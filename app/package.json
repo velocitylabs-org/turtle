@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sentry/nextjs": "^7.113.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
@@ -23,6 +24,7 @@
     "postcss": "^8",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
+    "sentry-testkit": "^5.0.9",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
