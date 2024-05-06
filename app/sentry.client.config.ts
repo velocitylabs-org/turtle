@@ -7,7 +7,8 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  // Adjust this value in production, or use tracesSampler for greater control
+  // The percentage of transactions that get sent, defined between 0 and 1. 
+  // For example, to send 20% of transactions, set tracesSampleRate to 0.2
   tracesSampleRate: 1,
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
