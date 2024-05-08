@@ -2,12 +2,12 @@
 // The config you add here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  // The percentage of transactions that get sent, defined between 0 and 1. 
+  // The percentage of transactions that get sent, defined between 0 and 1.
   // For example, to send 20% of transactions, set tracesSampleRate to 0.2
   tracesSampleRate: 1,
 
@@ -30,7 +30,7 @@ Sentry.init({
 
     Sentry.feedbackIntegration({
       // Additional SDK configuration goes in here, for example:
-      colorScheme: "system",
+      colorScheme: 'system',
     }),
   ],
-});
+})
