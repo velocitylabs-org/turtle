@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import * as Sentry from "@sentry/nextjs";
-import { useEffect } from "react";
+import * as Sentry from '@sentry/nextjs'
+import { useEffect } from 'react'
 
 interface GlobalErrorProps {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error: Error & { digest?: string }
+  reset: () => void
 }
 
 const GlobalError: React.FC<GlobalErrorProps> = ({ error, reset }) => {
   useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
+    Sentry.captureException(error)
+  }, [error])
 
   return (
     <html>
@@ -20,7 +20,7 @@ const GlobalError: React.FC<GlobalErrorProps> = ({ error, reset }) => {
         <button onClick={() => reset()}>Try again</button>
       </body>
     </html>
-  );
-};
+  )
+}
 
-export default GlobalError;
+export default GlobalError
