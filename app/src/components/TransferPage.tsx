@@ -1,5 +1,6 @@
 'use client'
-import { FC } from 'react'
+import { Chain } from '@/models/chain'
+import { FC, useState } from 'react'
 import ChainSelect from './ChainSelect'
 
 interface TransferPageProps {}
@@ -25,11 +26,13 @@ const testchains = [
 ]
 
 const TransferPage: FC<TransferPageProps> = ({}) => {
+  const [sourceChain, setSourceChain] = useState<Chain | null>(testchains[0])
+
   return (
     <div className="card h-full max-h-[30rem] w-full max-w-xl rounded-lg border-2 border-green-300 bg-white/10 p-5 shadow-xl backdrop-blur-sm">
       <ChainSelect
-        value={testchains[0]}
-        onChange={() => {}}
+        value={sourceChain}
+        onChange={setSourceChain}
         chains={testchains}
         className="w-full"
       />

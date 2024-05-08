@@ -22,11 +22,24 @@ const ChainSelect: FC<ChainSelectProps> = ({ value, onChange, chains, disabled, 
   return (
     <div className={twMerge(`flex items-center justify-center`, className)}>
       <button className="btn w-full" onClick={openDialog} disabled={disabled}>
-        Select Chain
+        {value ? (
+          <div className="flex items-center gap-2">
+            <Image
+              src={value.logoURI}
+              alt={value.name}
+              width={30}
+              height={30}
+              className="rounded-full"
+            />
+            {value.name}
+          </div>
+        ) : (
+          'Select Chain'
+        )}
       </button>
 
       {showDialog && (
-        <dialog open className="modal transition-all duration-500	ease-in-out">
+        <dialog open className="modal">
           <div className="modal-box">
             <div className="flex items-center gap-1">
               <button className="btn btn-circle btn-ghost" onClick={closeDialog}>
