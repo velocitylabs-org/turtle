@@ -2,9 +2,11 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
+import AddressInput from './AddressInput'
 import CustomSelect from './CustomSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
+import WalletConnectButton from './WalletConnectButton'
 
 interface TransferPageProps {}
 
@@ -16,8 +18,8 @@ const testchains = [
       'https://yt3.googleusercontent.com/fxd3QjjeYi0j8RXHa5NwQ03_Puk8AgMpUg48fhtYUBJMaXtzadkFswjQ2fpOCpBEVBnXs0ZWnA=s900-c-k-c0x00ffffff-no-rj',
   },
   {
-    id: 'polkadot-relaychain',
-    name: 'Polkadot Relay Chain',
+    id: 'polkadot-assethub',
+    name: 'Polkadot Asset Hub',
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
   },
   {
@@ -55,10 +57,14 @@ const TransferPage: FC<TransferPageProps> = ({}) => {
   const [destinationChain, setDestinationChain] = useState<Chain | null>(testchains[1])
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(0)
+  const [receiverAddress, setReceiverAddress] = useState<string>('')
 
   return (
-    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-green-300 bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[30rem]">
-      <div className="flex flex-col gap-8">
+    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-green-300 bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
+      <div className="flex flex-col gap-3">
+        {/* Wallet Connect Button */}
+        <WalletConnectButton label="Connect Wallet" className="self-end" />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
           <div>
@@ -107,6 +113,16 @@ const TransferPage: FC<TransferPageProps> = ({}) => {
             options={testchains}
             title="Select Destination Chain"
             className="w-full"
+          />
+        </div>
+
+        {/* Receiver Address */}
+        <div>
+          <span className="label label-text">Receiver</span>
+          <AddressInput
+            value={receiverAddress}
+            onChange={setReceiverAddress}
+            placeholder="Receiver Address"
           />
         </div>
 

@@ -7,7 +7,7 @@ interface TransferButtonProps {
   className?: string
 }
 
-const TransferButton: FC<TransferButtonProps> = ({ label, onClick = () => {}, className }) => {
+const TransferButton: FC<TransferButtonProps> = ({ label = '', onClick = () => {}, className }) => {
   return (
     <button onClick={onClick} className={twMerge('btn btn-outline btn-primary', className)}>
       {label}
