@@ -3,6 +3,7 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
 import CustomSelect from './CustomSelect'
+import ValueInput from './ValueInput'
 
 interface TransferPageProps {}
 
@@ -28,11 +29,10 @@ const testchains = [
 
 const testTokens = [
   {
-    id: 'acala',
-    name: 'Acala',
-    symbol: 'ACA',
-    logoURI:
-      'https://yt3.googleusercontent.com/fxd3QjjeYi0j8RXHa5NwQ03_Puk8AgMpUg48fhtYUBJMaXtzadkFswjQ2fpOCpBEVBnXs0ZWnA=s900-c-k-c0x00ffffff-no-rj',
+    id: 'usdc',
+    name: 'USDC',
+    symbol: 'USDC',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/200x200/3408.png',
   },
   {
     id: 'polkadot',
@@ -53,10 +53,11 @@ const TransferPage: FC<TransferPageProps> = ({}) => {
   const [sourceChain, setSourceChain] = useState<Chain | null>(testchains[0])
   const [destinationChain, setDestinationChain] = useState<Chain | null>(testchains[1])
   const [token, setToken] = useState<Token | null>(null)
+  const [amount, setAmount] = useState<number | null>(0)
 
   return (
-    <div className="card h-full max-h-[30rem] w-full max-w-xl rounded-lg border-2 border-green-300 bg-white/10 p-5 shadow-xl backdrop-blur-sm">
-      <div className="flex flex-col gap-2">
+    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-green-300 bg-white/10 p-5 shadow-xl backdrop-blur-sm sm:max-h-[30rem]">
+      <div className="flex flex-col gap-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
           <div>
@@ -83,15 +84,30 @@ const TransferPage: FC<TransferPageProps> = ({}) => {
           </div>
         </div>
 
+        {/* Token Amount Input */}
+        <div>
+          <span className="label label-text">Amount</span>
+          <ValueInput
+            value={amount}
+            onChange={setAmount}
+            placeholder="0"
+            disabled={!token}
+            unit={token?.symbol}
+            className="w-full"
+          />
+        </div>
+
         {/* Destination Chain */}
-        <span className="label label-text">Destination Chain</span>
-        <CustomSelect
-          value={destinationChain}
-          onChange={setDestinationChain}
-          options={testchains}
-          title="Select Destination Chain"
-          className="w-full"
-        />
+        <div>
+          <span className="label label-text">Destination Chain</span>
+          <CustomSelect
+            value={destinationChain}
+            onChange={setDestinationChain}
+            options={testchains}
+            title="Select Destination Chain"
+            className="w-full"
+          />
+        </div>
       </div>
     </div>
   )
