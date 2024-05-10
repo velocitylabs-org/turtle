@@ -3,6 +3,7 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
 import CustomSelect from './CustomSelect'
+import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
 
 interface TransferPageProps {}
@@ -56,7 +57,7 @@ const TransferPage: FC<TransferPageProps> = ({}) => {
   const [amount, setAmount] = useState<number | null>(0)
 
   return (
-    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-green-300 bg-white/10 p-5 shadow-xl backdrop-blur-sm sm:max-h-[30rem]">
+    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-green-300 bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[30rem]">
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
@@ -84,7 +85,7 @@ const TransferPage: FC<TransferPageProps> = ({}) => {
           </div>
         </div>
 
-        {/* Token Amount Input */}
+        {/* Token Amount */}
         <div>
           <span className="label label-text">Amount</span>
           <ValueInput
@@ -108,6 +109,13 @@ const TransferPage: FC<TransferPageProps> = ({}) => {
             className="w-full"
           />
         </div>
+
+        {/* Transfer Button */}
+        <TransferButton
+          label="Transfer"
+          onClick={() => console.log('Transfer')}
+          className="max-w-xs self-center"
+        />
       </div>
     </div>
   )

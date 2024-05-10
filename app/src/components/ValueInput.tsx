@@ -1,3 +1,4 @@
+'use client'
 import { FC, useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
