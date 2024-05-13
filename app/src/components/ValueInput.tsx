@@ -27,7 +27,7 @@ const ValueInput: FC<ValueInputProps> = ({
   /** Reset value on token change */
   useEffect(() => {
     onChange(0)
-  }, [unit])
+  }, [unit, onChange])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVal = e.target.value
