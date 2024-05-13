@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-const AppHeader: FC = () => {
+const AppHeader: FC = async () => {
   return (
     <div className="flex flex-col items-center gap-3 p-6">
       <p className="text-8xl">🐢</p>

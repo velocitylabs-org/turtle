@@ -1,26 +1,29 @@
 'use client'
-
+import { Chain } from '@/models/chain'
+import { Token } from '@/models/token'
 import Image from 'next/image'
 import { FC, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import CustomSelectDialog from './CustomSelectDialog'
 
-interface SelectOption {
-  id: string
-  name: string
-  logoURI: string
-  symbol?: string
-}
+export type SelectOption = Chain & Token
 
-interface CustomSelectProps<T extends SelectOption> {
-  value: T | null
-  onChange: (newValue: T | null) => void
-  options: T[]
+interface CustomSelectProps {
+  /** Currently selected value, or null if no value is selected. */
+  value: SelectOption | null
+  /** Callback function that is invoked when the selected value changes. */
+  onChange: (newValue: SelectOption | null) => void
+  /** Array of options that the user can select from. */
+  options: SelectOption[]
+  /** Title of the select input, displayed when no item is selected. */
   title: string
+  /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
+  /** Additional classes to apply to the select input. */
   className?: string
 }
 
-const CustomSelect: FC<CustomSelectProps<SelectOption>> = ({
+const CustomSelect: FC<CustomSelectProps> = ({
   value,
   onChange,
   options,
@@ -33,30 +36,9 @@ const CustomSelect: FC<CustomSelectProps<SelectOption>> = ({
   const openDialog = () => setShowDialog(true)
   const closeDialog = () => setShowDialog(false)
 
-  const renderOptionContent = (option: SelectOption) => {
-    return (
-      <button
-        key={option.id}
-        className="btn btn-ghost w-full justify-start rounded-lg"
-        onClick={() => {
-          onChange(option)
-          closeDialog()
-        }}
-      >
-        <Image
-          src={option.logoURI}
-          alt={option?.symbol || option.name}
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-        {option?.symbol || option.name}
-      </button>
-    )
-  }
-
   return (
     <div className={twMerge(`flex items-center justify-center`, className)}>
+      {/* Select Button */}
       <button className="btn w-full" onClick={openDialog} disabled={disabled}>
         {value ? (
           <div className="flex items-center gap-2">
@@ -74,23 +56,14 @@ const CustomSelect: FC<CustomSelectProps<SelectOption>> = ({
         )}
       </button>
 
-      {/* Opened Select Dialog */}
+      {/* Select Dialog */}
       {showDialog && (
-        <dialog open className="modal">
-          <div className="modal-box">
-            <div className="flex items-center gap-1">
-              <button className="btn btn-circle btn-ghost" onClick={closeDialog}>
-                {'<'}-
-              </button>
-              <h3 className="text-lg font-bold">{title}</h3>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              {options.map((option) => renderOptionContent(option))}
-            </div>
-          </div>
-          <form method="dialog" className="modal-backdrop" onClick={closeDialog} />
-        </dialog>
+        <CustomSelectDialog
+          title={title}
+          options={options}
+          onChange={onChange}
+          onClose={closeDialog}
+        />
       )}
     </div>
   )

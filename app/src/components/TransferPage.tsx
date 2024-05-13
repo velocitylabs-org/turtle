@@ -1,4 +1,5 @@
 'use client'
+import { testchains, testTokens } from '@/__tests__/testdata'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
@@ -8,55 +9,11 @@ import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
 import WalletConnectButton from './WalletConnectButton'
 
-interface TransferPageProps {}
-
-const testchains = [
-  {
-    id: 'acala',
-    name: 'Acala',
-    logoURI:
-      'https://yt3.googleusercontent.com/fxd3QjjeYi0j8RXHa5NwQ03_Puk8AgMpUg48fhtYUBJMaXtzadkFswjQ2fpOCpBEVBnXs0ZWnA=s900-c-k-c0x00ffffff-no-rj',
-  },
-  {
-    id: 'polkadot-assethub',
-    name: 'Polkadot Asset Hub',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
-  },
-  {
-    id: 'ethereum',
-    name: 'Ethereum',
-    logoURI:
-      'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
-  },
-]
-
-const testTokens = [
-  {
-    id: 'usdc',
-    name: 'USDC',
-    symbol: 'USDC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/200x200/3408.png',
-  },
-  {
-    id: 'polkadot',
-    name: 'Polkadot',
-    symbol: 'DOT',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
-  },
-  {
-    id: 'ethereum',
-    name: 'Ether',
-    symbol: 'ETH',
-    logoURI:
-      'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
-  },
-]
-
-const TransferPage: FC<TransferPageProps> = ({}) => {
-  const [sourceChain, setSourceChain] = useState<Chain | null>(testchains[0])
-  const [destinationChain, setDestinationChain] = useState<Chain | null>(testchains[1])
+const TransferPage: FC = () => {
+  const [sourceChain, setSourceChain] = useState<Chain | null>(null)
+  const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
-  const [amount, setAmount] = useState<number | null>(0)
+  const [amount, setAmount] = useState<number | null>(null)
   const [receiverAddress, setReceiverAddress] = useState<string>('')
 
   return (
