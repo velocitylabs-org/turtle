@@ -1,5 +1,4 @@
 'use client'
-
 import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
 

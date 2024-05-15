@@ -1,6 +1,16 @@
 import { withSentryConfig } from '@sentry/nextjs'
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  images: {
+    domains: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**', // for testing purposes allow all domains. TODO restrict to specific domains.
+      },
+    ],
+  },
+}
 
 export default withSentryConfig(
   nextConfig,
