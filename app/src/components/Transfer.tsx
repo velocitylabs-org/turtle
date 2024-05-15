@@ -1,16 +1,12 @@
 'use client'
 import { testchains, testTokens } from '@/__tests__/testdata'
 import { Chain } from '@/models/chain'
-import {
-  chainsToSelectOptions,
-  chainToSelectOption,
-  tokensToSelectOptions,
-  tokenToSelectOption,
-} from '@/models/selectOption'
+import { chainsToSelectOptions, chainToSelectOption } from '@/models/selectOption'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
 import CustomSelect from './CustomSelect'
+import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
 import WalletConnectButton from './WalletConnectButton'
@@ -44,11 +40,11 @@ const Transfer: FC = () => {
           {/* Token */}
           <div>
             <span className="label label-text">Token</span>
-            <CustomSelect
-              value={tokenToSelectOption(token)}
-              onChange={(selected) => setToken(selected?.value as Token)}
-              options={tokensToSelectOptions(testTokens)}
-              title="Select Token"
+            <TokenSelect
+              value={token}
+              onChange={setToken}
+              options={testTokens}
+              disabled={!sourceChain}
               className="w-full"
             />
           </div>
