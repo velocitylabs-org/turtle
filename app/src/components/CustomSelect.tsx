@@ -1,12 +1,9 @@
 'use client'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { SelectOption } from '@/models/selectOption'
 import Image from 'next/image'
 import { FC, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import CustomSelectDialog from './CustomSelectDialog'
-
-export type SelectOption = Chain & Token
 
 interface CustomSelectProps {
   /** Currently selected value, or null if no value is selected. */
@@ -44,12 +41,12 @@ const CustomSelect: FC<CustomSelectProps> = ({
           <div className="flex items-center gap-2">
             <Image
               src={value.logoURI}
-              alt={value.name}
+              alt={value.label}
               width={30}
               height={30}
               className="rounded-full"
             />
-            {value?.symbol || value.name}
+            {value.label}
           </div>
         ) : (
           <p>{title}</p>

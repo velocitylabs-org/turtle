@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
-import { SelectOption } from './CustomSelect'
+
+import { SelectOption } from '@/models/selectOption'
 import CustomSelectOption from './CustomSelectOption'
 
 interface CustomSelectDialogProps {
@@ -35,7 +36,7 @@ const CustomSelectDialog: React.FC<CustomSelectDialogProps> = ({
         <div className="flex flex-col gap-2">
           {options.map((option) => (
             <CustomSelectOption
-              key={option.id}
+              key={option.value.toString()}
               option={option}
               onClick={(opt) => {
                 onChange(opt)

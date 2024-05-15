@@ -1,7 +1,7 @@
 'use client'
+import { SelectOption } from '@/models/selectOption'
 import Image from 'next/image'
 import { FC } from 'react'
-import { SelectOption } from './CustomSelect'
 
 interface CustomSelectOptionProps {
   /** The option to render. */
@@ -12,18 +12,18 @@ interface CustomSelectOptionProps {
 
 const CustomSelectOption: FC<CustomSelectOptionProps> = ({ option, onClick }) => (
   <button
-    key={option.id}
+    key={option.value.toString()}
     className="btn btn-ghost w-full justify-start rounded-lg"
     onClick={() => onClick(option)}
   >
     <Image
       src={option.logoURI}
-      alt={option?.symbol || option.name}
+      alt={option.label}
       width={40}
       height={40}
       className="rounded-full"
     />
-    {option?.symbol || option.name}
+    {option.label}
   </button>
 )
 
