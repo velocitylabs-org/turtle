@@ -1,26 +1,25 @@
 'use client'
-import React from 'react'
 
 import { SelectOption } from '@/models/selectOption'
 import CustomSelectOption from './CustomSelectOption'
 
-interface CustomSelectDialogProps {
+interface CustomSelectDialogProps<T> {
   /** Title of the dialog. */
   title: string
   /** Options that the user can select from within the dialog. */
-  options: SelectOption[]
+  options: SelectOption<T>[]
   /** Callback function that is invoked when an option is selected. */
-  onChange: (option: SelectOption) => void
+  onChange: (option: SelectOption<T>) => void
   /** Callback function to close the dialog. */
   onClose: () => void
 }
 
-const CustomSelectDialog: React.FC<CustomSelectDialogProps> = ({
+const CustomSelectDialog = <T,>({
   title,
   options,
   onChange,
   onClose,
-}) => {
+}: CustomSelectDialogProps<T>) => {
   return (
     <dialog open className="modal">
       <div className="modal-box">
@@ -34,9 +33,9 @@ const CustomSelectDialog: React.FC<CustomSelectDialogProps> = ({
 
         {/* Options */}
         <div className="flex flex-col gap-2">
-          {options.map((option) => (
+          {options.map((option, index) => (
             <CustomSelectOption
-              key={option.value.toString()}
+              key={index + option.label + option.logoURI}
               option={option}
               onClick={(opt) => {
                 onChange(opt)

@@ -26,9 +26,9 @@ const TokenSelect: FC<TokenSelectProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const selectOption = tokenToSelectOption(value)
-  const handleChange = (selectedOption: SelectOption | null) =>
-    onChange(selectedOption?.value as Token)
+  const selectOption = value ? tokenToSelectOption(value) : null
+  const handleChange = (selectedOption: SelectOption<Token> | null) =>
+    onChange(selectedOption?.value ?? null)
   const selectOptions = tokensToSelectOptions(options)
 
   return (

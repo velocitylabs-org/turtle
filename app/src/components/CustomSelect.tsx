@@ -1,17 +1,17 @@
 'use client'
 import { SelectOption } from '@/models/selectOption'
 import Image from 'next/image'
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import CustomSelectDialog from './CustomSelectDialog'
 
-interface CustomSelectProps {
+interface CustomSelectProps<T> {
   /** Currently selected value, or null if no value is selected. */
-  value: SelectOption | null
+  value: SelectOption<T> | null
   /** Callback function that is invoked when the selected value changes. */
-  onChange: (newValue: SelectOption | null) => void
+  onChange: (newValue: SelectOption<T> | null) => void
   /** Array of options that the user can select from. */
-  options: SelectOption[]
+  options: SelectOption<T>[]
   /** Title of the select input, displayed when no item is selected. */
   title: string
   /** Whether the select input is disabled (non-interactive). */
@@ -20,14 +20,14 @@ interface CustomSelectProps {
   className?: string
 }
 
-const CustomSelect: FC<CustomSelectProps> = ({
+export const CustomSelect = <T,>({
   value,
   onChange,
   options,
   title,
   disabled,
   className,
-}) => {
+}: CustomSelectProps<T>) => {
   const [showDialog, setShowDialog] = useState(false)
 
   const openDialog = () => setShowDialog(true)
