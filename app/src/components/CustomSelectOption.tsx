@@ -1,18 +1,17 @@
 'use client'
 import { SelectOption } from '@/models/selectOption'
 import Image from 'next/image'
-import { FC } from 'react'
 
-interface CustomSelectOptionProps {
+interface CustomSelectOptionProps<T> {
   /** The option to render. */
-  option: SelectOption
+  option: SelectOption<T>
   /** Callback when the option is clicked. */
-  onClick: (option: SelectOption) => void
+  onClick: (option: SelectOption<T>) => void
 }
 
-const CustomSelectOption: FC<CustomSelectOptionProps> = ({ option, onClick }) => (
+const CustomSelectOption = <T,>({ option, onClick }: CustomSelectOptionProps<T>) => (
   <button
-    key={option.value.toString()}
+    key={String(option.value)}
     className="btn btn-ghost w-full justify-start rounded-lg"
     onClick={() => onClick(option)}
   >

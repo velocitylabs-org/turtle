@@ -26,9 +26,9 @@ const ChainSelect: FC<ChainSelectProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const selectOption = chainToSelectOption(value)
-  const handleChange = (selectedOption: SelectOption | null) =>
-    onChange(selectedOption?.value as Chain)
+  const selectOption = value ? chainToSelectOption(value) : null
+  const handleChange = (selectedOption: SelectOption<Chain> | null) =>
+    onChange(selectedOption?.value ?? null)
   const selectOptions = chainsToSelectOptions(options)
 
   return (
