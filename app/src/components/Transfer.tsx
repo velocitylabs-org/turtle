@@ -1,11 +1,10 @@
 'use client'
 import { testchains, testTokens } from '@/__tests__/testdata'
 import { Chain } from '@/models/chain'
-import { chainsToSelectOptions, chainToSelectOption } from '@/models/selectOption'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
-import CustomSelect from './CustomSelect'
+import ChainSelect from './ChainSelect'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
@@ -28,10 +27,10 @@ const Transfer: FC = () => {
           {/* Source Chain */}
           <div>
             <span className="label label-text">Source Chain</span>
-            <CustomSelect
-              value={chainToSelectOption(sourceChain)}
-              onChange={(option) => setSourceChain(option?.value as Chain)}
-              options={chainsToSelectOptions(testchains)}
+            <ChainSelect
+              value={sourceChain}
+              onChange={setSourceChain}
+              options={testchains}
               title="Select Source Chain"
               className="w-full"
             />
@@ -66,10 +65,10 @@ const Transfer: FC = () => {
         {/* Destination Chain */}
         <div>
           <span className="label label-text">Destination Chain</span>
-          <CustomSelect
-            value={chainToSelectOption(destinationChain)}
-            onChange={(option) => setDestinationChain(option?.value as Chain)}
-            options={chainsToSelectOptions(testchains)}
+          <ChainSelect
+            value={destinationChain}
+            onChange={setDestinationChain}
+            options={testchains}
             title="Select Destination Chain"
             className="w-full"
           />
