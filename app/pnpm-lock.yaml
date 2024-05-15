@@ -8,7 +8,7 @@ importers:
   .:
     dependencies:
       '@sentry/nextjs':
-        specifier: ^7.113.0
+        specifier: ^7.114.0
         version: 7.114.0(next@14.2.3(@babel/core@7.24.5)(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.91.0)
       clsx:
         specifier: ^2.1.1
