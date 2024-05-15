@@ -1,5 +1,5 @@
 'use client'
-import * as Sentry from '@sentry/react'
+import * as Sentry from '@sentry/nextjs'
 import { useEffect } from 'react'
 
 interface GlobalErrorProps {
