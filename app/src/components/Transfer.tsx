@@ -9,7 +9,7 @@ import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
 import WalletConnectButton from './WalletConnectButton'
 
-const TransferPage: FC = () => {
+const Transfer: FC = () => {
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
@@ -94,4 +94,4 @@ const TransferPage: FC = () => {
   )
 }
 
-export default TransferPage
+export default Transfer

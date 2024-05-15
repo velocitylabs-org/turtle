@@ -1,5 +1,5 @@
 import AppHeader from '@/components/AppHeader'
-import TransferPage from '@/components/TransferPage'
+import Transfer from '@/components/Transfer'
 import { BackgroundBeams } from '@/components/ui/Background'
 import { FC } from 'react'
 
@@ -8,7 +8,7 @@ const App: FC = async () => {
     <div className="flex h-screen w-full flex-col items-center justify-center">
       <AppHeader />
       <BackgroundBeams />
-      <TransferPage />
+      <Transfer />
     </div>
   )
 }
