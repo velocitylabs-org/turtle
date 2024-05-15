@@ -1,4 +1,5 @@
 'use client'
+import * as Sentry from '@sentry/react'
 import { useEffect } from 'react'
 
 interface GlobalErrorProps {
@@ -8,7 +9,7 @@ interface GlobalErrorProps {
 
 const GlobalError: React.FC<GlobalErrorProps> = ({ error, reset }) => {
   useEffect(() => {
-    // Sentry.captureException(error)
+    Sentry.captureException(error)
   }, [error])
 
   return (
