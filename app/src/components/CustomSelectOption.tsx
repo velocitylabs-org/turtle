@@ -10,11 +10,7 @@ interface CustomSelectOptionProps<T> {
 }
 
 const CustomSelectOption = <T,>({ option, onClick }: CustomSelectOptionProps<T>) => (
-  <button
-    key={String(option.value)}
-    className="btn btn-ghost w-full justify-start rounded-lg"
-    onClick={() => onClick(option)}
-  >
+  <button className="btn btn-ghost w-full justify-start rounded-lg" onClick={() => onClick(option)}>
     <Image
       src={option.logoURI}
       alt={option.label}

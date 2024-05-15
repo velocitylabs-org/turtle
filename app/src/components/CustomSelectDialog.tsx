@@ -33,9 +33,9 @@ const CustomSelectDialog = <T,>({
 
         {/* Options */}
         <div className="flex flex-col gap-2">
-          {options.map((option) => (
+          {options.map((option, index) => (
             <CustomSelectOption
-              key={String(option.value)}
+              key={index + option.label + option.logoURI}
               option={option}
               onClick={(opt) => {
                 onChange(opt)
