@@ -16,7 +16,11 @@ const WalletConnectButton: FC<WalletConnectButtonProps> = ({
   onClick = () => {},
   className,
 }) => {
-  return <button className={twMerge('btn btn-outline btn-xs', className)}>{label}</button>
+  return (
+    <div className={twMerge('', className)}>
+      <w3m-button size="sm" balance="hide" />
+    </div>
+  )
 }
 
 export default WalletConnectButton
