@@ -18,7 +18,6 @@ const WalletConnectButton: FC<WalletConnectButtonProps> = ({
   return (
     <div className={className} onClick={onClick}>
       <w3m-button size="sm" balance="hide" label={label} />
-      <w3m-network-button />
     </div>
   )
 }
