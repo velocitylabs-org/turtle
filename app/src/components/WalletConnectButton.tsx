@@ -1,6 +1,5 @@
 'use client'
 import { FC } from 'react'
-import { twMerge } from 'tailwind-merge'
 
 interface WalletConnectButtonProps {
   /** Text shown inside the button. */
@@ -12,13 +11,14 @@ interface WalletConnectButtonProps {
 }
 
 const WalletConnectButton: FC<WalletConnectButtonProps> = ({
-  label = '',
+  label,
   onClick = () => {},
   className,
 }) => {
   return (
-    <div className={twMerge('', className)}>
-      <w3m-button size="sm" balance="hide" />
+    <div className={className} onClick={onClick}>
+      <w3m-button size="sm" balance="hide" label={label} />
+      <w3m-network-button />
     </div>
   )
 }
