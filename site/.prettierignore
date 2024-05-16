@@ -1,0 +1,7 @@
+node_modules
+.next
+LICENSE
+docs
+package-lock.json
+*.md
+.env*

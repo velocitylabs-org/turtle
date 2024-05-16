@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd "$(dirname -- "$0")/.."
+
+npm run format
+npm run lint
