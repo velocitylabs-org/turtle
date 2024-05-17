@@ -6,6 +6,16 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+
+  /* Add Talisman Connect dark mode */
+  --talisman-connect-control-background: #383838;
+  --talisman-connect-control-foreground: inherit;
+  --talisman-connect-active-background: #5a5a5a;
+  --talisman-connect-active-foreground: inherit;
+  --talisman-connect-modal-background: #222;
+  --talisman-connect-modal-foreground: #fafafa;
+  --talisman-connect-button-background: var(--talisman-connect-control-background);
+  --talisman-connect-button-foreground: #fafafa;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -5,10 +5,11 @@ import { Token } from '@/models/token'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
+import ConnectEvmWalletButton from './ConnectEvmWalletButton'
+import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
-import WalletConnectButton from './WalletConnectButton'
 
 const Transfer: FC = () => {
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
@@ -17,11 +18,21 @@ const Transfer: FC = () => {
   const [amount, setAmount] = useState<number | null>(null)
   const [receiverAddress, setReceiverAddress] = useState<string>('')
 
+  const address = '5Hp7jnPx2bBZDTvAWZ3udtxar1nhhbmGvnU7eg37P4kmKUev'
+  // size (optional) is a number, indicating the size (in pixels, 64 as default)
+  const size = 20
+  // theme (optional), depicts the type of icon, one of
+  // 'polkadot', 'substrate' (default), 'beachball' or 'jdenticon'
+  const theme = 'polkadot'
+
   return (
     <div className="card h-full w-full max-w-xl rounded-lg border-2 border-green-300 bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
       <div className="flex flex-col gap-3">
         {/* Wallet Connect Button */}
-        <WalletConnectButton label="Connect Wallet" className="self-end" />
+        <div className="flex gap-2 self-end">
+          <ConnectEvmWalletButton label="Connect EVM" />
+          <ConnectSubstrateWalletButton />
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
