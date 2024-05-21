@@ -3,7 +3,6 @@ import { truncateAddress } from '@/utils/address'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
 import { FC, useState } from 'react'
-const { ApiPromise, WsProvider } = require('@polkadot/api')
 
 interface WalletAccount {
   address: string
@@ -51,23 +50,21 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
   )
 
   return (
-    <div className="p-1">
-      <WalletSelect
-        onlyShowInstalled
-        dappName="turtle"
-        showAccountsList={true}
-        triggerComponent={
-          <button className="btn btn-sm max-w-40 rounded-2xl ">{buttonContent}</button>
-        }
-        onAccountSelected={(account) => {
-          setActiveAccount(account)
-        }}
-        onUpdatedAccounts={handleUpdatedAccounts}
-        onError={(error) => {
-          console.error(error)
-        }}
-      />
-    </div>
+    <WalletSelect
+      onlyShowInstalled
+      dappName="turtle"
+      showAccountsList={true}
+      triggerComponent={
+        <button className="btn btn-sm max-w-40 rounded-2xl ">{buttonContent}</button>
+      }
+      onAccountSelected={(account) => {
+        setActiveAccount(account)
+      }}
+      onUpdatedAccounts={handleUpdatedAccounts}
+      onError={(error) => {
+        console.error(error)
+      }}
+    />
   )
 }
 

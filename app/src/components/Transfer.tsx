@@ -3,7 +3,6 @@ import { testchains, testTokens } from '@/__tests__/testdata'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
-import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
 import ConnectEvmWalletButton from './ConnectEvmWalletButton'
 import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
@@ -24,7 +23,6 @@ const Transfer: FC = () => {
         {/* Wallet Connect Buttons */}
         <div className="flex  gap-2 self-end">
           <ConnectEvmWalletButton label="Connect EVM" />
-          <ConnectSubstrateWalletButton label="Connect Substrate" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
@@ -80,12 +78,13 @@ const Transfer: FC = () => {
 
         {/* Receiver Address */}
         <div>
-          <span className="label label-text">Receiver</span>
-          <AddressInput
+          <span className="label label-text">Receiver Address</span>
+          <ConnectSubstrateWalletButton label="Connect Substrate" />
+          {/* <AddressInput
             value={receiverAddress}
             onChange={setReceiverAddress}
             placeholder="Receiver Address"
-          />
+          /> */}
         </div>
 
         {/* Transfer Button */}
