@@ -1,53 +1,70 @@
-import { InjectedExtension } from '@polkadot/extension-inject/types'
-import { WalletSelect, web3FromSource } from '@talismn/connect-components'
-import { FC } from 'react'
+'use client'
+import { truncateAddress } from '@/utils/address'
+import Identicon from '@polkadot/react-identicon'
+import { WalletSelect } from '@talismn/connect-components'
+import { FC, useState } from 'react'
 const { ApiPromise, WsProvider } = require('@polkadot/api')
 
-interface ConnectSubstrateWalletButtonProps {}
+interface WalletAccount {
+  address: string
+  source: string
+  name?: string
+  wallet?: unknown
+  signer?: unknown
+}
 
-const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = () => {
-  const handleTest = async () => {
-    const provider = new WsProvider('wss://rpc.polkadot.io')
-    const api = await ApiPromise.create({ provider })
+interface ConnectSubstrateWalletButtonProps {
+  /** Text shown inside the button. */
+  label?: string
+}
 
-    const injector = web3FromSource() as InjectedExtension
-    api.setSigner(injector.signer)
+const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
+  label = 'Connect Wallet',
+}) => {
+  const [activeAccount, setActiveAccount] = useState<WalletAccount | null>(null)
 
-    const transfer = api.tx.balances.transferAllowDeath(
-      '5Gza9nxUQiiErg5NotZ6FPePcjBEHhawoNL3sGqpmjrVhgeo',
-      12345,
-    )
+  // removes the active account if it is removed from the app
+  const handleUpdatedAccounts = (accounts?: WalletAccount[]) => {
+    if (!accounts || !activeAccount) return
 
-    const hash = await transfer.signAndSend('5Gza9nxUQiiErg5NotZ6FPePcjBEHhawoNL3sGqpmjrVhgeo', {
-      signer: injector.signer,
-    })
+    for (let account of accounts) {
+      if (account.address === activeAccount.address) return
+    }
+
+    setActiveAccount(null)
   }
 
-  return (
-    <div>
-      <button className="btn" onClick={handleTest}>
-        Test
-      </button>
+  // Prevents click event propagation
+  const handleIdenticonClick = (event: React.MouseEvent) => {
+    event.stopPropagation()
+  }
 
+  const buttonContent = activeAccount?.address ? (
+    <div className="flex items-center gap-2">
+      <div onClick={handleIdenticonClick}>
+        <Identicon value={activeAccount.address} size={20} theme="polkadot" />
+      </div>
+      <p>{truncateAddress(activeAccount.address)}</p>
+    </div>
+  ) : (
+    label
+  )
+
+  return (
+    <div className="p-1">
       <WalletSelect
         onlyShowInstalled
         dappName="turtle"
-        open={false}
         showAccountsList={true}
         triggerComponent={
-          <button
-            className="btn btn-sm max-w-40 rounded-2xl text-white"
-            // `onClick` is optional here
-            onClick={(wallets) => {
-              console.log(wallets)
-            }}
-          >
-            Connect Substrate
-          </button>
+          <button className="btn btn-sm max-w-40 rounded-2xl ">{buttonContent}</button>
         }
         onAccountSelected={(account) => {
-          console.log(account)
-          const injector = web3FromSource() as InjectedExtension
+          setActiveAccount(account)
+        }}
+        onUpdatedAccounts={handleUpdatedAccounts}
+        onError={(error) => {
+          console.error(error)
         }}
       />
     </div>
