@@ -22,13 +22,10 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
 }) => {
   const [activeAccount, setActiveAccount] = useState<WalletAccount | null>(null)
 
-  // removes the active account if it is removed from the app
+  // removes the active account if it is disconnected from the app
   const handleUpdatedAccounts = (accounts?: WalletAccount[]) => {
     if (!accounts || !activeAccount) return
-
-    for (let account of accounts) {
-      if (account.address === activeAccount.address) return
-    }
+    if (accounts.some(x => x.address === activeAccount.address)) return
 
     setActiveAccount(null)
   }
@@ -57,11 +54,11 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
       triggerComponent={
         <button className="btn btn-sm max-w-40 rounded-2xl ">{buttonContent}</button>
       }
-      onAccountSelected={(account) => {
+      onAccountSelected={account => {
         setActiveAccount(account)
       }}
       onUpdatedAccounts={handleUpdatedAccounts}
-      onError={(error) => {
+      onError={error => {
         console.error(error)
       }}
     />

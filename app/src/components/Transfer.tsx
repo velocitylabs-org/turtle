@@ -80,11 +80,6 @@ const Transfer: FC = () => {
         <div>
           <span className="label label-text">Receiver Address</span>
           <ConnectSubstrateWalletButton label="Connect Substrate" />
-          {/* <AddressInput
-            value={receiverAddress}
-            onChange={setReceiverAddress}
-            placeholder="Receiver Address"
-          /> */}
         </div>
 
         {/* Transfer Button */}

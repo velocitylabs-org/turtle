@@ -24,7 +24,7 @@ export const chainToSelectOption = (chain: Chain): SelectOption<Chain> => {
 }
 
 export const chainsToSelectOptions = (chains: Chain[]): SelectOption<Chain>[] => {
-  return chains.map((chain) => chainToSelectOption(chain) as SelectOption<Chain>)
+  return chains.map(chain => chainToSelectOption(chain) as SelectOption<Chain>)
 }
 
 export const tokenToSelectOption = (token: Token): SelectOption<Token> => {
@@ -36,5 +36,5 @@ export const tokenToSelectOption = (token: Token): SelectOption<Token> => {
 }
 
 export const tokensToSelectOptions = (tokens: Token[]): SelectOption<Token>[] => {
-  return tokens.map((token) => tokenToSelectOption(token) as SelectOption<Token>)
+  return tokens.map(token => tokenToSelectOption(token) as SelectOption<Token>)
 }

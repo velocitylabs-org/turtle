@@ -37,7 +37,7 @@ const CustomSelectDialog = <T,>({
             <CustomSelectOption
               key={index + option.label + option.logoURI}
               option={option}
-              onClick={(opt) => {
+              onClick={opt => {
                 onChange(opt)
                 onClose()
               }}

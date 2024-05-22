@@ -1,7 +1,7 @@
 import { withSentryConfig } from '@sentry/nextjs'
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config) => {
+  webpack: config => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     return config
   },
