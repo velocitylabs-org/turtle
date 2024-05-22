@@ -18,10 +18,10 @@ const Transfer: FC = () => {
   const [receiverAddress, setReceiverAddress] = useState<string>('')
 
   return (
-    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-green-300 bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
+    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
       <div className="flex flex-col gap-3">
         {/* Wallet Connect Buttons */}
-        <div className="flex  gap-2 self-end">
+        <div className="flex gap-2 self-end">
           <ConnectEvmWalletButton label="Connect EVM" />
         </div>
 
