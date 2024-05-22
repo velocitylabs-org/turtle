@@ -9,9 +9,9 @@ export const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 if (!projectId) throw new Error('Project ID is not defined')
 
 const metadata = {
-  name: 'Web3Modal',
-  description: 'Web3Modal Example',
-  url: 'http://localhost:3000', // origin must match your domain & subdomain
+  name: 'Turtle',
+  description: 'Token transfers done right',
+  url: process.env.NEXT_PUBLIC_APP_URL || '', // domain must be allowed in WalletConnect Cloud
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
 }
 

@@ -59,7 +59,7 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
       }}
       onUpdatedAccounts={handleUpdatedAccounts}
       onError={error => {
-        console.error(error)
+        if (error) console.error(error)
       }}
     />
   )
