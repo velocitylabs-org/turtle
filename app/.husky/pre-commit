@@ -4,4 +4,5 @@
 cd "$(dirname -- "$0")/.."
 
 npm run format
+git add .
 npm run lint

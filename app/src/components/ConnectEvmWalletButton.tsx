@@ -1,8 +1,7 @@
 'use client'
 import { FC } from 'react'
-import { twMerge } from 'tailwind-merge'
 
-interface WalletConnectButtonProps {
+interface ConnectEvmWalletButtonProps {
   /** Text shown inside the button. */
   label?: string
   /** Function to call when the button is clicked. */
@@ -11,12 +10,16 @@ interface WalletConnectButtonProps {
   className?: string
 }
 
-const WalletConnectButton: FC<WalletConnectButtonProps> = ({
-  label = '',
+const ConnectEvmWalletButton: FC<ConnectEvmWalletButtonProps> = ({
+  label,
   onClick = () => {},
   className,
 }) => {
-  return <button className={twMerge('btn btn-outline btn-xs', className)}>{label}</button>
+  return (
+    <div className={className} onClick={onClick}>
+      <w3m-button size="sm" balance="hide" label={label} />
+    </div>
+  )
 }
 
-export default WalletConnectButton
+export default ConnectEvmWalletButton
