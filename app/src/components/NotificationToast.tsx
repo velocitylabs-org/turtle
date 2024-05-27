@@ -1,16 +1,19 @@
 'use client'
-import { useEffect } from 'react'
-import { motion } from 'framer-motion'
 import { Notification } from '@/models/notification'
+import { motion } from 'framer-motion'
+import { useEffect } from 'react'
 
 const NOTIFICATION_TTL = 5000
 
-interface NotificationProps {
+interface NotificationToastProps {
   notification: Notification
   removeNotification: (id: number) => void
 }
 
-const Notification: React.FC<NotificationProps> = ({ notification, removeNotification }) => {
+const NotificationToast: React.FC<NotificationToastProps> = ({
+  notification,
+  removeNotification,
+}) => {
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
       removeNotification(notification.id)
@@ -37,4 +40,4 @@ const Notification: React.FC<NotificationProps> = ({ notification, removeNotific
   )
 }
 
-export default Notification
+export default NotificationToast

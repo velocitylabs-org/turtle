@@ -1,6 +1,7 @@
+import { Notification } from '@/models/notification'
 import { AnimatePresence } from 'framer-motion'
-import React, { useState } from 'react'
-import Notification from './Notification'
+import { useState } from 'react'
+import NotificationToast from './NotificationToast'
 
 export default function NotificationSystem() {
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -13,7 +14,7 @@ export default function NotificationSystem() {
     <div className="pointer-events-none fixed right-2 top-2 z-50 flex w-72 flex-col gap-1">
       <AnimatePresence>
         {notifications.map(n => (
-          <Notification key={n.id} notification={n} removeNotification={removeNotification} />
+          <NotificationToast key={n.id} notification={n} removeNotification={removeNotification} />
         ))}
       </AnimatePresence>
     </div>
