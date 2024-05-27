@@ -6,6 +6,7 @@ import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { ReactNode } from 'react'
 import { mainnet } from 'viem/chains'
 import { State, WagmiProvider } from 'wagmi'
+import { colors } from '@/../tailwind.config'
 
 // Setup queryClient
 const queryClient = new QueryClient()
@@ -20,7 +21,7 @@ createWeb3Modal({
   defaultChain: mainnet,
   themeVariables: {
     // TODO: adjust colors to fit into our project
-    '--w3m-accent': '#00BB7F',
+    '--w3m-accent': colors.primary,
   },
 })
 
