@@ -1,6 +1,7 @@
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
+import { getChains } from '@/services/chains'
 import * as Sentry from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from './useNotification'
@@ -23,13 +24,13 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
       setLoading(true)
       setError(null)
 
-      /* const loadedChains: Chain[] = await getChains({
+      const loadedChains: Chain[] = await getChains({
         token: supportedToken,
         sourceChain: supportedSourceChain,
         destChain: supportedDestChain,
-      }) // TODO change to chains service
+      })
 
-      setChains(loadedChains) */
+      setChains(loadedChains)
     } catch (err) {
       let errorMessage = 'An unknown error occurred'
       if (err instanceof Error) errorMessage = err.message
@@ -44,7 +45,7 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
     } finally {
       setLoading(false)
     }
-  }, [supportedToken, supportedSourceChain, supportedDestChain])
+  }, [supportedToken, supportedSourceChain, supportedDestChain, addNotification])
 
   useEffect(() => {
     fetchChains()
