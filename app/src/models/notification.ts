@@ -1,5 +1,4 @@
 export enum NotificationSeverity {
-  DEFAULT = 'default',
   INFO = 'info',
   ERROR = 'error',
   WARNING = 'warning',
@@ -8,7 +7,7 @@ export enum NotificationSeverity {
 
 export interface Notification {
   id: number
-  severity: NotificationSeverity
+  severity?: NotificationSeverity
   header: string
   message?: string
 }

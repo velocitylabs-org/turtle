@@ -1,10 +1,16 @@
 'use client'
+import DefaultIcon from '@/../public/notification-default-icon.svg'
+import ErrorIcon from '@/../public/notification-error-icon.svg'
+import InfoIcon from '@/../public/notification-info-icon.svg'
+import SuccessIcon from '@/../public/notification-success-icon.svg'
+import WarningIcon from '@/../public/notification-warning-icon.svg'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-const NOTIFICATION_TTL = 5000
+const NOTIFICATION_TTL_MS = 5000
 
 interface NotificationToastProps {
   notification: Notification
@@ -19,14 +25,10 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
       removeNotification(notification.id)
-    }, NOTIFICATION_TTL)
+    }, NOTIFICATION_TTL_MS)
 
     return () => clearTimeout(timeoutRef)
   }, [notification.id, removeNotification])
-
-  // Determine daisyui severity classname
-  const severityClass =
-    notification.severity !== NotificationSeverity.DEFAULT ? `alert-${notification.severity}` : null
 
   return (
     <motion.div
@@ -38,7 +40,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
       role="alert"
       className={twMerge(
         'alert pointer-events-auto flex items-center gap-2 shadow-lg',
-        severityClass,
+        `alert-${notification.severity}`,
       )}
     >
       {/* Notification Icon */}
@@ -58,92 +60,22 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   )
 }
 
-const renderSeverityIcon = (severity: NotificationSeverity) => {
+const renderSeverityIcon = (severity?: NotificationSeverity) => {
   switch (severity) {
-    case NotificationSeverity.DEFAULT:
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          className="h-6 w-6 shrink-0 stroke-info"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-      )
-
     case NotificationSeverity.INFO:
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          className="h-6 w-6 shrink-0 stroke-current"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          ></path>
-        </svg>
-      )
+      return <Image src={InfoIcon} alt="info icon" />
 
     case NotificationSeverity.ERROR:
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      )
+      return <Image src={ErrorIcon} alt="error icon" />
 
     case NotificationSeverity.WARNING:
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-          />
-        </svg>
-      )
+      return <Image src={WarningIcon} alt="warning icon" />
 
     case NotificationSeverity.SUCCESS:
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      )
+      return <Image src={SuccessIcon} alt="success icon" />
+
+    default:
+      return <Image src={DefaultIcon} alt="default icon" />
   }
 }
 
