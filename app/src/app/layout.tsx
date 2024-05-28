@@ -1,3 +1,4 @@
+import NotificationSystem from '@/components/NotificationSystem'
 import { config } from '@/config'
 import Web3ModalProvider from '@/context'
 import type { Metadata } from 'next'
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>{children}</Web3ModalProvider>
       </body>
     </html>
