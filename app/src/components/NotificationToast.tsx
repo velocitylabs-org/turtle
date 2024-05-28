@@ -24,7 +24,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   // Remove notification after TTL
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
-      removeNotification(notification.id)
+      removeNotification(notification.id!)
     }, NOTIFICATION_TTL_MS)
 
     return () => clearTimeout(timeoutRef)
@@ -53,7 +53,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
       </div>
 
       {/* Close Button */}
-      <button className="btn btn-ghost btn-xs" onClick={() => removeNotification(notification.id)}>
+      <button className="btn btn-ghost btn-xs" onClick={() => removeNotification(notification.id!)}>
         Close
       </button>
     </motion.div>
