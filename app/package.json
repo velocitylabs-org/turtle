@@ -38,6 +38,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.6",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -54,6 +55,7 @@
     "prettier-plugin-tailwindcss": "^0.5.14",
     "sentry-testkit": "^5.0.9",
     "tailwindcss": "^3.4.1",
+    "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
   }
