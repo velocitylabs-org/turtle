@@ -13,13 +13,13 @@ importers:
         version: 11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/extension-dapp':
         specifier: ^0.47.4
-        version: 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        version: 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/extension-inject':
         specifier: ^0.47.4
-        version: 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        version: 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/react-identicon':
         specifier: ^3.6.6
-        version: 3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
+        version: 3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1))(@polkadot/networks@12.6.2)(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
       '@sentry/nextjs':
         specifier: ^7.114.0
         version: 7.114.0(next@14.2.3(@babel/core@7.24.5)(@opentelemetry/api@1.8.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.91.0)
@@ -28,10 +28,10 @@ importers:
         version: 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@talisman-connect/wallets':
         specifier: ^1.1.3
-        version: 1.1.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
+        version: 1.1.3(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
       '@talismn/connect-components':
         specifier: ^1.1.8
-        version: 1.1.8(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react-dom@18.3.0)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@2.78.0)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
+        version: 1.1.8(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react-dom@18.3.0)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@2.78.0)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
       '@tanstack/react-query':
         specifier: ^5.36.2
         version: 5.36.2(react@18.3.1)
@@ -68,10 +68,13 @@ importers:
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.4.5
-        version: 6.4.5(@jest/globals@29.7.0)(jest@29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)))
+        version: 6.4.5(@jest/globals@29.7.0)(@types/jest@29.5.12)(jest@29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)))
       '@testing-library/react':
         specifier: ^15.0.6
         version: 15.0.7(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/jest':
+        specifier: ^29.5.12
+        version: 29.5.12
       '@types/node':
         specifier: ^20
         version: 20.12.11
@@ -120,6 +123,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.3(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
+      ts-jest:
+        specifier: ^29.1.4
+        version: 29.1.4(@babel/core@7.24.5)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.5))(jest@29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)))(typescript@5.4.5)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.12.11)(typescript@5.4.5)
@@ -2299,6 +2305,9 @@ packages:
   '@types/istanbul-reports@3.0.4':
     resolution: {integrity: sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==}
 
+  '@types/jest@29.5.12':
+    resolution: {integrity: sha512-eDC8bTvT/QhYdxJAulQikueigY5AsdBRH2yDKW3yveW7svY3+DzN84/2NUgkw10RTiJbWqZrTtoGVdYlvFJdLw==}
+
   '@types/jsdom@20.0.1':
     resolution: {integrity: sha512-d0r18sZPmMQr1eG35u12FZfhIXNrnsPU/g5wvRKCUf/tOGilKKwYMYGqh33BNR6ba+2gkHw1EUiHoN3mn7E5IQ==}
 
@@ -2931,6 +2940,10 @@ packages:
     resolution: {integrity: sha512-QW8HiM1shhT2GuzkvklfjcKDiWFXHOeFCIA/huJPwHsslwcydgk7X+z2zXpEijP98UCY7HbubZt5J2Zgvf0CaQ==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
+
+  bs-logger@0.2.6:
+    resolution: {integrity: sha512-pd8DCoxmbgc7hyPKOvxtqNcjYoOsABPQdcCUjGp3d42VR2CX1ORhk2A87oqqu5R1kk+76nsxZupkmyd+MVtCog==}
+    engines: {node: '>= 6'}
 
   bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
@@ -6153,6 +6166,7 @@ packages:
 
   rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@3.0.2:
@@ -6684,6 +6698,30 @@ packages:
 
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
+
+  ts-jest@29.1.4:
+    resolution: {integrity: sha512-YiHwDhSvCiItoAgsKtoLFCuakDzDsJ1DLDnSouTaTmdOcOwIkSzbLXduaQ6M5DRVhuZC/NYaaZ/mtHbWMv/S6Q==}
+    engines: {node: ^14.15.0 || ^16.10.0 || ^18.0.0 || >=20.0.0}
+    hasBin: true
+    peerDependencies:
+      '@babel/core': '>=7.0.0-beta.0 <8'
+      '@jest/transform': ^29.0.0
+      '@jest/types': ^29.0.0
+      babel-jest: ^29.0.0
+      esbuild: '*'
+      jest: ^29.0.0
+      typescript: '>=4.3 <6'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@jest/transform':
+        optional: true
+      '@jest/types':
+        optional: true
+      babel-jest:
+        optional: true
+      esbuild:
+        optional: true
 
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -9005,23 +9043,23 @@ snapshots:
       - encoding
       - supports-color
 
-  '@polkadot/extension-dapp@0.42.10(@polkadot/api@7.15.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)':
+  '@polkadot/extension-dapp@0.42.10(@polkadot/api@7.15.1)(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)':
     dependencies:
       '@babel/runtime': 7.24.5
       '@polkadot/api': 7.15.1
       '@polkadot/extension-inject': 0.42.10(@polkadot/api@7.15.1)
-      '@polkadot/util': 12.6.2
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      '@polkadot/util': 8.7.1
+      '@polkadot/util-crypto': 8.7.1(@polkadot/util@8.7.1)
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  '@polkadot/extension-dapp@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@polkadot/extension-dapp@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/api': 11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@polkadot/extension-inject': 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@polkadot/util': 12.6.2
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      '@polkadot/extension-inject': 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/util': 8.7.1
+      '@polkadot/util-crypto': 8.7.1(@polkadot/util@8.7.1)
       tslib: 2.6.2
     transitivePeerDependencies:
       - bufferutil
@@ -9041,13 +9079,13 @@ snapshots:
       - encoding
       - supports-color
 
-  '@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/api': 11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/rpc-provider': 11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/types': 11.0.3
-      '@polkadot/util': 12.6.2
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      '@polkadot/util': 8.7.1
+      '@polkadot/util-crypto': 12.6.2(@polkadot/util@8.7.1)
       '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
     transitivePeerDependencies:
@@ -9059,6 +9097,12 @@ snapshots:
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      tslib: 2.6.2
+
+  '@polkadot/keyring@12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)':
+    dependencies:
+      '@polkadot/util': 8.7.1
+      '@polkadot/util-crypto': 8.7.1(@polkadot/util@8.7.1)
       tslib: 2.6.2
 
   '@polkadot/keyring@8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)':
@@ -9079,13 +9123,13 @@ snapshots:
       '@polkadot/util': 8.7.1
       '@substrate/ss58-registry': 1.47.0
 
-  '@polkadot/react-identicon@3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/networks@12.6.2)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)':
+  '@polkadot/react-identicon@3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1))(@polkadot/networks@12.6.2)(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)':
     dependencies:
-      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
-      '@polkadot/ui-settings': 3.6.6(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2)
-      '@polkadot/ui-shared': 3.6.6(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
-      '@polkadot/util': 12.6.2
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      '@polkadot/keyring': 12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
+      '@polkadot/ui-settings': 3.6.6(@polkadot/networks@12.6.2)(@polkadot/util@8.7.1)
+      '@polkadot/ui-shared': 3.6.6(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
+      '@polkadot/util': 8.7.1
+      '@polkadot/util-crypto': 8.7.1(@polkadot/util@8.7.1)
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
       react: 18.3.1
@@ -9272,18 +9316,18 @@ snapshots:
       '@polkadot/util-crypto': 8.7.1(@polkadot/util@8.7.1)
       rxjs: 7.8.1
 
-  '@polkadot/ui-settings@3.6.6(@polkadot/networks@12.6.2)(@polkadot/util@12.6.2)':
+  '@polkadot/ui-settings@3.6.6(@polkadot/networks@12.6.2)(@polkadot/util@8.7.1)':
     dependencies:
       '@polkadot/networks': 12.6.2
-      '@polkadot/util': 12.6.2
+      '@polkadot/util': 8.7.1
       eventemitter3: 5.0.1
       store: 2.0.12
       tslib: 2.6.2
 
-  '@polkadot/ui-shared@3.6.6(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)':
+  '@polkadot/ui-shared@3.6.6(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)':
     dependencies:
-      '@polkadot/util': 12.6.2
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
+      '@polkadot/util': 8.7.1
+      '@polkadot/util-crypto': 8.7.1(@polkadot/util@8.7.1)
       colord: 2.9.3
       tslib: 2.6.2
 
@@ -9297,6 +9341,19 @@ snapshots:
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
       '@polkadot/x-bigint': 12.6.2
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2))
+      '@scure/base': 1.1.6
+      tslib: 2.6.2
+
+  '@polkadot/util-crypto@12.6.2(@polkadot/util@8.7.1)':
+    dependencies:
+      '@noble/curves': 1.3.0
+      '@noble/hashes': 1.4.0
+      '@polkadot/networks': 12.6.2
+      '@polkadot/util': 8.7.1
+      '@polkadot/wasm-crypto': 7.3.2(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)))
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/x-bigint': 12.6.2
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1))
       '@scure/base': 1.1.6
       tslib: 2.6.2
 
@@ -9342,6 +9399,13 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2))
       tslib: 2.6.2
 
+  '@polkadot/wasm-bridge@7.3.2(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)))':
+    dependencies:
+      '@polkadot/util': 8.7.1
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1))
+      tslib: 2.6.2
+
   '@polkadot/wasm-crypto-asmjs@5.1.1(@polkadot/util@8.7.1)':
     dependencies:
       '@babel/runtime': 7.24.5
@@ -9350,6 +9414,11 @@ snapshots:
   '@polkadot/wasm-crypto-asmjs@7.3.2(@polkadot/util@12.6.2)':
     dependencies:
       '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+
+  '@polkadot/wasm-crypto-asmjs@7.3.2(@polkadot/util@8.7.1)':
+    dependencies:
+      '@polkadot/util': 8.7.1
       tslib: 2.6.2
 
   '@polkadot/wasm-crypto-init@7.3.2(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2)))':
@@ -9362,6 +9431,16 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2))
       tslib: 2.6.2
 
+  '@polkadot/wasm-crypto-init@7.3.2(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)))':
+    dependencies:
+      '@polkadot/util': 8.7.1
+      '@polkadot/wasm-bridge': 7.3.2(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)))
+      '@polkadot/wasm-crypto-asmjs': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/wasm-crypto-wasm': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1))
+      tslib: 2.6.2
+
   '@polkadot/wasm-crypto-wasm@5.1.1(@polkadot/util@8.7.1)':
     dependencies:
       '@babel/runtime': 7.24.5
@@ -9371,6 +9450,12 @@ snapshots:
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
+      tslib: 2.6.2
+
+  '@polkadot/wasm-crypto-wasm@7.3.2(@polkadot/util@8.7.1)':
+    dependencies:
+      '@polkadot/util': 8.7.1
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@8.7.1)
       tslib: 2.6.2
 
   '@polkadot/wasm-crypto@5.1.1(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@8.7.1)':
@@ -9392,9 +9477,25 @@ snapshots:
       '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2))
       tslib: 2.6.2
 
+  '@polkadot/wasm-crypto@7.3.2(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)))':
+    dependencies:
+      '@polkadot/util': 8.7.1
+      '@polkadot/wasm-bridge': 7.3.2(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)))
+      '@polkadot/wasm-crypto-asmjs': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/wasm-crypto-init': 7.3.2(@polkadot/util@8.7.1)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)))
+      '@polkadot/wasm-crypto-wasm': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@8.7.1)
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1))
+      tslib: 2.6.2
+
   '@polkadot/wasm-util@7.3.2(@polkadot/util@12.6.2)':
     dependencies:
       '@polkadot/util': 12.6.2
+      tslib: 2.6.2
+
+  '@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1)':
+    dependencies:
+      '@polkadot/util': 8.7.1
       tslib: 2.6.2
 
   '@polkadot/x-bigint@12.6.2':
@@ -9434,6 +9535,13 @@ snapshots:
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@12.6.2)
+      '@polkadot/x-global': 12.6.2
+      tslib: 2.6.2
+
+  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@8.7.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@8.7.1))':
+    dependencies:
+      '@polkadot/util': 8.7.1
+      '@polkadot/wasm-util': 7.3.2(@polkadot/util@8.7.1)
       '@polkadot/x-global': 12.6.2
       tslib: 2.6.2
 
@@ -10137,10 +10245,10 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@talisman-connect/wallets@1.1.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)':
+  '@talisman-connect/wallets@1.1.3(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)':
     dependencies:
       '@polkadot/api': 7.15.1
-      '@polkadot/extension-dapp': 0.42.10(@polkadot/api@7.15.1)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
+      '@polkadot/extension-dapp': 0.42.10(@polkadot/api@7.15.1)(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
       '@polkadot/extension-inject': 0.42.10(@polkadot/api@7.15.1)
     transitivePeerDependencies:
       - '@polkadot/util'
@@ -10148,10 +10256,10 @@ snapshots:
       - encoding
       - supports-color
 
-  '@talismn/connect-components@1.1.8(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react-dom@18.3.0)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@2.78.0)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))':
+  '@talismn/connect-components@1.1.8(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react-dom@18.3.0)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@2.78.0)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))':
     dependencies:
       '@talismn/connect-ui': 1.1.3(@types/react-dom@18.3.0)(@types/react@18.3.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@2.78.0)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
-      '@talismn/connect-wallets': 1.2.5(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@talismn/connect-wallets': 1.2.5(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@testing-library/react': 13.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react': 18.3.2
       '@types/react-dom': 18.3.0
@@ -10179,10 +10287,10 @@ snapshots:
       - rollup
       - ts-node
 
-  '@talismn/connect-wallets@1.2.5(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@talismn/connect-wallets@1.2.5(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
       '@polkadot/api': 11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@polkadot/extension-inject': 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@12.6.2)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/extension-inject': 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
   '@tanstack/query-core@5.36.1': {}
 
@@ -10213,7 +10321,7 @@ snapshots:
       lz-string: 1.5.0
       pretty-format: 27.5.1
 
-  '@testing-library/jest-dom@6.4.5(@jest/globals@29.7.0)(jest@29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)))':
+  '@testing-library/jest-dom@6.4.5(@jest/globals@29.7.0)(@types/jest@29.5.12)(jest@29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)))':
     dependencies:
       '@adobe/css-tools': 4.3.3
       '@babel/runtime': 7.24.5
@@ -10225,6 +10333,7 @@ snapshots:
       redent: 3.0.0
     optionalDependencies:
       '@jest/globals': 29.7.0
+      '@types/jest': 29.5.12
       jest: 29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
 
   '@testing-library/react@13.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -10323,6 +10432,11 @@ snapshots:
   '@types/istanbul-reports@3.0.4':
     dependencies:
       '@types/istanbul-lib-report': 3.0.3
+
+  '@types/jest@29.5.12':
+    dependencies:
+      expect: 29.7.0
+      pretty-format: 29.7.0
 
   '@types/jsdom@20.0.1':
     dependencies:
@@ -11506,6 +11620,10 @@ snapshots:
       electron-to-chromium: 1.4.763
       node-releases: 2.0.14
       update-browserslist-db: 1.0.15(browserslist@4.23.0)
+
+  bs-logger@0.2.6:
+    dependencies:
+      fast-json-stable-stringify: 2.1.0
 
   bser@2.1.1:
     dependencies:
@@ -15929,6 +16047,24 @@ snapshots:
       typescript: 5.4.5
 
   ts-interface-checker@0.1.13: {}
+
+  ts-jest@29.1.4(@babel/core@7.24.5)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.24.5))(jest@29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5)))(typescript@5.4.5):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0(@types/node@20.12.11)(ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5))
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.6.2
+      typescript: 5.4.5
+      yargs-parser: 21.1.1
+    optionalDependencies:
+      '@babel/core': 7.24.5
+      '@jest/transform': 29.7.0
+      '@jest/types': 29.6.3
+      babel-jest: 29.7.0(@babel/core@7.24.5)
 
   ts-node@10.9.2(@types/node@20.12.11)(typescript@5.4.5):
     dependencies:
