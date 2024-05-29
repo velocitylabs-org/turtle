@@ -6,7 +6,7 @@ interface State {
   notifications: Notification[]
 
   // Actions
-  addNotification: (notification: Notification) => void
+  addNotification: (notification: Omit<Notification, 'id'>) => void
   removeNotification: (id: number) => void
 }
 
@@ -16,7 +16,9 @@ export const useNotificationStore = create<State>(set => ({
 
   // Actions
   addNotification: notification =>
-    set(state => ({ notifications: [...state.notifications, notification] })),
+    set(state => ({
+      notifications: [...state.notifications, { ...notification, id: state.notifications.length }], // override id
+    })),
 
   removeNotification: id =>
     set(state => ({

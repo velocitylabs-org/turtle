@@ -10455,6 +10455,10 @@ snapshots:
     dependencies:
       expect: 29.7.0
       pretty-format: 29.7.0
+<<<<<<< HEAD
+    optional: true
+=======
+>>>>>>> main
 
   '@types/jsdom@20.0.1':
     dependencies:
