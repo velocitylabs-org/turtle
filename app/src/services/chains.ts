@@ -18,7 +18,8 @@ interface Params {
  * @throws An error if the fetch request fails.
  */
 export const getChains = async ({ token, sourceChain, destChain }: Params): Promise<Chain[]> => {
-  // add query params - TODO: Adjust when endpoint is defined
+  // TODO: Adjust when endpoint is defined
+  // add query params
   const searchParams = new URLSearchParams()
   if (token) searchParams.append('token', token.id)
   if (sourceChain) searchParams.append('sourceChain', sourceChain.id)
