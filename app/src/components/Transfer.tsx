@@ -9,6 +9,7 @@ import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
+import { transfer } from '../services/transfer'
 
 const Transfer: FC = () => {
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
@@ -85,7 +86,9 @@ const Transfer: FC = () => {
         {/* Transfer Button */}
         <TransferButton
           label="Transfer"
-          onClick={() => console.log('Transfer')}
+          onClick={async () => {
+            transfer(sourceChain!!, token!!, amount!!, destinationChain!!)
+          }}
           className="max-w-xs self-center"
         />
       </div>
