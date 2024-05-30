@@ -8,7 +8,7 @@ export interface Transfer {
   token: Token
   sourceChain: Chain
   destChain: Chain
-  amount: string
-  receiver: string
+  amount: bigint
+  receiver: string // TODO: Decide to use either string type or create own Address type
   status: string
 }
