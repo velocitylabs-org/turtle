@@ -6,7 +6,7 @@ interface State {
   notifications: Notification[]
 
   // Actions
-  addNotification: (notification: Notification) => void
+  addNotification: (notification: Omit<Notification, 'id'>) => void
   removeNotification: (id: number) => void
 }
 
