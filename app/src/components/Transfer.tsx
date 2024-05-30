@@ -36,7 +36,7 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
-  const { transfer } = useTransfer()
+  const { transfer, isValid } = useTransfer()
 
   return (
     <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
@@ -107,7 +107,15 @@ const Transfer: FC = () => {
         <TransferButton
           className="max-w-xs self-center"
           label="Transfer"
-          disabled={!sourceChain || !destinationChain || !token || !amount} // TODO: write helper function to check values
+          disabled={
+            !isValid({
+              token,
+              sourceChain,
+              destinationChain,
+              amount,
+              receiverAddress,
+            })
+          }
           onClick={() => {
             if (sourceChain && destinationChain && token && amount)
               transfer({

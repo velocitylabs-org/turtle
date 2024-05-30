@@ -9,6 +9,14 @@ interface TransferParams {
   receiverAddress: string
 }
 
+interface TransferValidationParams {
+  token: Token | null
+  sourceChain: Chain | null
+  destinationChain: Chain | null
+  amount: number | null
+  receiverAddress: string
+}
+
 /**
  * Used to initiate a transfer from source chain to destination chain.
  * It figures out which api to use based on token, source and destination chain.
@@ -28,7 +36,18 @@ const useTransfer = () => {
     return
   }
 
-  return { transfer }
+  const isValid = ({
+    token,
+    sourceChain,
+    destinationChain,
+    amount,
+    receiverAddress,
+  }: TransferValidationParams) => {
+    // TODO: Implement validation logic
+    return true
+  }
+
+  return { transfer, isValid }
 }
 
 export default useTransfer
