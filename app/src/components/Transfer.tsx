@@ -13,20 +13,30 @@ import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
 
 const Transfer: FC = () => {
-  const {
-    chains: sourceChains,
-    loading: loadingSourceChains,
-    error: sourceChainsError,
-  } = useChains()
-  const { chains: destChains, loading: loadingDestChains, error: destChainsError } = useChains()
-  const { transfer } = useTransfer()
-
   // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
   const [receiverAddress, setReceiverAddress] = useState<string>('')
+
+  const {
+    chains: sourceChains,
+    loading: loadingSourceChains,
+    error: sourceChainsError,
+  } = useChains({
+    supportedDestChain: destinationChain ?? undefined,
+    supportedToken: token ?? undefined,
+  })
+  const {
+    chains: destChains,
+    loading: loadingDestChains,
+    error: destChainsError,
+  } = useChains({
+    supportedSourceChain: sourceChain ?? undefined,
+    supportedToken: token ?? undefined,
+  })
+  const { transfer } = useTransfer()
 
   return (
     <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
