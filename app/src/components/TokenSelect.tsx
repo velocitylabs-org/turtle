@@ -26,10 +26,10 @@ const TokenSelect: FC<TokenSelectProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const selectOption = value ? tokenToSelectOption(value) : null
+  const selectOption = value ? tokenToSelectOption(value) : null // convert token value to select option for custom select component
+  const selectOptions = tokensToSelectOptions(options) // converts chains to select options for custom select component
   const handleChange = (selectedOption: SelectOption<Token> | null) =>
     onChange(selectedOption?.value ?? null)
-  const selectOptions = tokensToSelectOptions(options)
 
   return (
     <CustomSelect

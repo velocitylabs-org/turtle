@@ -1,5 +1,7 @@
 'use client'
-import { testchains, testTokens } from '@/__tests__/testdata'
+import { testTokens } from '@/__tests__/testdata'
+import useChains from '@/hooks/useChains'
+import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
@@ -11,6 +13,15 @@ import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
 
 const Transfer: FC = () => {
+  const {
+    chains: sourceChains,
+    loading: loadingSourceChains,
+    error: sourceChainsError,
+  } = useChains()
+  const { chains: destChains, loading: loadingDestChains, error: destChainsError } = useChains()
+  const { transfer } = useTransfer()
+
+  // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
@@ -32,7 +43,7 @@ const Transfer: FC = () => {
             <ChainSelect
               value={sourceChain}
               onChange={setSourceChain}
-              options={testchains}
+              options={sourceChains}
               title="Select Source Chain"
               className="w-full"
             />
@@ -70,7 +81,7 @@ const Transfer: FC = () => {
           <ChainSelect
             value={destinationChain}
             onChange={setDestinationChain}
-            options={testchains}
+            options={destChains}
             title="Select Destination Chain"
             className="w-full"
           />
@@ -84,9 +95,19 @@ const Transfer: FC = () => {
 
         {/* Transfer Button */}
         <TransferButton
-          label="Transfer"
-          onClick={() => console.log('Transfer')}
           className="max-w-xs self-center"
+          label="Transfer"
+          disabled={!sourceChain || !destinationChain || !token || !amount} // TODO: write helper function to check values
+          onClick={() => {
+            if (sourceChain && destinationChain && token && amount)
+              transfer({
+                sourceChain,
+                destinationChain,
+                token,
+                amount,
+                receiverAddress,
+              })
+          }}
         />
       </div>
     </div>

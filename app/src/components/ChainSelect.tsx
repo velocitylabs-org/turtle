@@ -26,10 +26,10 @@ const ChainSelect: FC<ChainSelectProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const selectOption = value ? chainToSelectOption(value) : null
+  const selectOption = value ? chainToSelectOption(value) : null // convert chain value to select option for custom select component
+  const selectOptions = chainsToSelectOptions(options) // converts chains to select options for custom select component
   const handleChange = (selectedOption: SelectOption<Chain> | null) =>
     onChange(selectedOption?.value ?? null)
-  const selectOptions = chainsToSelectOptions(options)
 
   return (
     <CustomSelect
