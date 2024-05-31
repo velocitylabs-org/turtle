@@ -11,7 +11,8 @@
     "test:watch": "jest --watch",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "prepare": "cd .. && husky install app/.husky"
+    "prepare": "cd .. && husky install app/.husky",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@polkadot/api": "^11.0.3",
@@ -42,6 +43,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cypress": "^13.10.0",
     "daisyui": "^4.10.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
