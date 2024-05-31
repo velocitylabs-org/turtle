@@ -65,8 +65,7 @@ const Transfer: FC = () => {
             <TokenSelect
               value={token}
               onChange={setToken}
-              options={testTokens}
-              disabled={!sourceChain}
+              options={testTokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
               className="w-full"
             />
           </div>
