@@ -45,7 +45,6 @@ const Transfer: FC = () => {
               value={token}
               onChange={setToken}
               options={testTokens}
-              disabled={!sourceChain}
               className="w-full"
             />
           </div>

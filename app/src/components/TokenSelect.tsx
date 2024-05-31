@@ -32,14 +32,16 @@ const TokenSelect: FC<TokenSelectProps> = ({
   const selectOptions = tokensToSelectOptions(options)
 
   return (
-    <CustomSelect
-      value={selectOption}
-      onChange={handleChange}
-      options={selectOptions}
-      title={title}
-      disabled={disabled}
-      className={className}
-    />
+    <div data-cy="token-select">
+      <CustomSelect
+        value={selectOption}
+        onChange={handleChange}
+        options={selectOptions}
+        title={title}
+        disabled={disabled}
+        className={className}
+      />
+    </div>
   )
 }
 

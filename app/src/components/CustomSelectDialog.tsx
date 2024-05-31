@@ -21,7 +21,7 @@ const CustomSelectDialog = <T,>({
   onClose,
 }: CustomSelectDialogProps<T>) => {
   return (
-    <dialog open className="modal">
+    <dialog open className="modal" data-cy="custom-select-dialog">
       <div className="modal-box">
         {/* Header */}
         <div className="flex items-center gap-1">

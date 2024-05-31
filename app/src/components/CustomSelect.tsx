@@ -34,9 +34,14 @@ export const CustomSelect = <T,>({
   const closeDialog = () => setShowDialog(false)
 
   return (
-    <div className={twMerge(`flex items-center justify-center`, className)}>
+    <div className={twMerge(`flex items-center justify-center`, className)} data-cy="custom-select">
       {/* Select Button */}
-      <button className="btn w-full" onClick={openDialog} disabled={disabled}>
+      <button
+        className="btn w-full"
+        onClick={openDialog}
+        disabled={disabled}
+        data-cy="custom-select-button"
+      >
         {value ? (
           <div className="flex items-center gap-2">
             <Image

@@ -32,14 +32,16 @@ const ChainSelect: FC<ChainSelectProps> = ({
   const selectOptions = chainsToSelectOptions(options)
 
   return (
-    <CustomSelect
-      value={selectOption}
-      onChange={handleChange}
-      options={selectOptions}
-      title={title}
-      disabled={disabled}
-      className={className}
-    />
+    <div data-cy="chain-select">
+      <CustomSelect
+        value={selectOption}
+        onChange={handleChange}
+        options={selectOptions}
+        title={title}
+        disabled={disabled}
+        className={className}
+      />
+    </div>
   )
 }
 
