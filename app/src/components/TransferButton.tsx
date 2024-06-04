@@ -9,11 +9,22 @@ interface TransferButtonProps {
   onClick?: () => void
   /** Additional classes to apply to the button. */
   className?: string
+  /** Whether the button is disabled (non-interactive). */
+  disabled?: boolean
 }
 
-const TransferButton: FC<TransferButtonProps> = ({ label = '', onClick = () => {}, className }) => {
+const TransferButton: FC<TransferButtonProps> = ({
+  label = '',
+  onClick = () => {},
+  className,
+  disabled,
+}) => {
   return (
-    <button onClick={onClick} className={twMerge('btn btn-outline btn-primary', className)}>
+    <button
+      disabled={disabled}
+      onClick={onClick}
+      className={twMerge('btn btn-outline btn-primary', className)}
+    >
       {label}
     </button>
   )

@@ -12,7 +12,7 @@ interface Params {
   supportedDestChain?: Chain
 }
 
-const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }: Params) => {
+const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }: Params = {}) => {
   const { addNotification } = useNotification()
 
   const [chains, setChains] = useState<Chain[]>([])

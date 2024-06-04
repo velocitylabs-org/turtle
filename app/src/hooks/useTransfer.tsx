@@ -4,9 +4,17 @@ import { Token } from '@/models/token'
 interface TransferParams {
   token: Token
   sourceChain: Chain
-  destChain: Chain
-  amount: bigint
-  recipient: string
+  destinationChain: Chain
+  amount: number
+  receiverAddress: string
+}
+
+interface TransferValidationParams {
+  token: Token | null
+  sourceChain: Chain | null
+  destinationChain: Chain | null
+  amount: number | null
+  receiverAddress: string
 }
 
 /**
@@ -16,12 +24,30 @@ interface TransferParams {
 const useTransfer = () => {
   // TODO: Adjust this once dependent functions are implemented. Also create a way for supporting the 2-step transfers.
 
-  const transfer = ({ token, sourceChain, destChain, amount, recipient }: TransferParams) => {
+  const transfer = ({
+    token,
+    sourceChain,
+    destinationChain,
+    amount,
+    receiverAddress,
+  }: TransferParams) => {
     // TODO: Create some helper functions such as isParachainToEthereumTransfer, isEthereumToParachainTransfer, isXcmOnlyTransfer, etc. and use to make the right call
+    console.log('Transfer initiated')
     return
   }
 
-  return { transfer }
+  const isValid = ({
+    token,
+    sourceChain,
+    destinationChain,
+    amount,
+    receiverAddress,
+  }: TransferValidationParams) => {
+    // TODO: Implement validation logic
+    return true
+  }
+
+  return { transfer, isValid }
 }
 
 export default useTransfer

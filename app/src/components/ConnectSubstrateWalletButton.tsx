@@ -52,7 +52,7 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
       dappName="turtle"
       showAccountsList={true}
       triggerComponent={
-        <button className="btn btn-sm max-w-40 rounded-2xl ">{buttonContent}</button>
+        <button className="btn btn-sm max-w-40 rounded-2xl">{buttonContent}</button>
       }
       onAccountSelected={account => {
         setActiveAccount(account)
