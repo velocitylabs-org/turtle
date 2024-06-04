@@ -17,6 +17,9 @@ importers:
       '@polkadot/extension-inject':
         specifier: ^0.47.4
         version: 0.47.4(@polkadot/api@11.0.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/util@8.7.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/keyring':
+        specifier: ^12.6.2
+        version: 12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
       '@polkadot/react-identicon':
         specifier: ^3.6.6
         version: 3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1))(@polkadot/networks@12.6.2)(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
@@ -44,6 +47,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      ethers:
+        specifier: ^6.12.1
+        version: 6.12.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       framer-motion:
         specifier: ^11.1.9
         version: 11.1.9(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

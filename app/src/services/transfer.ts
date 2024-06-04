@@ -1,5 +1,8 @@
 import { Chain } from '../models/chain'
 import { Token } from '../models/token'
+import { Keyring } from '@polkadot/keyring'
+import { Signer } from 'ethers'
+import { getEnvironment, getContext } from '../context/snowbridge'
 import * as Snowbridge from '@snowbridge/api'
 
 /**
@@ -20,6 +23,47 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   return Direction.WithinPolkadot
 }
 
+export const doTransferTmp = async (signer: Signer, amount: number): Promise<void> => {
+  //todo(nuno): make the network an injected value that's set globally
+  const snowbridgeEnv = getEnvironment('rococo_sepolia')
+  const context = await getContext(snowbridgeEnv)
+  const POLL_INTERVAL_MS = 10_000
+  const WETH_CONTRACT = snowbridgeEnv.locations[0].erc20tokensReceivable['WETH']
+
+  // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, WETH_CONTRACT, BigInt('1000000000000000000000'))
+  // await Snowbridge.toPolkadot.depositWeth(context, signer, WETH_CONTRACT, BigInt('2000000000000000000'))
+
+  const polkadot_keyring = new Keyring({ type: 'sr25519' })
+  const POLKADOT_ACCOUNT = polkadot_keyring.addFromAddress(
+    '5Gxxx5B9fXHJvo5eFpMtdLJXdbhjfs78UJ8ra7puFcFUvpY2',
+  )
+  const POLKADOT_ACCOUNT_PUBLIC = POLKADOT_ACCOUNT.address
+
+  const plan = await Snowbridge.toPolkadot.validateSend(
+    context,
+    signer,
+    POLKADOT_ACCOUNT_PUBLIC,
+    WETH_CONTRACT,
+    1000,
+    BigInt(amount),
+    BigInt(0),
+  )
+  console.log('Plan:', plan, plan.failure?.errors)
+
+  const sent = await Snowbridge.toPolkadot.send(context, signer, plan)
+  console.log('Submitted transfer')
+
+  while (true) {
+    const { status } = await Snowbridge.toPolkadot.trackSendProgressPolling(context, sent)
+    if (status !== 'pending') {
+      break
+    }
+    await new Promise(r => setTimeout(r, POLL_INTERVAL_MS))
+  }
+
+  console.log('Result: ', sent)
+}
+
 export const doTransfer = async (
   sourceChain: Chain,
   token: Token,
@@ -37,33 +81,6 @@ export const doTransfer = async (
   let direction = resolveDirection(sourceChain, destinationChain)
   // 1. Snowbridge.toEthereum.validateSend
   // 2. Snowbridge.toEthereum.send
-
-  const snwobridgeEnv = Snowbridge.environment.SNOWBRIDGE_ENV['rococo_sepolia']
-  if (snwobridgeEnv === undefined) {
-    throw Error(`Unknown environment`)
-  }
-
-  const { config } = snwobridgeEnv
-
-  const context = await Snowbridge.contextFactory({
-    ethereum: {
-      //TODO(nuno): Get infura key for our needs
-      execution_url: config.ETHEREUM_WS_API(process.env.TURTLE_APP_INFURA_KEY || ''),
-      beacon_url: config.BEACON_HTTP_API,
-    },
-    polkadot: {
-      url: {
-        bridgeHub: config.BRIDGE_HUB_WS_URL,
-        assetHub: config.ASSET_HUB_WS_URL,
-        relaychain: config.RELAY_CHAIN_WS_URL,
-        parachains: config.PARACHAINS,
-      },
-    },
-    appContracts: {
-      gateway: config.GATEWAY_CONTRACT,
-      beefy: config.BEEFY_CONTRACT,
-    },
-  })
 
   switch (direction) {
     case Direction.ToEthereum: {

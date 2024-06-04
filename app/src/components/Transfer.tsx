@@ -9,14 +9,16 @@ import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
-import { doTransfer } from '../services/transfer'
+import { doTransferTmp } from '../services/transfer'
+import useEthersSigner from '@/context/ethers'
 
 const Transfer: FC = () => {
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
-  const [receiverAddress, setReceiverAddress] = useState<string>('')
+
+  const signer = useEthersSigner()
 
   return (
     <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
@@ -87,7 +89,11 @@ const Transfer: FC = () => {
         <TransferButton
           label="Transfer"
           onClick={async () => {
-            doTransfer(sourceChain!!, token!!, amount!!, destinationChain!!)
+            if (signer) {
+              await doTransferTmp(signer, amount)
+            } else {
+              throw Error('Wallet not connected')
+            }
           }}
           className="max-w-xs self-center"
         />

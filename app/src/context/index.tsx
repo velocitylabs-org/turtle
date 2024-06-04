@@ -13,7 +13,7 @@ const queryClient = new QueryClient()
 if (!projectId) throw new Error('Project ID is not defined')
 
 // Create modal
-createWeb3Modal({
+export const wallet = createWeb3Modal({
   wagmiConfig: config,
   projectId,
   enableAnalytics: true,
