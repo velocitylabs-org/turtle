@@ -23,12 +23,27 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   return Direction.WithinPolkadot
 }
 
-export const doTransferTmp = async (signer: Signer, amount: number): Promise<void> => {
+export const getErc20TokenContract = (
+  token: Token,
+  env: Snowbridge.environment.SnowbridgeEnvironment,
+): string => {
+  switch (token.id) {
+    case 'weth':
+      return env.locations[0].erc20tokensReceivable['WETH']
+    default:
+      throw Error('Token not supported or it is not an ERC20 token')
+  }
+}
+
+export const doTransferTmp = async (
+  signer: Signer,
+  token: Token,
+  amount: number,
+): Promise<void> => {
   //todo(nuno): make the network an injected value that's set globally
   const snowbridgeEnv = getEnvironment('rococo_sepolia')
   const context = await getContext(snowbridgeEnv)
-  const POLL_INTERVAL_MS = 10_000
-  const WETH_CONTRACT = snowbridgeEnv.locations[0].erc20tokensReceivable['WETH']
+  const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
   // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, WETH_CONTRACT, BigInt('1000000000000000000000'))
   // await Snowbridge.toPolkadot.depositWeth(context, signer, WETH_CONTRACT, BigInt('2000000000000000000'))
@@ -43,13 +58,22 @@ export const doTransferTmp = async (signer: Signer, amount: number): Promise<voi
     context,
     signer,
     POLKADOT_ACCOUNT_PUBLIC,
-    WETH_CONTRACT,
+    tokenContract,
     1000,
     BigInt(amount),
     BigInt(0),
   )
   console.log('Plan:', plan, plan.failure?.errors)
 
+  console.log(
+    'Transfer is: ',
+    await signer.getAddress(),
+    POLKADOT_ACCOUNT_PUBLIC,
+    token.name,
+    tokenContract,
+    amount,
+  )
+  return
   const sent = await Snowbridge.toPolkadot.send(context, signer, plan)
   console.log('Submitted transfer')
 
@@ -58,6 +82,7 @@ export const doTransferTmp = async (signer: Signer, amount: number): Promise<voi
     if (status !== 'pending') {
       break
     }
+    const POLL_INTERVAL_MS = 10_000
     await new Promise(r => setTimeout(r, POLL_INTERVAL_MS))
   }
 

@@ -89,8 +89,8 @@ const Transfer: FC = () => {
         <TransferButton
           label="Transfer"
           onClick={async () => {
-            if (signer) {
-              await doTransferTmp(signer, amount)
+            if (signer && token && amount) {
+              await doTransferTmp(signer, token, amount)
             } else {
               throw Error('Wallet not connected')
             }
