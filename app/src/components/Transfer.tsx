@@ -4,8 +4,10 @@ import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { chainToWalletType, WalletType } from '@/models/walletType'
 import { isValidSubstrateAddress } from '@/utils/address'
-import { FC, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { FC, useEffect, useState } from 'react'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
 import ConnectEvmWalletButton from './ConnectEvmWalletButton'
@@ -23,6 +25,10 @@ const Transfer: FC = () => {
   const [amount, setAmount] = useState<number | null>(null)
   const [receiverAddress, setReceiverAddress] = useState<string>('')
   const [manualAddressInputEnabled, setManualAddressInputEnabled] = useState<boolean>(false)
+  const [walletTypes, setWalletTypes] = useState<{
+    source?: WalletType
+    destination?: WalletType
+  }>({})
 
   const {
     chains: sourceChains,
@@ -42,13 +48,38 @@ const Transfer: FC = () => {
   })
   const { transfer, isValid } = useTransfer()
 
+  useEffect(() => {
+    if (sourceChain) setWalletTypes(prev => ({ ...prev, source: chainToWalletType(sourceChain) }))
+  }, [sourceChain])
+
+  useEffect(() => {
+    if (destinationChain)
+      setWalletTypes(prev => ({ ...prev, destination: chainToWalletType(destinationChain) }))
+  }, [destinationChain])
+
   return (
     <div className="card w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm">
       <div className="flex flex-col gap-3">
-        {/* Wallet Connect Buttons */}
-        <div className="flex gap-2 self-end">
-          <ConnectEvmWalletButton label="Connect EVM" />
-        </div>
+        {/* Source Wallet Connection */}
+        <AnimatePresence>
+          {walletTypes.source && (
+            <motion.div
+              key="source"
+              className="flex self-end"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              {walletTypes.source === WalletType.EVM && (
+                <ConnectEvmWalletButton label="Connect EVM" />
+              )}
+
+              {walletTypes.source === WalletType.SUBSTRATE && (
+                <ConnectSubstrateWalletButton label="Connect Substrate" />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
@@ -101,26 +132,46 @@ const Transfer: FC = () => {
         </div>
 
         {/* Receiver Wallet or Address Input */}
-        <div>
-          <span className="label label-text">Receiver Address</span>
-          {manualAddressInputEnabled ? (
-            <AddressInput
-              value={receiverAddress}
-              onChange={setReceiverAddress}
-              validateAddress={isValidSubstrateAddress}
-            />
-          ) : (
-            <ConnectSubstrateWalletButton label="Connect Substrate" />
-          )}
+        {walletTypes.destination && (
+          <div>
+            <span className="label label-text">Receiver Address</span>
+            {manualAddressInputEnabled ? (
+              <AddressInput
+                value={receiverAddress}
+                onChange={setReceiverAddress}
+                validateAddress={isValidSubstrateAddress}
+              />
+            ) : (
+              <AnimatePresence>
+                {walletTypes.destination && (
+                  <motion.div
+                    key="destination"
+                    className="flex self-end"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {walletTypes.destination === WalletType.EVM && (
+                      <ConnectEvmWalletButton label="Connect EVM" />
+                    )}
 
-          {/* Switch Wallet and Manual Input */}
-          <Switch
-            className="items-start"
-            checked={manualAddressInputEnabled}
-            onChange={setManualAddressInputEnabled}
-            label="Send to a different address"
-          />
-        </div>
+                    {walletTypes.destination === WalletType.SUBSTRATE && (
+                      <ConnectSubstrateWalletButton label="Connect Substrate" />
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
+
+            {/* Switch Wallet and Manual Input */}
+            <Switch
+              className="items-start"
+              checked={manualAddressInputEnabled}
+              onChange={setManualAddressInputEnabled}
+              label="Send to a different address"
+            />
+          </div>
+        )}
 
         {/* Transfer Button */}
         <TransferButton
