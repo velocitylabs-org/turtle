@@ -61,25 +61,7 @@ const Transfer: FC = () => {
     <div className="card w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm">
       <div className="flex flex-col gap-3">
         {/* Source Wallet Connection */}
-        <AnimatePresence>
-          {walletTypes.source && (
-            <motion.div
-              key="source"
-              className="flex self-end"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              {walletTypes.source === WalletType.EVM && (
-                <ConnectEvmWalletButton label="Connect EVM" />
-              )}
-
-              {walletTypes.source === WalletType.SUBSTRATE && (
-                <ConnectSubstrateWalletButton label="Connect Substrate" />
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <AnimatePresence>{renderWalletButton(walletTypes.source, 'source')}</AnimatePresence>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
@@ -143,23 +125,7 @@ const Transfer: FC = () => {
               />
             ) : (
               <AnimatePresence>
-                {walletTypes.destination && (
-                  <motion.div
-                    key="destination"
-                    className="flex self-end"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    {walletTypes.destination === WalletType.EVM && (
-                      <ConnectEvmWalletButton label="Connect EVM" />
-                    )}
-
-                    {walletTypes.destination === WalletType.SUBSTRATE && (
-                      <ConnectSubstrateWalletButton label="Connect Substrate" />
-                    )}
-                  </motion.div>
-                )}
+                {renderWalletButton(walletTypes.destination, 'destination')}
               </AnimatePresence>
             )}
 
@@ -199,6 +165,24 @@ const Transfer: FC = () => {
         />
       </div>
     </div>
+  )
+}
+
+const renderWalletButton = (walletType: WalletType | undefined, key: string) => {
+  if (!walletType) return null
+  return (
+    <motion.div
+      key={key}
+      className="flex self-end"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {walletType === WalletType.EVM && <ConnectEvmWalletButton label="Connect EVM" />}
+      {walletType === WalletType.SUBSTRATE && (
+        <ConnectSubstrateWalletButton label="Connect Substrate" />
+      )}
+    </motion.div>
   )
 }
 
