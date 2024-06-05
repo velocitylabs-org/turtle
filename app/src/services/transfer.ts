@@ -4,6 +4,7 @@ import { Keyring } from '@polkadot/keyring'
 import { Signer } from 'ethers'
 import { getEnvironment, getContext } from '../context/snowbridge'
 import * as Snowbridge from '@snowbridge/api'
+import { Environment, toSnowbridgeNetwork } from '../store/environmentStore'
 
 /**
  * The direction of a transfer, i.e, from and to which network the tokens
@@ -35,9 +36,14 @@ export const getErc20TokenContract = (
   }
 }
 
-export const toPolkadot = async (signer: Signer, token: Token, amount: number): Promise<void> => {
+export const toPolkadot = async (
+  environment: Environment,
+  signer: Signer,
+  token: Token,
+  amount: number,
+): Promise<void> => {
   //todo(nuno): make the network an injected value that's set globally
-  const snowbridgeEnv = getEnvironment('rococo_sepolia')
+  const snowbridgeEnv = getEnvironment(toSnowbridgeNetwork(environment))
   const context = await getContext(snowbridgeEnv)
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 

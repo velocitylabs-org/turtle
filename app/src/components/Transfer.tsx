@@ -11,8 +11,9 @@ import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
-import { doTransferTmp } from '../services/transfer'
 import useEthersSigner from '@/context/ethers'
+import useEnvironment from '@/hooks/useEnvironment'
+import { environment } from '@snowbridge/api'
 
 const Transfer: FC = () => {
   // Inputs
@@ -21,8 +22,8 @@ const Transfer: FC = () => {
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
 
+  // Hooks
   const signer = useEthersSigner()
-
   const {
     chains: sourceChains,
     loading: loadingSourceChains,
@@ -40,6 +41,7 @@ const Transfer: FC = () => {
     supportedToken: token ?? undefined,
   })
   const { transfer, isValid } = useTransfer()
+  const { environment, switchTo } = useEnvironment()
 
   return (
     <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
@@ -122,6 +124,7 @@ const Transfer: FC = () => {
           onClick={() => {
             if (signer && sourceChain && destinationChain && token && amount)
               transfer({
+                environment,
                 signer,
                 sourceChain,
                 token,
