@@ -73,7 +73,7 @@ export const doTransferTmp = async (
     tokenContract,
     amount,
   )
-  return
+
   const sent = await Snowbridge.toPolkadot.send(context, signer, plan)
   console.log('Submitted transfer')
 
