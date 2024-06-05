@@ -24,7 +24,7 @@ const Transfer: FC = () => {
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
-  const [receiverAddress, setReceiverAddress] = useState<string>('')
+  const [manualReceiverAddress, setManualReceiverAddress] = useState<string>('')
   const [manualAddressInputEnabled, setManualAddressInputEnabled] = useState<boolean>(false)
   const [walletTypes, setWalletTypes] = useState<{
     source?: WalletType
@@ -121,8 +121,8 @@ const Transfer: FC = () => {
             <span className="label label-text">Receiver Address</span>
             {manualAddressInputEnabled ? (
               <AddressInput
-                value={receiverAddress}
-                onChange={setReceiverAddress}
+                value={manualReceiverAddress}
+                onChange={setManualReceiverAddress}
                 validateAddress={isValidSubstrateAddress}
               />
             ) : (
@@ -151,7 +151,7 @@ const Transfer: FC = () => {
               sourceChain,
               destinationChain,
               amount,
-              receiverAddress,
+              receiverAddress: manualReceiverAddress,
             })
           }
           onClick={() => {
@@ -164,7 +164,7 @@ const Transfer: FC = () => {
             let receiverAddressToUse: string | undefined
 
             if (manualAddressInputEnabled) {
-              receiverAddressToUse = receiverAddress
+              receiverAddressToUse = manualReceiverAddress
             } else if (walletTypes.destination === WalletType.EVM) {
               receiverAddressToUse = evmAccount.address
             } else if (walletTypes.destination === WalletType.SUBSTRATE) {
