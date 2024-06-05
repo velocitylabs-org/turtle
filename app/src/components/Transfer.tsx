@@ -8,6 +8,7 @@ import { chainToWalletType, WalletType } from '@/models/walletType'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
 import ConnectEvmWalletButton from './ConnectEvmWalletButton'
@@ -47,6 +48,7 @@ const Transfer: FC = () => {
     supportedToken: token ?? undefined,
   })
   const { transfer, isValid } = useTransfer()
+  const evmAccount = useAccount()
 
   useEffect(() => {
     if (sourceChain) setWalletTypes(prev => ({ ...prev, source: chainToWalletType(sourceChain) }))
@@ -153,14 +155,37 @@ const Transfer: FC = () => {
             })
           }
           onClick={() => {
-            if (sourceChain && destinationChain && token && amount)
-              transfer({
-                sourceChain,
-                destinationChain,
-                token,
-                amount,
-                receiverAddress,
-              })
+            // basic checks for TS type checker
+            if (!sourceChain || !destinationChain || !token || !amount) {
+              return
+            }
+
+            // Get receiver address based on manual input or connected wallet
+            let receiverAddressToUse: string | undefined
+
+            if (manualAddressInputEnabled) {
+              receiverAddressToUse = receiverAddress
+            } else if (walletTypes.destination === WalletType.EVM) {
+              receiverAddressToUse = evmAccount.address
+            } else if (walletTypes.destination === WalletType.SUBSTRATE) {
+              receiverAddressToUse = undefined // TODO: Placeholder to get Substrate address from connected wallet. This will be added once substrate connection is fixed.
+            } else {
+              receiverAddressToUse = undefined
+            }
+
+            // This should never happen as the button will be disabled ideally
+            if (!receiverAddressToUse) {
+              console.error('No receiver address!')
+              return
+            }
+
+            transfer({
+              sourceChain,
+              destinationChain,
+              token,
+              amount,
+              receiverAddress: receiverAddressToUse,
+            })
           }}
         />
       </div>

@@ -14,7 +14,7 @@ interface TransferValidationParams {
   sourceChain: Chain | null
   destinationChain: Chain | null
   amount: number | null
-  receiverAddress: string
+  receiverAddress?: string
 }
 
 /**
