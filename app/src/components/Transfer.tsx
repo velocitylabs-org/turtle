@@ -4,6 +4,7 @@ import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { isValidSubstrateAddress } from '@/utils/address'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
@@ -106,7 +107,7 @@ const Transfer: FC = () => {
             <AddressInput
               value={receiverAddress}
               onChange={setReceiverAddress}
-              validateAddress={s => false}
+              validateAddress={isValidSubstrateAddress}
             />
           ) : (
             <ConnectSubstrateWalletButton label="Connect Substrate" />

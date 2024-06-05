@@ -1,3 +1,7 @@
+import { decodeAddress, encodeAddress } from '@polkadot/keyring'
+import { hexToU8a, isHex } from '@polkadot/util'
+import { isAddress } from 'viem/utils'
+
 /**
  * Truncate a blockchain address by showing the beginning and end parts.
  *
@@ -14,4 +18,29 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
   const endStr = end > 0 ? str.substring(str.length - end) : ''
 
   return `${startStr}...${endStr}`
+}
+
+/**
+ * Validate if a given address is a legitimate Ethereum address.
+ *
+ * @param address - The address string to be validated.
+ * @returns True if the address is a valid Ethereum address, false otherwise.
+ */
+export const isValidEthereumAddress = (address: string): boolean => {
+  return isAddress(address)
+}
+
+/**
+ * Validate if a given address is a legitimate Substrate address.
+ *
+ * @param address - The address string to be validated.
+ * @returns True if the address is a valid Substrate address, false otherwise.
+ */
+export const isValidSubstrateAddress = (address: string): boolean => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
+    return true
+  } catch (error) {
+    return false
+  }
 }
