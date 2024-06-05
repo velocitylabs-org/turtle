@@ -5,9 +5,11 @@ import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
+import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
 import ConnectEvmWalletButton from './ConnectEvmWalletButton'
 import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
+import Switch from './Switch'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
@@ -19,6 +21,7 @@ const Transfer: FC = () => {
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
   const [receiverAddress, setReceiverAddress] = useState<string>('')
+  const [manualAddressInputEnabled, setManualAddressInputEnabled] = useState<boolean>(false)
 
   const {
     chains: sourceChains,
@@ -39,7 +42,7 @@ const Transfer: FC = () => {
   const { transfer, isValid } = useTransfer()
 
   return (
-    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
+    <div className="card w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm">
       <div className="flex flex-col gap-3">
         {/* Wallet Connect Buttons */}
         <div className="flex gap-2 self-end">
@@ -96,10 +99,22 @@ const Transfer: FC = () => {
           />
         </div>
 
-        {/* Receiver Address */}
+        {/* Receiver Wallet or Address Input */}
         <div>
           <span className="label label-text">Receiver Address</span>
-          <ConnectSubstrateWalletButton label="Connect Substrate" />
+          {manualAddressInputEnabled ? (
+            <AddressInput value={receiverAddress} onChange={setReceiverAddress} />
+          ) : (
+            <ConnectSubstrateWalletButton label="Connect Substrate" />
+          )}
+
+          {/* Switch Wallet and Manual Input */}
+          <Switch
+            className="items-start"
+            checked={manualAddressInputEnabled}
+            onChange={setManualAddressInputEnabled}
+            label="Send to a different address"
+          />
         </div>
 
         {/* Transfer Button */}
