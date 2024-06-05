@@ -41,6 +41,7 @@ export const toPolkadot = async (
   signer: Signer,
   token: Token,
   amount: number,
+  destinationChain: Chain,
   recipient: string,
 ): Promise<void> => {
   const snowbridgeEnv = getEnvironment(toSnowbridgeNetwork(environment))
@@ -60,7 +61,7 @@ export const toPolkadot = async (
     signer,
     POLKADOT_ACCOUNT_PUBLIC,
     tokenContract,
-    1000,
+    destinationChain.chainId,
     BigInt(amount),
     BigInt(0),
   )

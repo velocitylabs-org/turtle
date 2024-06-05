@@ -45,7 +45,7 @@ const useTransfer = () => {
     if (direction == Direction.ToPolkadot) {
       console.log('toPolkadot: ', sourceChain.name, destinationChain.name)
       // TODO(nuno): pass the rest of the params
-      toPolkadot(environment, signer, token, amount, recipient)
+      toPolkadot(environment, signer, token, amount, destinationChain, recipient)
     } else {
       console.log('Todo(nuno): Support toEthereum')
     }
