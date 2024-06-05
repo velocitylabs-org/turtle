@@ -29,8 +29,6 @@ interface TransferValidationParams {
  * It figures out which api to use based on token, source and destination chain.
  */
 const useTransfer = () => {
-  // TODO: Adjust this once dependent functions are implemented. Also create a way for supporting the 2-step transfers.
-
   const transfer = ({
     environment,
     signer,
@@ -43,8 +41,7 @@ const useTransfer = () => {
     let direction = resolveDirection(sourceChain, destinationChain)
 
     if (direction == Direction.ToPolkadot) {
-      console.log('toPolkadot: ', sourceChain.name, destinationChain.name)
-      // TODO(nuno): pass the rest of the params
+      console.log('toPolkadot')
       toPolkadot(environment, signer, token, amount, destinationChain, recipient)
     } else {
       console.log('Todo(nuno): Support toEthereum')
