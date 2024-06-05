@@ -48,9 +48,6 @@ export const toPolkadot = async (
   const context = await getContext(snowbridgeEnv)
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
-  // await Snowbridge.toPolkadot.depositWeth(context, signer, tokenContract, BigInt('2000000000000000000'))
-  // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, tokenContract, BigInt('2000000000000000000000'))
-  // return
   await Snowbridge.toPolkadot
     .validateSend(
       context,
