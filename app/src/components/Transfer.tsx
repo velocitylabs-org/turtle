@@ -103,7 +103,11 @@ const Transfer: FC = () => {
         <div>
           <span className="label label-text">Receiver Address</span>
           {manualAddressInputEnabled ? (
-            <AddressInput value={receiverAddress} onChange={setReceiverAddress} />
+            <AddressInput
+              value={receiverAddress}
+              onChange={setReceiverAddress}
+              validateAddress={s => false}
+            />
           ) : (
             <ConnectSubstrateWalletButton label="Connect Substrate" />
           )}
