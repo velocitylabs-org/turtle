@@ -111,15 +111,24 @@ const Transfer: FC = () => {
           className="max-w-xs self-center"
           disabled={
             !isValid({
+              sender: signer?.address,
               token,
               sourceChain,
               destinationChain,
+              recipient: 'todo(nuno)',
               amount,
             })
           }
           onClick={() => {
             if (signer && sourceChain && destinationChain && token && amount)
-              doTransferTmp(signer, token, amount)
+              transfer({
+                signer,
+                sourceChain,
+                token,
+                destinationChain,
+                recipient: 'todo(nuno)',
+                amount,
+              })
           }}
         />
       </div>

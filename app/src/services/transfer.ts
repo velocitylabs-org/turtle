@@ -35,11 +35,7 @@ export const getErc20TokenContract = (
   }
 }
 
-export const doTransferTmp = async (
-  signer: Signer,
-  token: Token,
-  amount: number,
-): Promise<void> => {
+export const toPolkadot = async (signer: Signer, token: Token, amount: number): Promise<void> => {
   //todo(nuno): make the network an injected value that's set globally
   const snowbridgeEnv = getEnvironment('rococo_sepolia')
   const context = await getContext(snowbridgeEnv)

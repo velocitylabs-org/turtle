@@ -1,17 +1,23 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Direction, resolveDirection, toPolkadot } from '@/services/transfer'
+import { Signer } from 'ethers'
 
 interface TransferParams {
-  token: Token
+  signer: Signer
   sourceChain: Chain
+  token: Token
   destinationChain: Chain
+  recipient: string
   amount: number
 }
 
 interface TransferValidationParams {
-  token: Token | null
+  sender: string | null | undefined
   sourceChain: Chain | null
+  token: Token | null
   destinationChain: Chain | null
+  recipient: string | null
   amount: number | null
 }
 
@@ -22,14 +28,42 @@ interface TransferValidationParams {
 const useTransfer = () => {
   // TODO: Adjust this once dependent functions are implemented. Also create a way for supporting the 2-step transfers.
 
-  const transfer = ({ token, sourceChain, destinationChain, amount }: TransferParams) => {
-    // TODO: Create some helper functions such as isParachainToEthereumTransfer, isEthereumToParachainTransfer, isXcmOnlyTransfer, etc. and use to make the right call
-    return
+  const transfer = ({
+    signer,
+    sourceChain,
+    token,
+    destinationChain,
+    recipient,
+    amount,
+  }: TransferParams) => {
+    let direction = resolveDirection(sourceChain, destinationChain)
+
+    if (direction == Direction.ToPolkadot) {
+      console.log('toPolkadot: ', sourceChain.name, destinationChain.name)
+      // TODO(nuno): pass the rest of the params
+      toPolkadot(signer, token, amount)
+    } else {
+      console.log('Todo(nuno): Support toEthereum')
+    }
   }
 
-  const isValid = ({ token, sourceChain, destinationChain, amount }: TransferValidationParams) => {
-    // TODO: Implement validation logic
-    return true
+  const isValid = ({
+    sender,
+    sourceChain,
+    token,
+    destinationChain,
+    recipient,
+    amount,
+  }: TransferValidationParams) => {
+    return (
+      sender &&
+      sourceChain &&
+      token &&
+      destinationChain &&
+      recipient &&
+      amount &&
+      resolveDirection(sourceChain, destinationChain) == Direction.ToPolkadot
+    )
   }
 
   return { transfer, isValid }
