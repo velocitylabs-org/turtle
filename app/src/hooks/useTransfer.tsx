@@ -20,7 +20,7 @@ interface TransferValidationParams {
   sourceChain: Chain | null
   token: Token | null
   destinationChain: Chain | null
-  recipient: string | null
+  recipient: string | undefined | null
   amount: number | null
 }
 
@@ -45,7 +45,7 @@ const useTransfer = () => {
     if (direction == Direction.ToPolkadot) {
       console.log('toPolkadot: ', sourceChain.name, destinationChain.name)
       // TODO(nuno): pass the rest of the params
-      toPolkadot(environment, signer, token, amount)
+      toPolkadot(environment, signer, token, amount, recipient)
     } else {
       console.log('Todo(nuno): Support toEthereum')
     }
@@ -59,6 +59,7 @@ const useTransfer = () => {
     recipient,
     amount,
   }: TransferValidationParams) => {
+    console.log('Recipient: ', recipient)
     return (
       sender &&
       sourceChain &&

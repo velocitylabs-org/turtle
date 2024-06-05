@@ -41,19 +41,18 @@ export const toPolkadot = async (
   signer: Signer,
   token: Token,
   amount: number,
+  recipient: string,
 ): Promise<void> => {
-  //todo(nuno): make the network an injected value that's set globally
   const snowbridgeEnv = getEnvironment(toSnowbridgeNetwork(environment))
   const context = await getContext(snowbridgeEnv)
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
-  // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, tokenContract, BigInt('2000000000000000000000'))
   // await Snowbridge.toPolkadot.depositWeth(context, signer, tokenContract, BigInt('2000000000000000000'))
+  // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, tokenContract, BigInt('2000000000000000000000'))
+  // return
 
   const polkadot_keyring = new Keyring({ type: 'sr25519' })
-  const POLKADOT_ACCOUNT = polkadot_keyring.addFromAddress(
-    '5Gxxx5B9fXHJvo5eFpMtdLJXdbhjfs78UJ8ra7puFcFUvpY2',
-  )
+  const POLKADOT_ACCOUNT = polkadot_keyring.addFromAddress(recipient)
   const POLKADOT_ACCOUNT_PUBLIC = POLKADOT_ACCOUNT.address
 
   const plan = await Snowbridge.toPolkadot.validateSend(
@@ -89,37 +88,4 @@ export const toPolkadot = async (
   }
 
   console.log('Result: ', sent)
-}
-
-export const doTransfer = async (
-  sourceChain: Chain,
-  token: Token,
-  amount: number,
-  destinationChain: Chain,
-): Promise<void> => {
-  console.log(
-    'Transfer {} {} from {} to on {}',
-    token.id,
-    amount,
-    sourceChain.name,
-    destinationChain.id,
-  )
-
-  let direction = resolveDirection(sourceChain, destinationChain)
-  // 1. Snowbridge.toEthereum.validateSend
-  // 2. Snowbridge.toEthereum.send
-
-  switch (direction) {
-    case Direction.ToEthereum: {
-      console.log('ToEthereum')
-      break
-    }
-    case Direction.ToPolkadot: {
-      console.log('ToPolkadot')
-      break
-    }
-    case Direction.WithinPolkadot: {
-      throw new Error('Polkadot internal transfers are not supported')
-    }
-  }
 }

@@ -14,6 +14,7 @@ import ValueInput from './ValueInput'
 import useEthersSigner from '@/context/ethers'
 import useEnvironment from '@/hooks/useEnvironment'
 import { environment } from '@snowbridge/api'
+import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 
 const Transfer: FC = () => {
   // Inputs
@@ -40,6 +41,7 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
+  const { account, setAccount } = useSubstrateWallet()
   const { transfer, isValid } = useTransfer()
   const { environment, switchTo } = useEnvironment()
 
@@ -117,19 +119,19 @@ const Transfer: FC = () => {
               token,
               sourceChain,
               destinationChain,
-              recipient: 'todo(nuno)',
+              recipient: account?.address,
               amount,
             })
           }
           onClick={() => {
-            if (signer && sourceChain && destinationChain && token && amount)
+            if (signer && sourceChain && destinationChain && token && amount && account)
               transfer({
                 environment,
                 signer,
                 sourceChain,
                 token,
                 destinationChain,
-                recipient: 'todo(nuno)',
+                recipient: account.address,
                 amount,
               })
           }}

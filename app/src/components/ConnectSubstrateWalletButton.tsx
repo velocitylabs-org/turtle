@@ -1,16 +1,10 @@
 'use client'
+import useSubstrateWallet from '@/hooks/useSubstrateWallet'
+import { Account } from '@/store/substrateWalletStore'
 import { truncateAddress } from '@/utils/address'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
 import { FC, useState } from 'react'
-
-interface WalletAccount {
-  address: string
-  source: string
-  name?: string
-  wallet?: unknown
-  signer?: unknown
-}
 
 interface ConnectSubstrateWalletButtonProps {
   /** Text shown inside the button. */
@@ -20,14 +14,14 @@ interface ConnectSubstrateWalletButtonProps {
 const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
   label = 'Connect Wallet',
 }) => {
-  const [activeAccount, setActiveAccount] = useState<WalletAccount | null>(null)
+  const { account, setAccount } = useSubstrateWallet()
 
   // removes the active account if it is disconnected from the app
-  const handleUpdatedAccounts = (accounts?: WalletAccount[]) => {
-    if (!accounts || !activeAccount) return
-    if (accounts.some(x => x.address === activeAccount.address)) return
+  const handleUpdatedAccounts = (accounts?: Account[]) => {
+    if (!accounts || !account) return
+    if (accounts.some(x => x.address === account.address)) return
 
-    setActiveAccount(null)
+    setAccount(null)
   }
 
   // Prevents click event propagation
@@ -35,12 +29,12 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
     event.stopPropagation()
   }
 
-  const buttonContent = activeAccount?.address ? (
+  const buttonContent = account?.address ? (
     <div className="flex items-center gap-2">
       <div onClick={handleIdenticonClick}>
-        <Identicon value={activeAccount.address} size={20} theme="polkadot" />
+        <Identicon value={account.address} size={20} theme="polkadot" />
       </div>
-      <p>{truncateAddress(activeAccount.address)}</p>
+      <p>{truncateAddress(account.address)}</p>
     </div>
   ) : (
     label
@@ -55,7 +49,8 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
         <button className="btn btn-sm max-w-40 rounded-2xl">{buttonContent}</button>
       }
       onAccountSelected={account => {
-        setActiveAccount(account)
+        console.log('Will set account to: ', account.address)
+        setAccount(account)
       }}
       onUpdatedAccounts={handleUpdatedAccounts}
       onError={error => {
