@@ -1,5 +1,7 @@
 'use client'
-import { testchains, testTokens } from '@/__tests__/testdata'
+import { testTokens } from '@/__tests__/testdata'
+import useChains from '@/hooks/useChains'
+import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC, useState } from 'react'
@@ -13,12 +15,31 @@ import { doTransferTmp } from '../services/transfer'
 import useEthersSigner from '@/context/ethers'
 
 const Transfer: FC = () => {
+  // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
 
   const signer = useEthersSigner()
+
+  const {
+    chains: sourceChains,
+    loading: loadingSourceChains,
+    error: sourceChainsError,
+  } = useChains({
+    supportedDestChain: destinationChain ?? undefined,
+    supportedToken: token ?? undefined,
+  })
+  const {
+    chains: destChains,
+    loading: loadingDestChains,
+    error: destChainsError,
+  } = useChains({
+    supportedSourceChain: sourceChain ?? undefined,
+    supportedToken: token ?? undefined,
+  })
+  const { transfer, isValid } = useTransfer()
 
   return (
     <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
@@ -35,7 +56,7 @@ const Transfer: FC = () => {
             <ChainSelect
               value={sourceChain}
               onChange={setSourceChain}
-              options={testchains}
+              options={sourceChains}
               title="Select Source Chain"
               className="w-full"
             />
@@ -47,8 +68,7 @@ const Transfer: FC = () => {
             <TokenSelect
               value={token}
               onChange={setToken}
-              options={testTokens}
-              disabled={!sourceChain}
+              options={testTokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
               className="w-full"
             />
           </div>
@@ -73,7 +93,7 @@ const Transfer: FC = () => {
           <ChainSelect
             value={destinationChain}
             onChange={setDestinationChain}
-            options={testchains}
+            options={destChains}
             title="Select Destination Chain"
             className="w-full"
           />
@@ -88,14 +108,19 @@ const Transfer: FC = () => {
         {/* Transfer Button */}
         <TransferButton
           label="Transfer"
-          onClick={async () => {
-            if (signer && token && amount) {
-              await doTransferTmp(signer, token, amount)
-            } else {
-              throw Error('Wallet not connected')
-            }
-          }}
           className="max-w-xs self-center"
+          disabled={
+            !isValid({
+              token,
+              sourceChain,
+              destinationChain,
+              amount,
+            })
+          }
+          onClick={() => {
+            if (signer && sourceChain && destinationChain && token && amount)
+              doTransferTmp(signer, token, amount)
+          }}
         />
       </div>
     </div>

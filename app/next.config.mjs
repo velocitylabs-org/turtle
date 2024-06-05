@@ -42,8 +42,8 @@ export default withSentryConfig(
 
     // Suppresses source map uploading logs during build
     silent: true,
-    org: 'noah-joeris', // TODO: replace with actual organization
-    project: 'javascript-nextjs', // TODO: replace with actual project name
+    org: 'velocity-labs',
+    project: 'turtle-app',
   },
   {
     // For all available options, see:

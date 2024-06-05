@@ -45,8 +45,8 @@ export const doTransferTmp = async (
   const context = await getContext(snowbridgeEnv)
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
-  // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, WETH_CONTRACT, BigInt('1000000000000000000000'))
-  // await Snowbridge.toPolkadot.depositWeth(context, signer, WETH_CONTRACT, BigInt('2000000000000000000'))
+  // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, tokenContract, BigInt('2000000000000000000000'))
+  // await Snowbridge.toPolkadot.depositWeth(context, signer, tokenContract, BigInt('2000000000000000000'))
 
   const polkadot_keyring = new Keyring({ type: 'sr25519' })
   const POLKADOT_ACCOUNT = polkadot_keyring.addFromAddress(
