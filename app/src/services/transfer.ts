@@ -51,42 +51,32 @@ export const toPolkadot = async (
   // await Snowbridge.toPolkadot.depositWeth(context, signer, tokenContract, BigInt('2000000000000000000'))
   // await Snowbridge.toPolkadot.approveTokenSpend(context, signer, tokenContract, BigInt('2000000000000000000000'))
   // return
+  await Snowbridge.toPolkadot
+    .validateSend(
+      context,
+      signer,
+      recipient,
+      tokenContract,
+      destinationChain.chainId,
+      BigInt(amount),
+      BigInt(0),
+    )
+    .then(plan => Snowbridge.toPolkadot.send(context, signer, plan))
+    .then(sent => trackTransaction(context, sent))
+    .then(res => console.log('Result:', res))
+    .catch(e => console.log('Failed to transfer: ', e))
+}
 
-  const polkadot_keyring = new Keyring({ type: 'sr25519' })
-  const POLKADOT_ACCOUNT = polkadot_keyring.addFromAddress(recipient)
-  const POLKADOT_ACCOUNT_PUBLIC = POLKADOT_ACCOUNT.address
-
-  const plan = await Snowbridge.toPolkadot.validateSend(
-    context,
-    signer,
-    POLKADOT_ACCOUNT_PUBLIC,
-    tokenContract,
-    destinationChain.chainId,
-    BigInt(amount),
-    BigInt(0),
-  )
-  console.log('Plan:', plan, plan.failure?.errors)
-
-  console.log(
-    'Transfer is: ',
-    await signer.getAddress(),
-    POLKADOT_ACCOUNT_PUBLIC,
-    token.name,
-    tokenContract,
-    amount,
-  )
-
-  const sent = await Snowbridge.toPolkadot.send(context, signer, plan)
-  console.log('Submitted transfer')
-
+async function trackTransaction(
+  context: Snowbridge.Context,
+  result: Snowbridge.toPolkadot.SendResult,
+): Promise<Snowbridge.toPolkadot.SendResult> {
   while (true) {
-    const { status } = await Snowbridge.toPolkadot.trackSendProgressPolling(context, sent)
-    if (status !== 'pending') {
-      break
-    }
-    const POLL_INTERVAL_MS = 10_000
-    await new Promise(r => setTimeout(r, POLL_INTERVAL_MS))
+    const { status } = await Snowbridge.toPolkadot.trackSendProgressPolling(context, result)
+    if (status !== 'pending') break
+
+    await new Promise(r => setTimeout(r, 10_000))
   }
 
-  console.log('Result: ', sent)
+  return result
 }
