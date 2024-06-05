@@ -59,6 +59,39 @@ const Transfer: FC = () => {
       setWalletTypes(prev => ({ ...prev, destination: chainToWalletType(destinationChain) }))
   }, [destinationChain])
 
+  const getReceiverAddress = () => {
+    if (manualAddressInputEnabled) return manualReceiverAddress
+    if (walletTypes.destination === WalletType.EVM) return evmAccount.address
+    if (walletTypes.destination === WalletType.SUBSTRATE) return undefined // TODO: Placeholder to get Substrate address from connected wallet. This will be added once substrate connection is fixed.
+
+    return undefined
+  }
+
+  const isTransferValid = () =>
+    isValid({
+      token,
+      sourceChain,
+      destinationChain,
+      amount,
+      receiverAddress: getReceiverAddress(),
+    })
+
+  const handleSubmit = () => {
+    // get receiver address based on manual input or connected wallet
+    let receiverAddress = getReceiverAddress()
+
+    // basic checks for TS type checker. But usually button should be disabled if these are not met.
+    if (!sourceChain || !destinationChain || !token || !amount || !receiverAddress) return
+
+    transfer({
+      sourceChain,
+      destinationChain,
+      token,
+      amount,
+      receiverAddress,
+    })
+  }
+
   return (
     <div className="card w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm">
       <div className="flex flex-col gap-3">
@@ -145,48 +178,8 @@ const Transfer: FC = () => {
         <TransferButton
           className="max-w-xs self-center"
           label="Transfer"
-          disabled={
-            !isValid({
-              token,
-              sourceChain,
-              destinationChain,
-              amount,
-              receiverAddress: manualReceiverAddress,
-            })
-          }
-          onClick={() => {
-            // basic checks for TS type checker
-            if (!sourceChain || !destinationChain || !token || !amount) {
-              return
-            }
-
-            // Get receiver address based on manual input or connected wallet
-            let receiverAddressToUse: string | undefined
-
-            if (manualAddressInputEnabled) {
-              receiverAddressToUse = manualReceiverAddress
-            } else if (walletTypes.destination === WalletType.EVM) {
-              receiverAddressToUse = evmAccount.address
-            } else if (walletTypes.destination === WalletType.SUBSTRATE) {
-              receiverAddressToUse = undefined // TODO: Placeholder to get Substrate address from connected wallet. This will be added once substrate connection is fixed.
-            } else {
-              receiverAddressToUse = undefined
-            }
-
-            // This should never happen as the button will be disabled ideally
-            if (!receiverAddressToUse) {
-              console.error('No receiver address!')
-              return
-            }
-
-            transfer({
-              sourceChain,
-              destinationChain,
-              token,
-              amount,
-              receiverAddress: receiverAddressToUse,
-            })
-          }}
+          onClick={handleSubmit}
+          disabled={!isTransferValid()}
         />
       </div>
     </div>
