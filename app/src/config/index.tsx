@@ -8,10 +8,14 @@ export const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 
 if (!projectId) throw new Error('Project ID is not defined')
 
+const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+  : ''
+
 const metadata = {
   name: 'Turtle',
   description: 'Token transfers done right',
-  url: process.env.NEXT_PUBLIC_APP_URL || '', // domain must be allowed in WalletConnect Cloud
+  url: vercelUrl, // domain must be allowed in WalletConnect Cloud
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
 }
 

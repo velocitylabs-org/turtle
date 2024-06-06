@@ -14,7 +14,7 @@ interface TransferValidationParams {
   sourceChain: Chain | null
   destinationChain: Chain | null
   amount: number | null
-  receiverAddress: string
+  receiverAddress?: string
 }
 
 /**
@@ -32,11 +32,18 @@ const useTransfer = () => {
     receiverAddress,
   }: TransferParams) => {
     // TODO: Create some helper functions such as isParachainToEthereumTransfer, isEthereumToParachainTransfer, isXcmOnlyTransfer, etc. and use to make the right call
-    console.log('Transfer initiated')
+    console.log(
+      `Token: ${token?.name ?? 'null'}, ` +
+        `Source Chain: ${sourceChain?.name ?? 'null'}, ` +
+        `Destination Chain: ${destinationChain?.name ?? 'null'}, ` +
+        `Amount: ${amount ?? 'null'}, ` +
+        `Receiver Address: ${receiverAddress ?? 'undefined'}`,
+    )
+
     return
   }
 
-  const isValid = ({
+  const validate = ({
     token,
     sourceChain,
     destinationChain,
@@ -47,7 +54,7 @@ const useTransfer = () => {
     return true
   }
 
-  return { transfer, isValid }
+  return { transfer, validate }
 }
 
 export default useTransfer

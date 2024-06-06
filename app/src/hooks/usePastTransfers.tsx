@@ -28,7 +28,7 @@ const usePastTransfers = (address?: string) => {
       addNotification({
         header: 'Error loading past transfers',
         message: errorMessage,
-        severity: NotificationSeverity.ERROR,
+        severity: NotificationSeverity.Error,
       })
       Sentry.captureException(err)
     } finally {

@@ -39,7 +39,7 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
       addNotification({
         header: 'Error loading chains',
         message: errorMessage,
-        severity: NotificationSeverity.ERROR,
+        severity: NotificationSeverity.Error,
       })
       Sentry.captureException(err)
     } finally {
