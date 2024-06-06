@@ -4,7 +4,7 @@ interface SwitchProps {
   /** The current state of the switch, true for on and false for off. */
   checked: boolean
   /** Callback invoked with the new state each time the switch is toggled. */
-  onChange: (checked: boolean) => void
+  onChange: (newVal: boolean) => void
   /** Optional label for the switch. */
   label?: string
   /** Flag indicating whether the switch is interactable. */

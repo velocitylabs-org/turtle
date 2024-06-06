@@ -1,3 +1,4 @@
+import { Chain } from '@/models/chain'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { isAddress } from 'viem/utils'
@@ -18,6 +19,19 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
   const endStr = end > 0 ? str.substring(str.length - end) : ''
 
   return `${startStr}...${endStr}`
+}
+
+/**
+ * Validate if a given address is a legitimate address of a specific chain.
+ *
+ * @param address - The address string to be validated.
+ * @param chain - The chain to validate the address against.
+ * @returns True if the address is a valid address of the chain, false otherwise.
+ */
+export const isValidAddressOfChain = (address: string, chain: Chain): boolean => {
+  // TODO: Implement this function
+
+  return true
 }
 
 /**
