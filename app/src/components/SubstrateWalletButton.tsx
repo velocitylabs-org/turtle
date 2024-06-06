@@ -12,14 +12,12 @@ interface WalletAccount {
   signer?: unknown
 }
 
-interface ConnectSubstrateWalletButtonProps {
+interface SubstrateWalletButtonProps {
   /** Text shown inside the button. */
   label?: string
 }
 
-const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
-  label = 'Connect Wallet',
-}) => {
+const SubstrateWalletButton: FC<SubstrateWalletButtonProps> = ({ label = 'Connect Wallet' }) => {
   const [activeAccount, setActiveAccount] = useState<WalletAccount | null>(null)
 
   // removes the active account if it is disconnected from the app
@@ -65,4 +63,4 @@ const ConnectSubstrateWalletButton: FC<ConnectSubstrateWalletButtonProps> = ({
   )
 }
 
-export default ConnectSubstrateWalletButton
+export default SubstrateWalletButton
