@@ -24,8 +24,8 @@ export default withSentryConfig(
 
     // Suppresses source map uploading logs during build
     silent: true,
-    org: 'velocity-labs',
-    project: 'turtle-app',
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
   },
   {
     // For all available options, see:
