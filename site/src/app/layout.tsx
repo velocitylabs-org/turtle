@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: '🐢 Turtle',
-  description: 'Token transfers done right',
+  description: 'The ultimate token transfer platform for Polkadot',
 }
 
 export default function RootLayout({
