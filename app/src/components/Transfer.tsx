@@ -47,7 +47,7 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
-  const { transfer, isValid } = useTransfer()
+  const { transfer, validate } = useTransfer()
   const evmAccount = useAccount()
 
   useEffect(() => {
@@ -67,8 +67,8 @@ const Transfer: FC = () => {
     return undefined
   }
 
-  const isTransferValid = () =>
-    isValid({
+  const isValid = () =>
+    validate({
       token,
       sourceChain,
       destinationChain,
@@ -179,7 +179,7 @@ const Transfer: FC = () => {
           className="max-w-xs self-center"
           label="Transfer"
           onClick={handleSubmit}
-          disabled={!isTransferValid()}
+          disabled={!isValid()}
         />
       </div>
     </div>

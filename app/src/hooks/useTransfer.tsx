@@ -36,7 +36,7 @@ const useTransfer = () => {
     return
   }
 
-  const isValid = ({
+  const validate = ({
     token,
     sourceChain,
     destinationChain,
@@ -47,7 +47,7 @@ const useTransfer = () => {
     return true
   }
 
-  return { transfer, isValid }
+  return { transfer, validate }
 }
 
 export default useTransfer
