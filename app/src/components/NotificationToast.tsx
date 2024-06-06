@@ -62,16 +62,16 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
 
 const renderSeverityIcon = (severity?: NotificationSeverity) => {
   switch (severity) {
-    case NotificationSeverity.INFO:
+    case NotificationSeverity.Info:
       return <Image src={InfoIcon} alt="info icon" />
 
-    case NotificationSeverity.ERROR:
+    case NotificationSeverity.Error:
       return <Image src={ErrorIcon} alt="error icon" />
 
-    case NotificationSeverity.WARNING:
+    case NotificationSeverity.Warning:
       return <Image src={WarningIcon} alt="warning icon" />
 
-    case NotificationSeverity.SUCCESS:
+    case NotificationSeverity.Success:
       return <Image src={SuccessIcon} alt="success icon" />
 
     default:

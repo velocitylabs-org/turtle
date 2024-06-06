@@ -4,19 +4,19 @@ import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { chainToWalletType, WalletType } from '@/models/walletType'
+import { isEVMWallet, isSubstrateWallet, Wallet } from '@/models/wallet'
 import { isValidSubstrateAddress } from '@/utils/address'
-import { AnimatePresence, motion } from 'framer-motion'
+import { chainToWallet } from '@/utils/wallet'
+import { AnimatePresence } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
-import ConnectEvmWalletButton from './ConnectEvmWalletButton'
-import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
 import Switch from './Switch'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
+import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
   // Inputs
@@ -26,9 +26,9 @@ const Transfer: FC = () => {
   const [amount, setAmount] = useState<number | null>(null)
   const [manualReceiverAddress, setManualReceiverAddress] = useState<string>('')
   const [manualAddressInputEnabled, setManualAddressInputEnabled] = useState<boolean>(false)
-  const [walletTypes, setWalletTypes] = useState<{
-    source?: WalletType
-    destination?: WalletType
+  const [wallets, setWallets] = useState<{
+    source?: Wallet
+    destination?: Wallet
   }>({})
 
   const {
@@ -51,20 +51,22 @@ const Transfer: FC = () => {
   const evmAccount = useAccount()
 
   useEffect(() => {
-    if (sourceChain) setWalletTypes(prev => ({ ...prev, source: chainToWalletType(sourceChain) }))
+    if (sourceChain) setWallets(prev => ({ ...prev, source: chainToWallet(sourceChain) }))
   }, [sourceChain])
 
   useEffect(() => {
     if (destinationChain)
-      setWalletTypes(prev => ({ ...prev, destination: chainToWalletType(destinationChain) }))
+      setWallets(prev => ({ ...prev, destination: chainToWallet(destinationChain) }))
   }, [destinationChain])
 
   const getReceiverAddress = () => {
     if (manualAddressInputEnabled) return manualReceiverAddress
-    if (walletTypes.destination === WalletType.EVM) return evmAccount.address
-    if (walletTypes.destination === WalletType.SUBSTRATE) return undefined // TODO: Placeholder to get Substrate address from connected wallet. This will be added once substrate connection is fixed.
+    if (!wallets.destination) return
 
-    return undefined
+    if (isEVMWallet(wallets.destination)) return evmAccount.address
+    if (isSubstrateWallet(wallets.destination)) return undefined // TODO: Placeholder to get Substrate address from connected wallet. This will be added once substrate connection is fixed.
+
+    return
   }
 
   const isValid = () =>
@@ -96,7 +98,9 @@ const Transfer: FC = () => {
     <div className="card w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm">
       <div className="flex flex-col gap-3">
         {/* Source Wallet Connection */}
-        <AnimatePresence>{renderWalletButton(walletTypes.source, 'source')}</AnimatePresence>
+        <AnimatePresence>
+          <WalletButton wallet={wallets.source} />
+        </AnimatePresence>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
@@ -149,9 +153,10 @@ const Transfer: FC = () => {
         </div>
 
         {/* Receiver Wallet or Address Input */}
-        {walletTypes.destination && (
+        {wallets.destination && (
           <div>
             <span className="label label-text">Receiver Address</span>
+
             {manualAddressInputEnabled ? (
               <AddressInput
                 value={manualReceiverAddress}
@@ -160,7 +165,7 @@ const Transfer: FC = () => {
               />
             ) : (
               <AnimatePresence>
-                {renderWalletButton(walletTypes.destination, 'destination')}
+                <WalletButton wallet={wallets.destination} />
               </AnimatePresence>
             )}
 
@@ -183,24 +188,6 @@ const Transfer: FC = () => {
         />
       </div>
     </div>
-  )
-}
-
-const renderWalletButton = (walletType: WalletType | undefined, key: string) => {
-  if (!walletType) return null
-  return (
-    <motion.div
-      key={key}
-      className="flex self-end"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      {walletType === WalletType.EVM && <ConnectEvmWalletButton label="Connect EVM" />}
-      {walletType === WalletType.SUBSTRATE && (
-        <ConnectSubstrateWalletButton label="Connect Substrate" />
-      )}
-    </motion.div>
   )
 }
 
