@@ -32,7 +32,14 @@ const useTransfer = () => {
     receiverAddress,
   }: TransferParams) => {
     // TODO: Create some helper functions such as isParachainToEthereumTransfer, isEthereumToParachainTransfer, isXcmOnlyTransfer, etc. and use to make the right call
-    console.log('Transfer initiated')
+    console.log(
+      `Token: ${token?.name ?? 'null'}, ` +
+        `Source Chain: ${sourceChain?.name ?? 'null'}, ` +
+        `Destination Chain: ${destinationChain?.name ?? 'null'}, ` +
+        `Amount: ${amount ?? 'null'}, ` +
+        `Receiver Address: ${receiverAddress ?? 'undefined'}`,
+    )
+
     return
   }
 

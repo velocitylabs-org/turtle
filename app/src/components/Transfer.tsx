@@ -2,14 +2,14 @@
 import { testTokens } from '@/__tests__/testdata'
 import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
+import useWalletAddress from '@/hooks/useWalletAddress'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { isEVMWallet, isSubstrateWallet, Wallet } from '@/models/wallet'
+import { Wallet } from '@/models/wallet'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { chainToWallet } from '@/utils/wallet'
 import { AnimatePresence } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
 import Switch from './Switch'
@@ -47,8 +47,10 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
+  const receiverWalletAddress = useWalletAddress(wallets.destination)
   const { transfer, validate } = useTransfer()
-  const evmAccount = useAccount()
+
+  const receiverAddress = manualAddressInputEnabled ? manualReceiverAddress : receiverWalletAddress
 
   useEffect(() => {
     if (sourceChain) setWallets(prev => ({ ...prev, source: chainToWallet(sourceChain) }))
@@ -59,29 +61,16 @@ const Transfer: FC = () => {
       setWallets(prev => ({ ...prev, destination: chainToWallet(destinationChain) }))
   }, [destinationChain])
 
-  const getReceiverAddress = () => {
-    if (manualAddressInputEnabled) return manualReceiverAddress
-    if (!wallets.destination) return
-
-    if (isEVMWallet(wallets.destination)) return evmAccount.address
-    if (isSubstrateWallet(wallets.destination)) return undefined // TODO: Placeholder to get Substrate address from connected wallet. This will be added once substrate connection is fixed.
-
-    return
-  }
-
   const isValid = () =>
     validate({
       token,
       sourceChain,
       destinationChain,
       amount,
-      receiverAddress: getReceiverAddress(),
+      receiverAddress,
     })
 
   const handleSubmit = () => {
-    // get receiver address based on manual input or connected wallet
-    let receiverAddress = getReceiverAddress()
-
     // basic checks for TS type checker. But usually button should be disabled if these are not met.
     if (!sourceChain || !destinationChain || !token || !amount || !receiverAddress) return
 
