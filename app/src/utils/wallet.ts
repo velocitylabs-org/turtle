@@ -12,10 +12,3 @@ export const chainToWallet = (chain: Chain): Wallet => {
   if (chain.name === 'Ethereum') return { type: WalletType.EVM }
   else return { type: WalletType.Substrate }
 }
-
-export const getWalletAddress = (wallet: Wallet): string | undefined => {
-  /*   if (isSubstrateWallet(wallet)) return getSubstrateWalletAddress(wallet)
-  if (isEVMWallet(wallet)) return getEVMWalletAddress(wallet)
- */
-  return
-}
