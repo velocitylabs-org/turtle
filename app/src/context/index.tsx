@@ -19,6 +19,7 @@ createWeb3Modal({
   enableAnalytics: true,
   enableOnramp: true,
   defaultChain: mainnet,
+  themeMode: 'light',
   themeVariables: {
     // TODO: adjust colors to fit into our project
     '--w3m-accent': colors['turtle-primary-dark'],
