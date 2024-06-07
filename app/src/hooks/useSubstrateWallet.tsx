@@ -1,9 +1,10 @@
 import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
 
 const useSubstrateWallet = () => {
-  const state = useSubstrateWalletStore.getState()
+  const account = useSubstrateWalletStore(state => state.account)
+  const setAccount = useSubstrateWalletStore(state => state.setAccount)
 
-  return { account: state.account, setAccount: state.setAccount }
+  return { account, setAccount }
 }
 
 export default useSubstrateWallet
