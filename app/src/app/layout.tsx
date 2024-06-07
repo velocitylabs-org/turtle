@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
 import { cookieToInitialState } from 'wagmi'
 import './globals.css'
+import Navbar from '@/components/NavBar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Navbar />
         <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>{children}</Web3ModalProvider>
         <Analytics />
