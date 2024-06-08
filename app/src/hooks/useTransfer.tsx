@@ -8,16 +8,16 @@ import { WalletSigner } from '@snowbridge/api/dist/toEthereum'
 
 interface TransferParams {
   environment: Environment
-  signer: Signer
+  sender: Signer | SubstrateAccount
   sourceChain: Chain
   token: Token
   destinationChain: Chain
-  recipient: SubstrateAccount
+  recipient: string
   amount: number
 }
 
 interface TransferValidationParams {
-  sender: string | null | undefined
+  sender: any | null | undefined
   sourceChain: Chain | null
   token: Token | null
   destinationChain: Chain | null
@@ -32,7 +32,7 @@ interface TransferValidationParams {
 const useTransfer = () => {
   const transfer = async ({
     environment,
-    signer,
+    sender,
     sourceChain,
     token,
     destinationChain,
@@ -43,19 +43,12 @@ const useTransfer = () => {
 
     if (direction == Direction.ToPolkadot) {
       console.log('toPolkadot')
-      toPolkadot(environment, signer, token, amount, destinationChain, recipient.address)
+      toPolkadot(environment, sender as Signer, token, amount, destinationChain, recipient)
     } else if (direction == Direction.ToEthereum) {
       console.log('toEthereum')
-      toEthereum(
-        environment,
-        sourceChain,
-        recipient as WalletSigner,
-        token,
-        amount,
-        await signer.getAddress(),
-      )
+      toEthereum(environment, sourceChain, sender as WalletSigner, token, amount, recipient)
     } else {
-      console.log('Todo(nuno): Support toEthereum')
+      throw Error('Unsupported transfer flow')
     }
   }
 
@@ -67,7 +60,6 @@ const useTransfer = () => {
     recipient,
     amount,
   }: TransferValidationParams) => {
-    console.log('Recipient: ', recipient)
     return sender && sourceChain && token && destinationChain && recipient && amount
   }
 

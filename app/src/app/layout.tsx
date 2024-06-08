@@ -1,6 +1,7 @@
 import NotificationSystem from '@/components/NotificationSystem'
 import { config } from '@/config'
 import Web3ModalProvider from '@/context'
+import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>{children}</Web3ModalProvider>
+        <Analytics />
       </body>
     </html>
   )

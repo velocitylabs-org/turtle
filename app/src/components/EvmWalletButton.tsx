@@ -1,7 +1,7 @@
 'use client'
 import { FC } from 'react'
 
-interface ConnectEvmWalletButtonProps {
+interface EvmWalletButtonProps {
   /** Text shown inside the button. */
   label?: string
   /** Function to call when the button is clicked. */
@@ -10,11 +10,7 @@ interface ConnectEvmWalletButtonProps {
   className?: string
 }
 
-const ConnectEvmWalletButton: FC<ConnectEvmWalletButtonProps> = ({
-  label,
-  onClick = () => {},
-  className,
-}) => {
+const EvmWalletButton: FC<EvmWalletButtonProps> = ({ label, onClick = () => {}, className }) => {
   return (
     <div className={className} onClick={onClick}>
       <w3m-button size="sm" balance="hide" label={label} />
@@ -22,4 +18,4 @@ const ConnectEvmWalletButton: FC<ConnectEvmWalletButtonProps> = ({
   )
 }
 
-export default ConnectEvmWalletButton
+export default EvmWalletButton
