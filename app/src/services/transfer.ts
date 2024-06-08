@@ -5,6 +5,7 @@ import { Signer } from 'ethers'
 import { getEnvironment, getContext } from '../context/snowbridge'
 import * as Snowbridge from '@snowbridge/api'
 import { Environment, toSnowbridgeNetwork } from '../store/environmentStore'
+import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 
 /**
  * The direction of a transfer, i.e, from and to which network the tokens
@@ -59,17 +60,53 @@ export const toPolkadot = async (
       BigInt(0),
     )
     .then(plan => Snowbridge.toPolkadot.send(context, signer, plan))
-    .then(sent => trackTransaction(context, sent))
+    .then(sent => trackToPolkadot(context, sent))
     .then(res => console.log('Result:', res))
     .catch(e => console.log('Failed to transfer: ', e))
 }
 
-async function trackTransaction(
+async function trackToPolkadot(
   context: Snowbridge.Context,
   result: Snowbridge.toPolkadot.SendResult,
 ): Promise<Snowbridge.toPolkadot.SendResult> {
   while (true) {
     const { status } = await Snowbridge.toPolkadot.trackSendProgressPolling(context, result)
+    if (status !== 'pending') break
+
+    await new Promise(r => setTimeout(r, 10_000))
+  }
+
+  return result
+}
+
+// To Ethereum
+
+export const toEthereum = async (
+  environment: Environment,
+  sourceChain: Chain,
+  sender: WalletOrKeypair,
+  token: Token,
+  amount: number,
+  recipient: string,
+): Promise<void> => {
+  const snowbridgeEnv = getEnvironment(toSnowbridgeNetwork(environment))
+  const context = await getContext(snowbridgeEnv)
+  const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
+
+  await Snowbridge.toEthereum
+    .validateSend(context, sender, sourceChain.chainId, recipient, tokenContract, BigInt(amount))
+    .then(plan => Snowbridge.toEthereum.send(context, sender, plan))
+    .then(sent => trackToEthereum(context, sent))
+    .then(res => console.log('Result:', res))
+    .catch(e => console.log('Failed to transfer: ', e))
+}
+
+async function trackToEthereum(
+  context: Snowbridge.Context,
+  result: Snowbridge.toEthereum.SendResult,
+): Promise<Snowbridge.toEthereum.SendResult> {
+  while (true) {
+    const { status } = await Snowbridge.toEthereum.trackSendProgressPolling(context, result)
     if (status !== 'pending') break
 
     await new Promise(r => setTimeout(r, 10_000))

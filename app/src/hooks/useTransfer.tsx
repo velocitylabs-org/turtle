@@ -1,9 +1,10 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Direction, resolveDirection, toPolkadot } from '@/services/transfer'
+import { Direction, resolveDirection, toPolkadot, toEthereum } from '@/services/transfer'
 import { Signer } from 'ethers'
-import { environment } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
+import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { WalletSigner } from '@snowbridge/api/dist/toEthereum'
 
 interface TransferParams {
   environment: Environment
@@ -11,7 +12,7 @@ interface TransferParams {
   sourceChain: Chain
   token: Token
   destinationChain: Chain
-  recipient: string
+  recipient: SubstrateAccount
   amount: number
 }
 
@@ -29,7 +30,7 @@ interface TransferValidationParams {
  * It figures out which api to use based on token, source and destination chain.
  */
 const useTransfer = () => {
-  const transfer = ({
+  const transfer = async ({
     environment,
     signer,
     sourceChain,
@@ -42,7 +43,17 @@ const useTransfer = () => {
 
     if (direction == Direction.ToPolkadot) {
       console.log('toPolkadot')
-      toPolkadot(environment, signer, token, amount, destinationChain, recipient)
+      toPolkadot(environment, signer, token, amount, destinationChain, recipient.address)
+    } else if (direction == Direction.ToEthereum) {
+      console.log('toEthereum')
+      toEthereum(
+        environment,
+        sourceChain,
+        recipient as WalletSigner,
+        token,
+        amount,
+        await signer.getAddress(),
+      )
     } else {
       console.log('Todo(nuno): Support toEthereum')
     }
@@ -57,15 +68,7 @@ const useTransfer = () => {
     amount,
   }: TransferValidationParams) => {
     console.log('Recipient: ', recipient)
-    return (
-      sender &&
-      sourceChain &&
-      token &&
-      destinationChain &&
-      recipient &&
-      amount &&
-      resolveDirection(sourceChain, destinationChain) == Direction.ToPolkadot
-    )
+    return sender && sourceChain && token && destinationChain && recipient && amount
   }
 
   return { transfer, isValid }

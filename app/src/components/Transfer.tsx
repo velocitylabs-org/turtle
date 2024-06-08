@@ -13,7 +13,6 @@ import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
 import useEthersSigner from '@/context/ethers'
 import useEnvironment from '@/hooks/useEnvironment'
-import { environment } from '@snowbridge/api'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 
 const Transfer: FC = () => {
@@ -131,7 +130,7 @@ const Transfer: FC = () => {
                 sourceChain,
                 token,
                 destinationChain,
-                recipient: account.address,
+                recipient: account,
                 amount,
               })
           }}
