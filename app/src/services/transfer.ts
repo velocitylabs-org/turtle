@@ -1,6 +1,5 @@
 import { Chain, Network } from '../models/chain'
 import { Token } from '../models/token'
-import { Keyring } from '@polkadot/keyring'
 import { Signer } from 'ethers'
 import { getEnvironment, getContext } from '../context/snowbridge'
 import * as Snowbridge from '@snowbridge/api'
@@ -23,16 +22,16 @@ export enum Direction {
  * Resolve the direction of a transfer given the source and destination chains.
  */
 export const resolveDirection = (source: Chain, destination: Chain): Direction => {
-  switch ((source.network, destination.network)) {
-    case (Network.Ethereum, Network.Polkadot):
-      return Direction.ToPolkadot
-    case (Network.Polkadot, Network.Ethereum):
-      return Direction.ToEthereum
-    case (Network.Ethereum, Network.Ethereum):
-      return Direction.WithinEthereum
-    default:
-      return Direction.WithinPolkadot
-  }
+  if (source.network == Network.Ethereum && destination.network == Network.Polkadot)
+    return Direction.ToPolkadot
+  if (source.network == Network.Polkadot && destination.network == Network.Ethereum)
+    return Direction.ToEthereum
+  if (source.network == Network.Ethereum && destination.network == Network.Ethereum)
+    return Direction.WithinEthereum
+  if (source.network == Network.Polkadot && destination.network == Network.Polkadot)
+    return Direction.WithinPolkadot
+
+  throw Error('The impossible happened')
 }
 
 export const getErc20TokenContract = (

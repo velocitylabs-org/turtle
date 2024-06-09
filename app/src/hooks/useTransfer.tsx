@@ -39,16 +39,15 @@ const useTransfer = () => {
     recipient,
     amount,
   }: TransferParams) => {
-    console.log('From -> To', sourceChain.network, destinationChain.network)
     let direction = resolveDirection(sourceChain, destinationChain)
-
-    console.log('Direction: ', direction)
 
     switch (direction) {
       case Direction.ToPolkadot:
         toPolkadot(environment, sender as Signer, token, amount, destinationChain, recipient)
+        break
       case Direction.ToEthereum:
         toEthereum(environment, sourceChain, sender as WalletSigner, token, amount, recipient)
+        break
       default:
         throw Error('Unsupported flow')
     }
