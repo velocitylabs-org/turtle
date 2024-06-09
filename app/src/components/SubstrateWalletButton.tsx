@@ -54,7 +54,6 @@ const SubstrateWalletButton: FC<SubstrateWalletButtonProps> = ({ label = 'Connec
         <button className="btn btn-sm max-w-40 rounded-2xl">{buttonContent}</button>
       }
       onAccountSelected={account => {
-        console.log('Set substrate account')
         setSubstrateAccount(account)
       }}
       onUpdatedAccounts={handleUpdatedAccounts}

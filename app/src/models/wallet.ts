@@ -1,6 +1,6 @@
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { Signer } from 'ethers'
-import { Chain } from './chain'
+import { Chain, Network } from './chain'
 
 export enum WalletType {
   Substrate = 'substrate',
@@ -38,19 +38,6 @@ export const isEVMWallet = (wallet: Wallet): wallet is EVMWallet => {
  */
 // TODO implement real logic
 export const chainToWalletType = (chain: Chain): WalletType => {
-  if (chain.name === 'Ethereum') return WalletType.EVM
+  if (chain.network === Network.Ethereum) return WalletType.EVM
   else return WalletType.Substrate
-}
-
-export const walletFromChain = (
-  chain: Chain,
-  evmWallet?: Signer,
-  substrateWallet?: SubstrateAccount | null,
-): Wallet => {
-  switch (chainToWalletType(chain)) {
-    case WalletType.EVM:
-      return { type: WalletType.EVM, wallet: evmWallet }
-    case WalletType.Substrate:
-      return { type: WalletType.Substrate, wallet: substrateWallet }
-  }
 }

@@ -1,4 +1,4 @@
-import { Chain } from '../models/chain'
+import { Chain, Network } from '../models/chain'
 import { Token } from '../models/token'
 import { Keyring } from '@polkadot/keyring'
 import { Signer } from 'ethers'
@@ -16,13 +16,24 @@ export enum Direction {
   ToEthereum,
   ToPolkadot,
   WithinPolkadot,
+  WithinEthereum,
 }
 
+/**
+ * This function resolves the direction of a transfer given the source and destination chains.
+ * It assumes that validations for unsupported flows have been done before being called.
+ */
 export const resolveDirection = (source: Chain, destination: Chain): Direction => {
-  if (source.id == 'ethereum') return Direction.ToPolkadot
-  if (destination.id == 'ethereum') return Direction.ToEthereum
-
-  return Direction.WithinPolkadot
+  switch ([source.network, destination.network]) {
+    case [Network.Ethereum, Network.Polkadot]:
+      return Direction.ToPolkadot
+    case [Network.Polkadot, Network.Ethereum]:
+      return Direction.ToEthereum
+    case [Network.Ethereum, Network.Ethereum]:
+      return Direction.WithinEthereum
+    default:
+      return Direction.WithinPolkadot
+  }
 }
 
 export const getErc20TokenContract = (

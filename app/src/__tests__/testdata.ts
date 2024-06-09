@@ -1,4 +1,4 @@
-import { Chain } from '@/models/chain'
+import { Chain, Network } from '@/models/chain'
 
 export const Ethereum: Chain = {
   id: 'ethereum',
@@ -6,6 +6,7 @@ export const Ethereum: Chain = {
   logoURI:
     'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
   chainId: 1,
+  network: Network.Ethereum,
 }
 
 export const AssetHub: Chain = {
@@ -13,6 +14,7 @@ export const AssetHub: Chain = {
   name: 'Polkadot Asset Hub',
   logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
   chainId: 1000,
+  network: Network.Polkadot,
 }
 
 export const testchains = [AssetHub, Ethereum]

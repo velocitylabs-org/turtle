@@ -1,14 +1,14 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Direction, resolveDirection, toPolkadot, toEthereum } from '@/services/transfer'
-import { Signer } from 'ethers'
+import { JsonRpcSigner, Signer } from 'ethers'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { WalletSigner } from '@snowbridge/api/dist/toEthereum'
 
 interface TransferParams {
   environment: Environment
-  sender: Signer | SubstrateAccount
+  sender: JsonRpcSigner | SubstrateAccount
   sourceChain: Chain
   token: Token
   destinationChain: Chain
@@ -41,14 +41,13 @@ const useTransfer = () => {
   }: TransferParams) => {
     let direction = resolveDirection(sourceChain, destinationChain)
 
-    if (direction == Direction.ToPolkadot) {
-      console.log('toPolkadot')
-      toPolkadot(environment, sender as Signer, token, amount, destinationChain, recipient)
-    } else if (direction == Direction.ToEthereum) {
-      console.log('toEthereum')
-      toEthereum(environment, sourceChain, sender as WalletSigner, token, amount, recipient)
-    } else {
-      throw Error('Unsupported transfer flow')
+    switch (direction) {
+      case Direction.ToPolkadot:
+        toPolkadot(environment, sender as Signer, token, amount, destinationChain, recipient)
+      case Direction.ToEthereum:
+        toEthereum(environment, sourceChain, sender as WalletSigner, token, amount, recipient)
+      default:
+        throw Error('Unsupported flow')
     }
   }
 
