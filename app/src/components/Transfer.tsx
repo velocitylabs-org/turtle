@@ -4,7 +4,7 @@ import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Wallet, walletFromChain, WalletType } from '@/models/wallet'
+import { chainToWalletType, WalletType } from '@/models/wallet'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { AnimatePresence } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
@@ -14,12 +14,9 @@ import Switch from './Switch'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
-import useEthersSigner from '@/context/ethers'
 import useEnvironment from '@/hooks/useEnvironment'
-import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import WalletButton from './WalletButton'
-import useWalletAddress from '@/hooks/useWalletAddress'
-import { Signer } from 'ethers'
+import useWallet from '@/hooks/useWallet'
 
 const Transfer: FC = () => {
   // Inputs
@@ -27,16 +24,17 @@ const Transfer: FC = () => {
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
-  const [manualReceiverAddress, setManualReceiverAddress] = useState<string>('')
-  const [manualAddressInputEnabled, setManualAddressInputEnabled] = useState<boolean>(false)
+  const [manualRecipient, setManualRecipient] = useState<string>('')
+  const [manualRecipientEnabled, setManualRecipientEnabled] = useState<boolean>(false)
   const [wallets, setWallets] = useState<{
-    source?: Wallet
-    destination?: Wallet
+    source?: WalletType
+    destination?: WalletType
   }>({})
 
   // Hooks
-  const evmWallet = useEthersSigner()
-  const { substrateAccount, setSubstrateAccount } = useSubstrateWallet()
+  const sourceWallet = useWallet(wallets.source)
+  const destinationWallet = useWallet(wallets.destination)
+
   const {
     chains: sourceChains,
     loading: loadingSourceChains,
@@ -55,33 +53,17 @@ const Transfer: FC = () => {
   })
 
   const { environment, switchTo } = useEnvironment()
-  const receiverWalletAddress = useWalletAddress(wallets.destination)
   const { transfer, isValid } = useTransfer()
 
-  const receiverAddress = manualAddressInputEnabled ? manualReceiverAddress : receiverWalletAddress
+  const recipient = manualRecipientEnabled ? manualRecipient : destinationWallet?.address
 
   useEffect(() => {
-    if (substrateAccount)
-      setWallets(prev => ({
-        ...prev,
-        source: walletFromChain(sourceChain!, evmWallet, substrateAccount!),
-      }))
-  }, [sourceChain])
-
-  useEffect(() => {
-    if (sourceChain)
-      setWallets(prev => ({
-        ...prev,
-        source: walletFromChain(sourceChain, evmWallet, substrateAccount),
-      }))
+    if (sourceChain) setWallets(prev => ({ ...prev, source: chainToWalletType(sourceChain) }))
   }, [sourceChain])
 
   useEffect(() => {
     if (destinationChain)
-      setWallets(prev => ({
-        ...prev,
-        destination: walletFromChain(destinationChain, evmWallet, substrateAccount),
-      }))
+      setWallets(prev => ({ ...prev, destination: chainToWalletType(destinationChain) }))
   }, [destinationChain])
 
   const validate = () =>
@@ -90,33 +72,23 @@ const Transfer: FC = () => {
       token,
       sourceChain,
       destinationChain,
-      recipient: receiverAddress,
+      recipient: recipient,
       amount,
     })
 
   const handleSubmit = () => {
     // basic checks for TS type checker. But usually button should be disabled if these are not met.
-    if (
-      !sourceChain ||
-      !receiverAddress ||
-      !wallets.source ||
-      !destinationChain ||
-      !token ||
-      !amount
-    ) {
-      console.log('Failed precheck: ', JSON.stringify(wallets))
+    if (!sourceChain || !recipient || !sourceWallet || !destinationChain || !token || !amount)
       return
-    }
 
-    console.log('Will transfer')
     transfer({
       environment,
-      sender: wallets.source.type == WalletType.EVM ? (evmWallet! as Signer) : substrateAccount!,
+      sender: sourceWallet!,
       sourceChain,
       destinationChain,
       token,
       amount,
-      recipient: receiverAddress,
+      recipient: recipient,
     })
   }
 
@@ -127,7 +99,7 @@ const Transfer: FC = () => {
         <AnimatePresence>
           <WalletButton wallet={wallets.source} />
         </AnimatePresence>
-        Substrate Account: {JSON.stringify(substrateAccount?.address)}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
           <div>
@@ -152,6 +124,7 @@ const Transfer: FC = () => {
             />
           </div>
         </div>
+
         {/* Token Amount */}
         <div>
           <span className="label label-text">Amount</span>
@@ -164,6 +137,7 @@ const Transfer: FC = () => {
             className="w-full"
           />
         </div>
+
         {/* Destination Chain */}
         <div>
           <span className="label label-text">Destination Chain</span>
@@ -175,15 +149,16 @@ const Transfer: FC = () => {
             className="w-full"
           />
         </div>
-        {/* Receiver Wallet or Address Input */}
+
+        {/* Recipient Wallet or Address Input */}
         {wallets.destination && (
           <div>
-            <span className="label label-text">Receiver Address</span>
+            <span className="label label-text">Recipient Address</span>
 
-            {manualAddressInputEnabled ? (
+            {manualRecipientEnabled ? (
               <AddressInput
-                value={manualReceiverAddress}
-                onChange={setManualReceiverAddress}
+                value={manualRecipient}
+                onChange={setManualRecipient}
                 validateAddress={isValidSubstrateAddress}
               />
             ) : (
@@ -195,12 +170,13 @@ const Transfer: FC = () => {
             {/* Switch Wallet and Manual Input */}
             <Switch
               className="items-start"
-              checked={manualAddressInputEnabled}
-              onChange={setManualAddressInputEnabled}
+              checked={manualRecipientEnabled}
+              onChange={setManualRecipientEnabled}
               label="Send to a different address"
             />
           </div>
         )}
+
         {/* Transfer Button */}
         <TransferButton label="Transfer" onClick={handleSubmit} disabled={!validate()} />
       </div>

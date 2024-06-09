@@ -3,7 +3,7 @@ import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 
 interface WalletAccount {
   address: string

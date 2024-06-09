@@ -47,7 +47,6 @@ export const walletFromChain = (
   evmWallet?: Signer,
   substrateWallet?: SubstrateAccount | null,
 ): Wallet => {
-  console.log('wslletFromChain: ', chain, substrateWallet)
   switch (chainToWalletType(chain)) {
     case WalletType.EVM:
       return { type: WalletType.EVM, wallet: evmWallet }

@@ -5,7 +5,7 @@ import EvmWalletButton from './EvmWalletButton'
 import SubstrateWalletButton from './SubstrateWalletButton'
 
 interface WalletButtonProps {
-  wallet?: Wallet
+  wallet?: WalletType
 }
 
 const WalletButton: React.FC<WalletButtonProps> = ({ wallet }) => {
@@ -13,15 +13,15 @@ const WalletButton: React.FC<WalletButtonProps> = ({ wallet }) => {
 
   return (
     <motion.div
-      key={wallet.type}
+      key={wallet}
       className="flex self-end"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {wallet.type === WalletType.EVM && <EvmWalletButton label="Connect EVM" />}
+      {wallet === WalletType.EVM && <EvmWalletButton label="Connect EVM" />}
 
-      {wallet.type === WalletType.Substrate && <SubstrateWalletButton label="Connect Substrate" />}
+      {wallet === WalletType.Substrate && <SubstrateWalletButton label="Connect Substrate" />}
     </motion.div>
   )
 }
