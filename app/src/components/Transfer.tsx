@@ -4,10 +4,9 @@ import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { chainToWalletType, WalletType } from '@/models/wallet'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { AnimatePresence } from 'framer-motion'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
 import Switch from './Switch'
@@ -26,15 +25,10 @@ const Transfer: FC = () => {
   const [amount, setAmount] = useState<number | null>(null)
   const [manualRecipient, setManualRecipient] = useState<string>('')
   const [manualRecipientEnabled, setManualRecipientEnabled] = useState<boolean>(false)
-  const [wallets, setWallets] = useState<{
-    source?: WalletType
-    destination?: WalletType
-  }>({})
 
   // Hooks
-  const sourceWallet = useWallet(wallets.source)
-  const destinationWallet = useWallet(wallets.destination)
-
+  const sourceWallet = useWallet(sourceChain)
+  const destinationWallet = useWallet(destinationChain)
   const {
     chains: sourceChains,
     loading: loadingSourceChains,
@@ -51,24 +45,14 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
-
   const { environment, switchTo } = useEnvironment()
   const { transfer, isValid } = useTransfer()
-
   const recipient = manualRecipientEnabled ? manualRecipient : destinationWallet?.address
 
-  useEffect(() => {
-    if (sourceChain) setWallets(prev => ({ ...prev, source: chainToWalletType(sourceChain) }))
-  }, [sourceChain])
-
-  useEffect(() => {
-    if (destinationChain)
-      setWallets(prev => ({ ...prev, destination: chainToWalletType(destinationChain) }))
-  }, [destinationChain])
-
+  // functions
   const validate = () =>
     isValid({
-      sender: wallets.source,
+      sender: sourceWallet,
       token,
       sourceChain,
       destinationChain,
@@ -97,7 +81,7 @@ const Transfer: FC = () => {
       <div className="flex flex-col gap-3">
         {/* Source Wallet Connection */}
         <AnimatePresence>
-          <WalletButton wallet={wallets.source} />
+          <WalletButton network={sourceChain?.network} />
         </AnimatePresence>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
@@ -151,7 +135,7 @@ const Transfer: FC = () => {
         </div>
 
         {/* Recipient Wallet or Address Input */}
-        {wallets.destination && (
+        {destinationChain && (
           <div>
             <span className="label label-text">Recipient Address</span>
 
@@ -163,7 +147,7 @@ const Transfer: FC = () => {
               />
             ) : (
               <AnimatePresence>
-                <WalletButton wallet={wallets.destination} />
+                <WalletButton network={destinationChain?.network} />
               </AnimatePresence>
             )}
 

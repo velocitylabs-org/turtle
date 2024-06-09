@@ -13,23 +13,22 @@ import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
  *
  */
 export enum Direction {
-  ToEthereum,
-  ToPolkadot,
-  WithinPolkadot,
-  WithinEthereum,
+  ToEthereum = 'ToThereum',
+  ToPolkadot = 'toPolkadot',
+  WithinPolkadot = 'WithinPolkadot',
+  WithinEthereum = 'WithinEthereum',
 }
 
 /**
- * This function resolves the direction of a transfer given the source and destination chains.
- * It assumes that validations for unsupported flows have been done before being called.
+ * Resolve the direction of a transfer given the source and destination chains.
  */
 export const resolveDirection = (source: Chain, destination: Chain): Direction => {
-  switch ([source.network, destination.network]) {
-    case [Network.Ethereum, Network.Polkadot]:
+  switch ((source.network, destination.network)) {
+    case (Network.Ethereum, Network.Polkadot):
       return Direction.ToPolkadot
-    case [Network.Polkadot, Network.Ethereum]:
+    case (Network.Polkadot, Network.Ethereum):
       return Direction.ToEthereum
-    case [Network.Ethereum, Network.Ethereum]:
+    case (Network.Ethereum, Network.Ethereum):
       return Direction.WithinEthereum
     default:
       return Direction.WithinPolkadot

@@ -39,7 +39,10 @@ const useTransfer = () => {
     recipient,
     amount,
   }: TransferParams) => {
+    console.log('From -> To', sourceChain.network, destinationChain.network)
     let direction = resolveDirection(sourceChain, destinationChain)
+
+    console.log('Direction: ', direction)
 
     switch (direction) {
       case Direction.ToPolkadot:

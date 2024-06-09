@@ -9,6 +9,6 @@ export interface Chain {
 }
 
 export enum Network {
-  Ethereum,
-  Polkadot,
+  Ethereum = 'Ethereum',
+  Polkadot = 'Polkadot',
 }
