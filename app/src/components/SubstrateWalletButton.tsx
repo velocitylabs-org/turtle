@@ -1,17 +1,10 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
+import { Account } from '@/store/substrateWalletStore'
 import { truncateAddress } from '@/utils/address'
 import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
 import { FC } from 'react'
-
-interface WalletAccount {
-  address: string
-  source: string
-  name?: string
-  wallet?: unknown
-  signer?: unknown
-}
 
 interface SubstrateWalletButtonProps {
   /** Text shown inside the button. */
@@ -22,7 +15,7 @@ const SubstrateWalletButton: FC<SubstrateWalletButtonProps> = ({ label = 'Connec
   const { substrateAccount, setSubstrateAccount } = useSubstrateWallet()
 
   // removes the active account if it is disconnected from the app
-  const handleUpdatedAccounts = (accounts?: WalletAccount[]) => {
+  const handleUpdatedAccounts = (accounts?: Account[]) => {
     if (!accounts || !substrateAccount) return
     if (accounts.some(x => x.address === substrateAccount.address)) return
 
