@@ -2,8 +2,8 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="mb-32 grid text-center lg:mb-0 lg:max-w-5xl lg:grid-cols-2 lg:text-left">
+    <main className="h-full flex flex-col items-center justify-between bg-[#BFDADC]">
+      <div className="grid text-center lg:mb-0 lg:max-w-5xl lg:grid-cols-2 lg:text-left">
         <a
           href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
@@ -31,7 +31,7 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full">
+      {/* <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full">
         <h2 className="mb-2 text-4xl font-semibold">🐢 Turtle App </h2>
       </div>
 
@@ -46,7 +46,7 @@ export default function Home() {
             Made with ❤️ by Velocity Labs
           </a>
         </div>
-      </div>
+      </div> */}
     </main>
   )
 }
