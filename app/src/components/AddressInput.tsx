@@ -38,7 +38,7 @@ const AddressInput: FC<AddressInputProps> = ({
     <div className={`input input-sm flex items-center gap-2 ${disabledClass}`}>
       <input
         type="text"
-        aria-label={`Input for receiver address`}
+        aria-label={`Input for recipient address`}
         placeholder={placeholder}
         value={value ?? ''}
         onChange={handleChange}

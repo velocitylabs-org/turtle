@@ -1,8 +1,9 @@
+import { Environment } from '@/store/environmentStore'
 import { useEnvironmentStore } from '@/store/environmentStore'
 
 const useEnvironment = () => {
-  const environment = useEnvironmentStore.getState().current
-  const switchTo = useEnvironmentStore.getState().switchTo
+  const environment = useEnvironmentStore(state => state.current)
+  const switchTo = useEnvironmentStore(state => state.switchTo)
 
   return { environment, switchTo }
 }

@@ -1,7 +1,17 @@
+import { Environment } from '@/store/environmentStore'
 import * as Snowbridge from '@snowbridge/api'
 
-export function getEnvironment(network: string): Snowbridge.environment.SnowbridgeEnvironment {
+/**
+ * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
+ *
+ *
+ * @param env - The environment in which the app is operating on
+ * @returns The adequate SnowbridgeEnvironment for the given input
+ */
+export function getEnvironment(env: Environment): Snowbridge.environment.SnowbridgeEnvironment {
+  const network = toSnowbridgeNetwork(env)
   const x = Snowbridge.environment.SNOWBRIDGE_ENV[network]
+
   if (x === undefined) {
     throw Error(`Unknown environment`)
   }
@@ -32,4 +42,19 @@ export async function getContext(
       beefy: config.BEEFY_CONTRACT,
     },
   })
+}
+
+/**
+ * Convert a given Environment value to the corresponding network string value
+ * that the Snowbridge/api SDK understands.
+ * @param env - The environmnet in which the app is operating
+ * @returns the corresponding network value that Snowbridge/api understands
+ */
+export function toSnowbridgeNetwork(env: Environment): string {
+  switch (env) {
+    case Environment.Mainnet:
+      return 'polkadot_mainnet'
+    case Environment.Testnet:
+      return 'rococo_sepolia'
+  }
 }

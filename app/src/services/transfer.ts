@@ -3,7 +3,7 @@ import { Token } from '../models/token'
 import { Signer } from 'ethers'
 import { getEnvironment, getContext } from '../context/snowbridge'
 import * as Snowbridge from '@snowbridge/api'
-import { Environment, toSnowbridgeNetwork } from '../store/environmentStore'
+import { Environment } from '../store/environmentStore'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 
 /**
@@ -54,11 +54,11 @@ export const toPolkadot = async (
   destinationChain: Chain,
   recipient: string,
 ): Promise<void> => {
-  const snowbridgeEnv = getEnvironment(toSnowbridgeNetwork(environment))
+  const snowbridgeEnv = getEnvironment(environment)
   const context = await getContext(snowbridgeEnv)
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
-  await Snowbridge.toPolkadot
+  Snowbridge.toPolkadot
     .validateSend(
       context,
       signer,
@@ -98,7 +98,7 @@ export const toEthereum = async (
   amount: number,
   recipient: string,
 ): Promise<void> => {
-  const snowbridgeEnv = getEnvironment(toSnowbridgeNetwork(environment))
+  const snowbridgeEnv = getEnvironment(environment)
   const context = await getContext(snowbridgeEnv)
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 

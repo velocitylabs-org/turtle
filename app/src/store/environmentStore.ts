@@ -7,15 +7,6 @@ export enum Environment {
   Testnet,
 }
 
-export function toSnowbridgeNetwork(env: Environment): string {
-  switch (env) {
-    case Environment.Mainnet:
-      return 'polkadot_mainnet'
-    case Environment.Testnet:
-      return 'rococo_sepolia'
-  }
-}
-
 interface State {
   // State
   current: Environment

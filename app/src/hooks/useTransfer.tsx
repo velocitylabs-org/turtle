@@ -6,9 +6,11 @@ import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { WalletSigner } from '@snowbridge/api/dist/toEthereum'
 
+export type Sender = JsonRpcSigner | SubstrateAccount
+
 interface TransferParams {
   environment: Environment
-  sender: JsonRpcSigner | SubstrateAccount
+  sender: Sender
   sourceChain: Chain
   token: Token
   destinationChain: Chain
@@ -17,11 +19,11 @@ interface TransferParams {
 }
 
 interface TransferValidationParams {
-  sender: any | null | undefined
+  sender?: Sender | null
   sourceChain: Chain | null
   token: Token | null
   destinationChain: Chain | null
-  recipient: string | undefined | null
+  recipient?: string | null
   amount: number | null
 }
 
