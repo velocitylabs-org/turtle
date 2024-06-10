@@ -17,6 +17,7 @@
   --talisman-connect-modal-foreground: #fafafa;
   --talisman-connect-button-background: var(--talisman-connect-control-background);
   --talisman-connect-button-foreground: #fafafa;
+  --talisman-connect-modal-max-height: 60vh;
 }
 
 @media (prefers-color-scheme: dark) {
