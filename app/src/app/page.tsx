@@ -3,7 +3,7 @@ import { FC } from 'react'
 
 const App: FC = async () => {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center p-5">
+    <div className="flex h-screen w-full flex-col items-center justify-center bg-turtle-tertiary p-5">
       <Transfer />
     </div>
   )

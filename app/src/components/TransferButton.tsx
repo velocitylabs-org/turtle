@@ -20,11 +20,7 @@ const TransferButton: FC<TransferButtonProps> = ({
   disabled,
 }) => {
   return (
-    <button
-      disabled={disabled}
-      onClick={onClick}
-      className={twMerge('btn btn-outline btn-primary', className)}
-    >
+    <button disabled={true} onClick={onClick} className={twMerge('btn btn-primary ', className)}>
       {label}
     </button>
   )

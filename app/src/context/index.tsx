@@ -21,8 +21,7 @@ createWeb3Modal({
   defaultChain: mainnet,
   themeMode: 'light',
   themeVariables: {
-    // TODO: adjust colors to fit into our project
-    '--w3m-accent': colors['turtle-primary-dark'],
+    '--w3m-accent': colors['turtle-primary'],
   },
 })
 

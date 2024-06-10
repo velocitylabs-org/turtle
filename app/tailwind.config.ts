@@ -57,6 +57,9 @@ const config: Config = {
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
+      backgroundColor: {
+        'btn-disabled': colors[`${prefix}-primary`],
+      },
     },
   },
 

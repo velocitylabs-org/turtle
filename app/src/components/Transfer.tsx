@@ -84,7 +84,7 @@ const Transfer: FC = () => {
   }
 
   return (
-    <div className="card w-full max-w-xl rounded-4xl border-2 border-black p-5 shadow-xl backdrop-blur-sm">
+    <div className="card w-full max-w-xl rounded-4xl border-2 border-black bg-white p-5 backdrop-blur-sm">
       <div className="flex flex-col gap-3">
         {/* Source Wallet Connection */}
         <AnimatePresence>
@@ -169,12 +169,7 @@ const Transfer: FC = () => {
         )}
 
         {/* Transfer Button */}
-        <TransferButton
-          className="max-w-xs self-center"
-          label="Transfer"
-          onClick={handleSubmit}
-          disabled={!isValid()}
-        />
+        <TransferButton label="Transfer" onClick={handleSubmit} disabled={!isValid()} />
       </div>
     </div>
   )
