@@ -1,4 +1,5 @@
 import { Chain, Network } from '@/models/chain'
+import { Token } from '@/models/token'
 
 export const Ethereum: Chain = {
   id: 'ethereum',
@@ -19,11 +20,12 @@ export const AssetHub: Chain = {
 
 export const testchains = [AssetHub, Ethereum]
 
-export const testTokens = [
-  {
-    id: 'weth',
-    name: 'Wrapped Ether',
-    symbol: 'wETH',
-    logoURI: 'https://ucarecdn.com/c01c9021-a497-41b5-8597-9ab4e71440c1/wrapped-eth.png',
-  },
-]
+export const WETH: Token = {
+  id: 'weth',
+  name: 'Wrapped Ether',
+  symbol: 'wETH',
+  logoURI: 'https://ucarecdn.com/c01c9021-a497-41b5-8597-9ab4e71440c1/wrapped-eth.png',
+  decimals: 18,
+}
+
+export const testTokens = [WETH]
