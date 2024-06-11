@@ -1,12 +1,12 @@
 'use client'
 
+import { colors } from '@/../tailwind.config'
 import { config, projectId } from '@/config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { ReactNode } from 'react'
 import { sepolia } from 'viem/chains'
 import { State, WagmiProvider } from 'wagmi'
-import { colors } from '@/../tailwind.config'
 
 // Setup queryClient
 const queryClient = new QueryClient()
@@ -19,9 +19,9 @@ export const wallet = createWeb3Modal({
   enableAnalytics: true,
   enableOnramp: true,
   defaultChain: sepolia,
+  themeMode: 'light',
   themeVariables: {
-    // TODO: adjust colors to fit into our project
-    '--w3m-accent': colors.primary,
+    '--w3m-accent': colors['turtle-primary'],
   },
 })
 
