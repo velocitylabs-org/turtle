@@ -1,52 +1,26 @@
-import Link from 'next/link'
+import { Features } from '@/components/features'
 
 export default function Home() {
   return (
-    <main className="h-full flex flex-col items-center justify-between bg-[#BFDADC]">
-      <div className="grid text-center lg:mb-0 lg:max-w-5xl lg:grid-cols-2 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-        </a>
-
-        <Link
-          href={'#todo'}
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            App{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-        </Link>
-      </div>
-
-      {/* <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full">
-        <h2 className="mb-2 text-4xl font-semibold">🐢 Turtle App </h2>
-      </div>
-
-      <div className="z-10 w-full max-w-5xl place-items-center items-center justify-between font-mono text-sm">
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white lg:static lg:size-auto lg:bg-none dark:from-black dark:via-black">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Made with ❤️ by Velocity Labs
-          </a>
+    <>
+      <div className="relative z-20 flex h-[60vh] flex-col items-center justify-center md:mb-20 md:h-[80vh]">
+        <h1 className="p-4 text-center text-3xl sm:text-5xl md:w-2/3 lg:text-6xl xl:text-8xl">
+          Easily move tokens across blockchains.
+        </h1>
+        <div className="absolute inset-x-0 -bottom-9 -z-10 md:-bottom-48">
+          <svg viewBox="0 0 1440 531" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M-0.5 529.218V529.718H0C128.729 529.718 225.425 504.769 326.196 478.769C330.701 477.606 335.214 476.442 339.739 475.277C445.465 448.068 557.426 420.868 716.864 420.868C874.338 420.868 970.857 444.699 1068.6 468.833L1072.26 469.737C1171.29 494.182 1272.37 518.635 1440 518.635H1440.5V518.135V68.881V68.381H1440C1272.28 68.381 1171.14 131.334 1072.12 194.224L1068.47 196.538C970.713 258.637 874.253 319.911 716.864 319.911C557.544 319.911 445.654 240.287 339.915 160.559C335.381 157.14 330.858 153.721 326.343 150.308C225.605 74.1567 128.837 1.00586 0 1.00586H-0.5V1.50586V529.218Z"
+              fill="#A184DC"
+              // stroke="#001B04"
+            />
+          </svg>
         </div>
-      </div> */}
-    </main>
+      </div>
+
+      <section className="bg-info pb-36 pt-20 md:pb-72 lg:pb-96">
+        <Features />
+      </section>
+    </>
   )
 }
