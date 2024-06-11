@@ -3,6 +3,10 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
+:root {
+  --talisman-connect-modal-max-height: 60vh;
+}
+
 body {
   font-family: 'Inter', sans-serif;
 }

@@ -1,20 +1,30 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Direction, resolveDirection, toPolkadot, toEthereum } from '@/services/transfer'
+import { JsonRpcSigner, Signer } from 'ethers'
+import { Environment } from '@/store/environmentStore'
+import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { WalletSigner } from '@snowbridge/api/dist/toEthereum'
+
+export type Sender = JsonRpcSigner | SubstrateAccount
 
 interface TransferParams {
-  token: Token
+  environment: Environment
+  sender: Sender
   sourceChain: Chain
+  token: Token
   destinationChain: Chain
+  recipient: string
   amount: number
-  receiverAddress: string
 }
 
 interface TransferValidationParams {
-  token: Token | null
+  sender?: Sender | null
   sourceChain: Chain | null
+  token: Token | null
   destinationChain: Chain | null
+  recipient?: string | null
   amount: number | null
-  receiverAddress?: string
 }
 
 /**
@@ -22,39 +32,41 @@ interface TransferValidationParams {
  * It figures out which api to use based on token, source and destination chain.
  */
 const useTransfer = () => {
-  // TODO: Adjust this once dependent functions are implemented. Also create a way for supporting the 2-step transfers.
-
-  const transfer = ({
-    token,
+  const transfer = async ({
+    environment,
+    sender,
     sourceChain,
+    token,
     destinationChain,
+    recipient,
     amount,
-    receiverAddress,
   }: TransferParams) => {
-    // TODO: Create some helper functions such as isParachainToEthereumTransfer, isEthereumToParachainTransfer, isXcmOnlyTransfer, etc. and use to make the right call
-    console.log(
-      `Token: ${token?.name ?? 'null'}, ` +
-        `Source Chain: ${sourceChain?.name ?? 'null'}, ` +
-        `Destination Chain: ${destinationChain?.name ?? 'null'}, ` +
-        `Amount: ${amount ?? 'null'}, ` +
-        `Receiver Address: ${receiverAddress ?? 'undefined'}`,
-    )
+    let direction = resolveDirection(sourceChain, destinationChain)
 
-    return
+    switch (direction) {
+      case Direction.ToPolkadot:
+        toPolkadot(environment, sender as Signer, token, amount, destinationChain, recipient)
+        break
+      case Direction.ToEthereum:
+        toEthereum(environment, sourceChain, sender as WalletSigner, token, amount, recipient)
+        break
+      default:
+        throw Error('Unsupported flow')
+    }
   }
 
-  const validate = ({
-    token,
+  const isValid = ({
+    sender,
     sourceChain,
+    token,
     destinationChain,
+    recipient,
     amount,
-    receiverAddress,
   }: TransferValidationParams) => {
-    // TODO: Implement validation logic
-    return true
+    return sender && sourceChain && token && destinationChain && recipient && amount
   }
 
-  return { transfer, validate }
+  return { transfer, isValid }
 }
 
 export default useTransfer

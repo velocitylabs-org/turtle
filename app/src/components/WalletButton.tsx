@@ -1,27 +1,26 @@
-import { Wallet, WalletType } from '@/models/wallet'
 import { motion } from 'framer-motion'
 import React from 'react'
 import EvmWalletButton from './EvmWalletButton'
 import SubstrateWalletButton from './SubstrateWalletButton'
+import { Network } from '@/models/chain'
 
 interface WalletButtonProps {
-  wallet?: Wallet
+  network?: Network
 }
 
-const WalletButton: React.FC<WalletButtonProps> = ({ wallet }) => {
-  if (!wallet) return null
+const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
+  if (!network) return null
 
   return (
     <motion.div
-      key={wallet.type}
+      key={network}
       className="flex self-end"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {wallet.type === WalletType.EVM && <EvmWalletButton label="Connect EVM" />}
-
-      {wallet.type === WalletType.Substrate && <SubstrateWalletButton label="Connect Substrate" />}
+      {network === Network.Ethereum && <EvmWalletButton label="Connect EVM" />}
+      {network === Network.Polkadot && <SubstrateWalletButton label="Connect Substrate" />}
     </motion.div>
   )
 }
