@@ -1,22 +1,22 @@
 'use client'
 import { testTokens } from '@/__tests__/testdata'
 import useChains from '@/hooks/useChains'
+import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
+import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { isValidSubstrateAddress } from '@/utils/address'
+import { convertAmount } from '@/utils/transfer'
 import { AnimatePresence } from 'framer-motion'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
+import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Switch from './Switch'
 import TokenSelect from './TokenSelect'
-import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
-import useEnvironment from '@/hooks/useEnvironment'
 import WalletButton from './WalletButton'
-import useWallet from '@/hooks/useWallet'
-import { convertAmount } from '@/utils/transfer'
 
 const Transfer: FC = () => {
   // Inputs
@@ -79,7 +79,7 @@ const Transfer: FC = () => {
   }
 
   return (
-    <div className="card w-full max-w-xl rounded-4xl border-2 border-black bg-white p-5 backdrop-blur-sm">
+    <div className="card w-full max-w-md rounded-4xl border-2 border-black bg-white p-8 backdrop-blur-sm">
       <div className="flex flex-col gap-3">
         {/* Source Wallet Connection */}
         <AnimatePresence>
@@ -164,7 +164,7 @@ const Transfer: FC = () => {
         )}
 
         {/* Transfer Button */}
-        <TransferButton label="Transfer" onClick={handleSubmit} disabled={!validate()} />
+        <Button label="Transfer" onClick={handleSubmit} disabled={!validate()} />
       </div>
     </div>
   )
