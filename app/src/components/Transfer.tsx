@@ -16,13 +16,14 @@ import ValueInput from './ValueInput'
 import useEnvironment from '@/hooks/useEnvironment'
 import WalletButton from './WalletButton'
 import useWallet from '@/hooks/useWallet'
+import { convertAmount } from '@/utils/transfer'
 
 const Transfer: FC = () => {
   // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
-  const [amount, setAmount] = useState<number | null>(null)
+  const [inputAmount, setInputAmount] = useState<number | null>(null)
   const [manualRecipient, setManualRecipient] = useState<string>('')
   const [manualRecipientEnabled, setManualRecipientEnabled] = useState<boolean>(false)
 
@@ -48,6 +49,7 @@ const Transfer: FC = () => {
   const { environment, switchTo } = useEnvironment()
   const { transfer, isValid } = useTransfer()
   const recipient = manualRecipientEnabled ? manualRecipient : destinationWallet?.address
+  const amount = convertAmount(inputAmount, token)
 
   // functions
   const validate = () =>
@@ -113,8 +115,8 @@ const Transfer: FC = () => {
         <div>
           <span className="label label-text">Amount</span>
           <ValueInput
-            value={amount}
-            onChange={setAmount}
+            value={inputAmount}
+            onChange={setInputAmount}
             placeholder="0"
             disabled={!token}
             unit={token?.symbol}

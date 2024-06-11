@@ -15,7 +15,7 @@ interface TransferParams {
   token: Token
   destinationChain: Chain
   recipient: string
-  amount: number
+  amount: bigint
 }
 
 interface TransferValidationParams {
@@ -24,7 +24,7 @@ interface TransferValidationParams {
   token: Token | null
   destinationChain: Chain | null
   recipient?: string | null
-  amount: number | null
+  amount: bigint | null
 }
 
 /**
