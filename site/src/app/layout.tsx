@@ -18,11 +18,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" data-theme="turtleTheme" className="h-full">
-      <body className={cn(inter.className, 'flex h-full flex-col')}>
-        <Header />
-        <main className="h-full flex-1 pt-24">{children}</main>
-        <Footer />
+    <html lang="en" data-theme="turtleTheme" className="bg-turtle-secondary h-full">
+      <body className={cn(inter.className, 'bg-turtle-secondary h-full')}>
+        <main className="h-full flex-1">
+          <Header />
+          {children}
+          <Footer />
+        </main>
       </body>
     </html>
   )

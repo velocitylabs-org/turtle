@@ -64,11 +64,13 @@ export default function Header() {
           {/* desktop menu */}
           <ul className="hidden items-center space-x-6 md:flex">
             <li>
-              <a href="">Read the Docs</a>
+              <button className="btn btn-ghost text-base font-normal">
+                <a href="/">Read the Docs</a>
+              </button>
             </li>
             <li>
               <button className="btn btn-primary text-base font-normal">
-                <a href="">Start a transfer</a>
+                <a href="/">Start a transfer</a>
               </button>
             </li>
           </ul>
