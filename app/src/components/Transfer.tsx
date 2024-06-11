@@ -2,21 +2,20 @@
 import { testTokens } from '@/__tests__/testdata'
 import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
-import useWalletAddress from '@/hooks/useWalletAddress'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Wallet } from '@/models/wallet'
 import { isValidSubstrateAddress } from '@/utils/address'
-import { chainToWallet } from '@/utils/wallet'
 import { AnimatePresence } from 'framer-motion'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
 import Switch from './Switch'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
+import useEnvironment from '@/hooks/useEnvironment'
 import WalletButton from './WalletButton'
+import useWallet from '@/hooks/useWallet'
 
 const Transfer: FC = () => {
   // Inputs
@@ -24,13 +23,12 @@ const Transfer: FC = () => {
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
   const [amount, setAmount] = useState<number | null>(null)
-  const [manualReceiverAddress, setManualReceiverAddress] = useState<string>('')
-  const [manualAddressInputEnabled, setManualAddressInputEnabled] = useState<boolean>(false)
-  const [wallets, setWallets] = useState<{
-    source?: Wallet
-    destination?: Wallet
-  }>({})
+  const [manualRecipient, setManualRecipient] = useState<string>('')
+  const [manualRecipientEnabled, setManualRecipientEnabled] = useState<boolean>(false)
 
+  // Hooks
+  const sourceWallet = useWallet(sourceChain)
+  const destinationWallet = useWallet(destinationChain)
   const {
     chains: sourceChains,
     loading: loadingSourceChains,
@@ -47,39 +45,34 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
-  const receiverWalletAddress = useWalletAddress(wallets.destination)
-  const { transfer, validate } = useTransfer()
+  const { environment, switchTo } = useEnvironment()
+  const { transfer, isValid } = useTransfer()
+  const recipient = manualRecipientEnabled ? manualRecipient : destinationWallet?.address
 
-  const receiverAddress = manualAddressInputEnabled ? manualReceiverAddress : receiverWalletAddress
-
-  useEffect(() => {
-    if (sourceChain) setWallets(prev => ({ ...prev, source: chainToWallet(sourceChain) }))
-  }, [sourceChain])
-
-  useEffect(() => {
-    if (destinationChain)
-      setWallets(prev => ({ ...prev, destination: chainToWallet(destinationChain) }))
-  }, [destinationChain])
-
-  const isValid = () =>
-    validate({
+  // functions
+  const validate = () =>
+    isValid({
+      sender: sourceWallet,
       token,
       sourceChain,
       destinationChain,
+      recipient: recipient,
       amount,
-      receiverAddress,
     })
 
   const handleSubmit = () => {
     // basic checks for TS type checker. But usually button should be disabled if these are not met.
-    if (!sourceChain || !destinationChain || !token || !amount || !receiverAddress) return
+    if (!sourceChain || !recipient || !sourceWallet || !destinationChain || !token || !amount)
+      return
 
     transfer({
+      environment,
+      sender: sourceWallet!,
       sourceChain,
       destinationChain,
       token,
       amount,
-      receiverAddress,
+      recipient: recipient,
     })
   }
 
@@ -88,7 +81,7 @@ const Transfer: FC = () => {
       <div className="flex flex-col gap-3">
         {/* Source Wallet Connection */}
         <AnimatePresence>
-          <WalletButton wallet={wallets.source} />
+          <WalletButton network={sourceChain?.network} />
         </AnimatePresence>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
@@ -141,40 +134,35 @@ const Transfer: FC = () => {
           />
         </div>
 
-        {/* Receiver Wallet or Address Input */}
-        {wallets.destination && (
+        {/* Recipient Wallet or Address Input */}
+        {destinationChain && (
           <div>
-            <span className="label label-text">Receiver Address</span>
+            <span className="label label-text">Recipient Address</span>
 
-            {manualAddressInputEnabled ? (
+            {manualRecipientEnabled ? (
               <AddressInput
-                value={manualReceiverAddress}
-                onChange={setManualReceiverAddress}
+                value={manualRecipient}
+                onChange={setManualRecipient}
                 validateAddress={isValidSubstrateAddress}
               />
             ) : (
               <AnimatePresence>
-                <WalletButton wallet={wallets.destination} />
+                <WalletButton network={destinationChain?.network} />
               </AnimatePresence>
             )}
 
             {/* Switch Wallet and Manual Input */}
             <Switch
               className="items-start"
-              checked={manualAddressInputEnabled}
-              onChange={setManualAddressInputEnabled}
+              checked={manualRecipientEnabled}
+              onChange={setManualRecipientEnabled}
               label="Send to a different address"
             />
           </div>
         )}
 
         {/* Transfer Button */}
-        <TransferButton
-          className="max-w-xs self-center"
-          label="Transfer"
-          onClick={handleSubmit}
-          disabled={!isValid()}
-        />
+        <TransferButton label="Transfer" onClick={handleSubmit} disabled={!validate()} />
       </div>
     </div>
   )
