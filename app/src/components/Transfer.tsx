@@ -1,5 +1,5 @@
 'use client'
-import { testTokens } from '@/__tests__/testdata'
+import { REGISTRY } from '@/config/registry'
 import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
@@ -105,7 +105,7 @@ const Transfer: FC = () => {
             <TokenSelect
               value={token}
               onChange={setToken}
-              options={testTokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
+              options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
               className="w-full"
             />
           </div>

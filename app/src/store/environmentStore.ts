@@ -2,9 +2,9 @@ import { create } from 'zustand'
 
 export enum Environment {
   /* Polkadot - Ethereum */
-  Mainnet,
+  Mainnet = 'Mainnet',
   /* Rococo - Sepolia */
-  Testnet,
+  Testnet = 'Testnet',
 }
 
 interface State {
