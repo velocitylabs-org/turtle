@@ -42,6 +42,7 @@ const useTransfer = () => {
     amount,
   }: TransferParams) => {
     let direction = resolveDirection(sourceChain, destinationChain)
+    let basedAmount = amount ** token.decimals
 
     switch (direction) {
       case Direction.ToPolkadot:
