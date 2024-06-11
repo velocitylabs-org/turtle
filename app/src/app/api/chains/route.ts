@@ -7,7 +7,8 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const environmentParam = searchParams.get('environment')
 
-  if (environmentParam == null) return NextResponse.error
+  if (environmentParam == null)
+    return Response.json({ error: "Invalid request: missing 'environment' param" }, { status: 400 })
   const environment = Environment[environmentParam as keyof typeof Environment]
 
   const token = searchParams.get('token')
