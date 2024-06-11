@@ -1,16 +1,16 @@
 import { Token } from '@/models/token'
 
 /**
- * Convert a user given amount to the correct value that takes the token decimal in consideration
+ * Converts a user-specified amount to its corresponding value in the token's decimal base.
  *
- * E.g 1 WETH as input is converted to 1000000000000000000 given that WETH is an 18-decimal token.
+ * For example, if the input is "1 WETH" and given that WETH is an 18 decimals token, the function converts this to 1 * 10^18 = 1000000000000000000 (wei).
  *
- * @param input - the input amount
- * @param token - the token the amount is relative to
- * @returns the amount in the decimal base of the given token
+ * @param input - The amount specified by the user. For example, 1 WETH.
+ * @param token - The token object which includes its decimals property.
+ * @returns The amount in with the token's decimal base, or null if the input or token is not provided.
  */
-export const convertAmount = (input: number | null, token: Token | null): number | null => {
-  if (!input || !token) return null
+export const convertAmount = (input: number | null, token: Token | null): bigint | null => {
+  if (input == null || !token) return null
 
-  return input * 10 ** token.decimals
+  return BigInt(input * 10 ** token.decimals)
 }
