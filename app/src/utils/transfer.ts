@@ -9,8 +9,8 @@ import { Token } from '@/models/token'
  * @param token - the token the amount is relative to
  * @returns the amount in the decimal base of the given token
  */
-export const convertAmount = (input: number | null, token: Token | null): number | null => {
-  if (!input || !token) return null
+export const convertAmount = (input: number | null, token: Token | null): bigint | null => {
+  if (input == null || !token) return null
 
-  return input * 10 ** token.decimals
+  return BigInt(input * 10 ** token.decimals)
 }

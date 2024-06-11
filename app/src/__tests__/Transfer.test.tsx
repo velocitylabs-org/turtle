@@ -23,8 +23,8 @@ describe('Transfer', () => {
 
 describe('Transfer', () => {
   it('convert input amount to based amount', () => {
-    expect(convertAmount(1, WETH)).toBe(1000000000000000000)
-    expect(convertAmount(0.12, WETH)).toBe(120000000000000000)
-    expect(convertAmount(123, WETH)).toBe(123000000000000000000)
+    expect(convertAmount(1, WETH)).toBe(BigInt(1000000000000000000))
+    expect(convertAmount(0.12, WETH)).toBe(BigInt(120000000000000000))
+    expect(convertAmount(123, WETH)).toBe(BigInt(123000000000000000000))
   })
 })

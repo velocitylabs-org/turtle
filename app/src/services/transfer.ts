@@ -50,7 +50,7 @@ export const toPolkadot = async (
   environment: Environment,
   signer: Signer,
   token: Token,
-  amount: number,
+  amount: bigint,
   destinationChain: Chain,
   recipient: string,
 ): Promise<void> => {
@@ -65,7 +65,7 @@ export const toPolkadot = async (
       recipient,
       tokenContract,
       destinationChain.chainId,
-      BigInt(amount),
+      amount,
       BigInt(0),
     )
     .then(plan => Snowbridge.toPolkadot.send(context, signer, plan))
@@ -95,7 +95,7 @@ export const toEthereum = async (
   sourceChain: Chain,
   sender: WalletOrKeypair,
   token: Token,
-  amount: number,
+  amount: bigint,
   recipient: string,
 ): Promise<void> => {
   const snowbridgeEnv = getEnvironment(environment)
@@ -103,7 +103,7 @@ export const toEthereum = async (
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
   await Snowbridge.toEthereum
-    .validateSend(context, sender, sourceChain.chainId, recipient, tokenContract, BigInt(amount))
+    .validateSend(context, sender, sourceChain.chainId, recipient, tokenContract, amount)
     .then(plan => Snowbridge.toEthereum.send(context, sender, plan))
     .then(sent => trackToEthereum(context, sent))
     .then(res => console.log('Result:', res))
