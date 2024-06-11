@@ -48,7 +48,7 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
     } finally {
       setLoading(false)
     }
-  }, [supportedToken, supportedSourceChain, supportedDestChain, addNotification])
+  }, [supportedToken, supportedSourceChain, supportedDestChain, addNotification, environment])
 
   useEffect(() => {
     fetchChains()
