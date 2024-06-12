@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
+type ButtonSize = 'small' | 'medium' | 'large'
 
 interface ButtonProps {
   /** Text shown inside the button. */
@@ -16,7 +17,7 @@ interface ButtonProps {
   /** The variant determines the preset color and style of the button. */
   variant?: ButtonVariant
   /** The size of the button. */
-  size?: 'sm' | 'md' | 'lg'
+  size?: ButtonSize
 }
 
 const Button: FC<ButtonProps> = ({
@@ -25,17 +26,33 @@ const Button: FC<ButtonProps> = ({
   className,
   disabled,
   variant = 'primary',
-  size = 'md',
+  size = 'large',
 }) => {
   return (
     <button
       disabled={disabled}
       onClick={onClick}
-      className={twMerge('btn', buttonStyle(variant), className)}
+      className={twMerge('btn', convertSize(size), buttonStyle(variant), className)}
     >
       {label}
     </button>
   )
+}
+
+const convertSize = (size: ButtonSize) => {
+  switch (size) {
+    case 'small':
+      return 'btn-xs'
+
+    case 'medium':
+      return 'btn-sm'
+
+    case 'large':
+      return 'btn-md'
+
+    default:
+      return ''
+  }
 }
 
 const buttonStyle = (variant: ButtonVariant) => {
