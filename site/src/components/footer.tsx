@@ -1,24 +1,16 @@
 import Link from 'next/link'
 import { TurtleSocialData, TurtleSocialIcons } from './assets/social-icons'
 import { TurtleIcon } from './assets/turtle-icon'
+import { WaveLine } from './assets/waves-lines'
 
 export default function Footer() {
-  const WaveSVG = () => (
-    <div className="absolute inset-0 -top-24 -z-10 sm:-top-28 md:-top-36 lg:-top-64">
-      <svg viewBox="0 0 1440 501" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M-0.5 205.455V204.955H0C128.547 204.955 225.095 158.165 325.885 109.32C330.379 107.142 334.882 104.96 339.397 102.778C445.145 51.6583 557.242 0.500031 716.864 0.500031C874.489 0.500031 971.123 36.1519 1068.89 72.2214L1072.56 73.5742C1171.56 110.09 1272.52 146.587 1440 146.587H1440.5V147.087V501.087V501.587H1440H0H-0.5V501.087V205.455Z"
-          fill="#A184DC"
-          // stroke="#001B04"
-        />
-      </svg>
-    </div>
-  )
-
   return (
     <footer className="relative z-30">
       {/* wave svg */}
-      <WaveSVG />
+      <WaveLine
+        name="footerWave"
+        className="absolute inset-0 -top-24 -z-10 sm:-top-28 md:-top-36 lg:-top-64"
+      />
 
       {/* footer content */}
       <div className="absolute inset-0 lg:-top-24">

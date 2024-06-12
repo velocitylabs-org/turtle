@@ -8,7 +8,7 @@ export default function Header() {
       <div className="flex items-center justify-between py-4">
         <Link href="/" className="flex items-center space-x-2">
           <TurtleIcon size={28} />
-          <p className="text-[32px] font-bold">Turtle</p>
+          <p className="text-[32px] font-normal">Turtle</p>
         </Link>
 
         <nav>
@@ -41,7 +41,10 @@ export default function Header() {
                 className="drawer-overlay"
               ></label>
               <div className="menu min-h-full w-2/3 space-y-4 bg-secondary p-4 text-base-content">
-                <div className="text-xl font-bold">🐢 Turtle</div>
+                <Link href="/" className="flex items-center space-x-2">
+                  <TurtleIcon size={28} />
+                  <p className="text-xl font-normal">Turtle</p>
+                </Link>
                 <ul className="space-y-4">
                   <li>
                     <button className="btn btn-outline text-base font-normal">
