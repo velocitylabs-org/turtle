@@ -3,7 +3,6 @@ import { cn } from '@/utils/cn'
 import { FC } from 'react'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
-type ButtonSize = 'small' | 'medium' | 'large'
 
 interface ButtonProps {
   /** Text shown inside the button. */
@@ -16,8 +15,6 @@ interface ButtonProps {
   disabled?: boolean
   /** The variant determines the preset color and style of the button. */
   variant?: ButtonVariant
-  /** The size of the button. */
-  size?: ButtonSize
 }
 
 const Button: FC<ButtonProps> = ({
@@ -26,33 +23,19 @@ const Button: FC<ButtonProps> = ({
   className,
   disabled,
   variant = 'primary',
-  size = 'large',
 }) => {
   return (
     <button
-      disabled={disabled}
+      disabled={false}
       onClick={onClick}
-      className={cn('btn', convertSize(size), 'btn-turtle-primary', className)}
+      className={cn(
+        'btn bg-turtle-level3 hover:bg-turtle-level4 disabled:bg-turtle-level3 disabled:bg-opacity-30',
+        className,
+      )}
     >
       {label}
     </button>
   )
-}
-
-const convertSize = (size: ButtonSize) => {
-  switch (size) {
-    case 'small':
-      return 'btn-xs'
-
-    case 'medium':
-      return 'btn-sm'
-
-    case 'large':
-      return 'btn-md'
-
-    default:
-      return ''
-  }
 }
 
 const buttonStyle = (variant: ButtonVariant) => {

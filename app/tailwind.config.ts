@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss'
-import customComponents from './src/constants/customTailwindComponents'
+import customComponents from './src/constants/customTwComponents'
 const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 
 const prefix = 'turtle'
