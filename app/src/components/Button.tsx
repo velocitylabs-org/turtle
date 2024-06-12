@@ -25,14 +25,7 @@ const Button: FC<ButtonProps> = ({
   variant = 'primary',
 }) => {
   return (
-    <button
-      disabled={false}
-      onClick={onClick}
-      className={cn(
-        'btn bg-turtle-level3 hover:bg-turtle-level4 disabled:bg-turtle-level3 disabled:bg-opacity-30',
-        className,
-      )}
-    >
+    <button disabled={false} onClick={onClick} className={cn('btn-turtle-outlined-lg', className)}>
       {label}
     </button>
   )

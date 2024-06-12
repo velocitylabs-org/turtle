@@ -10,6 +10,11 @@ const buttonSecondaryStyle = {
     {},
 }
 
+const buttonOutlinedStyle = {
+  '@apply btn btn-ghost border-turtle-level3 hover:border-turtle-level3 hover:bg-turtle-level1 disabled:border-turtle-level3 disabled:border-opacity-30 disabled:bg-white disabled:bg-opacity-30':
+    {},
+}
+
 const customComponents = plugin(function ({ addComponents }) {
   addComponents({
     // Primary buttons
@@ -41,6 +46,22 @@ const customComponents = plugin(function ({ addComponents }) {
 
     '.btn-turtle-secondary-sm': {
       ...buttonSecondaryStyle,
+      '@apply btn-xs': {},
+    },
+
+    // Outlined buttons
+    '.btn-turtle-outlined-lg': {
+      ...buttonOutlinedStyle,
+      '@apply btn-md': {},
+    },
+
+    '.btn-turtle-outlined-md': {
+      ...buttonOutlinedStyle,
+      '@apply btn-sm': {},
+    },
+
+    '.btn-turtle-outlined-sm': {
+      ...buttonOutlinedStyle,
       '@apply btn-xs': {},
     },
   })
