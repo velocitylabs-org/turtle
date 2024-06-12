@@ -59,11 +59,11 @@ export module Testnet {
 }
 
 export const REGISTRY = {
-  Mainnet: {
+  mainnet: {
     chains: [Mainnet.Ethereum, Mainnet.AssetHub],
     tokens: [Mainnet.WETH],
   },
-  Testnet: {
+  testnet: {
     chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
     tokens: [Testnet.WETH],
   },

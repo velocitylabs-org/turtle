@@ -2,9 +2,9 @@ import { create } from 'zustand'
 
 export enum Environment {
   /* Polkadot - Ethereum */
-  Mainnet = 'Mainnet',
+  Mainnet = 'mainnet',
   /* Rococo - Sepolia */
-  Testnet = 'Testnet',
+  Testnet = 'testnet',
 }
 
 interface State {
@@ -25,3 +25,14 @@ export const useEnvironmentStore = create<State>(set => ({
       current: environment,
     })),
 }))
+
+export function environmentFromStr(str: string): Environment | undefined {
+  switch (str.toLowerCase()) {
+    case 'mainnet':
+      return Environment.Mainnet
+    case 'testnet':
+      return Environment.Testnet
+    default:
+      return
+  }
+}
