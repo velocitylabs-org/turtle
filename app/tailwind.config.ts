@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import customComponents from './src/constants/customTailwindComponents'
 const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 
 const prefix = 'turtle'
@@ -63,7 +64,7 @@ const config: Config = {
     },
   },
 
-  plugins: [require('daisyui'), addVariablesForColors],
+  plugins: [require('daisyui'), addVariablesForColors, customComponents],
   daisyui: {
     themes: [
       {

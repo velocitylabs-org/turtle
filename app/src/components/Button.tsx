@@ -1,6 +1,6 @@
 'use client'
+import { cn } from '@/utils/cn'
 import { FC } from 'react'
-import { twMerge } from 'tailwind-merge'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
 type ButtonSize = 'small' | 'medium' | 'large'
@@ -32,7 +32,7 @@ const Button: FC<ButtonProps> = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={twMerge('btn', convertSize(size), buttonStyle(variant), className)}
+      className={cn('btn', convertSize(size), 'btn-turtle-primary', className)}
     >
       {label}
     </button>
