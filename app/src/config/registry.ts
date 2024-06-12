@@ -1,7 +1,5 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Environment } from '@/store/environmentStore'
-import { environment } from '@snowbridge/api'
 
 /* Mainnet :: Polkadot - Ethereum */
 export module Mainnet {
