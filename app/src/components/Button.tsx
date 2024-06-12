@@ -29,7 +29,7 @@ const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      disabled={false}
+      disabled={disabled}
       onClick={onClick}
       className={twMerge('btn', buttonStyle(variant), className)}
     >
@@ -41,7 +41,7 @@ const Button: FC<ButtonProps> = ({
 const buttonStyle = (variant: ButtonVariant) => {
   switch (variant) {
     case 'primary':
-      return 'btn-primary border border-black hover:border-black focus:border-black active:border-black disabled:border-black'
+      return 'btn-primary border border-black hover:border-black focus:border-black active:border-black disabled:border-black disabled:bg-turtle-primary disabled:bg-opacity-30'
 
     case 'secondary':
       return 'btn-secondary'
