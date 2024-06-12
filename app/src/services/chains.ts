@@ -1,7 +1,10 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Environment } from '@/store/environmentStore'
 
 interface Params {
+  /** The environment the request is targeted to */
+  environment: Environment
   /** Token to filter chains by. If provided, only chains that support this token will be returned */
   token?: Token
   /** Source chain to filter chains by. If provided, only chains that support this source chain will be returned */
@@ -17,9 +20,15 @@ interface Params {
  * @returns A promise that resolves to a list of available blockchains for a transfer.
  * @throws An error if the fetch request fails.
  */
-export const getChains = async ({ token, sourceChain, destChain }: Params): Promise<Chain[]> => {
+export const getChains = async ({
+  environment,
+  token,
+  sourceChain,
+  destChain,
+}: Params): Promise<Chain[]> => {
   // add query params
   const searchParams = new URLSearchParams()
+  searchParams.append('environment', environment.toString())
   if (token) searchParams.append('token', token.id)
   if (sourceChain) searchParams.append('sourceChain', sourceChain.id)
   if (destChain) searchParams.append('destChain', destChain.id)
