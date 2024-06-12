@@ -4,6 +4,7 @@ import './globals.css'
 import { cn } from '@/utils/cn'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
+import { dazzed } from '@/components/fonts/fonts'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,8 +19,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" data-theme="turtleTheme" className="bg-turtle-secondary h-full">
-      <body className={cn(inter.className, 'bg-turtle-secondary h-full')}>
+    <html lang="en" data-theme="turtleTheme" className="h-full bg-turtle-secondary">
+      <body
+        className={cn(dazzed.variable, inter.className, ' font-dazzed h-full bg-turtle-secondary')}
+      >
         <main className="h-full flex-1">
           <Header />
           {children}

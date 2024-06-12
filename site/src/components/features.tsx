@@ -44,10 +44,10 @@ export const Features = () => {
   ] satisfies TurtleFeatures
 
   return (
-    <div className="relative z-30 -mt-28 md:-mt-48 lg:px-10">
+    <div className="relative z-30 -mt-28 md:-mt-40 lg:px-10">
       {/* 1st grid features */}
       <div>
-        <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-10 p-5 md:grid-cols-2 xl:grid-cols-3">
           {mainFeatures.map((feature, index) => (
             <FeatureCard
               key={index}
@@ -59,7 +59,7 @@ export const Features = () => {
         </div>
 
         {/* 2nd grid features */}
-        <div className="grid grid-cols-1 gap-6 px-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-10 p-5 md:grid-cols-2">
           {secondaryFeatures.map((feature, index) => (
             <FeatureCard
               key={index}

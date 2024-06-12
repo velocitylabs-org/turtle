@@ -52,14 +52,20 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         serif: ['Merriweather', 'serif'],
+        dazzed:['var(--font-dazzed)']
       },
       borderRadius: {
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
-      backgroundColor: {
-        'btn-disabled': colors[`${prefix}-primary`],
+      fontSize: {
+        'logo': '2rem',
+        'h-sub': '3.5rem',
+        'hero-xl': '6.625rem',
       },
+      lineHeight: {
+        '12': '3.5rem',
+      }
     },
   },
 

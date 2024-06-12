@@ -19,13 +19,13 @@ export default function Footer() {
             <TurtleIcon size={28} />
           </div>
 
-          <h3 className="space-y-2 text-center text-4xl font-semibold leading-10 sm:text-5xl md:text-[56px]">
+          <h3 className="md:text-h-sub md:leading-12 space-y-2 text-center text-4xl font-medium tracking-tighter sm:text-5xl">
             <p>Built to last.</p>
             <p>Built on Turtle.</p>
           </h3>
 
           <div className="flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-10 md:space-y-0">
-            <div className="space-x-5 underline md:space-x-10">
+            <div className="space-x-5 text-sm underline md:space-x-10">
               <a href="/" aria-label="Turle documentation">
                 Docs
               </a>
@@ -36,7 +36,7 @@ export default function Footer() {
             <div className="flex items-center space-x-10 md:hidden">
               <TurtleSocialIcons />
             </div>
-            <div className="mr-10 hidden space-x-10 capitalize underline md:flex">
+            <div className="mr-10 hidden space-x-10 text-sm capitalize underline md:flex">
               {TurtleSocialData.map((item, idx) => {
                 return (
                   <a
@@ -52,7 +52,7 @@ export default function Footer() {
               })}
             </div>
           </div>
-          <p>
+          <p className="text-xs">
             Made with 💚 by{' '}
             <a href="https://www.velocitylabs.org/" target="_blank" rel="noopener noreferrer">
               Velocity Labs.
