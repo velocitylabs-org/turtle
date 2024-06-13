@@ -11,7 +11,6 @@ import { convertAmount } from '@/utils/transfer'
 import { AnimatePresence } from 'framer-motion'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
-import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Switch from './Switch'
 import TokenSelect from './TokenSelect'
@@ -164,7 +163,9 @@ const Transfer: FC = () => {
         )}
 
         {/* Transfer Button */}
-        <Button label="Transfer" onClick={handleSubmit} disabled={!validate()} />
+        <button className="btn-turtle-primary-lg" onClick={handleSubmit} disabled={!validate()}>
+          Transfer
+        </button>
       </div>
     </div>
   )

@@ -19,7 +19,7 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, cla
       <label className={`label gap-2 ${disabled ? '' : 'cursor-pointer'}`}>
         <input
           type="checkbox"
-          className="toggle toggle-xs"
+          className={`toggle toggle-sm rounded-md border-turtle-level3 [--tglbg:#D9FFDF] checked:bg-turtle-primary`}
           checked={checked}
           onChange={e => onChange(e.target.checked)}
           disabled={disabled}

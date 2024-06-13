@@ -15,6 +15,10 @@ const buttonOutlinedStyle = {
     {},
 }
 
+const buttonGhostStyle = {
+  '@apply btn btn-ghost hover:bg-turtle-level2 disabled:bg-white': {},
+}
+
 const customComponents = plugin(function ({ addComponents }) {
   addComponents({
     // Primary buttons
@@ -62,6 +66,22 @@ const customComponents = plugin(function ({ addComponents }) {
 
     '.btn-turtle-outlined-sm': {
       ...buttonOutlinedStyle,
+      '@apply btn-xs': {},
+    },
+
+    // Ghost buttons
+    '.btn-turtle-ghost-lg': {
+      ...buttonGhostStyle,
+      '@apply btn-md': {},
+    },
+
+    '.btn-turtle-ghost-md': {
+      ...buttonGhostStyle,
+      '@apply btn-sm': {},
+    },
+
+    '.btn-turtle-ghost-sm': {
+      ...buttonGhostStyle,
       '@apply btn-xs': {},
     },
   })
