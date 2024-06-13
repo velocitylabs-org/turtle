@@ -1,12 +1,12 @@
 'use client'
 
-import { colors } from '@/../tailwind.config'
 import { config, projectId } from '@/config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { ReactNode } from 'react'
 import { sepolia } from 'viem/chains'
 import { State, WagmiProvider } from 'wagmi'
+import { colors } from '../../tailwind.config'
 
 // Setup queryClient
 const queryClient = new QueryClient()

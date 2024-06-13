@@ -49,6 +49,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      container: {
+        center: true,
+        padding: '2rem',
+        screens: {
+          '2xl': '1400px',
+        },
+      },
       colors: colors,
       // TODO fonts will be adjusted once design is finalized
       fontFamily: {
@@ -59,21 +66,27 @@ const config: Config = {
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
+      backgroundColor: {
+        'btn-disabled': colors[`${prefix}-primary`],
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
     },
   },
   darkMode: 'class',
-  plugins: [
-    addVariablesForColors,
-    nextui({
-      layout: {
-        radius: {
-          small: '0.5rem',
-          medium: '0.5rem',
-          large: '0.5rem',
-        },
-      },
-    }),
-  ],
+  plugins: [addVariablesForColors, nextui(), require('tailwindcss-animate')],
 }
 export default config
 

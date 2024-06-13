@@ -44,6 +44,8 @@ const Button: FC<ButtonProps> = ({
   return (
     <NextButton
       isDisabled={disabled}
+      disabled={disabled}
+      disableRipple
       onClick={onClick}
       size={size}
       className={twMerge(styles[variant], className)}

@@ -8,10 +8,10 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
-import { Button } from '@nextui-org/button'
 import { AnimatePresence } from 'framer-motion'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
+import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Switch from './Switch'
 import TokenSelect from './TokenSelect'
@@ -79,96 +79,87 @@ const Transfer: FC = () => {
   }
 
   return (
-    <div className="card w-full max-w-md rounded-4xl border-2 border-black bg-white p-8 backdrop-blur-sm">
-      <div className="flex flex-col gap-3">
-        {/* Source Wallet Connection */}
-        <AnimatePresence>
-          <WalletButton network={sourceChain?.network} />
-        </AnimatePresence>
+    <div className="flex w-full max-w-md flex-col gap-4 rounded-4xl border-2 border-black bg-white p-8 backdrop-blur-sm">
+      {/* Source Wallet Connection */}
+      <AnimatePresence>
+        <WalletButton network={sourceChain?.network} />
+      </AnimatePresence>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
-          {/* Source Chain */}
-          <div>
-            <span className="label label-text">Source Chain</span>
-            <ChainSelect
-              value={sourceChain}
-              onChange={setSourceChain}
-              options={sourceChains}
-              title="Select Source Chain"
-              className="w-full"
+      {/* Source Chain */}
+
+      <ChainSelect
+        value={sourceChain}
+        onChange={setSourceChain}
+        options={sourceChains}
+        title="Select Source Chain"
+        className="w-full"
+      />
+
+      {/* Token */}
+
+      <TokenSelect
+        value={token}
+        onChange={setToken}
+        options={testTokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
+        className="w-full"
+      />
+
+      {/* Token Amount */}
+
+      <ValueInput
+        value={inputAmount}
+        onChange={setInputAmount}
+        placeholder="0"
+        disabled={!token}
+        unit={token?.symbol}
+        className="w-full"
+      />
+
+      {/* Destination Chain */}
+
+      <ChainSelect
+        value={destinationChain}
+        onChange={setDestinationChain}
+        options={destChains}
+        title="Select Destination Chain"
+        className="w-full"
+      />
+
+      {/* Recipient Wallet or Address Input */}
+      {destinationChain && (
+        <div className="flex flex-col gap-3">
+          <span className="label label-text">Recipient Address</span>
+
+          {manualRecipientEnabled ? (
+            <AddressInput
+              value={manualRecipient}
+              onChange={setManualRecipient}
+              validateAddress={isValidSubstrateAddress}
             />
-          </div>
+          ) : (
+            <AnimatePresence>
+              <WalletButton network={destinationChain?.network} />
+            </AnimatePresence>
+          )}
 
-          {/* Token */}
-          <div>
-            <span className="label label-text">Token</span>
-            <TokenSelect
-              value={token}
-              onChange={setToken}
-              options={testTokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
-              className="w-full"
-            />
-          </div>
-        </div>
-
-        {/* Token Amount */}
-        <div>
-          <span className="label label-text">Amount</span>
-          <ValueInput
-            value={inputAmount}
-            onChange={setInputAmount}
-            placeholder="0"
-            disabled={!token}
-            unit={token?.symbol}
-            className="w-full"
+          {/* Switch Wallet and Manual Input */}
+          <Switch
+            className="items-start"
+            checked={manualRecipientEnabled}
+            onChange={setManualRecipientEnabled}
+            label="Send to a different address"
           />
         </div>
+      )}
 
-        {/* Destination Chain */}
-        <div>
-          <span className="label label-text">Destination Chain</span>
-          <ChainSelect
-            value={destinationChain}
-            onChange={setDestinationChain}
-            options={destChains}
-            title="Select Destination Chain"
-            className="w-full"
-          />
-        </div>
-
-        {/* Recipient Wallet or Address Input */}
-        {destinationChain && (
-          <div>
-            <span className="label label-text">Recipient Address</span>
-
-            {manualRecipientEnabled ? (
-              <AddressInput
-                value={manualRecipient}
-                onChange={setManualRecipient}
-                validateAddress={isValidSubstrateAddress}
-              />
-            ) : (
-              <AnimatePresence>
-                <WalletButton network={destinationChain?.network} />
-              </AnimatePresence>
-            )}
-
-            {/* Switch Wallet and Manual Input */}
-            <Switch
-              className="items-start"
-              checked={manualRecipientEnabled}
-              onChange={setManualRecipientEnabled}
-              label="Send to a different address"
-            />
-          </div>
-        )}
-
-        {/* Transfer Button */}
-        {/* <button className="btn-turtle-primary-lg" onClick={handleSubmit} disabled={!validate()}>
-          Transfer
-        </button> */}
-        <Button size="sm">Button</Button>
-      </div>
+      {/* Transfer Button */}
+      <Button
+        label="Transfer"
+        size="lg"
+        variant="primary"
+        onClick={handleSubmit}
+        disabled={!validate()}
+      />
     </div>
   )
 }

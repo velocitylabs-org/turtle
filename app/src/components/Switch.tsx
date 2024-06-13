@@ -1,4 +1,5 @@
-import { twMerge } from 'tailwind-merge'
+import { cn } from '@/utils/cn'
+import { Switch as NextSwitch } from '@nextui-org/react'
 
 interface SwitchProps {
   /** The current state of the switch, true for on and false for off. */
@@ -15,18 +16,15 @@ interface SwitchProps {
 
 const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, className }) => {
   return (
-    <div className={twMerge('form-control', className)}>
-      <label className={`label gap-2 ${disabled ? '' : 'cursor-pointer'}`}>
-        <input
-          type="checkbox"
-          className={`toggle toggle-sm rounded-md border-turtle-level3 [--tglbg:#D9FFDF] checked:bg-turtle-primary`}
-          checked={checked}
-          onChange={e => onChange(e.target.checked)}
-          disabled={disabled}
-        />
-        <span className="label-text">{label}</span>
-      </label>
-    </div>
+    <NextSwitch
+      isSelected={checked}
+      isDisabled={disabled}
+      onValueChange={onChange}
+      size="sm"
+      className={cn('', className)}
+    >
+      {label}
+    </NextSwitch>
   )
 }
 
