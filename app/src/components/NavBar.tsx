@@ -1,12 +1,13 @@
 import { NavbarBrand, NavbarContent, NavbarItem, Navbar as NextNavbar } from '@nextui-org/react'
 import { FC } from 'react'
 import Button from './Button'
+import { TurtleIcon } from './TurtleIcon'
 
 const Navbar: FC = async () => {
   return (
     <NextNavbar className="bg-transparent" isBlurred={false}>
       <NavbarBrand className="gap-2">
-        <p>🐢</p> {/* 🐢 Turtle Logo Placeholder */}
+        <TurtleIcon size={30} />
         <p className="text-xl font-semibold">Turtle</p>
       </NavbarBrand>
 
