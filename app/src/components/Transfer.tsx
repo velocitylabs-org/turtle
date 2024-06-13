@@ -8,6 +8,7 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
+import { Button } from '@nextui-org/button'
 import { AnimatePresence } from 'framer-motion'
 import { FC, useState } from 'react'
 import AddressInput from './AddressInput'
@@ -163,9 +164,10 @@ const Transfer: FC = () => {
         )}
 
         {/* Transfer Button */}
-        <button className="btn-turtle-primary-lg" onClick={handleSubmit} disabled={!validate()}>
+        {/* <button className="btn-turtle-primary-lg" onClick={handleSubmit} disabled={!validate()}>
           Transfer
-        </button>
+        </button> */}
+        <Button size="sm">Button</Button>
       </div>
     </div>
   )

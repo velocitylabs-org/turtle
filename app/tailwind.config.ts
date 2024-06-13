@@ -1,5 +1,5 @@
+import { nextui } from '@nextui-org/react'
 import type { Config } from 'tailwindcss'
-import customComponents from './src/constants/customTwComponents'
 const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 
 const prefix = 'turtle'
@@ -45,6 +45,7 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -63,34 +64,20 @@ const config: Config = {
       },
     },
   },
-
-  plugins: [require('daisyui'), addVariablesForColors, customComponents],
-  daisyui: {
-    themes: [
-      {
-        turtleTheme: {
-          primary: colors[`${prefix}-primary`],
-          secondary: colors[`${prefix}-secondary`],
-          accent: colors[`${prefix}-tertiary-dark`],
-
-          neutral: colors[`${prefix}-foreground`],
-          'base-100': colors[`${prefix}-background`],
-
-          info: colors[`${prefix}-tertiary`],
-          success: colors[`${prefix}-success`],
-          warning: colors[`${prefix}-warning`],
-          error: colors[`${prefix}-error`],
+  darkMode: 'class',
+  plugins: [
+    addVariablesForColors,
+    nextui({
+      layout: {
+        disabledOpacity: '0.3',
+        radius: {
+          small: '0.5rem',
+          medium: '0.5rem',
+          large: '0.5rem',
         },
       },
-    ],
-
-    base: true, // applies background color and foreground color for root element by default
-    styled: true, // include daisyUI colors and design decisions for all components
-    utils: true, // adds responsive and modifier utility classes
-    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
-    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
-    themeRoot: ':root', // The element that receives theme color CSS variables
-  },
+    }),
+  ],
 }
 export default config
 
