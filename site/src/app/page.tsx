@@ -17,7 +17,7 @@ export default function Home() {
         {/* waves svg */}
         <WaveLine
           name="heroBackgroundWave"
-          className="absolute inset-x-0 -bottom-9 -z-10 md:-bottom-48"
+          className="absolute inset-x-0 -bottom-9 -z-10 md:-bottom-44"
         />
         {/* animated ellipse svg */}
         <WaveLine
@@ -29,7 +29,7 @@ export default function Home() {
       </section>
 
       {/* Features section */}
-      <section className="bg-info pb-36 pt-20  md:pb-72 lg:pb-96">
+      <section className="bg-info pb-36 pt-20 md:pb-72 lg:pb-96">
         <Features />
       </section>
     </>

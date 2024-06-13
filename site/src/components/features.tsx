@@ -1,11 +1,10 @@
-import Image from 'next/image'
-import tokensBridge from '../../public/tokens.png'
+import { FeatureCard, TurtleFeatures } from './card'
+import { TokenExchange } from './tokens'
 import chains from '../../public/chains.png'
 import turtle from '../../public/turtle.png'
 import locker from '../../public/locker.png'
 import record from '../../public/record.png'
 import chart from '../../public/chart.png'
-import { FeatureCard, TurtleFeatures } from './card'
 
 export const Features = () => {
   const mainFeatures = [
@@ -70,13 +69,10 @@ export const Features = () => {
           ))}
         </div>
       </div>
-      {/* token transfer img */}
-      <Image
-        src={tokensBridge}
-        alt="Velocity Labs, Bridge token form any chain"
-        className="absolute inset-x-0 -top-9 -z-10 mx-auto max-w-60 sm:-top-[70px] sm:max-w-96"
-        priority={true}
-      />
+      {/* token transfer component */}
+      <div className="absolute inset-x-0 -top-9 -z-10 mx-auto sm:-top-[70px] ">
+        <TokenExchange />
+      </div>
     </div>
   )
 }
