@@ -59,9 +59,6 @@ const config: Config = {
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
-      backgroundColor: {
-        'btn-disabled': colors[`${prefix}-primary`],
-      },
     },
   },
   darkMode: 'class',
@@ -69,7 +66,6 @@ const config: Config = {
     addVariablesForColors,
     nextui({
       layout: {
-        disabledOpacity: '0.3',
         radius: {
           small: '0.5rem',
           medium: '0.5rem',
