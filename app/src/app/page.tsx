@@ -1,10 +1,14 @@
 import Transfer from '@/components/Transfer'
+import { Background } from '@/components/WavesBackground'
 import { FC } from 'react'
 
 const App: FC = async () => {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-turtle-tertiary p-5">
-      <Transfer />
+    <div className="relative flex h-screen w-full flex-col items-center justify-center p-5">
+      <Background />
+      <div className="relative z-10">
+        <Transfer />
+      </div>
     </div>
   )
 }
