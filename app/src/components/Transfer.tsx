@@ -31,8 +31,8 @@ const Transfer: FC = () => {
   })
 
   // Hooks
-  const sourceWallet = useWallet(sourceChain)
-  const destinationWallet = useWallet(destinationChain)
+  const sourceWallet = useWallet(sourceChain?.network)
+  const destinationWallet = useWallet(destinationChain?.network)
   const {
     chains: sourceChains,
     loading: loadingSourceChains,

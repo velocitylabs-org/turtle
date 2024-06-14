@@ -1,15 +1,15 @@
-import useSubstrateWallet from './useSubstrateWallet'
 import useEvmWallet from '@/hooks/useEvmWallet'
-import { Chain, Network } from '@/models/chain'
+import { Network } from '@/models/chain'
+import useSubstrateWallet from './useSubstrateWallet'
 import { Sender } from './useTransfer'
 
-const useWallet = (chain: Chain | null): Sender | undefined => {
+const useWallet = (network?: Network): Sender | undefined => {
   const evmWallet = useEvmWallet()
   const { substrateAccount, setSubstrateAccount } = useSubstrateWallet()
 
-  if (!chain) return
+  if (!network) return
 
-  switch (chain.network) {
+  switch (network) {
     case Network.Ethereum:
       return evmWallet
     case Network.Polkadot:
