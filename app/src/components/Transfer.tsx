@@ -166,7 +166,7 @@ const Transfer: FC = () => {
       />
 
       {/* Warning Label */}
-      <div className={`self-center text-xs text-turtle-level5 ${!isValid ? 'opacity-30' : ''}`}>
+      <div className="self-center text-sm text-turtle-level5">
         <span>This can take up to 30 minutes. </span>
         <Link href={'/'}>
           {/* TODO: update Link */}

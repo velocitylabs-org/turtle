@@ -48,6 +48,7 @@ const Button: FC<ButtonProps> = ({
       disableRipple
       onClick={onClick}
       size={size}
+      radius="sm"
       className={twMerge(styles[variant], className)}
     >
       {children || label}
