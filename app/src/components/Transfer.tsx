@@ -9,7 +9,8 @@ import { Token } from '@/models/token'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import { AnimatePresence } from 'framer-motion'
-import { FC, useState } from 'react'
+import Link from 'next/link'
+import { FC, useMemo, useState } from 'react'
 import AddressInput from './AddressInput'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
@@ -47,13 +48,13 @@ const Transfer: FC = () => {
     supportedToken: token ?? undefined,
   })
   const { environment, switchTo } = useEnvironment()
-  const { transfer, isValid } = useTransfer()
+  const { transfer, isValid: _isValid } = useTransfer()
   const recipient = manualRecipientEnabled ? manualRecipient : destinationWallet?.address
   const amount = convertAmount(inputAmount, token)
 
-  // functions
-  const validate = () =>
-    isValid({
+  // Functions
+  const isValid = useMemo(() => {
+    return _isValid({
       sender: sourceWallet,
       token,
       sourceChain,
@@ -61,6 +62,7 @@ const Transfer: FC = () => {
       recipient: recipient,
       amount,
     })
+  }, [sourceWallet, token, sourceChain, destinationChain, recipient, amount, _isValid])
 
   const handleSubmit = () => {
     // basic checks for TS type checker. But usually button should be disabled if these are not met.
@@ -158,8 +160,17 @@ const Transfer: FC = () => {
         size="lg"
         variant="primary"
         onClick={handleSubmit}
-        disabled={!validate()}
+        disabled={!isValid}
       />
+
+      {/* Warning Label */}
+      <div className={`self-center text-xs text-turtle-level5 ${!isValid ? 'opacity-30' : ''}`}>
+        <span>This can take up to 30 minutes. </span>
+        <Link href={'/'}>
+          {/* TODO: update Link */}
+          <span className="underline">Read more</span>
+        </Link>
+      </div>
     </div>
   )
 }
