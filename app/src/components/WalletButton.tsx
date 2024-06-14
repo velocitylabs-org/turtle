@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import React from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 import Button from './Button'
+import SubstrateWalletModal from './SubstrateWalletModal'
 
 interface WalletButtonProps {
   network: Network
@@ -13,6 +14,14 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
   const { open } = useWeb3Modal()
   const { disconnect } = useDisconnect()
   const { isConnected } = useAccount()
+  const [substrateModalOpen, setSubstrateModalOpen] = React.useState(false)
+
+  let buttonfunc
+  if (network === Network.Polkadot) {
+    buttonfunc = () => setSubstrateModalOpen(true)
+  } else if (network === Network.Ethereum) {
+    buttonfunc = isConnected ? () => disconnect() : () => open()
+  }
 
   return (
     <motion.div
@@ -27,7 +36,12 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
         variant={isConnected ? 'outline' : 'primary'}
         size="sm"
         className={`${isConnected ? '' : 'w-[4.875rem]'} text-sm`}
-        onClick={isConnected ? () => disconnect() : () => open()}
+        onClick={buttonfunc}
+      />
+
+      <SubstrateWalletModal
+        open={substrateModalOpen}
+        onClose={() => setSubstrateModalOpen(false)}
       />
     </motion.div>
   )
