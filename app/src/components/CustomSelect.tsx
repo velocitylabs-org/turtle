@@ -1,7 +1,6 @@
 'use client'
 import { SelectOption } from '@/models/selectOption'
 import Image from 'next/image'
-import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
@@ -28,20 +27,13 @@ export const CustomSelect = <T,>({
   disabled,
   className,
 }: CustomSelectProps<T>) => {
-  const [showDialog, setShowDialog] = useState(false)
-
-  const openDialog = () => setShowDialog(true)
-  const closeDialog = () => setShowDialog(false)
-
   const handleSelectionChange = (newValue: string) => {
     const selectedOption = options.find(opt => JSON.stringify(opt.value) === newValue) || null
     onChange(selectedOption)
   }
 
   return (
-    <div className={twMerge(`flex items-center justify-center`, className)}>
-      {/* Select Button */}
-
+    <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
       <Select onValueChange={handleSelectionChange}>
         <SelectTrigger>
           <SelectValue placeholder={title}>
