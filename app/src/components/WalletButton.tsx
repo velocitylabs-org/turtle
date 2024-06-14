@@ -7,14 +7,16 @@ import Button from './Button'
 import SubstrateWalletModal from './SubstrateWalletModal'
 
 interface WalletButtonProps {
+  /** The network to connect to. */
   network: Network
+  /** Additional classes to apply to the button. */
+  className?: string
 }
 
 /**
  * Wallet button component that is intended to support connecting to various different networks.
- * @param network - The network to connect to.
  */
-const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
+const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
   const {
     disconnect: disconnectEvm,
     isConnected: evmIsConnected,
@@ -49,7 +51,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
   return (
     <motion.div
       key={network}
-      className="flex self-end"
+      className={className}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

@@ -9,11 +9,7 @@ const useSubstrateWallet = () => {
   const openModal = () => setModalOpen(true)
   const closeModal = () => setModalOpen(false)
   const isConnected = !!substrateAccount
-
-  // TODO: implement this. clear store.
-  const disconnect = () => {
-    console.log('disconnect')
-  }
+  const disconnect = () => setSubstrateAccount(null)
 
   return {
     substrateAccount,

@@ -96,7 +96,7 @@ const Transfer: FC = () => {
       {/* Source Wallet Connection */}
       {sourceChain?.network && (
         <AnimatePresence>
-          <WalletButton network={sourceChain?.network} />
+          <WalletButton network={sourceChain?.network} className="flex self-end" />
         </AnimatePresence>
       )}
 
@@ -143,8 +143,6 @@ const Transfer: FC = () => {
       {/* Recipient Wallet or Address Input */}
       {destinationChain && (
         <div className="flex flex-col gap-3">
-          <span className="label label-text">Recipient Address</span>
-
           {manualRecipient.enabled ? (
             <AddressInput
               value={manualRecipient.address}
