@@ -1,25 +1,35 @@
 'use client'
-import { testTokens } from '@/__tests__/testdata'
+import { REGISTRY } from '@/config/registry'
 import useChains from '@/hooks/useChains'
 import useTransfer from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { isValidSubstrateAddress } from '@/utils/address'
+import { AnimatePresence } from 'framer-motion'
 import { FC, useState } from 'react'
+import AddressInput from './AddressInput'
 import ChainSelect from './ChainSelect'
-import ConnectEvmWalletButton from './ConnectEvmWalletButton'
-import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
+import Switch from './Switch'
 import TokenSelect from './TokenSelect'
 import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
+import useEnvironment from '@/hooks/useEnvironment'
+import WalletButton from './WalletButton'
+import useWallet from '@/hooks/useWallet'
+import { convertAmount } from '@/utils/transfer'
 
 const Transfer: FC = () => {
   // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
-  const [amount, setAmount] = useState<number | null>(null)
-  const [receiverAddress, setReceiverAddress] = useState<string>('')
+  const [inputAmount, setInputAmount] = useState<number | null>(null)
+  const [manualRecipient, setManualRecipient] = useState<string>('')
+  const [manualRecipientEnabled, setManualRecipientEnabled] = useState<boolean>(false)
 
+  // Hooks
+  const sourceWallet = useWallet(sourceChain)
+  const destinationWallet = useWallet(destinationChain)
   const {
     chains: sourceChains,
     loading: loadingSourceChains,
@@ -36,15 +46,45 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
+  const { environment, switchTo } = useEnvironment()
   const { transfer, isValid } = useTransfer()
+  const recipient = manualRecipientEnabled ? manualRecipient : destinationWallet?.address
+  const amount = convertAmount(inputAmount, token)
+
+  // functions
+  const validate = () =>
+    isValid({
+      sender: sourceWallet,
+      token,
+      sourceChain,
+      destinationChain,
+      recipient: recipient,
+      amount,
+    })
+
+  const handleSubmit = () => {
+    // basic checks for TS type checker. But usually button should be disabled if these are not met.
+    if (!sourceChain || !recipient || !sourceWallet || !destinationChain || !token || !amount)
+      return
+
+    transfer({
+      environment,
+      sender: sourceWallet!,
+      sourceChain,
+      destinationChain,
+      token,
+      amount,
+      recipient: recipient,
+    })
+  }
 
   return (
-    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
+    <div className="card w-full max-w-xl rounded-4xl border-2 border-black bg-white p-5 backdrop-blur-sm">
       <div className="flex flex-col gap-3">
-        {/* Wallet Connect Buttons */}
-        <div className="flex gap-2 self-end">
-          <ConnectEvmWalletButton label="Connect EVM" />
-        </div>
+        {/* Source Wallet Connection */}
+        <AnimatePresence>
+          <WalletButton network={sourceChain?.network} />
+        </AnimatePresence>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
           {/* Source Chain */}
@@ -65,7 +105,7 @@ const Transfer: FC = () => {
             <TokenSelect
               value={token}
               onChange={setToken}
-              options={testTokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
+              options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
               className="w-full"
             />
           </div>
@@ -75,8 +115,8 @@ const Transfer: FC = () => {
         <div>
           <span className="label label-text">Amount</span>
           <ValueInput
-            value={amount}
-            onChange={setAmount}
+            value={inputAmount}
+            onChange={setInputAmount}
             placeholder="0"
             disabled={!token}
             unit={token?.symbol}
@@ -96,36 +136,35 @@ const Transfer: FC = () => {
           />
         </div>
 
-        {/* Receiver Address */}
-        <div>
-          <span className="label label-text">Receiver Address</span>
-          <ConnectSubstrateWalletButton label="Connect Substrate" />
-        </div>
+        {/* Recipient Wallet or Address Input */}
+        {destinationChain && (
+          <div>
+            <span className="label label-text">Recipient Address</span>
+
+            {manualRecipientEnabled ? (
+              <AddressInput
+                value={manualRecipient}
+                onChange={setManualRecipient}
+                validateAddress={isValidSubstrateAddress}
+              />
+            ) : (
+              <AnimatePresence>
+                <WalletButton network={destinationChain?.network} />
+              </AnimatePresence>
+            )}
+
+            {/* Switch Wallet and Manual Input */}
+            <Switch
+              className="items-start"
+              checked={manualRecipientEnabled}
+              onChange={setManualRecipientEnabled}
+              label="Send to a different address"
+            />
+          </div>
+        )}
 
         {/* Transfer Button */}
-        <TransferButton
-          className="max-w-xs self-center"
-          label="Transfer"
-          disabled={
-            !isValid({
-              token,
-              sourceChain,
-              destinationChain,
-              amount,
-              receiverAddress,
-            })
-          }
-          onClick={() => {
-            if (sourceChain && destinationChain && token && amount)
-              transfer({
-                sourceChain,
-                destinationChain,
-                token,
-                amount,
-                receiverAddress,
-              })
-          }}
-        />
+        <TransferButton label="Transfer" onClick={handleSubmit} disabled={!validate()} />
       </div>
     </div>
   )

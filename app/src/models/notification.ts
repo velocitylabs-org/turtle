@@ -1,8 +1,8 @@
 export enum NotificationSeverity {
-  INFO = 'info',
-  ERROR = 'error',
-  WARNING = 'warning',
-  SUCCESS = 'success',
+  Info = 'info',
+  Error = 'error',
+  Warning = 'warning',
+  Success = 'success',
 }
 
 export interface Notification {

@@ -1,34 +1,34 @@
 import { NotificationSeverity } from '@/models/notification'
 import { Transfer } from '@/models/transfer'
-import { getPastTransfers } from '@/services/pastTransfers'
+import { getCompletedTransfers } from '@/services/completedTransfers'
 import * as Sentry from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from './useNotification'
 
-const usePastTransfers = (address?: string) => {
+const useCompletedTransfers = (address?: string) => {
   const { addNotification } = useNotification()
 
-  const [pastTransfers, setPastTransfers] = useState<Transfer[]>([])
+  const [completedTransfers, setCompletedTransfers] = useState<Transfer[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchPastTransfers = useCallback(async () => {
+  const fetchCompletedTransfers = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
 
-      const loadedTransfers: Transfer[] = await getPastTransfers(address)
+      const loadedTransfers: Transfer[] = await getCompletedTransfers(address)
 
-      setPastTransfers(loadedTransfers)
+      setCompletedTransfers(loadedTransfers)
     } catch (err) {
       let errorMessage = 'An unknown error occurred'
       if (err instanceof Error) errorMessage = err.message
 
       setError(errorMessage)
       addNotification({
-        header: 'Error loading past transfers',
+        header: 'Error loading completed transfers',
         message: errorMessage,
-        severity: NotificationSeverity.ERROR,
+        severity: NotificationSeverity.Error,
       })
       Sentry.captureException(err)
     } finally {
@@ -37,14 +37,14 @@ const usePastTransfers = (address?: string) => {
   }, [address, addNotification])
 
   useEffect(() => {
-    fetchPastTransfers()
-  }, [fetchPastTransfers])
+    fetchCompletedTransfers()
+  }, [fetchCompletedTransfers])
 
   return {
-    pastTransfers,
+    completedTransfers,
     loading,
     error,
   }
 }
 
-export default usePastTransfers
+export default useCompletedTransfers

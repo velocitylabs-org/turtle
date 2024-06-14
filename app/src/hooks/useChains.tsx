@@ -5,6 +5,7 @@ import { getChains } from '@/services/chains'
 import * as Sentry from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from './useNotification'
+import useEnvironment from './useEnvironment'
 
 interface Params {
   supportedToken?: Token
@@ -15,6 +16,7 @@ interface Params {
 const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }: Params = {}) => {
   const { addNotification } = useNotification()
 
+  const { environment, switchTo } = useEnvironment()
   const [chains, setChains] = useState<Chain[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -25,6 +27,7 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
       setError(null)
 
       const loadedChains: Chain[] = await getChains({
+        environment,
         token: supportedToken,
         sourceChain: supportedSourceChain,
         destChain: supportedDestChain,
@@ -39,13 +42,13 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
       addNotification({
         header: 'Error loading chains',
         message: errorMessage,
-        severity: NotificationSeverity.ERROR,
+        severity: NotificationSeverity.Error,
       })
       Sentry.captureException(err)
     } finally {
       setLoading(false)
     }
-  }, [supportedToken, supportedSourceChain, supportedDestChain, addNotification])
+  }, [supportedToken, supportedSourceChain, supportedDestChain, addNotification, environment])
 
   useEffect(() => {
     fetchChains()
