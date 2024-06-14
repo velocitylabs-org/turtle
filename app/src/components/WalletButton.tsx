@@ -42,7 +42,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
           isConnected: evmIsConnected,
         }
       default:
-        return { buttonFunction: () => {}, isConnected: false }
+        throw new Error(`Unsupported network used: ${network}`)
     }
   })()
 
