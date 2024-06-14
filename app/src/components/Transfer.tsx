@@ -25,8 +25,10 @@ const Transfer: FC = () => {
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
   const [inputAmount, setInputAmount] = useState<number | null>(null)
-  const [manualRecipient, setManualRecipient] = useState<string>('')
-  const [manualRecipientEnabled, setManualRecipientEnabled] = useState<boolean>(false)
+  const [manualRecipient, setManualRecipient] = useState<{ enabled: boolean; address: string }>({
+    enabled: false,
+    address: '',
+  })
 
   // Hooks
   const sourceWallet = useWallet(sourceChain)
@@ -49,7 +51,7 @@ const Transfer: FC = () => {
   })
   const { environment, switchTo } = useEnvironment()
   const { transfer, isValid: _isValid } = useTransfer()
-  const recipient = manualRecipientEnabled ? manualRecipient : destinationWallet?.address
+  const recipient = manualRecipient.enabled ? manualRecipient.address : destinationWallet?.address
   const amount = convertAmount(inputAmount, token)
 
   // Functions
@@ -132,10 +134,10 @@ const Transfer: FC = () => {
         <div className="flex flex-col gap-3">
           <span className="label label-text">Recipient Address</span>
 
-          {manualRecipientEnabled ? (
+          {manualRecipient.enabled ? (
             <AddressInput
-              value={manualRecipient}
-              onChange={setManualRecipient}
+              value={manualRecipient.address}
+              onChange={address => setManualRecipient(prev => ({ ...prev, address }))}
               validateAddress={isValidSubstrateAddress}
             />
           ) : (
@@ -147,8 +149,8 @@ const Transfer: FC = () => {
           {/* Switch Wallet and Manual Input */}
           <Switch
             className="items-start"
-            checked={manualRecipientEnabled}
-            onChange={setManualRecipientEnabled}
+            checked={manualRecipient.enabled}
+            onChange={enabled => setManualRecipient(prev => ({ ...prev, enabled }))}
             label="Send to a different address"
           />
         </div>
