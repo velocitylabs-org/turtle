@@ -2,7 +2,7 @@ import { ComponentPropsWithoutRef } from 'react'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
-export type TurtleIconProps = { 
+export type TurtleIconProps = {
   size?: number
 } & SvgProps
 

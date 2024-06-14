@@ -19,7 +19,7 @@ export default function Footer() {
             <TurtleIcon size={28} />
           </div>
 
-          <h3 className="md:text-h-sub md:leading-12 space-y-2 text-center text-4xl font-medium tracking-tighter sm:text-5xl">
+          <h3 className="space-y-2 text-center text-4xl font-medium tracking-tighter sm:text-5xl md:text-h-sub md:leading-12">
             <p>Built to last.</p>
             <p>Built on Turtle.</p>
           </h3>

@@ -35,12 +35,14 @@ export const FeatureCard = ({
         height={126}
         width={126}
       />
-      <h3 className="text-2xl font-medium tracking-tighter sm:text-4xl xl:text-h-sub xl:leading-12">{feature.title}</h3>
+      <h3 className="text-2xl font-medium tracking-tighter sm:text-4xl xl:text-h-sub xl:leading-12">
+        {feature.title}
+      </h3>
       <p className="text-sm font-medium sm:w-5/6">{feature.description}</p>
       {feature.tags && (
         <div className="flex space-x-1 sm:space-x-2">
           {feature.tags.map((f, idx) => (
-            <div key={idx} className="text-sm font-medium rounded-lg border border-black p-2">
+            <div key={idx} className="rounded-lg border border-black p-2 text-sm font-medium">
               {f.name}
             </div>
           ))}

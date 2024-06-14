@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="turtleTheme" className="h-full bg-turtle-secondary">
       <body
-        className={cn(dazzed.variable, inter.className, ' font-dazzed h-full bg-turtle-secondary')}
+        className={cn(dazzed.variable, inter.className, ' h-full bg-turtle-secondary font-dazzed')}
       >
         <main className="h-full flex-1">
           <Header />

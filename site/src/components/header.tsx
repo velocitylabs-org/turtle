@@ -72,7 +72,7 @@ export default function Header() {
               </button>
             </li>
             <li>
-              <button className="btn btn-primary text-sm font-medium rounded-lg">
+              <button className="btn btn-primary rounded-lg text-sm font-medium">
                 <a href="/">Start a transfer</a>
               </button>
             </li>
