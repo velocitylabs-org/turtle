@@ -85,9 +85,11 @@ const Transfer: FC = () => {
   return (
     <div className="flex w-full flex-col gap-4 rounded-4xl border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
       {/* Source Wallet Connection */}
-      <AnimatePresence>
-        <WalletButton network={sourceChain?.network} />
-      </AnimatePresence>
+      {sourceChain?.network && (
+        <AnimatePresence>
+          <WalletButton network={sourceChain?.network} />
+        </AnimatePresence>
+      )}
 
       {/* Source Chain */}
 
@@ -141,9 +143,11 @@ const Transfer: FC = () => {
               validateAddress={isValidSubstrateAddress}
             />
           ) : (
-            <AnimatePresence>
-              <WalletButton network={destinationChain?.network} />
-            </AnimatePresence>
+            destinationChain?.network && (
+              <AnimatePresence>
+                <WalletButton network={destinationChain.network} />
+              </AnimatePresence>
+            )
           )}
 
           {/* Switch Wallet and Manual Input */}

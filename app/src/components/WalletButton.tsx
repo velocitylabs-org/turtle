@@ -1,15 +1,18 @@
+import { Network } from '@/models/chain'
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { motion } from 'framer-motion'
 import React from 'react'
-import EvmWalletButton from './EvmWalletButton'
-import SubstrateWalletButton from './SubstrateWalletButton'
-import { Network } from '@/models/chain'
+import { useAccount, useDisconnect } from 'wagmi'
+import Button from './Button'
 
 interface WalletButtonProps {
-  network?: Network
+  network: Network
 }
 
 const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
-  if (!network) return null
+  const { open } = useWeb3Modal()
+  const { disconnect } = useDisconnect()
+  const { isConnected } = useAccount()
 
   return (
     <motion.div
@@ -19,8 +22,13 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {network === Network.Ethereum && <EvmWalletButton label="Connect EVM" />}
-      {network === Network.Polkadot && <SubstrateWalletButton label="Connect Substrate" />}
+      <Button
+        label={isConnected ? 'Disconnect' : 'Connect'}
+        variant={isConnected ? 'outline' : 'primary'}
+        size="sm"
+        className={`${isConnected ? '' : 'w-[4.875rem]'} text-sm`}
+        onClick={isConnected ? () => disconnect() : () => open()}
+      />
     </motion.div>
   )
 }

@@ -15,6 +15,12 @@ const styles = {
   ghost: 'bg-transparent disabled:opacity-30',
 }
 
+const sizeHeights: Record<ButtonSize, string> = {
+  sm: 'h-[1.625rem]',
+  md: 'h-[2.5rem]',
+  lg: 'h-[3.5rem]',
+}
+
 interface ButtonProps {
   /** Text shown inside the button. */
   label?: string
@@ -44,12 +50,11 @@ const Button: FC<ButtonProps> = ({
   return (
     <NextButton
       isDisabled={disabled}
-      disabled={disabled}
       disableRipple
       onClick={onClick}
       size={size}
       radius="sm"
-      className={twMerge(styles[variant], className)}
+      className={twMerge(styles[variant], sizeHeights[size], className)}
     >
       {children || label}
     </NextButton>
