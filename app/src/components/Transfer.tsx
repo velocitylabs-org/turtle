@@ -51,13 +51,15 @@ const Transfer: FC = () => {
   })
   const { environment, switchTo } = useEnvironment()
   const { transfer, isValid: _isValid } = useTransfer()
-  const recipient = manualRecipient.enabled ? manualRecipient.address : destinationWallet?.address
+  const recipient = manualRecipient.enabled
+    ? manualRecipient.address
+    : destinationWallet?.sender?.address
   const amount = convertAmount(inputAmount, token)
 
   // Functions
   const isValid = useMemo(() => {
     return _isValid({
-      sender: sourceWallet,
+      sender: sourceWallet?.sender,
       token,
       sourceChain,
       destinationChain,
@@ -68,12 +70,19 @@ const Transfer: FC = () => {
 
   const handleSubmit = () => {
     // basic checks for TS type checker. But usually button should be disabled if these are not met.
-    if (!sourceChain || !recipient || !sourceWallet || !destinationChain || !token || !amount)
+    if (
+      !sourceChain ||
+      !recipient ||
+      !sourceWallet?.sender ||
+      !destinationChain ||
+      !token ||
+      !amount
+    )
       return
 
     transfer({
       environment,
-      sender: sourceWallet!,
+      sender: sourceWallet.sender,
       sourceChain,
       destinationChain,
       token,
