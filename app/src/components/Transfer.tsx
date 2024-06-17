@@ -106,7 +106,7 @@ const Transfer: FC = () => {
         value={sourceChain}
         onChange={setSourceChain}
         options={sourceChains}
-        title="Select Source Chain"
+        title="From"
         className="w-full"
       />
 
@@ -136,7 +136,7 @@ const Transfer: FC = () => {
         value={destinationChain}
         onChange={setDestinationChain}
         options={destChains}
-        title="Select Destination Chain"
+        title="To"
         className="w-full"
       />
 

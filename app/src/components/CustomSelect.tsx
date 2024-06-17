@@ -35,7 +35,7 @@ export const CustomSelect = <T,>({
   return (
     <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
       <Select onValueChange={handleSelectionChange}>
-        <SelectTrigger>
+        <SelectTrigger floatingLabel={title}>
           <SelectValue placeholder={title}>
             {value ? (
               <div className="flex items-center gap-2">

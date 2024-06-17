@@ -22,7 +22,7 @@ const TokenSelect: FC<TokenSelectProps> = ({
   value,
   onChange,
   options,
-  title = 'Select Token',
+  title = 'Amount',
   disabled = false,
   className = '',
 }) => {
