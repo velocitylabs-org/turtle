@@ -1,19 +1,51 @@
-import useSubstrateWallet from './useSubstrateWallet'
 import useEvmWallet from '@/hooks/useEvmWallet'
-import { Chain, Network } from '@/models/chain'
+import { Network } from '@/models/chain'
+import useSubstrateWallet from './useSubstrateWallet'
 import { Sender } from './useTransfer'
 
-const useWallet = (chain: Chain | null): Sender | undefined => {
-  const evmWallet = useEvmWallet()
-  const { substrateAccount, setSubstrateAccount } = useSubstrateWallet()
+export interface WalletInfo {
+  sender?: Sender
+  disconnect: () => void
+  isConnected: boolean
+  openModal: () => void
+  closeModal: () => void
+}
 
-  if (!chain) return
+const useWallet = (network?: Network): WalletInfo | undefined => {
+  const {
+    signer,
+    disconnect: evmDisconnect,
+    isConnected: evmIsConnected,
+    openModal: openEvmModal,
+    closeModal: closeEvmModal,
+  } = useEvmWallet()
+  const {
+    substrateAccount,
+    disconnect: substrateDisconnect,
+    isConnected: substrateIsConnected,
+    openModal: openSubstrateModal,
+    closeModal: closeSubstrateModal,
+  } = useSubstrateWallet()
 
-  switch (chain.network) {
+  if (!network) return
+
+  switch (network) {
     case Network.Ethereum:
-      return evmWallet
+      return {
+        sender: signer,
+        disconnect: evmDisconnect,
+        isConnected: evmIsConnected,
+        openModal: openEvmModal,
+        closeModal: closeEvmModal,
+      }
     case Network.Polkadot:
-      return substrateAccount ?? undefined
+      return {
+        sender: substrateAccount ?? undefined,
+        disconnect: substrateDisconnect,
+        isConnected: !!substrateAccount,
+        openModal: openEvmModal,
+        closeModal: closeEvmModal,
+      }
   }
 }
 

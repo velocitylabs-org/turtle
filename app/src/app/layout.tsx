@@ -2,6 +2,7 @@ import Navbar from '@/components/NavBar'
 import NotificationSystem from '@/components/NotificationSystem'
 import { config } from '@/config'
 import Web3ModalProvider from '@/context'
+import { NextUIProvider } from '@nextui-org/react'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -13,7 +14,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: '🐢 Turtle',
+  title: 'Turtle',
   description: 'Token transfers done right',
 }
 
@@ -35,10 +36,12 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={twMerge(inter.className, 'bg-turtle-tertiary')}>
+      <body className={twMerge(inter.className, 'bg-turtle-secondary')}>
         <Navbar />
         <NotificationSystem />
-        <Web3ModalProvider initialState={initialState}>{children}</Web3ModalProvider>
+        <Web3ModalProvider initialState={initialState}>
+          <NextUIProvider>{children}</NextUIProvider>
+        </Web3ModalProvider>
         <Analytics />
       </body>
     </html>

@@ -1,10 +1,10 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Direction, resolveDirection, toPolkadot, toEthereum } from '@/services/transfer'
-import { JsonRpcSigner, Signer } from 'ethers'
+import { Direction, resolveDirection, toEthereum, toPolkadot } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { WalletSigner } from '@snowbridge/api/dist/toEthereum'
+import { JsonRpcSigner, Signer } from 'ethers'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -63,7 +63,7 @@ const useTransfer = () => {
     recipient,
     amount,
   }: TransferValidationParams) => {
-    return sender && sourceChain && token && destinationChain && recipient && amount
+    return !!(sender && sourceChain && token && destinationChain && recipient && amount)
   }
 
   return { transfer, isValid }

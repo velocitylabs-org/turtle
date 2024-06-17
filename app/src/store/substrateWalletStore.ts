@@ -16,6 +16,7 @@ interface State {
   setAccount: (x: Account | null) => void
 }
 
+// TODO: Add persistence of the account in local storage. It's easy with Zustand.
 export const useSubstrateWalletStore = create<State>(set => ({
   // State
   account: null,

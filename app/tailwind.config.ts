@@ -1,3 +1,4 @@
+import { nextui } from '@nextui-org/react'
 import type { Config } from 'tailwindcss'
 const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 
@@ -44,9 +45,17 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
+      container: {
+        center: true,
+        padding: '2rem',
+        screens: {
+          '2xl': '1400px',
+        },
+      },
       colors: colors,
       // TODO fonts will be adjusted once design is finalized
       fontFamily: {
@@ -60,36 +69,24 @@ const config: Config = {
       backgroundColor: {
         'btn-disabled': colors[`${prefix}-primary`],
       },
-    },
-  },
-
-  plugins: [require('daisyui'), addVariablesForColors],
-  daisyui: {
-    themes: [
-      {
-        turtleTheme: {
-          primary: colors[`${prefix}-primary`],
-          secondary: colors[`${prefix}-secondary`],
-          accent: colors[`${prefix}-tertiary-dark`],
-
-          neutral: colors[`${prefix}-foreground`],
-          'base-100': colors[`${prefix}-background`],
-
-          info: colors[`${prefix}-tertiary`],
-          success: colors[`${prefix}-success`],
-          warning: colors[`${prefix}-warning`],
-          error: colors[`${prefix}-error`],
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
       },
-    ],
-
-    base: true, // applies background color and foreground color for root element by default
-    styled: true, // include daisyUI colors and design decisions for all components
-    utils: true, // adds responsive and modifier utility classes
-    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
-    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
-    themeRoot: ':root', // The element that receives theme color CSS variables
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+    },
   },
+  darkMode: 'class',
+  plugins: [addVariablesForColors, nextui(), require('tailwindcss-animate')],
 }
 export default config
 

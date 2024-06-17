@@ -6,12 +6,14 @@ import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
 import { FC } from 'react'
 
-interface SubstrateWalletButtonProps {
-  /** Text shown inside the button. */
-  label?: string
+interface SubstrateWalletModalProps {
+  /** Whether the modal is open. */
+  open?: boolean
+  /** Callback when the modal is closed. */
+  onClose?: () => void
 }
 
-const SubstrateWalletButton: FC<SubstrateWalletButtonProps> = ({ label = 'Connect Wallet' }) => {
+const SubstrateWalletModal: FC<SubstrateWalletModalProps> = ({ open, onClose = () => {} }) => {
   const { substrateAccount, setSubstrateAccount } = useSubstrateWallet()
 
   // removes the active account if it is disconnected from the app
@@ -22,33 +24,14 @@ const SubstrateWalletButton: FC<SubstrateWalletButtonProps> = ({ label = 'Connec
     setSubstrateAccount(null)
   }
 
-  // Prevents click event propagation
-  const handleIdenticonClick = (event: React.MouseEvent) => {
-    event.stopPropagation()
-  }
-
-  const buttonContent = substrateAccount?.address ? (
-    <div className="flex items-center gap-2">
-      <div onClick={handleIdenticonClick}>
-        <Identicon value={substrateAccount.address} size={20} theme="polkadot" />
-      </div>
-      <p>{truncateAddress(substrateAccount.address)}</p>
-    </div>
-  ) : (
-    label
-  )
-
   return (
     <WalletSelect
       onlyShowInstalled
       dappName="turtle"
       showAccountsList={true}
-      triggerComponent={
-        <button className="btn btn-sm max-w-40 rounded-2xl">{buttonContent}</button>
-      }
-      onAccountSelected={account => {
-        setSubstrateAccount(account)
-      }}
+      open={open}
+      onWalletConnectClose={() => onClose()}
+      onAccountSelected={account => setSubstrateAccount(account)}
       onUpdatedAccounts={handleUpdatedAccounts}
       onError={error => {
         if (error) console.error(error)
@@ -57,4 +40,4 @@ const SubstrateWalletButton: FC<SubstrateWalletButtonProps> = ({ label = 'Connec
   )
 }
 
-export default SubstrateWalletButton
+export default SubstrateWalletModal
