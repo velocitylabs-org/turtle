@@ -4,7 +4,7 @@ import { TurtleIcon } from './assets/turtle-icon'
 
 export default function Header() {
   return (
-    <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between sm:inset-x-10 sm:top-8">
+    <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={28} />
         <p className="text-logo font-medium">Turtle</p>
@@ -12,7 +12,7 @@ export default function Header() {
 
       <nav>
         {/* mobile menu */}
-        <div className="drawer md:hidden">
+        <div className="drawer sm:hidden">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
             <label htmlFor="my-drawer" className="btn btn-circle btn-ghost drawer-button">
@@ -64,14 +64,14 @@ export default function Header() {
         </div>
 
         {/* desktop menu */}
-        <ul className="hidden items-center space-x-6 md:flex">
+        <ul className="hidden items-center space-x-6 sm:flex">
           <li>
             <button className="btn btn-ghost text-sm font-medium">
               <a href="/">Read the Docs</a>
             </button>
           </li>
           <li>
-            <button className="btn btn-primary rounded-lg border-black text-sm font-medium hover:border-black p-4 leading-none">
+            <button className="btn btn-primary rounded-lg border-black p-4 text-sm font-medium leading-none hover:border-black">
               <a href="/">Start a transfer</a>
             </button>
           </li>
