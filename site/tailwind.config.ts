@@ -48,10 +48,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: colors,
-      // TODO fonts will be adjusted once design is finalized
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-        serif: ['Merriweather', 'serif'],
         dazzed: ['var(--font-dazzed)'],
       },
       borderRadius: {
@@ -66,6 +64,10 @@ const config: Config = {
       lineHeight: {
         '12': '3.5rem',
       },
+      letterSpacing:{
+        xs:'0.04em',
+        sm:'0.03em'
+      }
     },
   },
 

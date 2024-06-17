@@ -9,7 +9,7 @@ import { dazzed } from '@/components/fonts/fonts'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: '🐢 Turtle',
+  title: 'Turtle',
   description: 'The ultimate token transfer platform for Polkadot',
 }
 

@@ -35,7 +35,7 @@ export const FeatureCard = ({
         height={126}
         width={126}
       />
-      <h3 className="text-2xl font-medium tracking-tighter sm:text-4xl xl:text-h-sub xl:leading-12">
+      <h3 className="text-2xl font-medium sm:text-4xl xl:text-h-sub xl:leading-12 max-w-xl">
         {feature.title}
       </h3>
       <p className="text-sm font-medium sm:w-5/6">{feature.description}</p>

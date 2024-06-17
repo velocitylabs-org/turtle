@@ -6,13 +6,12 @@ import { WaveLine } from './assets/waves-lines'
 export default function Footer() {
   return (
     <footer className="relative z-30">
-      {/* wave svg */}
       <WaveLine
         name="footerWave"
+        withStroke={true}
         className="absolute inset-0 -top-24 -z-10 sm:-top-28 md:-top-36 lg:-top-64"
       />
 
-      {/* footer content */}
       <div className="absolute inset-0 lg:-top-24">
         <div className="flex flex-col items-center justify-center space-y-8 pb-20 2xl:pb-0">
           <div>
@@ -53,7 +52,7 @@ export default function Footer() {
             </div>
           </div>
           <p className="text-xs">
-            Made with 💚 by{' '}
+            Made with love 💚 by{' '}
             <a href="https://www.velocitylabs.org/" target="_blank" rel="noopener noreferrer">
               Velocity Labs.
             </a>

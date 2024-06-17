@@ -7,7 +7,7 @@ export default function Home() {
       <section className="relative z-20 flex h-[40vh] flex-col items-center justify-center sm:h-[60vh] md:mb-20 md:h-[80vh] lg:mb-10">
         <h1
           className={
-            'z-30 p-4 text-center text-3xl font-medium sm:text-5xl md:w-5/6 lg:text-6xl xl:text-hero-xl 2xl:w-full'
+            'z-30 max-w-[400px] p-4 text-center text-3xl font-medium sm:max-w-[550px] sm:text-5xl md:max-w-[600px] lg:max-w-[700px] lg:text-6xl xl:max-w-[1050px] xl:text-hero-xl'
           }
         >
           Easily move tokens across blockchains.
@@ -17,13 +17,14 @@ export default function Home() {
         {/* waves svg */}
         <WaveLine
           name="heroBackgroundWave"
-          className="absolute inset-x-0 -bottom-9 -z-10 md:-bottom-44"
+          withStroke={true}
+          className="absolute inset-x-0 -bottom-9 -z-10 md:-bottom-44 2xl:-bottom-64"
         />
         {/* animated ellipse svg */}
         <WaveLine
           name="animationEllipse"
           dur={3}
-          className="absolute inset-y-[calc(25%)] md:inset-y-[calc(15%)] lg:inset-y-[calc(10%)] xl:inset-y-0"
+          className="absolute inset-y-[calc(25%)] left-0 xl:-inset-y-2"
           repeatCount={'indefinite'}
         />
       </section>

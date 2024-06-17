@@ -3,11 +3,24 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --letter-spacing-xs: -0.04em;
+    --letter-spacing-sm: 3%;
+  }
   * {
     -ms-overflow-style: none;
   }
   ::-webkit-scrollbar {
     display: none;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: var(--letter-spacing-xs);
+  }
+  p{
+    letter-spacing: var(--letter-spacing-sm);
   }
 }
 
