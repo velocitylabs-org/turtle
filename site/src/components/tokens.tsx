@@ -1,6 +1,6 @@
 'use client'
 import { cn } from '@/utils/cn'
-import { BaseIcon } from './assets/base-icons'
+import { ArrowRight } from './assets/arrow-right'
 import { TokenIcon, TokenIconName } from './assets/tokens-icons'
 
 type BridgeTx = {
@@ -52,7 +52,7 @@ export const TokenExchange = () => {
               />
               <p className="font-sans text-lg font-extrabold uppercase sm:text-2xl">{fromToken}</p>
             </div>
-            <BaseIcon name="arrowRight" className="h-3" />
+            <ArrowRight className="h-3" />
             <div className="flex items-center space-x-2">
               <TokenIcon
                 name={toToken}
