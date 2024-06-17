@@ -34,8 +34,9 @@ export const FeatureCard = ({
         alt="Velocity Labs, Bridge token form any chain"
         height={126}
         width={126}
+        className="rounded-[26px] bg-secondary"
       />
-      <h3 className="text-2xl font-medium sm:text-4xl xl:text-h-sub xl:leading-12 max-w-xl">
+      <h3 className="max-w-xl text-2xl font-medium sm:text-4xl xl:text-h-sub xl:leading-12">
         {feature.title}
       </h3>
       <p className="text-sm font-medium sm:w-5/6">{feature.description}</p>

@@ -7,7 +7,7 @@ export default function Home() {
       <section className="relative z-20 flex h-[40vh] flex-col items-center justify-center sm:h-[60vh] md:mb-20 md:h-[80vh] lg:mb-10">
         <h1
           className={
-            'z-30 max-w-[400px] p-4 text-center text-3xl font-medium sm:max-w-[550px] sm:text-5xl md:max-w-[600px] lg:max-w-[700px] lg:text-6xl xl:max-w-[1050px] xl:text-hero-xl'
+            'z-30 max-w-[350px] p-4 text-center text-3xl font-medium sm:max-w-[550px] sm:text-5xl lg:max-w-[700px] lg:text-6xl xl:max-w-[1050px] xl:text-hero-xl'
           }
         >
           Easily move tokens across blockchains.

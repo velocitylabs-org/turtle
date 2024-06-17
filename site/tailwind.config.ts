@@ -64,9 +64,12 @@ const config: Config = {
       lineHeight: {
         '12': '3.5rem',
       },
-      letterSpacing:{
-        xs:'0.04em',
-        sm:'0.03em'
+      letterSpacing: {
+        xs: '0.04em',
+        sm: '0.03em'
+      },
+      screens: {
+        '3xl': '2100px'
       }
     },
   },
