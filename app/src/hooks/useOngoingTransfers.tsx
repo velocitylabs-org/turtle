@@ -1,9 +1,9 @@
 import { NotificationSeverity } from '@/models/notification'
 import { Transfer } from '@/models/transfer'
+import { getOngoingTransfers } from '@/services/ongoingTransfers'
 import * as Sentry from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from './useNotification'
-import { getOngoingTransfers } from '@/services/ongoingTransfers'
 
 const useOngoingTransfers = (address?: string) => {
   const { addNotification } = useNotification()
@@ -28,7 +28,7 @@ const useOngoingTransfers = (address?: string) => {
       addNotification({
         header: 'Error loading ongoing transfers',
         message: errorMessage,
-        severity: NotificationSeverity.ERROR,
+        severity: NotificationSeverity.Error,
       })
       Sentry.captureException(err)
     } finally {

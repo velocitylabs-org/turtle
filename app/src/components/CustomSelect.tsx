@@ -1,9 +1,8 @@
 'use client'
 import { SelectOption } from '@/models/selectOption'
 import Image from 'next/image'
-import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
-import CustomSelectDialog from './CustomSelectDialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 interface CustomSelectProps<T> {
   /** Currently selected value, or null if no value is selected. */
@@ -28,15 +27,56 @@ export const CustomSelect = <T,>({
   disabled,
   className,
 }: CustomSelectProps<T>) => {
-  const [showDialog, setShowDialog] = useState(false)
-
-  const openDialog = () => setShowDialog(true)
-  const closeDialog = () => setShowDialog(false)
+  const handleSelectionChange = (newValue: string) => {
+    const selectedOption = options.find(opt => JSON.stringify(opt.value) === newValue) || null
+    onChange(selectedOption)
+  }
 
   return (
-    <div className={twMerge(`flex items-center justify-center`, className)}>
-      {/* Select Button */}
-      <button className="btn w-full" onClick={openDialog} disabled={disabled}>
+    <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
+      <Select onValueChange={handleSelectionChange}>
+        <SelectTrigger>
+          <SelectValue placeholder={title}>
+            {value ? (
+              <div className="flex items-center gap-2">
+                <Image
+                  src={value.logoURI}
+                  alt={value.label}
+                  width={30}
+                  height={30}
+                  className="rounded-full"
+                />
+                {value.label}
+              </div>
+            ) : (
+              <p>{title}</p>
+            )}
+          </SelectValue>
+        </SelectTrigger>
+
+        <SelectContent className="bg-white">
+          <div className="flex flex-col gap-2">
+            {options.map((option, index) => (
+              <SelectItem
+                key={index + option.label + option.logoURI}
+                value={JSON.stringify(option.value)}
+              >
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={option.logoURI}
+                    alt={option.label}
+                    width={30}
+                    height={30}
+                    className="rounded-full"
+                  />
+                  {option.label}
+                </div>
+              </SelectItem>
+            ))}
+          </div>
+        </SelectContent>
+      </Select>
+      {/* <button className="w-full" onClick={openDialog} disabled={disabled}>
         {value ? (
           <div className="flex items-center gap-2">
             <Image
@@ -51,17 +91,16 @@ export const CustomSelect = <T,>({
         ) : (
           <p>{title}</p>
         )}
-      </button>
-
+      </button> */}
       {/* Select Dialog */}
-      {showDialog && (
+      {/* {showDialog && (
         <CustomSelectDialog
           title={title}
           options={options}
           onChange={onChange}
           onClose={closeDialog}
         />
-      )}
+      )} */}
     </div>
   )
 }

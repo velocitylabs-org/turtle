@@ -1,33 +1,43 @@
+import { nextui } from '@nextui-org/react'
 import type { Config } from 'tailwindcss'
 const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 
-// TODO colors will be adjusted once design is finalized
+const prefix = 'turtle'
+
 export const colors = {
-  primary: '#88ef28',
-  'primary-content': '#0c1602',
-  'primary-dark': '#6fd410',
-  'primary-light': '#a2f357',
+  [`${prefix}-primary`]: '#00FF29',
+  [`${prefix}-primary-dark`]: '#008115',
+  [`${prefix}-primary-light`]: '#D9FFDF',
 
-  secondary: '#8f28ef',
-  'secondary-content': '#ffffff',
-  'secondary-dark': '#7510d4',
-  'secondary-light': '#a857f3',
+  [`${prefix}-secondary`]: '#A184DC',
+  [`${prefix}-secondary-dark`]: '#513589',
+  [`${prefix}-secondary-light`]: '#F1EDFA',
 
-  background: '#191b18',
-  foreground: '#262923',
-  border: '#40453b',
+  [`${prefix}-tertiary`]: '#BFDADC',
+  [`${prefix}-tertiary-dark`]: '#196065',
+  [`${prefix}-tertiary-light`]: '#E1FDFF',
 
-  copy: '#fbfbfb',
-  'copy-light': '#d9dcd6',
-  'copy-lighter': '#a6ac9f',
+  [`${prefix}-background`]: '#FFFFFF',
+  [`${prefix}-foreground`]: '#001B04',
 
-  success: '#28ef28',
-  warning: '#efef28',
-  error: '#ef2828',
+  [`${prefix}-level1`]: '#F6F8FA',
+  [`${prefix}-level2`]: '#EBEFF3',
+  [`${prefix}-level3`]: '#C5D1DB',
+  [`${prefix}-level4`]: '#A9B8C8',
+  [`${prefix}-level5`]: '#90A1AE',
+  [`${prefix}-level6`]: '#546573',
 
-  'success-content': '#021602',
-  'warning-content': '#161602',
-  'error-content': '#ffffff',
+  [`${prefix}-success`]: '#00FF29',
+  [`${prefix}-success-dark`]: '#008115',
+  [`${prefix}-success-light`]: '#D9FFDF',
+
+  [`${prefix}-warning`]: '#FFFF00',
+  [`${prefix}-warning-dark`]: '#7A7C00',
+  [`${prefix}-warning-light`]: '#FFFFD9',
+
+  [`${prefix}-error`]: '#ef2828',
+  [`${prefix}-error-dark`]: '#8D1269',
+  [`${prefix}-error-light`]: '#FFE1F6',
 }
 
 const config: Config = {
@@ -35,41 +45,48 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
+      container: {
+        center: true,
+        padding: '2rem',
+        screens: {
+          '2xl': '1400px',
+        },
+      },
       colors: colors,
       // TODO fonts will be adjusted once design is finalized
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         serif: ['Merriweather', 'serif'],
       },
-    },
-  },
-
-  plugins: [require('daisyui'), addVariablesForColors],
-  daisyui: {
-    themes: [
-      {
-        turtle: {
-          ...require('daisyui/src/theming/themes')['dark'],
-          primary: colors.primary,
-          secondary: colors.secondary,
-          accent: colors['primary-light'],
-          neutral: colors.foreground,
-          'base-100': colors.background,
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+      },
+      backgroundColor: {
+        'btn-disabled': colors[`${prefix}-primary`],
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
         },
       },
-    ],
-
-    darkTheme: 'turtle', // name of one of the included themes for dark mode
-    base: true, // applies background color and foreground color for root element by default
-    styled: true, // include daisyUI colors and design decisions for all components
-    utils: true, // adds responsive and modifier utility classes
-    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
-    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
-    themeRoot: ':root', // The element that receives theme color CSS variables
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+    },
   },
+  darkMode: 'class',
+  plugins: [addVariablesForColors, nextui(), require('tailwindcss-animate')],
 }
 export default config
 

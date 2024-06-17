@@ -1,25 +1,38 @@
 'use client'
-import { testTokens } from '@/__tests__/testdata'
+import { REGISTRY } from '@/config/registry'
 import useChains from '@/hooks/useChains'
+import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
+import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { FC, useState } from 'react'
+import { isValidSubstrateAddress } from '@/utils/address'
+import { convertAmount } from '@/utils/transfer'
+import { AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
+import { FC, useMemo, useState } from 'react'
+import AddressInput from './AddressInput'
+import Button from './Button'
 import ChainSelect from './ChainSelect'
-import ConnectEvmWalletButton from './ConnectEvmWalletButton'
-import ConnectSubstrateWalletButton from './ConnectSubstrateWalletButton'
+import Switch from './Switch'
 import TokenSelect from './TokenSelect'
-import TransferButton from './TransferButton'
 import ValueInput from './ValueInput'
+import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
   // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
   const [token, setToken] = useState<Token | null>(null)
-  const [amount, setAmount] = useState<number | null>(null)
-  const [receiverAddress, setReceiverAddress] = useState<string>('')
+  const [inputAmount, setInputAmount] = useState<number | null>(null)
+  const [manualRecipient, setManualRecipient] = useState<{ enabled: boolean; address: string }>({
+    enabled: false,
+    address: '',
+  })
 
+  // Hooks
+  const sourceWallet = useWallet(sourceChain?.network)
+  const destinationWallet = useWallet(destinationChain?.network)
   const {
     chains: sourceChains,
     loading: loadingSourceChains,
@@ -36,96 +49,140 @@ const Transfer: FC = () => {
     supportedSourceChain: sourceChain ?? undefined,
     supportedToken: token ?? undefined,
   })
-  const { transfer, isValid } = useTransfer()
+  const { environment, switchTo } = useEnvironment()
+  const { transfer, isValid: _isValid } = useTransfer()
+  const recipient = manualRecipient.enabled
+    ? manualRecipient.address
+    : destinationWallet?.sender?.address
+  const amount = convertAmount(inputAmount, token)
+
+  // Functions
+  const isValid = useMemo(() => {
+    return _isValid({
+      sender: sourceWallet?.sender,
+      token,
+      sourceChain,
+      destinationChain,
+      recipient: recipient,
+      amount,
+    })
+  }, [sourceWallet, token, sourceChain, destinationChain, recipient, amount, _isValid])
+
+  const handleSubmit = () => {
+    // basic checks for TS type checker. But usually button should be disabled if these are not met.
+    if (
+      !sourceChain ||
+      !recipient ||
+      !sourceWallet?.sender ||
+      !destinationChain ||
+      !token ||
+      !amount
+    )
+      return
+
+    transfer({
+      environment,
+      sender: sourceWallet.sender,
+      sourceChain,
+      destinationChain,
+      token,
+      amount,
+      recipient: recipient,
+    })
+  }
 
   return (
-    <div className="card h-full w-full max-w-xl rounded-lg border-2 border-primary bg-gray-800 bg-opacity-25 p-5 shadow-xl backdrop-blur-sm sm:max-h-[32rem]">
-      <div className="flex flex-col gap-3">
-        {/* Wallet Connect Buttons */}
-        <div className="flex gap-2 self-end">
-          <ConnectEvmWalletButton label="Connect EVM" />
-        </div>
+    <div className="flex w-full flex-col gap-4 rounded-4xl border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
+      {/* Source Wallet Connection */}
+      {sourceChain?.network && (
+        <AnimatePresence>
+          <WalletButton network={sourceChain?.network} className="flex self-end" />
+        </AnimatePresence>
+      )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-6">
-          {/* Source Chain */}
-          <div>
-            <span className="label label-text">Source Chain</span>
-            <ChainSelect
-              value={sourceChain}
-              onChange={setSourceChain}
-              options={sourceChains}
-              title="Select Source Chain"
-              className="w-full"
+      {/* Source Chain */}
+
+      <ChainSelect
+        value={sourceChain}
+        onChange={setSourceChain}
+        options={sourceChains}
+        title="Select Source Chain"
+        className="w-full"
+      />
+
+      {/* Token */}
+
+      <TokenSelect
+        value={token}
+        onChange={setToken}
+        options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
+        className="w-full"
+      />
+
+      {/* Token Amount */}
+
+      <ValueInput
+        value={inputAmount}
+        onChange={setInputAmount}
+        placeholder="0"
+        disabled={!token}
+        unit={token?.symbol}
+        className="w-full"
+      />
+
+      {/* Destination Chain */}
+
+      <ChainSelect
+        value={destinationChain}
+        onChange={setDestinationChain}
+        options={destChains}
+        title="Select Destination Chain"
+        className="w-full"
+      />
+
+      {/* Recipient Wallet or Address Input */}
+      {destinationChain && (
+        <div className="flex flex-col gap-3">
+          {manualRecipient.enabled ? (
+            <AddressInput
+              value={manualRecipient.address}
+              onChange={address => setManualRecipient(prev => ({ ...prev, address }))}
+              validateAddress={isValidSubstrateAddress}
             />
-          </div>
+          ) : (
+            destinationChain?.network && (
+              <AnimatePresence>
+                <WalletButton network={destinationChain.network} />
+              </AnimatePresence>
+            )
+          )}
 
-          {/* Token */}
-          <div>
-            <span className="label label-text">Token</span>
-            <TokenSelect
-              value={token}
-              onChange={setToken}
-              options={testTokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
-              className="w-full"
-            />
-          </div>
-        </div>
-
-        {/* Token Amount */}
-        <div>
-          <span className="label label-text">Amount</span>
-          <ValueInput
-            value={amount}
-            onChange={setAmount}
-            placeholder="0"
-            disabled={!token}
-            unit={token?.symbol}
-            className="w-full"
+          {/* Switch Wallet and Manual Input */}
+          <Switch
+            className="items-start"
+            checked={manualRecipient.enabled}
+            onChange={enabled => setManualRecipient(prev => ({ ...prev, enabled }))}
+            label="Send to a different address"
           />
         </div>
+      )}
 
-        {/* Destination Chain */}
-        <div>
-          <span className="label label-text">Destination Chain</span>
-          <ChainSelect
-            value={destinationChain}
-            onChange={setDestinationChain}
-            options={destChains}
-            title="Select Destination Chain"
-            className="w-full"
-          />
-        </div>
+      {/* Transfer Button */}
+      <Button
+        label="Transfer"
+        size="lg"
+        variant="primary"
+        onClick={handleSubmit}
+        disabled={!isValid}
+      />
 
-        {/* Receiver Address */}
-        <div>
-          <span className="label label-text">Receiver Address</span>
-          <ConnectSubstrateWalletButton label="Connect Substrate" />
-        </div>
-
-        {/* Transfer Button */}
-        <TransferButton
-          className="max-w-xs self-center"
-          label="Transfer"
-          disabled={
-            !isValid({
-              token,
-              sourceChain,
-              destinationChain,
-              amount,
-              receiverAddress,
-            })
-          }
-          onClick={() => {
-            if (sourceChain && destinationChain && token && amount)
-              transfer({
-                sourceChain,
-                destinationChain,
-                token,
-                amount,
-                receiverAddress,
-              })
-          }}
-        />
+      {/* Warning Label */}
+      <div className="self-center text-sm text-turtle-level5">
+        <span>This can take up to 30 minutes. </span>
+        <Link href={'/'}>
+          {/* TODO: update Link */}
+          <span className="underline">Read more</span>
+        </Link>
       </div>
     </div>
   )

@@ -17,7 +17,7 @@ export const useNotificationStore = create<State>(set => ({
   // Actions
   addNotification: notification =>
     set(state => ({
-      notifications: [...state.notifications, { ...notification, id: state.notifications.length }], // override id
+      notifications: [...state.notifications, { ...notification, id: state.notifications.length }],
     })),
 
   removeNotification: id =>
