@@ -18,6 +18,8 @@ interface CustomSelectProps<T> {
   floatingLabel?: string
   /** Placeholder text to display when no value is selected. */
   placeholder?: string
+  /** Icon to display in the placeholder. */
+  placeholderIcon?: ReactNode
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
   /** Button to display in the wallet section of the select input. */
@@ -34,6 +36,7 @@ export const CustomSelect = <T,>({
   options,
   floatingLabel,
   placeholder,
+  placeholderIcon,
   disabled,
   walletButton,
   address,
@@ -48,7 +51,15 @@ export const CustomSelect = <T,>({
     <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
       <Select onValueChange={handleSelectionChange}>
         <SelectTrigger floatingLabel={floatingLabel} trailing={walletButton}>
-          <SelectValue placeholder={placeholder}>
+          <SelectValue
+            placeholder={
+              <div className="flex items-center gap-1">
+                {placeholderIcon}
+                {placeholder}
+                <ChevronDown strokeWidth={1} />
+              </div>
+            }
+          >
             {value && (
               <div className="flex items-center gap-1">
                 <Image

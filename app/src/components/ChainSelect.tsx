@@ -2,6 +2,7 @@ import { Chain } from '@/models/chain'
 import { chainsToSelectOptions, chainToSelectOption, SelectOption } from '@/models/selectOption'
 import { FC, ReactNode } from 'react'
 import CustomSelect from './CustomSelect'
+import ChainIcon from './svg/ChainIcon'
 
 interface ChainSelectProps {
   /** Currently selected chain, or null if no value is selected. */
@@ -14,6 +15,8 @@ interface ChainSelectProps {
   floatingLabel?: string
   /** Placeholder text to display when no value is selected. */
   placeholder?: string
+
+  placeholderIcon?: ReactNode
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
   /** Button to display in the wallet section of the select input. */
@@ -30,6 +33,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
   options,
   floatingLabel,
   placeholder,
+  placeholderIcon = <ChainIcon />,
   disabled = false,
   walletButton,
   address,
@@ -47,6 +51,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
       options={selectOptions}
       floatingLabel={floatingLabel}
       placeholder={placeholder}
+      placeholderIcon={placeholderIcon}
       walletButton={walletButton}
       address={address}
       disabled={disabled}
