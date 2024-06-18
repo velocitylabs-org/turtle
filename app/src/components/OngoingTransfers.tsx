@@ -1,6 +1,7 @@
 'use client'
 import { FC } from 'react'
 import OngoingTransfer from './OngoingTransfer'
+import OngoingTransferModal from './OngoingTransferModal'
 
 const OngoingTransfers: FC = () => {
   return (
