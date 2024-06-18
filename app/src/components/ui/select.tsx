@@ -38,7 +38,7 @@ const SelectTrigger = React.forwardRef<
             </label>
           )}
         </div>
-        {trailing && <div onClick={e => e.stopPropagation()}>{trailing}</div>}
+        {trailing}
       </div>
     </SelectPrimitive.Trigger>
   </div>

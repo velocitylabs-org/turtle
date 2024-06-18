@@ -110,6 +110,8 @@ const Transfer: FC = () => {
         value={token}
         onChange={setToken}
         options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
+        floatingLabel="Amount"
+        placeholder="Token"
         className="w-full"
       />
 
