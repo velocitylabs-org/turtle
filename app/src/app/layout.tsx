@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         {(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
           // eslint-disable-next-line @next/next/no-sync-scripts

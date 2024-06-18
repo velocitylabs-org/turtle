@@ -35,7 +35,7 @@ export const colors = {
   [`${prefix}-warning-dark`]: '#7A7C00',
   [`${prefix}-warning-light`]: '#FFFFD9',
 
-  [`${prefix}-error`]: '#ef2828',
+  [`${prefix}-error`]: '#ff35c3',
   [`${prefix}-error-dark`]: '#8D1269',
   [`${prefix}-error-light`]: '#FFE1F6',
 }
