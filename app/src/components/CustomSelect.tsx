@@ -1,6 +1,7 @@
 'use client'
 import { SelectOption } from '@/models/selectOption'
 import Image from 'next/image'
+import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
@@ -15,6 +16,8 @@ interface CustomSelectProps<T> {
   title: string
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
+  /** Button to display in the wallet section of the select input. */
+  walletButton?: ReactNode
   /** Additional classes to apply to the select input. */
   className?: string
 }
@@ -25,6 +28,7 @@ export const CustomSelect = <T,>({
   options,
   title,
   disabled,
+  walletButton,
   className,
 }: CustomSelectProps<T>) => {
   const handleSelectionChange = (newValue: string) => {
@@ -35,7 +39,7 @@ export const CustomSelect = <T,>({
   return (
     <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
       <Select onValueChange={handleSelectionChange}>
-        <SelectTrigger floatingLabel={title}>
+        <SelectTrigger floatingLabel={title} trailing={walletButton}>
           <SelectValue placeholder={title}>
             {value ? (
               <div className="flex items-center gap-2">

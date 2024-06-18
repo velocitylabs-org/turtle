@@ -14,8 +14,11 @@ const SelectValue = SelectPrimitive.Value
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & { floatingLabel?: string }
->(({ className, children, floatingLabel, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
+    floatingLabel?: string
+    trailing?: React.ReactNode
+  }
+>(({ className, children, floatingLabel, trailing, ...props }, ref) => (
   <div className="relative w-full">
     <SelectPrimitive.Trigger
       ref={ref}
@@ -26,15 +29,21 @@ const SelectTrigger = React.forwardRef<
       {...props}
     >
       {children}
+      {floatingLabel && (
+        <label className="absolute left-3 top-2 z-30 origin-top-left -translate-y-4 bg-background px-1 text-xs text-turtle-level5">
+          {floatingLabel}
+        </label>
+      )}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className="h-4 w-4 opacity-50" />
+        {trailing ? (
+          React.cloneElement(trailing as React.ReactElement, {
+            onClick: (e: any) => e.stopPropagation(),
+          })
+        ) : (
+          <ChevronDown className="h-4 w-4" />
+        )}
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
-    {floatingLabel && (
-      <label className="absolute left-3 top-2 z-10 origin-top-left -translate-y-4 scale-75 transform bg-background px-1 text-sm text-gray-500 duration-300 peer-placeholder-shown:left-3 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:left-3 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75">
-        {floatingLabel}
-      </label>
-    )}
   </div>
 ))
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
@@ -76,7 +85,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       side="bottom"
       className={cn(
-        'bg-popover text-popover-foreground relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+        'bg-popover text-popover-foreground relative z-10 max-h-96 min-h-[5.5rem] min-w-[8rem] overflow-hidden rounded-md border',
         position === 'popper' && 'data-[side=bottom]:translate-y-[-3.5rem]',
         className,
       )}

@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { chainsToSelectOptions, chainToSelectOption, SelectOption } from '@/models/selectOption'
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import CustomSelect from './CustomSelect'
 
 interface ChainSelectProps {
@@ -14,6 +14,8 @@ interface ChainSelectProps {
   title?: string
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
+  /** Button to display in the wallet section of the select input. */
+  walletButton?: ReactNode
   /** Additional classes to apply to the select input. */
   className?: string
 }
@@ -24,6 +26,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
   options,
   title = 'Select Chain',
   disabled = false,
+  walletButton,
   className = '',
 }) => {
   const selectOption = value ? chainToSelectOption(value) : null // convert chain value to select option for custom select component
@@ -37,6 +40,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
       onChange={handleChange}
       options={selectOptions}
       title={title}
+      walletButton={walletButton}
       disabled={disabled}
       className={className}
     />

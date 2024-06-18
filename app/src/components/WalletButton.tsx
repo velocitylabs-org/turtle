@@ -8,7 +8,7 @@ import SubstrateWalletModal from './SubstrateWalletModal'
 
 interface WalletButtonProps {
   /** The network to connect to. */
-  network: Network
+  network?: Network
   /** Additional classes to apply to the button. */
   className?: string
 }
@@ -31,20 +31,26 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
     modalOpen: substrateModalOpen,
   } = useSubstrateWallet()
 
-  const { buttonFunction, isConnected } = (() => {
+  const { buttonFunction, isConnected, disabled } = (() => {
     switch (network) {
       case Network.Polkadot:
         return {
           buttonFunction: substrateIsConnected ? disconnectSubstrate : () => openSubstrate(),
           isConnected: substrateIsConnected,
+          disabled: false,
         }
       case Network.Ethereum:
         return {
           buttonFunction: evmIsConnected ? disconnectEvm : openEvm,
           isConnected: evmIsConnected,
+          disabled: false,
         }
       default:
-        throw new Error(`Unsupported network used: ${network}`)
+        return {
+          buttonFunction: () => {},
+          isConnected: false,
+          disabled: true,
+        }
     }
   })()
 
@@ -59,6 +65,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}
         variant={isConnected ? 'outline' : 'primary'}
+        disabled={disabled}
         size="sm"
         className={`${isConnected ? '' : 'w-[4.875rem]'} text-sm`}
         onClick={buttonFunction}
