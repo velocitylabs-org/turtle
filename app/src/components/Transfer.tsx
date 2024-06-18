@@ -8,7 +8,6 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
-import { AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { FC, useMemo, useState } from 'react'
 import AddressInput from './AddressInput'
@@ -17,7 +16,6 @@ import ChainSelect from './ChainSelect'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import Switch from './Switch'
 import TokenSelect from './TokenSelect'
-import ValueInput from './ValueInput'
 import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
@@ -99,8 +97,10 @@ const Transfer: FC = () => {
         value={sourceChain}
         onChange={setSourceChain}
         options={sourceChains}
-        title="From"
+        floatingLabel="From"
+        placeholder="Source"
         walletButton={<WalletButton network={sourceChain?.network} />}
+        address={sourceWallet?.sender?.address}
         className="w-full"
       />
 
@@ -113,42 +113,27 @@ const Transfer: FC = () => {
         className="w-full"
       />
 
-      {/* Token Amount */}
-
-      <ValueInput
-        value={inputAmount}
-        onChange={setInputAmount}
-        placeholder="0"
-        disabled={!token}
-        unit={token?.symbol}
-        className="w-full"
-      />
-
       {/* Destination Chain */}
-
       <ChainSelect
         value={destinationChain}
         onChange={setDestinationChain}
         options={destChains}
-        title="To"
+        floatingLabel="To"
+        placeholder="Destination"
+        walletButton={<WalletButton network={destinationChain?.network} />}
+        address={destinationWallet?.sender?.address}
         className="w-full"
       />
 
       {/* Recipient Wallet or Address Input */}
       {destinationChain && (
         <div className="flex flex-col gap-3">
-          {manualRecipient.enabled ? (
+          {manualRecipient.enabled && (
             <AddressInput
               value={manualRecipient.address}
               onChange={address => setManualRecipient(prev => ({ ...prev, address }))}
               validateAddress={isValidSubstrateAddress}
             />
-          ) : (
-            destinationChain?.network && (
-              <AnimatePresence>
-                <WalletButton network={destinationChain.network} />
-              </AnimatePresence>
-            )
           )}
 
           {/* Switch Wallet and Manual Input */}

@@ -10,12 +10,16 @@ interface ChainSelectProps {
   onChange: (newValue: Chain | null) => void
   /** Array of chains that the user can select from. */
   options: Chain[]
-  /** Title of the select input, displayed when no item is selected. */
-  title?: string
+  /** Label floating above the select input */
+  floatingLabel?: string
+  /** Placeholder text to display when no value is selected. */
+  placeholder?: string
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
   /** Button to display in the wallet section of the select input. */
   walletButton?: ReactNode
+  /** Address to display in the wallet section of the select input. */
+  address?: string
   /** Additional classes to apply to the select input. */
   className?: string
 }
@@ -24,9 +28,11 @@ const ChainSelect: FC<ChainSelectProps> = ({
   value,
   onChange,
   options,
-  title = 'Select Chain',
+  floatingLabel,
+  placeholder,
   disabled = false,
   walletButton,
+  address,
   className = '',
 }) => {
   const selectOption = value ? chainToSelectOption(value) : null // convert chain value to select option for custom select component
@@ -39,8 +45,10 @@ const ChainSelect: FC<ChainSelectProps> = ({
       value={selectOption}
       onChange={handleChange}
       options={selectOptions}
-      title={title}
+      floatingLabel={floatingLabel}
+      placeholder={placeholder}
       walletButton={walletButton}
+      address={address}
       disabled={disabled}
       className={className}
     />

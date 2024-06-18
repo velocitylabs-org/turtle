@@ -1,7 +1,7 @@
 import { NavbarBrand, NavbarContent, NavbarItem, Navbar as NextNavbar } from '@nextui-org/react'
 import { FC } from 'react'
 import Button from './Button'
-import { TurtleIcon } from './TurtleIcon'
+import { TurtleIcon } from './svg/TurtleIcon'
 
 const Navbar: FC = async () => {
   return (

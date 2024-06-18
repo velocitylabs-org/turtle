@@ -36,7 +36,7 @@ const TokenSelect: FC<TokenSelectProps> = ({
       value={selectOption}
       onChange={handleChange}
       options={selectOptions}
-      title={title}
+      floatingLabel={title}
       disabled={disabled}
       className={className}
     />

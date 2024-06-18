@@ -1,5 +1,7 @@
 'use client'
 import { SelectOption } from '@/models/selectOption'
+import { truncateAddress } from '@/utils/address'
+import { ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -12,12 +14,16 @@ interface CustomSelectProps<T> {
   onChange: (newValue: SelectOption<T> | null) => void
   /** Array of options that the user can select from. */
   options: SelectOption<T>[]
-  /** Title of the select input, displayed when no item is selected. */
-  title: string
+  /** Label floating above the select input */
+  floatingLabel?: string
+  /** Placeholder text to display when no value is selected. */
+  placeholder?: string
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
   /** Button to display in the wallet section of the select input. */
   walletButton?: ReactNode
+  /** Address to display in the wallet section of the select input. */
+  address?: string
   /** Additional classes to apply to the select input. */
   className?: string
 }
@@ -26,9 +32,11 @@ export const CustomSelect = <T,>({
   value,
   onChange,
   options,
-  title,
+  floatingLabel,
+  placeholder,
   disabled,
   walletButton,
+  address,
   className,
 }: CustomSelectProps<T>) => {
   const handleSelectionChange = (newValue: string) => {
@@ -39,21 +47,21 @@ export const CustomSelect = <T,>({
   return (
     <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
       <Select onValueChange={handleSelectionChange}>
-        <SelectTrigger floatingLabel={title} trailing={walletButton}>
-          <SelectValue placeholder={title}>
-            {value ? (
-              <div className="flex items-center gap-2">
+        <SelectTrigger floatingLabel={floatingLabel} trailing={walletButton}>
+          <SelectValue placeholder={placeholder}>
+            {value && (
+              <div className="flex items-center gap-1">
                 <Image
                   src={value.logoURI}
                   alt={value.label}
-                  width={30}
-                  height={30}
-                  className="rounded-full"
+                  width={24}
+                  height={24}
+                  className="h-[1.5rem] w-[1.5rem] rounded-full"
                 />
-                {value.label}
+                {!address && <p>{value.label}</p>}
+                <ChevronDown strokeWidth={1} />
+                {address && <p>{truncateAddress(address)}</p>}
               </div>
-            ) : (
-              <p>{title}</p>
             )}
           </SelectValue>
         </SelectTrigger>
@@ -65,13 +73,13 @@ export const CustomSelect = <T,>({
                 key={index + option.label + option.logoURI}
                 value={JSON.stringify(option.value)}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <Image
                     src={option.logoURI}
                     alt={option.label}
-                    width={30}
-                    height={30}
-                    className="rounded-full"
+                    width={24}
+                    height={24}
+                    className="h-[1.5rem] w-[1.5rem] rounded-full"
                   />
                   {option.label}
                 </div>

@@ -1,5 +1,5 @@
 import Transfer from '@/components/Transfer'
-import { Background } from '@/components/WavesBackground'
+import { Background } from '@/components/svg/WavesBackground'
 import { FC } from 'react'
 
 const App: FC = async () => {

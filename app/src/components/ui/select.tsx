@@ -1,7 +1,7 @@
 'use client'
 
 import * as SelectPrimitive from '@radix-ui/react-select'
-import { Check, ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import * as React from 'react'
 
 import { cn } from '@/utils/cn'
@@ -24,7 +24,7 @@ const SelectTrigger = React.forwardRef<
       ref={ref}
       asChild
       className={cn(
-        'border-input placeholder:text-muted-foreground peer flex h-[3.5rem] w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none disabled:cursor-not-allowed disabled:opacity-30',
+        'flex h-[3.5rem] w-full cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-30',
         className,
       )}
       {...props}
@@ -82,7 +82,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       side="bottom"
       className={cn(
-        'bg-popover text-popover-foreground relative z-10 max-h-96 min-h-[5.5rem] min-w-[8rem] overflow-hidden rounded-md border',
+        'bg-popover text-popover-foreground relative z-10 max-h-96 min-h-[5.5rem] min-w-[8rem] overflow-hidden rounded-md border-1 border-turtle-level3',
         position === 'popper' && 'data-[side=bottom]:translate-y-[-3.5rem]',
         className,
       )}
@@ -124,17 +124,11 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-2 pl-2 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-30',
       className,
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </SelectPrimitive.ItemIndicator>
-    </span>
-
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ))
