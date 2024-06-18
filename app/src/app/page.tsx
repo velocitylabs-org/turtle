@@ -1,3 +1,4 @@
+import OngoingTransfers from '@/components/OngoingTransfers'
 import Transfer from '@/components/Transfer'
 import { Background } from '@/components/WavesBackground'
 import { FC } from 'react'
@@ -8,6 +9,7 @@ const App: FC = async () => {
       <Background />
       <div className="relative z-10">
         <Transfer />
+        <OngoingTransfers />
       </div>
     </div>
   )

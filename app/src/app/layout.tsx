@@ -27,6 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        ></link>
         {(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
           // eslint-disable-next-line @next/next/no-sync-scripts
           <script
