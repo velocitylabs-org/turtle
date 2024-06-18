@@ -1,20 +1,11 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { Account } from '@/store/substrateWalletStore'
-import { truncateAddress } from '@/utils/address'
-import Identicon from '@polkadot/react-identicon'
 import { WalletSelect } from '@talismn/connect-components'
 import { FC } from 'react'
 
-interface SubstrateWalletModalProps {
-  /** Whether the modal is open. */
-  open?: boolean
-  /** Callback when the modal is closed. */
-  onClose?: () => void
-}
-
-const SubstrateWalletModal: FC<SubstrateWalletModalProps> = ({ open, onClose = () => {} }) => {
-  const { substrateAccount, setSubstrateAccount } = useSubstrateWallet()
+const SubstrateWalletModal: FC = () => {
+  const { substrateAccount, setSubstrateAccount, isModalOpen, closeModal } = useSubstrateWallet()
 
   // removes the active account if it is disconnected from the app
   const handleUpdatedAccounts = (accounts?: Account[]) => {
@@ -29,8 +20,8 @@ const SubstrateWalletModal: FC<SubstrateWalletModalProps> = ({ open, onClose = (
       onlyShowInstalled
       dappName="turtle"
       showAccountsList={true}
-      open={open}
-      onWalletConnectClose={() => onClose()}
+      open={isModalOpen}
+      onWalletConnectClose={() => closeModal()}
       onAccountSelected={account => setSubstrateAccount(account)}
       onUpdatedAccounts={handleUpdatedAccounts}
       onError={error => {

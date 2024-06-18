@@ -80,31 +80,6 @@ export const CustomSelect = <T,>({
           </div>
         </SelectContent>
       </Select>
-      {/* <button className="w-full" onClick={openDialog} disabled={disabled}>
-        {value ? (
-          <div className="flex items-center gap-2">
-            <Image
-              src={value.logoURI}
-              alt={value.label}
-              width={30}
-              height={30}
-              className="rounded-full"
-            />
-            {value.label}
-          </div>
-        ) : (
-          <p>{title}</p>
-        )}
-      </button> */}
-      {/* Select Dialog */}
-      {/* {showDialog && (
-        <CustomSelectDialog
-          title={title}
-          options={options}
-          onChange={onChange}
-          onClose={closeDialog}
-        />
-      )} */}
     </div>
   )
 }

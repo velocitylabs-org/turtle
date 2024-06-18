@@ -22,27 +22,24 @@ const SelectTrigger = React.forwardRef<
   <div className="relative w-full">
     <SelectPrimitive.Trigger
       ref={ref}
+      asChild
       className={cn(
         'border-input placeholder:text-muted-foreground peer flex h-[3.5rem] w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none disabled:cursor-not-allowed disabled:opacity-30',
         className,
       )}
       {...props}
     >
-      {children}
-      {floatingLabel && (
-        <label className="absolute left-3 top-2 z-30 origin-top-left -translate-y-4 bg-background px-1 text-xs text-turtle-level5">
-          {floatingLabel}
-        </label>
-      )}
-      <SelectPrimitive.Icon asChild>
-        {trailing ? (
-          React.cloneElement(trailing as React.ReactElement, {
-            onClick: (e: any) => e.stopPropagation(),
-          })
-        ) : (
-          <ChevronDown className="h-4 w-4" />
-        )}
-      </SelectPrimitive.Icon>
+      <div className="flex w-full items-center justify-between">
+        <div className="flex grow items-center gap-2">
+          {children}
+          {floatingLabel && (
+            <label className="absolute left-3 top-2 z-30 origin-top-left -translate-y-4 bg-background px-1 text-xs text-turtle-level5">
+              {floatingLabel}
+            </label>
+          )}
+        </div>
+        {trailing && <div onClick={e => e.stopPropagation()}>{trailing}</div>}
+      </div>
     </SelectPrimitive.Trigger>
   </div>
 ))

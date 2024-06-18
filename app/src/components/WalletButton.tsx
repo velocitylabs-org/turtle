@@ -1,10 +1,10 @@
+'use client'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { Network } from '@/models/chain'
 import { motion } from 'framer-motion'
 import React from 'react'
 import Button from './Button'
-import SubstrateWalletModal from './SubstrateWalletModal'
 
 interface WalletButtonProps {
   /** The network to connect to. */
@@ -21,14 +21,11 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
     disconnect: disconnectEvm,
     isConnected: evmIsConnected,
     openModal: openEvm,
-    closeModal: closeEvm,
   } = useEvmWallet()
   const {
     disconnect: disconnectSubstrate,
     isConnected: substrateIsConnected,
     openModal: openSubstrate,
-    closeModal: closeSubstrate,
-    modalOpen: substrateModalOpen,
   } = useSubstrateWallet()
 
   const { buttonFunction, isConnected, disabled } = (() => {
@@ -70,8 +67,6 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
         className={`${isConnected ? '' : 'w-[4.875rem]'} text-sm`}
         onClick={buttonFunction}
       />
-
-      <SubstrateWalletModal open={substrateModalOpen} onClose={() => closeSubstrate()} />
     </motion.div>
   )
 }

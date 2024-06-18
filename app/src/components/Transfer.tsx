@@ -14,6 +14,7 @@ import { FC, useMemo, useState } from 'react'
 import AddressInput from './AddressInput'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
+import SubstrateWalletModal from './SubstrateWalletModal'
 import Switch from './Switch'
 import TokenSelect from './TokenSelect'
 import ValueInput from './ValueInput'
@@ -177,6 +178,8 @@ const Transfer: FC = () => {
           <span className="underline">Read more</span>
         </Link>
       </div>
+
+      <SubstrateWalletModal />
     </div>
   )
 }
