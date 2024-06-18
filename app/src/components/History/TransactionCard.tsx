@@ -17,11 +17,11 @@ import useEnvironment from '@/hooks/useEnvironment'
 export const statusIcon = (status: TransactionStatus) => {
   switch (status) {
     case Status.Failed:
-      return <Fail />
+      return <Fail width={24} height={24} />
     case Status.Pending:
-      return <Pending />
+      return <Pending width={24} height={24} />
     default:
-      return <Success />
+      return <Success width={24} height={24} />
   }
 }
 
@@ -50,13 +50,13 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
         'flex items-center gap-4 rounded-2xl border p-4 hover:cursor-pointer',
         tx.status === 'completed'
           ? 'border-turtle-level3  hover:bg-turtle-level1'
-          : 'border-turtle-error bg-turtle-error-light hover:border-turtle-error-dark',
+          : 'border-turtle-error  hover:border-turtle-error-dark',
       )}
     >
-      <div>{statusIcon(tx.status)}</div>
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
-          <div className="flex max-w-60 space-x-2 overflow-x-auto">
+          <div className="flex max-w-xs space-x-2 overflow-x-auto">
+            <div>{statusIcon(tx.status)}</div>
             <div
               className={cn(
                 'flex items-center space-x-1 text-xl font-medium leading-none',
@@ -69,7 +69,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             <div
               className={cn(
                 'flex items-center justify-between space-x-1 rounded-2xl border px-1 py-0.5',
-                tx.status === 'failed' && 'border-turtle-error',
+                tx.status === 'failed' && 'border-turtle-error bg-turtle-error-light',
               )}
             >
               <div className="relative h-4 w-4 rounded-full">
@@ -161,9 +161,9 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
           </div>
         </div>
         {tx.status === 'failed' && (
-          <p className="text-start text-sm text-turtle-error-dark">
+          <p className="flex items-center justify-between rounded-lg bg-turtle-error-light px-2 py-1 text-sm text-turtle-error-dark">
             This transaction failed.{' '}
-            <Link href={'/history'} className="underline hover:text-turtle-error">
+            <Link href={'/history'} className="text-sm underline hover:text-turtle-error">
               See more
             </Link>
           </p>

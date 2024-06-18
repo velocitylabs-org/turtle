@@ -128,10 +128,10 @@ export const TransactionHistory = () => {
   })
 
   return (
-    <div className="flex flex-col gap-4 rounded-3xl border-1 border-black bg-white p-[2.5rem] sm:w-[31.5rem] ">
+    <div className="flex flex-col gap-4 rounded-3xl border border-black bg-white p-[2.5rem] sm:w-[31.5rem]">
       {mappedTransactionsByDate.map(({ date, transactions }, idx) => (
         <div key={idx + date + transactions.length}>
-          <div className="w-full space-y-4 py-2">
+          <div className="w-full space-y-4">
             <div className="text-sm">{formatDate(date)}</div>
             {transactions.map((tx, idx) => (
               <TransactionDialog key={idx + tx.fromAddress} tx={tx} />

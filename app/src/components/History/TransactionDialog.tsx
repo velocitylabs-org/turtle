@@ -114,11 +114,11 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             />
             {tx.status !== 'failed' ? (
               <p>
-                <span className="font-medium">Done!</span>
+                <span className="pe-0.5 font-medium">Done!</span>
                 This transfer is completed.
               </p>
             ) : (
-              <p className="w-5/6">
+              <p className="w-5/6 space-x-0.5">
                 <span className="font-medium">This transfer failed.</span>
                 You likely don’t have enough DAI in your receiving wallet.{' '}
                 <Link href={'/history'} className="underline hover:text-turtle-error">
