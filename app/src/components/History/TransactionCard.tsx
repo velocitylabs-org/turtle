@@ -1,20 +1,22 @@
 'use client'
-import { cn } from '@/utils/cn'
-import Image from 'next/image'
 import React from 'react'
-import { Status, Transaction, TransactionStatus } from './TransactionHistory'
-import { Pending } from '../TransactionIcons/Pending'
-import { Fail } from '../TransactionIcons/Fail'
-import { Success } from '../TransactionIcons/Success'
-import Identicon from '@polkadot/react-identicon'
-import { truncateWithDashAddress } from '@/utils/address'
-import { ArrowRight } from './ArrowRight'
+import Image from 'next/image'
 import Link from 'next/link'
-import { Environment } from '@/store/environmentStore'
-import { REGISTRY } from '@/config/registry'
-import useEnvironment from '@/hooks/useEnvironment'
+import Identicon from '@polkadot/react-identicon'
 
-export const statusIcon = (status: TransactionStatus) => {
+import useEnvironment from '@/hooks/useEnvironment'
+import { Status, Transaction, TransactionStatus } from '@/models/history'
+import { getChainLogoURI } from '@/services/history'
+import { truncateAddress } from '@/utils/address'
+import { cn } from '@/utils/cn'
+import { formatHours } from '@/utils/datetime'
+
+import { ArrowRight } from './TransactionIcons/ArrowRight'
+import { Fail } from './TransactionIcons/Fail'
+import { Pending } from './TransactionIcons/Pending'
+import { Success } from './TransactionIcons/Success'
+
+const statusIcon = (status: TransactionStatus) => {
   switch (status) {
     case Status.Failed:
       return <Fail width={24} height={24} />
@@ -23,23 +25,6 @@ export const statusIcon = (status: TransactionStatus) => {
     default:
       return <Success width={24} height={24} />
   }
-}
-
-export const getChainLogo = (chainName: string, environment: Environment) => {
-  const registery = REGISTRY[environment]
-  const chainData = registery.chains.filter(x => x.network === chainName)
-  return chainData[0].logoURI
-}
-
-export const formatHours = (time: string) => {
-  const hoursIndex = time.indexOf(':')
-  const minsIndex = time.indexOf(':', hoursIndex + 1)
-  if (minsIndex === -1) {
-    return '-'
-  }
-  const splitTime = time.substring(0, minsIndex).split('T')[1]
-  const timeAcr = Number(splitTime.split(':')[0]) > 12 ? 'pm' : 'am'
-  return `${splitTime} ${timeAcr}`
 }
 
 export const TransactionCard = ({ tx }: { tx: Transaction }) => {
@@ -74,7 +59,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             >
               <div className="relative h-4 w-4 rounded-full">
                 <Image
-                  src={getChainLogo(tx.fromChain, environment)}
+                  src={getChainLogoURI(tx.fromChain, environment)}
                   alt={`Velocity Labs. Handles transactions from ${tx.fromChain}`}
                   fill={true}
                   className={cn(
@@ -89,7 +74,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
               />
               <div className="relative h-4 w-4 rounded-full">
                 <Image
-                  src={getChainLogo(tx.toChain, environment)}
+                  src={getChainLogoURI(tx.toChain, environment)}
                   alt={`Velocity Labs. Handles transactions to ${tx.toChain}`}
                   fill={true}
                   className={cn(
@@ -135,7 +120,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 )}
               />
             )}
-            <p className="text-sm">{truncateWithDashAddress(tx.fromAddress)}</p>
+            <p className="text-sm">{truncateAddress(tx.fromAddress)}</p>
           </div>
           <ArrowRight className="h-3 w-3" fill={'#A184DC'} />
           <div className="flex items-center gap-x-2">
@@ -157,7 +142,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 )}
               />
             )}
-            <p className="text-sm">{truncateWithDashAddress(tx.toAddress)}</p>
+            <p className="text-sm">{truncateAddress(tx.toAddress)}</p>
           </div>
         </div>
         {tx.status === 'failed' && (

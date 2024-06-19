@@ -1,25 +1,22 @@
 'use client'
-import { Transaction, formatDate } from './TransactionHistory'
 import Image from 'next/image'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../ui/dialog'
-import { TransactionCard, formatHours, getChainLogo } from './TransactionCard'
-import useEnvironment from '@/hooks/useEnvironment'
-import { cn } from '@/utils/cn'
-import { ArrowRight } from './ArrowRight'
-import { ExclamationMark } from './ExclamationMark'
-import { ArrowUpRight } from './ArrowUpRight'
 import Link from 'next/link'
 import Identicon from '@polkadot/react-identicon'
-import { truncateWithDashAddress } from '@/utils/address'
+
+import useEnvironment from '@/hooks/useEnvironment'
+import { Transaction } from '@/models/history'
+import { cn } from '@/utils/cn'
+import { truncateAddress } from '@/utils/address'
+import { formatDate, formatHours } from '@/utils/datetime'
+import { getChainLogoURI } from '@/services/history'
+
+import { TransactionCard } from './TransactionCard'
+import { ArrowRight } from './TransactionIcons/ArrowRight'
+import { ArrowUpRight } from './TransactionIcons/ArrowUpRight'
+import { ExclamationMark } from './TransactionIcons/ExclamationMark'
+
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
+
 export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
   const { environment } = useEnvironment()
   return (
@@ -45,7 +42,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
                 <Image
-                  src={getChainLogo(tx.fromChain, environment)}
+                  src={getChainLogoURI(tx.fromChain, environment)}
                   alt={`Velocity Labs. Handles transactions from ${tx.fromChain}`}
                   fill={true}
                   className={cn(
@@ -65,7 +62,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
                 <Image
-                  src={getChainLogo(tx.toChain, environment)}
+                  src={getChainLogoURI(tx.toChain, environment)}
                   alt={`Velocity Labs. Handles transactions from ${tx.toChain}`}
                   fill={true}
                   className={cn(
@@ -152,7 +149,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">{truncateWithDashAddress(tx.fromAddress)}</p>
+                <p className="text-sm">{truncateAddress(tx.fromAddress)}</p>
               </div>
             </div>
 
@@ -179,7 +176,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">{truncateWithDashAddress(tx.toAddress)}</p>
+                <p className="text-sm">{truncateAddress(tx.toAddress)}</p>
               </div>
             </div>
           </div>
