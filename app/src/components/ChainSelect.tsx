@@ -9,6 +9,10 @@ import ChainIcon from './svg/ChainIcon'
 import AddressInput from './AddressInput'
 import { isValidSubstrateAddress } from '@/utils/address'
 
+const VerticalDivider: FC = () => (
+  <div className="ml-2 h-[1.625rem] border-1 border-turtle-level3" />
+)
+
 interface ChainSelectProps {
   /** Currently selected chain, or null if no value is selected. */
   value: Chain | null
@@ -122,18 +126,21 @@ const ChainSelect: FC<ChainSelectProps> = ({
           {!manualRecipient?.enabled && walletAddress}
 
           {manualRecipient && manualRecipient.enabled && (
-            <input
-              type="text"
-              className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-              placeholder="Address"
-              value={manualRecipient.address}
-              onChange={e =>
-                onChangeManualRecipient
-                  ? onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
-                  : null
-              }
-              onClick={e => e.stopPropagation()}
-            />
+            <>
+              {!manualRecipient.address && <VerticalDivider />}
+              <input
+                type="text"
+                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+                placeholder="Address"
+                value={manualRecipient.address}
+                onChange={e =>
+                  onChangeManualRecipient
+                    ? onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
+                    : null
+                }
+                onClick={e => e.stopPropagation()}
+              />
+            </>
           )}
         </div>
 

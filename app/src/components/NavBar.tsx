@@ -5,7 +5,7 @@ import { TurtleIcon } from './svg/TurtleIcon'
 
 const Navbar: FC = async () => {
   return (
-    <NextNavbar className="bg-transparent" isBlurred={false}>
+    <NextNavbar className="bg-transparent" maxWidth="full" isBlurred={false}>
       <NavbarBrand className="gap-2">
         <TurtleIcon size={30} />
         <p className="text-xl font-semibold">Turtle</p>
