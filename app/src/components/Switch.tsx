@@ -16,12 +16,12 @@ interface SwitchProps {
 
 const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, className }) => {
   return (
-    <div className={cn('flex items-center gap-1', className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       <button
         type="button"
         className={cn(
-          'relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out',
-          checked ? 'bg-green-500' : 'bg-gray-300',
+          'relative inline-flex h-6 w-10 cursor-pointer items-center rounded-lg border-1 border-turtle-level3 transition-colors duration-200 ease-in-out',
+          checked ? 'bg-turtle-primary-light' : 'bg-turtle-level1',
           disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
         )}
         role="switch"
@@ -31,12 +31,12 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, cla
       >
         <span
           className={cn(
-            'inline-block h-5 w-5 transform rounded-md bg-white transition duration-200 ease-in-out',
-            checked ? 'translate-x-5' : 'translate-x-0',
+            'inline-block h-4 w-4 transform rounded-[4px] border-1 border-black bg-white transition duration-200 ease-in-out',
+            checked ? 'translate-x-5 bg-turtle-primary' : 'translate-x-1',
           )}
         />
       </button>
-      {label && <span className="mr-2 text-sm">{label}</span>}
+      {label && <span className="self-center text-sm">{label}</span>}
     </div>
   )
 }
