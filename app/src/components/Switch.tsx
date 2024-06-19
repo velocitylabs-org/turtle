@@ -1,5 +1,5 @@
+import React from 'react'
 import { cn } from '@/utils/cn'
-import { Switch as NextSwitch } from '@nextui-org/react'
 
 interface SwitchProps {
   /** The current state of the switch, true for on and false for off. */
@@ -16,15 +16,28 @@ interface SwitchProps {
 
 const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, className }) => {
   return (
-    <NextSwitch
-      isSelected={checked}
-      isDisabled={disabled}
-      onValueChange={onChange}
-      size="sm"
-      className={cn('', className)}
-    >
-      {label}
-    </NextSwitch>
+    <div className={cn('flex items-center gap-1', className)}>
+      <button
+        type="button"
+        className={cn(
+          'relative inline-flex h-6 w-11 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out',
+          checked ? 'bg-green-500' : 'bg-gray-300',
+          disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+        )}
+        role="switch"
+        aria-checked={checked}
+        disabled={disabled}
+        onClick={() => !disabled && onChange(!checked)}
+      >
+        <span
+          className={cn(
+            'inline-block h-5 w-5 transform rounded-md bg-white transition duration-200 ease-in-out',
+            checked ? 'translate-x-5' : 'translate-x-0',
+          )}
+        />
+      </button>
+      {label && <span className="mr-2 text-sm">{label}</span>}
+    </div>
   )
 }
 
