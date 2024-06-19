@@ -6,7 +6,7 @@ import { FC } from 'react'
 
 const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
   return (
-    <div className="mb-1 rounded-[16px] border border-[color:var(--turtle-level3)] p-3">
+    <div className="mb-2 rounded-[16px] border border-[color:var(--turtle-level3)] p-3">
       <div className="mb-2 flex items-center justify-between">
         {/* TODO(nuno) fetch and use a proper status update here **/}
         <p className="font-semibold text-[color:var(--turtle-secondary-dark)] text-purple-600">
