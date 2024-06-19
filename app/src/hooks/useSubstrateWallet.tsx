@@ -1,6 +1,8 @@
 import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
+import { useState } from 'react'
 
 const useSubstrateWallet = () => {
+  const [modalOpen, setModalOpen] = useState(false)
   const substrateAccount = useSubstrateWalletStore(state => state.account)
   const setSubstrateAccount = useSubstrateWalletStore(state => state.setAccount)
   const isModalOpen = useSubstrateWalletStore(state => state.modalOpen)
