@@ -117,7 +117,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             ) : (
               <div
                 className={cn(
-                  'h-4 w-4 rounded-full border bg-turtle-level3',
+                  'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
                   tx.status === 'completed' ? 'border-black ' : 'border-turtle-error-dark',
                 )}
               />
@@ -145,7 +145,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             ) : (
               <div
                 className={cn(
-                  'h-4 w-4 rounded-full border bg-turtle-level3',
+                  'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
                   tx.status === 'completed' ? 'border-black ' : 'border-turtle-error-dark',
                 )}
               />

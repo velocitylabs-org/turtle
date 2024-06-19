@@ -36,6 +36,9 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    --letter-spacing-xs: -0.04em;
+    --letter-spacing-sm: -0.03em;
   }
 
   .dark {
@@ -74,8 +77,22 @@ body {
 }
 
 @layer base {
+  /* removes scrollbar */
+  ::-webkit-scrollbar {
+    display: none;
+    scrollbar-width: none;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: var(--letter-spacing-xs);
+  }
+  p {
+    letter-spacing: var(--letter-spacing-sm);
   }
 }
 
