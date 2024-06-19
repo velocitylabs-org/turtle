@@ -20,7 +20,7 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, cla
       <button
         type="button"
         className={cn(
-          'relative inline-flex h-6 w-10 cursor-pointer items-center rounded-lg border-1 border-turtle-level3 transition-colors duration-200 ease-in-out',
+          'relative inline-flex h-6 w-10 cursor-pointer items-center rounded-[8px] border-1 border-turtle-level3 transition-colors duration-200 ease-in-out',
           checked ? 'bg-turtle-primary-light' : 'bg-turtle-level1',
           disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
         )}

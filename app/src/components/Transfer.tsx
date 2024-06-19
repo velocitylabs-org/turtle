@@ -16,6 +16,7 @@ import SubstrateWalletModal from './SubstrateWalletModal'
 import Switch from './Switch'
 import TokenSelect, { TokenAmount } from './TokenSelect'
 import WalletButton from './WalletButton'
+import Image from 'next/image'
 
 const Transfer: FC = () => {
   // Inputs
@@ -146,9 +147,10 @@ const Transfer: FC = () => {
       {destinationChain && (
         <div className="flex flex-col gap-1">
           {manualRecipient.enabled && (
-            <span className="self-center pt-1 text-xs">
-              Double check address to avoid losing funds.
-            </span>
+            <div className="flex items-center gap-1 self-center pt-1">
+              <Image src="/alert-icon.svg" alt="alert" width={16} height={16} />
+              <span className=" text-xs">Double check address to avoid losing funds.</span>
+            </div>
           )}
           {/* Switch Wallet and Manual Input */}
           <Switch
