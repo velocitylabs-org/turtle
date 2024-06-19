@@ -1,20 +1,17 @@
 'use client'
+
 import { Chain } from '@/models/chain'
-import { truncateAddress } from '@/utils/address'
-import { ChevronDown } from 'lucide-react'
 import Image from 'next/image'
-import { FC, ReactNode } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import ChevronDown from './svg/ChevronDown'
 import ChainIcon from './svg/ChainIcon'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 interface ChainSelectProps {
   /** Currently selected chain, or null if no value is selected. */
   value: Chain | null
   /** Callback function that is invoked when the selected chain changes. */
   onChange: (newValue: Chain | null) => void
-  /** The connected address to display */
-  address?: string
   /** Array of chains that the user can select from. */
   options: Chain[]
   /** Label floating above the select input */
@@ -22,11 +19,11 @@ interface ChainSelectProps {
   /** Placeholder text to display when no value is selected. */
   placeholder?: string
   /** Icon to display in the placeholder. */
-  placeholderIcon?: ReactNode
+  placeholderIcon?: React.ReactNode
+  /** Component to attach at the end */
+  trailing?: React.ReactNode
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
-  /** Button to display in the wallet section of the select input. */
-  walletButton?: ReactNode
   /** Additional classes to apply to the select input. */
   className?: string
 }
@@ -36,70 +33,111 @@ const ChainSelect: FC<ChainSelectProps> = ({
   onChange,
   options,
   floatingLabel,
-  placeholder,
+  placeholder = 'Chain',
   placeholderIcon = <ChainIcon />,
+  trailing,
   disabled,
-  walletButton,
-  address,
   className,
 }) => {
-  const handleSelectionChange = (newValue: string) => {
-    const selectedChain = options.find(opt => JSON.stringify(opt.chainId) === newValue) || null
+  const [isOpen, setIsOpen] = useState(false)
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  const handleSelectionChange = (selectedChain: Chain) => {
     onChange(selectedChain)
+    setIsOpen(false)
+  }
+
+  const handleTriggerClick = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen)
+    }
   }
 
   return (
-    <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
-      <Select onValueChange={handleSelectionChange} disabled={disabled}>
-        <SelectTrigger floatingLabel={floatingLabel} trailing={walletButton}>
-          <SelectValue
-            placeholder={
-              <div className="flex items-center gap-1">
-                {placeholderIcon}
-                {placeholder}
-                <ChevronDown strokeWidth={1} />
-              </div>
-            }
-          >
-            {value && (
-              <div className="flex items-center gap-1">
+    <div className={twMerge('relative w-full', className)}>
+      {floatingLabel && (
+        <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+          {floatingLabel}
+        </label>
+      )}
+      <div
+        ref={triggerRef}
+        className={twMerge(
+          'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+        )}
+        onClick={handleTriggerClick}
+      >
+        <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+          {/* Trigger Content or Placeholder Content */}
+          {value ? (
+            <>
+              <Image
+                src={value.logoURI}
+                alt={value.name}
+                width={24}
+                height={24}
+                className="h-[1.5rem] w-[1.5rem] rounded-full"
+              />
+              <span>{value.name}</span>
+            </>
+          ) : (
+            <>
+              {placeholderIcon}
+              {placeholder}
+            </>
+          )}
+          <ChevronDown strokeWidth={0.2} />
+        </div>
+
+        {trailing && <div className="ml-2">{trailing}</div>}
+      </div>
+
+      {/* Dialog */}
+      {isOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute left-0 right-0 z-20 max-h-60 min-h-[6rem] translate-y-[-3.58rem] overflow-auto rounded-md border-1 border-turtle-level3 bg-white"
+        >
+          <ul className="flex flex-col gap-2 px-1 py-2">
+            {options.map(option => (
+              <li
+                key={option.id}
+                className="flex cursor-pointer items-center gap-2 p-2"
+                onClick={() => handleSelectionChange(option)}
+              >
                 <Image
-                  src={value.logoURI}
-                  alt={value.name}
+                  src={option.logoURI}
+                  alt={option.name}
                   width={24}
                   height={24}
                   className="h-[1.5rem] w-[1.5rem] rounded-full"
                 />
-                {!address && <p>{value.name}</p>}
-                <ChevronDown strokeWidth={1} />
-                {address && <p>{truncateAddress(address)}</p>}
-              </div>
-            )}
-          </SelectValue>
-        </SelectTrigger>
-
-        <SelectContent>
-          <div className="flex flex-col gap-2">
-            {options.map((option, index) => (
-              <SelectItem
-                key={index + option.name + option.logoURI}
-                value={JSON.stringify(option.chainId)}
-              >
-                <div className="flex items-center gap-1">
-                  <Image
-                    src={option.logoURI}
-                    alt={option.name}
-                    width={24}
-                    height={24}
-                    className="h-[1.5rem] w-[1.5rem] rounded-full"
-                  />
-                  {option.name}
-                </div>
-              </SelectItem>
+                <span className="text-sm">{option.name}</span>
+              </li>
             ))}
-          </div>
-        </SelectContent>
-      </Select>
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

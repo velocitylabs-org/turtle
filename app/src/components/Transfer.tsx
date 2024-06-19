@@ -101,9 +101,9 @@ const Transfer: FC = () => {
         options={sourceChains}
         floatingLabel="From"
         placeholder="Source"
-        walletButton={<WalletButton network={sourceChain?.network} />}
-        address={sourceWallet?.sender?.address}
-        className="w-full"
+        trailing={<WalletButton network={sourceChain?.network} />}
+        /* address={sourceWallet?.sender?.address} */
+        className="z-50"
       />
 
       {/* Token */}
@@ -121,7 +121,7 @@ const Transfer: FC = () => {
             disabled={!sourceWallet?.isConnected || tokenAmount.token === null}
           />
         } // TODO: Implement max button functionality
-        className="w-full"
+        className="z-40"
       />
 
       {/* Destination Chain */}
@@ -131,9 +131,9 @@ const Transfer: FC = () => {
         options={destChains}
         floatingLabel="To"
         placeholder="Destination"
-        walletButton={<WalletButton network={destinationChain?.network} />}
-        address={destinationWallet?.sender?.address}
-        className="w-full"
+        trailing={<WalletButton network={destinationChain?.network} />}
+        /* address={destinationWallet?.sender?.address} */
+        className="z-30"
       />
 
       {/* Recipient Wallet or Address Input */}

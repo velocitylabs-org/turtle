@@ -83,6 +83,11 @@ const TokenSelect: FC<TokenSelectProps> = ({
 
   return (
     <div className={twMerge('relative w-full', className)}>
+      {floatingLabel && (
+        <label className="top absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+          {floatingLabel}
+        </label>
+      )}
       <div
         ref={triggerRef}
         className={twMerge(
@@ -128,7 +133,7 @@ const TokenSelect: FC<TokenSelectProps> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute left-0 right-0 z-10 max-h-60 min-h-[6rem] translate-y-[-3.58rem] overflow-auto rounded-md border-1 border-turtle-level3 bg-white"
+          className="absolute left-0 right-0 z-20 max-h-60 min-h-[6rem] translate-y-[-3.58rem] overflow-auto rounded-md border-1 border-turtle-level3 bg-white"
         >
           <ul className="flex flex-col gap-2 px-1 py-2">
             {options.map(option => (
