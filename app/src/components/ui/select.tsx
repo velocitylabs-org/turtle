@@ -33,7 +33,7 @@ const SelectTrigger = React.forwardRef<
         <div className="flex grow items-center gap-2">
           {children}
           {floatingLabel && (
-            <label className="absolute left-3 top-2 z-30 origin-top-left -translate-y-4 bg-background px-1 text-xs text-turtle-level5">
+            <label className="absolute left-3 top-2 origin-top-left -translate-y-4 bg-background px-1 text-xs text-turtle-level5">
               {floatingLabel}
             </label>
           )}

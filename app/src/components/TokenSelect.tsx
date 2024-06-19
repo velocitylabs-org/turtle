@@ -1,18 +1,22 @@
 'use client'
+
 import { Token } from '@/models/token'
-import { ChevronDown } from 'lucide-react'
 import Image from 'next/image'
-import { FC, ReactNode } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
-import Button from './Button'
+import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+
+export interface TokenAmount {
+  token: Token | null
+  amount: number | null
+}
 
 interface TokenSelectProps {
-  /** Currently selected token, or null if no value is selected. */
-  value: Token | null
+  /** Currently selected token and amount, or null if no value is selected. */
+  value: TokenAmount
   /** Callback function that is invoked when the selected token changes. */
-  onChange: (newValue: Token | null) => void
+  onChange: (newValue: TokenAmount) => void
   /** Array of tokens that the user can select from. */
   options: Token[]
   /** Label floating above the select input */
@@ -20,84 +24,125 @@ interface TokenSelectProps {
   /** Placeholder text to display when no value is selected. */
   placeholder?: string
   /** Icon to display in the placeholder. */
-  placeholderIcon?: ReactNode
+  placeholderIcon?: React.ReactNode
+  /** Component to attach at the end */
+  trailing?: React.ReactNode
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
   /** Additional classes to apply to the select input. */
   className?: string
 }
 
+const VerticalDivider: FC = () => (
+  <div className="ml-2 h-[1.625rem] border-1 border-turtle-level3" />
+)
+
 const TokenSelect: FC<TokenSelectProps> = ({
   value,
   onChange,
   options,
   floatingLabel,
-  placeholder,
+  placeholder = 'Token',
   placeholderIcon = <TokenIcon />,
+  trailing,
   disabled,
   className,
 }) => {
-  const handleSelectionChange = (newValue: string) => {
-    const selectedToken = options.find(opt => JSON.stringify(opt.id) === newValue) || null
-    onChange(selectedToken)
+  const [isOpen, setIsOpen] = useState(false)
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  const handleSelectionChange = (selectedToken: Token) => {
+    onChange({ token: selectedToken, amount: value.amount })
+    setIsOpen(false)
+  }
+
+  const handleTriggerClick = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen)
+    }
   }
 
   return (
-    <div className={twMerge(`flex items-center justify-center border-turtle-level3`, className)}>
-      <Select onValueChange={handleSelectionChange} disabled={disabled}>
-        <SelectTrigger
-          floatingLabel={floatingLabel}
-          trailing={<Button variant="outline" size="sm" label="Max" className="min-w-[40px]" />}
+    <div className={twMerge('relative w-full', className)}>
+      <div
+        ref={triggerRef}
+        className={twMerge(
+          'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+        )}
+        onClick={handleTriggerClick}
+      >
+        <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+          {/* Trigger Content or Placeholder Content */}
+          {value.token ? (
+            <>
+              <Image
+                src={value.token.logoURI}
+                alt={value.token.name}
+                width={24}
+                height={24}
+                className="h-[1.5rem] w-[1.5rem] rounded-full"
+              />
+              <span>{value.token.symbol}</span>
+              <span>{value.amount}</span> {/* Display the amount */}
+            </>
+          ) : (
+            <>
+              {placeholderIcon}
+              {placeholder}
+            </>
+          )}
+          <ChevronDown strokeWidth={0.2} />
+          <VerticalDivider />
+        </div>
+        {trailing && <div className="ml-2">{trailing}</div>}
+      </div>
+
+      {/* Dialog */}
+      {isOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute left-0 right-0 z-10 max-h-60 min-h-[6rem] translate-y-[-3.58rem] overflow-auto rounded-md border-1 border-turtle-level3 bg-white"
         >
-          <SelectValue
-            placeholder={
-              <div className="flex items-center gap-1">
-                {placeholderIcon}
-                {placeholder}
-                <ChevronDown strokeWidth={1} />
-              </div>
-            }
-          >
-            {value && (
-              <div className="flex items-center gap-1">
+          <ul className="flex flex-col gap-2 px-1 py-2">
+            {options.map(option => (
+              <li
+                key={option.id}
+                className="flex cursor-pointer items-center gap-2 p-2"
+                onClick={() => handleSelectionChange(option)}
+              >
                 <Image
-                  src={value.logoURI}
-                  alt={value.name}
+                  src={option.logoURI}
+                  alt={option.name}
                   width={24}
                   height={24}
                   className="h-[1.5rem] w-[1.5rem] rounded-full"
                 />
-                <p>{value.symbol}</p>
-                <ChevronDown strokeWidth={1} />
-                <div className="ml-2 h-[1.625rem] border-1 border-turtle-level3" />
-                {/* Textfield */}
-              </div>
-            )}
-          </SelectValue>
-        </SelectTrigger>
-
-        <SelectContent>
-          <div className="flex flex-col gap-2">
-            {options.map((option, index) => (
-              <SelectItem
-                key={index + option.name + option.logoURI}
-                value={JSON.stringify(option.id)}
-              >
-                <div className="flex items-center gap-1">
-                  <Image
-                    src={option.logoURI}
-                    alt={option.name}
-                    width={24}
-                    height={24}
-                    className="h-[1.5rem] w-[1.5rem] rounded-full"
-                  />
-                  {option.symbol}
-                </div>
-              </SelectItem>
+                <span className="text-sm">{option.symbol}</span>
+              </li>
             ))}
-          </div>
-        </SelectContent>
-      </Select>
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

@@ -5,7 +5,6 @@ import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import Link from 'next/link'
@@ -15,15 +14,14 @@ import Button from './Button'
 import ChainSelect from './ChainSelect'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import Switch from './Switch'
-import TokenSelect from './TokenSelect'
+import TokenSelect, { TokenAmount } from './TokenSelect'
 import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
   // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
-  const [token, setToken] = useState<Token | null>(null)
-  const [inputAmount, setInputAmount] = useState<number | null>(null)
+  const [tokenAmount, setTokenAmount] = useState<TokenAmount>({ token: null, amount: null })
   const [manualRecipient, setManualRecipient] = useState<{ enabled: boolean; address: string }>({
     enabled: false,
     address: '',
@@ -38,7 +36,7 @@ const Transfer: FC = () => {
     error: sourceChainsError,
   } = useChains({
     supportedDestChain: destinationChain ?? undefined,
-    supportedToken: token ?? undefined,
+    supportedToken: tokenAmount.token ?? undefined,
   })
   const {
     chains: destChains,
@@ -46,26 +44,26 @@ const Transfer: FC = () => {
     error: destChainsError,
   } = useChains({
     supportedSourceChain: sourceChain ?? undefined,
-    supportedToken: token ?? undefined,
+    supportedToken: tokenAmount.token ?? undefined,
   })
   const { environment, switchTo } = useEnvironment()
   const { transfer, isValid: _isValid } = useTransfer()
   const recipient = manualRecipient.enabled
     ? manualRecipient.address
     : destinationWallet?.sender?.address
-  const amount = convertAmount(inputAmount, token)
+  const amount = convertAmount(tokenAmount.amount, tokenAmount.token)
 
   // Functions
   const isValid = useMemo(() => {
     return _isValid({
       sender: sourceWallet?.sender,
-      token,
+      token: tokenAmount.token,
       sourceChain,
       destinationChain,
       recipient: recipient,
       amount,
     })
-  }, [sourceWallet, token, sourceChain, destinationChain, recipient, amount, _isValid])
+  }, [sourceWallet, tokenAmount, sourceChain, destinationChain, recipient, amount, _isValid])
 
   const handleSubmit = () => {
     // basic checks for TS type checker. But usually button should be disabled if these are not met.
@@ -74,7 +72,7 @@ const Transfer: FC = () => {
       !recipient ||
       !sourceWallet?.sender ||
       !destinationChain ||
-      !token ||
+      !tokenAmount.token ||
       !amount
     )
       return
@@ -84,7 +82,7 @@ const Transfer: FC = () => {
       sender: sourceWallet.sender,
       sourceChain,
       destinationChain,
-      token,
+      token: tokenAmount.token,
       amount,
       recipient: recipient,
     })
@@ -105,13 +103,12 @@ const Transfer: FC = () => {
       />
 
       {/* Token */}
-
       <TokenSelect
-        value={token}
-        onChange={setToken}
+        value={tokenAmount}
+        onChange={setTokenAmount}
         options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
         floatingLabel="Amount"
-        placeholder="Token"
+        trailing={<Button label="Max" size="sm" variant="outline" className="min-w-[40px]" />} // TODO: Implement max button functionality
         className="w-full"
       />
 
