@@ -1,7 +1,7 @@
 'use client'
-import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
 import useEnvironment from '@/hooks/useEnvironment'
@@ -29,6 +29,9 @@ const statusIcon = (status: TransactionStatus) => {
 
 export const TransactionCard = ({ tx }: { tx: Transaction }) => {
   const { environment } = useEnvironment()
+  const { data: ensName } = useEnsName({
+    address: tx.fromAddress as `0x${string}`,
+  })
   return (
     <div
       className={cn(
@@ -48,8 +51,8 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 tx.status === 'failed' && 'text-turtle-error',
               )}
             >
-              <p>{tx.amount.toFixed(2)}</p>
-              <p>{tx.token}</p>
+              <p>{tx.fromChainAmount.toFixed(2)}</p>
+              <p>{tx.fromChainToken}</p>
             </div>
             <div
               className={cn(
@@ -100,7 +103,6 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             tx.status === 'failed' && 'text-turtle-error-dark',
           )}
         >
-          {/* check ENS domains */}
           <div className="flex items-center gap-x-1">
             {tx.fromChain === 'Polkadot' ? (
               <Identicon
@@ -120,7 +122,13 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 )}
               />
             )}
-            <p className="text-sm">{truncateAddress(tx.fromAddress)}</p>
+            <p className="text-sm">
+              {tx.fromChain === 'Ethereum'
+                ? ensName
+                  ? ensName
+                  : truncateAddress(tx.fromAddress)
+                : truncateAddress(tx.fromAddress)}
+            </p>
           </div>
           <ArrowRight className="h-3 w-3" fill={'#A184DC'} />
           <div className="flex items-center gap-x-2">
@@ -142,7 +150,13 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 )}
               />
             )}
-            <p className="text-sm">{truncateAddress(tx.toAddress)}</p>
+            <p className="text-sm">
+              {tx.toChain === 'Ethereum'
+                ? ensName
+                  ? ensName
+                  : truncateAddress(tx.toAddress)
+                : truncateAddress(tx.toAddress)}
+            </p>
           </div>
         </div>
         {tx.status === 'failed' && (

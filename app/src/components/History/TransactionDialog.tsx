@@ -1,6 +1,8 @@
 'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
 import useEnvironment from '@/hooks/useEnvironment'
@@ -16,9 +18,13 @@ import { ArrowUpRight } from './TransactionIcons/ArrowUpRight'
 import { ExclamationMark } from './TransactionIcons/ExclamationMark'
 
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
+import { Separator } from '../ui/separator'
 
 export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
   const { environment } = useEnvironment()
+  const { data: ensName } = useEnsName({
+    address: tx.fromAddress as `0x${string}`,
+  })
   return (
     <Dialog>
       <DialogTrigger className="w-full">
@@ -82,8 +88,8 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
               tx.status === 'completed' ? 'text-turtle-success-dark' : ' text-turtle-error-dark',
             )}
           >
-            <p>{tx.amount.toFixed(2)}</p>
-            <p>{tx.token}</p>
+            <p>{tx.fromChainAmount.toFixed(2)}</p>
+            <p>{tx.fromChainToken}</p>
           </div>
           <div
             className={cn(
@@ -149,7 +155,13 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">{truncateAddress(tx.fromAddress)}</p>
+                <p className="text-sm">
+                  {tx.fromChain === 'Ethereum'
+                    ? ensName
+                      ? ensName
+                      : truncateAddress(tx.fromAddress)
+                    : truncateAddress(tx.fromAddress)}
+                </p>
               </div>
             </div>
 
@@ -176,7 +188,43 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">{truncateAddress(tx.toAddress)}</p>
+                <p className="text-sm">
+                  {tx.toChain === 'Ethereum'
+                    ? ensName
+                      ? ensName
+                      : truncateAddress(tx.toAddress)
+                    : truncateAddress(tx.toAddress)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* fees */}
+          <div className="w-full gap-10">
+            <div className="flex items-center justify-between">
+              <p className="text-sm">Transfer amount</p>
+              <div className="flex space-x-1 text-sm">
+                <p>{tx.fromChainAmount.toFixed(2)}</p>
+                <p>{tx.fromChainToken}</p>
+                <p className="text-turtle-level5">${tx.fromChainAmountValue.toFixed(2)}</p>
+              </div>
+            </div>
+            <Separator className="my-4 bg-turtle-level3" />
+            <div className="flex items-center justify-between">
+              <p className="text-sm">Fees</p>
+              <div className="flex space-x-1 text-sm">
+                <p>{tx.fees.toFixed(2)}</p>
+                <p>{tx.fromChainToken}</p>
+                <p className="text-turtle-level5">${tx.feesValue.toFixed(2)}9</p>
+              </div>
+            </div>
+            <Separator className="my-4 bg-turtle-level3" />
+            <div className="flex items-center justify-between">
+              <p className="text-sm">Min receive</p>
+              <div className="flex space-x-1 text-sm">
+                <p>{tx.minTokenRecieved.toFixed(2)}</p>
+                <p>{tx.toChainToken}</p>
+                <p className="text-turtle-level5">${tx.minTokenRecievedValue.toFixed(2)}</p>
               </div>
             </div>
           </div>

@@ -24,7 +24,6 @@ const useEvmWallet = ({ chainId }: { chainId?: number } = {}) => {
   const { isConnected } = useAccount()
 
   const signer = useMemo(() => (client ? clientToSigner(client) : undefined), [client])
-
   return { signer, openModal: open, closeModal: close, disconnect, isConnected }
 }
 

@@ -8,10 +8,18 @@ export type TransactionStatus = 'pending' | 'completed' | 'failed'
 
 export type Transaction = {
   status: TransactionStatus
-  amount: number
-  token: string
   fromChain: string
+  fromChainToken: string
+  fromChainAmount: number
+  fromChainAmountValue: number
   toChain: string
+  toChainToken: string
+  toChainAmount: number
+  toChainAmountValue: number
+  fees: number
+  feesValue: number
+  minTokenRecieved: number
+  minTokenRecievedValue: number
   fromAddress: string
   toAddress: string
   timestamp: string
