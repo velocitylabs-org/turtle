@@ -36,7 +36,7 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={twMerge(inter.className, 'bg-turtle-secondary')}>
+      <body className={twMerge(inter.className, 'bg-turtle-tertiary')}>
         <Navbar />
         <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>
