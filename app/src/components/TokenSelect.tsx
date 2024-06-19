@@ -103,7 +103,6 @@ const TokenSelect: FC<TokenSelectProps> = ({
                 className="h-[1.5rem] w-[1.5rem] rounded-full"
               />
               <span>{value.token.symbol}</span>
-              <span>{value.amount}</span> {/* Display the amount */}
             </>
           ) : (
             <>
@@ -113,7 +112,15 @@ const TokenSelect: FC<TokenSelectProps> = ({
           )}
           <ChevronDown strokeWidth={0.2} />
           <VerticalDivider />
+          <input
+            type="number"
+            className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+            placeholder="Amount"
+            onChange={e => onChange({ token: value.token, amount: +e.target.value })}
+            onClick={e => e.stopPropagation()}
+          />
         </div>
+
         {trailing && <div className="ml-2">{trailing}</div>}
       </div>
 

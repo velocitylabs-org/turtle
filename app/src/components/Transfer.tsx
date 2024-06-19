@@ -8,7 +8,7 @@ import { Chain } from '@/models/chain'
 import { isValidSubstrateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import Link from 'next/link'
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import AddressInput from './AddressInput'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
@@ -88,6 +88,10 @@ const Transfer: FC = () => {
     })
   }
 
+  useEffect(() => {
+    console.log(tokenAmount)
+  }, [tokenAmount])
+
   return (
     <div className="flex w-full flex-col gap-4 rounded-4xl border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
       {/* Source Chain */}
@@ -108,7 +112,15 @@ const Transfer: FC = () => {
         onChange={setTokenAmount}
         options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
         floatingLabel="Amount"
-        trailing={<Button label="Max" size="sm" variant="outline" className="min-w-[40px]" />} // TODO: Implement max button functionality
+        trailing={
+          <Button
+            label="Max"
+            size="sm"
+            variant="outline"
+            className="min-w-[40px]"
+            disabled={!sourceWallet?.isConnected || tokenAmount.token === null}
+          />
+        } // TODO: Implement max button functionality
         className="w-full"
       />
 
