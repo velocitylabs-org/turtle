@@ -81,7 +81,7 @@ const Transfer: FC = () => {
   }
 
   return (
-    <div className="flex w-full flex-col gap-4 rounded-4xl border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
+    <div className="flex w-full flex-col gap-4 rounded-4xl bg-white p-[2.5rem] shadow-[0_2px_16px_0px_#00000026] backdrop-blur-sm sm:min-w-[31.5rem]">
       {/* Source Wallet Connection */}
       {sourceChain?.network && (
         <AnimatePresence>

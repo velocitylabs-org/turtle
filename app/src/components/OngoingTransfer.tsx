@@ -1,50 +1,72 @@
 'use client'
 import { Transfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
+import { toHumans } from '@/utils/transfer'
 import { FC } from 'react'
 
 const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
   return (
-    <div>
-      <div className="mt-8 flex w-full flex-col gap-2  rounded-[24px] border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-normal">
-            <span className="font-bold">Step 1 of 1</span> {transfer.status}
-          </span>
-          <span className="text-normal text-[color:var(--turtle-level5)]">{transfer.date}</span>
+    <div className="mb-1 rounded-[16px] border border-[color:var(--turtle-level3)] p-3">
+      <div className="mb-2 flex items-center justify-between">
+        {/* TODO(nuno) fetch and use a proper status update here **/}
+        <p className="font-semibold text-[color:var(--turtle-secondary-dark)] text-purple-600">
+          Being bridged...
+        </p>
+        <p className="text-normal text-[color:var(--turtle-secondary)]">
+          {transfer.date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+          })}
+        </p>
+      </div>
+      {/* Progress bar */}
+      <div className="mb-4 h-2 rounded-full bg-[color:var(--turtle-secondary-light)]">
+        <div
+          className="h-2 rounded-full border border-[color:var(--turtle-secondary-dark)] bg-[color:var(--turtle-secondary)]"
+          style={{ width: '60%' }}
+        ></div>
+      </div>
+      <div className="mb-2 flex items-center">
+        <i className="fas fa-sync-alt mr-3 animate-[spin_3s_infinite] text-lg font-light text-[color:var(--turtle-secondary)]"></i>
+        <p className="text-xl font-normal text-[color:var(--turtle-foreground)]">
+          {toHumans(transfer.amount, transfer.token)} {transfer.token.symbol}
+        </p>
+        {/* From and to Chains */}
+        <div className="ml-2 flex h-[24px] items-center rounded-full border border-[color:var(--turtle-level3)] p-1">
+          <img
+            src={transfer.sourceChain.logoURI}
+            alt="Source Chain"
+            className="h-[16px] rounded-full border border-[color:var(--turtle-secondary-dark)]"
+          />
+          <i className="fas fa-arrow-right p-1.5 text-xs text-[color:var(--turtle-secondary-dark)]"></i>
+          <img
+            src={transfer.destChain.logoURI}
+            alt="Destination Chain"
+            className="h-[16px] w-4 rounded-full border border-[color:var(--turtle-secondary-dark)]"
+          />
         </div>
-        <div className="mb-4 h-1.5 w-full rounded-full bg-gray-200">
-          <div className="h-1.5 rounded-full bg-purple-500" style={{ width: '66%' }}></div>
-        </div>
-
-        {/* Details box */}
-        <div className="mb-4 flex justify-between rounded-[16px] border border-[color:var(--turtle-secondary)] bg-[color:var(--turtle-secondary-light)] p-[24px]">
-          <div className="mb-2 flex grow flex-row">
-            <div className="flex items-center p-3">
-              <i className="fas fa-sync-alt mr-2 animate-spin text-[30px] text-[color:var(--turtle-secondary)]"></i>
-            </div>
-
-            <div className="flex grow flex-col justify-between">
-              <div className="items-left mb-2 flex flex-row justify-between ">
-                <span className="text-2xl text-[color:var(--turtle-secondary-dark)]">
-                  {transfer.amount} {transfer.token.symbol}{' '}
-                </span>
-                <span className="text-normal text-[color:var(--turtle-secondary)]">8:32 am</span>
-              </div>
-              <div className="mb-2 flex items-center text-[color:var(--turtle-secondary-dark)]">
-                <span className="text-sm">{truncateAddress(transfer.sender, 4, 4)}</span>
-                <i className="fas fa-arrow-right mx-2"></i>
-                <span className="text-sm">{truncateAddress(transfer.recipient, 4, 4)}</span>
-              </div>
-              <div className="text-sm text-[color:var(--turtle-secondary-dark)]">
-                This transaction is in progress.{' '}
-                <a href="#" className="underline">
-                  See more
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+      </div>
+      <div className="flex items-center">
+        <img
+          src="https://placehold.co/16x16"
+          alt="User avatar"
+          className="mr-1 h-[16px] rounded-full border border-[color:var(--turtle-secondary-dark)]"
+        />
+        <p className="text-[color:var(--turtle-foreground)]">
+          {truncateAddress(transfer.sender, 4, 4)}
+        </p>
+        <i className="fas fa-arrow-right mx-2 p-1.5 text-lg text-[color:var(--turtle-secondary-dark)]"></i>
+        <img
+          src="https://placehold.co/16x16"
+          alt="User avatar"
+          className="mr-1 h-[16px] rounded-full border border-[color:var(--turtle-secondary-dark)]"
+        />
+        <p className="text-[color:var(--turtle-foreground)]">
+          {truncateAddress(transfer.recipient, 4, 4)}
+        </p>
       </div>
     </div>
   )

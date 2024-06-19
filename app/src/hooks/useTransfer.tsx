@@ -93,17 +93,17 @@ const useTransfer = () => {
           return
         }
 
-        console.log('Sent success, will add to ongoing transfers')
+        console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
         addTransfer({
           id: sent.success!.messageId,
           sourceChain,
           token,
           sender: await (sender as Signer).getAddress(),
           destChain: destinationChain,
-          amount,
+          amount: amount,
           recipient: recipient,
           status: 'todo',
-          date: 'Today 11:49',
+          date: new Date(),
         })
 
         break
@@ -139,17 +139,17 @@ const useTransfer = () => {
           return
         }
 
-        console.log('Sent success, will add to ongoing transfers')
+        console.log('Sent success, will add to ongoing transfers. Amount:', amount)
         addTransfer({
           id: sent.success!.messageId ?? 'todo',
           sourceChain,
           token,
           sender: sender.address,
           destChain: destinationChain,
-          amount,
+          amount: amount,
           recipient: recipient,
           status: 'todo',
-          date: 'Today 11:49',
+          date: new Date(),
         })
         break
       default:

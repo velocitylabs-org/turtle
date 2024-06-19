@@ -6,11 +6,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 const useOngoingTransfers = () => {
-  const transfers = useOngoingTransfersStore(state => state.transfers)
+  const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const addTransfer = useOngoingTransfersStore.getState().addTransfer
   const removeTransfer = useOngoingTransfersStore.getState().removeTransfer
 
-  return { transfers, addTransfer, removeTransfer }
+  return { ongoingTransfers, addTransfer, removeTransfer }
 }
 
 // const useOngoingTransfers = (address?: string) => {
