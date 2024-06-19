@@ -93,57 +93,66 @@ const Transfer: FC = () => {
   }, [manualRecipient])
 
   return (
-    <div className="flex w-full flex-col gap-4 rounded-4xl border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
-      {/* Source Chain */}
-      <ChainSelect
-        value={sourceChain}
-        onChange={setSourceChain}
-        options={sourceChains}
-        floatingLabel="From"
-        placeholder="Source"
-        trailing={<WalletButton network={sourceChain?.network} />}
-        walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
-        className="z-50"
-      />
+    <div className="flex w-full flex-col gap-1 rounded-4xl border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
+      <div className="flex flex-col gap-5">
+        {/* Source Chain */}
+        <ChainSelect
+          value={sourceChain}
+          onChange={setSourceChain}
+          options={sourceChains}
+          floatingLabel="From"
+          placeholder="Source"
+          trailing={<WalletButton network={sourceChain?.network} />}
+          walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
+          className="z-50"
+        />
 
-      {/* Token */}
-      <TokenSelect
-        value={tokenAmount}
-        onChange={setTokenAmount}
-        options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
-        floatingLabel="Amount"
-        trailing={
-          <Button
-            label="Max"
-            size="sm"
-            variant="outline"
-            className="min-w-[40px]"
-            disabled={!sourceWallet?.isConnected || tokenAmount.token === null}
-          />
-        } // TODO: Implement max button functionality
-        className="z-40"
-      />
+        {/* Token */}
+        <TokenSelect
+          value={tokenAmount}
+          onChange={setTokenAmount}
+          options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
+          floatingLabel="Amount"
+          trailing={
+            <Button
+              label="Max"
+              size="sm"
+              variant="outline"
+              className="min-w-[40px]"
+              disabled={!sourceWallet?.isConnected || tokenAmount.token === null}
+            />
+          } // TODO: Implement max button functionality
+          className="z-40"
+        />
 
-      {/* Destination Chain */}
-      <ChainSelect
-        value={destinationChain}
-        onChange={setDestinationChain}
-        options={destChains}
-        floatingLabel="To"
-        placeholder="Destination"
-        manualRecipient={manualRecipient}
-        onChangeManualRecipient={setManualRecipient}
-        trailing={!manualRecipient.enabled && <WalletButton network={destinationChain?.network} />}
-        walletAddress={truncateAddress(destinationWallet?.sender?.address || '')}
-        className="z-30"
-      />
+        {/* Destination Chain */}
+        <ChainSelect
+          value={destinationChain}
+          onChange={setDestinationChain}
+          options={destChains}
+          floatingLabel="To"
+          placeholder="Destination"
+          manualRecipient={manualRecipient}
+          onChangeManualRecipient={setManualRecipient}
+          trailing={
+            !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
+          }
+          walletAddress={truncateAddress(destinationWallet?.sender?.address || '')}
+          className="z-30"
+        />
+      </div>
 
       {/* Recipient Wallet or Address Input */}
       {destinationChain && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          {manualRecipient.enabled && (
+            <span className="self-center pt-1 text-xs">
+              Double check address to avoid losing funds.
+            </span>
+          )}
           {/* Switch Wallet and Manual Input */}
           <Switch
-            className="items-start"
+            className="items-start pt-1"
             checked={manualRecipient.enabled}
             onChange={enabled => setManualRecipient(prev => ({ ...prev, enabled }))}
             label="Send to a different address"
@@ -153,11 +162,12 @@ const Transfer: FC = () => {
 
       {/* Transfer Button */}
       <Button
-        label="Transfer"
+        label="Send"
         size="lg"
         variant="primary"
         onClick={handleSubmit}
         disabled={!isValid}
+        className="my-5"
       />
 
       {/* Warning Label */}
