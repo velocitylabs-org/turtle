@@ -31,7 +31,7 @@ const OngoingTransferModal: FC = () => {
           <div className="mt-2 flex items-center space-x-2">
             <img
               src="https://placehold.co/32x32"
-              alt="Receiver's avatar"
+              alt="Recipient's avatar"
               className="rounded-full"
             />
             <div className="text-gray-700">0f17-2h97</div>

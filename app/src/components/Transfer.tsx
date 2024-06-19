@@ -69,25 +69,14 @@ const Transfer: FC = () => {
   }, [sourceWallet, token, sourceChain, destinationChain, recipient, amount, _isValid])
 
   const handleSubmit = () => {
-    // basic checks for TS type checker. But usually button should be disabled if these are not met.
-    if (
-      !sourceChain ||
-      !recipient ||
-      !sourceWallet?.sender ||
-      !destinationChain ||
-      !token ||
-      !amount
-    )
-      return
-
     transfer({
       environment,
-      sender: sourceWallet.sender,
-      sourceChain,
-      destinationChain,
-      token,
-      amount,
-      recipient: recipient,
+      sender: sourceWallet!.sender!,
+      sourceChain: sourceChain!,
+      destinationChain: destinationChain!,
+      token: token!,
+      amount: amount!,
+      recipient: recipient!,
     })
   }
 
