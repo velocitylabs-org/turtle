@@ -89,8 +89,8 @@ const Transfer: FC = () => {
   }
 
   useEffect(() => {
-    console.log(tokenAmount)
-  }, [tokenAmount])
+    console.log(manualRecipient)
+  }, [manualRecipient])
 
   return (
     <div className="flex w-full flex-col gap-4 rounded-4xl border-1 border-black bg-white p-[2.5rem] backdrop-blur-sm sm:min-w-[31.5rem]">
@@ -131,7 +131,9 @@ const Transfer: FC = () => {
         options={destChains}
         floatingLabel="To"
         placeholder="Destination"
-        trailing={<WalletButton network={destinationChain?.network} />}
+        manualRecipient={manualRecipient}
+        onChangeManualRecipient={setManualRecipient}
+        trailing={!manualRecipient.enabled && <WalletButton network={destinationChain?.network} />}
         walletAddress={truncateAddress(destinationWallet?.sender?.address || '')}
         className="z-30"
       />
@@ -139,14 +141,6 @@ const Transfer: FC = () => {
       {/* Recipient Wallet or Address Input */}
       {destinationChain && (
         <div className="flex flex-col gap-3">
-          {manualRecipient.enabled && (
-            <AddressInput
-              value={manualRecipient.address}
-              onChange={address => setManualRecipient(prev => ({ ...prev, address }))}
-              validateAddress={isValidSubstrateAddress}
-            />
-          )}
-
           {/* Switch Wallet and Manual Input */}
           <Switch
             className="items-start"

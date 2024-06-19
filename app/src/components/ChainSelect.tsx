@@ -6,6 +6,8 @@ import { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import ChevronDown from './svg/ChevronDown'
 import ChainIcon from './svg/ChainIcon'
+import AddressInput from './AddressInput'
+import { isValidSubstrateAddress } from '@/utils/address'
 
 interface ChainSelectProps {
   /** Currently selected chain, or null if no value is selected. */
@@ -22,6 +24,9 @@ interface ChainSelectProps {
   placeholderIcon?: React.ReactNode
   /** The connected address is displayed to the right of the Chain  */
   walletAddress?: string
+  /** Used for manual recipient input */
+  manualRecipient?: { enabled: boolean; address: string }
+  onChangeManualRecipient?: (newVal: { enabled: boolean; address: string }) => void
   /** Component to attach at the end */
   trailing?: React.ReactNode
   /** Whether the select input is disabled (non-interactive). */
@@ -38,6 +43,8 @@ const ChainSelect: FC<ChainSelectProps> = ({
   placeholder,
   placeholderIcon = <ChainIcon />,
   walletAddress,
+  manualRecipient,
+  onChangeManualRecipient,
   trailing,
   disabled,
   className,
@@ -101,7 +108,9 @@ const ChainSelect: FC<ChainSelectProps> = ({
                 height={24}
                 className="h-[1.5rem] w-[1.5rem] rounded-full"
               />
-              {!walletAddress && <span>{value.name}</span>}
+              {!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address) && (
+                <span>{value.name}</span>
+              )}
             </>
           ) : (
             <>
@@ -110,7 +119,22 @@ const ChainSelect: FC<ChainSelectProps> = ({
             </>
           )}
           <ChevronDown strokeWidth={0.2} />
-          {walletAddress}
+          {!manualRecipient?.enabled && walletAddress}
+
+          {manualRecipient && manualRecipient.enabled && (
+            <input
+              type="text"
+              className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+              placeholder="Address"
+              value={manualRecipient.address}
+              onChange={e =>
+                onChangeManualRecipient
+                  ? onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
+                  : null
+              }
+              onClick={e => e.stopPropagation()}
+            />
+          )}
         </div>
 
         {trailing && <div className="ml-2">{trailing}</div>}
