@@ -2,7 +2,7 @@
 
 import { Chain } from '@/models/chain'
 import Image from 'next/image'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import ChevronDown from './svg/ChevronDown'
 import ChainIcon from './svg/ChainIcon'
@@ -20,6 +20,8 @@ interface ChainSelectProps {
   placeholder?: string
   /** Icon to display in the placeholder. */
   placeholderIcon?: React.ReactNode
+  /** The connected address is displayed to the right of the Chain  */
+  walletAddress?: string
   /** Component to attach at the end */
   trailing?: React.ReactNode
   /** Whether the select input is disabled (non-interactive). */
@@ -33,8 +35,9 @@ const ChainSelect: FC<ChainSelectProps> = ({
   onChange,
   options,
   floatingLabel,
-  placeholder = 'Chain',
+  placeholder,
   placeholderIcon = <ChainIcon />,
+  walletAddress,
   trailing,
   disabled,
   className,
@@ -98,7 +101,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
                 height={24}
                 className="h-[1.5rem] w-[1.5rem] rounded-full"
               />
-              <span>{value.name}</span>
+              {!walletAddress && <span>{value.name}</span>}
             </>
           ) : (
             <>
@@ -107,6 +110,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
             </>
           )}
           <ChevronDown strokeWidth={0.2} />
+          {walletAddress}
         </div>
 
         {trailing && <div className="ml-2">{trailing}</div>}

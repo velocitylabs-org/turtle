@@ -5,7 +5,7 @@ import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
-import { isValidSubstrateAddress } from '@/utils/address'
+import { isValidSubstrateAddress, truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import Link from 'next/link'
 import { FC, useEffect, useMemo, useState } from 'react'
@@ -102,7 +102,7 @@ const Transfer: FC = () => {
         floatingLabel="From"
         placeholder="Source"
         trailing={<WalletButton network={sourceChain?.network} />}
-        /* address={sourceWallet?.sender?.address} */
+        walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
         className="z-50"
       />
 
@@ -132,7 +132,7 @@ const Transfer: FC = () => {
         floatingLabel="To"
         placeholder="Destination"
         trailing={<WalletButton network={destinationChain?.network} />}
-        /* address={destinationWallet?.sender?.address} */
+        walletAddress={truncateAddress(destinationWallet?.sender?.address || '')}
         className="z-30"
       />
 
