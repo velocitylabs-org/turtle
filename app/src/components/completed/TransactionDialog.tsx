@@ -124,7 +124,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             <ExclamationMark
               {...(tx.status === Status.Failed ? { fill: '#8D1269' } : { fill: '#008115' })}
             />
-            {tx.status !== 'failed' ? (
+            {tx.status !== Status.Failed ? (
               <p>
                 <span className="pe-0.5 font-medium">Done!</span>
                 This transfer is completed.
@@ -132,7 +132,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             ) : (
               <p className="w-5/6 space-x-0.5">
                 <span className="font-medium">This transfer failed.</span>
-                You likely don’t have enough DAI in your receiving wallet.{' '}
+                {tx.errors?.length && tx.errors[tx.errors?.length - 1]}
                 <Link href={'/'} className="underline hover:text-turtle-error">
                   Try it again
                 </Link>
@@ -245,6 +245,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             aria-label="View transaction on block explorer"
             className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
           >
+            {/* use transaction hash */}
             <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
           </a>
         </div>

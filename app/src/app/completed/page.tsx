@@ -5,6 +5,7 @@ export default function CompletedTransactions() {
   const transactionsMockUp: Transaction[] = [
     {
       status: Status.Failed,
+      errors: ['You likely don’t have enough ETH in your receiving wallet.'],
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 345098.1234573,
@@ -59,6 +60,7 @@ export default function CompletedTransactions() {
     },
     {
       status: Status.Failed,
+      errors: ['You likely don’t have enough ETH in your receiving wallet.'],
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 10998.09876,
@@ -77,6 +79,7 @@ export default function CompletedTransactions() {
     },
     {
       status: Status.Failed,
+      errors: ['You likely don’t have enough ETH in your receiving wallet.'],
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 345098.1234573,
@@ -131,6 +134,7 @@ export default function CompletedTransactions() {
     },
     {
       status: Status.Failed,
+      errors: ['You likely don’t have enough ETH in your receiving wallet.'],
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 10998.09876,

@@ -8,6 +8,8 @@ export type TransactionStatus = Status.Pending | Status.Completed | Status.Faile
 
 export type Transaction = {
   status: TransactionStatus
+  transactionHashes?: string[]
+  errors?: string[]
   fromChain: string
   fromChainToken: string
   fromChainAmount: number
