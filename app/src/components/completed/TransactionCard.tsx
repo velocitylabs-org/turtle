@@ -1,6 +1,5 @@
 'use client'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
@@ -72,7 +71,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 />
               </div>
               <ArrowRight
-                className="h-2 w-2"
+                className="h-[0.45rem] w-[0.45rem]"
                 {...(tx.status === Status.Failed && { fill: '#FF35C3' })}
               />
               <div className="relative h-4 w-4 rounded-full">
@@ -107,7 +106,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             {tx.fromChain === 'Polkadot' ? (
               <Identicon
                 value={tx.fromAddress}
-                size={16}
+                size={14}
                 theme="polkadot"
                 className={cn(
                   'rounded-full border',
@@ -130,12 +129,15 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 : truncateAddress(tx.fromAddress)}
             </p>
           </div>
-          <ArrowRight className="h-3 w-3" fill={'#A184DC'} />
+          <ArrowRight
+            className="h-3 w-3"
+            {...(tx.status === Status.Completed ? { fill: '#001B04' } : { fill: '#A184DC' })}
+          />
           <div className="flex items-center gap-x-2">
             {tx.toChain === 'Polkadot' ? (
               <Identicon
                 value={tx.toAddress}
-                size={16}
+                size={14}
                 theme="polkadot"
                 className={cn(
                   'rounded-full border',
@@ -160,11 +162,11 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
           </div>
         </div>
         {tx.status === Status.Failed && (
-          <p className="flex items-center justify-between rounded-lg bg-turtle-error-light px-2 py-1 text-sm text-turtle-error-dark">
+          <p className="flex items-center justify-between rounded-lg bg-[#FF35C31A] p-2 text-xs font-normal leading-3 text-turtle-error-dark">
             This transaction failed.{' '}
-            <Link href={'#'} className="text-sm underline hover:text-turtle-error">
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
               See more
-            </Link>
+            </span>
           </p>
         )}
       </div>

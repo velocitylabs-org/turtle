@@ -17,7 +17,7 @@ import { ArrowRight } from './TransactionIcons/ArrowRight'
 import { ArrowUpRight } from './TransactionIcons/ArrowUpRight'
 import { ExclamationMark } from './TransactionIcons/ExclamationMark'
 
-import { Dialog, DialogContent, DialogHeader, DialogTrigger, DialogClose } from '../ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
 import { Separator } from '../ui/separator'
 
 export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
@@ -31,12 +31,12 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
         <TransactionCard tx={tx} />
       </DialogTrigger>
       <DialogContent
-        className="max-w-[24rem] rounded-3xl sm:max-w-[30.5rem]"
+        className="max-w-[24rem] rounded-4xl sm:max-w-[30.5rem]"
         hideCloseButton={true}
       >
         <DialogHeader
           className={cn(
-            'flex flex-col items-center justify-center space-y-6 rounded-t-2xl border py-5 sm:py-10',
+            'flex flex-col items-center justify-center space-y-6 rounded-t-4xl border py-5 sm:py-10',
             tx.status === Status.Completed
               ? 'border-turtle-success-dark bg-turtle-success-light'
               : 'border-turtle-error-dark bg-turtle-error-light ',
@@ -87,7 +87,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
               <div className="text-sm">{tx.toChain}</div>
             </div>
           </div>
-          <div
+          <h3
             className={cn(
               'flex items-center space-x-1 text-3xl font-medium leading-none sm:text-5xl ',
               tx.status === Status.Completed
@@ -97,7 +97,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
           >
             <p>{tx.fromChainAmount.toFixed(2)}</p>
             <p>{tx.fromChainToken}</p>
-          </div>
+          </h3>
           <div
             className={cn(
               'flex items-center space-x-4 text-sm',
@@ -112,7 +112,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
         </DialogHeader>
 
         {/* Modal content */}
-        <div className="flex w-full flex-1 flex-col items-center gap-4 rounded-b-2xl border border-x-turtle-secondary border-b-turtle-secondary bg-white p-4 sm:p-10">
+        <div className="flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary bg-white p-4 sm:p-10">
           <div
             className={cn(
               'flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm',
@@ -238,9 +238,15 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             </div>
           </div>
 
-          <div className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm">
-            <p>View on Block Explorer</p> <ArrowUpRight />
-          </div>
+          <a
+            href={'#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View transaction on block explorer"
+            className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
+          >
+            <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
+          </a>
         </div>
       </DialogContent>
     </Dialog>
