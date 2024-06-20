@@ -35,14 +35,14 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
   return (
     <div
       className={cn(
-        'flex items-center gap-4 rounded-2xl border p-4 hover:cursor-pointer',
+        'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
         tx.status === 'completed'
           ? 'border-turtle-level3  hover:bg-turtle-level1'
           : 'border-turtle-error  hover:border-turtle-error-dark',
       )}
     >
-      <div className="w-full space-y-2">
-        <div className="flex items-center justify-between">
+      <div className="w-full space-y-2 ">
+        <div className="flex items-center justify-center sm:justify-between">
           <div className="flex max-w-xs space-x-2 overflow-x-auto">
             <div>{statusIcon(tx.status)}</div>
             <div
@@ -90,7 +90,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
           </div>
           <div
             className={cn(
-              'text-sm',
+              'hidden text-sm sm:block',
               tx.status === 'completed' ? 'text-turtle-level5' : 'text-turtle-error',
             )}
           >
@@ -99,7 +99,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
         </div>
         <div
           className={cn(
-            'flex items-center space-x-4',
+            'flex items-center justify-center space-x-4 sm:justify-start',
             tx.status === 'failed' && 'text-turtle-error-dark',
           )}
         >
