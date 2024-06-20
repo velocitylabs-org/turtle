@@ -5,8 +5,8 @@ import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
 import useEnvironment from '@/hooks/useEnvironment'
-import { Status, Transaction, TransactionStatus } from '@/models/history'
-import { getChainLogoURI } from '@/services/history'
+import { Status, Transaction, TransactionStatus } from '@/models/completedTransactions'
+import { getChainLogoURI } from '@/services/chains'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
@@ -36,7 +36,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
     <div
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
-        tx.status === 'completed'
+        tx.status === Status.Completed
           ? 'border-turtle-level3  hover:bg-turtle-level1'
           : 'border-turtle-error  hover:border-turtle-error-dark',
       )}
@@ -48,7 +48,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             <div
               className={cn(
                 'flex items-center space-x-1 text-xl font-medium leading-none',
-                tx.status === 'failed' && 'text-turtle-error',
+                tx.status === Status.Failed && 'text-turtle-error',
               )}
             >
               <p>{tx.fromChainAmount.toFixed(2)}</p>
@@ -57,7 +57,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             <div
               className={cn(
                 'flex items-center justify-between space-x-1 rounded-2xl border px-1 py-0.5',
-                tx.status === 'failed' && 'border-turtle-error bg-turtle-error-light',
+                tx.status === Status.Failed && 'border-turtle-error bg-turtle-error-light',
               )}
             >
               <div className="relative h-4 w-4 rounded-full">
@@ -67,13 +67,13 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.status === 'completed' ? 'border-black' : 'border-turtle-error',
+                    tx.status === Status.Completed ? 'border-black' : 'border-turtle-error',
                   )}
                 />
               </div>
               <ArrowRight
                 className="h-2 w-2"
-                {...(tx.status === 'failed' && { fill: '#FF35C3' })}
+                {...(tx.status === Status.Failed && { fill: '#FF35C3' })}
               />
               <div className="relative h-4 w-4 rounded-full">
                 <Image
@@ -82,7 +82,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.status === 'completed' ? 'border-black' : 'border-turtle-error',
+                    tx.status === Status.Completed ? 'border-black' : 'border-turtle-error',
                   )}
                 />
               </div>
@@ -91,7 +91,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
           <div
             className={cn(
               'hidden text-sm sm:block',
-              tx.status === 'completed' ? 'text-turtle-level5' : 'text-turtle-error',
+              tx.status === Status.Completed ? 'text-turtle-level5' : 'text-turtle-error',
             )}
           >
             {formatHours(tx.timestamp)}
@@ -100,7 +100,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
         <div
           className={cn(
             'flex items-center justify-center space-x-4 sm:justify-start',
-            tx.status === 'failed' && 'text-turtle-error-dark',
+            tx.status === Status.Failed && 'text-turtle-error-dark',
           )}
         >
           <div className="flex items-center gap-x-1">
@@ -111,14 +111,14 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 theme="polkadot"
                 className={cn(
                   'rounded-full border',
-                  tx.status === 'completed' ? 'border-black' : 'border-turtle-error-dark',
+                  tx.status === Status.Completed ? 'border-black' : 'border-turtle-error-dark',
                 )}
               />
             ) : (
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                  tx.status === 'completed' ? 'border-black ' : 'border-turtle-error-dark',
+                  tx.status === Status.Completed ? 'border-black ' : 'border-turtle-error-dark',
                 )}
               />
             )}
@@ -139,14 +139,14 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
                 theme="polkadot"
                 className={cn(
                   'rounded-full border',
-                  tx.status === 'completed' ? 'border-black' : 'border-turtle-error-dark',
+                  tx.status === Status.Completed ? 'border-black' : 'border-turtle-error-dark',
                 )}
               />
             ) : (
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                  tx.status === 'completed' ? 'border-black ' : 'border-turtle-error-dark',
+                  tx.status === Status.Completed ? 'border-black ' : 'border-turtle-error-dark',
                 )}
               />
             )}
@@ -159,10 +159,10 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             </p>
           </div>
         </div>
-        {tx.status === 'failed' && (
+        {tx.status === Status.Failed && (
           <p className="flex items-center justify-between rounded-lg bg-turtle-error-light px-2 py-1 text-sm text-turtle-error-dark">
             This transaction failed.{' '}
-            <Link href={'/history'} className="text-sm underline hover:text-turtle-error">
+            <Link href={'#'} className="text-sm underline hover:text-turtle-error">
               See more
             </Link>
           </p>

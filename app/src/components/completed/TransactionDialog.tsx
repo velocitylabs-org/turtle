@@ -6,11 +6,11 @@ import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
 import useEnvironment from '@/hooks/useEnvironment'
-import { Transaction } from '@/models/history'
+import { Status, Transaction } from '@/models/completedTransactions'
+import { getChainLogoURI } from '@/services/chains'
 import { cn } from '@/utils/cn'
 import { truncateAddress } from '@/utils/address'
 import { formatDate, formatHours } from '@/utils/datetime'
-import { getChainLogoURI } from '@/services/history'
 
 import { TransactionCard } from './TransactionCard'
 import { ArrowRight } from './TransactionIcons/ArrowRight'
@@ -37,7 +37,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
         <DialogHeader
           className={cn(
             'flex flex-col items-center justify-center space-y-6 rounded-t-2xl border py-5 sm:py-10',
-            tx.status === 'completed'
+            tx.status === Status.Completed
               ? 'border-turtle-success-dark bg-turtle-success-light'
               : 'border-turtle-error-dark bg-turtle-error-light ',
           )}
@@ -45,7 +45,9 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
           <div
             className={cn(
               'flex items-center justify-center space-x-4',
-              tx.status === 'completed' ? ' text-turtle-success-dark' : 'text-turtle-error-dark ',
+              tx.status === Status.Completed
+                ? ' text-turtle-success-dark'
+                : 'text-turtle-error-dark ',
             )}
           >
             <div className="turtle-success-dark flex items-center space-x-1">
@@ -56,7 +58,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.status === 'completed'
+                    tx.status === Status.Completed
                       ? 'border-turtle-success-dark'
                       : 'border-turtle-error-dark ',
                   )}
@@ -66,7 +68,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             </div>
             <ArrowRight
               className="h-2 w-2"
-              {...(tx.status === 'failed' ? { fill: '#8D1269' } : { fill: '#008115' })}
+              {...(tx.status === Status.Failed ? { fill: '#8D1269' } : { fill: '#008115' })}
             />
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
@@ -76,7 +78,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.status === 'completed'
+                    tx.status === Status.Completed
                       ? 'border-turtle-success-dark'
                       : 'border-turtle-error-dark ',
                   )}
@@ -88,7 +90,9 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
           <div
             className={cn(
               'flex items-center space-x-1 text-3xl font-medium leading-none sm:text-5xl ',
-              tx.status === 'completed' ? 'text-turtle-success-dark' : ' text-turtle-error-dark',
+              tx.status === Status.Completed
+                ? 'text-turtle-success-dark'
+                : ' text-turtle-error-dark',
             )}
           >
             <p>{tx.fromChainAmount.toFixed(2)}</p>
@@ -97,7 +101,9 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
           <div
             className={cn(
               'flex items-center space-x-4 text-sm',
-              tx.status === 'completed' ? 'text-turtle-success-dark' : ' text-turtle-error-dark',
+              tx.status === Status.Completed
+                ? 'text-turtle-success-dark'
+                : ' text-turtle-error-dark',
             )}
           >
             <div>{formatDate(tx.timestamp.split('T')[0])}</div>
@@ -110,13 +116,13 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
           <div
             className={cn(
               'flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm',
-              tx.status === 'completed'
+              tx.status === Status.Completed
                 ? 'border-turtle-success-dark bg-turtle-success-light text-turtle-success-dark'
                 : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark',
             )}
           >
             <ExclamationMark
-              {...(tx.status === 'failed' ? { fill: '#8D1269' } : { fill: '#008115' })}
+              {...(tx.status === Status.Failed ? { fill: '#8D1269' } : { fill: '#008115' })}
             />
             {tx.status !== 'failed' ? (
               <p>
@@ -127,7 +133,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
               <p className="w-5/6 space-x-0.5">
                 <span className="font-medium">This transfer failed.</span>
                 You likely don’t have enough DAI in your receiving wallet.{' '}
-                <Link href={'/history'} className="underline hover:text-turtle-error">
+                <Link href={'/'} className="underline hover:text-turtle-error">
                   Try it again
                 </Link>
               </p>
@@ -147,14 +153,14 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                     theme="polkadot"
                     className={cn(
                       'rounded-full border',
-                      tx.status === 'completed' ? 'border-black' : 'border-turtle-error-dark',
+                      tx.status === Status.Completed ? 'border-black' : 'border-turtle-error-dark',
                     )}
                   />
                 ) : (
                   <div
                     className={cn(
                       'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                      tx.status === 'completed' ? 'border-black ' : 'border-turtle-error-dark',
+                      tx.status === Status.Completed ? 'border-black ' : 'border-turtle-error-dark',
                     )}
                   />
                 )}
@@ -180,14 +186,14 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
                     theme="polkadot"
                     className={cn(
                       'rounded-full border',
-                      tx.status === 'completed' ? 'border-black' : 'border-turtle-error-dark',
+                      tx.status === Status.Completed ? 'border-black' : 'border-turtle-error-dark',
                     )}
                   />
                 ) : (
                   <div
                     className={cn(
                       'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                      tx.status === 'completed' ? 'border-black ' : 'border-turtle-error-dark',
+                      tx.status === Status.Completed ? 'border-black ' : 'border-turtle-error-dark',
                     )}
                   />
                 )}

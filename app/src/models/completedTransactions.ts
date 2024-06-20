@@ -4,7 +4,7 @@ export enum Status {
   Failed = 'failed',
 }
 
-export type TransactionStatus = 'pending' | 'completed' | 'failed'
+export type TransactionStatus = Status.Pending | Status.Completed | Status.Failed
 
 export type Transaction = {
   status: TransactionStatus

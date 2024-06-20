@@ -1,10 +1,10 @@
-import { TransactionHistory } from '@/components/History/TransactionHistory'
-import { Transaction } from '@/models/history'
+import { TransactionHistory } from '@/components/completed/TransactionHistory'
+import { Status, Transaction } from '@/models/completedTransactions'
 
-export default function History() {
-  const transactions: Transaction[] = [
+export default function CompletedTransactions() {
+  const transactionsMockUp: Transaction[] = [
     {
-      status: 'failed',
+      status: Status.Failed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 345098.1234573,
@@ -22,7 +22,7 @@ export default function History() {
       timestamp: '2024-06-18T08:47:02.016Z',
     },
     {
-      status: 'completed',
+      status: Status.Completed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 543.657373,
@@ -40,7 +40,7 @@ export default function History() {
       timestamp: '2024-06-18T08:20:02.016Z',
     },
     {
-      status: 'completed',
+      status: Status.Completed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 12.463278,
@@ -58,7 +58,7 @@ export default function History() {
       timestamp: '2024-06-13T15:65:02.016Z',
     },
     {
-      status: 'failed',
+      status: Status.Failed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 10998.09876,
@@ -76,7 +76,7 @@ export default function History() {
       timestamp: '2024-06-12T02:12:02.016Z',
     },
     {
-      status: 'failed',
+      status: Status.Failed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 345098.1234573,
@@ -94,7 +94,7 @@ export default function History() {
       timestamp: '2024-05-31T08:47:02.016Z',
     },
     {
-      status: 'completed',
+      status: Status.Completed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 543.657373,
@@ -112,7 +112,7 @@ export default function History() {
       timestamp: '2024-05-18T08:20:02.016Z',
     },
     {
-      status: 'completed',
+      status: Status.Completed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 12.463278,
@@ -130,7 +130,7 @@ export default function History() {
       timestamp: '2024-04-12T15:65:02.016Z',
     },
     {
-      status: 'failed',
+      status: Status.Failed,
       fromChain: 'Ethereum',
       fromChainToken: 'WETH',
       fromChainAmount: 10998.09876,
@@ -150,9 +150,8 @@ export default function History() {
   ]
   return (
     <main className="flex flex-col items-center justify-center p-5">
-      {/* <Background /> */}
       <section>
-        <TransactionHistory transactions={transactions} />
+        <TransactionHistory transactions={transactionsMockUp} />
       </section>
     </main>
   )

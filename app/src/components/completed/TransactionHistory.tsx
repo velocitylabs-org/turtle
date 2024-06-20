@@ -1,4 +1,4 @@
-import { Transaction, TransactionsByDate } from '@/models/history'
+import { Transaction, TransactionsByDate } from '@/models/completedTransactions'
 import { formatDate } from '@/utils/datetime'
 
 import { TransactionDialog } from './TransactionDialog'
