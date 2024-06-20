@@ -1,7 +1,17 @@
+'use client'
+
 import { Chain } from '@/models/chain'
-import { chainsToSelectOptions, chainToSelectOption, SelectOption } from '@/models/selectOption'
-import { FC } from 'react'
-import CustomSelect from './CustomSelect'
+import Image from 'next/image'
+import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { twMerge } from 'tailwind-merge'
+import ChevronDown from './svg/ChevronDown'
+import ChainIcon from './svg/ChainIcon'
+import AddressInput from './AddressInput'
+import { isValidSubstrateAddress } from '@/utils/address'
+
+const VerticalDivider: FC = () => (
+  <div className="ml-2 h-[1.625rem] border-1 border-turtle-level3" />
+)
 
 interface ChainSelectProps {
   /** Currently selected chain, or null if no value is selected. */
@@ -10,8 +20,19 @@ interface ChainSelectProps {
   onChange: (newValue: Chain | null) => void
   /** Array of chains that the user can select from. */
   options: Chain[]
-  /** Title of the select input, displayed when no item is selected. */
-  title?: string
+  /** Label floating above the select input */
+  floatingLabel?: string
+  /** Placeholder text to display when no value is selected. */
+  placeholder?: string
+  /** Icon to display in the placeholder. */
+  placeholderIcon?: React.ReactNode
+  /** The connected address is displayed to the right of the Chain  */
+  walletAddress?: string
+  /** Used for manual recipient input */
+  manualRecipient?: { enabled: boolean; address: string }
+  onChangeManualRecipient?: (newVal: { enabled: boolean; address: string }) => void
+  /** Component to attach at the end */
+  trailing?: React.ReactNode
   /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
   /** Additional classes to apply to the select input. */
@@ -22,24 +43,137 @@ const ChainSelect: FC<ChainSelectProps> = ({
   value,
   onChange,
   options,
-  title = 'Select Chain',
-  disabled = false,
-  className = '',
+  floatingLabel,
+  placeholder,
+  placeholderIcon = <ChainIcon />,
+  walletAddress,
+  manualRecipient,
+  onChangeManualRecipient,
+  trailing,
+  disabled,
+  className,
 }) => {
-  const selectOption = value ? chainToSelectOption(value) : null // convert chain value to select option for custom select component
-  const selectOptions = chainsToSelectOptions(options) // converts chains to select options for custom select component
-  const handleChange = (selectedOption: SelectOption<Chain> | null) =>
-    onChange(selectedOption?.value ?? null)
+  const [isOpen, setIsOpen] = useState(false)
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        triggerRef.current &&
+        !triggerRef.current.contains(event.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  const handleSelectionChange = (selectedChain: Chain) => {
+    onChange(selectedChain)
+    setIsOpen(false)
+  }
+
+  const handleTriggerClick = () => {
+    if (!disabled) {
+      setIsOpen(!isOpen)
+    }
+  }
 
   return (
-    <CustomSelect
-      value={selectOption}
-      onChange={handleChange}
-      options={selectOptions}
-      title={title}
-      disabled={disabled}
-      className={className}
-    />
+    <div className={twMerge('relative w-full', className)}>
+      {floatingLabel && (
+        <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+          {floatingLabel}
+        </label>
+      )}
+      <div
+        ref={triggerRef}
+        className={twMerge(
+          'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+        )}
+        onClick={handleTriggerClick}
+      >
+        <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+          {/* Trigger Content or Placeholder Content */}
+          {value ? (
+            <>
+              <Image
+                src={value.logoURI}
+                alt={value.name}
+                width={24}
+                height={24}
+                className="h-[1.5rem] w-[1.5rem] rounded-full"
+              />
+              {!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address) && (
+                <span>{value.name}</span>
+              )}
+            </>
+          ) : (
+            <>
+              {placeholderIcon}
+              {placeholder}
+            </>
+          )}
+          <ChevronDown strokeWidth={0.2} />
+          {!manualRecipient?.enabled && walletAddress}
+
+          {manualRecipient && manualRecipient.enabled && (
+            <>
+              {!manualRecipient.address && <VerticalDivider />}
+              <input
+                type="text"
+                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+                placeholder="Address"
+                value={manualRecipient.address}
+                onChange={e =>
+                  onChangeManualRecipient
+                    ? onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
+                    : null
+                }
+                onClick={e => e.stopPropagation()}
+              />
+            </>
+          )}
+        </div>
+
+        {trailing && <div className="ml-2">{trailing}</div>}
+      </div>
+
+      {/* Dialog */}
+      {isOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute left-0 right-0 z-20 max-h-60 min-h-[6rem] translate-y-[-3.58rem] overflow-auto rounded-md border-1 border-turtle-level3 bg-white"
+        >
+          <ul className="flex flex-col gap-2 px-1 py-2">
+            {options.map(option => (
+              <li
+                key={option.id}
+                className="flex cursor-pointer items-center gap-2 p-2"
+                onClick={() => handleSelectionChange(option)}
+              >
+                <Image
+                  src={option.logoURI}
+                  alt={option.name}
+                  width={24}
+                  height={24}
+                  className="h-[1.5rem] w-[1.5rem] rounded-full"
+                />
+                <span className="text-sm">{option.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   )
 }
 

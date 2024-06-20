@@ -22,7 +22,6 @@ const useWallet = (network?: Network): WalletInfo | undefined => {
   const {
     substrateAccount,
     disconnect: substrateDisconnect,
-    isConnected: substrateIsConnected,
     openModal: openSubstrateModal,
     closeModal: closeSubstrateModal,
   } = useSubstrateWallet()
@@ -43,8 +42,8 @@ const useWallet = (network?: Network): WalletInfo | undefined => {
         sender: substrateAccount ?? undefined,
         disconnect: substrateDisconnect,
         isConnected: !!substrateAccount,
-        openModal: openEvmModal,
-        closeModal: closeEvmModal,
+        openModal: openSubstrateModal,
+        closeModal: closeSubstrateModal,
       }
   }
 }
