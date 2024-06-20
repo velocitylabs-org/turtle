@@ -1,5 +1,6 @@
 import Navbar from '@/components/NavBar'
 import NotificationSystem from '@/components/NotificationSystem'
+import { dazzed } from '@/components/fonts/fonts'
 import { config } from '@/config'
 import Web3ModalProvider from '@/context'
 import { NextUIProvider } from '@nextui-org/react'
@@ -25,7 +26,7 @@ export default function RootLayout({
 }>) {
   const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         {(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
           // eslint-disable-next-line @next/next/no-sync-scripts
@@ -36,7 +37,13 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={twMerge(inter.className, 'bg-turtle-tertiary')}>
+      <body
+        className={twMerge(
+          dazzed.variable,
+          inter.className,
+          'min-h-full bg-turtle-tertiary font-dazzed',
+        )}
+      >
         <Navbar />
         <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>
