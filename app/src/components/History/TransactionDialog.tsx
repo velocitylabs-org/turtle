@@ -17,7 +17,7 @@ import { ArrowRight } from './TransactionIcons/ArrowRight'
 import { ArrowUpRight } from './TransactionIcons/ArrowUpRight'
 import { ExclamationMark } from './TransactionIcons/ExclamationMark'
 
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTrigger, DialogClose } from '../ui/dialog'
 import { Separator } from '../ui/separator'
 
 export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
@@ -30,7 +30,10 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
       <DialogTrigger className="w-full">
         <TransactionCard tx={tx} />
       </DialogTrigger>
-      <DialogContent className="max-w-[24rem] sm:max-w-[30.5rem]">
+      <DialogContent
+        className="max-w-[24rem] rounded-3xl sm:max-w-[30.5rem]"
+        hideCloseButton={true}
+      >
         <DialogHeader
           className={cn(
             'flex flex-col items-center justify-center space-y-6 rounded-t-2xl border py-5 sm:py-10',
