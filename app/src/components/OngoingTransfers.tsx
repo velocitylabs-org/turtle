@@ -2,7 +2,6 @@
 import { FC } from 'react'
 import OngoingTransfer from './OngoingTransfer'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
-import { Network } from '../models/chain'
 
 const OngoingTransfers: FC = () => {
   const { ongoingTransfers } = useOngoingTransfers()
@@ -10,9 +9,6 @@ const OngoingTransfers: FC = () => {
   const handleViewCompleted = () => {
     // TODO(nuno)
   }
-
-  //   box-shadow: 0px 2px 16px 0px #00000026;
-  // shadow-[0_2px_16px_0px_#00000026]">
 
   return (
     <div>
@@ -34,6 +30,8 @@ const OngoingTransfers: FC = () => {
                 recipient={tx.recipient}
                 status={tx.status}
                 date={tx.date}
+                context={tx.context}
+                sendResult={tx.sendResult}
               />
             ))}
 

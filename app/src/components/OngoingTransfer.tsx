@@ -1,16 +1,102 @@
 'use client'
 import { Transfer } from '@/models/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { toHumans } from '@/utils/transfer'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
+import * as Snowbridge from '@snowbridge/api'
 
 const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
+  const [update, setUpdate] = useState<string | null>('Loading...')
+  const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+
+  useEffect(() => {
+    const fetchUpdate = async () => {
+      try {
+        if (direction == Direction.ToEthereum) {
+          while (true) {
+            const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
+              transfer.context,
+              transfer.sendResult as Snowbridge.toEthereum.SendResult,
+            )
+            if (status == 'success') {
+              setUpdate('Transfer is completed')
+              //TODO(nuno): remove tx from ongoing and move it to completed
+              break
+            }
+
+            console.log('While true')
+
+            // Pending, keep track of progress
+            const { success } = result
+
+            //TODO(nuno): This shouldn't really happen but we should handle this better
+            if (result.failure || !success || !success.plan.success) {
+              throw new Error('Send failed')
+            }
+
+            if (!!success.sourceParachain?.events) {
+              setUpdate('Sending...')
+            } else if (!!success.assetHub.events) {
+              setUpdate('Arriving at AssetHub...')
+            } else if (!!success.bridgeHub.events) {
+              setUpdate('Arriving at BridgeHub...')
+            } else {
+              setUpdate('Bridging in progress...')
+            }
+
+            await new Promise(r => setTimeout(r, 6_000))
+          }
+        } else if (direction == Direction.ToPolkadot) {
+          while (true) {
+            const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
+              transfer.context,
+              transfer.sendResult as Snowbridge.toPolkadot.SendResult,
+            )
+            if (status == 'success') {
+              setUpdate('Transfer is completed')
+              break
+            }
+
+            console.log('while true')
+
+            // Pending, keep track of progress
+            const { success } = result
+
+            //TODO(nuno): This shouldn't really happen but we should handle this better
+            if (result.failure || !success || !success.plan.success) {
+              throw new Error('Send failed')
+            }
+
+            if (!!success.destinationParachain?.events) {
+              setUpdate(`Arriving at ${transfer.destChain.name}..."`)
+            } else if (!!success.bridgeHub.events) {
+              setUpdate('Arriving at BridgeHub...')
+            } else if (!!success.assetHub.events) {
+              setUpdate('Arriving at AssetHub...')
+            } else if (!!success.ethereum.events) {
+              setUpdate('Bridging in progress..')
+            } else {
+              setUpdate('Loading...')
+            }
+          }
+
+          await new Promise(r => setTimeout(r, 6_000))
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    }
+
+    fetchUpdate()
+  }, [])
+
   return (
     <div className="mb-2 rounded-[16px] border border-[color:var(--turtle-level3)] p-3">
       <div className="mb-2 flex items-center justify-between">
         {/* TODO(nuno) fetch and use a proper status update here **/}
-        <p className="font-semibold text-[color:var(--turtle-secondary-dark)] text-purple-600">
-          Being bridged...
+        <p className="font-bold text-[color:var(--turtle-secondary-dark)] text-purple-600">
+          {update}
         </p>
         <p className="text-normal text-[color:var(--turtle-secondary)]">
           {transfer.date.toLocaleDateString('en-US', {

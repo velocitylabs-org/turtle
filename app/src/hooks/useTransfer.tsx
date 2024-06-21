@@ -1,12 +1,6 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import {
-  Direction,
-  getErc20TokenContract,
-  resolveDirection,
-  toEthereum,
-  toPolkadot,
-} from '@/services/transfer'
+import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
@@ -82,9 +76,9 @@ const useTransfer = () => {
           return
         }
 
-        let sent = await Snowbridge.toPolkadot.send(context, sender as Signer, plan)
+        let sendResult = await Snowbridge.toPolkadot.send(context, sender as Signer, plan)
 
-        if (sent.failure) {
+        if (sendResult.failure) {
           addNotification({
             header: 'This transfer failed',
             message: 'TODO(nuno)',
@@ -95,7 +89,7 @@ const useTransfer = () => {
 
         console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
         addTransfer({
-          id: sent.success!.messageId,
+          id: sendResult.success!.messageId,
           sourceChain,
           token,
           sender: await (sender as Signer).getAddress(),
@@ -104,6 +98,8 @@ const useTransfer = () => {
           recipient: recipient,
           status: 'todo',
           date: new Date(),
+          context,
+          sendResult,
         })
 
         break
@@ -128,9 +124,9 @@ const useTransfer = () => {
           return
         }
 
-        let sent = await Snowbridge.toEthereum.send(context, sender as WalletOrKeypair, plan)
+        let sendResult = await Snowbridge.toEthereum.send(context, sender as WalletOrKeypair, plan)
 
-        if (sent.failure) {
+        if (sendResult.failure) {
           addNotification({
             header: 'This transfer failed',
             message: 'TODO(nuno)',
@@ -141,7 +137,7 @@ const useTransfer = () => {
 
         console.log('Sent success, will add to ongoing transfers. Amount:', amount)
         addTransfer({
-          id: sent.success!.messageId ?? 'todo',
+          id: sendResult.success!.messageId ?? 'todo',
           sourceChain,
           token,
           sender: sender.address,
@@ -150,6 +146,8 @@ const useTransfer = () => {
           recipient: recipient,
           status: 'todo',
           date: new Date(),
+          context,
+          sendResult,
         })
         break
       default:
