@@ -1,5 +1,6 @@
 import Navbar from '@/components/NavBar'
 import NotificationSystem from '@/components/NotificationSystem'
+import { dazzed } from '@/components/fonts/fonts'
 import { config } from '@/config'
 import Web3ModalProvider from '@/context'
 import { NextUIProvider } from '@nextui-org/react'
@@ -36,7 +37,13 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={twMerge(inter.className, 'min-h-full bg-turtle-secondary')}>
+      <body
+        className={twMerge(
+          dazzed.variable,
+          inter.className,
+          'min-h-full bg-turtle-secondary font-dazzed',
+        )}
+      >
         <Navbar />
         <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>
