@@ -13,9 +13,9 @@ import { truncateAddress } from '@/utils/address'
 import { formatDate, formatHours } from '@/utils/datetime'
 
 import { TransactionCard } from './TransactionCard'
-import { ArrowRight } from './TransactionIcons/ArrowRight'
-import { ArrowUpRight } from './TransactionIcons/ArrowUpRight'
-import { ExclamationMark } from './TransactionIcons/ExclamationMark'
+import { ArrowRight } from '../svg/ArrowRight'
+import { ArrowUpRight } from '../svg/ArrowUpRight'
+import { ExclamationMark } from '../svg/ExclamationMark'
 
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
 import { Separator } from '../ui/separator'

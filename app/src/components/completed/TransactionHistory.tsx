@@ -18,7 +18,7 @@ export const TransactionHistory = ({ transactions }: { transactions: Transaction
   })
 
   return (
-    <div className="flex flex-col gap-4 rounded-3xl bg-white p-4 sm:w-[31.5rem] sm:p-[2.5rem]">
+    <div className="z-20 flex flex-col gap-4 rounded-3xl bg-white p-4 sm:w-[31.5rem] sm:p-[2.5rem]">
       {mappedTransactionsByDate.map(({ date, transactions }, idx) => (
         <div key={idx + date + transactions.length}>
           <div className="w-full space-y-4">

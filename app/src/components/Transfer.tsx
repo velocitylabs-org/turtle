@@ -94,7 +94,7 @@ const Transfer: FC = () => {
   }, [manualRecipient])
 
   return (
-    <div className="flex flex-col gap-1 rounded-4xl bg-white p-[2.5rem] shadow-lg backdrop-blur-sm sm:w-[31.5rem]">
+    <div className="flex flex-col gap-1 rounded-3xl bg-white p-[2.5rem] shadow-lg backdrop-blur-sm sm:w-[31.5rem]">
       <div className="flex flex-col gap-5">
         {/* Source Chain */}
         <ChainSelect

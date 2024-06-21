@@ -10,10 +10,10 @@ import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
 
-import { ArrowRight } from './TransactionIcons/ArrowRight'
-import { Fail } from './TransactionIcons/Fail'
-import { Pending } from './TransactionIcons/Pending'
-import { Success } from './TransactionIcons/Success'
+import { ArrowRight } from '../svg/ArrowRight'
+import { Fail } from '../svg/Fail'
+import { Pending } from '../svg/Pending'
+import { Success } from '../svg/Success'
 
 import { colors } from '../../../tailwind.config'
 

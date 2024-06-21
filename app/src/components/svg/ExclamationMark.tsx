@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef } from 'react'
-import { colors } from '../../../../tailwind.config'
+import { colors } from '../../../tailwind.config'
 
 export const ExclamationMark = ({
   fill = colors['turtle-primary-dark'],

@@ -41,7 +41,7 @@ export default function RootLayout({
         className={twMerge(
           dazzed.variable,
           inter.className,
-          'min-h-full bg-turtle-secondary font-dazzed',
+          'min-h-full bg-turtle-tertiary font-dazzed',
         )}
       >
         <Navbar />
