@@ -15,6 +15,7 @@ const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
       try {
         if (direction == Direction.ToEthereum) {
           while (true) {
+            console.log('Polling...')
             const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
               transfer.context,
               transfer.sendResult as Snowbridge.toEthereum.SendResult,
@@ -49,6 +50,8 @@ const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
           }
         } else if (direction == Direction.ToPolkadot) {
           while (true) {
+            console.log('Polling...')
+
             const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
               transfer.context,
               transfer.sendResult as Snowbridge.toPolkadot.SendResult,
@@ -94,7 +97,6 @@ const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
   return (
     <div className="mb-2 rounded-[16px] border border-[color:var(--turtle-level3)] p-3">
       <div className="mb-2 flex items-center justify-between">
-        {/* TODO(nuno) fetch and use a proper status update here **/}
         <p className="font-bold text-[color:var(--turtle-secondary-dark)] text-purple-600">
           {update}
         </p>
