@@ -56,7 +56,7 @@ export default function CompletedTransactions() {
       minTokenRecievedValue: 100.1837439058,
       fromAddress: '0x1AFb3aa8d0aD21cE0389bf180499A3DC8dce94bE',
       toAddress: '5HjV1mmZiv43j4nvMjzf27D6vwy7RY9X863qd8RuTVHA7gQ2',
-      timestamp: '2024-06-13T15:65:02.016Z',
+      timestamp: '2024-06-13T15:35:02.016Z',
     },
     {
       status: Status.Failed,
@@ -130,7 +130,7 @@ export default function CompletedTransactions() {
       minTokenRecievedValue: 1000000000.1837439058,
       fromAddress: '0x1AFb3aa8d0aD21cE0389bf180499A3DC8dce94bE',
       toAddress: '5HjV1mmZiv43j4nvMjzf27D6vwy7RY9X863qd8RuTVHA7gQ2',
-      timestamp: '2024-04-12T15:65:02.016Z',
+      timestamp: '2024-04-12T15:35:02.016Z',
     },
     {
       status: Status.Failed,

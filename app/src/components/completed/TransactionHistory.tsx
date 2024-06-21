@@ -14,10 +14,7 @@ export const TransactionHistory = ({ transactions }: { transactions: Transaction
   }, {})
 
   const mappedTransactionsByDate = Object.keys(transactionsByDate).map(date => {
-    const updatedTransactions = transactionsByDate[date].map(transaction => ({
-      ...transaction,
-    }))
-    return { date, transactions: updatedTransactions }
+    return { date, transactions: transactionsByDate[date] }
   })
 
   return (

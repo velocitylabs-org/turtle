@@ -20,6 +20,8 @@ import { ExclamationMark } from './TransactionIcons/ExclamationMark'
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
 import { Separator } from '../ui/separator'
 
+import { colors } from '../../../tailwind.config'
+
 export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
   const { environment } = useEnvironment()
   const { data: ensName } = useEnsName({
@@ -68,7 +70,9 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             </div>
             <ArrowRight
               className="h-2 w-2"
-              {...(tx.status === Status.Failed ? { fill: '#8D1269' } : { fill: '#008115' })}
+              {...(tx.status === Status.Failed
+                ? { fill: colors['turtle-error-dark'] }
+                : { fill: colors['turtle-primary-dark'] })}
             />
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
@@ -122,7 +126,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             )}
           >
             <ExclamationMark
-              {...(tx.status === Status.Failed ? { fill: '#8D1269' } : { fill: '#008115' })}
+              {...(tx.status === Status.Failed && { fill: colors['turtle-error-dark'] })}
             />
             {tx.status !== Status.Failed ? (
               <p>

@@ -1,7 +1,8 @@
 import { ComponentPropsWithoutRef } from 'react'
+import { colors } from '../../../../tailwind.config'
 
 export const ExclamationMark = ({
-  fill = '#008115',
+  fill = colors['turtle-primary-dark'],
   ...props
 }: ComponentPropsWithoutRef<'svg'> & { fill?: string }) => (
   <svg

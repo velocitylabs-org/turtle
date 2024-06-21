@@ -36,6 +36,7 @@ export const colors = {
   [`${prefix}-warning-light`]: '#FFFFD9',
 
   [`${prefix}-error`]: '#ff35c3',
+  [`${prefix}-error/10`]: '#ff35c31a',
   [`${prefix}-error-dark`]: '#8D1269',
   [`${prefix}-error-light`]: '#FFE1F6',
 }

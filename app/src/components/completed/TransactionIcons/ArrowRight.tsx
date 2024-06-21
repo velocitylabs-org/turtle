@@ -1,7 +1,8 @@
 import { ComponentPropsWithoutRef } from 'react'
+import { colors } from '../../../../tailwind.config'
 
 export const ArrowRight = ({
-  fill = '#001B04',
+  fill = colors['turtle-foreground'],
   ...props
 }: ComponentPropsWithoutRef<'svg'> & { fill?: string }) => (
   <svg viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
