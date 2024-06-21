@@ -11,87 +11,19 @@ const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
 
   useEffect(() => {
-    const fetchUpdate = async () => {
+    const pollUpdate = async () => {
       try {
         if (direction == Direction.ToEthereum) {
-          while (true) {
-            console.log('Polling...')
-            const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
-              transfer.context,
-              transfer.sendResult as Snowbridge.toEthereum.SendResult,
-            )
-            if (status == 'success') {
-              setUpdate('Transfer is completed')
-              //TODO(nuno): remove tx from ongoing and move it to completed
-              break
-            }
-
-            console.log('While true')
-
-            // Pending, keep track of progress
-            const { success } = result
-
-            //TODO(nuno): This shouldn't really happen but we should handle this better
-            if (result.failure || !success || !success.plan.success) {
-              throw new Error('Send failed')
-            }
-
-            if (!!success.sourceParachain?.events) {
-              setUpdate('Sending...')
-            } else if (!!success.assetHub.events) {
-              setUpdate('Arriving at AssetHub...')
-            } else if (!!success.bridgeHub.events) {
-              setUpdate('Arriving at BridgeHub...')
-            } else {
-              setUpdate('Bridging in progress...')
-            }
-
-            await new Promise(r => setTimeout(r, 6_000))
-          }
+          await trackToEthereum(transfer, setUpdate)
         } else if (direction == Direction.ToPolkadot) {
-          while (true) {
-            console.log('Polling...')
-
-            const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
-              transfer.context,
-              transfer.sendResult as Snowbridge.toPolkadot.SendResult,
-            )
-            if (status == 'success') {
-              setUpdate('Transfer is completed')
-              break
-            }
-
-            console.log('while true')
-
-            // Pending, keep track of progress
-            const { success } = result
-
-            //TODO(nuno): This shouldn't really happen but we should handle this better
-            if (result.failure || !success || !success.plan.success) {
-              throw new Error('Send failed')
-            }
-
-            if (!!success.destinationParachain?.events) {
-              setUpdate(`Arriving at ${transfer.destChain.name}..."`)
-            } else if (!!success.bridgeHub.events) {
-              setUpdate('Arriving at BridgeHub...')
-            } else if (!!success.assetHub.events) {
-              setUpdate('Arriving at AssetHub...')
-            } else if (!!success.ethereum.events) {
-              setUpdate('Bridging in progress..')
-            } else {
-              setUpdate('Loading...')
-            }
-          }
-
-          await new Promise(r => setTimeout(r, 6_000))
+          await trackToPolkadot(transfer, setUpdate)
         }
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
 
-    fetchUpdate()
+    pollUpdate()
   }, [])
 
   return (
@@ -161,3 +93,78 @@ const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
 }
 
 export default OngoingTransfer
+
+const POLL_UPDATE_INTERVAL_MS: number = 10_000
+
+async function trackToPolkadot(transfer: Transfer, setUpdate: (x: string) => void) {
+  while (true) {
+    const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
+      transfer.context,
+      transfer.sendResult as Snowbridge.toPolkadot.SendResult,
+    )
+
+    if (status != 'pending') {
+      setUpdate('Done!')
+      //TODO(nuno): remove tx from ongoing and move it to completed
+      break
+    }
+
+    // Pending, keep track of progress
+    const { success } = result
+
+    if (result.failure || !success || !success.plan.success) {
+      setUpdate('This transfer failed!')
+      break
+    }
+
+    if (!!success.destinationParachain?.events) {
+      setUpdate(`Arriving at ${transfer.destChain.name}..."`)
+    } else if (!!success.bridgeHub.events) {
+      setUpdate('Arriving at BridgeHub...')
+    } else if (!!success.assetHub.events) {
+      setUpdate('Arriving at AssetHub...')
+    } else if (!!success.ethereum.events) {
+      setUpdate('Bridging in progress..')
+    } else {
+      setUpdate('Loading...')
+    }
+  }
+
+  await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
+}
+
+async function trackToEthereum(transfer: Transfer, setUpdate: (x: string) => void) {
+  while (true) {
+    const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
+      transfer.context,
+      transfer.sendResult as Snowbridge.toEthereum.SendResult,
+    )
+
+    if (status != 'pending') {
+      setUpdate('Done!')
+      //TODO(nuno): remove tx from ongoing and move it to completed
+      break
+    }
+
+    // Pending, keep track of progress
+    const { success } = result
+
+    //TODO(nuno): This shouldn't really happen but we should handle this better
+    if (result.failure || !success || !success.plan.success) {
+      setUpdate('This transfer failed!')
+      break
+    }
+
+    if (!!success.sourceParachain?.events) {
+      setUpdate('Sending...')
+    } else if (!!success.assetHub.events) {
+      setUpdate('Arriving at AssetHub...')
+    } else if (!!success.bridgeHub.events) {
+      setUpdate('Arriving at BridgeHub...')
+    } else {
+      setUpdate('Bridging in progress...')
+    }
+
+    await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
+  }
+}

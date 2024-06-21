@@ -69,7 +69,7 @@ const useTransfer = () => {
         if (plan.failure) {
           console.log('Validation failed: ' + plan.failure)
           addNotification({
-            header: 'Transfer failed validation',
+            header: 'Transfer validation failed!',
             message: '',
             severity: NotificationSeverity.Error,
           })
@@ -80,8 +80,8 @@ const useTransfer = () => {
 
         if (sendResult.failure) {
           addNotification({
-            header: 'This transfer failed',
-            message: 'TODO(nuno)',
+            header: 'This transfer failed!',
+            message: '',
             severity: NotificationSeverity.Error,
           })
           return
@@ -96,7 +96,6 @@ const useTransfer = () => {
           destChain: destinationChain,
           amount: amount,
           recipient: recipient,
-          status: 'todo',
           date: new Date(),
           context,
           sendResult,
@@ -117,7 +116,7 @@ const useTransfer = () => {
         if (plan.failure) {
           console.log('Validation failed: ' + plan.failure)
           addNotification({
-            header: 'Transfer failed validation',
+            header: 'Transfer validation failed',
             message: '',
             severity: NotificationSeverity.Error,
           })
@@ -128,8 +127,8 @@ const useTransfer = () => {
 
         if (sendResult.failure) {
           addNotification({
-            header: 'This transfer failed',
-            message: 'TODO(nuno)',
+            header: 'This transfer failed!',
+            message: '',
             severity: NotificationSeverity.Error,
           })
           return
@@ -137,14 +136,13 @@ const useTransfer = () => {
 
         console.log('Sent success, will add to ongoing transfers. Amount:', amount)
         addTransfer({
-          id: sendResult.success!.messageId ?? 'todo',
+          id: sendResult.success!.messageId ?? 'todo(nuno)',
           sourceChain,
           token,
           sender: sender.address,
           destChain: destinationChain,
           amount: amount,
           recipient: recipient,
-          status: 'todo',
           date: new Date(),
           context,
           sendResult,

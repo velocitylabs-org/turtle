@@ -12,10 +12,11 @@ export interface Transfer {
   destChain: Chain
   amount: bigint
   recipient: string // TODO: Decide to use either string type or create own Address type
-  status: string
   date: Date
 
   // Contextual
   context: Snowbridge.Context
+  // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
+  // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
 }

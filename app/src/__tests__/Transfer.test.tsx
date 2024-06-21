@@ -28,7 +28,7 @@ describe('Transfer', () => {
     expect(convertAmount(123, Mainnet.WETH)).toBe(BigInt(123000000000000000000))
   })
 
-  it('convert input amount to based back to humans  ', () => {
+  it('convert input amount to based back to humans', () => {
     let inputs = [1, 10000, 123, 0.35]
 
     inputs.forEach(x => {
