@@ -57,10 +57,11 @@ const config: Config = {
         },
       },
       colors: colors,
-      // TODO fonts will be adjusted once design is finalized
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        serif: ['Merriweather', 'serif'],
+        dazzed: ['var(--font-dazzed)'],
+      },
+      fontSize: {
+        large: '2rem',
       },
       borderRadius: {
         '4xl': '2rem',

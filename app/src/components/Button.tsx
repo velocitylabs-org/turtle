@@ -21,6 +21,12 @@ const sizeHeights: Record<ButtonSize, string> = {
   lg: 'h-[3.5rem]',
 }
 
+const paddingX: Record<ButtonSize, string> = {
+  sm: 'px-2',
+  md: 'px-3',
+  lg: 'px-5',
+}
+
 interface ButtonProps {
   /** Text shown inside the button. */
   label?: string
@@ -54,7 +60,7 @@ const Button: FC<ButtonProps> = ({
       onClick={onClick}
       size={size}
       radius="sm"
-      className={twMerge(styles[variant], sizeHeights[size], className)}
+      className={twMerge(styles[variant], sizeHeights[size], paddingX[size], className)}
     >
       {children || label}
     </NextButton>
