@@ -15,7 +15,7 @@ export const HomeComponentSelect = () => {
     <>
       <Menu isNewTransaction={isNewTransaction} setIsNewTransaction={setIsNewTransaction} />
       {isNewTransaction ? (
-        <div className="z-20">
+        <div className="z-15">
           {' '}
           <Transfer /> <OngoingTransfers />{' '}
         </div>
