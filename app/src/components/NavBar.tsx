@@ -13,10 +13,10 @@ const Navbar: FC = async () => {
 
       <NavbarContent justify="end" className="gap-10">
         <NavbarItem>
-          <Button label="Read the Docs" size="md" variant="ghost" className="text-sm text-white" />
+          <Button label="Docs" size="md" variant="ghost" className="text-sm text-white" />
         </NavbarItem>
         <NavbarItem>
-          <Button label="About Turtle" size="md" variant="ghost" className="text-sm text-white" />
+          <Button label="About" size="md" variant="ghost" className="text-sm text-white" />
         </NavbarItem>
       </NavbarContent>
     </NextNavbar>
