@@ -1,7 +1,7 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
-
+import { REGISTRY } from '@/config/registry'
 interface Params {
   /** The environment the request is targeted to */
   environment: Environment
@@ -41,4 +41,10 @@ export const getChains = async ({
   const chains: Chain[] = await response.json()
 
   return chains
+}
+
+export const getChainLogoURI = (chainName: string, environment: Environment) => {
+  const registery = REGISTRY[environment]
+  const chainData = registery.chains.filter(x => x.network === chainName)
+  return chainData[0].logoURI
 }

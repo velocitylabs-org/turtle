@@ -13,7 +13,7 @@ const OngoingTransfers: FC = () => {
   return (
     <div>
       {ongoingTransfers.length > 0 && (
-        <div className="mt-20">
+        <div className="my-20">
           <div className="self-center text-center text-3xl tracking-tight text-black">
             In Progress
           </div>
@@ -28,7 +28,6 @@ const OngoingTransfers: FC = () => {
                 destChain={tx.destChain}
                 amount={tx.amount}
                 recipient={tx.recipient}
-                status={tx.status}
                 date={tx.date}
                 context={tx.context}
                 sendResult={tx.sendResult}

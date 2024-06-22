@@ -1,15 +1,19 @@
-import OngoingTransfers from '@/components/OngoingTransfers'
-import Menu from '@/components/Menu'
-import Transfer from '@/components/Transfer'
 import { FC } from 'react'
+
+import { HomeComponentSelect } from '@/components/HomeComponentSelect'
+import { TurtlesBackground } from '@/components/TurtlesBackground'
 
 const App: FC = async () => {
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-8 p-1 sm:p-5">
-      <Menu />
-      <Transfer />
-      <OngoingTransfers />
-    </div>
+    <main>
+      <TurtlesBackground
+        src={'/turtle-background.svg'}
+        alt={'Frictionless cross-chain transfers'}
+      />
+      <section className="z-10 flex flex-col items-center justify-center gap-8 p-1 sm:p-5">
+        <HomeComponentSelect />
+      </section>
+    </main>
   )
 }
 
