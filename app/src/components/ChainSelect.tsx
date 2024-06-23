@@ -42,9 +42,12 @@ const ChainSelect: FC<ChainSelectProps> = ({
   }
 
   const handleTriggerClick = () => {
-    if (!disabled) {
-      setIsOpen(!isOpen)
-    }
+    if (!disabled) setIsOpen(!isOpen)
+  }
+
+  const handleManualRecipientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChangeManualRecipient && manualRecipient)
+      onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
   }
 
   return (
@@ -92,11 +95,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
                 className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
                 placeholder="Address"
                 value={manualRecipient.address}
-                onChange={e =>
-                  onChangeManualRecipient
-                    ? onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
-                    : null
-                }
+                onChange={handleManualRecipientChange}
                 onClick={e => e.stopPropagation()}
               />
             </>
