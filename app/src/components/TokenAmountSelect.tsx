@@ -10,9 +10,9 @@ import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Token } from '@/models/token'
 import { SelectProps, TokenAmount } from '@/models/select'
 
-export interface TokenSelectProps extends SelectProps<TokenAmount> {}
+export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
-const TokenSelect: FC<TokenSelectProps> = ({
+const TokenAmountSelect: FC<TokenAmountSelectProps> = ({
   value,
   onChange,
   options,
@@ -115,4 +115,4 @@ const TokenSelect: FC<TokenSelectProps> = ({
   )
 }
 
-export default TokenSelect
+export default TokenAmountSelect

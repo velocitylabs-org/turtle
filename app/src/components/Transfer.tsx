@@ -13,7 +13,7 @@ import Button from './Button'
 import ChainSelect from './ChainSelect'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import Switch from './Switch'
-import TokenSelect from './TokenSelect'
+import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
 import { ManualRecipient, TokenAmount } from '@/models/select'
@@ -109,7 +109,7 @@ const Transfer: FC = () => {
         />
 
         {/* Token */}
-        <TokenSelect
+        <TokenAmountSelect
           value={tokenAmount}
           onChange={setTokenAmount}
           options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
