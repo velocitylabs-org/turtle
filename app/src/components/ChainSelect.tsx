@@ -1,41 +1,26 @@
 'use client'
-
-import { Chain } from '@/models/chain'
+import { FC, useRef, useState } from 'react'
 import Image from 'next/image'
-import { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import ChevronDown from './svg/ChevronDown'
 import ChainIcon from './svg/ChainIcon'
-import AddressInput from './AddressInput'
-import { isValidSubstrateAddress } from '@/utils/address'
-
-const VerticalDivider: FC = () => (
-  <div className="ml-2 h-[1.625rem] border-1 border-turtle-level3" />
-)
+import VerticalDivider from './VerticalDivider'
+import Dropdown from './Dropdown'
+import { useOutsideClick } from '@/hooks/useOutsideClick'
+import { Chain } from '@/models/chain'
 
 interface ChainSelectProps {
-  /** Currently selected chain, or null if no value is selected. */
   value: Chain | null
-  /** Callback function that is invoked when the selected chain changes. */
   onChange: (newValue: Chain | null) => void
-  /** Array of chains that the user can select from. */
   options: Chain[]
-  /** Label floating above the select input */
   floatingLabel?: string
-  /** Placeholder text to display when no value is selected. */
   placeholder?: string
-  /** Icon to display in the placeholder. */
   placeholderIcon?: React.ReactNode
-  /** The connected address is displayed to the right of the Chain  */
   walletAddress?: string
-  /** Used for manual recipient input */
   manualRecipient?: { enabled: boolean; address: string }
   onChangeManualRecipient?: (newVal: { enabled: boolean; address: string }) => void
-  /** Component to attach at the end */
   trailing?: React.ReactNode
-  /** Whether the select input is disabled (non-interactive). */
   disabled?: boolean
-  /** Additional classes to apply to the select input. */
   className?: string
 }
 
@@ -57,23 +42,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        triggerRef.current &&
-        !triggerRef.current.contains(event.target as Node) &&
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+  useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
   const handleSelectionChange = (selectedChain: Chain) => {
     onChange(selectedChain)
@@ -102,7 +71,6 @@ const ChainSelect: FC<ChainSelectProps> = ({
         onClick={handleTriggerClick}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-2">
-          {/* Trigger Content or Placeholder Content */}
           {value ? (
             <>
               <Image
@@ -124,7 +92,6 @@ const ChainSelect: FC<ChainSelectProps> = ({
           )}
           <ChevronDown strokeWidth={0.2} />
           {!manualRecipient?.enabled && walletAddress}
-
           {manualRecipient && manualRecipient.enabled && (
             <>
               {!manualRecipient.address && <VerticalDivider />}
@@ -143,36 +110,27 @@ const ChainSelect: FC<ChainSelectProps> = ({
             </>
           )}
         </div>
-
         {trailing && <div className="ml-2">{trailing}</div>}
       </div>
 
-      {/* Dialog */}
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          className="absolute left-0 right-0 z-20 max-h-60 min-h-[6rem] translate-y-[-3.58rem] overflow-auto rounded-md border-1 border-turtle-level3 bg-white"
-        >
-          <ul className="flex flex-col gap-2 px-1 py-2">
-            {options.map(option => (
-              <li
-                key={option.id}
-                className="flex cursor-pointer items-center gap-2 p-2"
-                onClick={() => handleSelectionChange(option)}
-              >
-                <Image
-                  src={option.logoURI}
-                  alt={option.name}
-                  width={24}
-                  height={24}
-                  className="h-[1.5rem] w-[1.5rem] rounded-full"
-                />
-                <span className="text-sm">{option.name}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
+        {options.map(option => (
+          <li
+            key={option.id}
+            className="flex cursor-pointer items-center gap-2 p-2"
+            onClick={() => handleSelectionChange(option)}
+          >
+            <Image
+              src={option.logoURI}
+              alt={option.name}
+              width={24}
+              height={24}
+              className="h-[1.5rem] w-[1.5rem] rounded-full"
+            />
+            <span className="text-sm">{option.name}</span>
+          </li>
+        ))}
+      </Dropdown>
     </div>
   )
 }
