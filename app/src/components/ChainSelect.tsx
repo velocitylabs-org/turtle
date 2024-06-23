@@ -8,20 +8,12 @@ import VerticalDivider from './VerticalDivider'
 import Dropdown from './Dropdown'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
+import { ManualRecipient, SelectProps } from '@/models/select'
 
-interface ChainSelectProps {
-  value: Chain | null
-  onChange: (newValue: Chain | null) => void
-  options: Chain[]
-  floatingLabel?: string
-  placeholder?: string
-  placeholderIcon?: React.ReactNode
+interface ChainSelectProps extends SelectProps<Chain> {
   walletAddress?: string
-  manualRecipient?: { enabled: boolean; address: string }
-  onChangeManualRecipient?: (newVal: { enabled: boolean; address: string }) => void
-  trailing?: React.ReactNode
-  disabled?: boolean
-  className?: string
+  manualRecipient?: ManualRecipient
+  onChangeManualRecipient?: (newVal: ManualRecipient) => void
 }
 
 const ChainSelect: FC<ChainSelectProps> = ({

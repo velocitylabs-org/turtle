@@ -8,23 +8,9 @@ import VerticalDivider from './VerticalDivider'
 import Dropdown from './Dropdown'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Token } from '@/models/token'
+import { SelectProps, TokenAmount } from '@/models/select'
 
-export interface TokenAmount {
-  token: Token | null
-  amount: number | null
-}
-
-interface TokenSelectProps {
-  value: TokenAmount
-  onChange: (newValue: TokenAmount) => void
-  options: Token[]
-  floatingLabel?: string
-  placeholder?: string
-  placeholderIcon?: React.ReactNode
-  trailing?: React.ReactNode
-  disabled?: boolean
-  className?: string
-}
+export interface TokenSelectProps extends SelectProps<TokenAmount> {}
 
 const TokenSelect: FC<TokenSelectProps> = ({
   value,
@@ -43,15 +29,18 @@ const TokenSelect: FC<TokenSelectProps> = ({
 
   useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
-  const handleSelectionChange = (selectedToken: Token) => {
-    onChange({ token: selectedToken, amount: value.amount })
+  const handleSelectionChange = (selectedToken: Token | null) => {
+    onChange({ token: selectedToken, amount: value?.amount ?? null })
     setIsOpen(false)
   }
 
   const handleTriggerClick = () => {
-    if (!disabled) {
-      setIsOpen(!isOpen)
-    }
+    if (!disabled) setIsOpen(!isOpen)
+  }
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.target.value === '' ? null : parseFloat(e.target.value)
+    onChange({ token: value?.token ?? null, amount: newVal })
   }
 
   return (
@@ -70,7 +59,7 @@ const TokenSelect: FC<TokenSelectProps> = ({
         onClick={handleTriggerClick}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-2">
-          {value.token ? (
+          {value?.token ? (
             <>
               <Image
                 src={value.token.logoURI}
@@ -93,7 +82,8 @@ const TokenSelect: FC<TokenSelectProps> = ({
             type="number"
             className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
             placeholder="Amount"
-            onChange={e => onChange({ token: value.token, amount: +e.target.value })}
+            value={value?.amount ?? ''}
+            onChange={handleAmountChange}
             onClick={e => e.stopPropagation()}
           />
         </div>
@@ -101,22 +91,25 @@ const TokenSelect: FC<TokenSelectProps> = ({
       </div>
 
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
-        {options.map(option => (
-          <li
-            key={option.id}
-            className="flex cursor-pointer items-center gap-2 p-2"
-            onClick={() => handleSelectionChange(option)}
-          >
-            <Image
-              src={option.logoURI}
-              alt={option.name}
-              width={24}
-              height={24}
-              className="h-[1.5rem] w-[1.5rem] rounded-full"
-            />
-            <span className="text-sm">{option.symbol}</span>
-          </li>
-        ))}
+        {options.map(option => {
+          if (option.token === null) return null
+          return (
+            <li
+              key={option.token.id}
+              className="flex cursor-pointer items-center gap-2 p-2"
+              onClick={() => handleSelectionChange(option.token)}
+            >
+              <Image
+                src={option.token.logoURI}
+                alt={option.token.name}
+                width={24}
+                height={24}
+                className="h-[1.5rem] w-[1.5rem] rounded-full"
+              />
+              <span className="text-sm">{option.token.symbol}</span>
+            </li>
+          )
+        })}
       </Dropdown>
     </div>
   )
