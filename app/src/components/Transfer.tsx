@@ -18,6 +18,7 @@ import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import useNotification from '@/hooks/useNotification'
+import { NotificationSeverity } from '@/models/notification'
 
 const Transfer: FC = () => {
   // Inputs
@@ -110,6 +111,18 @@ const Transfer: FC = () => {
           walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
           className="z-50"
           disabled={transferStatus !== 'Idle'}
+        />
+
+        <Button
+          label="Trigger"
+          onClick={() =>
+            addNotification({
+              severity: NotificationSeverity.Error,
+              header: 'Note Title',
+              message: 'Note Text',
+              dismissible: true,
+            })
+          }
         />
 
         {/* Token */}

@@ -3,6 +3,7 @@ export enum NotificationSeverity {
   Error = 'error',
   Warning = 'warning',
   Success = 'success',
+  Default = 'default',
 }
 
 export interface Notification {
@@ -10,4 +11,5 @@ export interface Notification {
   severity?: NotificationSeverity
   header?: string
   message?: string
+  dismissible?: boolean
 }
