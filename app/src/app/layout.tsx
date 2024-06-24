@@ -6,13 +6,10 @@ import Web3ModalProvider from '@/context'
 import { NextUIProvider } from '@nextui-org/react'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
 import { twMerge } from 'tailwind-merge'
 import { cookieToInitialState } from 'wagmi'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Turtle',
@@ -44,8 +41,7 @@ export default function RootLayout({
       <body
         className={twMerge(
           dazzed.variable,
-          inter.className,
-          'min-h-full bg-turtle-tertiary font-dazzed',
+          'min-h-full bg-turtle-tertiary font-dazzed font-medium',
         )}
       >
         <Navbar />
