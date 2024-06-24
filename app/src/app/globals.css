@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
 @layer base {
   :root {
@@ -39,6 +38,8 @@
 
     --letter-spacing-xs: -0.04em;
     --letter-spacing-sm: -0.03em;
+
+    --font-dazzed: 'Dazzed', sans-serif;
   }
 
   .dark {
@@ -70,27 +71,24 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
-}
 
-body {
-  font-family: 'Inter', sans-serif;
-}
-
-@layer base {
   /* removes scrollbar */
   ::-webkit-scrollbar {
     display: none;
     scrollbar-width: none;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   h1,
   h2,
   h3,
   h4 {
     letter-spacing: var(--letter-spacing-xs);
   }
+
   p {
     letter-spacing: var(--letter-spacing-sm);
   }

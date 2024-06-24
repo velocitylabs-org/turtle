@@ -5,25 +5,25 @@ import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
-import { isValidSubstrateAddress, truncateAddress } from '@/utils/address'
+import { truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import Link from 'next/link'
 import { FC, useEffect, useMemo, useState } from 'react'
-import AddressInput from './AddressInput'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import Switch from './Switch'
-import TokenSelect, { TokenAmount } from './TokenSelect'
+import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
+import { ManualRecipient, TokenAmount } from '@/models/select'
 
 const Transfer: FC = () => {
   // Inputs
   const [sourceChain, setSourceChain] = useState<Chain | null>(null)
   const [destinationChain, setDestinationChain] = useState<Chain | null>(null)
-  const [tokenAmount, setTokenAmount] = useState<TokenAmount>({ token: null, amount: null })
-  const [manualRecipient, setManualRecipient] = useState<{ enabled: boolean; address: string }>({
+  const [tokenAmount, setTokenAmount] = useState<TokenAmount | null>({ token: null, amount: null })
+  const [manualRecipient, setManualRecipient] = useState<ManualRecipient>({
     enabled: false,
     address: '',
   })
@@ -37,7 +37,7 @@ const Transfer: FC = () => {
     error: sourceChainsError,
   } = useChains({
     supportedDestChain: destinationChain ?? undefined,
-    supportedToken: tokenAmount.token ?? undefined,
+    supportedToken: tokenAmount?.token ?? undefined,
   })
   const {
     chains: destChains,
@@ -45,20 +45,20 @@ const Transfer: FC = () => {
     error: destChainsError,
   } = useChains({
     supportedSourceChain: sourceChain ?? undefined,
-    supportedToken: tokenAmount.token ?? undefined,
+    supportedToken: tokenAmount?.token ?? undefined,
   })
   const { environment, switchTo } = useEnvironment()
   const { transfer, isValid: _isValid } = useTransfer()
   const recipient = manualRecipient.enabled
     ? manualRecipient.address
     : destinationWallet?.sender?.address
-  const amount = convertAmount(tokenAmount.amount, tokenAmount.token)
+  const amount = tokenAmount ? convertAmount(tokenAmount.amount, tokenAmount.token) : null
 
   // Functions
   const isValid = useMemo(() => {
     return _isValid({
       sender: sourceWallet?.sender,
-      token: tokenAmount.token,
+      token: tokenAmount?.token ?? null,
       sourceChain,
       destinationChain,
       recipient: recipient,
@@ -73,7 +73,7 @@ const Transfer: FC = () => {
       !recipient ||
       !sourceWallet?.sender ||
       !destinationChain ||
-      !tokenAmount.token ||
+      !tokenAmount?.token ||
       !amount
     )
       return
@@ -109,10 +109,10 @@ const Transfer: FC = () => {
         />
 
         {/* Token */}
-        <TokenSelect
+        <TokenAmountSelect
           value={tokenAmount}
           onChange={setTokenAmount}
-          options={REGISTRY[environment].tokens} // TODO: Replace with fetched tokens once 'useTokens' is implemented
+          options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
           floatingLabel="Amount"
           trailing={
             <Button
@@ -120,9 +120,9 @@ const Transfer: FC = () => {
               size="sm"
               variant="outline"
               className="min-w-[40px]"
-              disabled={!sourceWallet?.isConnected || tokenAmount.token === null}
+              disabled={!sourceWallet?.isConnected || tokenAmount?.token === null}
             />
-          } // TODO: Implement max button functionality
+          }
           className="z-40"
         />
 
