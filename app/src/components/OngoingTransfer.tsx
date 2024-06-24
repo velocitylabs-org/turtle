@@ -6,7 +6,7 @@ import { formatDate, toHuman } from '@/utils/transfer'
 import { FC, useEffect, useState } from 'react'
 import * as Snowbridge from '@snowbridge/api'
 
-const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
+const OngoingTransfer: FC<{ transfer: Transfer }> = ({ transfer }) => {
   const [update, setUpdate] = useState<string | null>('Loading...')
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
 
