@@ -51,6 +51,8 @@ interface ButtonProps {
   size?: ButtonSize
   /** Content to be rendered inside the button. It will replace the label. */
   children?: ReactNode
+  /** The type of the button. */
+  type?: 'button' | 'submit' | 'reset'
 }
 
 const Button: FC<ButtonProps> = ({
@@ -62,6 +64,7 @@ const Button: FC<ButtonProps> = ({
   variant = 'primary',
   size = 'lg',
   children,
+  type = 'button', // Default type is 'button'
 }) => {
   return (
     <NextButton
@@ -71,6 +74,7 @@ const Button: FC<ButtonProps> = ({
       size={size}
       radius="sm"
       className={twMerge(styles[variant], sizeHeights[size], paddingX[size], className)}
+      type={type} // Pass the type prop to NextButton
     >
       {/** loading state */}
       {loading && (
