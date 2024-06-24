@@ -17,6 +17,7 @@ import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
 import { ManualRecipient, TokenAmount } from '@/models/select'
+import useNotification from '@/hooks/useNotification'
 
 const Transfer: FC = () => {
   // Inputs
@@ -65,6 +66,8 @@ const Transfer: FC = () => {
       amount,
     })
   }, [sourceWallet, tokenAmount, sourceChain, destinationChain, recipient, amount, _isValid])
+
+  const { addNotification } = useNotification()
 
   const handleSubmit = () => {
     // basic checks for TS type checker. But usually button should be disabled if these are not met.

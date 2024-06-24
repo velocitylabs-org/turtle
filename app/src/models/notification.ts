@@ -8,6 +8,6 @@ export enum NotificationSeverity {
 export interface Notification {
   id: number
   severity?: NotificationSeverity
-  header: string
+  header?: string
   message?: string
 }
