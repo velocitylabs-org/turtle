@@ -34,7 +34,12 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={twMerge(dazzed.variable, 'min-h-full bg-turtle-tertiary font-dazzed')}>
+      <body
+        className={twMerge(
+          dazzed.variable,
+          'min-h-full bg-turtle-tertiary font-dazzed font-medium',
+        )}
+      >
         <Navbar />
         <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>

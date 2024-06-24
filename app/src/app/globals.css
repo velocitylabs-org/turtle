@@ -72,10 +72,6 @@
     --ring: 212.7 26.8% 83.9%;
   }
 
-  body {
-    font-family: var(--font-dazzed);
-  }
-
   /* removes scrollbar */
   ::-webkit-scrollbar {
     display: none;
