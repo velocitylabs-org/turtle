@@ -15,11 +15,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from './ui/dialog'
 import { Separator } from './ui/separator'
 
 import OngoingTransfer from './OngoingTransfer'
-import { formatDate } from '@/utils/transfer'
+import { formatDate, toHuman } from '@/utils/transfer'
 import { useEffect, useState } from 'react'
 import { Direction, resolveDirection } from '@/services/transfer'
 import * as Snowbridge from '@snowbridge/api'
 import { Network } from '@/models/chain'
+import { colors } from '../../tailwind.config'
 
 export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
   const { data: ensName } = useEnsName({
@@ -78,7 +79,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
               </div>
               <div className="text-sm">{transfer.sourceChain.name}</div>
             </div>
-            <ArrowRight className="h-2 w-2" fill="{colors['turtle-secondary-dark']}" />
+            <ArrowRight className="h-2 w-2" fill={colors['turtle-secondary-dark']} />
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
                 <Image
@@ -96,7 +97,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
               'flex items-center space-x-1 text-3xl font-medium leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
-            <p>{transfer.amount}</p>
+            <p>{toHuman(transfer.amount, transfer.token)}</p>
             <p>{transfer.token.symbol}</p>
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
