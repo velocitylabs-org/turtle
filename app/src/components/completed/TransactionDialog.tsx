@@ -144,7 +144,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
             )}
           </div>
           {/* sender */}
-          <div className="relative w-full rounded-lg border border-turtle-level3">
+          <div className="relative mt-2 w-full rounded-lg border border-turtle-level3">
             <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
               Sender
             </div>

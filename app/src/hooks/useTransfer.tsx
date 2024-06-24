@@ -1,10 +1,16 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Direction, resolveDirection, toEthereum, toPolkadot } from '@/services/transfer'
+import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
-import { WalletSigner } from '@snowbridge/api/dist/toEthereum'
+import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
 import { JsonRpcSigner, Signer } from 'ethers'
+import useOngoingTransfers from './useOngoingTransfers'
+import useNotification from './useNotification'
+import { NotificationSeverity } from '@/models/notification'
+import * as Snowbridge from '@snowbridge/api'
+import { getContext, getEnvironment } from '@/context/snowbridge'
+import { useState } from 'react'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -27,11 +33,17 @@ interface TransferValidationParams {
   amount: bigint | null
 }
 
+export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
+
 /**
  * Used to initiate a transfer from source chain to destination chain.
  * It figures out which api to use based on token, source and destination chain.
  */
 const useTransfer = () => {
+  const [status, setStatus] = useState<Status>('Idle')
+  const { addTransfer } = useOngoingTransfers()
+  const { addNotification } = useNotification()
+
   const transfer = async ({
     environment,
     sender,
@@ -41,14 +53,136 @@ const useTransfer = () => {
     recipient,
     amount,
   }: TransferParams) => {
+    setStatus('Loading')
+
     let direction = resolveDirection(sourceChain, destinationChain)
+    const snowbridgeEnv = getEnvironment(environment)
+    const context = await getContext(snowbridgeEnv)
+    const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
     switch (direction) {
-      case Direction.ToPolkadot:
-        toPolkadot(environment, sender as Signer, token, amount, destinationChain, recipient)
+      case Direction.ToPolkadot: {
+        setStatus('Validating')
+        let plan = await Snowbridge.toPolkadot.validateSend(
+          context,
+          sender as Signer,
+          recipient,
+          tokenContract,
+          destinationChain.chainId,
+          amount,
+          BigInt(0),
+        )
+
+        if (plan.failure) {
+          console.log('Validation failed: ' + plan.failure)
+          addNotification({
+            header: 'Transfer validation failed!',
+            message: '',
+            severity: NotificationSeverity.Error,
+          })
+          setStatus('Idle')
+          return
+        }
+
+        try {
+          setStatus('Sending')
+          let sendResult = await Snowbridge.toPolkadot.send(context, sender as Signer, plan)
+          setStatus('Idle')
+
+          if (sendResult.failure) {
+            addNotification({
+              header: 'This transfer failed!',
+              message: '',
+              severity: NotificationSeverity.Error,
+            })
+            return
+          }
+
+          console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
+          addTransfer({
+            id: sendResult.success!.messageId,
+            sourceChain,
+            token,
+            sender: await (sender as Signer).getAddress(),
+            destChain: destinationChain,
+            amount: amount,
+            recipient: recipient,
+            date: new Date(),
+            context,
+            sendResult,
+          })
+        } catch (e) {
+          addNotification({
+            header: 'Transfer validation failed!',
+            message: '',
+            severity: NotificationSeverity.Error,
+          })
+          setStatus('Idle')
+        }
+
         break
+      }
       case Direction.ToEthereum:
-        toEthereum(environment, sourceChain, sender as WalletSigner, token, amount, recipient)
+        setStatus('Validating')
+        let plan = await Snowbridge.toEthereum.validateSend(
+          context,
+          sender as WalletOrKeypair,
+          sourceChain.chainId,
+          recipient,
+          tokenContract,
+          amount,
+        )
+
+        if (plan.failure) {
+          console.log('Validation failed: ' + plan.failure)
+          addNotification({
+            header: 'Transfer validation failed',
+            message: '',
+            severity: NotificationSeverity.Error,
+          })
+          setStatus('Idle')
+          return
+        }
+
+        setStatus('Sending')
+        try {
+          let sendResult = await Snowbridge.toEthereum.send(
+            context,
+            sender as WalletOrKeypair,
+            plan,
+          )
+          setStatus('Idle')
+          if (sendResult.failure) {
+            addNotification({
+              header: 'This transfer failed!',
+              message: '',
+              severity: NotificationSeverity.Error,
+            })
+            return
+          }
+
+          console.log('Sent success, will add to ongoing transfers. Amount:', amount)
+          addTransfer({
+            id: sendResult.success!.messageId ?? 'todo(nuno)',
+            sourceChain,
+            token,
+            sender: sender.address,
+            destChain: destinationChain,
+            amount: amount,
+            recipient: recipient,
+            date: new Date(),
+            context,
+            sendResult,
+          })
+        } catch (e) {
+          addNotification({
+            header: 'This transfer failed!',
+            message: '',
+            severity: NotificationSeverity.Error,
+          })
+          setStatus('Idle')
+        }
+
         break
       default:
         throw Error('Unsupported flow')
@@ -66,7 +200,7 @@ const useTransfer = () => {
     return !!(sender && sourceChain && token && destinationChain && recipient && amount)
   }
 
-  return { transfer, isValid }
+  return { transfer, isValid, transferStatus: status }
 }
 
 export default useTransfer

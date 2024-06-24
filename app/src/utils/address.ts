@@ -18,7 +18,7 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
   const startStr = str.substring(0, start)
   const endStr = end > 0 ? str.substring(str.length - end) : ''
 
-  return `${startStr}...${endStr}`
+  return `${startStr}...${endStr}`.toLowerCase()
 }
 
 /**
