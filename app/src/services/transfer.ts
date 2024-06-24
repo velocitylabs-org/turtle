@@ -5,6 +5,7 @@ import { getEnvironment, getContext } from '../context/snowbridge'
 import * as Snowbridge from '@snowbridge/api'
 import { Environment } from '../store/environmentStore'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
+import { convertAmount } from '@/utils/transfer'
 
 /**
  * The direction of a transfer, i.e, from and to which network the tokens
@@ -46,34 +47,6 @@ export const getErc20TokenContract = (
   }
 }
 
-export const toPolkadot = async (
-  environment: Environment,
-  signer: Signer,
-  token: Token,
-  amount: bigint,
-  destinationChain: Chain,
-  recipient: string,
-): Promise<void> => {
-  const snowbridgeEnv = getEnvironment(environment)
-  const context = await getContext(snowbridgeEnv)
-  const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
-
-  Snowbridge.toPolkadot
-    .validateSend(
-      context,
-      signer,
-      recipient,
-      tokenContract,
-      destinationChain.chainId,
-      amount,
-      BigInt(0),
-    )
-    .then(plan => Snowbridge.toPolkadot.send(context, signer, plan))
-    .then(sent => trackToPolkadot(context, sent))
-    .then(res => console.log('Result:', res))
-    .catch(e => console.log('Failed to transfer: ', e))
-}
-
 async function trackToPolkadot(
   context: Snowbridge.Context,
   result: Snowbridge.toPolkadot.SendResult,
@@ -97,17 +70,14 @@ export const toEthereum = async (
   token: Token,
   amount: bigint,
   recipient: string,
-): Promise<void> => {
+): Promise<Snowbridge.toEthereum.SendResult> => {
   const snowbridgeEnv = getEnvironment(environment)
   const context = await getContext(snowbridgeEnv)
   const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
-  await Snowbridge.toEthereum
+  return Snowbridge.toEthereum
     .validateSend(context, sender, sourceChain.chainId, recipient, tokenContract, amount)
     .then(plan => Snowbridge.toEthereum.send(context, sender, plan))
-    .then(sent => trackToEthereum(context, sent))
-    .then(res => console.log('Result:', res))
-    .catch(e => console.log('Failed to transfer: ', e))
 }
 
 async function trackToEthereum(

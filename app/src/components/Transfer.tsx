@@ -48,7 +48,7 @@ const Transfer: FC = () => {
     supportedToken: tokenAmount?.token ?? undefined,
   })
   const { environment, switchTo } = useEnvironment()
-  const { transfer, isValid: _isValid } = useTransfer()
+  const { transfer, isValid: _isValid, transferStatus } = useTransfer()
   const recipient = manualRecipient.enabled
     ? manualRecipient.address
     : destinationWallet?.sender?.address
@@ -106,6 +106,7 @@ const Transfer: FC = () => {
           trailing={<WalletButton network={sourceChain?.network} />}
           walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
           className="z-50"
+          disabled={transferStatus !== 'Idle'}
         />
 
         {/* Token */}
@@ -120,10 +121,15 @@ const Transfer: FC = () => {
               size="sm"
               variant="outline"
               className="min-w-[40px]"
-              disabled={!sourceWallet?.isConnected || tokenAmount?.token === null}
+              disabled={
+                !sourceWallet?.isConnected ||
+                tokenAmount?.token === null ||
+                transferStatus !== 'Idle'
+              }
             />
           }
           className="z-40"
+          disabled={transferStatus !== 'Idle'}
         />
 
         {/* Destination Chain */}
@@ -140,6 +146,7 @@ const Transfer: FC = () => {
           }
           walletAddress={truncateAddress(destinationWallet?.sender?.address || '')}
           className="z-30"
+          disabled={transferStatus !== 'Idle'}
         />
       </div>
 
@@ -158,6 +165,7 @@ const Transfer: FC = () => {
             checked={manualRecipient.enabled}
             onChange={enabled => setManualRecipient(prev => ({ ...prev, enabled }))}
             label="Send to a different address"
+            disabled={transferStatus !== 'Idle'}
           />
         </div>
       )}
@@ -168,7 +176,7 @@ const Transfer: FC = () => {
         size="lg"
         variant="primary"
         onClick={handleSubmit}
-        disabled={!isValid}
+        disabled={!isValid || transferStatus !== 'Idle'}
         className="my-5"
       />
 
