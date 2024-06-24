@@ -24,6 +24,16 @@ export const convertAmount = (input: number | null, token: Token | null): bigint
  * @param token - The token object which includes its decimals property.
  * @returns The amount readable by humans
  */
-export const toHumans = (input: bigint, token: Token): number => {
+export const toHuman = (input: bigint, token: Token): number => {
   return Number(input) / 10 ** token.decimals
+}
+
+export const formatDate = (date: Date): string => {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  })
 }

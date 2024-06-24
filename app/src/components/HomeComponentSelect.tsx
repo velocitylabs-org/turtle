@@ -16,8 +16,8 @@ export const HomeComponentSelect = () => {
       <Menu isNewTransaction={isNewTransaction} setIsNewTransaction={setIsNewTransaction} />
       {isNewTransaction ? (
         <div className="z-15 relative">
-          {' '}
-          <Transfer /> <OngoingTransfers />{' '}
+          <Transfer />
+          <OngoingTransfers />
         </div>
       ) : (
         <TransactionHistory transactions={transactionsMockUp} />

@@ -36,7 +36,7 @@ const OngoingTransfers: FC = () => {
 
             <button
               onClick={handleViewCompleted}
-              className="w-full rounded-[8px] border border-[color:var(--turtle-level3)] py-[8px] text-center text-lg text-xl text-[color:var(--turtle-foreground)]"
+              className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-xl"
             >
               View completed transactions <i className="fas fa-arrow-right ml-1"></i>
             </button>

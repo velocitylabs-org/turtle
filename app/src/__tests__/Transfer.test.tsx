@@ -1,7 +1,7 @@
 import { Direction, resolveDirection } from '@/services/transfer'
 import '@testing-library/jest-dom'
 import { Mainnet } from '../config/registry'
-import { convertAmount, toHumans } from '@/utils/transfer'
+import { convertAmount, toHuman } from '@/utils/transfer'
 
 describe('Transfer', () => {
   it('direction ToEthereum', () => {
@@ -32,7 +32,7 @@ describe('Transfer', () => {
     let inputs = [1, 10000, 123, 0.35]
 
     inputs.forEach(x => {
-      expect(toHumans(convertAmount(x, Mainnet.WETH)!, Mainnet.WETH)).toBe(x)
+      expect(toHuman(convertAmount(x, Mainnet.WETH)!, Mainnet.WETH)).toBe(x)
     })
   })
 })
