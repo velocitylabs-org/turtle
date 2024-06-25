@@ -91,9 +91,10 @@ const Transfer: FC = () => {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
+    mode: 'onTouched', // TODO: change that depending on feedback
     defaultValues: {
       sourceChain: null,
       destinationChain: null,
@@ -114,24 +115,13 @@ const Transfer: FC = () => {
   const sourceWallet = useWallet(sourceChain?.network)
   const destinationWallet = useWallet(destinationChain?.network) // TODO: add this to zod. use isConnected field.
   const { environment } = useEnvironment()
-  const { transfer, isValid: _isValid, transferStatus } = useTransfer()
+  const { transfer, transferStatus } = useTransfer()
   const recipient = manualRecipient.enabled
     ? manualRecipient.address
     : destinationWallet?.sender?.address
   const amount = tokenAmount ? convertAmount(tokenAmount.amount, tokenAmount.token) : null
 
-  // Functions
-  const isValid = useMemo(() => {
-    return _isValid({
-      sender: sourceWallet?.sender,
-      token: tokenAmount?.token ?? null,
-      sourceChain,
-      destinationChain,
-      recipient: recipient,
-      amount,
-    })
-  }, [sourceWallet, tokenAmount, sourceChain, destinationChain, recipient, amount, _isValid])
-
+  // Form submit
   const onSubmit: SubmitHandler<FormInputs> = data => {
     const { sourceChain, destinationChain, tokenAmount, manualRecipient } = data
     const recipient = manualRecipient.enabled
@@ -277,7 +267,7 @@ const Transfer: FC = () => {
         size="lg"
         variant="primary"
         type="submit"
-        /* disabled={!isValid || transferStatus !== 'Idle'} */
+        disabled={!isValid || isValidating || transferStatus !== 'Idle'}
         className="my-5"
       />
 
