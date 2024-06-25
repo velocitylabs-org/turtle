@@ -65,7 +65,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
               <div className="relative h-6 w-6 rounded-full">
                 <Image
                   src={transfer.sourceChain.logoURI}
-                  alt={`Velocity Labs. Handles transactions from ${transfer.sourceChain}`}
+                  alt={`${transfer.sourceChain.name}`}
                   fill={true}
                   className={'rounded-full border border-turtle-secondary-dark'}
                 />
@@ -77,7 +77,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
               <div className="relative h-6 w-6 rounded-full">
                 <Image
                   src={transfer.destChain.logoURI}
-                  alt={`Velocity Labs. Handles transactions from ${transfer.destChain.name}`}
+                  alt={`${transfer.destChain.name}`}
                   fill={true}
                   className={'rounded-full border border-turtle-secondary-dark'}
                 />
