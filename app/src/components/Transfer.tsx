@@ -4,11 +4,11 @@ import useChains from '@/hooks/useChains'
 import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
-import { Chain } from '@/models/chain'
+import { Network } from '@/models/chain'
 import { truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import Link from 'next/link'
-import { FC, useEffect, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
@@ -17,46 +17,40 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
-import { ManualRecipient, TokenAmount } from '@/models/select'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+const chainSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  logoURI: z.string(),
+  chainId: z.number(),
+  network: z.nativeEnum(Network),
+})
+
+const tokenSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  logoURI: z.string(),
+  symbol: z.string(),
+  decimals: z.number(),
+})
+
+const tokenAmountSchema = z.object({
+  token: tokenSchema.nullable(),
+  amount: z.number().nullable(),
+})
+
+const manualRecipientSchema = z.object({
+  enabled: z.boolean(),
+  address: z.string(),
+})
+
 const schema = z.object({
-  sourceChain: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      logoURI: z.string(),
-      chainId: z.number(),
-      network: z.string(), // Adjust according to your Network type
-    })
-    .nullable(),
-  destinationChain: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      logoURI: z.string(),
-      chainId: z.number(),
-      network: z.string(), // Adjust according to your Network type
-    })
-    .nullable(),
-  tokenAmount: z
-    .object({
-      token: z
-        .object({
-          id: z.string(), // Assuming Token has an id string, adjust according to your Token type
-          name: z.string(),
-          symbol: z.string(),
-          decimals: z.number(),
-        })
-        .nullable(),
-      amount: z.number().nullable(),
-    })
-    .nullable(),
-  manualRecipient: z.object({
-    enabled: z.boolean(),
-    address: z.string(),
-  }),
+  sourceChain: chainSchema.nullable(),
+  destinationChain: chainSchema.nullable(),
+  tokenAmount: tokenAmountSchema.nullable(),
+  manualRecipient: manualRecipientSchema,
 })
 
 type FormInputs = z.infer<typeof schema>
