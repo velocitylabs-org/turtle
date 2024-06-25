@@ -18,16 +18,58 @@ import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
 import { ManualRecipient, TokenAmount } from '@/models/select'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 
-interface FormInputs {
-  sourceChain: Chain | null
-  destinationChain: Chain | null
-  tokenAmount: TokenAmount | null
-  manualRecipient: ManualRecipient
-}
+const schema = z.object({
+  sourceChain: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      logoURI: z.string(),
+      chainId: z.number(),
+      network: z.string(), // Adjust according to your Network type
+    })
+    .nullable(),
+  destinationChain: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      logoURI: z.string(),
+      chainId: z.number(),
+      network: z.string(), // Adjust according to your Network type
+    })
+    .nullable(),
+  tokenAmount: z
+    .object({
+      token: z
+        .object({
+          id: z.string(), // Assuming Token has an id string, adjust according to your Token type
+          name: z.string(),
+          symbol: z.string(),
+          decimals: z.number(),
+        })
+        .nullable(),
+      amount: z.number().nullable(),
+    })
+    .nullable(),
+  manualRecipient: z.object({
+    enabled: z.boolean(),
+    address: z.string(),
+  }),
+})
+
+type FormInputs = z.infer<typeof schema>
 
 const Transfer: FC = () => {
-  const { control, handleSubmit, watch, setValue } = useForm<FormInputs>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormInputs>({
+    resolver: zodResolver(schema),
     defaultValues: {
       sourceChain: null,
       destinationChain: null,
