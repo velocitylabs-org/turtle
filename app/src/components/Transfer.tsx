@@ -20,6 +20,7 @@ import { AlertIcon } from './svg/AlertIcon'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+// TODO: outsource into own file
 const NetworkEnum = z.nativeEnum(Network)
 
 const chainSchema = z.object({
@@ -112,23 +113,7 @@ const Transfer: FC = () => {
   // Hooks
   const sourceWallet = useWallet(sourceChain?.network)
   const destinationWallet = useWallet(destinationChain?.network) // TODO: add this to zod. use isConnected field.
-  const {
-    chains: sourceChains,
-    loading: loadingSourceChains,
-    error: sourceChainsError,
-  } = useChains({
-    supportedDestChain: destinationChain ?? undefined,
-    supportedToken: tokenAmount?.token ?? undefined,
-  })
-  const {
-    chains: destChains,
-    loading: loadingDestChains,
-    error: destChainsError,
-  } = useChains({
-    supportedSourceChain: sourceChain ?? undefined,
-    supportedToken: tokenAmount?.token ?? undefined,
-  })
-  const { environment, switchTo } = useEnvironment()
+  const { environment } = useEnvironment()
   const { transfer, isValid: _isValid, transferStatus } = useTransfer()
   const recipient = manualRecipient.enabled
     ? manualRecipient.address
@@ -188,7 +173,9 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <ChainSelect
               {...field}
-              options={sourceChains}
+              options={REGISTRY[environment].chains.filter(
+                c => !destinationChain || c.id !== destinationChain?.id,
+              )}
               floatingLabel="From"
               placeholder="Source"
               error={errors.sourceChain?.message}
@@ -236,7 +223,9 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <ChainSelect
               {...field}
-              options={destChains}
+              options={REGISTRY[environment].chains.filter(
+                c => !sourceChain || c.id !== sourceChain?.id,
+              )}
               floatingLabel="To"
               placeholder="Destination"
               manualRecipient={manualRecipient}
