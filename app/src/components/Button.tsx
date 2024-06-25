@@ -73,7 +73,13 @@ const Button: FC<ButtonProps> = ({
       onClick={onClick}
       size={size}
       radius="sm"
-      className={twMerge(styles[variant], sizeHeights[size], paddingX[size], className)}
+      className={twMerge(
+        styles[variant],
+        sizeHeights[size],
+        paddingX[size],
+        '', // TODO: disable blue ring on tab focus
+        className,
+      )}
       type={type} // Pass the type prop to NextButton
     >
       {/** loading state */}

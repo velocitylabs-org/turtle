@@ -39,41 +39,43 @@ const tokenSchema = z.object({
 })
 
 const tokenAmountSchema = z.object({
-  token: tokenSchema.nullable(),
-  amount: z.number().nullable(),
+  token: tokenSchema.nullable().refine(val => val !== null, {
+    message: 'Token must be specified',
+  }),
+  amount: z
+    .number()
+    .gt(0, 'Amount must be larger than 0')
+    .nullable()
+    .refine(val => val !== null, {
+      message: 'Amount must be specified',
+    }),
 })
 
 const manualRecipientSchema = z.object({
   enabled: z.boolean(),
-  address: z.string(),
+  address: z.string().min(1, 'Address is required'),
 })
 
 const schema = z
   .object({
     sourceChain: chainSchema.nullable().refine(val => val !== null, {
-      message: 'Source chain cannot be null',
+      message: 'Source chain must be specified',
     }),
     destinationChain: chainSchema.nullable().refine(val => val !== null, {
-      message: 'Destination chain cannot be null',
+      message: 'Destination chain must be specified',
     }),
     tokenAmount: tokenAmountSchema,
     manualRecipient: manualRecipientSchema,
   })
   .superRefine((data, ctx) => {
     if (data.manualRecipient.enabled) {
-      if (!data.manualRecipient.address) {
-        ctx.addIssue({
-          path: ['manualRecipient', 'address'],
-          message: 'Address is required',
-          code: 'custom',
-        })
-      } else if (
+      if (
         data.destinationChain &&
         !isValidAddressOfChain(data.manualRecipient.address, data.destinationChain)
       ) {
         ctx.addIssue({
           path: ['manualRecipient', 'address'],
-          message: 'Invalid address for specified chain',
+          message: 'Invalid address',
           code: 'custom',
         })
       }
@@ -109,7 +111,7 @@ const Transfer: FC = () => {
 
   // Hooks
   const sourceWallet = useWallet(sourceChain?.network)
-  const destinationWallet = useWallet(destinationChain?.network)
+  const destinationWallet = useWallet(destinationChain?.network) // TODO: add this to zod. use isConnected field.
   const {
     chains: sourceChains,
     loading: loadingSourceChains,
@@ -189,6 +191,7 @@ const Transfer: FC = () => {
               options={sourceChains}
               floatingLabel="From"
               placeholder="Source"
+              error={errors.sourceChain?.message}
               trailing={<WalletButton network={sourceChain?.network} />}
               walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
               className="z-50"
@@ -206,6 +209,8 @@ const Transfer: FC = () => {
               {...field}
               options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
               floatingLabel="Amount"
+              disabled={transferStatus !== 'Idle'}
+              error={errors.tokenAmount?.token?.message || errors.tokenAmount?.amount?.message}
               trailing={
                 <Button
                   label="Max"
@@ -220,7 +225,6 @@ const Transfer: FC = () => {
                 />
               }
               className="z-40"
-              disabled={transferStatus !== 'Idle'}
             />
           )}
         />
@@ -237,6 +241,10 @@ const Transfer: FC = () => {
               placeholder="Destination"
               manualRecipient={manualRecipient}
               onChangeManualRecipient={value => setValue('manualRecipient', value)}
+              error={
+                errors.destinationChain?.message ||
+                (manualRecipient.enabled ? errors.manualRecipient?.address?.message : undefined)
+              }
               trailing={
                 !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
               }
@@ -280,7 +288,7 @@ const Transfer: FC = () => {
         size="lg"
         variant="primary"
         type="submit"
-        disabled={!isValid || transferStatus !== 'Idle'}
+        /* disabled={!isValid || transferStatus !== 'Idle'} */
         className="my-5"
       />
 

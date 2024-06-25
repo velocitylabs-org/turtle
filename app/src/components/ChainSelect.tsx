@@ -27,6 +27,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
   manualRecipient,
   onChangeManualRecipient,
   trailing,
+  error,
   disabled,
   className,
 }) => {
@@ -61,7 +62,8 @@ const ChainSelect: FC<ChainSelectProps> = ({
         ref={triggerRef}
         className={twMerge(
           'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+          disabled && 'opacity-30',
+          error && 'border-turtle-error',
         )}
         onClick={handleTriggerClick}
       >
@@ -122,6 +124,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
           </li>
         ))}
       </Dropdown>
+      <span className="text-xs text-turtle-error">{error}</span>
     </div>
   )
 }

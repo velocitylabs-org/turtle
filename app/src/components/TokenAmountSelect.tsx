@@ -9,6 +9,7 @@ import Dropdown from './Dropdown'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Token } from '@/models/token'
 import { SelectProps, TokenAmount } from '@/models/select'
+import { cn } from '@/utils/cn'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
@@ -21,6 +22,7 @@ const TokenAmountSelect: FC<TokenAmountSelectProps> = ({
   placeholderIcon = <TokenIcon />,
   trailing,
   disabled,
+  error,
   className,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -52,9 +54,10 @@ const TokenAmountSelect: FC<TokenAmountSelectProps> = ({
       )}
       <div
         ref={triggerRef}
-        className={twMerge(
-          'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+        className={cn(
+          'flex cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+          disabled && 'opacity-30',
+          error && 'border-turtle-error',
         )}
         onClick={handleTriggerClick}
       >
@@ -111,6 +114,7 @@ const TokenAmountSelect: FC<TokenAmountSelectProps> = ({
           )
         })}
       </Dropdown>
+      <span className="text-xs text-turtle-error">{error}</span>
     </div>
   )
 }
