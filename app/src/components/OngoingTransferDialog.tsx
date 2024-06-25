@@ -5,7 +5,6 @@ import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
 import { Transfer } from '@/models/transfer'
-import { cn } from '@/utils/cn'
 import { truncateAddress } from '@/utils/address'
 
 import { ArrowRight } from './svg/ArrowRight'
@@ -91,7 +90,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
               'flex items-center space-x-1 text-3xl font-medium leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
-            <p>{toHuman(transfer.amount, transfer.token)}</p>
+            <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
             <p>{transfer.token.symbol}</p>
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
@@ -182,7 +181,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
             <div className="mt-2 flex flex-col items-center justify-between space-x-4 sm:flex-row">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
-                <p>{transfer.amount}</p>
+                <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
                 <p>{transfer.token.symbol}</p>
                 <p className="text-turtle-level5">${transfer.amount}</p>
               </div>
@@ -191,9 +190,8 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                {/* TODO(nuno) */}
-                <p>0.0001</p>
-                <p>ETH</p>
+                <p>{toHuman(transfer.feeAmount, transfer.feeToken).toFixed(2)}</p>
+                <p>{transfer.feeToken.symbol}</p>
                 <p className="text-turtle-level5"> 40 $</p>
               </div>
             </div>
@@ -202,7 +200,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
                 {/* TODO(nuno) */}
-                <p>{0.95 * toHuman(transfer.amount, transfer.token)}</p>
+                <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
                 <p>{transfer.token.symbol}</p>
                 {/* TODO(nuno) */}
                 <p className="text-turtle-level5"> N/A $</p>

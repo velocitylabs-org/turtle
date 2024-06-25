@@ -110,6 +110,19 @@ const useTransfer = () => {
             date: new Date(),
             context,
             sendResult,
+            feeAmount: await Snowbridge.toPolkadot.getSendFee(
+              context,
+              tokenContract,
+              destinationChain.chainId,
+              BigInt(0),
+            ),
+            feeToken: {
+              id: 'eth',
+              symbol: 'ETH',
+              name: 'ETHER',
+              logoURI: '',
+              decimals: 18,
+            },
           })
         } catch (e) {
           addNotification({
@@ -173,6 +186,15 @@ const useTransfer = () => {
             date: new Date(),
             context,
             sendResult,
+            // todo(nuno): discussing with Snowfork a better way to fetch the fee token without harcoding it in the logic
+            feeAmount: await Snowbridge.toEthereum.getSendFee(context),
+            feeToken: {
+              id: 'dot',
+              symbol: 'DOT',
+              name: 'Polkadot',
+              logoURI: '',
+              decimals: environment == Environment.Mainnet ? 10 : 12,
+            },
           })
         } catch (e) {
           addNotification({
