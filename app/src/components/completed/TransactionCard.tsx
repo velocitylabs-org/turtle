@@ -64,7 +64,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
               <div className="relative h-4 w-4 rounded-full">
                 <Image
                   src={getChainLogoURI(tx.fromChain, environment)}
-                  alt={`Velocity Labs. Handles transactions from ${tx.fromChain}`}
+                  alt={`${tx.fromChain}`}
                   fill={true}
                   className={cn(
                     'rounded-full border',
@@ -79,7 +79,7 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
               <div className="relative h-4 w-4 rounded-full">
                 <Image
                   src={getChainLogoURI(tx.toChain, environment)}
-                  alt={`Velocity Labs. Handles transactions to ${tx.toChain}`}
+                  alt={`${tx.toChain}`}
                   fill={true}
                   className={cn(
                     'rounded-full border',
