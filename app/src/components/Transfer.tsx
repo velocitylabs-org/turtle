@@ -5,7 +5,7 @@ import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Network } from '@/models/chain'
-import { truncateAddress } from '@/utils/address'
+import { isValidAddressOfChain, truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import Link from 'next/link'
 import { FC, useMemo } from 'react'
@@ -20,12 +20,14 @@ import { AlertIcon } from './svg/AlertIcon'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+const NetworkEnum = z.nativeEnum(Network)
+
 const chainSchema = z.object({
   id: z.string(),
   name: z.string(),
   logoURI: z.string(),
   chainId: z.number(),
-  network: z.nativeEnum(Network),
+  network: NetworkEnum,
 })
 
 const tokenSchema = z.object({
@@ -46,12 +48,37 @@ const manualRecipientSchema = z.object({
   address: z.string(),
 })
 
-const schema = z.object({
-  sourceChain: chainSchema.nullable(),
-  destinationChain: chainSchema.nullable(),
-  tokenAmount: tokenAmountSchema.nullable(),
-  manualRecipient: manualRecipientSchema,
-})
+const schema = z
+  .object({
+    sourceChain: chainSchema.nullable().refine(val => val !== null, {
+      message: 'Source chain cannot be null',
+    }),
+    destinationChain: chainSchema.nullable().refine(val => val !== null, {
+      message: 'Destination chain cannot be null',
+    }),
+    tokenAmount: tokenAmountSchema,
+    manualRecipient: manualRecipientSchema,
+  })
+  .superRefine((data, ctx) => {
+    if (data.manualRecipient.enabled) {
+      if (!data.manualRecipient.address) {
+        ctx.addIssue({
+          path: ['manualRecipient', 'address'],
+          message: 'Address is required',
+          code: 'custom',
+        })
+      } else if (
+        data.destinationChain &&
+        !isValidAddressOfChain(data.manualRecipient.address, data.destinationChain)
+      ) {
+        ctx.addIssue({
+          path: ['manualRecipient', 'address'],
+          message: 'Invalid address for specified chain',
+          code: 'custom',
+        })
+      }
+    }
+  })
 
 type FormInputs = z.infer<typeof schema>
 
