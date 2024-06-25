@@ -5,12 +5,14 @@ import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
 import { JsonRpcSigner, Signer } from 'ethers'
-import useOngoingTransfers from './useOngoingTransfers'
 import useNotification from './useNotification'
 import { NotificationSeverity } from '@/models/notification'
 import * as Snowbridge from '@snowbridge/api'
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import { useState } from 'react'
+import useOngoingTransfers from './useOngoingTransfers'
+import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
+import useStore from './useStore'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -42,6 +44,8 @@ export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
 const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
   const { addTransfer } = useOngoingTransfers()
+  // const addTransfer = useStore(useOngoingTransfersStore, state => state.addTransfer)
+  //const addTransfer = useOngoingTransfersStore.getState().addTransfer
   const { addNotification } = useNotification()
 
   const transfer = async ({
@@ -111,6 +115,32 @@ const useTransfer = () => {
             context,
             sendResult,
           })
+
+          // console.log('addTransfer from useTransfer', addTransfer)
+          // // if (addTransfer) {
+          //   addTransfer({
+          //     id: sendResult.success!.messageId,
+          //     sourceChain,
+          //     token,
+          //     sender: await (sender as Signer).getAddress(),
+          //     destChain: destinationChain,
+          //     amount: amount,
+          //     recipient: recipient,
+          //     date: new Date(),
+          //     context,
+          //     sendResult,
+          //   })
+          // }
+          // } else {
+          //   console.log('Failed to add transfert in queue',)
+          //   addNotification({
+          //     header: 'Failed to add transfert in queue',
+          //     message: '',
+          //     severity: NotificationSeverity.Error,
+          //   })
+          //   setStatus('Idle')
+          //   return
+          // }
         } catch (e) {
           addNotification({
             header: 'Transfer validation failed!',
@@ -162,6 +192,7 @@ const useTransfer = () => {
           }
 
           console.log('Sent success, will add to ongoing transfers. Amount:', amount)
+          // addTransfer &&
           addTransfer({
             id: sendResult.success!.messageId ?? 'todo(nuno)',
             sourceChain,

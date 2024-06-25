@@ -1,10 +1,18 @@
 'use client'
 import { FC } from 'react'
 import OngoingTransfer from './OngoingTransfer'
+// import useStore from '@/hooks/useStore'
+// import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 
 const OngoingTransfers: FC = () => {
   const { ongoingTransfers } = useOngoingTransfers()
+  // const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
+  // const [transfers, setTransfers] = useState<Transfer[]>([])
+
+  // useEffect(() => {
+  //   ongoingTransfers && setTransfers(ongoingTransfers)
+  //  }, [ongoingTransfers])
 
   const handleViewCompleted = () => {
     // TODO(nuno)

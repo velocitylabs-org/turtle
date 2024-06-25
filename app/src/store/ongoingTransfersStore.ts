@@ -1,14 +1,44 @@
 import { Transfer } from '@/models/transfer'
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 interface State {
   // State
   transfers: Transfer[]
-
   // Actions
   addTransfer: (transfer: Transfer) => void
   removeTransfer: (id: string) => void
 }
+
+// export const useOngoingTransfersStore = create<State>()(
+//   persist(
+//     (set) => ({
+//       // State
+//       transfers: [],
+//       // Actions
+
+//       // addTransfer: transfer => {
+//       //   const { transfers } = get();
+//       //   set(() => ({
+//       //     transfers: [...transfers, transfer],
+//       //   }))
+//       // },
+//       addTransfer: transfer =>
+//         set(state => ({
+//           transfers: state.transfers.length ? [...state.transfers, transfer] : transfer ? [transfer] : [],
+//         })),
+
+//       removeTransfer: id =>
+//         set(state => ({
+//           transfers: state.transfers.filter(n => n && n.id !== id),
+//         })),
+//     }),
+//     {
+//       name: 'turtle-ongoing-transactions',
+//       // storage: createJSONStorage(() => localStorage),
+//     },
+//   ),
+// )
 
 export const useOngoingTransfersStore = create<State>(set => ({
   // State
