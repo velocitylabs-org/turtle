@@ -192,7 +192,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(transfer.feeAmount, transfer.feeToken).toFixed(2)}</p>
                 <p>{transfer.feeToken.symbol}</p>
-                <p className="text-turtle-level5"> 40 $</p>
+                <p className="text-turtle-level5"> TBD $</p>
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
@@ -203,7 +203,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
                 <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
                 <p>{transfer.token.symbol}</p>
                 {/* TODO(nuno) */}
-                <p className="text-turtle-level5"> N/A $</p>
+                <p className="text-turtle-level5"> TBD $</p>
               </div>
             </div>
           </div>

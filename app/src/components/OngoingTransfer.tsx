@@ -9,7 +9,7 @@ const OngoingTransfer: FC<{ transfer: Transfer; update: string | null }> = ({
   update,
 }) => {
   return (
-    <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3">
+    <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
         <p className="font-bold text-purple-600 text-turtle-secondary-dark">{update ?? ''}</p>
         <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
