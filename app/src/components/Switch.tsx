@@ -36,7 +36,11 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, cla
           )}
         />
       </button>
-      {label && <span className="self-center text-sm">{label}</span>}
+      {label && (
+        <span className={cn('self-center text-sm', disabled ? 'text-turtle-level4' : '')}>
+          {label}
+        </span>
+      )}
     </div>
   )
 }
