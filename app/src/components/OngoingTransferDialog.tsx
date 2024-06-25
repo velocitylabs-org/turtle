@@ -55,16 +55,10 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
         className="max-w-[24rem] rounded-4xl sm:max-w-[30.5rem]"
         hideCloseButton={true}
       >
-        <div
-          className={cn(
-            'flex flex flex-col flex-col items-center justify-center space-y-1.5 space-y-6 rounded-t-4xl border py-5 text-center sm:py-10 sm:text-left',
-          )}
-        />
-
         {/* Modal header */}
         <DialogHeader
           className={
-            'flex flex-col items-center justify-center space-y-6 rounded-t-4xl border border-turtle-secondary-dark bg-turtle-secondary-light py-5 sm:py-10'
+            'flex flex-col items-center justify-center space-y-6 rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-5 sm:py-10'
           }
         >
           <div className={'flex items-center justify-center space-x-4 text-turtle-secondary-dark'}>
@@ -110,14 +104,14 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
           {/* Update and progress bar */}
           <div
             className={
-              'flex w-full items-center gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-2 py-4 text-sm text-turtle-secondary-dark'
+              'block h-[60px] w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark'
             }
           >
-            <div className="mb-2 flex items-center justify-between">
+            <div className="my-2 flex items-center justify-between">
               <p className="font-bold text-purple-600 text-turtle-secondary-dark">{update}</p>
               <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
             </div>
-            <div className="mb-4 h-2 rounded-full bg-turtle-secondary-light">
+            <div className="mb-2 h-2 rounded-full bg-turtle-secondary-light">
               <div
                 className="h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
                 style={{ width: '60%' }}
@@ -185,7 +179,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
 
           {/* fees */}
           <div className="w-full gap-10">
-            <div className="flex flex-col items-center justify-between space-x-4 sm:flex-row">
+            <div className="mt-2 flex flex-col items-center justify-between space-x-4 sm:flex-row">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
                 <p>{transfer.amount}</p>
@@ -197,18 +191,21 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>TODO (fee amount)</p>
-                <p>TO DO (fee token)</p>
-                <p className="text-turtle-level5">TODO fees value in $</p>
+                {/* TODO(nuno) */}
+                <p>0.0001</p>
+                <p>ETH</p>
+                <p className="text-turtle-level5"> 40 $</p>
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
-                <p>TODO min token received</p>
+                {/* TODO(nuno) */}
+                <p>{0.95 * toHuman(transfer.amount, transfer.token)}</p>
                 <p>{transfer.token.symbol}</p>
-                <p className="text-turtle-level5">TODO min received in $</p>
+                {/* TODO(nuno) */}
+                <p className="text-turtle-level5"> N/A $</p>
               </div>
             </div>
           </div>
