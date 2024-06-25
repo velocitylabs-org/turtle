@@ -77,7 +77,7 @@ const useTransfer = () => {
           console.log('Validation failed: ' + plan.failure)
           addNotification({
             header: 'Transfer validation failed!',
-            message: '',
+            message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
           })
           setStatus('Idle')
@@ -150,7 +150,7 @@ const useTransfer = () => {
           console.log('Validation failed: ' + plan.failure)
           addNotification({
             header: 'Transfer validation failed',
-            message: '',
+            message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
           })
           setStatus('Idle')
