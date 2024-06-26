@@ -3,16 +3,15 @@ import { REGISTRY } from '@/config/registry'
 import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
+import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
-import { isValidAddressOfNetwork, truncateAddress } from '@/utils/address'
+import { truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { FC, useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { z } from 'zod'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import SubstrateWalletModal from './SubstrateWalletModal'
@@ -20,57 +19,6 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
-
-// TODO: outsource into own file
-const chainSchema: z.ZodType<Chain> = z.object({
-  id: z.string(),
-  name: z.string(),
-  logoURI: z.string(),
-  chainId: z.number(),
-  network: z.nativeEnum(Network),
-})
-
-const tokenSchema: z.ZodType<Token> = z.object({
-  id: z.string(),
-  name: z.string(),
-  logoURI: z.string(),
-  symbol: z.string(),
-  decimals: z.number(),
-})
-
-const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
-  token: tokenSchema.refine(val => val !== null),
-  amount: z
-    .number()
-    .gt(0, 'Amount must be larger than 0')
-    .refine(val => val !== null),
-})
-
-const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
-  enabled: z.boolean(),
-  address: z.string(),
-})
-
-const schema = z
-  .object({
-    sourceChain: chainSchema.refine(val => val !== null),
-    destinationChain: chainSchema.refine(val => val !== null),
-    tokenAmount: tokenAmountSchema,
-    manualRecipient: manualRecipientSchema,
-  })
-  .refine(
-    data => {
-      return (
-        !data.manualRecipient.enabled ||
-        !data.destinationChain ||
-        isValidAddressOfNetwork(data.manualRecipient.address, data.destinationChain.network)
-      )
-    },
-    {
-      message: 'Invalid address',
-      path: ['manualRecipient', 'address'],
-    },
-  )
 
 interface FormInputs {
   sourceChain: Chain | null
