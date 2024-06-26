@@ -1,15 +1,18 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
-import useChains from '@/hooks/useChains'
 import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
-import { Network } from '@/models/chain'
+import { Chain, Network } from '@/models/chain'
+import { ManualRecipient, TokenAmount } from '@/models/select'
+import { Token } from '@/models/token'
 import { isValidAddressOfChain, truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { FC, useMemo } from 'react'
-import { useForm, Controller, SubmitHandler } from 'react-hook-form'
+import { FC } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { z } from 'zod'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import SubstrateWalletModal from './SubstrateWalletModal'
@@ -17,21 +20,17 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 // TODO: outsource into own file
-const NetworkEnum = z.nativeEnum(Network)
-
-const chainSchema = z.object({
+const chainSchema: z.ZodType<Chain> = z.object({
   id: z.string(),
   name: z.string(),
   logoURI: z.string(),
   chainId: z.number(),
-  network: NetworkEnum,
+  network: z.nativeEnum(Network),
 })
 
-const tokenSchema = z.object({
+const tokenSchema: z.ZodType<Token> = z.object({
   id: z.string(),
   name: z.string(),
   logoURI: z.string(),
@@ -39,51 +38,45 @@ const tokenSchema = z.object({
   decimals: z.number(),
 })
 
-const tokenAmountSchema = z.object({
-  token: tokenSchema.nullable().refine(val => val !== null, {
-    message: 'Token must be specified',
-  }),
+const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
+  token: tokenSchema.refine(val => val !== null),
   amount: z
     .number()
     .gt(0, 'Amount must be larger than 0')
-    .nullable()
-    .refine(val => val !== null, {
-      message: 'Amount must be specified',
-    }),
+    .refine(val => val !== null),
 })
 
-const manualRecipientSchema = z.object({
+const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
   enabled: z.boolean(),
-  address: z.string().min(1, 'Address is required'),
+  address: z.string().min(1),
 })
 
 const schema = z
   .object({
-    sourceChain: chainSchema.nullable().refine(val => val !== null, {
-      message: 'Source chain must be specified',
-    }),
-    destinationChain: chainSchema.nullable().refine(val => val !== null, {
-      message: 'Destination chain must be specified',
-    }),
+    sourceChain: chainSchema.refine(val => val !== null),
+    destinationChain: chainSchema.refine(val => val !== null),
     tokenAmount: tokenAmountSchema,
     manualRecipient: manualRecipientSchema,
   })
   .superRefine((data, ctx) => {
-    if (data.manualRecipient.enabled) {
-      if (
-        data.destinationChain &&
-        !isValidAddressOfChain(data.manualRecipient.address, data.destinationChain)
-      ) {
-        ctx.addIssue({
-          path: ['manualRecipient', 'address'],
-          message: 'Invalid address',
-          code: 'custom',
-        })
-      }
-    }
+    if (
+      data.manualRecipient.enabled &&
+      data.destinationChain &&
+      !isValidAddressOfChain(data.manualRecipient.address, data.destinationChain)
+    )
+      ctx.addIssue({
+        path: ['manualRecipient', 'address'],
+        message: 'Invalid address',
+        code: 'custom',
+      })
   })
 
-type FormInputs = z.infer<typeof schema>
+interface FormInputs {
+  sourceChain: Chain | null
+  destinationChain: Chain | null
+  tokenAmount: TokenAmount | null
+  manualRecipient: ManualRecipient
+}
 
 const Transfer: FC = () => {
   const {
@@ -94,7 +87,8 @@ const Transfer: FC = () => {
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
-    mode: 'onTouched', // TODO: change that depending on feedback
+    mode: 'onChange',
+    delayError: 3000,
     defaultValues: {
       sourceChain: null,
       destinationChain: null,
@@ -163,9 +157,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <ChainSelect
               {...field}
-              options={REGISTRY[environment].chains.filter(
-                c => !destinationChain || c.id !== destinationChain?.id,
-              )}
+              options={REGISTRY[environment].chains}
               floatingLabel="From"
               placeholder="Source"
               error={errors.sourceChain?.message}
@@ -213,9 +205,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <ChainSelect
               {...field}
-              options={REGISTRY[environment].chains.filter(
-                c => !sourceChain || c.id !== sourceChain?.id,
-              )}
+              options={REGISTRY[environment].chains}
               floatingLabel="To"
               placeholder="Destination"
               manualRecipient={manualRecipient}
@@ -267,7 +257,13 @@ const Transfer: FC = () => {
         size="lg"
         variant="primary"
         type="submit"
-        disabled={!isValid || isValidating || transferStatus !== 'Idle'}
+        disabled={
+          !isValid ||
+          isValidating ||
+          transferStatus !== 'Idle' ||
+          !sourceWallet?.isConnected ||
+          (!manualRecipient.enabled && !destinationWallet?.isConnected)
+        }
         className="my-5"
       />
 

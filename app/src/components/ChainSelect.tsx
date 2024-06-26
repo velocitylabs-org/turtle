@@ -1,14 +1,14 @@
 'use client'
-import { FC, useRef, useState } from 'react'
-import Image from 'next/image'
-import { twMerge } from 'tailwind-merge'
-import ChevronDown from './svg/ChevronDown'
-import ChainIcon from './svg/ChainIcon'
-import VerticalDivider from './VerticalDivider'
-import Dropdown from './Dropdown'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
+import Image from 'next/image'
+import { FC, useRef, useState } from 'react'
+import { twMerge } from 'tailwind-merge'
+import Dropdown from './Dropdown'
+import ChainIcon from './svg/ChainIcon'
+import ChevronDown from './svg/ChevronDown'
+import VerticalDivider from './VerticalDivider'
 
 interface ChainSelectProps extends SelectProps<Chain> {
   walletAddress?: string
@@ -124,7 +124,6 @@ const ChainSelect: FC<ChainSelectProps> = ({
           </li>
         ))}
       </Dropdown>
-      <span className="text-xs text-turtle-error">{error}</span>
     </div>
   )
 }

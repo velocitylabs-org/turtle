@@ -1,15 +1,15 @@
 'use client'
-import { FC, useRef, useState } from 'react'
+import { useOutsideClick } from '@/hooks/useOutsideClick'
+import { SelectProps, TokenAmount } from '@/models/select'
+import { Token } from '@/models/token'
+import { cn } from '@/utils/cn'
 import Image from 'next/image'
+import { FC, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
 import VerticalDivider from './VerticalDivider'
-import Dropdown from './Dropdown'
-import { useOutsideClick } from '@/hooks/useOutsideClick'
-import { Token } from '@/models/token'
-import { SelectProps, TokenAmount } from '@/models/select'
-import { cn } from '@/utils/cn'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
@@ -114,7 +114,6 @@ const TokenAmountSelect: FC<TokenAmountSelectProps> = ({
           )
         })}
       </Dropdown>
-      <span className="text-xs text-turtle-error">{error}</span>
     </div>
   )
 }
