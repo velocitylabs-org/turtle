@@ -1,9 +1,11 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
 import useEnvironment from '@/hooks/useEnvironment'
+import useNotification from '@/hooks/useNotification'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
+import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
@@ -56,10 +58,36 @@ const Transfer: FC = () => {
   const manualRecipient = watch('manualRecipient')
 
   // Hooks
+  const { addNotification } = useNotification()
   const sourceWallet = useWallet(sourceChain?.network)
   const destinationWallet = useWallet(destinationChain?.network)
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
+
+  // Middleware to check and reset chains if they are the same
+  const handleSourceChainChange = (value: Chain | null) => {
+    if (value && value.uid === destinationChain?.uid) {
+      setValue('destinationChain', null)
+      addNotification({
+        severity: NotificationSeverity.Default,
+        message: 'Reset destination chain',
+        dismissible: true,
+      })
+    }
+    setValue('sourceChain', value)
+  }
+
+  const handleDestinationChainChange = (value: Chain | null) => {
+    if (value && value.uid === sourceChain?.uid) {
+      setValue('sourceChain', null)
+      addNotification({
+        severity: NotificationSeverity.Default,
+        message: 'Reset source chain',
+        dismissible: true,
+      })
+    }
+    setValue('destinationChain', value)
+  }
 
   // Form submit
   const onSubmit: SubmitHandler<FormInputs> = data => {
@@ -107,6 +135,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <ChainSelect
               {...field}
+              onChange={handleSourceChainChange}
               options={REGISTRY[environment].chains}
               floatingLabel="From"
               placeholder="Source"
@@ -155,6 +184,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <ChainSelect
               {...field}
+              onChange={handleDestinationChainChange}
               options={REGISTRY[environment].chains}
               floatingLabel="To"
               placeholder="Destination"
