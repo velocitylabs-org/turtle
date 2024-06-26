@@ -6,11 +6,11 @@ import useWallet from '@/hooks/useWallet'
 import { Chain, Network } from '@/models/chain'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { isValidAddressOfChain, truncateAddress } from '@/utils/address'
+import { isValidAddressOfNetwork, truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Button from './Button'
@@ -48,7 +48,7 @@ const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
 
 const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
   enabled: z.boolean(),
-  address: z.string().min(1),
+  address: z.string(),
 })
 
 const schema = z
@@ -58,18 +58,19 @@ const schema = z
     tokenAmount: tokenAmountSchema,
     manualRecipient: manualRecipientSchema,
   })
-  .superRefine((data, ctx) => {
-    if (
-      data.manualRecipient.enabled &&
-      data.destinationChain &&
-      !isValidAddressOfChain(data.manualRecipient.address, data.destinationChain)
-    )
-      ctx.addIssue({
-        path: ['manualRecipient', 'address'],
-        message: 'Invalid address',
-        code: 'custom',
-      })
-  })
+  .refine(
+    data => {
+      return (
+        !data.manualRecipient.enabled ||
+        !data.destinationChain ||
+        isValidAddressOfNetwork(data.manualRecipient.address, data.destinationChain.network)
+      )
+    },
+    {
+      message: 'Invalid address',
+      path: ['manualRecipient', 'address'],
+    },
+  )
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -84,6 +85,7 @@ const Transfer: FC = () => {
     handleSubmit,
     watch,
     setValue,
+    trigger,
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -107,13 +109,9 @@ const Transfer: FC = () => {
 
   // Hooks
   const sourceWallet = useWallet(sourceChain?.network)
-  const destinationWallet = useWallet(destinationChain?.network) // TODO: add this to zod. use isConnected field.
+  const destinationWallet = useWallet(destinationChain?.network)
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
-  const recipient = manualRecipient.enabled
-    ? manualRecipient.address
-    : destinationWallet?.sender?.address
-  const amount = tokenAmount ? convertAmount(tokenAmount.amount, tokenAmount.token) : null
 
   // Form submit
   const onSubmit: SubmitHandler<FormInputs> = data => {
@@ -143,6 +141,10 @@ const Transfer: FC = () => {
       recipient: recipient,
     })
   }
+
+  useEffect(() => {
+    trigger('manualRecipient.address')
+  }, [manualRecipient.address])
 
   return (
     <form
@@ -210,10 +212,7 @@ const Transfer: FC = () => {
               placeholder="Destination"
               manualRecipient={manualRecipient}
               onChangeManualRecipient={value => setValue('manualRecipient', value)}
-              error={
-                errors.destinationChain?.message ||
-                (manualRecipient.enabled ? errors.manualRecipient?.address?.message : undefined)
-              }
+              error={manualRecipient.enabled ? errors.manualRecipient?.address?.message : ''}
               trailing={
                 !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
               }

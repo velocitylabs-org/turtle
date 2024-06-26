@@ -94,7 +94,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
               {!manualRecipient.address && <VerticalDivider />}
               <input
                 type="text"
-                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+                className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
                 placeholder="Address"
                 value={manualRecipient.address}
                 onChange={handleManualRecipientChange}
