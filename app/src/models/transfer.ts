@@ -14,6 +14,8 @@ export interface Transfer {
   amount: bigint
   recipient: string // TODO: Decide to use either string type or create own Address type
   date: Date
+  feeToken: Token
+  feeAmount: bigint
 
   // Contextual
   context: Snowbridge.Context
@@ -21,7 +23,6 @@ export interface Transfer {
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
 }
-
 export interface StoredTransfer {
   // Params
   id: string
@@ -32,6 +33,8 @@ export interface StoredTransfer {
   amount: string
   recipient: string
   date: Date
+  feeAmount: string
+  feeToken: Token
 
   // Contextual
   environment: Environment // to access context

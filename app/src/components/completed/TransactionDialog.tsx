@@ -56,7 +56,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
               <div className="relative h-6 w-6 rounded-full">
                 <Image
                   src={getChainLogoURI(tx.fromChain, environment)}
-                  alt={`Velocity Labs. Handles transactions from ${tx.fromChain}`}
+                  alt={`${tx.fromChain}`}
                   fill={true}
                   className={cn(
                     'rounded-full border',
@@ -78,7 +78,7 @@ export const TransactionDialog = ({ tx }: { tx: Transaction }) => {
               <div className="relative h-6 w-6 rounded-full">
                 <Image
                   src={getChainLogoURI(tx.toChain, environment)}
-                  alt={`Velocity Labs. Handles transactions from ${tx.toChain}`}
+                  alt={`${tx.toChain}`}
                   fill={true}
                   className={cn(
                     'rounded-full border',
