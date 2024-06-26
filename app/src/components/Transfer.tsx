@@ -17,6 +17,7 @@ import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
 import { ManualRecipient, TokenAmount } from '@/models/select'
+import FeesPreview from './FeesPreview'
 
 const Transfer: FC = () => {
   // Inputs
@@ -169,6 +170,9 @@ const Transfer: FC = () => {
           />
         </div>
       )}
+
+      {/* Fees */}
+      <FeesPreview state={'Loading'} amount={BigInt(123)} />
 
       {/* Transfer Button */}
       <Button
