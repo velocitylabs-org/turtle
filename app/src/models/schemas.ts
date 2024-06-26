@@ -5,7 +5,7 @@ import { isValidAddressOfNetwork } from '@/utils/address'
 import { z } from 'zod'
 
 export const chainSchema: z.ZodType<Chain> = z.object({
-  id: z.string(),
+  uid: z.string(),
   name: z.string(),
   logoURI: z.string(),
   chainId: z.number(),

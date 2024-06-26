@@ -109,7 +109,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
         {options.map(option => (
           <li
-            key={option.id}
+            key={option.uid}
             className="flex cursor-pointer items-center gap-2 p-2"
             onClick={() => handleSelectionChange(option)}
           >

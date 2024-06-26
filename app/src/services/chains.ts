@@ -1,7 +1,7 @@
+import { REGISTRY } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
-import { REGISTRY } from '@/config/registry'
 interface Params {
   /** The environment the request is targeted to */
   environment: Environment
@@ -30,8 +30,8 @@ export const getChains = async ({
   const searchParams = new URLSearchParams()
   searchParams.append('environment', environment.toString())
   if (token) searchParams.append('token', token.id)
-  if (sourceChain) searchParams.append('sourceChain', sourceChain.id)
-  if (destChain) searchParams.append('destChain', destChain.id)
+  if (sourceChain) searchParams.append('sourceChain', sourceChain.uid)
+  if (destChain) searchParams.append('destChain', destChain.uid)
 
   const response = await fetch('/api/chains?' + searchParams.toString())
 

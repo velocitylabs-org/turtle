@@ -4,7 +4,7 @@ import { Token } from '@/models/token'
 /* Mainnet :: Polkadot - Ethereum */
 export module Mainnet {
   export const Ethereum: Chain = {
-    id: 'ethereum',
+    uid: 'ethereum',
     name: 'Ethereum',
     logoURI:
       'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
@@ -13,7 +13,7 @@ export module Mainnet {
   }
 
   export const AssetHub: Chain = {
-    id: 'polkadot-assethub',
+    uid: 'polkadot-assethub',
     name: 'Polkadot AssetHub',
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
@@ -33,7 +33,7 @@ export module Mainnet {
 export module Testnet {
   /* Mainnet :: Polkadot - Ethereum */
   export const Sepolia: Chain = {
-    id: 'sepolia',
+    uid: 'sepolia',
     name: 'Sepolia',
     logoURI:
       'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
@@ -42,7 +42,7 @@ export module Testnet {
   }
 
   export const RococoAssetHub: Chain = {
-    id: 'rococo-assethub',
+    uid: 'rococo-assethub',
     name: 'Rococo AssetHub',
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
