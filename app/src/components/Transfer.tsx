@@ -122,7 +122,7 @@ const Transfer: FC = () => {
 
   useEffect(() => {
     trigger('manualRecipient.address')
-  }, [manualRecipient.address])
+  }, [manualRecipient.address, trigger])
 
   return (
     <form
