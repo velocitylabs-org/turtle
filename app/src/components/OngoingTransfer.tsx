@@ -1,12 +1,14 @@
 'use client'
-import { Transfer } from '@/models/transfer'
+import { useEffect, useState } from 'react'
+import * as Snowbridge from '@snowbridge/api'
+
+import { StoredTransfer } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatDate, toHuman } from '@/utils/transfer'
-import { FC, useEffect, useState } from 'react'
-import * as Snowbridge from '@snowbridge/api'
+import { getContext, getEnvironment } from '@/context/snowbridge'
 
-const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
+const OngoingTransfer = (transfer: StoredTransfer) => {
   const [update, setUpdate] = useState<string | null>('Loading...')
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
 
@@ -29,7 +31,7 @@ const OngoingTransfer: FC<Transfer> = (transfer: Transfer) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3">
       <div className="mb-2 flex items-center justify-between">
-        <p className="font-bold text-purple-600 text-turtle-secondary-dark">{update}</p>
+        <p className="font-bold text-turtle-secondary-dark">{update}</p>
         <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
       </div>
       {/* Progress bar */}
@@ -82,14 +84,16 @@ export default OngoingTransfer
 
 const POLL_UPDATE_INTERVAL_MS: number = 10_000
 
-async function trackToPolkadot(transfer: Transfer, setUpdate: (x: string) => void) {
+async function trackToPolkadot(transfer: StoredTransfer, setUpdate: (x: string) => void) {
+  const snowbridgeEnv = getEnvironment(transfer.environment)
+  const context = await getContext(snowbridgeEnv)
   while (true) {
     const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
-      transfer.context,
+      context,
       transfer.sendResult as Snowbridge.toPolkadot.SendResult,
     )
 
-    if (status != 'pending') {
+    if (status !== 'pending') {
       setUpdate('Done!')
       //TODO(nuno): remove tx from ongoing and move it to completed
       break
@@ -119,14 +123,15 @@ async function trackToPolkadot(transfer: Transfer, setUpdate: (x: string) => voi
   await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
 }
 
-async function trackToEthereum(transfer: Transfer, setUpdate: (x: string) => void) {
+async function trackToEthereum(transfer: StoredTransfer, setUpdate: (x: string) => void) {
+  const snowbridgeEnv = getEnvironment(transfer.environment)
+  const context = await getContext(snowbridgeEnv)
   while (true) {
     const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
-      transfer.context,
+      context,
       transfer.sendResult as Snowbridge.toEthereum.SendResult,
     )
-
-    if (status != 'pending') {
+    if (status !== 'pending') {
       setUpdate('Done!')
       //TODO(nuno): remove tx from ongoing and move it to completed
       break

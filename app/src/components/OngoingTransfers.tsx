@@ -1,26 +1,19 @@
 'use client'
 import { FC } from 'react'
 import OngoingTransfer from './OngoingTransfer'
-// import useStore from '@/hooks/useStore'
-// import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-import useOngoingTransfers from '@/hooks/useOngoingTransfers'
+import useStore from '@/hooks/useStore'
+import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 const OngoingTransfers: FC = () => {
-  const { ongoingTransfers } = useOngoingTransfers()
-  // const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
-  // const [transfers, setTransfers] = useState<Transfer[]>([])
+  const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
 
-  // useEffect(() => {
-  //   ongoingTransfers && setTransfers(ongoingTransfers)
-  //  }, [ongoingTransfers])
-
-  const handleViewCompleted = () => {
-    // TODO(nuno)
-  }
+  // const handleViewCompleted = () => {
+  // TODO store Menu from home component selec in a store and switch it from here
+  // }
 
   return (
     <div>
-      {ongoingTransfers.length > 0 && (
+      {ongoingTransfers && ongoingTransfers.length > 0 && (
         <div className="my-20">
           <div className="self-center text-center text-3xl tracking-tight text-black">
             In Progress
@@ -37,17 +30,17 @@ const OngoingTransfers: FC = () => {
                 amount={tx.amount}
                 recipient={tx.recipient}
                 date={tx.date}
-                context={tx.context}
+                environment={tx.environment}
                 sendResult={tx.sendResult}
               />
             ))}
 
-            <button
+            {/* <button
               onClick={handleViewCompleted}
               className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-xl"
             >
               View completed transactions <i className="fas fa-arrow-right ml-1"></i>
-            </button>
+            </button> */}
           </div>
         </div>
       )}

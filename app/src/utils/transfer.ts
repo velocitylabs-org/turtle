@@ -24,12 +24,13 @@ export const convertAmount = (input: number | null, token: Token | null): bigint
  * @param token - The token object which includes its decimals property.
  * @returns The amount readable by humans
  */
-export const toHuman = (input: bigint, token: Token): number => {
+export const toHuman = (input: bigint | string, token: Token): number => {
   return Number(input) / 10 ** token.decimals
 }
 
-export const formatDate = (date: Date): string => {
-  return date.toLocaleDateString('en-US', {
+export const formatDate = (date: string | Date): string => {
+  const dateFrom = typeof date == 'string' ? new Date(date) : date
+  return dateFrom.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',

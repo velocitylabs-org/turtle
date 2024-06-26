@@ -1,3 +1,4 @@
+import { Environment } from '@/store/environmentStore'
 import { Chain } from './chain'
 import { Token } from './token'
 import * as Snowbridge from '@snowbridge/api'
@@ -16,6 +17,24 @@ export interface Transfer {
 
   // Contextual
   context: Snowbridge.Context
+  // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
+  // that way we can support different fields, for example for xcm-only transfers in the future.
+  sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
+}
+
+export interface StoredTransfer {
+  // Params
+  id: string
+  sourceChain: Chain
+  token: Token
+  sender: string
+  destChain: Chain
+  amount: string
+  recipient: string
+  date: Date
+
+  // Contextual
+  environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
