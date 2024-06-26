@@ -67,10 +67,11 @@ const Transfer: FC = () => {
   // Middleware to check and reset chains if they are the same
   const handleSourceChainChange = (value: Chain | null) => {
     if (value && value.uid === destinationChain?.uid) {
-      setValue('destinationChain', null)
+      setValue('destinationChain', sourceChain)
+      // TODO Currently chains are swapped. Replace with the following once more than 2 chains supported: setValue('destinationChain', null)
       addNotification({
         severity: NotificationSeverity.Default,
-        message: 'Reset destination chain',
+        message: 'Updated destination chain',
         dismissible: true,
       })
     }
@@ -79,10 +80,11 @@ const Transfer: FC = () => {
 
   const handleDestinationChainChange = (value: Chain | null) => {
     if (value && value.uid === sourceChain?.uid) {
-      setValue('sourceChain', null)
+      setValue('sourceChain', destinationChain)
+      // TODO Currently chains are swapped. Replace with the following once more than 2 chains supported: setValue('sourceChain', null)
       addNotification({
         severity: NotificationSeverity.Default,
-        message: 'Reset source chain',
+        message: 'Updated source chain',
         dismissible: true,
       })
     }
