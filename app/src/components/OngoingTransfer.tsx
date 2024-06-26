@@ -1,35 +1,17 @@
 'use client'
 import { Transfer } from '@/models/transfer'
-import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatDate, toHuman } from '@/utils/transfer'
-import { FC, useEffect, useState } from 'react'
-import * as Snowbridge from '@snowbridge/api'
+import { FC } from 'react'
 
-const OngoingTransfer: FC<{ transfer: Transfer }> = ({ transfer }) => {
-  const [update, setUpdate] = useState<string | null>('Loading...')
-  const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
-
-  useEffect(() => {
-    const pollUpdate = async () => {
-      try {
-        if (direction == Direction.ToEthereum) {
-          await trackToEthereum(transfer, setUpdate)
-        } else if (direction == Direction.ToPolkadot) {
-          await trackToPolkadot(transfer, setUpdate)
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-
-    pollUpdate()
-  }, [])
-
+const OngoingTransfer: FC<{ transfer: Transfer; update: string | null }> = ({
+  transfer,
+  update,
+}) => {
   return (
-    <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3">
+    <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
-        <p className="font-bold text-purple-600 text-turtle-secondary-dark">{update}</p>
+        <p className="font-bold text-purple-600 text-turtle-secondary-dark">{update ?? ''}</p>
         <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
       </div>
       {/* Progress bar */}
@@ -79,78 +61,3 @@ const OngoingTransfer: FC<{ transfer: Transfer }> = ({ transfer }) => {
 }
 
 export default OngoingTransfer
-
-const POLL_UPDATE_INTERVAL_MS: number = 10_000
-
-async function trackToPolkadot(transfer: Transfer, setUpdate: (x: string) => void) {
-  while (true) {
-    const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
-      transfer.context,
-      transfer.sendResult as Snowbridge.toPolkadot.SendResult,
-    )
-
-    if (status != 'pending') {
-      setUpdate('Done!')
-      //TODO(nuno): remove tx from ongoing and move it to completed
-      break
-    }
-
-    // Pending, keep track of progress
-    const { success } = result
-
-    if (result.failure || !success || !success.plan.success) {
-      setUpdate('This transfer failed!')
-      break
-    }
-
-    if (!!success.destinationParachain?.events) {
-      setUpdate(`Arriving at ${transfer.destChain.name}..."`)
-    } else if (!!success.bridgeHub.events) {
-      setUpdate('Arriving at BridgeHub...')
-    } else if (!!success.assetHub.events) {
-      setUpdate('Arriving at AssetHub...')
-    } else if (!!success.ethereum.events) {
-      setUpdate('Bridging in progress..')
-    } else {
-      setUpdate('Loading...')
-    }
-  }
-
-  await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
-}
-
-async function trackToEthereum(transfer: Transfer, setUpdate: (x: string) => void) {
-  while (true) {
-    const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
-      transfer.context,
-      transfer.sendResult as Snowbridge.toEthereum.SendResult,
-    )
-
-    if (status != 'pending') {
-      setUpdate('Done!')
-      //TODO(nuno): remove tx from ongoing and move it to completed
-      break
-    }
-
-    // Pending, keep track of progress
-    const { success } = result
-
-    //TODO(nuno): This shouldn't really happen but we should handle this better
-    if (result.failure || !success || !success.plan.success) {
-      setUpdate('This transfer failed!')
-      break
-    }
-
-    if (!!success.sourceParachain?.events) {
-      setUpdate('Sending...')
-    } else if (!!success.assetHub.events) {
-      setUpdate('Arriving at AssetHub...')
-    } else if (!!success.bridgeHub.events) {
-      setUpdate('Arriving at BridgeHub...')
-    } else {
-      setUpdate('Bridging in progress...')
-    }
-
-    await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
-  }
-}
