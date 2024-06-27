@@ -8,6 +8,7 @@ import { twMerge } from 'tailwind-merge'
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
+import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 interface ChainSelectProps extends SelectProps<Chain> {
@@ -62,53 +63,55 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
             {floatingLabel}
           </label>
         )}
-        <div
-          ref={triggerRef}
-          className={twMerge(
-            'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-            disabled && 'opacity-30',
-            error && 'border-turtle-error',
-          )}
-          onClick={handleTriggerClick}
-        >
-          <div className="flex h-[3.5rem] flex-grow items-center gap-2">
-            {value ? (
-              <>
-                <Image
-                  src={value.logoURI}
-                  alt={value.name}
-                  width={24}
-                  height={24}
-                  className="h-[1.5rem] w-[1.5rem] rounded-full"
-                />
-                {!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address) && (
-                  <span>{value.name}</span>
-                )}
-              </>
-            ) : (
-              <>
-                {placeholderIcon}
-                {placeholder}
-              </>
+        <Tooltip content={error}>
+          <div
+            ref={triggerRef}
+            className={twMerge(
+              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+              disabled && 'opacity-30',
+              error && 'border-turtle-error',
             )}
-            <ChevronDown strokeWidth={0.2} />
-            {!manualRecipient?.enabled && walletAddress}
-            {manualRecipient && manualRecipient.enabled && (
-              <>
-                {!manualRecipient.address && <VerticalDivider />}
-                <input
-                  type="text"
-                  className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
-                  placeholder="Address"
-                  value={manualRecipient.address}
-                  onChange={handleManualRecipientChange}
-                  onClick={e => e.stopPropagation()}
-                />
-              </>
-            )}
+            onClick={handleTriggerClick}
+          >
+            <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+              {value ? (
+                <>
+                  <Image
+                    src={value.logoURI}
+                    alt={value.name}
+                    width={24}
+                    height={24}
+                    className="h-[1.5rem] w-[1.5rem] rounded-full"
+                  />
+                  {!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address) && (
+                    <span>{value.name}</span>
+                  )}
+                </>
+              ) : (
+                <>
+                  {placeholderIcon}
+                  {placeholder}
+                </>
+              )}
+              <ChevronDown strokeWidth={0.2} />
+              {!manualRecipient?.enabled && walletAddress}
+              {manualRecipient && manualRecipient.enabled && (
+                <>
+                  {!manualRecipient.address && <VerticalDivider />}
+                  <input
+                    type="text"
+                    className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
+                    placeholder="Address"
+                    value={manualRecipient.address}
+                    onChange={handleManualRecipientChange}
+                    onClick={e => e.stopPropagation()}
+                  />
+                </>
+              )}
+            </div>
+            {trailing && <div className="ml-2">{trailing}</div>}
           </div>
-          {trailing && <div className="ml-2">{trailing}</div>}
-        </div>
+        </Tooltip>
 
         <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
           {options.map(option => (

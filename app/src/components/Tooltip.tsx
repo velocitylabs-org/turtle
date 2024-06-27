@@ -24,7 +24,7 @@ export const Tooltip: FC<TooltipProps> = ({ children, content }) => {
           // arrow color
           'before:bg-black before:rounded-[-10px] before:translate-y-[-1px]',
         ],
-        content: ['p-[4px, 8px, 4px, 4px] rounded-[8px]', 'text-white bg-black'],
+        content: ['p-[4px] pr-[8px] rounded-[8px]', 'text-white bg-black'],
         arrow: ['bg-black'],
       }}
     >
