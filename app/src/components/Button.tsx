@@ -28,7 +28,7 @@ const paddingX: Record<ButtonSize, string> = {
   lg: 'px-5',
 }
 
-const spinnerSize: Record<ButtonSize, number> = {
+export const spinnerSize: Record<ButtonSize, number> = {
   sm: 24,
   md: 24,
   lg: 40,

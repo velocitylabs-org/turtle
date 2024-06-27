@@ -1,4 +1,5 @@
 import { Token } from '@/models/token'
+import { Fees } from '@/models/transfer'
 
 /**
  * Converts a user-specified amount to its corresponding value in the token's decimal base.
@@ -36,4 +37,8 @@ export const formatDate = (date: Date): string => {
     minute: 'numeric',
     second: 'numeric',
   })
+}
+
+export function feeToHuman(fees: Fees): string {
+  return toHuman(fees.amount, fees.token).toFixed(10)
 }
