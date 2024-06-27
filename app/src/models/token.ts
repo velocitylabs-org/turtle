@@ -5,4 +5,16 @@ export interface Token {
   logoURI: string
   symbol: string
   decimals: number
+  address: Address
 }
+
+export interface PolkadotLocation {
+  type: 'polkadot'
+}
+export interface EthereumAddress {
+  type: 'ethereum'
+  address: string
+}
+export type AddressType = EthereumAddress | PolkadotLocation
+
+export type Address = Omit<AddressType, 'type'>

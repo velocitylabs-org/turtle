@@ -40,8 +40,8 @@ export const getErc20TokenContract = (
   env: Snowbridge.environment.SnowbridgeEnvironment,
 ): string => {
   switch (token.id) {
-    case 'weth':
-      return env.locations[0].erc20tokensReceivable[0].address
+    case 'weth' | 'veth':
+      return env.locations[0].erc20tokensReceivable[token.id].address
     default:
       throw Error('Token not supported or it is not an ERC20 token')
   }
