@@ -25,7 +25,8 @@ export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
   amount: z
     .number()
     .gt(0, 'Amount must be larger than 0')
-    .refine(val => val !== null),
+    .nullable()
+    .refine(val => val !== null, { message: 'Required', path: ['amount'] }),
 })
 
 export const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({

@@ -9,6 +9,7 @@ import { twMerge } from 'tailwind-merge'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
+import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
@@ -85,14 +86,16 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             )}
             <ChevronDown strokeWidth={0.2} />
             <VerticalDivider />
-            <input
-              type="number"
-              className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-              placeholder="Amount"
-              value={value?.amount ?? ''}
-              onChange={handleAmountChange}
-              onClick={e => e.stopPropagation()}
-            />
+            <Tooltip content={error}>
+              <input
+                type="number"
+                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+                placeholder="Amount"
+                value={value?.amount ?? ''}
+                onChange={handleAmountChange}
+                onClick={e => e.stopPropagation()}
+              />
+            </Tooltip>
           </div>
           {trailing && <div className="ml-2">{trailing}</div>}
         </div>

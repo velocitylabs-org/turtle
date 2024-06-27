@@ -1,21 +1,31 @@
-import React, { FC } from 'react'
+import TooltipIcon from '@/../public/tooltip-icon.svg'
 import { Tooltip as NextTooltip } from '@nextui-org/react'
+import Image from 'next/image'
+import React, { FC } from 'react'
 
 export interface TooltipProps {
+  content: React.ReactNode
   children: React.ReactNode
 }
 
-export const Tooltip: FC<TooltipProps> = ({ children }) => {
+export const Tooltip: FC<TooltipProps> = ({ children, content }) => {
+  if (!content) return <>{children}</>
   return (
     <NextTooltip
       showArrow
-      content="I am a tooltip"
+      content={
+        <div className="flex gap-1">
+          <Image src={TooltipIcon} alt="icon" />
+          {content}
+        </div>
+      }
       classNames={{
         base: [
           // arrow color
-          'before:bg-neutral-400 dark:before:bg-white',
+          'before:bg-black before:rounded-[-10px] before:translate-y-[-1px]',
         ],
-        content: ['py-2 px-4 shadow-xl', 'text-black bg-gradient-to-br from-white to-neutral-400'],
+        content: ['p-[4px, 8px, 4px, 4px] rounded-[8px]', 'text-white bg-black'],
+        arrow: ['bg-black'],
       }}
     >
       {children}
