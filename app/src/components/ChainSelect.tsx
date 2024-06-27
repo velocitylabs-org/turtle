@@ -3,7 +3,7 @@ import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
 import Image from 'next/image'
-import { FC, useRef, useState } from 'react'
+import { forwardRef, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
@@ -16,116 +16,123 @@ interface ChainSelectProps extends SelectProps<Chain> {
   onChangeManualRecipient?: (newVal: ManualRecipient) => void
 }
 
-const ChainSelect: FC<ChainSelectProps> = ({
-  value,
-  onChange,
-  options,
-  floatingLabel,
-  placeholder,
-  placeholderIcon = <ChainIcon />,
-  walletAddress,
-  manualRecipient,
-  onChangeManualRecipient,
-  trailing,
-  error,
-  disabled,
-  className,
-}) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const triggerRef = useRef<HTMLDivElement>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
+  (
+    {
+      value,
+      onChange,
+      options,
+      floatingLabel,
+      placeholder,
+      placeholderIcon = <ChainIcon />,
+      walletAddress,
+      manualRecipient,
+      onChangeManualRecipient,
+      trailing,
+      error,
+      disabled,
+      className,
+    },
+    ref,
+  ) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const triggerRef = useRef<HTMLDivElement>(null)
+    const dropdownRef = useRef<HTMLDivElement>(null)
 
-  useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
+    useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
-  const handleSelectionChange = (selectedChain: Chain) => {
-    onChange(selectedChain)
-    setIsOpen(false)
-  }
+    const handleSelectionChange = (selectedChain: Chain) => {
+      onChange(selectedChain)
+      setIsOpen(false)
+    }
 
-  const handleTriggerClick = () => {
-    if (!disabled) setIsOpen(!isOpen)
-  }
+    const handleTriggerClick = () => {
+      if (!disabled) setIsOpen(!isOpen)
+    }
 
-  const handleManualRecipientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChangeManualRecipient && manualRecipient)
-      onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
-  }
+    const handleManualRecipientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (onChangeManualRecipient && manualRecipient)
+        onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
+    }
 
-  return (
-    <div className={twMerge('relative w-full', className)}>
-      {floatingLabel && (
-        <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
-          {floatingLabel}
-        </label>
-      )}
-      <div
-        ref={triggerRef}
-        className={twMerge(
-          'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-          disabled && 'opacity-30',
-          error && 'border-turtle-error',
+    return (
+      <div ref={ref} className={twMerge('relative w-full', className)}>
+        {floatingLabel && (
+          <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+            {floatingLabel}
+          </label>
         )}
-        onClick={handleTriggerClick}
-      >
-        <div className="flex h-[3.5rem] flex-grow items-center gap-2">
-          {value ? (
-            <>
+        <div
+          ref={triggerRef}
+          className={twMerge(
+            'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+            disabled && 'opacity-30',
+            error && 'border-turtle-error',
+          )}
+          onClick={handleTriggerClick}
+        >
+          <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+            {value ? (
+              <>
+                <Image
+                  src={value.logoURI}
+                  alt={value.name}
+                  width={24}
+                  height={24}
+                  className="h-[1.5rem] w-[1.5rem] rounded-full"
+                />
+                {!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address) && (
+                  <span>{value.name}</span>
+                )}
+              </>
+            ) : (
+              <>
+                {placeholderIcon}
+                {placeholder}
+              </>
+            )}
+            <ChevronDown strokeWidth={0.2} />
+            {!manualRecipient?.enabled && walletAddress}
+            {manualRecipient && manualRecipient.enabled && (
+              <>
+                {!manualRecipient.address && <VerticalDivider />}
+                <input
+                  type="text"
+                  className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
+                  placeholder="Address"
+                  value={manualRecipient.address}
+                  onChange={handleManualRecipientChange}
+                  onClick={e => e.stopPropagation()}
+                />
+              </>
+            )}
+          </div>
+          {trailing && <div className="ml-2">{trailing}</div>}
+        </div>
+
+        <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
+          {options.map(option => (
+            <li
+              key={option.uid}
+              className="flex cursor-pointer items-center gap-2 p-2"
+              onClick={() => handleSelectionChange(option)}
+            >
               <Image
-                src={value.logoURI}
-                alt={value.name}
+                src={option.logoURI}
+                alt={option.name}
                 width={24}
                 height={24}
                 className="h-[1.5rem] w-[1.5rem] rounded-full"
               />
-              {!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address) && (
-                <span>{value.name}</span>
-              )}
-            </>
-          ) : (
-            <>
-              {placeholderIcon}
-              {placeholder}
-            </>
-          )}
-          <ChevronDown strokeWidth={0.2} />
-          {!manualRecipient?.enabled && walletAddress}
-          {manualRecipient && manualRecipient.enabled && (
-            <>
-              {!manualRecipient.address && <VerticalDivider />}
-              <input
-                type="text"
-                className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
-                placeholder="Address"
-                value={manualRecipient.address}
-                onChange={handleManualRecipientChange}
-                onClick={e => e.stopPropagation()}
-              />
-            </>
-          )}
-        </div>
-        {trailing && <div className="ml-2">{trailing}</div>}
+              <span className="text-sm">{option.name}</span>
+            </li>
+          ))}
+        </Dropdown>
       </div>
+    )
+  },
+)
 
-      <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
-        {options.map(option => (
-          <li
-            key={option.uid}
-            className="flex cursor-pointer items-center gap-2 p-2"
-            onClick={() => handleSelectionChange(option)}
-          >
-            <Image
-              src={option.logoURI}
-              alt={option.name}
-              width={24}
-              height={24}
-              className="h-[1.5rem] w-[1.5rem] rounded-full"
-            />
-            <span className="text-sm">{option.name}</span>
-          </li>
-        ))}
-      </Dropdown>
-    </div>
-  )
-}
+ChainSelect.displayName = 'ChainSelect'
 
 export default ChainSelect

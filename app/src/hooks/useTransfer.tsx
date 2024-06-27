@@ -11,6 +11,7 @@ import { NotificationSeverity } from '@/models/notification'
 import * as Snowbridge from '@snowbridge/api'
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import { useState } from 'react'
+import { Fees } from '@/models/transfer'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -22,6 +23,7 @@ interface TransferParams {
   destinationChain: Chain
   recipient: string
   amount: bigint
+  fees: Fees
 }
 
 interface TransferValidationParams {
@@ -52,6 +54,7 @@ const useTransfer = () => {
     destinationChain,
     recipient,
     amount,
+    fees,
   }: TransferParams) => {
     setStatus('Loading')
 
@@ -119,19 +122,7 @@ const useTransfer = () => {
             date: new Date(),
             context,
             sendResult,
-            feeAmount: await Snowbridge.toPolkadot.getSendFee(
-              context,
-              tokenContract,
-              destinationChain.chainId,
-              BigInt(0),
-            ),
-            feeToken: {
-              id: 'eth',
-              symbol: 'ETH',
-              name: 'ETHER',
-              logoURI: '',
-              decimals: 18,
-            },
+            fees,
           })
         } catch (e) {
           addNotification({
@@ -193,17 +184,9 @@ const useTransfer = () => {
             amount: amount,
             recipient: recipient,
             date: new Date(),
+            fees,
             context,
             sendResult,
-            // todo(nuno): discussing with Snowfork a better way to fetch the fee token without harcoding it in the logic
-            feeAmount: await Snowbridge.toEthereum.getSendFee(context),
-            feeToken: {
-              id: 'dot',
-              symbol: 'DOT',
-              name: 'Polkadot',
-              logoURI: '',
-              decimals: environment == Environment.Mainnet ? 10 : 12,
-            },
           })
         } catch (e) {
           addNotification({

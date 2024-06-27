@@ -1,5 +1,4 @@
 import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
-import { useState } from 'react'
 
 const useSubstrateWallet = () => {
   const substrateAccount = useSubstrateWalletStore(state => state.account)
