@@ -1,14 +1,15 @@
 'use client'
-import { FC, useRef, useState } from 'react'
+import { useOutsideClick } from '@/hooks/useOutsideClick'
+import { SelectProps, TokenAmount } from '@/models/select'
+import { Token } from '@/models/token'
+import { cn } from '@/utils/cn'
 import Image from 'next/image'
+import { FC, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
 import VerticalDivider from './VerticalDivider'
-import Dropdown from './Dropdown'
-import { useOutsideClick } from '@/hooks/useOutsideClick'
-import { Token } from '@/models/token'
-import { SelectProps, TokenAmount } from '@/models/select'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
@@ -21,6 +22,7 @@ const TokenAmountSelect: FC<TokenAmountSelectProps> = ({
   placeholderIcon = <TokenIcon />,
   trailing,
   disabled,
+  error,
   className,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -52,9 +54,10 @@ const TokenAmountSelect: FC<TokenAmountSelectProps> = ({
       )}
       <div
         ref={triggerRef}
-        className={twMerge(
-          'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+        className={cn(
+          'flex cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+          disabled && 'opacity-30',
+          error && 'border-turtle-error',
         )}
         onClick={handleTriggerClick}
       >

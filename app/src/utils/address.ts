@@ -1,4 +1,4 @@
-import { Chain } from '@/models/chain'
+import { Network } from '@/models/chain'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { isAddress } from 'viem/utils'
@@ -22,16 +22,27 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
 }
 
 /**
- * Validate if a given address is a legitimate address of a specific chain.
+ * Validate if a given address is a legitimate address of a specific network.
  *
  * @param address - The address string to be validated.
- * @param chain - The chain to validate the address against.
- * @returns True if the address is a valid address of the chain, false otherwise.
+ * @param network - The network to validate the address against.
+ * @returns True if the address is a valid address of the network, false otherwise.
  */
-export const isValidAddressOfChain = (address: string, chain: Chain): boolean => {
-  // TODO: Implement this function
-
-  return true
+export const isValidAddressOfNetwork = (address: string, network: Network): boolean => {
+  console.log('Validating address:', address, 'for network:', network)
+  switch (network) {
+    case Network.Ethereum:
+      const isEthereumValid = isValidEthereumAddress(address)
+      console.log('Ethereum address valid:', isEthereumValid)
+      return isEthereumValid
+    case Network.Polkadot:
+      const isPolkadotValid = isValidSubstrateAddress(address)
+      console.log('Polkadot address valid:', isPolkadotValid)
+      return isPolkadotValid
+    default:
+      console.log('Invalid network type:', network)
+      return false
+  }
 }
 
 /**
