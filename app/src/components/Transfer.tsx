@@ -22,10 +22,10 @@ import Button from './Button'
 import ChainSelect from './ChainSelect'
 import FeesPreview from './FeesPreview'
 import SubstrateWalletModal from './SubstrateWalletModal'
+import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { AlertIcon } from './svg/AlertIcon'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -41,7 +41,6 @@ const Transfer: FC = () => {
     watch,
     setValue,
     trigger,
-    clearErrors,
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -291,11 +290,13 @@ const Transfer: FC = () => {
       {isValid && <FeesPreview state={!!fees ? { type: 'Ready', fees } : { type: 'Loading' }} />}
 
       {/* Transfer Button */}
+
       <Button
         label="Send"
         size="lg"
         variant="primary"
         type="submit"
+        loading={transferStatus !== 'Idle'}
         disabled={
           !isValid ||
           isValidating ||
