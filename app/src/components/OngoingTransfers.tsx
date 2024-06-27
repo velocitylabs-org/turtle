@@ -1,17 +1,17 @@
 'use client'
-import { FC } from 'react'
 
 import useStore from '@/hooks/useStore'
+import { DisplaysTransfers } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 import OngoingTransferDialog from './OngoingTransferDialog'
 
-const OngoingTransfers: FC = () => {
+const OngoingTransfers = ({
+  isNewTransaction,
+  setIsNewTransaction,
+  isCompletedTransactions,
+}: DisplaysTransfers) => {
   const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
-
-  // const handleViewCompleted = () => {
-  // TODO store Menu from home component selec in a store and switch it from here
-  // }
 
   return (
     <div>
@@ -25,12 +25,15 @@ const OngoingTransfers: FC = () => {
               <OngoingTransferDialog key={tx.id} transfer={tx} />
             ))}
 
-            {/* <button
-              onClick={handleViewCompleted}
-              className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-xl"
-            >
-              View completed transactions <i className="fas fa-arrow-right ml-1"></i>
-            </button> */}
+            {isCompletedTransactions && (
+              <button
+                onClick={() => isNewTransaction && setIsNewTransaction(!isNewTransaction)}
+                disabled={!isCompletedTransactions}
+                className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
+              >
+                View completed transactions <i className="fas fa-arrow-right ml-1"></i>
+              </button>
+            )}
           </div>
         </div>
       )}

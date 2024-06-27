@@ -1,11 +1,11 @@
-import { Transaction, TransactionsByDate } from '@/models/completedTransactions'
+import { CompletedTransfer, TransfersByDate } from '@/models/transfer'
 import { formatDate } from '@/utils/datetime'
 
 import { TransactionDialog } from './TransactionDialog'
 
-export const TransactionHistory = ({ transactions }: { transactions: Transaction[] }) => {
-  const transactionsByDate = transactions.reduce<TransactionsByDate>((acc, transaction) => {
-    const date = transaction.timestamp.split('T')[0]
+export const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[] }) => {
+  const transactionsByDate = transactions.reduce<TransfersByDate>((acc, transaction) => {
+    const date = transaction.date.split('T')[0]
     if (!acc[date]) {
       acc[date] = []
     }
@@ -24,7 +24,7 @@ export const TransactionHistory = ({ transactions }: { transactions: Transaction
           <div className="w-full space-y-4">
             <p className="text-sm">{formatDate(date)}</p>
             {transactions.map((tx, idx) => (
-              <TransactionDialog key={idx + tx.fromAddress} tx={tx} />
+              <TransactionDialog key={idx + tx.id + tx.sender} tx={tx} />
             ))}
           </div>
         </div>

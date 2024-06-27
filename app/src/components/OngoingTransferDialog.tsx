@@ -1,30 +1,31 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useEnsName } from 'wagmi'
+import * as Snowbridge from '@snowbridge/api'
 import Identicon from '@polkadot/react-identicon'
 
-import { StoredTransfer } from '@/models/transfer'
+import { getContext, getEnvironment } from '@/context/snowbridge'
+import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import useOngoingTransfers from '@/hooks/useOngoingTransfers'
+import { Network } from '@/models/chain'
+import { StoredTransfer, CompletedTransfer, TxStatus } from '@/models/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
+import { formatDate, toHuman } from '@/utils/transfer'
 
+import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
-
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from './ui/dialog'
 import { Separator } from './ui/separator'
 
-import OngoingTransfer from './OngoingTransfer'
-import { formatDate, toHuman } from '@/utils/transfer'
-import { useEffect, useState } from 'react'
-import { Direction, resolveDirection } from '@/services/transfer'
-import * as Snowbridge from '@snowbridge/api'
-import { Network } from '@/models/chain'
 import { colors } from '../../tailwind.config'
-import { getContext, getEnvironment } from '@/context/snowbridge'
-import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 
 export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }) => {
-  const { removeTransfer } = useOngoingTransfers()
+  const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
+  const { addCompletedTransfer } = useCompletedTransfers() //completedTransfers
   const { data: ensName } = useEnsName({
     address: transfer.sender as `0x${string}`,
   })
@@ -36,9 +37,21 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
     const pollUpdate = async () => {
       try {
         if (direction == Direction.ToEthereum) {
-          await trackToEthereum(transfer, setUpdate, removeTransfer)
+          await trackToEthereum(
+            transfer,
+            setUpdate,
+            removeOngoingTransfer,
+            addCompletedTransfer,
+            // completedTransfers,
+          )
         } else if (direction == Direction.ToPolkadot) {
-          await trackToPolkadot(transfer, setUpdate, removeTransfer)
+          await trackToPolkadot(
+            transfer,
+            setUpdate,
+            removeOngoingTransfer,
+            addCompletedTransfer,
+            // completedTransfers,
+          )
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -231,7 +244,9 @@ const POLL_UPDATE_INTERVAL_MS: number = 10_000
 async function trackToPolkadot(
   transfer: StoredTransfer,
   setUpdate: (x: string) => void,
-  removeTransfer: (id: string) => void,
+  removeOngoingTransfer: (id: string) => void,
+  addCompletedTransfer: (transfer: CompletedTransfer) => void,
+  // completedTransfers: CompletedTransfer[] | undefined,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
@@ -241,12 +256,33 @@ async function trackToPolkadot(
       transfer.sendResult as Snowbridge.toPolkadot.SendResult,
     )
 
-    if (status != 'pending') {
+    if (status !== 'pending') {
       setUpdate('Done!')
-      //TODO(nuno): remove tx from ongoing and move it to completed
-      // store it in the completed tx:
+      const payload = {
+        id: transfer.id,
+        status: TxStatus.Completed, // TODO handle true status
+        // transactionHashes?: string[] TODO handle hashes
+        // errors?: string[] TODO handle errors details
+        token: transfer.token,
+        sourceChain: transfer.sourceChain,
+        destChain: transfer.destChain,
+        amount: transfer.amount,
+        feeToken: transfer.feeToken,
+        feeAmount: transfer.feeAmount,
+        minTokenRecieved: transfer.amount, // TODO handle true minTokenRecieved value
+        sender: transfer.sender,
+        recipient: transfer.recipient,
+        date: transfer.date.toISOString(),
+      } satisfies CompletedTransfer
 
-      removeTransfer(transfer.id)
+      // check to avoid duplication registration
+      // const registeredTXCheck =
+      //   completedTransfers?.length && completedTransfers.filter(t => t.id === transfer.id).length
+      // registeredTXCheck && registeredTXCheck > 0 &&
+      addCompletedTransfer(payload)
+
+      // check on local storage before removing the ongoing tx
+      removeOngoingTransfer(transfer.id)
       break
     }
 
@@ -277,7 +313,9 @@ async function trackToPolkadot(
 async function trackToEthereum(
   transfer: StoredTransfer,
   setUpdate: (x: string) => void,
-  removeTransfer: (id: string) => void,
+  removeOngoingTransfer: (id: string) => void,
+  addCompletedTransfer: (transfer: any) => void,
+  // completedTransfers: CompletedTransfer[] | undefined,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
@@ -287,12 +325,26 @@ async function trackToEthereum(
       transfer.sendResult as Snowbridge.toEthereum.SendResult,
     )
 
-    if (status != 'pending') {
-      setUpdate('Done!')
-      //TODO(nuno): remove tx from ongoing and move it to completed
-      // store it in the completed tx:
-
-      removeTransfer(transfer.id)
+    if (status !== 'pending') {
+      const payload = {
+        id: transfer.id,
+        status: TxStatus.Completed, // TODO handle true status
+        // transactionHashes?: string[] TODO handle hashes
+        // errors?: string[] TODO handle errors details
+        token: transfer.token,
+        sourceChain: transfer.sourceChain,
+        destChain: transfer.destChain,
+        amount: transfer.amount,
+        feeToken: transfer.feeToken,
+        feeAmount: transfer.feeAmount,
+        minTokenRecieved: transfer.amount, // TODO handle true status
+        sender: transfer.sender,
+        recipient: transfer.recipient,
+        date: transfer.date.toISOString(),
+      } satisfies CompletedTransfer
+      addCompletedTransfer(payload)
+      // need to check on local storage before removing the ongoing tx
+      removeOngoingTransfer(transfer.id)
       break
     }
 

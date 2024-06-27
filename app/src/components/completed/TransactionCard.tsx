@@ -3,12 +3,12 @@ import Image from 'next/image'
 import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
-import useEnvironment from '@/hooks/useEnvironment'
-import { Status, Transaction, TransactionStatus } from '@/models/completedTransactions'
-import { getChainLogoURI } from '@/services/chains'
+import { TxStatus, CompletedTransfer, TransferStatus } from '@/models/transfer'
+import { Network } from '@/models/chain'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
+import { toHuman } from '@/utils/transfer'
 
 import { ArrowRight } from '../svg/ArrowRight'
 import { Fail } from '../svg/Fail'
@@ -17,27 +17,26 @@ import { Success } from '../svg/Success'
 
 import { colors } from '../../../tailwind.config'
 
-const statusIcon = (status: TransactionStatus) => {
+const statusIcon = (status: TransferStatus) => {
   switch (status) {
-    case Status.Failed:
+    case TxStatus.Failed:
       return <Fail width={24} height={24} />
-    case Status.Pending:
+    case TxStatus.Pending:
       return <Pending width={24} height={24} />
     default:
       return <Success width={24} height={24} />
   }
 }
 
-export const TransactionCard = ({ tx }: { tx: Transaction }) => {
-  const { environment } = useEnvironment()
+export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
   const { data: ensName } = useEnsName({
-    address: tx.fromAddress as `0x${string}`,
+    address: tx.sender as `0x${string}`,
   })
   return (
     <div
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
-        tx.status === Status.Completed
+        tx.status === TxStatus.Completed
           ? 'border-turtle-level3  hover:bg-turtle-level1'
           : 'border-turtle-error  hover:border-turtle-error-dark',
       )}
@@ -49,41 +48,41 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
             <div
               className={cn(
                 'flex items-center space-x-1 text-xl font-medium leading-none',
-                tx.status === Status.Failed && 'text-turtle-error',
+                tx.status === TxStatus.Failed && 'text-turtle-error',
               )}
             >
-              <p>{tx.fromChainAmount.toFixed(2)}</p>
-              <p>{tx.fromChainToken}</p>
+              <p>{toHuman(tx.amount, tx.token).toFixed(2)}</p>
+              <p>{tx.token.symbol}</p>
             </div>
             <div
               className={cn(
                 'flex items-center justify-between space-x-1 rounded-2xl border px-1 py-0.5',
-                tx.status === Status.Failed && 'border-turtle-error bg-turtle-error-light',
+                tx.status === TxStatus.Failed && 'border-turtle-error bg-turtle-error-light',
               )}
             >
               <div className="relative h-4 w-4 rounded-full">
                 <Image
-                  src={getChainLogoURI(tx.fromChain, environment)}
-                  alt={`${tx.fromChain}`}
+                  src={tx.sourceChain.logoURI}
+                  alt={`${tx.sourceChain.name}`}
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.status === Status.Completed ? 'border-black' : 'border-turtle-error',
+                    tx.status === TxStatus.Completed ? 'border-black' : 'border-turtle-error',
                   )}
                 />
               </div>
               <ArrowRight
                 className="h-[0.45rem] w-[0.45rem]"
-                {...(tx.status === Status.Failed && { fill: colors['turtle-error'] })}
+                {...(tx.status === TxStatus.Failed && { fill: colors['turtle-error'] })}
               />
               <div className="relative h-4 w-4 rounded-full">
                 <Image
-                  src={getChainLogoURI(tx.toChain, environment)}
-                  alt={`${tx.toChain}`}
+                  src={tx.destChain.logoURI}
+                  alt={`${tx.destChain.name}`}
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.status === Status.Completed ? 'border-black' : 'border-turtle-error',
+                    tx.status === TxStatus.Completed ? 'border-black' : 'border-turtle-error',
                   )}
                 />
               </div>
@@ -92,80 +91,80 @@ export const TransactionCard = ({ tx }: { tx: Transaction }) => {
           <div
             className={cn(
               'hidden text-sm sm:block',
-              tx.status === Status.Completed ? 'text-turtle-level5' : 'text-turtle-error',
+              tx.status === TxStatus.Completed ? 'text-turtle-level5' : 'text-turtle-error',
             )}
           >
-            {formatHours(tx.timestamp)}
+            {formatHours(tx.date)}
           </div>
         </div>
         <div
           className={cn(
             'flex items-center justify-center space-x-4 sm:justify-start',
-            tx.status === Status.Failed && 'text-turtle-error-dark',
+            tx.status === TxStatus.Failed && 'text-turtle-error-dark',
           )}
         >
           <div className="flex items-center gap-x-1">
-            {tx.fromChain === 'Polkadot' ? (
+            {tx.sourceChain.network === Network.Polkadot ? (
               <Identicon
-                value={tx.fromAddress}
+                value={tx.sender}
                 size={14}
                 theme="polkadot"
                 className={cn(
                   'rounded-full border',
-                  tx.status === Status.Completed ? 'border-black' : 'border-turtle-error-dark',
+                  tx.status === TxStatus.Completed ? 'border-black' : 'border-turtle-error-dark',
                 )}
               />
             ) : (
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                  tx.status === Status.Completed ? 'border-black ' : 'border-turtle-error-dark',
+                  tx.status === TxStatus.Completed ? 'border-black ' : 'border-turtle-error-dark',
                 )}
               />
             )}
             <p className="text-sm">
-              {tx.fromChain === 'Ethereum'
+              {tx.sourceChain.network === Network.Ethereum
                 ? ensName
                   ? ensName
-                  : truncateAddress(tx.fromAddress)
-                : truncateAddress(tx.fromAddress)}
+                  : truncateAddress(tx.sender)
+                : truncateAddress(tx.sender)}
             </p>
           </div>
           <ArrowRight
             className="h-3 w-3"
-            {...(tx.status === Status.Completed
+            {...(tx.status === TxStatus.Completed
               ? { fill: colors['turtle-foreground'] }
               : { fill: colors['turtle-secondary-dark'] })}
           />
           <div className="flex items-center gap-x-2">
-            {tx.toChain === 'Polkadot' ? (
+            {tx.destChain.network === Network.Polkadot ? (
               <Identicon
-                value={tx.toAddress}
+                value={tx.recipient}
                 size={14}
                 theme="polkadot"
                 className={cn(
                   'rounded-full border',
-                  tx.status === Status.Completed ? 'border-black' : 'border-turtle-error-dark',
+                  tx.status === TxStatus.Completed ? 'border-black' : 'border-turtle-error-dark',
                 )}
               />
             ) : (
               <div
                 className={cn(
                   'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                  tx.status === Status.Completed ? 'border-black ' : 'border-turtle-error-dark',
+                  tx.status === TxStatus.Completed ? 'border-black ' : 'border-turtle-error-dark',
                 )}
               />
             )}
             <p className="text-sm">
-              {tx.toChain === 'Ethereum'
+              {tx.destChain.network === Network.Ethereum
                 ? ensName
                   ? ensName
-                  : truncateAddress(tx.toAddress)
-                : truncateAddress(tx.toAddress)}
+                  : truncateAddress(tx.recipient)
+                : truncateAddress(tx.recipient)}
             </p>
           </div>
         </div>
-        {tx.status === Status.Failed && (
+        {tx.status === TxStatus.Failed && (
           <p className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
             This transaction failed.{' '}
             <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">

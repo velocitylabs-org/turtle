@@ -109,34 +109,33 @@ const useTransfer = () => {
           }
 
           console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
-          addTransfer &&
-            addTransfer({
-              id: sendResult.success!.messageId,
-              sourceChain,
-              token,
-              sender: await (sender as Signer).getAddress(),
-              destChain: destinationChain,
-              amount: amount.toString(),
-              recipient: recipient,
-              date: new Date(),
-              environment,
-              sendResult,
-              feeAmount: (
-                await Snowbridge.toPolkadot.getSendFee(
-                  context,
-                  tokenContract,
-                  destinationChain.chainId,
-                  BigInt(0),
-                )
-              ).toString(),
-              feeToken: {
-                id: 'eth',
-                symbol: 'ETH',
-                name: 'ETHER',
-                logoURI: '',
-                decimals: 18,
-              },
-            } satisfies StoredTransfer)
+          addTransfer({
+            id: sendResult.success!.messageId,
+            sourceChain,
+            token,
+            sender: await (sender as Signer).getAddress(),
+            destChain: destinationChain,
+            amount: amount.toString(),
+            recipient: recipient,
+            date: new Date(),
+            environment,
+            sendResult,
+            feeAmount: (
+              await Snowbridge.toPolkadot.getSendFee(
+                context,
+                tokenContract,
+                destinationChain.chainId,
+                BigInt(0),
+              )
+            ).toString(),
+            feeToken: {
+              id: 'eth',
+              symbol: 'ETH',
+              name: 'ETHER',
+              logoURI: '',
+              decimals: 18,
+            },
+          } satisfies StoredTransfer)
         } catch (e) {
           console.log('TRANSFER_ERROR', e)
           addNotification({
@@ -189,28 +188,27 @@ const useTransfer = () => {
           }
 
           console.log('Sent success, will add to ongoing transfers. Amount:', amount)
-          addTransfer &&
-            addTransfer({
-              id: sendResult.success!.messageId ?? 'todo(nuno)',
-              sourceChain,
-              token,
-              sender: sender.address,
-              destChain: destinationChain,
-              amount: amount.toString(),
-              recipient: recipient,
-              date: new Date(),
-              environment,
-              sendResult,
-              // todo(nuno): discussing with Snowfork a better way to fetch the fee token without harcoding it in the logic
-              feeAmount: (await Snowbridge.toEthereum.getSendFee(context)).toString(),
-              feeToken: {
-                id: 'dot',
-                symbol: 'DOT',
-                name: 'Polkadot',
-                logoURI: '',
-                decimals: environment == Environment.Mainnet ? 10 : 12,
-              },
-            } satisfies StoredTransfer)
+          addTransfer({
+            id: sendResult.success!.messageId ?? 'todo(nuno)',
+            sourceChain,
+            token,
+            sender: sender.address,
+            destChain: destinationChain,
+            amount: amount.toString(),
+            recipient: recipient,
+            date: new Date(),
+            environment,
+            sendResult,
+            // todo(nuno): discussing with Snowfork a better way to fetch the fee token without harcoding it in the logic
+            feeAmount: (await Snowbridge.toEthereum.getSendFee(context)).toString(),
+            feeToken: {
+              id: 'dot',
+              symbol: 'DOT',
+              name: 'Polkadot',
+              logoURI: '',
+              decimals: environment == Environment.Mainnet ? 10 : 12,
+            },
+          } satisfies StoredTransfer)
         } catch (e) {
           console.log('TRANSFER_ERROR', e)
           addNotification({

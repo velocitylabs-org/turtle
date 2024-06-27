@@ -5,18 +5,18 @@ import { stringify, parse } from 'flatted'
 
 interface State {
   // State
-  // transfers: Transfer[]
   transfers: StoredTransfer[]
   // Actions
   addTransfer: (transfer: StoredTransfer) => void
   removeTransfer: (id: string) => void
 }
 
-// Serialization functions for BigInt
+// Serialization - Stringify function for BigInt
 function stringifyWithBigInt(value: StorageValue<StoredTransfer[]>) {
   return stringify(value, (_key, val) => (typeof val === 'bigint' ? `${val}n` : val))
 }
 
+// Serialization - Parse function for BigInt
 function parseWithBigInt(value: any) {
   return parse(value, (_key, val) => {
     if (typeof val === 'string' && /^\d+n$/.test(val)) {
@@ -53,10 +53,12 @@ export const useOngoingTransfersStore = create<State>()(
         }))
       },
 
-      removeTransfer: id =>
-        set(state => ({
+      removeTransfer: id => {
+        if (!id) return
+        return set(state => ({
           transfers: state.transfers.filter(transfer => transfer.id !== id),
-        })),
+        }))
+      },
     }),
     {
       name: 'turtle-ongoing-transactions',

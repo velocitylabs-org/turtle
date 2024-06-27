@@ -1,28 +1,10 @@
-import { Environment } from '@/store/environmentStore'
-import { Chain } from './chain'
-import { Token } from './token'
+import { Dispatch, SetStateAction } from 'react'
 import * as Snowbridge from '@snowbridge/api'
 
-// TODO: Update the interface once it is more clearly defined
-export interface Transfer {
-  // Params
-  id: string
-  sourceChain: Chain
-  token: Token
-  sender: string
-  destChain: Chain
-  amount: bigint
-  recipient: string // TODO: Decide to use either string type or create own Address type
-  date: Date
-  feeToken: Token
-  feeAmount: bigint
+import { Environment } from '@/store/environmentStore'
 
-  // Contextual
-  context: Snowbridge.Context
-  // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
-  // that way we can support different fields, for example for xcm-only transfers in the future.
-  sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
-}
+import { Chain } from './chain'
+import { Token } from './token'
 export interface StoredTransfer {
   // Params
   id: string
@@ -42,3 +24,38 @@ export interface StoredTransfer {
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
 }
+
+export interface DisplaysTransfers {
+  isNewTransaction: boolean
+  setIsNewTransaction: Dispatch<SetStateAction<boolean>>
+  isCompletedTransactions: boolean
+}
+
+export enum TxStatus {
+  Pending = 'pending',
+  Completed = 'completed',
+  Failed = 'failed',
+}
+
+export type TransferStatus = TxStatus.Pending | TxStatus.Completed | TxStatus.Failed
+
+export type CompletedTransfer = {
+  id: string
+  status: TransferStatus
+  transactionHashes?: string[]
+  errors?: string[]
+  token: Token
+  sourceChain: Chain
+  destChain: Chain
+  amount: string
+  amountValue?: number
+  feeToken: Token
+  feeAmount: string
+  feesValue?: number
+  minTokenRecieved: string
+  minTokenRecievedValue?: number
+  sender: string
+  recipient: string
+  date: string
+}
+export type TransfersByDate = Record<string, CompletedTransfer[]>
