@@ -11,10 +11,9 @@ export interface Transfer {
   sender: string
   destChain: Chain
   amount: bigint
-  recipient: string // TODO: Decide to use either string type or create own Address type
+  recipient: string
   date: Date
-  feeToken: Token
-  feeAmount: bigint
+  fees: Fees
 
   // Contextual
   context: Snowbridge.Context

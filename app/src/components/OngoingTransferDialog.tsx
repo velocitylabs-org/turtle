@@ -190,8 +190,8 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(transfer.feeAmount, transfer.feeToken).toFixed(2)}</p>
-                <p>{transfer.feeToken.symbol}</p>
+                <p>{toHuman(transfer.fees.amount, transfer.fees.token).toFixed(2)}</p>
+                <p>{transfer.fees.token.symbol}</p>
                 <p className="text-turtle-level5"> TBD $</p>
               </div>
             </div>
