@@ -256,7 +256,7 @@ async function trackToPolkadot(
       transfer.sendResult as Snowbridge.toPolkadot.SendResult,
     )
 
-    if (status !== 'pending') {
+    if (status == 'pending') {
       setUpdate('Done!')
       const payload = {
         id: transfer.id,
@@ -272,16 +272,19 @@ async function trackToPolkadot(
         minTokenRecieved: transfer.amount, // TODO handle true minTokenRecieved value
         sender: transfer.sender,
         recipient: transfer.recipient,
-        date: transfer.date.toISOString(),
+        date: transfer.date.toString(),
       } satisfies CompletedTransfer
 
-      // check to avoid duplication registration
-      // const registeredTXCheck =
-      //   completedTransfers?.length && completedTransfers.filter(t => t.id === transfer.id).length
-      // registeredTXCheck && registeredTXCheck > 0 &&
-      addCompletedTransfer(payload)
+      // TODO check to avoid duplication
 
-      // check on local storage before removing the ongoing tx
+      // const registeredTXCheck = completedTransfers?.length
+      //   ? completedTransfers.filter(t => t.id === payload.id)
+      //   : []
+
+      // if (registeredTXCheck.length === 0) {
+      addCompletedTransfer(payload)
+      // }
+
       removeOngoingTransfer(transfer.id)
       break
     }
