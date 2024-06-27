@@ -31,7 +31,7 @@ export module Mainnet {
   export const DOT: Token = {
     id: 'dot',
     name: 'Polkadot',
-    logoURI: '',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     symbol: 'DOT',
     decimals: 10,
   }
@@ -84,7 +84,7 @@ export module Testnet {
   export const ROC: Token = {
     id: 'roc',
     name: 'Rococo',
-    logoURI: '',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     symbol: 'ROC',
     decimals: 12,
   }
