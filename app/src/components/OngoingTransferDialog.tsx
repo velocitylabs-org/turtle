@@ -260,8 +260,8 @@ async function trackToPolkadot(
       setUpdate('Done!')
       const payload = {
         id: transfer.id,
-        status: TxStatus.Completed, // TODO handle true status
-        // transactionHashes?: string[] TODO handle hashes
+        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed, // TODO handle true status // change to result
+        // transferHashes?: string[] TODO handle hashes
         // errors?: string[] TODO handle errors details
         token: transfer.token,
         sourceChain: transfer.sourceChain,
@@ -331,8 +331,8 @@ async function trackToEthereum(
     if (status !== 'pending') {
       const payload = {
         id: transfer.id,
-        status: TxStatus.Completed, // TODO handle true status
-        // transactionHashes?: string[] TODO handle hashes
+        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed, // TODO handle true status
+        // transferHashes?: string[] TODO handle hashes
         // errors?: string[] TODO handle errors details
         token: transfer.token,
         sourceChain: transfer.sourceChain,

@@ -36,12 +36,12 @@ export enum TxStatus {
   Failed = 'failed',
 }
 
-export type TransferStatus = TxStatus.Pending | TxStatus.Completed | TxStatus.Failed
+export type TransferResult = TxStatus.Pending | TxStatus.Completed | TxStatus.Failed
 
 export type CompletedTransfer = {
   id: string
-  status: TransferStatus
-  transactionHashes?: string[]
+  transferResult: TransferResult
+  transferHashes?: string[]
   errors?: string[]
   token: Token
   sourceChain: Chain
