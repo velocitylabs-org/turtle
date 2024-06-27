@@ -56,6 +56,10 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
         onChangeManualRecipient({ ...manualRecipient, address: e.target.value })
     }
 
+    const shouldShowChainName =
+      (!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address)) ||
+      (manualRecipient?.enabled && !manualRecipient.address)
+
     return (
       <div ref={ref} className={twMerge('relative w-full', className)}>
         {floatingLabel && (
@@ -83,9 +87,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     height={24}
                     className="h-[1.5rem] w-[1.5rem] rounded-full"
                   />
-                  {!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address) && (
-                    <span>{value.name}</span>
-                  )}
+                  {shouldShowChainName && <span>{value.name}</span>}
                 </>
               ) : (
                 <>
@@ -93,11 +95,12 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                   {placeholder}
                 </>
               )}
+
               <ChevronDown strokeWidth={0.2} />
               {!manualRecipient?.enabled && walletAddress}
               {manualRecipient && manualRecipient.enabled && (
                 <>
-                  {!manualRecipient.address && <VerticalDivider />}
+                  <VerticalDivider className={!manualRecipient.address ? 'visible' : 'invisible'} />
                   <input
                     type="text"
                     className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"

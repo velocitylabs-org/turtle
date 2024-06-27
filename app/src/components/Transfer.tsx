@@ -41,6 +41,7 @@ const Transfer: FC = () => {
     watch,
     setValue,
     trigger,
+    clearErrors,
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -179,7 +180,7 @@ const Transfer: FC = () => {
 
   useEffect(() => {
     trigger('manualRecipient.address')
-  }, [manualRecipient.address, trigger])
+  }, [manualRecipient.address, destinationChain, tokenAmount, sourceChain, trigger])
 
   return (
     <form
