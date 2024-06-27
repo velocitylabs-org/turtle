@@ -124,6 +124,7 @@ const Transfer: FC = () => {
       token: tokenAmount.token,
       amount,
       recipient: recipient,
+      fees,
     })
   }
 

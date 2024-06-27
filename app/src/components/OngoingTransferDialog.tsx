@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from './ui/dialog'
 import { Separator } from './ui/separator'
 
 import OngoingTransfer from './OngoingTransfer'
-import { formatDate, toHuman } from '@/utils/transfer'
+import { formatDate, toHuman, feeToHuman } from '@/utils/transfer'
 import { useEffect, useState } from 'react'
 import { Direction, resolveDirection } from '@/services/transfer'
 import * as Snowbridge from '@snowbridge/api'
@@ -190,7 +190,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: Transfer }) => {
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(transfer.fees.amount, transfer.fees.token).toFixed(2)}</p>
+                <p>{feeToHuman(transfer.fees)}</p>
                 <p>{transfer.fees.token.symbol}</p>
                 <p className="text-turtle-level5"> TBD $</p>
               </div>
