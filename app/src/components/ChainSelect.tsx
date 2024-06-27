@@ -1,14 +1,14 @@
 'use client'
-import { FC, useRef, useState } from 'react'
-import Image from 'next/image'
-import { twMerge } from 'tailwind-merge'
-import ChevronDown from './svg/ChevronDown'
-import ChainIcon from './svg/ChainIcon'
-import VerticalDivider from './VerticalDivider'
-import Dropdown from './Dropdown'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
+import Image from 'next/image'
+import { FC, useRef, useState } from 'react'
+import { twMerge } from 'tailwind-merge'
+import Dropdown from './Dropdown'
+import ChainIcon from './svg/ChainIcon'
+import ChevronDown from './svg/ChevronDown'
+import VerticalDivider from './VerticalDivider'
 
 interface ChainSelectProps extends SelectProps<Chain> {
   walletAddress?: string
@@ -27,6 +27,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
   manualRecipient,
   onChangeManualRecipient,
   trailing,
+  error,
   disabled,
   className,
 }) => {
@@ -61,7 +62,8 @@ const ChainSelect: FC<ChainSelectProps> = ({
         ref={triggerRef}
         className={twMerge(
           'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-          disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
+          disabled && 'opacity-30',
+          error && 'border-turtle-error',
         )}
         onClick={handleTriggerClick}
       >
@@ -92,7 +94,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
               {!manualRecipient.address && <VerticalDivider />}
               <input
                 type="text"
-                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+                className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
                 placeholder="Address"
                 value={manualRecipient.address}
                 onChange={handleManualRecipientChange}
@@ -107,7 +109,7 @@ const ChainSelect: FC<ChainSelectProps> = ({
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
         {options.map(option => (
           <li
-            key={option.id}
+            key={option.uid}
             className="flex cursor-pointer items-center gap-2 p-2"
             onClick={() => handleSelectionChange(option)}
           >

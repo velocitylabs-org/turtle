@@ -16,7 +16,7 @@ export const transactionsMockUp: CompletedTransfer[] = [
       decimals: 18,
     },
     sourceChain: {
-      id: 'string',
+      uid: 'string',
       name: 'Ethereum',
       logoURI: 'string',
       chainId: 1111,
@@ -25,7 +25,7 @@ export const transactionsMockUp: CompletedTransfer[] = [
     amount: '345098.1234573',
     // amountValue: 25607440,
     destChain: {
-      id: 'string',
+      uid: 'string',
       name: 'Polkadot',
       logoURI: 'string',
       chainId: 1111,
@@ -52,7 +52,7 @@ export const transactionsMockUp: CompletedTransfer[] = [
     id: 'id',
     status: TxStatus.Completed,
     sourceChain: {
-      id: 'string',
+      uid: 'string',
       name: 'Ethereum',
       logoURI: 'string',
       chainId: 1111,
@@ -68,7 +68,7 @@ export const transactionsMockUp: CompletedTransfer[] = [
     amount: '543.657373',
     // amountValue: 25607440,
     destChain: {
-      id: 'string',
+      uid: 'string',
       name: 'Polkadot',
       logoURI: 'string',
       chainId: 1111,

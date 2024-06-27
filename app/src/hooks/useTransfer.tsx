@@ -225,18 +225,7 @@ const useTransfer = () => {
     }
   }
 
-  const isValid = ({
-    sender,
-    sourceChain,
-    token,
-    destinationChain,
-    recipient,
-    amount,
-  }: TransferValidationParams) => {
-    return !!(sender && sourceChain && token && destinationChain && recipient && amount)
-  }
-
-  return { transfer, isValid, transferStatus: status }
+  return { transfer, transferStatus: status }
 }
 
 export default useTransfer

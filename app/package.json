@@ -14,6 +14,7 @@
     "prepare": "cd .. && husky install app/.husky"
   },
   "dependencies": {
+    "@hookform/resolvers": "3.3.4",
     "@nextui-org/react": "^2.4.1",
     "@polkadot/api": "^11.0.3",
     "@polkadot/extension-dapp": "^0.47.4",
@@ -42,11 +43,13 @@
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "7.51.4",
     "sharp": "^0.33.3",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^2.10.8",
     "wagmi": "^2.8.8",
+    "zod": "3.22.4",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
