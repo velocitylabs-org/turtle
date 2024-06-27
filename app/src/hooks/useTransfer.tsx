@@ -11,6 +11,7 @@ import { NotificationSeverity } from '@/models/notification'
 import * as Snowbridge from '@snowbridge/api'
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import { useState } from 'react'
+import { Fees } from '@/models/transfer'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -31,6 +32,7 @@ interface TransferValidationParams {
   destinationChain: Chain | null
   recipient?: string | null
   amount: bigint | null
+  fees: Fees | null
 }
 
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
@@ -227,6 +229,7 @@ const useTransfer = () => {
     destinationChain,
     recipient,
     amount,
+    fees,
   }: TransferValidationParams) => {
     return !!(sender && sourceChain && token && destinationChain && recipient && amount)
   }

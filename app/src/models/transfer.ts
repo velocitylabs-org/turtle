@@ -22,3 +22,12 @@ export interface Transfer {
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
 }
+
+export interface Fees {
+  /* The amount in the `token` currency */
+  amount: bigint
+  /* the token of the fees */
+  token: Token
+  /* the value in dollars */
+  inDollars: number
+}

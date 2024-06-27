@@ -27,6 +27,22 @@ export module Mainnet {
     logoURI: 'https://ucarecdn.com/c01c9021-a497-41b5-8597-9ab4e71440c1/wrapped-eth.png',
     decimals: 18,
   }
+
+  export const DOT: Token = {
+    id: 'dot',
+    name: 'Polkadot',
+    logoURI: '',
+    symbol: 'DOT',
+    decimals: 10,
+  }
+
+  export const ETH: Token = {
+    id: 'eth',
+    name: 'Ethereum',
+    symbol: 'ETH',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    decimals: 18,
+  }
 }
 
 /* Testnet :: Rococo - Sepolia */
@@ -56,6 +72,22 @@ export module Testnet {
     logoURI: 'https://ucarecdn.com/c01c9021-a497-41b5-8597-9ab4e71440c1/wrapped-eth.png',
     decimals: 18,
   }
+
+  export const ETH: Token = {
+    id: 'seth',
+    name: 'Sepolia Ether',
+    symbol: 'sETH',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    decimals: 18,
+  }
+
+  export const ROC: Token = {
+    id: 'roc',
+    name: 'Rococo',
+    logoURI: '',
+    symbol: 'ROC',
+    decimals: 12,
+  }
 }
 
 export const REGISTRY = {
@@ -67,4 +99,19 @@ export const REGISTRY = {
     chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
     tokens: [Testnet.WETH],
   },
+}
+
+export function nativeToken(chain: Chain): Token {
+  switch (chain.id) {
+    case 'rococo-assethub':
+      return Testnet.ROC
+    case 'sepolia':
+      return Testnet.ETH
+    case 'polkadot-assethub':
+      return Mainnet.DOT
+    case 'ethereum':
+      return Mainnet.ETH
+    default:
+      throw Error('The impossible has happened')
+  }
 }

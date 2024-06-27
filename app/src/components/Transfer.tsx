@@ -1,5 +1,5 @@
 'use client'
-import { REGISTRY } from '@/config/registry'
+import { nativeToken, REGISTRY } from '@/config/registry'
 import useChains from '@/hooks/useChains'
 import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
@@ -18,6 +18,10 @@ import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import FeesPreview from './FeesPreview'
+import { Fees } from '@/models/transfer'
+import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
+import * as Snowbridge from '@snowbridge/api'
+import { getContext, getEnvironment } from '@/context/snowbridge'
 
 const Transfer: FC = () => {
   // Inputs
@@ -28,6 +32,8 @@ const Transfer: FC = () => {
     enabled: false,
     address: '',
   })
+
+  const [fees, setFees] = useState<Fees | null>(null)
 
   // Hooks
   const sourceWallet = useWallet(sourceChain?.network)
@@ -64,6 +70,7 @@ const Transfer: FC = () => {
       destinationChain,
       recipient: recipient,
       amount,
+      fees,
     })
   }, [sourceWallet, tokenAmount, sourceChain, destinationChain, recipient, amount, _isValid])
 
@@ -75,7 +82,8 @@ const Transfer: FC = () => {
       !sourceWallet?.sender ||
       !destinationChain ||
       !tokenAmount?.token ||
-      !amount
+      !amount ||
+      !fees
     )
       return
 
@@ -89,6 +97,55 @@ const Transfer: FC = () => {
       recipient: recipient,
     })
   }
+
+  /* Fetch fees */
+  useEffect(() => {
+    const fetchFees = async () => {
+      console.log('fetchFees')
+      if (!isValid) {
+        console.log('not valid')
+        setFees(null)
+        return
+      }
+
+      if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
+      console.log('fetch fees valid')
+
+      const snowbridgeEnv = getEnvironment(environment)
+      const context = await getContext(snowbridgeEnv)
+      let direction = resolveDirection(sourceChain, destinationChain)
+      let token = nativeToken(sourceChain)
+
+      switch (direction) {
+        case Direction.ToEthereum: {
+          let amount = await Snowbridge.toEthereum.getSendFee(context)
+          setFees({
+            amount,
+            token,
+            inDollars: 0, //todo(nuno)
+          })
+          await Snowbridge.toEthereum.getSendFee(context)
+          break
+        }
+        case Direction.ToPolkadot: {
+          let tokenContract = getErc20TokenContract(tokenAmount?.token, snowbridgeEnv)
+          let amount = await Snowbridge.toPolkadot.getSendFee(
+            context,
+            tokenContract,
+            destinationChain.chainId,
+            BigInt(0),
+          )
+          setFees({
+            amount,
+            token,
+            inDollars: 0,
+          })
+        }
+      }
+    }
+
+    fetchFees()
+  }, [isValid, sourceChain, tokenAmount, destinationChain])
 
   useEffect(() => {
     console.log(manualRecipient)
@@ -172,7 +229,7 @@ const Transfer: FC = () => {
       )}
 
       {/* Fees */}
-      <FeesPreview state={'Loading'} amount={BigInt(123)} />
+      {isValid && <FeesPreview state={!!fees ? { type: 'Ready', fees } : { type: 'Loading' }} />}
 
       {/* Transfer Button */}
       <Button
