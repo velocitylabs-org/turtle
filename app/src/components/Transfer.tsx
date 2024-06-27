@@ -1,5 +1,5 @@
 'use client'
-import { REGISTRY } from '@/config/registry'
+import { nativeToken, REGISTRY } from '@/config/registry'
 import useEnvironment from '@/hooks/useEnvironment'
 import useNotification from '@/hooks/useNotification'
 import useTransfer from '@/hooks/useTransfer'
@@ -7,12 +7,11 @@ import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
-import { ManualRecipient, TokenAmount } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
@@ -21,6 +20,12 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AlertIcon } from './svg/AlertIcon'
+import { ManualRecipient, TokenAmount } from '@/models/select'
+import FeesPreview from './FeesPreview'
+import { Fees } from '@/models/transfer'
+import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
+import * as Snowbridge from '@snowbridge/api'
+import { getContext, getEnvironment } from '@/context/snowbridge'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -52,6 +57,7 @@ const Transfer: FC = () => {
     },
   })
 
+  const [fees, setFees] = useState<Fees | null>(null)
   const sourceChain = watch('sourceChain')
   const destinationChain = watch('destinationChain')
   const tokenAmount = watch('tokenAmount')
@@ -105,7 +111,8 @@ const Transfer: FC = () => {
       !sourceWallet?.sender ||
       !destinationChain ||
       !tokenAmount?.token ||
-      !amount
+      !amount ||
+      !fees
     )
       return
 
@@ -117,8 +124,60 @@ const Transfer: FC = () => {
       token: tokenAmount.token,
       amount,
       recipient: recipient,
+      fees,
     })
   }
+
+  /* Fetch fees */
+  useEffect(() => {
+    const fetchFees = async () => {
+      console.log('fetchFees')
+      if (!isValid) {
+        console.log('not valid')
+        setFees(null)
+        return
+      }
+
+      if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
+      console.log('fetch fees valid')
+
+      const snowbridgeEnv = getEnvironment(environment)
+      const context = await getContext(snowbridgeEnv)
+      let direction = resolveDirection(sourceChain, destinationChain)
+      let token = nativeToken(sourceChain)
+
+      switch (direction) {
+        case Direction.ToEthereum: {
+          let amount = (await Snowbridge.toEthereum.getSendFee(context)).toString()
+          setFees({
+            amount,
+            token,
+            inDollars: 0, //todo(nuno)
+          })
+          await Snowbridge.toEthereum.getSendFee(context)
+          break
+        }
+        case Direction.ToPolkadot: {
+          let tokenContract = getErc20TokenContract(tokenAmount?.token, snowbridgeEnv)
+          let amount = (
+            await Snowbridge.toPolkadot.getSendFee(
+              context,
+              tokenContract,
+              destinationChain.chainId,
+              BigInt(0),
+            )
+          ).toString()
+          setFees({
+            amount,
+            token,
+            inDollars: 0,
+          })
+        }
+      }
+    }
+
+    fetchFees()
+  }, [isValid, sourceChain, tokenAmount, destinationChain])
 
   useEffect(() => {
     trigger('manualRecipient.address')
@@ -230,6 +289,9 @@ const Transfer: FC = () => {
         </div>
       )}
 
+      {/* Fees */}
+      {isValid && <FeesPreview state={!!fees ? { type: 'Ready', fees } : { type: 'Loading' }} />}
+
       {/* Transfer Button */}
       <Button
         label="Send"
@@ -239,6 +301,7 @@ const Transfer: FC = () => {
         disabled={
           !isValid ||
           isValidating ||
+          !fees ||
           transferStatus !== 'Idle' ||
           !sourceWallet?.isConnected ||
           (!manualRecipient.enabled && !destinationWallet?.isConnected)

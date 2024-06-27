@@ -13,7 +13,7 @@ import { Network } from '@/models/chain'
 import { StoredTransfer, CompletedTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { formatDate, toHuman } from '@/utils/transfer'
+import { formatDate, toHuman, feeToHuman } from '@/utils/transfer'
 
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -199,15 +199,15 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
                 <p>{transfer.token.symbol}</p>
-                <p className="text-turtle-level5">${transfer.amount}</p>
+                <p className="text-turtle-level5">TBD $</p>
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(transfer.feeAmount, transfer.feeToken).toFixed(2)}</p>
-                <p>{transfer.feeToken.symbol}</p>
+                <p>{feeToHuman(transfer.fees)}</p>
+                <p>{transfer.fees.token.symbol}</p>
                 <p className="text-turtle-level5"> TBD $</p>
               </div>
             </div>
@@ -256,7 +256,7 @@ async function trackToPolkadot(
       transfer.sendResult as Snowbridge.toPolkadot.SendResult,
     )
 
-    if (status == 'pending') {
+    if (status !== 'pending') {
       setUpdate('Done!')
       const payload = {
         id: transfer.id,
@@ -267,8 +267,8 @@ async function trackToPolkadot(
         sourceChain: transfer.sourceChain,
         destChain: transfer.destChain,
         amount: transfer.amount,
-        feeToken: transfer.feeToken,
-        feeAmount: transfer.feeAmount,
+        feeToken: transfer.fees.token,
+        feeAmount: transfer.fees.amount.toString(),
         minTokenRecieved: transfer.amount, // TODO handle true minTokenRecieved value
         sender: transfer.sender,
         recipient: transfer.recipient,
@@ -338,8 +338,8 @@ async function trackToEthereum(
         sourceChain: transfer.sourceChain,
         destChain: transfer.destChain,
         amount: transfer.amount,
-        feeToken: transfer.feeToken,
-        feeAmount: transfer.feeAmount,
+        feeToken: transfer.fees.token,
+        feeAmount: transfer.fees.amount.toString(),
         minTokenRecieved: transfer.amount, // TODO handle true status
         sender: transfer.sender,
         recipient: transfer.recipient,

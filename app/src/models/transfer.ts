@@ -15,8 +15,7 @@ export interface StoredTransfer {
   amount: string
   recipient: string
   date: Date
-  feeAmount: string
-  feeToken: Token
+  fees: Fees
 
   // Contextual
   environment: Environment // to access context
@@ -49,9 +48,11 @@ export type CompletedTransfer = {
   destChain: Chain
   amount: string
   amountValue?: number
-  feeToken: Token
+
   feeAmount: string
-  feesValue?: number
+  feeToken: Token
+  feesValue?: number // will comes from the Fees.inDollars
+
   minTokenRecieved: string
   minTokenRecievedValue?: number
   sender: string
@@ -59,3 +60,11 @@ export type CompletedTransfer = {
   date: string
 }
 export type TransfersByDate = Record<string, CompletedTransfer[]>
+export interface Fees {
+  /* The amount in the `token` currency */
+  amount: string
+  /* the token of the fees */
+  token: Token
+  /* the value in dollars */
+  inDollars: number
+}

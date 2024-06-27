@@ -7,7 +7,7 @@ import { getContext, getEnvironment } from '@/context/snowbridge'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
-import { StoredTransfer } from '@/models/transfer'
+import { StoredTransfer, Fees } from '@/models/transfer'
 import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
@@ -15,7 +15,6 @@ import useOngoingTransfers from './useOngoingTransfers'
 import useNotification from './useNotification'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
-
 interface TransferParams {
   environment: Environment
   sender: Sender
@@ -24,15 +23,7 @@ interface TransferParams {
   destinationChain: Chain
   recipient: string
   amount: bigint
-}
-
-interface TransferValidationParams {
-  sender?: Sender | null
-  sourceChain: Chain | null
-  token: Token | null
-  destinationChain: Chain | null
-  recipient?: string | null
-  amount: bigint | null
+  fees: Fees
 }
 
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
@@ -54,6 +45,7 @@ const useTransfer = () => {
     destinationChain,
     recipient,
     amount,
+    fees,
   }: TransferParams) => {
     setStatus('Loading')
 
@@ -109,6 +101,7 @@ const useTransfer = () => {
           }
 
           console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
+
           addTransfer({
             id: sendResult.success!.messageId,
             sourceChain,
@@ -120,21 +113,7 @@ const useTransfer = () => {
             date: new Date(),
             environment,
             sendResult,
-            feeAmount: (
-              await Snowbridge.toPolkadot.getSendFee(
-                context,
-                tokenContract,
-                destinationChain.chainId,
-                BigInt(0),
-              )
-            ).toString(),
-            feeToken: {
-              id: 'eth',
-              symbol: 'ETH',
-              name: 'ETHER',
-              logoURI: '',
-              decimals: 18,
-            },
+            fees,
           } satisfies StoredTransfer)
         } catch (e) {
           console.log('TRANSFER_ERROR', e)
@@ -145,9 +124,9 @@ const useTransfer = () => {
           })
           setStatus('Idle')
         }
-
         break
       }
+
       case Direction.ToEthereum:
         setStatus('Validating')
         let plan = await Snowbridge.toEthereum.validateSend(
@@ -199,15 +178,7 @@ const useTransfer = () => {
             date: new Date(),
             environment,
             sendResult,
-            // todo(nuno): discussing with Snowfork a better way to fetch the fee token without harcoding it in the logic
-            feeAmount: (await Snowbridge.toEthereum.getSendFee(context)).toString(),
-            feeToken: {
-              id: 'dot',
-              symbol: 'DOT',
-              name: 'Polkadot',
-              logoURI: '',
-              decimals: environment == Environment.Mainnet ? 10 : 12,
-            },
+            fees,
           } satisfies StoredTransfer)
         } catch (e) {
           console.log('TRANSFER_ERROR', e)
