@@ -112,6 +112,6 @@ export function nativeToken(chain: Chain): Token {
     case 'ethereum':
       return Mainnet.ETH
     default:
-      throw Error('The impossible has happened')
+      throw Error('The impossible has happened!')
   }
 }
