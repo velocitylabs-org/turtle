@@ -131,15 +131,12 @@ const Transfer: FC = () => {
   /* Fetch fees */
   useEffect(() => {
     const fetchFees = async () => {
-      console.log('fetchFees')
       if (!isValid) {
-        console.log('not valid')
         setFees(null)
         return
       }
 
       if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
-      console.log('fetch fees valid')
 
       const snowbridgeEnv = getEnvironment(environment)
       const context = await getContext(snowbridgeEnv)
