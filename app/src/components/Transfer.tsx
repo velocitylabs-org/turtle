@@ -237,7 +237,7 @@ const Transfer: FC = () => {
         size="lg"
         variant="primary"
         onClick={handleSubmit}
-        disabled={!isValid || transferStatus !== 'Idle'}
+        disabled={!isValid || !fees || transferStatus !== 'Idle'}
         className="my-5"
       />
 
