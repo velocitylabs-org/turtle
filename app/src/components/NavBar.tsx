@@ -9,6 +9,9 @@ const Navbar: FC = async () => {
       <NavbarBrand className="gap-2">
         <TurtleIcon size={28} />
         <p className="text-large text-white">Turtle</p>
+        <span className="flex h-[19px] items-center justify-center rounded-[4px] border-1 border-white px-[5px] text-[12px] font-bold text-white">
+          ALPHA
+        </span>
       </NavbarBrand>
 
       <NavbarContent justify="end" className="gap-10">

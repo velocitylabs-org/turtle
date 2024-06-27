@@ -1,10 +1,11 @@
 'use client'
-import DefaultIcon from '@/../public/notification-default-icon.svg'
-import ErrorIcon from '@/../public/notification-error-icon.svg'
-import InfoIcon from '@/../public/notification-info-icon.svg'
-import SuccessIcon from '@/../public/notification-success-icon.svg'
-import WarningIcon from '@/../public/notification-warning-icon.svg'
+import DefaultIcon from '@/../public/severity-default-icon.svg'
+import ErrorIcon from '@/../public/severity-error-icon.svg'
+import InfoIcon from '@/../public/severity-info-icon.svg'
+import SuccessIcon from '@/../public/severity-success-icon.svg'
+import WarningIcon from '@/../public/severity-warning-icon.svg'
 import { Notification, NotificationSeverity } from '@/models/notification'
+import { Button } from '@nextui-org/react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect } from 'react'
@@ -30,6 +31,9 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
     return () => clearTimeout(timeoutRef)
   }, [notification.id, removeNotification])
 
+  const header =
+    (notification.severity && getSeverityHeader(notification.severity)) || notification.header
+
   return (
     <motion.div
       layout
@@ -39,23 +43,25 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
       transition={{ duration: 0.35, ease: 'easeOut' }}
       role="alert"
       className={twMerge(
-        'alert pointer-events-auto flex items-center gap-2 shadow-lg',
-        `alert-${notification.severity}`,
+        'pointer-events-auto flex h-[2rem] flex-row items-center gap-[0.25rem] rounded-[8px] bg-turtle-foreground py-[0.25rem] pl-[0.25rem] pr-[0.5rem]',
       )}
     >
       {/* Notification Icon */}
       {renderSeverityIcon(notification.severity)}
 
       {/* Notification Content */}
-      <div className="flex flex-col">
-        <h4 className="font-bold">{notification.header}</h4>
-        <span className="text-xs">{notification.message}</span>
-      </div>
+      {header && <span className="font-bold text-white">{header}</span>}
+      {notification.message && <span className="text-white">{notification.message}</span>}
 
       {/* Close Button */}
-      <button className="btn btn-ghost btn-xs" onClick={() => removeNotification(notification.id)}>
-        Close
-      </button>
+      {notification.dismissible && (
+        <button
+          className="text-white underline"
+          onClick={() => removeNotification(notification.id)}
+        >
+          Dismiss
+        </button>
+      )}
     </motion.div>
   )
 }
@@ -74,8 +80,30 @@ const renderSeverityIcon = (severity?: NotificationSeverity) => {
     case NotificationSeverity.Success:
       return <Image src={SuccessIcon} alt="success icon" />
 
-    default:
+    case NotificationSeverity.Default:
       return <Image src={DefaultIcon} alt="default icon" />
+
+    default:
+      return
+  }
+}
+
+const getSeverityHeader = (severity: NotificationSeverity) => {
+  switch (severity) {
+    case NotificationSeverity.Info:
+      return 'By the way'
+
+    case NotificationSeverity.Error:
+      return 'Oops!'
+
+    case NotificationSeverity.Warning:
+      return 'Watch it!'
+
+    case NotificationSeverity.Success:
+      return 'Done!'
+
+    default:
+      return ''
   }
 }
 

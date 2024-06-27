@@ -26,14 +26,14 @@ export async function getContext(
 
   return await Snowbridge.contextFactory({
     ethereum: {
-      execution_url: config.ETHEREUM_WS_API('3Abd1KfeBZgvuM0YSAkoIwGRCC26z5lw'),
+      execution_url: config.ETHEREUM_API('3Abd1KfeBZgvuM0YSAkoIwGRCC26z5lw'),
       beacon_url: config.BEACON_HTTP_API,
     },
     polkadot: {
       url: {
-        bridgeHub: config.BRIDGE_HUB_WS_URL,
-        assetHub: config.ASSET_HUB_WS_URL,
-        relaychain: config.RELAY_CHAIN_WS_URL,
+        bridgeHub: config.BRIDGE_HUB_URL,
+        assetHub: config.ASSET_HUB_URL,
+        relaychain: config.RELAY_CHAIN_URL,
         parachains: config.PARACHAINS,
       },
     },

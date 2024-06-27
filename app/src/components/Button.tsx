@@ -2,6 +2,7 @@
 import { Button as NextButton } from '@nextui-org/react'
 import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
+import LoadingIcon from './svg/LoadingIcon'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -27,6 +28,12 @@ const paddingX: Record<ButtonSize, string> = {
   lg: 'px-5',
 }
 
+const spinnerSize: Record<ButtonSize, number> = {
+  sm: 24,
+  md: 24,
+  lg: 40,
+}
+
 interface ButtonProps {
   /** Text shown inside the button. */
   label?: string
@@ -36,12 +43,16 @@ interface ButtonProps {
   className?: string
   /** Whether the button is disabled (non-interactive). */
   disabled?: boolean
+  /** Whether the button is in a loading state. */
+  loading?: boolean
   /** The variant determines the preset color and style of the button. */
   variant?: ButtonVariant
   /** The size of the button. */
   size?: ButtonSize
   /** Content to be rendered inside the button. It will replace the label. */
   children?: ReactNode
+  /** The type of the button. */
+  type?: 'button' | 'submit' | 'reset'
 }
 
 const Button: FC<ButtonProps> = ({
@@ -49,9 +60,11 @@ const Button: FC<ButtonProps> = ({
   onClick = () => {},
   className,
   disabled,
+  loading,
   variant = 'primary',
   size = 'lg',
   children,
+  type = 'button', // Default type is 'button'
 }) => {
   return (
     <NextButton
@@ -60,9 +73,26 @@ const Button: FC<ButtonProps> = ({
       onClick={onClick}
       size={size}
       radius="sm"
-      className={twMerge(styles[variant], sizeHeights[size], paddingX[size], className)}
+      className={twMerge(
+        styles[variant],
+        sizeHeights[size],
+        paddingX[size],
+        '', // TODO: disable blue ring on tab focus
+        className,
+      )}
+      type={type} // Pass the type prop to NextButton
     >
-      {children || label}
+      {/** loading state */}
+      {loading && (
+        <LoadingIcon
+          className="animate-spin"
+          width={spinnerSize[size]}
+          height={spinnerSize[size]}
+        />
+      )}
+
+      {/** children or label */}
+      {!loading && (children || label)}
     </NextButton>
   )
 }

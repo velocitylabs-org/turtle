@@ -41,7 +41,7 @@ export const getErc20TokenContract = (
 ): string => {
   switch (token.id) {
     case 'weth':
-      return env.locations[0].erc20tokensReceivable['WETH']
+      return env.locations[0].erc20tokensReceivable[0].address
     default:
       throw Error('Token not supported or it is not an ERC20 token')
   }
