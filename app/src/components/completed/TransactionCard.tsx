@@ -51,7 +51,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                 tx.transferResult === TxStatus.Failed && 'text-turtle-error',
               )}
             >
-              <p>{toHuman(tx.amount, tx.token).toFixed(2)}</p>
+              <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
               <p>{tx.token.symbol}</p>
             </div>
             <div

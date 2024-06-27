@@ -25,7 +25,7 @@ import { colors } from '../../tailwind.config'
 
 export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
-  const { addCompletedTransfer } = useCompletedTransfers() //completedTransfers
+  const { addCompletedTransfer } = useCompletedTransfers()
   const { data: ensName } = useEnsName({
     address: transfer.sender as `0x${string}`,
   })
@@ -37,21 +37,9 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
     const pollUpdate = async () => {
       try {
         if (direction == Direction.ToEthereum) {
-          await trackToEthereum(
-            transfer,
-            setUpdate,
-            removeOngoingTransfer,
-            addCompletedTransfer,
-            // completedTransfers,
-          )
+          await trackToEthereum(transfer, setUpdate, removeOngoingTransfer, addCompletedTransfer)
         } else if (direction == Direction.ToPolkadot) {
-          await trackToPolkadot(
-            transfer,
-            setUpdate,
-            removeOngoingTransfer,
-            addCompletedTransfer,
-            // completedTransfers,
-          )
+          await trackToPolkadot(transfer, setUpdate, removeOngoingTransfer, addCompletedTransfer)
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -106,7 +94,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               'flex items-center space-x-1 text-3xl font-medium leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
-            <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
+            <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
             <p>{transfer.token.symbol}</p>
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
@@ -197,7 +185,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             <div className="mt-2 flex flex-col items-center justify-between space-x-4 sm:flex-row">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
+                <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
                 <p>{transfer.token.symbol}</p>
                 <p className="text-turtle-level5">TBD $</p>
               </div>
@@ -216,7 +204,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
                 {/* TODO(nuno) */}
-                <p>{toHuman(transfer.amount, transfer.token).toFixed(2)}</p>
+                <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
                 <p>{transfer.token.symbol}</p>
                 {/* TODO(nuno) */}
                 <p className="text-turtle-level5"> TBD $</p>
@@ -246,7 +234,6 @@ async function trackToPolkadot(
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: CompletedTransfer) => void,
-  // completedTransfers: CompletedTransfer[] | undefined,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
@@ -260,7 +247,7 @@ async function trackToPolkadot(
       setUpdate('Done!')
       const payload = {
         id: transfer.id,
-        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed, // TODO handle true status // change to result
+        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed,
         // transferHashes?: string[] TODO handle hashes
         // errors?: string[] TODO handle errors details
         token: transfer.token,
@@ -272,19 +259,12 @@ async function trackToPolkadot(
         minTokenRecieved: transfer.amount, // TODO handle true minTokenRecieved value
         sender: transfer.sender,
         recipient: transfer.recipient,
-        date: transfer.date.toString(),
+        date: transfer.date,
       } satisfies CompletedTransfer
 
-      // TODO check to avoid duplication
-
-      // const registeredTXCheck = completedTransfers?.length
-      //   ? completedTransfers.filter(t => t.id === payload.id)
-      //   : []
-
-      // if (registeredTXCheck.length === 0) {
+      // Add new completed tx to storage
       addCompletedTransfer(payload)
-      // }
-
+      // Removed ongoing tx from storage
       removeOngoingTransfer(transfer.id)
       break
     }
@@ -318,7 +298,6 @@ async function trackToEthereum(
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: any) => void,
-  // completedTransfers: CompletedTransfer[] | undefined,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
@@ -331,7 +310,7 @@ async function trackToEthereum(
     if (status !== 'pending') {
       const payload = {
         id: transfer.id,
-        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed, // TODO handle true status
+        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed,
         // transferHashes?: string[] TODO handle hashes
         // errors?: string[] TODO handle errors details
         token: transfer.token,
@@ -343,10 +322,11 @@ async function trackToEthereum(
         minTokenRecieved: transfer.amount, // TODO handle true status
         sender: transfer.sender,
         recipient: transfer.recipient,
-        date: transfer.date.toISOString(),
+        date: transfer.date,
       } satisfies CompletedTransfer
+      // Add new completed tx to storage
       addCompletedTransfer(payload)
-      // need to check on local storage before removing the ongoing tx
+      // Removed ongoing tx from storage
       removeOngoingTransfer(transfer.id)
       break
     }

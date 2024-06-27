@@ -57,7 +57,7 @@ export type CompletedTransfer = {
   minTokenRecievedValue?: number
   sender: string
   recipient: string
-  date: string
+  date: Date
 }
 export type TransfersByDate = Record<string, CompletedTransfer[]>
 export interface Fees {

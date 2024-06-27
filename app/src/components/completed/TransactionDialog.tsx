@@ -98,7 +98,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 : ' text-turtle-error-dark',
             )}
           >
-            <p>{toHuman(tx.amount, tx.token).toFixed(2)}</p>
+            <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
             <p>{tx.token.symbol}</p>
           </h3>
           <div
@@ -109,7 +109,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 : ' text-turtle-error-dark',
             )}
           >
-            <div>{formatDate(tx.date.split('T')[0])}</div>
+            <div>{formatDate(tx.date.toString().split('T')[0])}</div>
             <div>{formatHours(tx.date)}</div>
           </div>
         </DialogHeader>
@@ -224,11 +224,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div className="flex flex-col items-center justify-between space-x-4 sm:flex-row">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(tx.amount, tx.token).toFixed(2)}</p>
+                <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
                 <p>{tx.token.symbol}</p>
                 <p className="text-turtle-level5">
                   {/* TODO register value in $ */}
-                  {tx.amountValue ? `$${tx.amountValue.toFixed(2)}` : 'TBD $'}
+                  {tx.amountValue ? `$${tx.amountValue.toFixed(3)}` : 'TBD $'}
                 </p>
               </div>
             </div>
@@ -239,7 +239,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 <p>{toHuman(tx.feeAmount, tx.feeToken).toFixed(10)}</p>
                 <p>{tx.feeToken.symbol}</p>
                 <p className="text-turtle-level5">
-                  {tx.feesValue ? `$${Number(tx.feesValue).toFixed(2)}` : 'TBD $'}
+                  {tx.feesValue ? `$${Number(tx.feesValue).toFixed(3)}` : 'TBD $'}
                 </p>
               </div>
             </div>
@@ -248,11 +248,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
                 {/* TODO Confirm fee token */}
-                <p>{toHuman(tx.minTokenRecieved, tx.feeToken).toFixed(2)}</p>
+                <p>{toHuman(tx.minTokenRecieved, tx.feeToken).toFixed(3)}</p>
                 <p>{tx.feeToken.symbol}</p>
                 <p className="text-turtle-level5">
                   {tx.minTokenRecievedValue
-                    ? `$${Number(tx.minTokenRecievedValue).toFixed(2)}`
+                    ? `$${Number(tx.minTokenRecievedValue).toFixed(3)}`
                     : 'TBD $'}
                 </p>
               </div>
