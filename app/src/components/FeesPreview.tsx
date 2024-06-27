@@ -1,6 +1,8 @@
 import { Fees } from '@/models/transfer'
 import { feeToHuman } from '@/utils/transfer'
 import { FC } from 'react'
+import LoadingIcon from './svg/LoadingIcon'
+import { spinnerSize } from './Button'
 
 export interface Loading {
   type: 'Loading'
@@ -15,7 +17,11 @@ const Dropdown: FC<{ state: State }> = ({ state }) => {
   if (state.type === 'Loading')
     return (
       <div className="mt-4 flex h-[10rem] w-full items-center justify-center rounded-[8px] bg-turtle-level1">
-        <i className="fas fa-sync-alt mr-3 animate-[spin_3s_infinite] text-3xl font-light text-turtle-level3"></i>
+        <LoadingIcon
+          className="animate-spin"
+          width={spinnerSize['lg']}
+          height={spinnerSize['lg']}
+        />
       </div>
     )
 
