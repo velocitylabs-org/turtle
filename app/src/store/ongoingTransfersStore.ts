@@ -47,7 +47,7 @@ export const useOngoingTransfersStore = create<State>()(
 
       // Actions
       addTransfer: transfer => {
-        if (transfer === undefined || transfer === null) return
+        if (!transfer) return
         return set(state => ({
           transfers: [...state.transfers, transfer],
         }))

@@ -17,12 +17,17 @@ import { ArrowRight } from '../svg/ArrowRight'
 import { ArrowUpRight } from '../svg/ArrowUpRight'
 import { ExclamationMark } from '../svg/ExclamationMark'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../ui/dialog'
 import { Separator } from '../ui/separator'
 
 import { colors } from '../../../tailwind.config'
-import { DialogDescription } from '@radix-ui/react-dialog'
-
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   const { data: ensName } = useEnsName({
     address: tx.sender as `0x${string}`,
@@ -39,19 +44,19 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         <DialogHeader
           className={cn(
             'flex flex-col items-center justify-center space-y-6 rounded-t-4xl border py-5 sm:py-10',
-            tx.transferResult === TxStatus.Completed
+            tx.result === TxStatus.Succeeded
               ? 'border-turtle-success-dark bg-turtle-success-light'
               : 'border-turtle-error-dark bg-turtle-error-light ',
           )}
         >
-          <DialogTitle className="sr-only">Completed transaction</DialogTitle>
+          <DialogTitle className="sr-only">Completed transfer</DialogTitle>
           <DialogDescription className="sr-only">
-            Completed transaction status and details
+            Completed transfer status and details
           </DialogDescription>
           <div
             className={cn(
               'flex items-center justify-center space-x-4',
-              tx.transferResult === TxStatus.Completed
+              tx.result === TxStatus.Succeeded
                 ? ' text-turtle-success-dark'
                 : 'text-turtle-error-dark ',
             )}
@@ -64,7 +69,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.transferResult === TxStatus.Completed
+                    tx.result === TxStatus.Succeeded
                       ? 'border-turtle-success-dark'
                       : 'border-turtle-error-dark ',
                   )}
@@ -74,7 +79,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             </div>
             <ArrowRight
               className="h-2 w-2"
-              {...(tx.transferResult === TxStatus.Failed
+              {...(tx.result === TxStatus.Failed
                 ? { fill: colors['turtle-error-dark'] }
                 : { fill: colors['turtle-primary-dark'] })}
             />
@@ -86,7 +91,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.transferResult === TxStatus.Completed
+                    tx.result === TxStatus.Succeeded
                       ? 'border-turtle-success-dark'
                       : 'border-turtle-error-dark ',
                   )}
@@ -98,7 +103,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <h3
             className={cn(
               'flex items-center space-x-1 text-3xl font-medium leading-none sm:text-5xl ',
-              tx.transferResult === TxStatus.Completed
+              tx.result === TxStatus.Succeeded
                 ? 'text-turtle-success-dark'
                 : ' text-turtle-error-dark',
             )}
@@ -109,7 +114,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn(
               'flex items-center space-x-4 text-sm',
-              tx.transferResult === TxStatus.Completed
+              tx.result === TxStatus.Succeeded
                 ? 'text-turtle-success-dark'
                 : ' text-turtle-error-dark',
             )}
@@ -124,15 +129,15 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn(
               'flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm',
-              tx.transferResult === TxStatus.Completed
+              tx.result === TxStatus.Succeeded
                 ? 'border-turtle-success-dark bg-turtle-success-light text-turtle-success-dark'
                 : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark',
             )}
           >
             <ExclamationMark
-              {...(tx.transferResult === TxStatus.Failed && { fill: colors['turtle-error-dark'] })}
+              {...(tx.result === TxStatus.Failed && { fill: colors['turtle-error-dark'] })}
             />
-            {tx.transferResult !== TxStatus.Failed ? (
+            {tx.result !== TxStatus.Failed ? (
               <p>
                 <span className="pe-0.5 font-medium">Done!</span>
                 This transfer is completed.
@@ -161,7 +166,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     theme="polkadot"
                     className={cn(
                       'rounded-full border',
-                      tx.transferResult === TxStatus.Completed
+                      tx.result === TxStatus.Succeeded
                         ? 'border-black'
                         : 'border-turtle-error-dark',
                     )}
@@ -170,7 +175,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   <div
                     className={cn(
                       'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                      tx.transferResult === TxStatus.Completed
+                      tx.result === TxStatus.Succeeded
                         ? 'border-black '
                         : 'border-turtle-error-dark',
                     )}
@@ -198,7 +203,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     theme="polkadot"
                     className={cn(
                       'rounded-full border',
-                      tx.transferResult === TxStatus.Completed
+                      tx.result === TxStatus.Succeeded
                         ? 'border-black'
                         : 'border-turtle-error-dark',
                     )}
@@ -207,7 +212,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   <div
                     className={cn(
                       'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                      tx.transferResult === TxStatus.Completed
+                      tx.result === TxStatus.Succeeded
                         ? 'border-black '
                         : 'border-turtle-error-dark',
                     )}
@@ -241,18 +246,20 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(tx.feeAmount, tx.feeToken).toFixed(10)}</p>
-                <p>{tx.feeToken.symbol}</p>
+                <p>{toHuman(tx.fees.amount, tx.fees.token).toFixed(10)}</p>
+                <p>{tx.fees.token.symbol}</p>
                 <p className="text-turtle-level5">
-                  {tx.feesValue ? `$${Number(tx.feesValue).toFixed(3)}` : 'TBD $'}
+                  {tx.fees.inDollars ? `$${Number(tx.fees.inDollars).toFixed(3)}` : 'TBD $'}
                 </p>
               </div>
             </div>
-            <Separator className="my-4 bg-turtle-level3" />
+
+            {/* No need to display minTokenRecieved for now, code kept for future implementation */}
+
+            {/* <Separator className="my-4 bg-turtle-level3" />
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
-                {/* TODO Confirm fee token */}
                 <p>{toHuman(tx.minTokenRecieved, tx.feeToken).toFixed(3)}</p>
                 <p>{tx.feeToken.symbol}</p>
                 <p className="text-turtle-level5">
@@ -261,9 +268,10 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     : 'TBD $'}
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
 
+          {/* TODO use transaction hash to implement explorer link*/}
           <a
             href={'#'}
             // target="_blank"
@@ -271,7 +279,6 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             aria-label="View transaction on block explorer"
             className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
           >
-            {/* TODO use transaction hash */}
             <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
           </a>
         </div>

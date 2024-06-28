@@ -31,29 +31,24 @@ export interface DisplaysTransfers {
 }
 
 export enum TxStatus {
-  Pending = 'pending',
-  Completed = 'completed',
+  Succeeded = 'Succeeded',
   Failed = 'failed',
 }
 
-export type TransferResult = TxStatus.Pending | TxStatus.Completed | TxStatus.Failed
+export type TransferResult = TxStatus.Succeeded | TxStatus.Failed
 
 export type CompletedTransfer = {
   id: string
-  transferResult: TransferResult
-  transferHashes?: string[]
+  result: TransferResult
+  hashes?: string[]
   errors?: string[]
   token: Token
   sourceChain: Chain
   destChain: Chain
   amount: string
   amountValue?: number
-
-  feeAmount: string
-  feeToken: Token
-  feesValue?: number // will comes from the Fees.inDollars
-
-  minTokenRecieved: string
+  fees: Fees
+  minTokenRecieved?: string
   minTokenRecievedValue?: number
   sender: string
   recipient: string

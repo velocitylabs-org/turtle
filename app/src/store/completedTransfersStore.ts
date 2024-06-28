@@ -13,16 +13,14 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
       completedTransfers: [],
 
       addCompletedTransfer: newCompletedTransfer => {
-        if (newCompletedTransfer === undefined || newCompletedTransfer === null) return
+        if (!newCompletedTransfer) return
         set(state => {
           // Check if the newCompletedTransfer already exists in the local store
           const transferExists = state.completedTransfers.some(
             transfer => transfer.id === newCompletedTransfer.id,
           )
 
-          if (transferExists) {
-            return { completedTransfers: state.completedTransfers }
-          }
+          if (transferExists) return { completedTransfers: state.completedTransfers }
 
           return {
             completedTransfers: [...state.completedTransfers, newCompletedTransfer],

@@ -71,9 +71,9 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             'flex flex-col items-center justify-center space-y-6 rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-5 sm:py-10'
           }
         >
-          <DialogTitle className="sr-only">Ongoing transaction</DialogTitle>
+          <DialogTitle className="sr-only">Ongoing transfer</DialogTitle>
           <DialogDescription className="sr-only">
-            Ongoing transaction status and details
+            Ongoing transfer status and details
           </DialogDescription>
           <div className={'flex items-center justify-center space-x-4 text-turtle-secondary-dark'}>
             <div className="turtle-success-dark flex items-center space-x-1">
@@ -256,26 +256,24 @@ async function trackToPolkadot(
 
     if (status !== 'pending') {
       setUpdate('Done!')
-      const payload = {
+      // Adds the new completed tx to storage
+      addCompletedTransfer({
         id: transfer.id,
-        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed,
-        // transferHashes?: string[] TODO handle hashes
+        result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
+        // hashes?: string[] TODO handle hashes
         // errors?: string[] TODO handle errors details
         token: transfer.token,
         sourceChain: transfer.sourceChain,
         destChain: transfer.destChain,
         amount: transfer.amount,
-        feeToken: transfer.fees.token,
-        feeAmount: transfer.fees.amount.toString(),
-        minTokenRecieved: transfer.amount, // TODO handle true minTokenRecieved value
+        fees: transfer.fees,
+        // minTokenRecieved: transfer.amount, // TODO handle true minTokenRecieved value
         sender: transfer.sender,
         recipient: transfer.recipient,
         date: transfer.date,
-      } satisfies CompletedTransfer
+      } satisfies CompletedTransfer)
 
-      // Add new completed tx to storage
-      addCompletedTransfer(payload)
-      // Removed ongoing tx from storage
+      // Removes the ongoing tx from storage
       removeOngoingTransfer(transfer.id)
       break
     }
@@ -319,25 +317,24 @@ async function trackToEthereum(
     )
 
     if (status !== 'pending') {
-      const payload = {
+      //  Adds the new completed tx to storage
+      addCompletedTransfer({
         id: transfer.id,
-        transferResult: result?.failure ? TxStatus.Failed : TxStatus.Completed,
-        // transferHashes?: string[] TODO handle hashes
+        result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
+        // hashes?: string[] TODO handle hashes
         // errors?: string[] TODO handle errors details
         token: transfer.token,
         sourceChain: transfer.sourceChain,
         destChain: transfer.destChain,
         amount: transfer.amount,
-        feeToken: transfer.fees.token,
-        feeAmount: transfer.fees.amount.toString(),
-        minTokenRecieved: transfer.amount, // TODO handle true status
+        fees: transfer.fees,
+        // minTokenRecieved: transfer.amount,
         sender: transfer.sender,
         recipient: transfer.recipient,
         date: transfer.date,
-      } satisfies CompletedTransfer
-      // Add new completed tx to storage
-      addCompletedTransfer(payload)
-      // Removed ongoing tx from storage
+      } satisfies CompletedTransfer)
+
+      // Removes the ongoing tx from storage
       removeOngoingTransfer(transfer.id)
       break
     }
