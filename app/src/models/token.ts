@@ -5,4 +5,5 @@ export interface Token {
   logoURI: string
   symbol: string
   decimals: number
+  address: string
 }

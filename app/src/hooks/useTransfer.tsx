@@ -8,7 +8,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { StoredTransfer, Fees } from '@/models/transfer'
-import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -52,7 +52,6 @@ const useTransfer = () => {
     let direction = resolveDirection(sourceChain, destinationChain)
     const snowbridgeEnv = getEnvironment(environment)
     const context = await getContext(snowbridgeEnv)
-    const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
     switch (direction) {
       case Direction.ToPolkadot: {
@@ -61,7 +60,7 @@ const useTransfer = () => {
           context,
           sender as Signer,
           recipient,
-          tokenContract,
+          token.address,
           destinationChain.chainId,
           amount,
           BigInt(0),
@@ -70,7 +69,6 @@ const useTransfer = () => {
         if (plan.failure) {
           console.log('Validation failed: ' + plan)
           addNotification({
-            header: 'Transfer validation failed!',
             message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
           })
@@ -78,7 +76,7 @@ const useTransfer = () => {
             await Snowbridge.toPolkadot.approveTokenSpend(
               context,
               sender as Signer,
-              tokenContract,
+              token.address,
               amount,
             )
           }
@@ -93,15 +91,17 @@ const useTransfer = () => {
 
           if (sendResult.failure) {
             addNotification({
-              header: 'This transfer failed!',
-              message: '',
+              message: 'This transfer failed!',
               severity: NotificationSeverity.Error,
             })
             return
           }
 
           console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
-
+          addNotification({
+            message: 'Transfer initiated!',
+            severity: NotificationSeverity.Success,
+          })
           addTransfer({
             id: sendResult.success!.messageId,
             sourceChain,
@@ -118,8 +118,7 @@ const useTransfer = () => {
         } catch (e) {
           console.log('TRANSFER_ERROR', e)
           addNotification({
-            header: 'Transfer validation failed!',
-            message: '',
+            message: 'Transfer validation failed!',
             severity: NotificationSeverity.Error,
           })
           setStatus('Idle')
@@ -134,14 +133,13 @@ const useTransfer = () => {
           sender as WalletOrKeypair,
           sourceChain.chainId,
           recipient,
-          tokenContract,
+          token.address,
           amount,
         )
 
         if (plan.failure) {
           console.log('Validation failed: ' + plan)
           addNotification({
-            header: 'Transfer validation failed',
             message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
           })
@@ -159,8 +157,7 @@ const useTransfer = () => {
           setStatus('Idle')
           if (sendResult.failure) {
             addNotification({
-              header: 'This transfer failed!',
-              message: '',
+              message: 'This transfer failed!',
               severity: NotificationSeverity.Error,
             })
             return
@@ -183,8 +180,7 @@ const useTransfer = () => {
         } catch (e) {
           console.log('TRANSFER_ERROR', e)
           addNotification({
-            header: 'This transfer failed!',
-            message: '',
+            message: 'This transfer failed!',
             severity: NotificationSeverity.Error,
           })
           setStatus('Idle')

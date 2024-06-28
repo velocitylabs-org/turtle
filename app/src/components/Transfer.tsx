@@ -10,7 +10,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
-import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -155,15 +155,9 @@ const Transfer: FC = () => {
           break
         }
         case Direction.ToPolkadot: {
-          let tokenContract = getErc20TokenContract(tokenAmount?.token, snowbridgeEnv)
-          let amount = (
-            await Snowbridge.toPolkadot.getSendFee(
-              context,
-              tokenContract,
-              destinationChain.chainId,
-              BigInt(0),
-            )
-          ).toString()
+          let amount = await Snowbridge.toPolkadot
+            .getSendFee(context, token.address, destinationChain.chainId, BigInt(0))
+            .toString()
           setFees({
             amount,
             token,
