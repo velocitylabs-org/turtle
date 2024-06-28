@@ -131,15 +131,12 @@ const Transfer: FC = () => {
   /* Fetch fees */
   useEffect(() => {
     const fetchFees = async () => {
-      console.log('fetchFees')
       if (!isValid) {
-        console.log('not valid')
         setFees(null)
         return
       }
 
       if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
-      console.log('fetch fees valid')
 
       const snowbridgeEnv = getEnvironment(environment)
       const context = await getContext(snowbridgeEnv)
@@ -148,7 +145,7 @@ const Transfer: FC = () => {
 
       switch (direction) {
         case Direction.ToEthereum: {
-          let amount = await Snowbridge.toEthereum.getSendFee(context)
+          let amount = (await Snowbridge.toEthereum.getSendFee(context)).toString()
           setFees({
             amount,
             token,
@@ -159,12 +156,14 @@ const Transfer: FC = () => {
         }
         case Direction.ToPolkadot: {
           let tokenContract = getErc20TokenContract(tokenAmount?.token, snowbridgeEnv)
-          let amount = await Snowbridge.toPolkadot.getSendFee(
-            context,
-            tokenContract,
-            destinationChain.chainId,
-            BigInt(0),
-          )
+          let amount = (
+            await Snowbridge.toPolkadot.getSendFee(
+              context,
+              tokenContract,
+              destinationChain.chainId,
+              BigInt(0),
+            )
+          ).toString()
           setFees({
             amount,
             token,

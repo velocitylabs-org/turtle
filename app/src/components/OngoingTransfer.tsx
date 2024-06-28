@@ -1,17 +1,18 @@
 'use client'
-import { Transfer } from '@/models/transfer'
-import { truncateAddress } from '@/utils/address'
-import { formatDate, toHuman } from '@/utils/transfer'
 import { FC } from 'react'
 
-const OngoingTransfer: FC<{ transfer: Transfer; update: string | null }> = ({
+import { StoredTransfer } from '@/models/transfer'
+import { truncateAddress } from '@/utils/address'
+import { formatDate, toHuman } from '@/utils/transfer'
+
+const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> = ({
   transfer,
   update,
 }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
-        <p className="font-bold text-purple-600 text-turtle-secondary-dark">{update ?? ''}</p>
+        <p className="font-bold text-turtle-secondary-dark">{update ?? ''}</p>
         <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
       </div>
       {/* Progress bar */}

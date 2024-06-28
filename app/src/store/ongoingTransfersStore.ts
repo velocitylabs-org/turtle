@@ -1,27 +1,68 @@
-import { Transfer } from '@/models/transfer'
+import { StoredTransfer } from '@/models/transfer'
 import { create } from 'zustand'
+import { persist, PersistStorage, StorageValue } from 'zustand/middleware'
+import { stringify, parse } from 'flatted'
 
 interface State {
   // State
-  transfers: Transfer[]
-
+  transfers: StoredTransfer[]
   // Actions
-  addTransfer: (transfer: Transfer) => void
+  addTransfer: (transfer: StoredTransfer) => void
   removeTransfer: (id: string) => void
 }
 
-export const useOngoingTransfersStore = create<State>(set => ({
-  // State
-  transfers: [],
+// Serialization - Stringify function for BigInt
+function stringifyWithBigInt(value: StorageValue<StoredTransfer[]>) {
+  return stringify(value, (_key, val) => (typeof val === 'bigint' ? `${val}n` : val))
+}
 
-  // Actions
-  addTransfer: transfer =>
-    set(state => ({
-      transfers: [...state.transfers, transfer],
-    })),
+// Serialization - Parse function for BigInt
+function parseWithBigInt(value: any) {
+  return parse(value, (_key, val) => {
+    if (typeof val === 'string' && /^\d+n$/.test(val)) {
+      return BigInt(val.slice(0, -1))
+    }
+    return val
+  })
+}
 
-  removeTransfer: id =>
-    set(state => ({
-      transfers: state.transfers.filter(n => n.id !== id),
-    })),
-}))
+const storage: PersistStorage<StoredTransfer[]> = {
+  getItem: name => {
+    const storedValue = localStorage.getItem(name)
+    return storedValue ? parseWithBigInt(storedValue) : null
+  },
+  setItem: (name, value) => {
+    localStorage.setItem(name, stringifyWithBigInt(value))
+  },
+  removeItem: name => {
+    localStorage.removeItem(name)
+  },
+}
+
+export const useOngoingTransfersStore = create<State>()(
+  persist(
+    set => ({
+      // State
+      transfers: [],
+
+      // Actions
+      addTransfer: transfer => {
+        if (!transfer) return
+        return set(state => ({
+          transfers: [...state.transfers, transfer],
+        }))
+      },
+
+      removeTransfer: id => {
+        if (!id) return
+        return set(state => ({
+          transfers: state.transfers.filter(transfer => transfer.id !== id),
+        }))
+      },
+    }),
+    {
+      name: 'turtle-ongoing-transactions',
+      storage,
+    },
+  ),
+)

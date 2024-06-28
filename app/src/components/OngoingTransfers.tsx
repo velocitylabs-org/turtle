@@ -1,18 +1,21 @@
 'use client'
-import { FC } from 'react'
+
+import useStore from '@/hooks/useStore'
+import { DisplaysTransfers } from '@/models/transfer'
+import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
+
 import OngoingTransferDialog from './OngoingTransferDialog'
-import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 
-const OngoingTransfers: FC = () => {
-  const { ongoingTransfers } = useOngoingTransfers()
-
-  const handleViewCompleted = () => {
-    // TODO(nuno)
-  }
+const OngoingTransfers = ({
+  isNewTransaction,
+  setIsNewTransaction,
+  isCompletedTransactions,
+}: DisplaysTransfers) => {
+  const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
 
   return (
     <div>
-      {ongoingTransfers.length > 0 && (
+      {ongoingTransfers && ongoingTransfers.length > 0 && (
         <div className="my-20">
           <div className="self-center text-center text-3xl tracking-tight text-black">
             In Progress
@@ -22,12 +25,15 @@ const OngoingTransfers: FC = () => {
               <OngoingTransferDialog key={tx.id} transfer={tx} />
             ))}
 
-            <button
-              onClick={handleViewCompleted}
-              className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-xl"
-            >
-              View completed transactions <i className="fas fa-arrow-right ml-1"></i>
-            </button>
+            {isCompletedTransactions && (
+              <button
+                onClick={() => isNewTransaction && setIsNewTransaction(!isNewTransaction)}
+                disabled={!isCompletedTransactions}
+                className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
+              >
+                View completed transactions <i className="fas fa-arrow-right ml-1"></i>
+              </button>
+            )}
           </div>
         </div>
       )}
