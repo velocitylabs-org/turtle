@@ -98,6 +98,7 @@ export module Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     symbol: 'DOT',
     decimals: 10,
+    address: '',
   }
 
   export const ETH: Token = {
@@ -106,6 +107,7 @@ export module Mainnet {
     symbol: 'ETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     decimals: 18,
+    address: '',
   }
 }
 
@@ -153,6 +155,7 @@ export module Testnet {
     symbol: 'sETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     decimals: 18,
+    address: '',
   }
 
   export const ROC: Token = {
@@ -161,6 +164,7 @@ export module Testnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     symbol: 'ROC',
     decimals: 12,
+    address: '',
   }
 }
 

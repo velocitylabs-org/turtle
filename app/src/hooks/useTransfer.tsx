@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
@@ -61,7 +61,6 @@ const useTransfer = () => {
     let direction = resolveDirection(sourceChain, destinationChain)
     const snowbridgeEnv = getEnvironment(environment)
     const context = await getContext(snowbridgeEnv)
-    const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
     switch (direction) {
       case Direction.ToPolkadot: {
@@ -70,7 +69,7 @@ const useTransfer = () => {
           context,
           sender as Signer,
           recipient,
-          tokenContract,
+          token.address,
           destinationChain.chainId,
           amount,
           BigInt(0),
@@ -88,7 +87,7 @@ const useTransfer = () => {
             await Snowbridge.toPolkadot.approveTokenSpend(
               context,
               sender as Signer,
-              tokenContract,
+              token.address,
               amount,
             )
           }
@@ -142,7 +141,7 @@ const useTransfer = () => {
           sender as WalletOrKeypair,
           sourceChain.chainId,
           recipient,
-          tokenContract,
+          token.address,
           amount,
         )
 

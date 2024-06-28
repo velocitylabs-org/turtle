@@ -35,18 +35,6 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   throw Error('The impossible happened')
 }
 
-export const getErc20TokenContract = (
-  token: Token,
-  env: Snowbridge.environment.SnowbridgeEnvironment,
-): string => {
-  switch (token.id) {
-    case 'weth' | 'veth':
-      return env.locations[0].erc20tokensReceivable[token.id].address
-    default:
-      throw Error('Token not supported or it is not an ERC20 token')
-  }
-}
-
 async function trackToPolkadot(
   context: Snowbridge.Context,
   result: Snowbridge.toPolkadot.SendResult,
@@ -73,10 +61,9 @@ export const toEthereum = async (
 ): Promise<Snowbridge.toEthereum.SendResult> => {
   const snowbridgeEnv = getEnvironment(environment)
   const context = await getContext(snowbridgeEnv)
-  const tokenContract = getErc20TokenContract(token, snowbridgeEnv)
 
   return Snowbridge.toEthereum
-    .validateSend(context, sender, sourceChain.chainId, recipient, tokenContract, amount)
+    .validateSend(context, sender, sourceChain.chainId, recipient, token.address, amount)
     .then(plan => Snowbridge.toEthereum.send(context, sender, plan))
 }
 

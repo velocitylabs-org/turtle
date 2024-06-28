@@ -23,7 +23,7 @@ import { AlertIcon } from './svg/AlertIcon'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import FeesPreview from './FeesPreview'
 import { Fees } from '@/models/transfer'
-import { Direction, getErc20TokenContract, resolveDirection } from '@/services/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import * as Snowbridge from '@snowbridge/api'
 import { getContext, getEnvironment } from '@/context/snowbridge'
 
@@ -158,10 +158,10 @@ const Transfer: FC = () => {
           break
         }
         case Direction.ToPolkadot: {
-          let tokenContract = getErc20TokenContract(tokenAmount?.token, snowbridgeEnv)
+          // nuno
           let amount = await Snowbridge.toPolkadot.getSendFee(
             context,
-            tokenContract,
+            token.address,
             destinationChain.chainId,
             BigInt(0),
           )
