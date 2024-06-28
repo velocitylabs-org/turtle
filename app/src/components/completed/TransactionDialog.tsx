@@ -17,10 +17,11 @@ import { ArrowRight } from '../svg/ArrowRight'
 import { ArrowUpRight } from '../svg/ArrowUpRight'
 import { ExclamationMark } from '../svg/ExclamationMark'
 
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '../ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { Separator } from '../ui/separator'
 
 import { colors } from '../../../tailwind.config'
+import { DialogDescription } from '@radix-ui/react-dialog'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   const { data: ensName } = useEnsName({
@@ -43,6 +44,10 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               : 'border-turtle-error-dark bg-turtle-error-light ',
           )}
         >
+          <DialogTitle className="sr-only">Completed transaction</DialogTitle>
+          <DialogDescription className="sr-only">
+            Completed transaction status and details
+          </DialogDescription>
           <div
             className={cn(
               'flex items-center justify-center space-x-4',

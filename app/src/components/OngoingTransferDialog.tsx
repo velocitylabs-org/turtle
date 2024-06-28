@@ -18,7 +18,14 @@ import { formatDate, toHuman, feeToHuman } from '@/utils/transfer'
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from './ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog'
 import { Separator } from './ui/separator'
 
 import { colors } from '../../tailwind.config'
@@ -64,6 +71,10 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             'flex flex-col items-center justify-center space-y-6 rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-5 sm:py-10'
           }
         >
+          <DialogTitle className="sr-only">Ongoing transaction</DialogTitle>
+          <DialogDescription className="sr-only">
+            Ongoing transaction status and details
+          </DialogDescription>
           <div className={'flex items-center justify-center space-x-4 text-turtle-secondary-dark'}>
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
