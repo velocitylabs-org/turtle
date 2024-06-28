@@ -12,7 +12,7 @@ import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { convertAmount } from '@/utils/transfer'
+import { convertAmount, feeToHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Snowbridge from '@snowbridge/api'
 import Link from 'next/link'
@@ -155,14 +155,21 @@ const Transfer: FC = () => {
           break
         }
         case Direction.ToPolkadot: {
-          let amount = await Snowbridge.toPolkadot
-            .getSendFee(context, token.address, destinationChain.chainId, BigInt(0))
-            .toString()
+          let amount = await (
+            await Snowbridge.toPolkadot.getSendFee(
+              context,
+              tokenAmount.token.address,
+              destinationChain.chainId,
+              BigInt(0),
+            )
+          ).toString()
+
           setFees({
             amount,
             token,
             inDollars: 0,
           })
+          break
         }
       }
     }

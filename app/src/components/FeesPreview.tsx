@@ -13,7 +13,7 @@ export interface Ready {
 }
 type State = Loading | Ready
 
-const Dropdown: FC<{ state: State }> = ({ state }) => {
+const FeesPreview: FC<{ state: State }> = ({ state }) => {
   if (state.type === 'Loading')
     return (
       <div className="mt-4 flex h-[10rem] w-full items-center justify-center rounded-[8px] bg-turtle-level1">
@@ -46,4 +46,4 @@ const Dropdown: FC<{ state: State }> = ({ state }) => {
   )
 }
 
-export default Dropdown
+export default FeesPreview
