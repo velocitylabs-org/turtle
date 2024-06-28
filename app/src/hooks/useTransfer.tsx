@@ -1,17 +1,17 @@
+import { getContext, getEnvironment } from '@/context/snowbridge'
 import { Chain } from '@/models/chain'
+import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
+import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
-import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
-import { JsonRpcSigner, Signer } from 'ethers'
-import useOngoingTransfers from './useOngoingTransfers'
-import useNotification from './useNotification'
-import { NotificationSeverity } from '@/models/notification'
 import * as Snowbridge from '@snowbridge/api'
-import { getContext, getEnvironment } from '@/context/snowbridge'
+import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
+import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
-import { Fees } from '@/models/transfer'
+import useNotification from './useNotification'
+import useOngoingTransfers from './useOngoingTransfers'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -79,7 +79,6 @@ const useTransfer = () => {
           console.log('Validation failed: ' + plan.failure)
 
           addNotification({
-            header: 'Transfer validation failed!',
             message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
           })
@@ -102,14 +101,17 @@ const useTransfer = () => {
 
           if (sendResult.failure) {
             addNotification({
-              header: 'This transfer failed!',
-              message: '',
+              message: 'This transfer failed!',
               severity: NotificationSeverity.Error,
             })
             return
           }
 
           console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
+          addNotification({
+            message: 'Transfer initiated!',
+            severity: NotificationSeverity.Success,
+          })
           addTransfer({
             id: sendResult.success!.messageId,
             sourceChain,
@@ -125,8 +127,7 @@ const useTransfer = () => {
           })
         } catch (e) {
           addNotification({
-            header: 'Transfer validation failed!',
-            message: '',
+            message: 'Transfer validation failed!',
             severity: NotificationSeverity.Error,
           })
           setStatus('Idle')
@@ -148,7 +149,6 @@ const useTransfer = () => {
         if (plan.failure) {
           console.log('Validation failed: ' + plan.failure)
           addNotification({
-            header: 'Transfer validation failed',
             message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
           })
@@ -166,8 +166,7 @@ const useTransfer = () => {
           setStatus('Idle')
           if (sendResult.failure) {
             addNotification({
-              header: 'This transfer failed!',
-              message: '',
+              message: 'This transfer failed!',
               severity: NotificationSeverity.Error,
             })
             return
@@ -189,8 +188,7 @@ const useTransfer = () => {
           })
         } catch (e) {
           addNotification({
-            header: 'This transfer failed!',
-            message: '',
+            message: 'This transfer failed!',
             severity: NotificationSeverity.Error,
           })
           setStatus('Idle')
