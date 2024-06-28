@@ -158,7 +158,6 @@ const Transfer: FC = () => {
           break
         }
         case Direction.ToPolkadot: {
-          // nuno
           let amount = await Snowbridge.toPolkadot.getSendFee(
             context,
             token.address,
