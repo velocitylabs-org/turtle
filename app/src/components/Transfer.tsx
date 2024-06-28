@@ -1,5 +1,6 @@
 'use client'
 import { nativeToken, REGISTRY } from '@/config/registry'
+import { getContext, getEnvironment } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
 import useNotification from '@/hooks/useNotification'
 import useTransfer from '@/hooks/useTransfer'
@@ -7,25 +8,24 @@ import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
+import { ManualRecipient, TokenAmount } from '@/models/select'
+import { Fees } from '@/models/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
+import * as Snowbridge from '@snowbridge/api'
 import Link from 'next/link'
 import { FC, useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
+import FeesPreview from './FeesPreview'
 import SubstrateWalletModal from './SubstrateWalletModal'
+import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { AlertIcon } from './svg/AlertIcon'
-import { ManualRecipient, TokenAmount } from '@/models/select'
-import FeesPreview from './FeesPreview'
-import { Fees } from '@/models/transfer'
-import { Direction, resolveDirection } from '@/services/transfer'
-import * as Snowbridge from '@snowbridge/api'
-import { getContext, getEnvironment } from '@/context/snowbridge'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -131,15 +131,12 @@ const Transfer: FC = () => {
   /* Fetch fees */
   useEffect(() => {
     const fetchFees = async () => {
-      console.log('fetchFees')
       if (!isValid) {
-        console.log('not valid')
         setFees(null)
         return
       }
 
       if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
-      console.log('fetch fees valid')
 
       const snowbridgeEnv = getEnvironment(environment)
       const context = await getContext(snowbridgeEnv)
@@ -148,7 +145,7 @@ const Transfer: FC = () => {
 
       switch (direction) {
         case Direction.ToEthereum: {
-          let amount = await Snowbridge.toEthereum.getSendFee(context)
+          let amount = (await Snowbridge.toEthereum.getSendFee(context)).toString()
           setFees({
             amount,
             token,
@@ -158,12 +155,9 @@ const Transfer: FC = () => {
           break
         }
         case Direction.ToPolkadot: {
-          let amount = await Snowbridge.toPolkadot.getSendFee(
-            context,
-            token.address,
-            destinationChain.chainId,
-            BigInt(0),
-          )
+          let amount = await Snowbridge.toPolkadot
+            .getSendFee(context, token.address, destinationChain.chainId, BigInt(0))
+            .toString()
           setFees({
             amount,
             token,
@@ -178,7 +172,7 @@ const Transfer: FC = () => {
 
   useEffect(() => {
     trigger('manualRecipient.address')
-  }, [manualRecipient.address, trigger])
+  }, [manualRecipient.address, destinationChain, tokenAmount, sourceChain, trigger])
 
   return (
     <form
@@ -197,7 +191,6 @@ const Transfer: FC = () => {
               options={REGISTRY[environment].chains}
               floatingLabel="From"
               placeholder="Source"
-              error={errors.sourceChain?.message}
               trailing={<WalletButton network={sourceChain?.network} />}
               walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
               className="z-50"
@@ -216,7 +209,7 @@ const Transfer: FC = () => {
               options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
               floatingLabel="Amount"
               disabled={transferStatus !== 'Idle'}
-              error={errors.tokenAmount?.token?.message || errors.tokenAmount?.amount?.message}
+              error={errors.tokenAmount?.amount?.message}
               trailing={
                 <Button
                   label="Max"
@@ -290,11 +283,13 @@ const Transfer: FC = () => {
       {isValid && <FeesPreview state={!!fees ? { type: 'Ready', fees } : { type: 'Loading' }} />}
 
       {/* Transfer Button */}
+
       <Button
         label="Send"
         size="lg"
         variant="primary"
         type="submit"
+        loading={transferStatus !== 'Idle'}
         disabled={
           !isValid ||
           isValidating ||

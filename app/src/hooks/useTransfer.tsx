@@ -1,20 +1,20 @@
+import { useState } from 'react'
+import * as Snowbridge from '@snowbridge/api'
+import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
+import { JsonRpcSigner, Signer } from 'ethers'
+
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
-import { Fees } from '@/models/transfer'
+import { StoredTransfer, Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
-import * as Snowbridge from '@snowbridge/api'
-import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
-import { JsonRpcSigner, Signer } from 'ethers'
-import { useState } from 'react'
-import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
+import useNotification from './useNotification'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
-
 interface TransferParams {
   environment: Environment
   sender: Sender
@@ -24,15 +24,6 @@ interface TransferParams {
   recipient: string
   amount: bigint
   fees: Fees
-}
-
-interface TransferValidationParams {
-  sender?: Sender | null
-  sourceChain: Chain | null
-  token: Token | null
-  destinationChain: Chain | null
-  recipient?: string | null
-  amount: bigint | null
 }
 
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
@@ -76,8 +67,7 @@ const useTransfer = () => {
         )
 
         if (plan.failure) {
-          console.log('Validation failed: ' + plan.failure)
-
+          console.log('Validation failed: ' + plan)
           addNotification({
             message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
@@ -118,23 +108,24 @@ const useTransfer = () => {
             token,
             sender: await (sender as Signer).getAddress(),
             destChain: destinationChain,
-            amount: amount,
+            amount: amount.toString(),
             recipient: recipient,
             date: new Date(),
-            context,
+            environment,
             sendResult,
             fees,
-          })
+          } satisfies StoredTransfer)
         } catch (e) {
+          console.log('TRANSFER_ERROR', e)
           addNotification({
             message: 'Transfer validation failed!',
             severity: NotificationSeverity.Error,
           })
           setStatus('Idle')
         }
-
         break
       }
+
       case Direction.ToEthereum:
         setStatus('Validating')
         let plan = await Snowbridge.toEthereum.validateSend(
@@ -147,7 +138,7 @@ const useTransfer = () => {
         )
 
         if (plan.failure) {
-          console.log('Validation failed: ' + plan.failure)
+          console.log('Validation failed: ' + plan)
           addNotification({
             message: plan.failure.errors[0].message,
             severity: NotificationSeverity.Error,
@@ -179,14 +170,15 @@ const useTransfer = () => {
             token,
             sender: sender.address,
             destChain: destinationChain,
-            amount: amount,
+            amount: amount.toString(),
             recipient: recipient,
             date: new Date(),
-            fees,
-            context,
+            environment,
             sendResult,
-          })
+            fees,
+          } satisfies StoredTransfer)
         } catch (e) {
+          console.log('TRANSFER_ERROR', e)
           addNotification({
             message: 'This transfer failed!',
             severity: NotificationSeverity.Error,
