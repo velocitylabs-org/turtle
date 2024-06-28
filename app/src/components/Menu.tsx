@@ -1,13 +1,13 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import Button from './Button'
+import { DisplaysTransfers } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 
-interface MenuProps {
-  isNewTransaction: boolean
-  setIsNewTransaction: Dispatch<SetStateAction<boolean>>
-}
+import Button from './Button'
 
-const Menu = ({ isNewTransaction, setIsNewTransaction }: MenuProps) => {
+const Menu = ({
+  isNewTransaction,
+  setIsNewTransaction,
+  isCompletedTransactions,
+}: DisplaysTransfers) => {
   return (
     <div className="relative flex items-center gap-2">
       <Button
@@ -22,6 +22,7 @@ const Menu = ({ isNewTransaction, setIsNewTransaction }: MenuProps) => {
         variant={!isNewTransaction ? 'primary' : 'ghost'}
         className="relative z-10 rounded-2xl text-xl sm:text-large"
         size="lg"
+        disabled={!isCompletedTransactions}
         onClick={() => isNewTransaction && setIsNewTransaction(!isNewTransaction)}
       >
         <span className={cn('text-large', !isNewTransaction ? 'text-black' : 'text-white')}>
