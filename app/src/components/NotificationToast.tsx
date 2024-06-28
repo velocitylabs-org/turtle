@@ -5,7 +5,6 @@ import InfoIcon from '@/../public/severity-info-icon.svg'
 import SuccessIcon from '@/../public/severity-success-icon.svg'
 import WarningIcon from '@/../public/severity-warning-icon.svg'
 import { Notification, NotificationSeverity } from '@/models/notification'
-import { Button } from '@nextui-org/react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect } from 'react'
@@ -43,7 +42,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
       transition={{ duration: 0.35, ease: 'easeOut' }}
       role="alert"
       className={twMerge(
-        'pointer-events-auto flex h-[2rem] flex-row items-center gap-[0.25rem] rounded-[8px] bg-turtle-foreground py-[0.25rem] pl-[0.25rem] pr-[0.5rem]',
+        'pointer-events-auto flex h-[2rem] flex-row items-center gap-[0.25rem] text-nowrap rounded-[8px] bg-turtle-foreground py-[0.25rem] pl-[0.25rem] pr-[0.5rem]',
       )}
     >
       {/* Notification Icon */}

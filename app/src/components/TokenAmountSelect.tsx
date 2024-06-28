@@ -9,6 +9,7 @@ import { twMerge } from 'tailwind-merge'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
+import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
@@ -56,46 +57,48 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             {floatingLabel}
           </label>
         )}
-        <div
-          ref={triggerRef}
-          className={cn(
-            'flex cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-            disabled && 'opacity-30',
-            error && 'border-turtle-error',
-          )}
-          onClick={handleTriggerClick}
-        >
-          <div className="flex h-[3.5rem] flex-grow items-center gap-2">
-            {value?.token ? (
-              <>
-                <Image
-                  src={value.token.logoURI}
-                  alt={value.token.name}
-                  width={24}
-                  height={24}
-                  className="h-[1.5rem] w-[1.5rem] rounded-full"
-                />
-                <span>{value.token.symbol}</span>
-              </>
-            ) : (
-              <>
-                {placeholderIcon}
-                {placeholder}
-              </>
+        <Tooltip content={error}>
+          <div
+            ref={triggerRef}
+            className={cn(
+              'flex cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+              disabled && 'opacity-30',
+              error && 'border-turtle-error',
             )}
-            <ChevronDown strokeWidth={0.2} />
-            <VerticalDivider />
-            <input
-              type="number"
-              className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-              placeholder="Amount"
-              value={value?.amount ?? ''}
-              onChange={handleAmountChange}
-              onClick={e => e.stopPropagation()}
-            />
+            onClick={handleTriggerClick}
+          >
+            <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+              {value?.token ? (
+                <>
+                  <Image
+                    src={value.token.logoURI}
+                    alt={value.token.name}
+                    width={24}
+                    height={24}
+                    className="h-[1.5rem] w-[1.5rem] rounded-full"
+                  />
+                  <span>{value.token.symbol}</span>
+                </>
+              ) : (
+                <>
+                  {placeholderIcon}
+                  {placeholder}
+                </>
+              )}
+              <ChevronDown strokeWidth={0.2} />
+              <VerticalDivider />
+              <input
+                type="number"
+                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
+                placeholder="Amount"
+                value={value?.amount ?? ''}
+                onChange={handleAmountChange}
+                onClick={e => e.stopPropagation()}
+              />
+            </div>
+            {trailing && <div className="ml-2">{trailing}</div>}
           </div>
-          {trailing && <div className="ml-2">{trailing}</div>}
-        </div>
+        </Tooltip>
 
         <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
           {options.map(option => {

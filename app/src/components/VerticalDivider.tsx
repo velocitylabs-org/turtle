@@ -1,7 +1,8 @@
+import { cn } from '@/utils/cn'
 import { FC } from 'react'
 
-const VerticalDivider: FC = () => (
-  <div className="ml-2 h-[1.625rem] border-1 border-turtle-level3" />
+const VerticalDivider: FC<{ className?: string }> = className => (
+  <div className={cn('ml-2 h-[1.625rem] border-1 border-turtle-level3', className)} />
 )
 
 export default VerticalDivider
