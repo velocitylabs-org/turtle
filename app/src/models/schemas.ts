@@ -18,6 +18,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   logoURI: z.string(),
   symbol: z.string(),
   decimals: z.number(),
+  address: z.string(),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
