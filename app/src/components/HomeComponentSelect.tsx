@@ -11,7 +11,7 @@ import OngoingTransfers from './OngoingTransfers'
 export const HomeComponentSelect = () => {
   const { completedTransfers } = useCompletedTransfers()
   const [isNewTransaction, setIsNewTransaction] = useState<boolean>(true)
-  const isCompletedTransactions = completedTransfers && completedTransfers.length ? true : false
+  const isCompletedTransactions = !!completedTransfers && completedTransfers.length > 0
 
   return (
     <>
