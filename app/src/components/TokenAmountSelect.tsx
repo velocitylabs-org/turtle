@@ -106,7 +106,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             return (
               <li
                 key={option.token.id}
-                className="flex cursor-pointer items-center gap-2 p-2"
+                className="flex cursor-pointer items-center gap-1 p-2"
                 onClick={() => handleSelectionChange(option.token)}
               >
                 <Image
