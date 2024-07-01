@@ -12,7 +12,7 @@ import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { convertAmount, feeToHuman } from '@/utils/transfer'
+import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Snowbridge from '@snowbridge/api'
 import Link from 'next/link'
@@ -175,7 +175,7 @@ const Transfer: FC = () => {
     }
 
     fetchFees()
-  }, [isValid, sourceChain, tokenAmount, destinationChain])
+  }, [isValid, sourceChain, tokenAmount, destinationChain, environment])
 
   useEffect(() => {
     trigger('manualRecipient.address')
