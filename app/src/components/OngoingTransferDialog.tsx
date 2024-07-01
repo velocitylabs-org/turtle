@@ -1,19 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
-import { useEnsName } from 'wagmi'
-import * as Snowbridge from '@snowbridge/api'
 import Identicon from '@polkadot/react-identicon'
+import * as Snowbridge from '@snowbridge/api'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { useEnsName } from 'wagmi'
 
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { Network } from '@/models/chain'
-import { StoredTransfer, CompletedTransfer, TxStatus } from '@/models/transfer'
+import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { formatDate, toHuman, feeToHuman } from '@/utils/transfer'
+import { feeToHuman, formatDate, toHuman } from '@/utils/transfer'
 
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -54,7 +54,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
     }
 
     pollUpdate()
-  }, [])
+  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer])
 
   return (
     <Dialog>
