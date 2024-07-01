@@ -41,6 +41,7 @@ const Transfer: FC = () => {
     watch,
     setValue,
     trigger,
+    reset,
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -129,6 +130,7 @@ const Transfer: FC = () => {
       amount,
       recipient: recipient,
       fees,
+      onSuccess: () => reset(), // reset form on success
     })
   }
 
@@ -294,7 +296,6 @@ const Transfer: FC = () => {
       {isValid && <FeesPreview state={!!fees ? { type: 'Ready', fees } : { type: 'Loading' }} />}
 
       {/* Transfer Button */}
-
       <Button
         label="Send"
         size="lg"
