@@ -130,7 +130,10 @@ const Transfer: FC = () => {
       amount,
       recipient: recipient,
       fees,
-      onSuccess: () => reset(), // reset form on success
+      onSuccess: () => {
+        reset() // reset form on success
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }) // scroll to bottom
+      },
     })
   }
 
