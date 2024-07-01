@@ -71,30 +71,34 @@ const Transfer: FC = () => {
   const { transfer, transferStatus } = useTransfer()
 
   // Middleware to check and reset chains if they are the same
-  const handleSourceChainChange = (value: Chain | null) => {
-    if (value && value.uid === destinationChain?.uid) {
-      setValue('destinationChain', sourceChain)
-      // TODO Currently chains are swapped. Replace with the following once more than 2 chains supported: setValue('destinationChain', null)
+  const handleSourceChainChange = (newValue: Chain | null) => {
+    if (newValue && newValue.uid === destinationChain?.uid) {
+      if (REGISTRY[environment].chains.length === 2)
+        setValue('destinationChain', sourceChain) // swap
+      else setValue('destinationChain', null) // reset
+
       addNotification({
         severity: NotificationSeverity.Default,
         message: 'Updated destination chain',
         dismissible: true,
       })
     }
-    setValue('sourceChain', value)
+    setValue('sourceChain', newValue)
   }
 
-  const handleDestinationChainChange = (value: Chain | null) => {
-    if (value && value.uid === sourceChain?.uid) {
-      setValue('sourceChain', destinationChain)
-      // TODO Currently chains are swapped. Replace with the following once more than 2 chains supported: setValue('sourceChain', null)
+  const handleDestinationChainChange = (newValue: Chain | null) => {
+    if (newValue && newValue.uid === sourceChain?.uid) {
+      if (REGISTRY[environment].chains.length === 2)
+        setValue('sourceChain', destinationChain) // swap
+      else setValue('sourceChain', null) // reset
+
       addNotification({
         severity: NotificationSeverity.Default,
         message: 'Updated source chain',
         dismissible: true,
       })
     }
-    setValue('destinationChain', value)
+    setValue('destinationChain', newValue)
   }
 
   // Form submit
