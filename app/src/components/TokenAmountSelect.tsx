@@ -67,7 +67,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             )}
             onClick={handleTriggerClick}
           >
-            <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+            <div className="flex h-[3.5rem] flex-grow items-center gap-1">
               {value?.token ? (
                 <>
                   <Image
@@ -75,9 +75,9 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                     alt={value.token.name}
                     width={24}
                     height={24}
-                    className="h-[1.5rem] w-[1.5rem] rounded-full"
+                    className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
                   />
-                  <span>{value.token.symbol}</span>
+                  <span className="text-nowrap">{value.token.symbol}</span>
                 </>
               ) : (
                 <>
@@ -85,7 +85,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   {placeholder}
                 </>
               )}
-              <ChevronDown strokeWidth={0.2} />
+              <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
               <input
                 type="number"
@@ -114,7 +114,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   alt={option.token.name}
                   width={24}
                   height={24}
-                  className="h-[1.5rem] w-[1.5rem] rounded-full"
+                  className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
                 />
                 <span className="text-sm">{option.token.symbol}</span>
               </li>
