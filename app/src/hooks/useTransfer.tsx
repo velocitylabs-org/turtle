@@ -1,18 +1,18 @@
-import { useState } from 'react'
 import * as Snowbridge from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { JsonRpcSigner, Signer } from 'ethers'
+import { useState } from 'react'
 
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
-import { StoredTransfer, Fees } from '@/models/transfer'
+import { Fees, StoredTransfer } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
-import useOngoingTransfers from './useOngoingTransfers'
 import useNotification from './useNotification'
+import useOngoingTransfers from './useOngoingTransfers'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 interface TransferParams {
@@ -24,6 +24,8 @@ interface TransferParams {
   recipient: string
   amount: bigint
   fees: Fees
+  /** Callback to run when the transfer is initiated successfully. */
+  onSuccess?: () => void
 }
 
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
@@ -46,6 +48,7 @@ const useTransfer = () => {
     recipient,
     amount,
     fees,
+    onSuccess,
   }: TransferParams) => {
     setStatus('Loading')
 
@@ -97,9 +100,9 @@ const useTransfer = () => {
             return
           }
 
-          console.log('Sent success, will add to ongoing transfers. Amount: ', amount)
+          onSuccess?.()
           addNotification({
-            message: 'Transfer initiated!',
+            message: 'Transfer initiated. See below!',
             severity: NotificationSeverity.Success,
           })
           addTransfer({
