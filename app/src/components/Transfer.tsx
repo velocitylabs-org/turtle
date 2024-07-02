@@ -68,14 +68,19 @@ const Transfer: FC = () => {
   const { addNotification } = useNotification()
   const sourceWallet = useWallet(sourceChain?.network)
   const destinationWallet = useWallet(destinationChain?.network)
+  const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
 
   /* const { balance } = useErc20Balance({
     network: sourceChain?.network,
-    networkContext: context,
-    address: sourceWallet?.sender?.address || '',
+    networkContext: { context: snowbridgeContext, tokenAddress: tokenAmount?.token?.address },
+    address: sourceWallet?.sender?.address,
   }) */
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
+
+  useEffect(() => {
+    console.log('source wallet changed')
+  }, [sourceWallet])
 
   // Middleware to check and reset chains if they are the same
   const handleSourceChainChange = (newValue: Chain | null) => {
@@ -143,36 +148,52 @@ const Transfer: FC = () => {
     })
   }
 
-  /* Fetch fees */
+  // Fetch Snowbridge context
+  useEffect(() => {
+    const fetchContext = async () => {
+      const snowbridgeEnv = getEnvironment(environment)
+      const context = await getContext(snowbridgeEnv)
+      setSnowbridgeContext(context)
+    }
+
+    fetchContext()
+  }, [environment])
+
+  // Fetch fees
   useEffect(() => {
     const fetchFees = async () => {
       if (!isValid) {
         setFees(null)
         return
       }
+      if (
+        !sourceChain ||
+        !destinationChain ||
+        !tokenAmount ||
+        !tokenAmount.token ||
+        !snowbridgeContext
+      )
+        return
 
-      if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
-
-      const snowbridgeEnv = getEnvironment(environment)
-      const context = await getContext(snowbridgeEnv)
       let direction = resolveDirection(sourceChain, destinationChain)
       let token = nativeToken(sourceChain)
 
       switch (direction) {
         case Direction.ToEthereum: {
-          let amount = (await Snowbridge.toEthereum.getSendFee(context)).toString()
+          let amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
           setFees({
             amount,
             token,
             inDollars: 0, //todo(nuno)
           })
-          await Snowbridge.toEthereum.getSendFee(context)
+          await Snowbridge.toEthereum.getSendFee(snowbridgeContext)
           break
         }
+
         case Direction.ToPolkadot: {
-          let amount = await (
+          let amount = (
             await Snowbridge.toPolkadot.getSendFee(
-              context,
+              snowbridgeContext,
               tokenAmount.token.address,
               destinationChain.chainId,
               BigInt(0),
@@ -190,8 +211,9 @@ const Transfer: FC = () => {
     }
 
     fetchFees()
-  }, [isValid, sourceChain, tokenAmount, destinationChain, environment])
+  }, [isValid, sourceChain, destinationChain, tokenAmount, snowbridgeContext])
 
+  // Validate manual recipient address
   useEffect(() => {
     trigger('manualRecipient.address')
   }, [manualRecipient.address, destinationChain, tokenAmount, sourceChain, trigger])

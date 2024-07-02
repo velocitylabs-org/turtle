@@ -2,11 +2,11 @@ import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Context } from '@snowbridge/api'
 import { assetErc20Balance } from '@snowbridge/api/dist/assets'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type EthereumContext = {
-  context: Context
-  tokenAddress: string
+  context?: Context
+  tokenAddress?: string
 }
 
 // TODO: update types once PJS added
@@ -29,10 +29,11 @@ const useErc20Balance = ({ network, networkContext, address }: useBalanceParams)
   const [balance, setBalance] = useState<bigint>()
   const [loading, setLoading] = useState<boolean>(false)
 
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async () => {
     if (!network || !networkContext || !address) return
 
     try {
+      setLoading(true)
       switch (network) {
         case Network.Ethereum: {
           const { context, tokenAddress } = networkContext as EthereumContext
@@ -44,6 +45,8 @@ const useErc20Balance = ({ network, networkContext, address }: useBalanceParams)
             address,
           )
 
+          console.log('balance update', balance)
+
           setBalance(balance)
           break
         }
@@ -54,8 +57,10 @@ const useErc20Balance = ({ network, networkContext, address }: useBalanceParams)
       }
     } catch (error) {
       console.error('Failed to fetch balance', error)
+    } finally {
+      setLoading(false)
     }
-  }
+  }, [network, networkContext, address])
 
   useEffect(() => {
     fetchBalance()
