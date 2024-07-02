@@ -3,7 +3,6 @@ import { Token } from '@/models/token'
 import { Context } from '@snowbridge/api'
 import { assetErc20Balance } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
-import { useBalance } from 'wagmi'
 
 interface EthereumContext {
   context?: Context
@@ -45,7 +44,7 @@ const useErc20Balance = ({ network, networkContext, address }: UseBalanceParams)
           const { context, tokenAddress } = networkContext as EthereumContext
           if (!context || !tokenAddress) return
 
-          useBalance
+          console.log('Fetching balance for', tokenAddress, address)
 
           const { balance } = await assetErc20Balance(context, tokenAddress, address)
           fetchedBalance = balance
@@ -56,6 +55,7 @@ const useErc20Balance = ({ network, networkContext, address }: UseBalanceParams)
           break
         }
       }
+      console.log('Fetched balance', fetchedBalance)
       setBalance(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)

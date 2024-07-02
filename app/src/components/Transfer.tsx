@@ -8,7 +8,7 @@ import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { schema } from '@/models/schemas'
+import { createSchema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -36,6 +36,7 @@ interface FormInputs {
 }
 
 const Transfer: FC = () => {
+  const [maxAmount, setMaxAmount] = useState<number>(Infinity)
   const {
     control,
     handleSubmit,
@@ -45,7 +46,7 @@ const Transfer: FC = () => {
     reset,
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(createSchema(maxAmount)),
     mode: 'onChange',
     delayError: 3000,
     defaultValues: {
@@ -81,7 +82,7 @@ const Transfer: FC = () => {
     [snowbridgeContext, tokenAmount?.token?.address],
   )
 
-  const { balance, loading } = useErc20Balance({
+  const { balance, loading: loadingBalance } = useErc20Balance({
     network: sourceChain?.network,
     networkContext,
     address: sourceWallet?.sender?.address,
@@ -119,16 +120,23 @@ const Transfer: FC = () => {
   }
 
   const handleMaxButtonClick = () => {
-    if (!sourceWallet?.isConnected || !tokenAmount?.token || !balance) return
-    console.log('max button clicked')
-    const divisor = BigInt(10) ** BigInt(tokenAmount.token.decimals)
-    const maxAmount = balance / divisor
+    if (
+      !sourceWallet?.isConnected ||
+      !tokenAmount?.token ||
+      balance === undefined ||
+      balance === null ||
+      maxAmount === Infinity
+    )
+      return
 
-    console.log('maxAmount', maxAmount)
-    setValue('tokenAmount', {
-      token: tokenAmount.token,
-      amount: Number(maxAmount),
-    })
+    setValue(
+      'tokenAmount',
+      {
+        token: tokenAmount.token,
+        amount: maxAmount,
+      },
+      { shouldValidate: true },
+    )
   }
 
   // Form submit
@@ -236,6 +244,28 @@ const Transfer: FC = () => {
     trigger('manualRecipient.address')
   }, [manualRecipient.address, destinationChain, tokenAmount, sourceChain, trigger])
 
+  // Update max amount
+  useEffect(() => {
+    console.log('balance', balance, 'loadingBalance', loadingBalance)
+
+    if (loadingBalance || balance === undefined || balance === null) {
+      setMaxAmount(Infinity)
+    } else if (tokenAmount?.token) {
+      const maxAmountFormatted =
+        balance === BigInt(0)
+          ? 0
+          : Number(balance / BigInt(10) ** BigInt(tokenAmount.token.decimals))
+
+      console.log('maxAmountFormatted', maxAmountFormatted)
+      setMaxAmount(maxAmountFormatted)
+    }
+  }, [balance, loadingBalance, tokenAmount?.token?.decimals])
+
+  // Validate input amount
+  useEffect(() => {
+    trigger('tokenAmount.amount')
+  }, [balance, maxAmount, trigger])
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -282,7 +312,8 @@ const Transfer: FC = () => {
                   disabled={
                     !sourceWallet?.isConnected ||
                     tokenAmount?.token === null ||
-                    transferStatus !== 'Idle'
+                    transferStatus !== 'Idle' ||
+                    maxAmount === Infinity
                   }
                 />
               }
