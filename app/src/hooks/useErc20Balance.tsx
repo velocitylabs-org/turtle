@@ -34,7 +34,7 @@ const useErc20Balance = ({ network, tokenAddress, address }: UseBalanceParams) =
   useEffect(() => {
     if (network !== Network.Ethereum && !tokenAddress && !address) return
     wagmiData.refetch().then(data => setData(data.data))
-  }, [network, tokenAddress, address])
+  }, [network, tokenAddress, address, wagmiData])
 
   const fetchBalance = useCallback(async () => {
     if (!network || !address) return
@@ -59,7 +59,7 @@ const useErc20Balance = ({ network, tokenAddress, address }: UseBalanceParams) =
     } finally {
       setLoading(false)
     }
-  }, [network, address])
+  }, [network, address, wagmiData])
 
   useEffect(() => {
     fetchBalance()
