@@ -13,7 +13,7 @@ import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { convertAmount } from '@/utils/transfer'
+import { convertAmount, toHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Snowbridge from '@snowbridge/api'
 import Link from 'next/link'
@@ -246,16 +246,8 @@ const Transfer: FC = () => {
 
   // Update max amount
   useEffect(() => {
-    if (loadingBalance || balance === undefined || balance === null) {
-      setMaxAmount(Infinity)
-    } else if (tokenAmount?.token) {
-      const maxAmountFormatted =
-        balance === BigInt(0)
-          ? 0
-          : Number(balance / BigInt(10) ** BigInt(tokenAmount.token.decimals))
-
-      setMaxAmount(maxAmountFormatted)
-    }
+    if (loadingBalance || balance === undefined || balance === null) setMaxAmount(Infinity)
+    else if (tokenAmount?.token) setMaxAmount(toHuman(balance, tokenAmount.token))
   }, [balance, loadingBalance, tokenAmount?.token, tokenAmount?.token?.decimals])
 
   // Validate input amount
