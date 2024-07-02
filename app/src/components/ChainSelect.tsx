@@ -77,7 +77,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
             )}
             onClick={handleTriggerClick}
           >
-            <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+            <div className="flex h-[3.5rem] flex-grow items-center gap-1">
               {value ? (
                 <>
                   <Image
@@ -85,9 +85,9 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     alt={value.name}
                     width={24}
                     height={24}
-                    className="h-[1.5rem] w-[1.5rem] rounded-full"
+                    className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
                   />
-                  {shouldShowChainName && <span>{value.name}</span>}
+                  {shouldShowChainName && <span className="text-nowrap">{value.name}</span>}
                 </>
               ) : (
                 <>
@@ -96,7 +96,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                 </>
               )}
 
-              <ChevronDown strokeWidth={0.2} />
+              <ChevronDown strokeWidth={0.2} className="ml-1" />
               {!manualRecipient?.enabled && walletAddress}
               {manualRecipient && manualRecipient.enabled && (
                 <>
@@ -120,7 +120,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
           {options.map(option => (
             <li
               key={option.uid}
-              className="flex cursor-pointer items-center gap-2 p-2"
+              className="flex cursor-pointer items-center gap-1 p-2"
               onClick={() => handleSelectionChange(option)}
             >
               <Image
@@ -128,7 +128,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                 alt={option.name}
                 width={24}
                 height={24}
-                className="h-[1.5rem] w-[1.5rem] rounded-full"
+                className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
               />
               <span className="text-sm">{option.name}</span>
             </li>
