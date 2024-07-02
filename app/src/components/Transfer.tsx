@@ -246,8 +246,6 @@ const Transfer: FC = () => {
 
   // Update max amount
   useEffect(() => {
-    console.log('balance', balance, 'loadingBalance', loadingBalance)
-
     if (loadingBalance || balance === undefined || balance === null) {
       setMaxAmount(Infinity)
     } else if (tokenAmount?.token) {
@@ -256,10 +254,9 @@ const Transfer: FC = () => {
           ? 0
           : Number(balance / BigInt(10) ** BigInt(tokenAmount.token.decimals))
 
-      console.log('maxAmountFormatted', maxAmountFormatted)
       setMaxAmount(maxAmountFormatted)
     }
-  }, [balance, loadingBalance, tokenAmount?.token?.decimals])
+  }, [balance, loadingBalance, tokenAmount?.token, tokenAmount?.token?.decimals])
 
   // Validate input amount
   useEffect(() => {
