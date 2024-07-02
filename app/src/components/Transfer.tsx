@@ -82,9 +82,9 @@ const Transfer: FC = () => {
     [snowbridgeContext, tokenAmount?.token?.address],
   )
 
-  const { balance, loading: loadingBalance } = useErc20Balance({
+  const { data, loading: loadingBalance } = useErc20Balance({
     network: sourceChain?.network,
-    networkContext,
+    tokenAddress: tokenAmount?.token?.address,
     address: sourceWallet?.sender?.address,
   })
 
@@ -123,8 +123,8 @@ const Transfer: FC = () => {
     if (
       !sourceWallet?.isConnected ||
       !tokenAmount?.token ||
-      balance === undefined ||
-      balance === null ||
+      data === undefined ||
+      data === null ||
       maxAmount === Infinity
     )
       return
@@ -246,14 +246,14 @@ const Transfer: FC = () => {
 
   // Update max amount
   useEffect(() => {
-    if (loadingBalance || balance === undefined || balance === null) setMaxAmount(Infinity)
-    else if (tokenAmount?.token) setMaxAmount(toHuman(balance, tokenAmount.token))
-  }, [balance, loadingBalance, tokenAmount?.token, tokenAmount?.token?.decimals])
+    if (loadingBalance || data === undefined || data === null) setMaxAmount(Infinity)
+    else if (tokenAmount?.token) setMaxAmount(toHuman(data.value, tokenAmount.token))
+  }, [data, loadingBalance, tokenAmount?.token, tokenAmount?.token?.decimals])
 
   // Validate input amount
   useEffect(() => {
     trigger('tokenAmount.amount')
-  }, [balance, maxAmount, trigger])
+  }, [data, maxAmount, trigger])
 
   return (
     <form

@@ -1,53 +1,50 @@
 import { Network } from '@/models/chain'
-import { Token } from '@/models/token'
-import { Context } from '@snowbridge/api'
-import { assetErc20Balance } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
-
-interface EthereumContext {
-  context?: Context
-  tokenAddress?: string
-}
-
-// TODO: update types once PJS added
-interface PolkadotContext {
-  api: any
-  location: any
-  instance: any
-}
-
-type NetworkContext = EthereumContext | PolkadotContext
+import { useBalance } from 'wagmi'
 
 interface UseBalanceParams {
   network?: Network
-  networkContext?: NetworkContext
-  token?: Token // Could be extended to support multiple tokens
+  tokenAddress?: string // Could be extended to support multiple tokens
   address?: string
+}
+
+interface Erc20Balance {
+  value: bigint
+  decimals: number
+  symbol: string
+  formatted: string
 }
 
 /**
  * hook to fetch ERC20 balance for a given address. Supports Ethereum and Polkadot networks.
  * @remarks Doesn't provide metadata like decimals as we use a static registy.
  */
-const useErc20Balance = ({ network, networkContext, address }: UseBalanceParams) => {
-  const [balance, setBalance] = useState<bigint | undefined>()
+const useErc20Balance = ({ network, tokenAddress, address }: UseBalanceParams) => {
+  const [data, setData] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
+  const wagmiData = useBalance({
+    token: tokenAddress as `0x${string}`,
+    address: address as `0x${string}`,
+    query: {
+      enabled: network === Network.Ethereum,
+    },
+  })
+
+  useEffect(() => {
+    if (network !== Network.Ethereum && !tokenAddress && !address) return
+    wagmiData.refetch().then(data => setData(data.data))
+  }, [network, tokenAddress, address])
+
   const fetchBalance = useCallback(async () => {
-    if (!network || !networkContext || !address) return
+    if (!network || !address) return
 
     setLoading(true)
     try {
-      let fetchedBalance: bigint | undefined
+      let fetchedBalance: Erc20Balance | undefined
       switch (network) {
         case Network.Ethereum: {
-          const { context, tokenAddress } = networkContext as EthereumContext
-          if (!context || !tokenAddress) return
-
-          console.log('Fetching balance for', tokenAddress, address)
-
-          const { balance } = await assetErc20Balance(context, tokenAddress, address)
-          fetchedBalance = balance
+          fetchedBalance = (await wagmiData.refetch()).data
           break
         }
         case Network.Polkadot: {
@@ -56,19 +53,19 @@ const useErc20Balance = ({ network, networkContext, address }: UseBalanceParams)
         }
       }
       console.log('Fetched balance', fetchedBalance)
-      setBalance(fetchedBalance)
+      setData(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
     } finally {
       setLoading(false)
     }
-  }, [network, networkContext, address])
+  }, [network, address])
 
   useEffect(() => {
     fetchBalance()
   }, [fetchBalance])
 
-  return { balance, loading }
+  return { data, loading: loading || wagmiData.isLoading }
 }
 
 export default useErc20Balance
