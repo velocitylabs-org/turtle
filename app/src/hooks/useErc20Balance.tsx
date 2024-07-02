@@ -3,14 +3,15 @@ import { Token } from '@/models/token'
 import { Context } from '@snowbridge/api'
 import { assetErc20Balance } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
+import { useBalance } from 'wagmi'
 
-type EthereumContext = {
+interface EthereumContext {
   context?: Context
   tokenAddress?: string
 }
 
 // TODO: update types once PJS added
-type PolkadotContext = {
+interface PolkadotContext {
   api: any
   location: any
   instance: any
@@ -18,36 +19,36 @@ type PolkadotContext = {
 
 type NetworkContext = EthereumContext | PolkadotContext
 
-interface useBalanceParams {
+interface UseBalanceParams {
   network?: Network
   networkContext?: NetworkContext
   token?: Token // Could be extended to support multiple tokens
   address?: string
 }
 
-const useErc20Balance = ({ network, networkContext, address }: useBalanceParams) => {
-  const [balance, setBalance] = useState<bigint>()
+/**
+ * hook to fetch ERC20 balance for a given address. Supports Ethereum and Polkadot networks.
+ * @remarks Doesn't provide metadata like decimals as we use a static registy.
+ */
+const useErc20Balance = ({ network, networkContext, address }: UseBalanceParams) => {
+  const [balance, setBalance] = useState<bigint | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
 
   const fetchBalance = useCallback(async () => {
     if (!network || !networkContext || !address) return
 
+    setLoading(true)
     try {
-      setLoading(true)
+      let fetchedBalance: bigint | undefined
       switch (network) {
         case Network.Ethereum: {
           const { context, tokenAddress } = networkContext as EthereumContext
           if (!context || !tokenAddress) return
 
-          const { balance, gatewayAllowance } = await assetErc20Balance(
-            context,
-            tokenAddress,
-            address,
-          )
+          useBalance
 
-          console.log('balance update', balance)
-
-          setBalance(balance)
+          const { balance } = await assetErc20Balance(context, tokenAddress, address)
+          fetchedBalance = balance
           break
         }
         case Network.Polkadot: {
@@ -55,6 +56,7 @@ const useErc20Balance = ({ network, networkContext, address }: useBalanceParams)
           break
         }
       }
+      setBalance(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
     } finally {

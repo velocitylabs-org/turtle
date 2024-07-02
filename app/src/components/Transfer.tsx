@@ -2,6 +2,7 @@
 import { nativeToken, REGISTRY } from '@/config/registry'
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
+import useErc20Balance from '@/hooks/useErc20Balance'
 import useNotification from '@/hooks/useNotification'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
@@ -16,7 +17,7 @@ import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Snowbridge from '@snowbridge/api'
 import Link from 'next/link'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
@@ -69,18 +70,22 @@ const Transfer: FC = () => {
   const sourceWallet = useWallet(sourceChain?.network)
   const destinationWallet = useWallet(destinationChain?.network)
   const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
-
-  /* const { balance } = useErc20Balance({
-    network: sourceChain?.network,
-    networkContext: { context: snowbridgeContext, tokenAddress: tokenAmount?.token?.address },
-    address: sourceWallet?.sender?.address,
-  }) */
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
 
-  useEffect(() => {
-    console.log('source wallet changed')
-  }, [sourceWallet])
+  const networkContext = useMemo(
+    () => ({
+      context: snowbridgeContext,
+      tokenAddress: tokenAmount?.token?.address,
+    }),
+    [snowbridgeContext, tokenAmount?.token?.address],
+  )
+
+  const { balance, loading } = useErc20Balance({
+    network: sourceChain?.network,
+    networkContext,
+    address: sourceWallet?.sender?.address,
+  })
 
   // Middleware to check and reset chains if they are the same
   const handleSourceChainChange = (newValue: Chain | null) => {
@@ -111,6 +116,19 @@ const Transfer: FC = () => {
       })
     }
     setValue('destinationChain', newValue)
+  }
+
+  const handleMaxButtonClick = () => {
+    if (!sourceWallet?.isConnected || !tokenAmount?.token || !balance) return
+    console.log('max button clicked')
+    const divisor = BigInt(10) ** BigInt(tokenAmount.token.decimals)
+    const maxAmount = balance / divisor
+
+    console.log('maxAmount', maxAmount)
+    setValue('tokenAmount', {
+      token: tokenAmount.token,
+      amount: Number(maxAmount),
+    })
   }
 
   // Form submit
@@ -260,6 +278,7 @@ const Transfer: FC = () => {
                   size="sm"
                   variant="outline"
                   className="min-w-[40px]"
+                  onClick={handleMaxButtonClick}
                   disabled={
                     !sourceWallet?.isConnected ||
                     tokenAmount?.token === null ||
