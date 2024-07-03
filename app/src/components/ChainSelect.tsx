@@ -1,15 +1,17 @@
 'use client'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
-import { Chain } from '@/models/chain'
+import { Chain, Network } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
 import Image from 'next/image'
-import { forwardRef, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
+import { truncateAddress } from '@/utils/address'
+import { lookupName } from '@/utils/transfer'
 
 interface ChainSelectProps extends SelectProps<Chain> {
   walletAddress?: string
@@ -60,6 +62,22 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
       (!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address)) ||
       (manualRecipient?.enabled && !manualRecipient.address)
 
+    const [display, setDisplay] = useState('')
+
+    useEffect(() => {
+      const fetchNames = async () => {
+        let placeholder = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
+        setDisplay(
+          !!walletAddress
+            ? (await lookupName(Network.Ethereum, walletAddress)) ?? placeholder
+            : placeholder,
+        )
+        console.log('addressDisplay is now', display)
+      }
+
+      fetchNames()
+    })
+
     return (
       <div ref={ref} className={twMerge('relative w-full', className)}>
         {floatingLabel && (
@@ -97,7 +115,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
               )}
 
               <ChevronDown strokeWidth={0.2} className="ml-1" />
-              {!manualRecipient?.enabled && walletAddress}
+              {!manualRecipient?.enabled && display}
               {manualRecipient && manualRecipient.enabled && (
                 <>
                   <VerticalDivider className={!manualRecipient.address ? 'visible' : 'invisible'} />

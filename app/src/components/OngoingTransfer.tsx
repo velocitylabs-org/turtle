@@ -1,15 +1,26 @@
 'use client'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
 import { StoredTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
-import { formatDate, toHuman } from '@/utils/transfer'
+import { formatDate, lookupName, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
 
 const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> = ({
   transfer,
   update,
 }) => {
+  let recipientDisplay: string = truncateAddress(transfer.recipient, 4, 4)
+
+  useEffect(() => {
+    const fetchNames = async () => {
+      recipientDisplay =
+        (await lookupName(transfer.destChain.network, transfer.recipient)) ?? recipientDisplay
+    }
+
+    fetchNames()
+  }, [transfer])
+
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -65,7 +76,7 @@ const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> =
           height={16}
           className="mr-1 h-[16px] rounded-full border border-turtle-secondary-dark"
         />
-        <p className="text-turtle-foreground)]">{truncateAddress(transfer.recipient, 4, 4)}</p>
+        <p className="text-turtle-foreground)]">{todo}</p>
       </div>
     </div>
   )
