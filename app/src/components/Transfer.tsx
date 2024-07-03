@@ -70,27 +70,25 @@ const Transfer: FC = () => {
   const { addNotification } = useNotification()
   const sourceWallet = useWallet(sourceChain?.network)
   const destinationWallet = useWallet(destinationChain?.network)
-  /* const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>() */
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
 
   const balanceParams = useMemo(
     () => ({
+      network: sourceChain?.network,
       tokenAddress: tokenAmount?.token?.address,
+      address: sourceWallet?.sender?.address,
     }),
-    [tokenAmount?.token?.address],
-  )
-
-  const address = useMemo(
-    () => ({ address: sourceWallet?.sender?.address }),
-    [sourceWallet?.sender?.address],
+    [sourceChain?.network, tokenAmount?.token?.address, sourceWallet?.sender?.address],
   )
 
   const { data, loading: loadingBalance } = useErc20Balance({
-    network: sourceChain?.network,
+    network: balanceParams.network,
     tokenAddress: balanceParams.tokenAddress,
-    address: address.address,
+    address: balanceParams.address,
   })
+
+  console.log('render')
 
   // Middleware to check and reset chains if they are the same
   const handleSourceChainChange = (newValue: Chain | null) => {
@@ -177,17 +175,6 @@ const Transfer: FC = () => {
       },
     })
   }
-
-  // Fetch Snowbridge context
-  /*   useEffect(() => {
-    const fetchContext = async () => {
-      const snowbridgeEnv = getEnvironment(environment)
-      const context = await getContext(snowbridgeEnv)
-      setSnowbridgeContext(context)
-    }
-
-    fetchContext()
-  }, [environment]) */
 
   // Fetch fees
   useEffect(() => {
