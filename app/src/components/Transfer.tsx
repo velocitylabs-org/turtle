@@ -36,7 +36,7 @@ interface FormInputs {
 }
 
 const Transfer: FC = () => {
-  const [maxAmount, setMaxAmount] = useState<number>(Infinity)
+  const [maxAmount, setMaxAmount] = useState<number>(Infinity) // needed to update the schema.
   const {
     control,
     handleSubmit,
@@ -61,6 +61,7 @@ const Transfer: FC = () => {
   })
 
   const [fees, setFees] = useState<Fees | null>(null)
+  const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
   const sourceChain = watch('sourceChain')
   const destinationChain = watch('destinationChain')
   const tokenAmount = watch('tokenAmount')
@@ -76,19 +77,24 @@ const Transfer: FC = () => {
   const balanceParams = useMemo(
     () => ({
       network: sourceChain?.network,
-      tokenAddress: tokenAmount?.token?.address,
+      token: tokenAmount?.token,
       address: sourceWallet?.sender?.address,
+      context: snowbridgeContext,
     }),
-    [sourceChain?.network, tokenAmount?.token?.address, sourceWallet?.sender?.address],
+    [
+      sourceChain?.network,
+      tokenAmount?.token?.address,
+      sourceWallet?.sender?.address,
+      snowbridgeContext,
+    ],
   )
 
-  const { data, loading: loadingBalance } = useErc20Balance({
+  const { data: balanceData, loading: loadingBalance } = useErc20Balance({
     network: balanceParams.network,
-    tokenAddress: balanceParams.tokenAddress,
+    token: balanceParams.token ?? undefined,
     address: balanceParams.address,
+    context: balanceParams.context,
   })
-
-  console.log('render')
 
   // Middleware to check and reset chains if they are the same
   const handleSourceChainChange = (newValue: Chain | null) => {
@@ -125,8 +131,8 @@ const Transfer: FC = () => {
     if (
       !sourceWallet?.isConnected ||
       !tokenAmount?.token ||
-      data === undefined ||
-      data === null ||
+      balanceData === undefined ||
+      balanceData === null ||
       maxAmount === Infinity
     )
       return
@@ -183,10 +189,14 @@ const Transfer: FC = () => {
         setFees(null)
         return
       }
-      if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
-
-      const snowbridgeEnv = getEnvironment(environment)
-      const snowbridgeContext = await getContext(snowbridgeEnv)
+      if (
+        !sourceChain ||
+        !destinationChain ||
+        !tokenAmount ||
+        !tokenAmount.token ||
+        !snowbridgeContext
+      )
+        return
 
       let direction = resolveDirection(sourceChain, destinationChain)
       let token = nativeToken(sourceChain)
@@ -224,7 +234,7 @@ const Transfer: FC = () => {
     }
 
     fetchFees()
-  }, [isValid, sourceChain, destinationChain, tokenAmount, environment])
+  }, [isValid, sourceChain, destinationChain, tokenAmount, environment, snowbridgeContext])
 
   // Validate manual recipient address
   useEffect(() => {
@@ -233,14 +243,25 @@ const Transfer: FC = () => {
 
   // Update max amount
   useEffect(() => {
-    if (loadingBalance || data === undefined || data === null) setMaxAmount(Infinity)
-    else if (tokenAmount?.token) setMaxAmount(toHuman(data.value, tokenAmount.token))
-  }, [data, loadingBalance, tokenAmount?.token, tokenAmount?.token?.decimals])
+    if (loadingBalance || balanceData === undefined || balanceData === null) setMaxAmount(Infinity)
+    else if (tokenAmount?.token) setMaxAmount(toHuman(balanceData.value, tokenAmount.token))
+  }, [balanceData, loadingBalance, tokenAmount?.token, tokenAmount?.token?.decimals])
 
   // Validate input amount
   useEffect(() => {
     trigger('tokenAmount.amount')
-  }, [data, maxAmount, trigger])
+  }, [balanceData, maxAmount, trigger])
+
+  // Fetch Snowbridge context
+  useEffect(() => {
+    const fetchContext = async () => {
+      const snowbridgeEnv = getEnvironment(environment)
+      const context = await getContext(snowbridgeEnv)
+      setSnowbridgeContext(context)
+    }
+
+    fetchContext()
+  }, [environment])
 
   return (
     <form
