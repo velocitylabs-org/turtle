@@ -25,10 +25,15 @@ const statusIcon = (status: TransferResult) => {
   }
 }
 
-export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
-  const { data: ensName } = useEnsName({
-    address: tx.sender as `0x${string}`,
-  })
+export const TransactionCard = ({
+  tx,
+  senderDisplay,
+  recipientDisplay,
+}: {
+  tx: CompletedTransfer
+  senderDisplay: string
+  recipientDisplay: string
+}) => {
   return (
     <div
       className={cn(
@@ -119,13 +124,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                 )}
               />
             )}
-            <p className="text-sm">
-              {tx.sourceChain.network === Network.Ethereum
-                ? ensName
-                  ? ensName
-                  : truncateAddress(tx.sender)
-                : truncateAddress(tx.sender)}
-            </p>
+            <p className="text-sm">{senderDisplay}</p>
           </div>
           <ArrowRight
             className="h-3 w-3"
@@ -152,13 +151,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                 )}
               />
             )}
-            <p className="text-sm">
-              {tx.destChain.network === Network.Ethereum
-                ? ensName
-                  ? ensName
-                  : truncateAddress(tx.recipient)
-                : truncateAddress(tx.recipient)}
-            </p>
+            <p className="text-sm">{recipientDisplay}</p>
           </div>
         </div>
         {tx.result === TxStatus.Failed && (

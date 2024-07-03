@@ -10,7 +10,7 @@ import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { truncateAddress } from '@/utils/address'
 import { formatDate, formatHours } from '@/utils/datetime'
-import { toHuman } from '@/utils/transfer'
+import { lookupName, toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
 import { ArrowRight } from '../svg/ArrowRight'
@@ -28,14 +28,27 @@ import {
 import { Separator } from '../ui/separator'
 
 import { colors } from '../../../tailwind.config'
+import { useEffect, useState } from 'react'
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
-  const { data: ensName } = useEnsName({
-    address: tx.sender as `0x${string}`,
+  const [senderDisplay, setSenderDisplay] = useState('')
+  const [recipientDisplay, setRecipientDisplay] = useState('')
+  useEffect(() => {
+    const fetchName = async (address: string, network: Network, setter: (x: string) => void) => {
+      setter((await lookupName(network, address)) ?? truncateAddress(address, 4, 4))
+    }
+
+    fetchName(tx.sender, tx.sourceChain.network, setSenderDisplay)
+    fetchName(tx.recipient, tx.destChain.network, setRecipientDisplay)
   })
+
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <TransactionCard tx={tx} />
+        <TransactionCard
+          tx={tx}
+          senderDisplay={senderDisplay}
+          recipientDisplay={recipientDisplay}
+        />
       </DialogTrigger>
       <DialogContent
         className="max-w-[24rem] rounded-4xl sm:max-w-[30.5rem]"
@@ -181,13 +194,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">
-                  {tx.sourceChain.network === Network.Ethereum
-                    ? ensName
-                      ? ensName
-                      : truncateAddress(tx.sender)
-                    : truncateAddress(tx.sender)}
-                </p>
+                <p className="text-sm">{senderDisplay}</p>
               </div>
             </div>
 
@@ -218,13 +225,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">
-                  {tx.destChain.network === Network.Ethereum
-                    ? ensName
-                      ? ensName
-                      : truncateAddress(tx.recipient)
-                    : truncateAddress(tx.recipient)}
-                </p>
+                <p className="text-sm">{recipientDisplay}</p>
               </div>
             </div>
           </div>
