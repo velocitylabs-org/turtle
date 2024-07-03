@@ -13,7 +13,7 @@ import { Network } from '@/models/chain'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { feeToHuman, formatDate, toHuman } from '@/utils/transfer'
+import { feeToHuman, formatDate, lookupName, toHuman } from '@/utils/transfer'
 
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -33,9 +33,6 @@ import { colors } from '../../tailwind.config'
 export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
-  const { data: ensName } = useEnsName({
-    address: transfer.sender as `0x${string}`,
-  })
   const [update, setUpdate] = useState<string | null>('Loading...')
 
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
@@ -56,10 +53,26 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
     pollUpdate()
   }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer])
 
+  const [senderDisplay, setSenderDisplay] = useState('')
+  const [recipientDisplay, setRecipientDisplay] = useState('')
+  useEffect(() => {
+    const fetchName = async (address: string, network: Network, setter: (x: string) => void) => {
+      setter((await lookupName(network, address)) ?? truncateAddress(address, 4, 4))
+    }
+
+    fetchName(transfer.sender, transfer.sourceChain.network, setSenderDisplay)
+    fetchName(transfer.recipient, transfer.destChain.network, setRecipientDisplay)
+  })
+
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer transfer={transfer} update={update} />
+        <OngoingTransfer
+          transfer={transfer}
+          update={update}
+          senderDisplay={senderDisplay}
+          recipientDisplay={recipientDisplay}
+        />
       </DialogTrigger>
       <DialogContent
         className="max-w-[24rem] rounded-4xl sm:max-w-[30.5rem]"
@@ -155,11 +168,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
                   />
                 )}
 
-                <p className="text-sm">
-                  {transfer.sourceChain.network === Network.Ethereum
-                    ? ensName ?? truncateAddress(transfer.sender)
-                    : truncateAddress(transfer.sender)}
-                </p>
+                <p className="text-sm">{senderDisplay}</p>
               </div>
             </div>
 
@@ -182,11 +191,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
                     }
                   />
                 )}
-                <p className="text-sm">
-                  {transfer.destChain.network === Network.Ethereum
-                    ? ensName ?? truncateAddress(transfer.recipient)
-                    : truncateAddress(transfer.recipient)}
-                </p>
+                <p className="text-sm">{recipientDisplay}</p>
               </div>
             </div>
           </div>

@@ -2,27 +2,15 @@
 import { FC, useEffect, useState } from 'react'
 
 import { StoredTransfer } from '@/models/transfer'
-import { truncateAddress } from '@/utils/address'
-import { formatDate, lookupName, toHuman } from '@/utils/transfer'
+import { formatDate, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
-import { Network } from '@/models/chain'
 
-const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> = ({
-  transfer,
-  update,
-}) => {
-  const [senderDisplay, setSenderDisplay] = useState('')
-  const [recipientDisplay, setRecipientDisplay] = useState('')
-
-  useEffect(() => {
-    const fetchName = async (address: string, network: Network, setter: (x: string) => void) => {
-      setter((await lookupName(network, address)) ?? truncateAddress(address, 4, 4))
-    }
-
-    fetchName(transfer.sender, transfer.sourceChain.network, setSenderDisplay)
-    fetchName(transfer.recipient, transfer.destChain.network, setRecipientDisplay)
-  })
-
+const OngoingTransfer: FC<{
+  transfer: StoredTransfer
+  update: string | null
+  senderDisplay: string
+  recipientDisplay: string
+}> = ({ transfer, update, senderDisplay, recipientDisplay }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
