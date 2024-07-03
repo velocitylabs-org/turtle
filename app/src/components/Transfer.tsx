@@ -70,22 +70,26 @@ const Transfer: FC = () => {
   const { addNotification } = useNotification()
   const sourceWallet = useWallet(sourceChain?.network)
   const destinationWallet = useWallet(destinationChain?.network)
-  const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
+  /* const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>() */
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
 
-  const networkContext = useMemo(
+  const balanceParams = useMemo(
     () => ({
-      context: snowbridgeContext,
       tokenAddress: tokenAmount?.token?.address,
     }),
-    [snowbridgeContext, tokenAmount?.token?.address],
+    [tokenAmount?.token?.address],
+  )
+
+  const address = useMemo(
+    () => ({ address: sourceWallet?.sender?.address }),
+    [sourceWallet?.sender?.address],
   )
 
   const { data, loading: loadingBalance } = useErc20Balance({
     network: sourceChain?.network,
-    tokenAddress: tokenAmount?.token?.address,
-    address: sourceWallet?.sender?.address,
+    tokenAddress: balanceParams.tokenAddress,
+    address: address.address,
   })
 
   // Middleware to check and reset chains if they are the same
@@ -175,7 +179,7 @@ const Transfer: FC = () => {
   }
 
   // Fetch Snowbridge context
-  useEffect(() => {
+  /*   useEffect(() => {
     const fetchContext = async () => {
       const snowbridgeEnv = getEnvironment(environment)
       const context = await getContext(snowbridgeEnv)
@@ -183,7 +187,7 @@ const Transfer: FC = () => {
     }
 
     fetchContext()
-  }, [environment])
+  }, [environment]) */
 
   // Fetch fees
   useEffect(() => {
@@ -192,14 +196,10 @@ const Transfer: FC = () => {
         setFees(null)
         return
       }
-      if (
-        !sourceChain ||
-        !destinationChain ||
-        !tokenAmount ||
-        !tokenAmount.token ||
-        !snowbridgeContext
-      )
-        return
+      if (!sourceChain || !destinationChain || !tokenAmount || !tokenAmount.token) return
+
+      const snowbridgeEnv = getEnvironment(environment)
+      const snowbridgeContext = await getContext(snowbridgeEnv)
 
       let direction = resolveDirection(sourceChain, destinationChain)
       let token = nativeToken(sourceChain)
@@ -237,7 +237,7 @@ const Transfer: FC = () => {
     }
 
     fetchFees()
-  }, [isValid, sourceChain, destinationChain, tokenAmount, snowbridgeContext])
+  }, [isValid, sourceChain, destinationChain, tokenAmount, environment])
 
   // Validate manual recipient address
   useEffect(() => {

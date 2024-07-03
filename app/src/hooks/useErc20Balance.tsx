@@ -27,24 +27,21 @@ const useErc20Balance = ({ network, tokenAddress, address }: UseBalanceParams) =
     token: tokenAddress as `0x${string}`,
     address: address as `0x${string}`,
     query: {
-      enabled: network === Network.Ethereum,
+      enabled: false,
     },
   })
-
-  useEffect(() => {
-    if (network !== Network.Ethereum && !tokenAddress && !address) return
-    wagmiData.refetch().then(data => setData(data.data))
-  }, [network, tokenAddress, address, wagmiData])
+  const { refetch } = wagmiData
 
   const fetchBalance = useCallback(async () => {
-    if (!network || !address) return
+    if (!network || !tokenAddress || !address) return
 
-    setLoading(true)
     try {
+      setLoading(true)
       let fetchedBalance: Erc20Balance | undefined
+
       switch (network) {
         case Network.Ethereum: {
-          fetchedBalance = (await wagmiData.refetch()).data
+          fetchedBalance = (await refetch()).data
           break
         }
         case Network.Polkadot: {
@@ -59,11 +56,11 @@ const useErc20Balance = ({ network, tokenAddress, address }: UseBalanceParams) =
     } finally {
       setLoading(false)
     }
-  }, [network, address, wagmiData])
+  }, [network, address, tokenAddress, refetch])
 
   useEffect(() => {
     fetchBalance()
-  }, [fetchBalance])
+  }, [network, tokenAddress, address, fetchBalance])
 
   return { data, loading: loading || wagmiData.isLoading }
 }
