@@ -67,9 +67,11 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
     useEffect(() => {
       const fetchNames = async () => {
         let placeholder = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
+        if (!value) return
+
         setDisplay(
           !!walletAddress
-            ? (await lookupName(Network.Ethereum, walletAddress)) ?? placeholder
+            ? (await lookupName(value?.network, walletAddress)) ?? placeholder
             : placeholder,
         )
         console.log('addressDisplay is now', display)

@@ -50,7 +50,12 @@ export async function lookupName(network: Network, address: string): Promise<str
   switch (network) {
     case Network.Ethereum: {
       const provider = new ethers.CloudflareProvider()
-      return provider.lookupAddress(address)
+      try {
+        return provider.lookupAddress(address)
+      } catch {
+        // we are happy to fail silently here for now
+        return null
+      }
     }
     case Network.Polkadot: {
       //todo(nuno)

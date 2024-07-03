@@ -1,25 +1,27 @@
 'use client'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { StoredTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatDate, lookupName, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
+import { Network } from '@/models/chain'
 
 const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> = ({
   transfer,
   update,
 }) => {
-  let recipientDisplay: string = truncateAddress(transfer.recipient, 4, 4)
+  const [senderDisplay, setSenderDisplay] = useState('')
+  const [recipientDisplay, setRecipientDisplay] = useState('')
 
   useEffect(() => {
-    const fetchNames = async () => {
-      recipientDisplay =
-        (await lookupName(transfer.destChain.network, transfer.recipient)) ?? recipientDisplay
+    const fetchName = async (address: string, network: Network, setter: (x: string) => void) => {
+      setter((await lookupName(network, address)) ?? truncateAddress(address, 4, 4))
     }
 
-    fetchNames()
-  }, [transfer])
+    fetchName(transfer.sender, transfer.sourceChain.network, setSenderDisplay)
+    fetchName(transfer.recipient, transfer.destChain.network, setRecipientDisplay)
+  })
 
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
@@ -67,7 +69,7 @@ const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> =
           height={16}
           className="mr-1 h-[16px] rounded-full border border-turtle-secondary-dark"
         />
-        <p className="text-turtle-foreground)]">{truncateAddress(transfer.sender, 4, 4)}</p>
+        <p className="text-turtle-foreground)]">{senderDisplay}</p>
         <i className="fas fa-arrow-right mx-2 p-1.5 text-lg text-turtle-secondary-dark"></i>
         <Image
           src="https://placehold.co/16x16"
@@ -76,7 +78,7 @@ const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> =
           height={16}
           className="mr-1 h-[16px] rounded-full border border-turtle-secondary-dark"
         />
-        <p className="text-turtle-foreground)]">{todo}</p>
+        <p className="text-turtle-foreground)]">{recipientDisplay}</p>
       </div>
     </div>
   )
