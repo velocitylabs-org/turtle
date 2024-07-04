@@ -1,5 +1,7 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
+import { toHuman } from '@/utils/transfer'
+import * as Sentry from '@sentry/nextjs'
 import * as Snowbridge from '@snowbridge/api'
 import { erc20TokenToAssetLocation, palletAssetsBalance } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
@@ -52,48 +54,37 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
         }
 
         case Network.Polkadot: {
-          if (!context?.polkadot.api) {
-            console.error('API is not initialized')
-            return
-          }
-          console.log('dot selected')
+          if (!context?.polkadot.api) return
 
           const chainId = (await context.ethereum.api.getNetwork()).chainId
-
           const multiLocation = erc20TokenToAssetLocation(
             context.polkadot.api.assetHub.registry,
-            chainId,
+            BigInt(chainId),
             token.address,
           )
-          console.log('multiLocation', multiLocation.toPrimitive())
 
-          // The same snowbridge uses. Also not working.
-          /* const account = await context.polkadot.api.assetHub.query.assets.account(
-            multiLocation,
-            address,
-          ) */
-
-          // that works
-          const foreignAsset = (
-            await context.polkadot.api.assetHub.query.foreignAssets.asset(multiLocation)
-          ).toPrimitive() as { status: 'Live' }
-
-          console.log('foreignAsset', foreignAsset)
-
-          // that fails
-          const dotBalance = await palletAssetsBalance(
+          const balance = await palletAssetsBalance(
             context.polkadot.api.assetHub,
             multiLocation,
             address,
+            'foreignAssets',
           )
-          console.log('dot balance')
+
+          fetchedBalance = {
+            value: balance ?? 0n,
+            decimals: token.decimals,
+            symbol: token.symbol,
+            formatted: toHuman(balance ?? 0n, token).toString(),
+          }
+
           break
         }
       }
-      console.log('Fetched balance', fetchedBalance)
+
       setData(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
+      Sentry.captureException(error)
     } finally {
       setLoading(false)
     }
