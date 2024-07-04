@@ -81,12 +81,7 @@ const Transfer: FC = () => {
       address: sourceWallet?.sender?.address,
       context: snowbridgeContext,
     }),
-    [
-      sourceChain?.network,
-      tokenAmount?.token?.address,
-      sourceWallet?.sender?.address,
-      snowbridgeContext,
-    ],
+    [sourceChain?.network, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
   )
 
   const { data: balanceData, loading: loadingBalance } = useErc20Balance({

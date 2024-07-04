@@ -88,7 +88,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
     } finally {
       setLoading(false)
     }
-  }, [network, address, token, refetch])
+  }, [network, address, token, refetch, context])
 
   useEffect(() => {
     fetchBalance()
