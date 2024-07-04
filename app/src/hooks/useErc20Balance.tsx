@@ -6,7 +6,6 @@ import * as Snowbridge from '@snowbridge/api'
 import { erc20TokenToAssetLocation, palletAssetsBalance } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance } from 'wagmi'
-import useEnvironment from './useEnvironment'
 
 interface UseBalanceParams {
   network?: Network
@@ -29,7 +28,6 @@ interface Erc20Balance {
 const useErc20Balance = ({ network, token, address, context }: UseBalanceParams) => {
   const [data, setData] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
-  const { environment } = useEnvironment()
 
   const wagmiData = useBalance({
     token: token?.address as `0x${string}`,
@@ -38,7 +36,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       enabled: false,
     },
   })
-  const { refetch } = wagmiData
+  const { refetch, isLoading: wagmiLoading } = wagmiData
 
   const fetchBalance = useCallback(async () => {
     if (!network || !token || !address) return
@@ -76,9 +74,11 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
             symbol: token.symbol,
             formatted: toHuman(balance ?? 0n, token).toString(),
           }
-
           break
         }
+
+        default:
+          throw new Error('Unsupported network')
       }
 
       setData(fetchedBalance)
@@ -94,7 +94,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
     fetchBalance()
   }, [network, token, address, fetchBalance])
 
-  return { data, loading: loading || wagmiData.isLoading }
+  return { data, loading: loading || wagmiLoading }
 }
 
 export default useErc20Balance
