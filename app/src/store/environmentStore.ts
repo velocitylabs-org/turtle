@@ -1,7 +1,7 @@
+import { isDevelopment, isPreview } from '@/utils/env'
 import { create } from 'zustand'
 
-const shouldUseTestnet =
-  process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview'
+const shouldUseTestnet = isDevelopment || isPreview
 
 export enum Environment {
   /* Polkadot - Ethereum */
