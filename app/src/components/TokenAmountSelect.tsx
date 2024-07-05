@@ -12,10 +12,6 @@ import TokenIcon from './svg/TokenIcon'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
-const AmountInput: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = props => {
-  return <input type="number" {...props} />
-}
-
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
 const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
@@ -91,13 +87,6 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               )}
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
-              {/* <AmountInput
-                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-                value={value?.amount ?? ''}
-                onChange={handleAmountChange}
-                placeholder="Amount"
-                onClick={e => e.stopPropagation()}
-              /> */}
               <input
                 type="number"
                 className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
