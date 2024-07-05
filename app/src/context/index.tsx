@@ -1,16 +1,19 @@
 'use client'
 
-import { config, projectId } from '@/config'
+import { config } from '@/config'
+import { isDevelopment, isPreview, projectId } from '@/utils/env'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { ReactNode } from 'react'
-import { sepolia } from 'viem/chains'
 import { State, WagmiProvider } from 'wagmi'
+import { mainnet, sepolia } from 'wagmi/chains'
 import { colors } from '../../tailwind.config'
 
 // Setup queryClient
 const queryClient = new QueryClient()
 if (!projectId) throw new Error('Project ID is not defined')
+
+const shouldUseTestnet = isDevelopment || isPreview
 
 // Create modal
 export const wallet = createWeb3Modal({
@@ -18,7 +21,7 @@ export const wallet = createWeb3Modal({
   projectId,
   enableAnalytics: true,
   enableOnramp: true,
-  defaultChain: sepolia,
+  defaultChain: shouldUseTestnet ? sepolia : mainnet,
   themeMode: 'light',
   themeVariables: {
     '--w3m-accent': colors['turtle-primary'],
