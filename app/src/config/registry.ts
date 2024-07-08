@@ -14,7 +14,7 @@ export module Mainnet {
 
   export const AssetHub: Chain = {
     uid: 'polkadot-assethub',
-    name: 'Polkadot AssetHub',
+    name: 'Polkadot Asset Hub',
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
     network: Network.Polkadot,
@@ -125,7 +125,7 @@ export module Testnet {
 
   export const RococoAssetHub: Chain = {
     uid: 'rococo-assethub',
-    name: 'Rococo AssetHub',
+    name: 'Rococo Asset Hub',
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
     network: Network.Polkadot,
