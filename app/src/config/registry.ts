@@ -68,7 +68,7 @@ export module Mainnet {
   export const TON: Token = {
     id: 'ton',
     name: 'Toncoin',
-    symbol: 'TOIN',
+    symbol: 'TON',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
     decimals: 9,
     address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
