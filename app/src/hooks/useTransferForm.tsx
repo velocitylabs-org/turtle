@@ -13,6 +13,7 @@ import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { convertAmount, toHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
+import * as Sentry from '@sentry/nextjs'
 import * as Snowbridge from '@snowbridge/api'
 import debounce from 'lodash.debounce'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -202,38 +203,56 @@ const useTransferForm = () => {
       const direction = resolveDirection(sourceChain, destinationChain)
       const token = nativeToken(sourceChain)
 
-      switch (direction) {
-        case Direction.ToEthereum: {
-          const amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
-          setFees({
-            amount,
-            token,
-            inDollars: 0, // todo: update with actual value
-          })
-          break
-        }
-        case Direction.ToPolkadot: {
-          const amount = (
-            await Snowbridge.toPolkadot.getSendFee(
-              snowbridgeContext,
-              tokenAmount.token.address,
-              destinationChain.chainId,
-              BigInt(0),
-            )
-          ).toString()
+      try {
+        switch (direction) {
+          case Direction.ToEthereum: {
+            const amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
+            setFees({
+              amount,
+              token,
+              inDollars: 0, // todo: update with actual value
+            })
+            break
+          }
+          case Direction.ToPolkadot: {
+            const amount = (
+              await Snowbridge.toPolkadot.getSendFee(
+                snowbridgeContext,
+                tokenAmount.token.address,
+                destinationChain.chainId,
+                BigInt(0),
+              )
+            ).toString()
 
-          setFees({
-            amount,
-            token,
-            inDollars: 0,
-          })
-          break
+            setFees({
+              amount,
+              token,
+              inDollars: 0,
+            })
+            break
+          }
         }
+      } catch (error) {
+        setFees(null)
+        Sentry.captureException(error)
+        addNotification({
+          severity: NotificationSeverity.Error,
+          message: 'We failed to fetch the fees. Sorry, try again later.',
+          dismissible: true,
+        })
       }
     }
 
     fetchFees()
-  }, [isValid, sourceChain, destinationChain, tokenAmount, environment, snowbridgeContext])
+  }, [
+    isValid,
+    sourceChain,
+    destinationChain,
+    tokenAmount,
+    environment,
+    snowbridgeContext,
+    addNotification,
+  ])
 
   // Update max amount
   useEffect(() => {

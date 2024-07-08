@@ -26,7 +26,7 @@ export module Mainnet {
     symbol: 'wETH',
     logoURI: 'https://ucarecdn.com/c01c9021-a497-41b5-8597-9ab4e71440c1/wrapped-eth.png',
     decimals: 18,
-    address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
+    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
   }
 
   export const VETH: Token = {
