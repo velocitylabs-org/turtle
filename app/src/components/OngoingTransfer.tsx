@@ -4,6 +4,8 @@ import { FC, useEffect, useState } from 'react'
 import { StoredTransfer } from '@/models/transfer'
 import { formatDate, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
+import LoadingIcon from './svg/LoadingIcon'
+import { colors } from '../../tailwind.config'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
@@ -25,7 +27,13 @@ const OngoingTransfer: FC<{
         />
       </div>
       <div className="mb-2 flex items-center">
-        <i className="fas fa-sync-alt mr-3 animate-[spin_3s_infinite] text-lg font-light text-turtle-secondary" />
+        <LoadingIcon
+          className="mr-2 animate-spin"
+          width={24}
+          height={24}
+          strokeWidth={5}
+          color={colors['turtle-secondary']}
+        />
         <p className="text-turtle-foreground)] text-xl font-normal">
           {toHuman(transfer.amount, transfer.token)} {transfer.token.symbol}
         </p>
