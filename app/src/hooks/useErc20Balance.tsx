@@ -1,9 +1,8 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { toHuman } from '@/utils/transfer'
+import { fetchAssetHubBalance } from '@/services/balance'
 import * as Sentry from '@sentry/nextjs'
 import * as Snowbridge from '@snowbridge/api'
-import { erc20TokenToAssetLocation, palletAssetsBalance } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance } from 'wagmi'
 
@@ -14,7 +13,7 @@ interface UseBalanceParams {
   context?: Snowbridge.Context
 }
 
-interface Erc20Balance {
+export interface Erc20Balance {
   value: bigint
   decimals: number
   symbol: string
@@ -53,27 +52,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
 
         case Network.Polkadot: {
           if (!context?.polkadot.api) return
-
-          const chainId = (await context.ethereum.api.getNetwork()).chainId
-          const multiLocation = erc20TokenToAssetLocation(
-            context.polkadot.api.assetHub.registry,
-            BigInt(chainId),
-            token.address,
-          )
-
-          const balance = await palletAssetsBalance(
-            context.polkadot.api.assetHub,
-            multiLocation,
-            address,
-            'foreignAssets',
-          )
-
-          fetchedBalance = {
-            value: balance ?? 0n,
-            decimals: token.decimals,
-            symbol: token.symbol,
-            formatted: toHuman(balance ?? 0n, token).toString(),
-          }
+          fetchedBalance = await fetchAssetHubBalance(context, token, address)
           break
         }
 
