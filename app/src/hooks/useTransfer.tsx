@@ -68,10 +68,14 @@ const useTransfer = () => {
           if (plan.failure) {
             console.error('Validation failed:', plan)
             addNotification({
-              message: plan.failure.errors[0].message,
+              message:
+                plan.failure.errors.length > 0
+                  ? plan.failure.errors[0].message
+                  : 'Transfer validation failed',
               severity: NotificationSeverity.Error,
             })
-            if (plan.failure.errors[0].code === 9) {
+
+            if (plan.failure.errors.length > 0 && plan.failure.errors[0].code === 9) {
               await Snowbridge.toPolkadot.approveTokenSpend(
                 context,
                 sender as Signer,
@@ -134,7 +138,10 @@ const useTransfer = () => {
           if (plan.failure) {
             console.error('Validation failed:', plan)
             addNotification({
-              message: plan.failure.errors[0].message,
+              message:
+                plan.failure.errors.length > 0
+                  ? plan.failure.errors[0].message
+                  : 'Transfer validation failed',
               severity: NotificationSeverity.Error,
             })
             setStatus('Idle')
