@@ -291,7 +291,7 @@ const useTransferForm = () => {
     fees,
     transferStatus,
     environment,
-    isBalanceAvailable: maxAmount !== Infinity,
+    isBalanceAvailable: maxAmount !== Infinity && balanceData?.value && balanceData.value > 0,
   }
 }
 
