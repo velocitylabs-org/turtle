@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import useLookupName from '@/hooks/useLookUpName'
+import useLookupName from '@/hooks/useLookupName'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { Network } from '@/models/chain'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'

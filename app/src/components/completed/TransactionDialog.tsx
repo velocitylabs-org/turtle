@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Identicon from '@polkadot/react-identicon'
 
-import useLookupName from '@/hooks/useLookUpName'
+import useLookupName from '@/hooks/useLookupName'
 import { Network } from '@/models/chain'
 import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
