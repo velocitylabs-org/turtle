@@ -49,12 +49,12 @@ export function feeToHuman(fees: Fees): string {
 export async function lookupName(network: Network, address: string): Promise<string | null> {
   switch (network) {
     case Network.Ethereum: {
-      const provider = new ethers.CloudflareProvider()
       try {
-        return provider.lookupAddress(address)
-      } catch {
-        // we are happy to fail silently here for now
-        return null
+        const provider = new ethers.CloudflareProvider()
+        return await provider.lookupAddress(address)
+      } catch (error) {
+        // Do not throw an error here
+        console.log(error)
       }
     }
     case Network.Polkadot: {

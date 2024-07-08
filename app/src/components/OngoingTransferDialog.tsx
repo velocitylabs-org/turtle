@@ -4,16 +4,16 @@ import Identicon from '@polkadot/react-identicon'
 import * as Snowbridge from '@snowbridge/api'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { useEnsName } from 'wagmi'
 
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import useLookupName from '@/hooks/useLookUpName'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { Network } from '@/models/chain'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { feeToHuman, formatDate, lookupName, toHuman } from '@/utils/transfer'
+import { feeToHuman, formatDate, toHuman } from '@/utils/transfer'
 
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -33,8 +33,13 @@ import { colors } from '../../tailwind.config'
 export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
+  const senderName = useLookupName(transfer.sourceChain.network, transfer.sender)
+  const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
+
   const [update, setUpdate] = useState<string | null>('Loading...')
 
+  const senderDisplay = senderName ? senderName : truncateAddress(transfer.sender, 4, 4)
+  const recipientDisplay = recipientName ? recipientName : truncateAddress(transfer.recipient, 4, 4)
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
 
   useEffect(() => {
@@ -52,17 +57,6 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
 
     pollUpdate()
   }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer])
-
-  const [senderDisplay, setSenderDisplay] = useState('')
-  const [recipientDisplay, setRecipientDisplay] = useState('')
-  useEffect(() => {
-    const fetchName = async (address: string, network: Network, setter: (x: string) => void) => {
-      setter((await lookupName(network, address)) ?? truncateAddress(address, 4, 4))
-    }
-
-    fetchName(transfer.sender, transfer.sourceChain.network, setSenderDisplay)
-    fetchName(transfer.recipient, transfer.destChain.network, setRecipientDisplay)
-  })
 
   return (
     <Dialog>

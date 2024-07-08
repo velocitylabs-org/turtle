@@ -1,6 +1,6 @@
 'use client'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
 import Image from 'next/image'
 import { forwardRef, useEffect, useRef, useState } from 'react'
@@ -39,6 +39,8 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
     ref,
   ) => {
     const [isOpen, setIsOpen] = useState(false)
+    const [accountName, setAccountName] = useState('')
+
     const triggerRef = useRef<HTMLDivElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -62,19 +64,16 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
       (!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address)) ||
       (manualRecipient?.enabled && !manualRecipient.address)
 
-    const [display, setDisplay] = useState('')
-
     useEffect(() => {
       const fetchNames = async () => {
         let placeholder = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
         if (!value) return
 
-        setDisplay(
+        setAccountName(
           !!walletAddress
             ? (await lookupName(value?.network, walletAddress)) ?? placeholder
             : placeholder,
         )
-        console.log('addressDisplay is now', display)
       }
 
       fetchNames()
@@ -117,7 +116,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
               )}
 
               <ChevronDown strokeWidth={0.2} className="ml-1" />
-              {!manualRecipient?.enabled && display}
+              {!manualRecipient?.enabled && accountName}
               {manualRecipient && manualRecipient.enabled && (
                 <>
                   <VerticalDivider className={!manualRecipient.address ? 'visible' : 'invisible'} />

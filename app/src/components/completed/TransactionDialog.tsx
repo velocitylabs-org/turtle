@@ -2,20 +2,17 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
+import useLookupName from '@/hooks/useLookUpName'
 import { Network } from '@/models/chain'
 import { TxStatus, CompletedTransfer } from '@/models/transfer'
-import { cn } from '@/utils/cn'
 import { truncateAddress } from '@/utils/address'
+import { cn } from '@/utils/cn'
 import { formatDate, formatHours } from '@/utils/datetime'
-import { lookupName, toHuman } from '@/utils/transfer'
+import { toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
-import { ArrowRight } from '../svg/ArrowRight'
-import { ArrowUpRight } from '../svg/ArrowUpRight'
-import { ExclamationMark } from '../svg/ExclamationMark'
 
 import {
   Dialog,
@@ -25,21 +22,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
+
 import { Separator } from '../ui/separator'
+import { ArrowRight } from '../svg/ArrowRight'
+import { ArrowUpRight } from '../svg/ArrowUpRight'
+import { ExclamationMark } from '../svg/ExclamationMark'
 
 import { colors } from '../../../tailwind.config'
-import { useEffect, useState } from 'react'
-export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
-  const [senderDisplay, setSenderDisplay] = useState('')
-  const [recipientDisplay, setRecipientDisplay] = useState('')
-  useEffect(() => {
-    const fetchName = async (address: string, network: Network, setter: (x: string) => void) => {
-      setter((await lookupName(network, address)) ?? truncateAddress(address, 4, 4))
-    }
 
-    fetchName(tx.sender, tx.sourceChain.network, setSenderDisplay)
-    fetchName(tx.recipient, tx.destChain.network, setRecipientDisplay)
-  })
+export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
+  const senderName = useLookupName(tx.sourceChain.network, tx.sender)
+  const recipientName = useLookupName(tx.destChain.network, tx.recipient)
+  const senderDisplay = senderName ? senderName : truncateAddress(tx.sender, 4, 4)
+  const recipientDisplay = recipientName ? recipientName : truncateAddress(tx.recipient, 4, 4)
 
   return (
     <Dialog>
