@@ -30,15 +30,11 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       switch (network) {
         case Network.Ethereum: {
           fetchedBalance = await fetchEthereumBalance(context, token, address)
-          console.log(token.name)
-          console.log('fetchedBalance', fetchedBalance)
           break
         }
 
         case Network.Polkadot: {
           fetchedBalance = await fetchAssetHubBalance(context, token, address)
-          console.log(token.name)
-          console.log('fetchedBalance', fetchedBalance)
           break
         }
 
@@ -57,7 +53,6 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
 
   useEffect(() => {
     fetchBalance()
-    console.log('called')
   }, [network, token, address, fetchBalance])
 
   return { data, loading: loading }
