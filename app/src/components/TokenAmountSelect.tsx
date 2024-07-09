@@ -94,6 +94,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 value={value?.amount ?? ''}
                 onChange={handleAmountChange}
                 onClick={e => e.stopPropagation()}
+                autoFocus
               />
             </div>
             {trailing && <div className="ml-2">{trailing}</div>}
