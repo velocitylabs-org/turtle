@@ -7,10 +7,11 @@ import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { createSchema } from '@/models/schemas'
+import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { isValidAddressOfNetwork } from '@/utils/address'
 import { convertAmount, toHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Sentry from '@sentry/nextjs'
@@ -34,7 +35,6 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  const [maxAmount, setMaxAmount] = useState<number>(Infinity) // used to update the zod schema
   const [fees, setFees] = useState<Fees | null>(null)
   const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
   const { addNotification } = useNotification()
@@ -49,7 +49,7 @@ const useTransferForm = () => {
     reset,
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
-    resolver: zodResolver(createSchema(maxAmount)),
+    resolver: zodResolver(schema),
     mode: 'onChange',
     delayError: 3000,
     defaultValues: initValues,
@@ -59,6 +59,8 @@ const useTransferForm = () => {
   const destinationChain = useWatch({ control, name: 'destinationChain' })
   const manualRecipient = useWatch({ control, name: 'manualRecipient' })
   const tokenAmount = useWatch({ control, name: 'tokenAmount' })
+  const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
+  const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
 
   const sourceWallet = useWallet(sourceChain?.network)
@@ -127,8 +129,7 @@ const useTransferForm = () => {
       !sourceWallet?.isConnected ||
       !tokenAmount?.token ||
       balanceData === undefined ||
-      balanceData === null ||
-      maxAmount === Infinity
+      balanceData === null
     )
       return
 
@@ -136,11 +137,11 @@ const useTransferForm = () => {
       'tokenAmount',
       {
         token: tokenAmount.token,
-        amount: maxAmount,
+        amount: Number(balanceData.formatted),
       },
       { shouldValidate: true },
     )
-  }, [sourceWallet?.isConnected, tokenAmount?.token, balanceData, maxAmount, setValue])
+  }, [sourceWallet?.isConnected, tokenAmount?.token, balanceData, setValue])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
     data => {
@@ -179,10 +180,10 @@ const useTransferForm = () => {
     [destinationWallet?.sender?.address, fees, reset, sourceWallet?.sender, transfer, environment],
   )
 
-  const debouncedTrigger = useCallback(
+  /* const debouncedTrigger = useCallback(
     (field: any) => debounce(() => trigger(field), 3000),
     [trigger],
-  )
+  ) */
 
   // Fetch fees
   useEffect(() => {
@@ -254,21 +255,29 @@ const useTransferForm = () => {
     addNotification,
   ])
 
-  // Update max amount
+  // validate recipient address
   useEffect(() => {
-    if (loadingBalance || balanceData === undefined || balanceData === null) setMaxAmount(Infinity)
-    else if (tokenAmount?.token) setMaxAmount(toHuman(balanceData.value, tokenAmount.token))
-  }, [balanceData, loadingBalance, tokenAmount?.token, tokenAmount?.token?.decimals])
+    if (
+      !manualRecipient.enabled ||
+      !destinationChain ||
+      isValidAddressOfNetwork(manualRecipient.address, destinationChain.network) ||
+      manualRecipient.address === ''
+    )
+      setManualRecipientError('')
+    else setManualRecipientError('Invalid Address')
+  }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
-  // validate recipient address immediately
+  // validate token amount
   useEffect(() => {
-    trigger('manualRecipient.address')
-  }, [manualRecipient.address, destinationChain, sourceChain, trigger])
-
-  // validate token amount delayed
-  useEffect(() => {
-    debouncedTrigger('tokenAmount.amount')
-  }, [balanceData, maxAmount, debouncedTrigger])
+    // TODO
+    if (
+      tokenAmount?.amount &&
+      balanceData?.value &&
+      tokenAmount.amount > Number(balanceData.formatted)
+    )
+      setTokenAmountError("That's more than you have in your wallet")
+    else setTokenAmountError('')
+  }, [tokenAmount?.amount, balanceData])
 
   // reset token amount
   useEffect(() => {
@@ -310,7 +319,9 @@ const useTransferForm = () => {
     fees,
     transferStatus,
     environment,
-    isBalanceAvailable: maxAmount !== Infinity && balanceData?.value && balanceData.value > 0,
+    tokenAmountError,
+    manualRecipientError,
+    isBalanceAvailable: balanceData?.value && balanceData.value > 0,
   }
 }
 
