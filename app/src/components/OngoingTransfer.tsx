@@ -6,6 +6,7 @@ import { formatDate, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
 import LoadingIcon from './svg/LoadingIcon'
 import { colors } from '../../tailwind.config'
+import { truncateAddress } from '@/utils/address'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
