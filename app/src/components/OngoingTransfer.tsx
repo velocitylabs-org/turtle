@@ -57,22 +57,10 @@ const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> =
       </div>
 
       <div className="flex items-center">
-        <Image
-          src="https://placehold.co/16x16"
-          alt="User avatar"
-          width={16}
-          height={16}
-          className="mr-1 h-[16px] rounded-full border border-turtle-secondary-dark"
-        />
+        <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
         <p className="text-turtle-foreground)]">{truncateAddress(transfer.sender, 4, 4)}</p>
         <i className="fas fa-arrow-right mx-2 p-1.5 text-lg text-turtle-secondary-dark"></i>
-        <Image
-          src="https://placehold.co/16x16"
-          alt="User avatar"
-          width={16}
-          height={16}
-          className="mr-1 h-[16px] rounded-full border border-turtle-secondary-dark"
-        />
+        <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
         <p className="text-turtle-foreground)]">{truncateAddress(transfer.recipient, 4, 4)}</p>
       </div>
     </div>
