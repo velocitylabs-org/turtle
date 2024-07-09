@@ -269,8 +269,10 @@ const useTransferForm = () => {
 
   // validate token amount
   useEffect(() => {
-    // TODO
-    if (
+    if (!tokenAmount?.amount) setTokenAmountError('')
+    else if (balanceData && balanceData.value === BigInt(0))
+      setTokenAmountError("That's more than you have in your wallet")
+    else if (
       tokenAmount?.amount &&
       balanceData?.value &&
       tokenAmount.amount > Number(balanceData.formatted)
