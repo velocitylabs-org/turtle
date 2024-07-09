@@ -4,10 +4,10 @@ import Identicon from '@polkadot/react-identicon'
 import * as Snowbridge from '@snowbridge/api'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { useEnsName } from 'wagmi'
 
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import useLookupName from '@/hooks/useLookupName'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { Network } from '@/models/chain'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
@@ -33,11 +33,13 @@ import { colors } from '../../tailwind.config'
 export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
-  const { data: ensName } = useEnsName({
-    address: transfer.sender as `0x${string}`,
-  })
+  const senderName = useLookupName(transfer.sourceChain.network, transfer.sender)
+  const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
+
   const [update, setUpdate] = useState<string | null>('Loading...')
 
+  const senderDisplay = senderName ? senderName : truncateAddress(transfer.sender, 4, 4)
+  const recipientDisplay = recipientName ? recipientName : truncateAddress(transfer.recipient, 4, 4)
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
 
   useEffect(() => {
@@ -59,7 +61,12 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer transfer={transfer} update={update} />
+        <OngoingTransfer
+          transfer={transfer}
+          update={update}
+          senderDisplay={senderDisplay}
+          recipientDisplay={recipientDisplay}
+        />
       </DialogTrigger>
       <DialogContent
         className="max-w-[24rem] rounded-4xl sm:max-w-[30.5rem]"
@@ -155,11 +162,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
                   />
                 )}
 
-                <p className="text-sm">
-                  {transfer.sourceChain.network === Network.Ethereum
-                    ? ensName ?? truncateAddress(transfer.sender)
-                    : truncateAddress(transfer.sender)}
-                </p>
+                <p className="text-sm">{senderDisplay}</p>
               </div>
             </div>
 
@@ -182,11 +185,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
                     }
                   />
                 )}
-                <p className="text-sm">
-                  {transfer.destChain.network === Network.Ethereum
-                    ? ensName ?? truncateAddress(transfer.recipient)
-                    : truncateAddress(transfer.recipient)}
-                </p>
+                <p className="text-sm">{recipientDisplay}</p>
               </div>
             </div>
           </div>

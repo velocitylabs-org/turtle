@@ -1,5 +1,7 @@
+import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
+import { ethers } from 'ethers'
 
 /**
  * Converts a user-specified amount to its corresponding value in the token's decimal base.
@@ -42,4 +44,22 @@ export const formatDate = (date: string | Date): string => {
 
 export function feeToHuman(fees: Fees): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
+}
+
+export async function lookupName(network: Network, address: string): Promise<string | null> {
+  switch (network) {
+    case Network.Ethereum: {
+      try {
+        const provider = new ethers.CloudflareProvider()
+        return await provider.lookupAddress(address)
+      } catch (error) {
+        // Do not throw an error here
+        console.log(error)
+      }
+    }
+    case Network.Polkadot: {
+      //todo(nuno)
+      return null
+    }
+  }
 }

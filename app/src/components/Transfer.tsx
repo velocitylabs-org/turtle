@@ -13,6 +13,7 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import { ethers } from 'ethers'
 
 const Transfer: FC = () => {
   const {
@@ -57,7 +58,7 @@ const Transfer: FC = () => {
               floatingLabel="From"
               placeholder="Source"
               trailing={<WalletButton network={sourceChain?.network} />}
-              walletAddress={truncateAddress(sourceWallet?.sender?.address || '')}
+              walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
             />
@@ -112,7 +113,7 @@ const Transfer: FC = () => {
               trailing={
                 !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
               }
-              walletAddress={truncateAddress(destinationWallet?.sender?.address || '')}
+              walletAddress={destinationWallet?.sender?.address}
               className="z-30"
               disabled={transferStatus !== 'Idle'}
             />

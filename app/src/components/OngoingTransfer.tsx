@@ -1,17 +1,18 @@
 'use client'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { StoredTransfer } from '@/models/transfer'
-import { truncateAddress } from '@/utils/address'
 import { formatDate, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
 import LoadingIcon from './svg/LoadingIcon'
 import { colors } from '../../tailwind.config'
 
-const OngoingTransfer: FC<{ transfer: StoredTransfer; update: string | null }> = ({
-  transfer,
-  update,
-}) => {
+const OngoingTransfer: FC<{
+  transfer: StoredTransfer
+  update: string | null
+  senderDisplay: string
+  recipientDisplay: string
+}> = ({ transfer, update, senderDisplay, recipientDisplay }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">

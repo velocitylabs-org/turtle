@@ -2,20 +2,17 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
+import useLookupName from '@/hooks/useLookupName'
 import { Network } from '@/models/chain'
 import { TxStatus, CompletedTransfer } from '@/models/transfer'
-import { cn } from '@/utils/cn'
 import { truncateAddress } from '@/utils/address'
+import { cn } from '@/utils/cn'
 import { formatDate, formatHours } from '@/utils/datetime'
 import { toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
-import { ArrowRight } from '../svg/ArrowRight'
-import { ArrowUpRight } from '../svg/ArrowUpRight'
-import { ExclamationMark } from '../svg/ExclamationMark'
 
 import {
   Dialog,
@@ -25,17 +22,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
+
 import { Separator } from '../ui/separator'
+import { ArrowRight } from '../svg/ArrowRight'
+import { ArrowUpRight } from '../svg/ArrowUpRight'
+import { ExclamationMark } from '../svg/ExclamationMark'
 
 import { colors } from '../../../tailwind.config'
+
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
-  const { data: ensName } = useEnsName({
-    address: tx.sender as `0x${string}`,
-  })
+  const senderName = useLookupName(tx.sourceChain.network, tx.sender)
+  const recipientName = useLookupName(tx.destChain.network, tx.recipient)
+  const senderDisplay = senderName ? senderName : truncateAddress(tx.sender, 4, 4)
+  const recipientDisplay = recipientName ? recipientName : truncateAddress(tx.recipient, 4, 4)
+
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <TransactionCard tx={tx} />
+        <TransactionCard
+          tx={tx}
+          senderDisplay={senderDisplay}
+          recipientDisplay={recipientDisplay}
+        />
       </DialogTrigger>
       <DialogContent
         className="max-w-[24rem] rounded-4xl sm:max-w-[30.5rem]"
@@ -181,13 +189,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">
-                  {tx.sourceChain.network === Network.Ethereum
-                    ? ensName
-                      ? ensName
-                      : truncateAddress(tx.sender)
-                    : truncateAddress(tx.sender)}
-                </p>
+                <p className="text-sm">{senderDisplay}</p>
               </div>
             </div>
 
@@ -218,13 +220,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     )}
                   />
                 )}
-                <p className="text-sm">
-                  {tx.destChain.network === Network.Ethereum
-                    ? ensName
-                      ? ensName
-                      : truncateAddress(tx.recipient)
-                    : truncateAddress(tx.recipient)}
-                </p>
+                <p className="text-sm">{recipientDisplay}</p>
               </div>
             </div>
           </div>
