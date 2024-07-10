@@ -13,7 +13,6 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { ethers } from 'ethers'
 
 const Transfer: FC = () => {
   const {

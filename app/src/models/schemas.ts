@@ -35,24 +35,13 @@ export const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
   address: z.string(),
 })
 
-export const schema = z
-  .object({
-    sourceChain: chainSchema
-      .nullable()
-      .refine(val => val !== null, { message: 'Source chain is required' }),
-    destinationChain: chainSchema.refine(val => val !== null, {
-      message: 'Destination chain is required',
-    }),
-    tokenAmount: tokenAmountSchema,
-    manualRecipient: manualRecipientSchema,
-  })
-  .refine(
-    data =>
-      !data.manualRecipient.enabled ||
-      !data.destinationChain ||
-      isValidAddressOfNetwork(data.manualRecipient.address, data.destinationChain.network),
-    {
-      message: 'Invalid address',
-      path: ['manualRecipient', 'address'],
-    },
-  )
+export const schema = z.object({
+  sourceChain: chainSchema
+    .nullable()
+    .refine(val => val !== null, { message: 'Source chain is required' }),
+  destinationChain: chainSchema.refine(val => val !== null, {
+    message: 'Destination chain is required',
+  }),
+  tokenAmount: tokenAmountSchema,
+  manualRecipient: manualRecipientSchema,
+})
