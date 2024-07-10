@@ -13,7 +13,6 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { ethers } from 'ethers'
 
 const Transfer: FC = () => {
   const {
@@ -35,6 +34,8 @@ const Transfer: FC = () => {
     fees,
     transferStatus,
     environment,
+    tokenAmountError,
+    manualRecipientError,
     isBalanceAvailable,
   } = useTransferForm()
 
@@ -73,7 +74,7 @@ const Transfer: FC = () => {
               options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
               floatingLabel="Amount"
               disabled={transferStatus !== 'Idle'}
-              error={errors.tokenAmount?.amount?.message}
+              error={errors.tokenAmount?.amount?.message || tokenAmountError}
               trailing={
                 <Button
                   label="Max"
@@ -107,7 +108,7 @@ const Transfer: FC = () => {
               placeholder="Destination"
               manualRecipient={manualRecipient}
               onChangeManualRecipient={handleManualRecipientChange}
-              error={manualRecipient.enabled ? errors.manualRecipient?.address?.message : ''}
+              error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
                 !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
               }
@@ -161,7 +162,9 @@ const Transfer: FC = () => {
           !fees ||
           transferStatus !== 'Idle' ||
           !sourceWallet?.isConnected ||
-          (!manualRecipient.enabled && !destinationWallet?.isConnected)
+          (!manualRecipient.enabled && !destinationWallet?.isConnected) ||
+          !!tokenAmountError ||
+          !!manualRecipientError
         }
         className="my-5"
       />

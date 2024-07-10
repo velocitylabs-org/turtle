@@ -6,6 +6,7 @@ import { formatDate, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
 import LoadingIcon from './svg/LoadingIcon'
 import { colors } from '../../tailwind.config'
+import { truncateAddress } from '@/utils/address'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
@@ -58,23 +59,11 @@ const OngoingTransfer: FC<{
       </div>
 
       <div className="flex items-center">
-        <Image
-          src="https://placehold.co/16x16"
-          alt="User avatar"
-          width={16}
-          height={16}
-          className="mr-1 h-[16px] rounded-full border border-turtle-secondary-dark"
-        />
-        <p className="text-turtle-foreground)]">{senderDisplay}</p>
+        <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
+        <p className="text-turtle-foreground)]">{truncateAddress(transfer.sender, 4, 4)}</p>
         <i className="fas fa-arrow-right mx-2 p-1.5 text-lg text-turtle-secondary-dark"></i>
-        <Image
-          src="https://placehold.co/16x16"
-          alt="User avatar"
-          width={16}
-          height={16}
-          className="mr-1 h-[16px] rounded-full border border-turtle-secondary-dark"
-        />
-        <p className="text-turtle-foreground)]">{recipientDisplay}</p>
+        <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
+        <p className="text-turtle-foreground)]">{truncateAddress(transfer.recipient, 4, 4)}</p>
       </div>
     </div>
   )

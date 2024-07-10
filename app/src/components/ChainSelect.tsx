@@ -124,6 +124,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     type="text"
                     className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
                     placeholder="Address"
+                    autoFocus
                     value={manualRecipient.address}
                     onChange={handleManualRecipientChange}
                     onClick={e => e.stopPropagation()}
