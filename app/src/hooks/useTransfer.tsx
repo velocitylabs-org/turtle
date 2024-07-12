@@ -13,6 +13,7 @@ import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
+import { SendValidationCode } from '@snowbridge/api/dist/toPolkadot'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 interface TransferParams {
@@ -67,22 +68,28 @@ const useTransfer = () => {
 
           if (plan.failure) {
             console.error('Validation failed:', plan)
-            addNotification({
-              message:
-                plan.failure.errors.length > 0
-                  ? plan.failure.errors[0].message
-                  : 'Transfer validation failed',
-              severity: NotificationSeverity.Error,
-            })
-
-            if (plan.failure.errors.length > 0 && plan.failure.errors[0].code === 9) {
+            // todo(nuno): handle other errors and show popup for cases like this where the user needs to first sign
+            // another transaction first (approve spending, wrap eth, etc)
+            if (
+              plan.failure.errors.length > 0 &&
+              plan.failure.errors[0].code === SendValidationCode.ERC20SpendNotApproved
+            ) {
               await Snowbridge.toPolkadot.approveTokenSpend(
                 context,
                 sender as Signer,
                 token.address,
                 amount,
               )
+            } else {
+              addNotification({
+                message:
+                  plan.failure.errors.length > 0
+                    ? plan.failure.errors[0].message
+                    : 'Transfer validation failed',
+                severity: NotificationSeverity.Error,
+              })
             }
+
             setStatus('Idle')
             return
           }
