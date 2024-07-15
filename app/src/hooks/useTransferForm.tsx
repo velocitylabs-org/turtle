@@ -1,4 +1,4 @@
-import { nativeToken, REGISTRY } from '@/config/registry'
+import { getNativeToken, REGISTRY } from '@/config/registry'
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
 import useErc20Balance from '@/hooks/useErc20Balance'
@@ -12,7 +12,7 @@ import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { isValidAddressOfNetwork } from '@/utils/address'
-import { convertAmount, toHuman } from '@/utils/transfer'
+import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as Sentry from '@sentry/nextjs'
 import * as Snowbridge from '@snowbridge/api'
@@ -44,7 +44,6 @@ const useTransferForm = () => {
     control,
     handleSubmit,
     setValue,
-    trigger,
     reset,
     formState: { errors, isValid, isValidating },
   } = useForm<FormInputs>({
@@ -179,11 +178,6 @@ const useTransferForm = () => {
     [destinationWallet?.sender?.address, fees, reset, sourceWallet?.sender, transfer, environment],
   )
 
-  /* const debouncedTrigger = useCallback(
-    (field: any) => debounce(() => trigger(field), 3000),
-    [trigger],
-  ) */
-
   // Fetch fees
   useEffect(() => {
     const fetchFees = async () => {
@@ -201,7 +195,7 @@ const useTransferForm = () => {
         return
 
       const direction = resolveDirection(sourceChain, destinationChain)
-      const token = nativeToken(sourceChain)
+      const token = getNativeToken(sourceChain)
 
       try {
         switch (direction) {
