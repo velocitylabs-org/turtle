@@ -1,7 +1,6 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
 import useTransferForm from '@/hooks/useTransferForm'
-import { truncateAddress } from '@/utils/address'
 import Link from 'next/link'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
@@ -13,6 +12,7 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const Transfer: FC = () => {
   const {
@@ -148,14 +148,24 @@ const Transfer: FC = () => {
       )}
 
       {/* Fees */}
-      {isValid && (
-        <FeesPreview
-          state={!!fees && !loadingFees ? { type: 'Ready', fees } : { type: 'Loading' }}
-        />
-      )}
+      <AnimatePresence>
+        {isValid && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <FeesPreview
+              state={!!fees && !loadingFees ? { type: 'Ready', fees } : { type: 'Loading' }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Transfer Button */}
       <Button
+        className="z-20 my-5"
         label="Send"
         size="lg"
         variant="primary"
@@ -171,7 +181,6 @@ const Transfer: FC = () => {
           !!tokenAmountError ||
           !!manualRecipientError
         }
-        className="my-5"
       />
 
       {/* Warning Label */}
