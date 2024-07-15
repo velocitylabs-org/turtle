@@ -12,7 +12,6 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { AnimatePresence, motion } from 'framer-motion'
 
 const Transfer: FC = () => {
   const {
@@ -148,20 +147,7 @@ const Transfer: FC = () => {
       )}
 
       {/* Fees */}
-      <AnimatePresence>
-        {isValid && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <FeesPreview
-              state={!!fees && !loadingFees ? { type: 'Ready', fees } : { type: 'Loading' }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FeesPreview hidden={!isValid} loading={loadingFees || !fees} fees={fees} />
 
       {/* Transfer Button */}
       <Button
