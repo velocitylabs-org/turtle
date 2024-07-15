@@ -1,7 +1,6 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
 import useTransferForm from '@/hooks/useTransferForm'
-import { truncateAddress } from '@/utils/address'
 import Link from 'next/link'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
@@ -32,6 +31,7 @@ const Transfer: FC = () => {
     sourceWallet,
     destinationWallet,
     fees,
+    loadingFees,
     transferStatus,
     environment,
     tokenAmountError,
@@ -147,10 +147,11 @@ const Transfer: FC = () => {
       )}
 
       {/* Fees */}
-      {isValid && <FeesPreview state={!!fees ? { type: 'Ready', fees } : { type: 'Loading' }} />}
+      <FeesPreview hidden={!isValid} loading={loadingFees || !fees} fees={fees} />
 
       {/* Transfer Button */}
       <Button
+        className="z-20 my-5"
         label="Send"
         size="lg"
         variant="primary"
@@ -166,7 +167,6 @@ const Transfer: FC = () => {
           !!tokenAmountError ||
           !!manualRecipientError
         }
-        className="my-5"
       />
 
       {/* Warning Label */}

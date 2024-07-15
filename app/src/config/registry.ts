@@ -187,7 +187,7 @@ export const REGISTRY = {
   },
 }
 
-export function nativeToken(chain: Chain): Token {
+export function getNativeToken(chain: Chain): Token {
   switch (chain.uid) {
     case 'rococo-assethub':
       return Testnet.ROC
