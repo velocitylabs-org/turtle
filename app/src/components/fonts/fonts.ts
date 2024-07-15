@@ -12,4 +12,5 @@ export const dazzed = localFont({
     },
   ],
   variable: '--font-dazzed',
+  display: 'swap',
 })
