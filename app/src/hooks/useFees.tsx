@@ -12,9 +12,9 @@ import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 
 const useFees = (
-  sourceChain: Chain | null,
-  destinationChain: Chain | null,
-  token: Token | null,
+  sourceChain?: Chain | null,
+  destinationChain?: Chain | null,
+  token?: Token | null,
 ) => {
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
@@ -24,7 +24,10 @@ const useFees = (
   const { environment } = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token || !snowbridgeContext) return
+    if (!sourceChain || !destinationChain || !token || !snowbridgeContext) {
+      setFees(null)
+      return
+    }
 
     const direction = resolveDirection(sourceChain, destinationChain)
     const nativeToken = getNativeToken(sourceChain)
@@ -66,11 +69,13 @@ const useFees = (
     } finally {
       setLoading(false)
     }
-  }, [sourceChain, destinationChain, token, snowbridgeContext, addNotification])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourceChain, destinationChain, token?.id, snowbridgeContext, addNotification])
 
+  // call fetch fees
   useEffect(() => {
     fetchFees()
-  }, [fetchFees])
+  }, [sourceChain, destinationChain, token?.id, fetchFees])
 
   // Load the Snowbridge context.
   useEffect(() => {

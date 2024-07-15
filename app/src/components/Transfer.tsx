@@ -32,6 +32,7 @@ const Transfer: FC = () => {
     sourceWallet,
     destinationWallet,
     fees,
+    loadingFees,
     transferStatus,
     environment,
     tokenAmountError,
@@ -147,7 +148,11 @@ const Transfer: FC = () => {
       )}
 
       {/* Fees */}
-      {isValid && <FeesPreview state={!!fees ? { type: 'Ready', fees } : { type: 'Loading' }} />}
+      {isValid && (
+        <FeesPreview
+          state={!!fees && !loadingFees ? { type: 'Ready', fees } : { type: 'Loading' }}
+        />
+      )}
 
       {/* Transfer Button */}
       <Button
