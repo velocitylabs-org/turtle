@@ -23,53 +23,50 @@ const useFees = (
   const { addNotification } = useNotification()
   const { environment } = useEnvironment()
 
-  const fetchFees = useCallback(
-    debounce(async () => {
-      if (!sourceChain || !destinationChain || !token || !snowbridgeContext) return
+  const fetchFees = useCallback(async () => {
+    if (!sourceChain || !destinationChain || !token || !snowbridgeContext) return
 
-      const direction = resolveDirection(sourceChain, destinationChain)
-      const nativeToken = getNativeToken(sourceChain)
+    const direction = resolveDirection(sourceChain, destinationChain)
+    const nativeToken = getNativeToken(sourceChain)
 
-      try {
-        setLoading(true)
-        let amount: string
-        switch (direction) {
-          case Direction.ToEthereum:
-            amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
-            break
-          case Direction.ToPolkadot:
-            amount = (
-              await Snowbridge.toPolkadot.getSendFee(
-                snowbridgeContext,
-                token.address,
-                destinationChain.chainId,
-                BigInt(0),
-              )
-            ).toString()
-            break
-          default:
-            throw new Error('Unsupported direction')
-        }
-
-        setFees({
-          amount,
-          token: nativeToken,
-          inDollars: 0, // TODO: update with actual value
-        })
-      } catch (error) {
-        setFees(null)
-        Sentry.captureException(error)
-        addNotification({
-          severity: NotificationSeverity.Error,
-          message: 'Failed to fetch the fees. Please try again later.',
-          dismissible: true,
-        })
-      } finally {
-        setLoading(false)
+    try {
+      setLoading(true)
+      let amount: string
+      switch (direction) {
+        case Direction.ToEthereum:
+          amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
+          break
+        case Direction.ToPolkadot:
+          amount = (
+            await Snowbridge.toPolkadot.getSendFee(
+              snowbridgeContext,
+              token.address,
+              destinationChain.chainId,
+              BigInt(0),
+            )
+          ).toString()
+          break
+        default:
+          throw new Error('Unsupported direction')
       }
-    }, 300),
-    [sourceChain, destinationChain, token, snowbridgeContext, addNotification],
-  )
+
+      setFees({
+        amount,
+        token: nativeToken,
+        inDollars: 0, // TODO: update with actual value
+      })
+    } catch (error) {
+      setFees(null)
+      Sentry.captureException(error)
+      addNotification({
+        severity: NotificationSeverity.Error,
+        message: 'Failed to fetch the fees. Please try again later.',
+        dismissible: true,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [sourceChain, destinationChain, token, snowbridgeContext, addNotification])
 
   useEffect(() => {
     fetchFees()
