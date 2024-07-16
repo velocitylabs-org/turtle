@@ -44,10 +44,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
     const triggerRef = useRef<HTMLDivElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
     useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
-    const addressLookup = useLookupName(
-      value ? value.network : null,
-      walletAddress ? walletAddress.toLowerCase() : null,
-    )
+    const addressLookup = useLookupName(value?.network, walletAddress?.toLowerCase())
 
     const addressPlaceholder = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
     const accountName = addressLookup ? addressLookup : addressPlaceholder

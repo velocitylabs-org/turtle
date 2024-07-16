@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Network } from '@/models/chain'
 import { lookupName } from '@/utils/transfer'
 
-const useLookupName = (network: Network | null, address: string | null) => {
+const useLookupName = (network?: Network, address?: string) => {
   const [accountName, setAccountName] = useState<string | null>(null)
 
   const fetchName = useCallback(async () => {
@@ -18,7 +18,6 @@ const useLookupName = (network: Network | null, address: string | null) => {
     } catch (e) {
       // Do not throw an error here
       console.error('Address lookup error:', e)
-      setAccountName(null)
     }
   }, [network, address])
 
