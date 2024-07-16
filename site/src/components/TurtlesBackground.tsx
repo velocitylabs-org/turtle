@@ -7,9 +7,13 @@ interface TurtlesBackgroundProps {
 
 export const TurtlesBackground: React.FC<TurtlesBackgroundProps> = ({ src, alt }) => {
   return (
-    <div className="absolute top-0 z-0 turtle-background bg-[#000]">
-      <div className="flex flex-col items-center justify-center h-[80vh] w-screen overflow-hidden bg-[url('/bg.png')] bg-bottom bg-cover" >
-        <h1 className='text-[9rem] max-w-[1500px] text-turtle-background leading-[100%] text-center turtle-text-shadow'>{alt}</h1>
+    <div className="absolute top-0 z-0">
+      <div className="turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/bg.png')] bg-cover bg-bottom">
+        <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center ">
+          <h1 className="turtle-text-shadow max-w-[1500px] text-center text-[9rem] leading-[100%] text-turtle-background">
+            {alt}
+          </h1>
+        </div>
       </div>
     </div>
   )

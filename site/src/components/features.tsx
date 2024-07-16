@@ -43,9 +43,9 @@ export const Features = () => {
   ] satisfies TurtleFeatures
 
   return (
-   <div className="relative z-30 -mt-28 sm:-mt-36 md:-mt-40 lg:px-10">
+    <div className="relative z-30 -mt-28 sm:-mt-36 md:-mt-40 lg:px-10">
       {/* 1st grid features */}
-      <div className='my-0 mx-auto max-w-[1600px] items-center justify-center'>
+      <div className="mx-auto my-0 max-w-[1600px] items-center justify-center">
         <div className="grid grid-cols-1 gap-10 p-5 md:grid-cols-2 xl:grid-cols-3">
           {mainFeatures.map((feature, index) => (
             <FeatureCard

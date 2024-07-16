@@ -7,7 +7,7 @@ export default function Header() {
     <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={36} />
-        <p className="text-logo text-[1.85rem] font-medium text-white">Turtle</p>
+        <p className="text-[1.85rem] text-logo font-medium text-white">Turtle</p>
       </Link>
 
       <nav>
@@ -61,7 +61,7 @@ export default function Header() {
         {/* desktop menu */}
         <ul className="hidden items-center space-x-6 sm:flex">
           <li>
-            <button className="btn btn-primary rounded-lg border-black text-xl font-medium hover:border-black flex flex-row justify-center w-[122px] h-[56px]">
+            <button className="btn btn-primary flex h-[56px] w-[122px] flex-row justify-center rounded-lg border-black text-xl font-medium hover:border-black">
               <a href="/">Transfer</a>
             </button>
           </li>
