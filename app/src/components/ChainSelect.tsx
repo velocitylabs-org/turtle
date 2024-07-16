@@ -116,7 +116,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
               )}
 
               <ChevronDown strokeWidth={0.2} className="ml-1" />
-              {!manualRecipient?.enabled && accountName}
+              {!manualRecipient?.enabled && !!value && accountName}
               {manualRecipient && manualRecipient.enabled && (
                 <>
                   <VerticalDivider className={!manualRecipient.address ? 'visible' : 'invisible'} />
