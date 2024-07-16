@@ -37,7 +37,7 @@ type ValidationResult =
 
 const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
-  const { addTransfer } = useOngoingTransfers()
+  const { addTransfer: addTransferToStorage } = useOngoingTransfers()
   const { addNotification } = useNotification()
 
   const handleValidationFailure = (plan: ValidationResult) => {
@@ -55,6 +55,7 @@ const useTransfer = () => {
     addNotification({ message: 'Transfer sending failed!', severity: NotificationSeverity.Error })
   }
 
+  // Executes the transfer. Validation should happen before.
   const performTransfer = async (
     context: Snowbridge.Context,
     sender: Sender,
@@ -110,7 +111,7 @@ const useTransfer = () => {
           ? await sender.getAddress()
           : (sender as WalletOrKeypair).address
 
-      addTransfer({
+      addTransferToStorage({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): replace with actual messageId
         sourceChain,
         token,
@@ -140,6 +141,7 @@ const useTransfer = () => {
     recipient: string,
     amount: bigint,
   ): Promise<ValidationResult> => {
+    setStatus('Validating')
     switch (direction) {
       case Direction.ToPolkadot:
         return await Snowbridge.toPolkadot.validateSend(
@@ -167,6 +169,7 @@ const useTransfer = () => {
     }
   }
 
+  // main transfer function which is exposed to the components.
   const transfer = async ({
     environment,
     sender,
@@ -184,7 +187,6 @@ const useTransfer = () => {
       const snowbridgeEnv = getEnvironment(environment)
       const context = await getContext(snowbridgeEnv)
 
-      setStatus('Validating')
       const plan = await validateTransfer(
         direction,
         context,
@@ -230,7 +232,7 @@ const useTransfer = () => {
     } catch (e) {
       console.error('Transfer initialization error:', e)
       addNotification({
-        message: 'Transfer initialization failed!',
+        message: 'Transfer failed!',
         severity: NotificationSeverity.Error,
       })
     } finally {
