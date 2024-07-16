@@ -1,17 +1,19 @@
 'use client'
-import { useOutsideClick } from '@/hooks/useOutsideClick'
+import { forwardRef, useRef, useState } from 'react'
+import Image from 'next/image'
+import { twMerge } from 'tailwind-merge'
+
 import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
-import Image from 'next/image'
-import { forwardRef, useEffect, useRef, useState } from 'react'
-import { twMerge } from 'tailwind-merge'
+import useLookupName from '@/hooks/useLookupName'
+import { useOutsideClick } from '@/hooks/useOutsideClick'
+import { truncateAddress } from '@/utils/address'
+
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
-import { truncateAddress } from '@/utils/address'
-import { lookupName } from '@/utils/transfer'
 
 interface ChainSelectProps extends SelectProps<Chain> {
   walletAddress?: string
@@ -39,12 +41,13 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
     ref,
   ) => {
     const [isOpen, setIsOpen] = useState(false)
-    const [accountName, setAccountName] = useState('')
-
     const triggerRef = useRef<HTMLDivElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
-
     useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
+    const addressLookup = useLookupName(value?.network, walletAddress?.toLowerCase())
+
+    const addressPlaceholder = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
+    const accountName = addressLookup ? addressLookup : addressPlaceholder
 
     const handleSelectionChange = (selectedChain: Chain) => {
       onChange(selectedChain)
@@ -63,21 +66,6 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
     const shouldShowChainName =
       (!walletAddress && (!manualRecipient?.enabled || !manualRecipient?.address)) ||
       (manualRecipient?.enabled && !manualRecipient.address)
-
-    useEffect(() => {
-      const fetchNames = async () => {
-        let placeholder = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
-        if (!value) return
-
-        setAccountName(
-          !!walletAddress
-            ? (await lookupName(value?.network, walletAddress)) ?? placeholder
-            : placeholder,
-        )
-      }
-
-      fetchNames()
-    })
 
     return (
       <div ref={ref} className={twMerge('relative w-full', className)}>
