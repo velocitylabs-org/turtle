@@ -6,8 +6,8 @@ export default function Header() {
   return (
     <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
-        <TurtleIcon size={28} />
-        <p className="text-logo font-medium">Turtle</p>
+        <TurtleIcon size={36} />
+        <p className="text-logo text-[1.85rem] font-medium text-white">Turtle</p>
       </Link>
 
       <nav>
@@ -42,14 +42,9 @@ export default function Header() {
             <div className="menu min-h-full w-2/3 space-y-4 bg-secondary p-4 text-base-content">
               <Link href="/" className="flex items-center space-x-2">
                 <TurtleIcon size={28} />
-                <p className="text-xl font-medium">Turtle</p>
+                <p className="text-2xl font-medium">Turtle</p>
               </Link>
               <ul className="space-y-4">
-                <li>
-                  <button className="btn btn-outline text-sm font-medium">
-                    <a href="">Read the Docs</a>
-                  </button>
-                </li>
                 <li>
                   <button className="btn btn-primary border-black text-sm font-medium hover:border-black">
                     <a href="">Start a transfer</a>
@@ -66,13 +61,8 @@ export default function Header() {
         {/* desktop menu */}
         <ul className="hidden items-center space-x-6 sm:flex">
           <li>
-            <button className="btn btn-ghost text-sm font-medium">
-              <a href="/">Read the Docs</a>
-            </button>
-          </li>
-          <li>
-            <button className="btn btn-primary rounded-lg border-black p-4 text-sm font-medium leading-none hover:border-black">
-              <a href="/">Start a transfer</a>
+            <button className="btn btn-primary rounded-lg border-black text-xl font-medium hover:border-black flex flex-row justify-center w-[122px] h-[56px]">
+              <a href="/">Transfer</a>
             </button>
           </li>
         </ul>

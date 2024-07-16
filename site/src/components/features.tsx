@@ -45,7 +45,7 @@ export const Features = () => {
   return (
    <div className="relative z-30 -mt-28 sm:-mt-36 md:-mt-40 lg:px-10">
       {/* 1st grid features */}
-      <div>
+      <div className='my-0 mx-auto max-w-[1600px] items-center justify-center'>
         <div className="grid grid-cols-1 gap-10 p-5 md:grid-cols-2 xl:grid-cols-3">
           {mainFeatures.map((feature, index) => (
             <FeatureCard
@@ -70,9 +70,9 @@ export const Features = () => {
         </div>
       </div>
       {/* token transfer component */}
-      <div className="absolute inset-x-0 -top-9 -z-10 mx-auto sm:-top-[70px] ">
+      {/* <div className="absolute inset-x-0 -top-9 -z-10 mx-auto sm:-top-[70px] ">
         <TokenExchange />
-      </div>
+      </div> */}
     </div>
   )
 }
