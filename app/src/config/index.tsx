@@ -12,7 +12,7 @@ const shouldUseTestnet = isDevelopment || isPreview
 const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
 
 const metadata = {
-  name: 'Turtle',
+  name: 'turtle-app',
   description: 'Token transfers done right',
   url: isDevelopment ? 'http://localhost:3000' : vercelUrl, // domain must be allowed in WalletConnect Cloud
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
