@@ -151,7 +151,7 @@ const Transfer: FC = () => {
 
       {/* Transfer Button */}
       <Button
-        className="z-20 my-5"
+        className="my-5"
         label="Send"
         size="lg"
         variant="primary"
