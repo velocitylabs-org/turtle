@@ -29,16 +29,16 @@ export const Features = () => {
 
   const secondaryFeatures = [
     {
-      title: 'Security comes standard.',
+      title: 'Security comes standard',
       description:
         'Bridge hacks are responsible for nearly 50% of all value hacked in the blockchain industry. Not on Turtle.',
       icon: locker,
     },
     {
-      title: 'Multi-chain.',
+      title: 'Multi-chain',
       description: 'Transact across most popular networks.',
       icon: chains,
-      tags: [{ name: 'Ethereum' }, { name: 'Optimism' }, { name: 'Polygon' }],
+      tags: [{ name: 'Ethereum' }, { name: 'Polkadot' }],
     },
   ] satisfies TurtleFeatures
 

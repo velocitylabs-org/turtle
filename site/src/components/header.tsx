@@ -7,7 +7,7 @@ export default function Header() {
     <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={36} />
-        <p className="text-[1.85rem] text-logo font-medium text-white">Turtle</p>
+        <p className="text-[1.85rem] text-logo font-medium text-white turtle-text-shadow">Turtle</p>
       </Link>
 
       <nav>
