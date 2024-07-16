@@ -58,7 +58,7 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, hidden }) => {
             height: 'auto',
             transition: { type: 'spring', stiffness: 300, damping: 23 },
           }}
-          exit={{ opacity: 0, height: 0, transition: { duration: 0.3 } }}
+          exit={{ opacity: 0, height: 0, transition: { duration: 0.2 } }}
         >
           {renderContent()}
         </motion.div>
