@@ -7,7 +7,7 @@ export default function Header() {
     <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={36} />
-        <p className="text-[1.85rem] text-logo font-medium text-white turtle-text-shadow">Turtle</p>
+        <p className="turtle-text-shadow text-[1.85rem] text-logo font-medium text-white">Turtle</p>
       </Link>
 
       <nav>
@@ -47,7 +47,7 @@ export default function Header() {
               <ul className="space-y-4">
                 <li>
                   <button className="btn btn-primary border-black text-sm font-medium hover:border-black">
-                    <a href="">Start a transfer</a>
+                    <a href="https://app.turtle.cool">Start a transfer</a>
                   </button>
                 </li>
               </ul>
@@ -62,7 +62,7 @@ export default function Header() {
         <ul className="hidden items-center space-x-6 sm:flex">
           <li>
             <button className="btn btn-primary flex h-[56px] w-[122px] flex-row justify-center rounded-lg border-black text-xl font-medium hover:border-black">
-              <a href="/">Transfer</a>
+              <a href="https://app.turtle.cool" target="_blank">Transfer</a>
             </button>
           </li>
         </ul>

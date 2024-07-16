@@ -1,5 +1,4 @@
 import { FeatureCard, TurtleFeatures } from './card'
-import { TokenExchange } from './tokens'
 import chains from '../../public/chains.png'
 import turtle from '../../public/turtle.png'
 import locker from '../../public/locker.png'
