@@ -38,7 +38,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
         }
       case Network.Ethereum:
         return {
-          buttonFunction: evmIsConnected ? disconnectEvm : openEvm,
+          buttonFunction: evmIsConnected ? disconnectEvm : () => openEvm(),
           isConnected: evmIsConnected,
           disabled: false,
         }
