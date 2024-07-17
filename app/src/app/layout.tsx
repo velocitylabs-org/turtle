@@ -10,6 +10,7 @@ import { headers } from 'next/headers'
 import { twMerge } from 'tailwind-merge'
 import { cookieToInitialState } from 'wagmi'
 import './globals.css'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Turtle',
@@ -37,7 +38,7 @@ export default function RootLayout({
       <body
         className={twMerge(
           dazzed.variable,
-          'min-h-full bg-turtle-tertiary font-dazzed font-medium',
+          'min-h-screen bg-turtle-tertiary font-dazzed font-medium',
         )}
       >
         <Navbar />
@@ -45,6 +46,7 @@ export default function RootLayout({
         <Web3ModalProvider initialState={initialState}>
           <NextUIProvider>{children}</NextUIProvider>
         </Web3ModalProvider>
+        <Footer />
         <Analytics />
       </body>
     </html>

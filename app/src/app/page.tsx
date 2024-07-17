@@ -1,5 +1,4 @@
 import { FC } from 'react'
-
 import { HomeComponentSelect } from '@/components/HomeComponentSelect'
 import { TurtlesBackground } from '@/components/TurtlesBackground'
 
