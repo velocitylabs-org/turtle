@@ -13,7 +13,7 @@ import { Network } from '@/models/chain'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { feeToHuman, formatDate, toHuman } from '@/utils/transfer'
+import { feeToHuman, formatDate, getExplorerLink, toHuman } from '@/utils/transfer'
 
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -41,6 +41,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
   const senderDisplay = senderName ? senderName : truncateAddress(transfer.sender, 4, 4)
   const recipientDisplay = recipientName ? recipientName : truncateAddress(transfer.recipient, 4, 4)
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const explorerLink = getExplorerLink(transfer)
 
   useEffect(() => {
     const pollUpdate = async () => {
@@ -221,16 +222,17 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               </div>
             </div>
           </div>
-          <a
-            href={'#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="View transaction on block explorer"
-            className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
-          >
-            {/* use transaction hash */}
-            <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
-          </a>
+          {explorerLink && (
+            <a
+              href={explorerLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View transaction on block explorer"
+              className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
+            >
+              <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
+            </a>
+          )}
         </div>
       </DialogContent>
     </Dialog>
