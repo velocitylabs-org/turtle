@@ -37,7 +37,7 @@ export const Features = () => {
       description:
         'Turtle will become bridge-agnostic and support additional bridges available on Polkadot. Users just need to specify the token and destination; Turtle will handle the rest',
       icon: chains,
-      tags: [{ name: 'Ethereum' }, { name: 'Polkadot' }],
+      tags: [{ name: 'Ethereum' }, { name: 'Polkadot' }, { name: 'Snowbridge' }],
     },
   ] satisfies TurtleFeatures
 
