@@ -268,7 +268,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           </div>
           {tx.explorerLink && (
             <a
-              href={'#'}
+              href={tx.explorerLink}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View your completed transaction on block explorer"
