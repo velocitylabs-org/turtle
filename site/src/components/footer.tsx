@@ -19,8 +19,7 @@ export default function Footer() {
           </div>
 
           <h3 className="space-y-2 text-center text-4xl font-medium tracking-tighter sm:text-5xl md:text-h-sub md:leading-12">
-            <p>Built to last.</p>
-            <p>Built on Turtle.</p>
+            <p>Trustless, Simple, Turtle.</p>
           </h3>
 
           <div className="flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-10 md:space-y-0">
@@ -52,7 +51,7 @@ export default function Footer() {
             </div>
           </div>
           <p className="text-xs">
-            Made with love 💚 by{' '}
+            Made with love 💚 by {' '}
             <a href="https://www.velocitylabs.org/" target="_blank" rel="noopener noreferrer">
               Velocity Labs.
             </a>

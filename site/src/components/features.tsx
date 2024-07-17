@@ -10,32 +10,32 @@ export const Features = () => {
     {
       title: 'Shell-hard security',
       description:
-        'Transfer tokens using Chainlink CCIP—the industry standard cross-chain protocol.',
+        `We don't take security lightly, and neither should you. Turtle is built on solid general message passing (GMP) protocols like Snowbridge and XCMP, which leverage both Ethereum and Polkadot security.`,
       icon: turtle,
     },
     {
-      title: 'Real-time tracking',
+      title: 'Transparency all the way',
       description:
-        'Track your assets every step of the way for extra transparency and peace of mind.',
+        `Keep an eye on your assets at every step of the way. The days of anxiously waiting for our funds to arrive are finally behind us!`,
       icon: chart,
     },
     {
       title: 'Seamless experience',
-      description: 'Transact with ease with an intuitive UI.',
+      description: 'Transfer any token anywhere. Turtle is your go-to app for cross-chain transfers.',
       icon: record,
     },
   ] satisfies TurtleFeatures
 
   const secondaryFeatures = [
     {
-      title: 'Security comes standard',
+      title: 'Decentralized interoperability',
       description:
-        'Bridge hacks are responsible for nearly 50% of all value hacked in the blockchain industry. Not on Turtle.',
+        'We ensure reliability when it comes to interoperability. Turtle uses fully decentralized protocols for its token transfers.',
       icon: locker,
     },
     {
-      title: 'Multi-chain',
-      description: 'Transact across most popular networks.',
+      title: 'Multi-bridge support (coming soon)',
+      description: 'Turtle will become bridge-agnostic and support additional bridges available on Polkadot. Users just need to specify the token and destination; Turtle will handle the rest',
       icon: chains,
       tags: [{ name: 'Ethereum' }, { name: 'Polkadot' }],
     },
@@ -68,10 +68,6 @@ export const Features = () => {
           ))}
         </div>
       </div>
-      {/* token transfer component */}
-      {/* <div className="absolute inset-x-0 -top-9 -z-10 mx-auto sm:-top-[70px] ">
-        <TokenExchange />
-      </div> */}
     </div>
   )
 }
