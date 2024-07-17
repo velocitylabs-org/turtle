@@ -62,7 +62,9 @@ export default function Header() {
         <ul className="hidden items-center space-x-6 sm:flex">
           <li>
             <button className="btn btn-primary flex h-[56px] w-[122px] flex-row justify-center rounded-lg border-black text-xl font-medium hover:border-black">
-              <a href="https://app.turtle.cool" target="_blank">Transfer</a>
+              <a href="https://app.turtle.cool" target="_blank">
+                Transfer
+              </a>
             </button>
           </li>
         </ul>

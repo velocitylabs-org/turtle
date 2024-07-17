@@ -25,7 +25,10 @@ export default function Footer() {
 
           <div className="flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-10 md:space-y-0">
             <div className="space-x-5 text-sm underline md:space-x-10">
-              <Link href="https://app.turtle.cool" aria-label="Turle bridge decentralized application">
+              <Link
+                href="https://app.turtle.cool"
+                aria-label="Turle bridge decentralized application"
+              >
                 Start a transfer
               </Link>
             </div>
