@@ -56,7 +56,7 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, hidden }) => {
           animate={{
             opacity: 1,
             height: 'auto',
-            transition: { type: 'spring', stiffness: 300, damping: 23 },
+            transition: { type: 'spring', bounce: 0.6, duration: 0.5 },
           }}
           exit={{ opacity: 0, height: 0, transition: { duration: 0.2 } }}
         >
