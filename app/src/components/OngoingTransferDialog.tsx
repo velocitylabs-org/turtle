@@ -47,9 +47,21 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
     const pollUpdate = async () => {
       try {
         if (direction == Direction.ToEthereum) {
-          await trackToEthereum(transfer, setUpdate, removeOngoingTransfer, addCompletedTransfer)
+          await trackToEthereum(
+            transfer,
+            setUpdate,
+            removeOngoingTransfer,
+            addCompletedTransfer,
+            explorerLink,
+          )
         } else if (direction == Direction.ToPolkadot) {
-          await trackToPolkadot(transfer, setUpdate, removeOngoingTransfer, addCompletedTransfer)
+          await trackToPolkadot(
+            transfer,
+            setUpdate,
+            removeOngoingTransfer,
+            addCompletedTransfer,
+            explorerLink,
+          )
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -246,6 +258,7 @@ async function trackToPolkadot(
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: CompletedTransfer) => void,
+  explorerLink: string | undefined,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
@@ -261,17 +274,15 @@ async function trackToPolkadot(
       addCompletedTransfer({
         id: transfer.id,
         result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
-        // hashes?: string[] TODO handle hashes
-        // errors?: string[] TODO handle errors details
         token: transfer.token,
         sourceChain: transfer.sourceChain,
         destChain: transfer.destChain,
         amount: transfer.amount,
         fees: transfer.fees,
-        // minTokenRecieved: transfer.amount, // TODO handle true minTokenRecieved value
         sender: transfer.sender,
         recipient: transfer.recipient,
         date: transfer.date,
+        ...(explorerLink && { explorerLink }),
       } satisfies CompletedTransfer)
 
       // Removes the ongoing tx from storage
@@ -308,6 +319,7 @@ async function trackToEthereum(
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: any) => void,
+  explorerLink: string | undefined,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
@@ -322,17 +334,15 @@ async function trackToEthereum(
       addCompletedTransfer({
         id: transfer.id,
         result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
-        // hashes?: string[] TODO handle hashes
-        // errors?: string[] TODO handle errors details
         token: transfer.token,
         sourceChain: transfer.sourceChain,
         destChain: transfer.destChain,
         amount: transfer.amount,
         fees: transfer.fees,
-        // minTokenRecieved: transfer.amount,
         sender: transfer.sender,
         recipient: transfer.recipient,
         date: transfer.date,
+        ...(explorerLink && { explorerLink }),
       } satisfies CompletedTransfer)
 
       // Removes the ongoing tx from storage

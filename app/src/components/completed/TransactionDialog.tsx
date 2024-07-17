@@ -266,17 +266,17 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               </div>
             </div> */}
           </div>
-
-          {/* TODO use transaction hash to implement explorer link*/}
-          <a
-            href={'#'}
-            // target="_blank"
-            // rel="noopener noreferrer"
-            aria-label="View transaction on block explorer"
-            className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
-          >
-            <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
-          </a>
+          {tx.explorerLink && (
+            <a
+              href={'#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View your completed transaction on block explorer"
+              className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
+            >
+              <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
+            </a>
+          )}
         </div>
       </DialogContent>
     </Dialog>

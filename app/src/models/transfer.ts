@@ -40,8 +40,6 @@ export type TransferResult = TxStatus.Succeeded | TxStatus.Failed
 export type CompletedTransfer = {
   id: string
   result: TransferResult
-  hashes?: string[]
-  errors?: string[]
   token: Token
   sourceChain: Chain
   destChain: Chain
@@ -53,6 +51,9 @@ export type CompletedTransfer = {
   sender: string
   recipient: string
   date: Date
+  explorerLink?: string
+  hashes?: string[]
+  errors?: string[]
 }
 export type TransfersByDate = Record<string, CompletedTransfer[]>
 export interface Fees {
