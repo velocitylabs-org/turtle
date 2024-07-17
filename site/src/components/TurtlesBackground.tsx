@@ -29,9 +29,9 @@ export const TurtlesBackground: React.FC<TurtlesBackgroundProps> = ({ header }) 
               />
             </defs>
             <g className="parallax">
-              <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(191,218,220,0.7" />
-              <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(191,218,220,0.5)" />
-              <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(191,218,220,0.3)" />
+              <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(191,218,220,0.85" />
+              <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(191,218,220,0.65)" />
+              <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(191,218,220,0.45)" />
               <use xlinkHref="#gentle-wave" x="48" y="7" fill="#BFDADC" />
             </g>
           </svg>
