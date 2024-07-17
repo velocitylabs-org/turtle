@@ -151,22 +151,13 @@ const Transfer: FC = () => {
 
       {/* Transfer Button */}
       <Button
-        className="z-20 my-5"
+        className="my-5"
         label="Send"
         size="lg"
         variant="primary"
         type="submit"
         loading={transferStatus !== 'Idle'}
-        disabled={
-          !isValid ||
-          isValidating ||
-          !fees ||
-          transferStatus !== 'Idle' ||
-          !sourceWallet?.isConnected ||
-          (!manualRecipient.enabled && !destinationWallet?.isConnected) ||
-          !!tokenAmountError ||
-          !!manualRecipientError
-        }
+        disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
       />
 
       {/* Warning Label */}
