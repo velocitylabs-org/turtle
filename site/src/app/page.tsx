@@ -4,7 +4,7 @@ import { TurtlesBackground } from '@/components/TurtlesBackground'
 export default function Home() {
   return (
     <>
-      <section className="relative z-20 flex h-[40vh] h-[75vh] flex-col items-center justify-center md:mb-20 lg:mb-10">
+      <section className="relative z-20 flex h-[40vh] h-[75vh] flex-col items-center justify-center">
         <TurtlesBackground header={'Frictionless cross-chain transfers'} />
       </section>
 
