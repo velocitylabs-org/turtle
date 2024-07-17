@@ -5,7 +5,7 @@ import { WaveLine } from './assets/waves-lines'
 
 export default function Footer() {
   return (
-    <footer className="relative z-30">
+    <footer className="relative z-50">
       <WaveLine
         name="footerWave"
         withStroke={true}
