@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <section className="relative z-20 flex h-[40vh] flex-col items-center justify-center sm:h-[75vh] md:mb-20 lg:mb-10">
-        <TurtlesBackground src={'/bg.png'} alt={'Frictionless cross-chain transfers'} />
+        <TurtlesBackground header={'Frictionless cross-chain transfers'} />
       </section>
 
       {/* Features section */}
