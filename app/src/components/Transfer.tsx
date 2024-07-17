@@ -12,6 +12,7 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const Transfer: FC = () => {
   const {
@@ -122,13 +123,6 @@ const Transfer: FC = () => {
 
       {destinationChain && (
         <div className="flex flex-col gap-1">
-          {/* Manual input warning */}
-          {manualRecipient.enabled && (
-            <div className="flex items-center gap-1 self-center pt-1">
-              <AlertIcon />
-              <span className="text-xs">Double check address to avoid losing funds.</span>
-            </div>
-          )}
           {/* Switch between Wallet and Manual Input */}
           <Controller
             name="manualRecipient.enabled"
@@ -143,6 +137,25 @@ const Transfer: FC = () => {
               />
             )}
           />
+
+          {/* Manual input warning */}
+          <AnimatePresence>
+            {manualRecipient.enabled && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.07 }}
+                className="flex items-center gap-1 self-center pt-1"
+              >
+                <AlertIcon />
+                <span className="text-xs">Double check address to avoid losing funds.</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
 

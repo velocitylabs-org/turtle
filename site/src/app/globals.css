@@ -19,7 +19,7 @@
   h4 {
     letter-spacing: var(--letter-spacing-xs);
   }
-  p{
+  p {
     letter-spacing: var(--letter-spacing-sm);
   }
 }

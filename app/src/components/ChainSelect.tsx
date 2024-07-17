@@ -103,7 +103,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                 </>
               )}
 
-              <ChevronDown strokeWidth={0.2} className="ml-1" />
+              <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
               {!manualRecipient?.enabled && !!value && accountName}
               {manualRecipient && manualRecipient.enabled && (
                 <>
