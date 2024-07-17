@@ -157,16 +157,7 @@ const Transfer: FC = () => {
         variant="primary"
         type="submit"
         loading={transferStatus !== 'Idle'}
-        disabled={
-          !isValid ||
-          isValidating ||
-          !fees ||
-          transferStatus !== 'Idle' ||
-          !sourceWallet?.isConnected ||
-          (!manualRecipient.enabled && !destinationWallet?.isConnected) ||
-          !!tokenAmountError ||
-          !!manualRecipientError
-        }
+        disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
       />
 
       {/* Warning Label */}

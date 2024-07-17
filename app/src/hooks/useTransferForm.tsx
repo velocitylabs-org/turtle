@@ -229,7 +229,13 @@ const useTransferForm = () => {
   return {
     control,
     errors,
-    isValid,
+    isValid:
+      isValid &&
+      !tokenAmountError &&
+      !manualRecipientError &&
+      sourceWallet?.isConnected &&
+      (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
+      (manualRecipient.enabled || destinationWallet?.isConnected),
     isValidating,
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
