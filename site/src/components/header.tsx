@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { TurtleSocialIcons } from './assets/social-icons'
 import { TurtleIcon } from './assets/turtle-icon'
 
 export default function Header() {
@@ -8,6 +7,9 @@ export default function Header() {
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={36} />
         <p className="turtle-text-shadow text-[1.85rem] text-logo font-medium text-white">Turtle</p>
+        <span className="flex h-[19px] items-center justify-center rounded-[4px] border border-white px-[5px] text-[12px] font-bold text-white">
+          ALPHA
+        </span>
       </Link>
 
       <nav>

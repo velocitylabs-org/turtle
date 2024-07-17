@@ -51,7 +51,7 @@ export default function Footer() {
             </div>
           </div>
           <p className="text-xs">
-            Made with love 💚 by {' '}
+            Made with love 💚 by{' '}
             <a href="https://www.velocitylabs.org/" target="_blank" rel="noopener noreferrer">
               Velocity Labs.
             </a>
