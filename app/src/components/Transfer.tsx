@@ -13,6 +13,7 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image'
 
 const Transfer: FC = () => {
   const {
@@ -40,8 +41,7 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     balanceData,
   } = useTransferForm()
-
-  const amountPlaceholder = tokenAmount?.token == null ? "Amount" : balanceData?.value == BigInt(0) ? "No balance :(" : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  const amountPlaceholder = !sourceWallet || tokenAmount?.token == null ? "Amount" : balanceData?.value == BigInt(0) ? "No balance :(" : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
 
   return (
     <form
@@ -155,7 +155,7 @@ const Transfer: FC = () => {
                 transition={{ duration: 0.07 }}
                 className="flex items-center gap-1 self-center pt-1"
               >
-                <AlertIcon />
+                <AlertIcon/>
                 <span className="text-xs">Double check address to avoid losing funds.</span>
               </motion.div>
             )}
@@ -177,15 +177,30 @@ const Transfer: FC = () => {
         disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
       />
 
-      {/* Warning Label */}
-      <div className="self-center text-sm text-turtle-level5">
-        <span>This can take up to 30 minutes. </span>
-        <Link href={'/'}>
-          {/* TODO: update Link */}
-          <span className="underline">Read more</span>
-        </Link>
-      </div>
-
+       {/* Credits */}
+      <div className="flex flex-row justify-center mt-6 credits text-sm turtle-text-shadow text-turtle-level5">
+        Made with love by {' '} 
+        <a href="https://www.velocitylabs.org" target="_blank" rel="noopener noreferrer" className='px-2'>
+        <Image
+                src={"/velocitylabs.svg"}
+                alt={'Velocity Labs'}
+                width={24}
+                height={24}
+                className="rounded-full border-1"
+              />
+        </a>
+        {' ・ '} 
+        Powered by {' '}
+        <a href="https://docs.snowbridge.network/" target="_blank" rel="noopener noreferrer" className='px-2'>
+          <Image
+                  src={"/snowbridge.svg"}
+                  alt={'Snowbridge Network'}
+                  width={24}
+                  height={24}
+                  className="rounded-full border-1"
+                />
+        </a>
+        </div>
       <SubstrateWalletModal />
     </form>
   )
