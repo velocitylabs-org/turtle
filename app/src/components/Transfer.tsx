@@ -38,7 +38,10 @@ const Transfer: FC = () => {
     tokenAmountError,
     manualRecipientError,
     isBalanceAvailable,
+    balanceData,
   } = useTransferForm()
+
+  const amountPlaceholder = tokenAmount?.token == null ? "Amount" : balanceData?.value == BigInt(0) ? "No balance :(" : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
 
   return (
     <form
@@ -75,6 +78,7 @@ const Transfer: FC = () => {
               options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
               floatingLabel="Amount"
               disabled={transferStatus !== 'Idle'}
+              secondPlaceholder={amountPlaceholder}
               error={errors.tokenAmount?.amount?.message || tokenAmountError}
               trailing={
                 <Button

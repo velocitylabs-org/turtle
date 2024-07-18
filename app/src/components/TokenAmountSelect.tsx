@@ -23,6 +23,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
       floatingLabel,
       placeholder = 'Token',
       placeholderIcon = <TokenIcon />,
+      secondPlaceholder,
       trailing,
       disabled,
       error,
@@ -90,7 +91,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <input
                 type="number"
                 className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-                placeholder="Amount"
+                placeholder={secondPlaceholder ?? "Amount"}
                 value={value?.amount ?? ''}
                 onChange={handleAmountChange}
                 onClick={e => e.stopPropagation()}
