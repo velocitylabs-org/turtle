@@ -41,9 +41,7 @@ const Transfer: FC = () => {
     balanceData,
   } = useTransferForm()
 
-  const amountPlaceholder = !isBalanceAvailable ? "Amount" : balanceData?.value == BigInt(0) ? "No balance :(" : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol} `
-
-  console.log("Transfer - balance is ", balanceData)
+  const amountPlaceholder = tokenAmount?.token == null ? "Amount" : balanceData?.value == BigInt(0) ? "No balance :(" : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
 
   return (
     <form
