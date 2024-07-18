@@ -187,7 +187,7 @@ const Transfer: FC = () => {
                 alt={'Velocity Labs'}
                 width={24}
                 height={24}
-                className="rounded-full border-1 border-turtle-level3"
+                className="rounded-full border-1"
               />
         </a>
         {' ・ '} 
@@ -198,7 +198,7 @@ const Transfer: FC = () => {
                   alt={'Snowbridge Network'}
                   width={24}
                   height={24}
-                  className="rounded-full border-1 border-turtle-level3"
+                  className="rounded-full border-1"
                 />
         </a>
         </div>
