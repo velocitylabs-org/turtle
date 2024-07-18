@@ -13,7 +13,7 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Image } from '@nextui-org/react'
+import Image from 'next/image'
 
 const Transfer: FC = () => {
   const {
