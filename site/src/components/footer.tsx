@@ -15,7 +15,7 @@ export default function Footer() {
       <div className="absolute inset-0 lg:-top-24">
         <div className="flex flex-col items-center justify-center space-y-8 pb-20 2xl:pb-0">
           <div>
-            <TurtleIcon size={28} />
+            <TurtleIcon size={40} />
           </div>
 
           <h3 className="space-y-2 text-center text-4xl font-medium tracking-tighter sm:text-5xl md:text-h-sub md:leading-12">
