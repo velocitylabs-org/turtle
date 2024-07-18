@@ -1,5 +1,3 @@
-import { Discord } from './discord'
-import { Telegram } from './telegram'
 import { X } from './twitter'
 
 export enum SocialIcon {
@@ -16,18 +14,6 @@ export type TurtleSocialIcons = {
 }[]
 
 export const TurtleSocialData: TurtleSocialIcons = [
-  {
-    alt: 'Velocity Labs twitter',
-    url: 'https://twitter.com/v_labs',
-    name: SocialIcon.DISCORD,
-    icon: <Discord />,
-  },
-  {
-    alt: 'Velocity Labs telegram',
-    url: 'https://twitter.com/v_labs',
-    name: SocialIcon.TELEGRAM,
-    icon: <Telegram />,
-  },
   {
     alt: 'Velocity Labs twitter',
     url: 'https://twitter.com/v_labs',
