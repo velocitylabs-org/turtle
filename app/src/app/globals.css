@@ -91,6 +91,16 @@
     letter-spacing: var(--letter-spacing-sm);
   }
 
+  .turtle-dark-overlay {
+    background-color: rgba(0, 0, 0, 0.20);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
   .waves-container {
     position: relative;
     bottom: 14vh;

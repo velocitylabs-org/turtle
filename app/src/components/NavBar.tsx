@@ -19,15 +19,6 @@ const Navbar: FC = async () => {
           ALPHA
         </span>
       </NavbarBrand>
-
-      <NavbarContent justify="end" className="gap-0 sm:gap-10">
-        <NavbarItem>
-          <Button label="Docs" size="md" variant="ghost" className="text-sm text-white" />
-        </NavbarItem>
-        <NavbarItem>
-          <Button label="About" size="md" variant="ghost" className="text-sm text-white" />
-        </NavbarItem>
-      </NavbarContent>
     </NextNavbar>
   )
 }

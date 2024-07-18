@@ -155,7 +155,7 @@ const Transfer: FC = () => {
                 transition={{ duration: 0.07 }}
                 className="flex items-center gap-1 self-center pt-1"
               >
-                <AlertIcon />
+                <AlertIcon/>
                 <span className="text-xs">Double check address to avoid losing funds.</span>
               </motion.div>
             )}
@@ -180,10 +180,6 @@ const Transfer: FC = () => {
       {/* Warning Label */}
       <div className="self-center text-sm text-turtle-level5">
         <span>This can take up to 30 minutes. </span>
-        <Link href={'/'}>
-          {/* TODO: update Link */}
-          <span className="underline">Read more</span>
-        </Link>
       </div>
 
       <SubstrateWalletModal />
