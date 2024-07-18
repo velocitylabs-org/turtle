@@ -210,7 +210,14 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
                 <p>{transfer.token.symbol}</p>
-                <p className="text-turtle-level5">TBD $</p>
+                {typeof transfer.tokenUSDValue == 'number' && (
+                  <p className="text-turtle-level5">
+                    {(
+                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0)
+                    ).toFixed(3)}{' '}
+                    $
+                  </p>
+                )}
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
@@ -219,18 +226,25 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               <div className="flex space-x-1 text-sm">
                 <p>{feeToHuman(transfer.fees)}</p>
                 <p>{transfer.fees.token.symbol}</p>
-                <p className="text-turtle-level5"> TBD $</p>
+                {transfer.fees.inDollars >= 0 && (
+                  <div className="text-turtle-level5">{transfer.fees.inDollars.toFixed(6)} $</div>
+                )}
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
-                {/* TODO(nuno) */}
                 <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
                 <p>{transfer.token.symbol}</p>
-                {/* TODO(nuno) */}
-                <p className="text-turtle-level5"> TBD $</p>
+                {typeof transfer.tokenUSDValue == 'number' && (
+                  <p className="text-turtle-level5">
+                    {(
+                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0)
+                    ).toFixed(3)}{' '}
+                    $
+                  </p>
+                )}
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ export interface StoredTransfer {
   id: string
   sourceChain: Chain
   token: Token
+  tokenUSDValue?: number
   sender: string
   destChain: Chain
   amount: string

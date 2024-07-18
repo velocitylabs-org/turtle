@@ -14,6 +14,7 @@ import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
+import { getErc20TokenUSDValue } from '@/services/balance'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -111,10 +112,15 @@ const useTransfer = () => {
           ? await sender.getAddress()
           : (sender as WalletOrKeypair).address
 
+      const tokenData = await getErc20TokenUSDValue(token.address)
+      const tokenUSDValue =
+        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address].usd : 0
+
       addTransferToStorage({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): replace with actual messageId
         sourceChain,
         token,
+        tokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
         amount: amount.toString(),

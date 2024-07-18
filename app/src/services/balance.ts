@@ -8,8 +8,8 @@ import { Token } from '@/models/token'
 import { toHuman } from '../utils/transfer'
 import { Network } from '@/models/chain'
 
-export interface TokensValue {
-  [network: string]: { usd: number }
+export interface TokenValue {
+  [key: string]: { usd: number }
 }
 
 export interface Erc20Balance {
@@ -64,17 +64,34 @@ export const fetchEthereumBalance = async (
   }
 }
 
-export const getFeesTokensUSDValue = async (networkToken: Network): Promise<TokensValue | null> => {
+export const getFeesTokenUSDValue = async (networkToken: Network): Promise<TokenValue | null> => {
   try {
     const url = `https://api.coingecko.com/api/v3/simple/price?ids=${networkToken.toLowerCase()}&vs_currencies=usd`
     const options = { method: 'GET', headers: { accept: 'application/json' } }
     const result = await fetch(url, options)
     if (!result.ok) {
-      throw new Error('Failed to fetch tokens value')
+      throw new Error('Failed to fetch fees tokens value')
     }
-    return (await result.json()) as TokensValue
+    return (await result.json()) as TokenValue
   } catch (error) {
-    console.log('Token value fetch error:', error)
+    console.log('Fees token value fetch error:', error)
+    return null
+  }
+}
+export const getErc20TokenUSDValue = async (
+  contract: Token['address'],
+  network = Network.Ethereum,
+): Promise<TokenValue | null> => {
+  try {
+    const url = `https://api.coingecko.com/api/v3/simple/token_price/${network.toLowerCase()}?contract_addresses=${contract}&vs_currencies=usd`
+    const options = { method: 'GET', headers: { accept: 'application/json' } }
+    const result = await fetch(url, options)
+    if (!result.ok) {
+      throw new Error('Failed to fetch ERC20 tokens value')
+    }
+    return (await result.json()) as TokenValue
+  } catch (error) {
+    console.log('ERC20 token value fetch error:', error)
     return null
   }
 }

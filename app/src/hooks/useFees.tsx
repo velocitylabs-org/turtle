@@ -8,7 +8,7 @@ import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import * as Sentry from '@sentry/nextjs'
-import { getFeesTokensUSDValue } from '@/services/balance'
+import { getFeesTokenUSDValue } from '@/services/balance'
 import * as Snowbridge from '@snowbridge/api'
 import { toHuman } from '@/utils/transfer'
 
@@ -41,12 +41,12 @@ const useFees = (
       let tokenUSDValue: number = 0
       switch (direction) {
         case Direction.ToEthereum:
-          const dotUSDValue = await getFeesTokensUSDValue(Network.Polkadot)
+          const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
           tokenUSDValue = dotUSDValue?.[Network.Polkadot.toLowerCase()].usd ?? 0
           amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         case Direction.ToPolkadot:
-          const ethUSDValue = await getFeesTokensUSDValue(Network.Ethereum)
+          const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
           tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()].usd ?? 0
           amount = (
             await Snowbridge.toPolkadot.getSendFee(
