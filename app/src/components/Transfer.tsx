@@ -192,7 +192,7 @@ const Transfer: FC = () => {
         </a>
         {' ・ '} 
         Powered by {' '}
-        <a href="https://www.snowbridge.network/" target="_blank" rel="noopener noreferrer" className='px-2'>
+        <a href="https://docs.snowbridge.network/" target="_blank" rel="noopener noreferrer" className='px-2'>
           <Image
                   src={"/snowbridge.svg"}
                   alt={'Snowbridge Network'}
