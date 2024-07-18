@@ -83,7 +83,7 @@ export const getErc20TokenUSDValue = async (
   network = Network.Ethereum,
 ): Promise<TokenValue | null> => {
   try {
-    const url = `https://api.coingecko.com/api/v3/simple/token_price/${network.toLowerCase()}?contract_addresses=${contract}&vs_currencies=usd`
+    const url = `https://api.coingecko.com/api/v3/simple/token_price/${network.toLowerCase()}?contract_addresses=${contract.toLowerCase()}&vs_currencies=usd`
     const options = { method: 'GET', headers: { accept: 'application/json' } }
     const result = await fetch(url, options)
     if (!result.ok) {

@@ -53,7 +53,7 @@ export module Mainnet {
     symbol: 'SHIB',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png',
     decimals: 18,
-    address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+    address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
   }
 
   export const PEPE: Token = {
@@ -71,7 +71,7 @@ export module Mainnet {
     symbol: 'TON',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
     decimals: 9,
-    address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
+    address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
   }
 
   export const WSTETH: Token = {
