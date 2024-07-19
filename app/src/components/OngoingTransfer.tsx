@@ -17,8 +17,8 @@ const OngoingTransfer: FC<{
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
-        <p className="font-bold text-turtle-secondary-dark">{update ?? ''}</p>
-        <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
+        <p className="font-bold text-turtle-secondary-dark text-left">{update ?? ''}</p>
+        <p className="text-normal text-turtle-secondary text-right">{formatDate(transfer.date)}</p>
       </div>
       {/* Progress bar */}
       <div className="mb-4 h-2 rounded-full bg-turtle-secondary-light">
