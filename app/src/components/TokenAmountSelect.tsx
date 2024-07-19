@@ -91,7 +91,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <input
                 type="number"
                 className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-                placeholder={secondPlaceholder ?? "Amount"}
+                placeholder={secondPlaceholder ?? 'Amount'}
                 value={value?.amount ?? ''}
                 onChange={handleAmountChange}
                 onClick={e => e.stopPropagation()}

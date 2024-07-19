@@ -46,7 +46,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         />
       </DialogTrigger>
       <DialogContent
-        className="completed-transfer max-w-[90vw] max-h-[85vh] rounded-4xl sm:max-w-[30.5rem] m-auto overflow-scroll"
+        className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
         hideCloseButton={true}
       >
         <DialogHeader
@@ -257,7 +257,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="View transaction on block explorer"
-            className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 mb-4 sm:m-0 text-sm hover:text-turtle-level5"
+            className="mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5 sm:m-0"
           >
             <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
           </a>
