@@ -13,9 +13,11 @@ export const TransactionHistory = ({ transactions }: { transactions: CompletedTr
     return acc
   }, {})
 
-  const mappedTransactionsByDate = Object.keys(transactionsByDate).map(date => {
-    return { date, transactions: transactionsByDate[date] }
-  })
+  const mappedTransactionsByDate = Object.keys(transactionsByDate)
+    .map(date => {
+      return { date, transactions: transactionsByDate[date] }
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   return (
     <div className="z-20 flex flex-col gap-4 rounded-3xl bg-white p-4 sm:w-[31.5rem] sm:p-[2.5rem]">
