@@ -41,12 +41,8 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     balanceData,
   } = useTransferForm()
-  const amountPlaceholder =
-    !sourceWallet || tokenAmount?.token == null
-      ? 'Amount'
-      : balanceData?.value == BigInt(0)
-        ? 'No balance :('
-        : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  
+  const amountPlaceholder = !sourceWallet || tokenAmount?.token == null || !sourceWallet.isConnected || !isBalanceAvailable ? "Amount" : balanceData?.value == BigInt(0) ? "No balance :(" : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
 
   return (
     <form
