@@ -178,7 +178,7 @@ const Transfer: FC = () => {
       />
 
        {/* Credits */}
-      <div className="flex flex-row justify-center mt-6 credits text-xs sm:text-sm text-turtle-level5">
+      <div className="flex flex-row justify-center items-center mt-6 credits text-xs sm:text-sm text-turtle-level5">
         Made with love by {' '} 
         <a href="https://www.velocitylabs.org" target="_blank" rel="noopener noreferrer" className='px-2'>
         <Image

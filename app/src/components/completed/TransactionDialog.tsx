@@ -46,7 +46,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         />
       </DialogTrigger>
       <DialogContent
-        className="max-w-[24rem] rounded-4xl sm:max-w-[30.5rem]"
+        className="completed-transfer max-w-[90vw] max-h-[85vh] rounded-4xl sm:max-w-[30.5rem] m-auto overflow-scroll"
         hideCloseButton={true}
       >
         <DialogHeader
@@ -86,7 +86,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="text-sm">{tx.sourceChain.name}</div>
             </div>
             <ArrowRight
-              className="h-2 w-2"
+              className="h-3 w-3"
               {...(tx.result === TxStatus.Failed
                 ? { fill: colors['turtle-error-dark'] }
                 : { fill: colors['turtle-primary-dark'] })}
@@ -227,7 +227,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
 
           {/* fees */}
           <div className="w-full gap-10">
-            <div className="flex flex-col items-center justify-between space-x-4 sm:flex-row">
+            <div className="flex flex-row items-center justify-between space-x-4 px-1">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
@@ -239,7 +239,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
-            <div className="flex flex-col items-center justify-between sm:flex-row">
+            <div className="flex flex-row items-center justify-between px-1">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(tx.fees.amount, tx.fees.token).toFixed(10)}</p>
@@ -249,31 +249,15 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 </p>
               </div>
             </div>
-
-            {/* No need to display minTokenRecieved for now, code kept for future implementation */}
-
-            {/* <Separator className="my-4 bg-turtle-level3" />
-            <div className="flex flex-col items-center justify-between sm:flex-row">
-              <p className="text-sm">Min receive</p>
-              <div className="flex space-x-1 text-sm">
-                <p>{toHuman(tx.minTokenRecieved, tx.feeToken).toFixed(3)}</p>
-                <p>{tx.feeToken.symbol}</p>
-                <p className="text-turtle-level5">
-                  {tx.minTokenRecievedValue
-                    ? `$${Number(tx.minTokenRecievedValue).toFixed(3)}`
-                    : 'TBD $'}
-                </p>
-              </div>
-            </div> */}
           </div>
 
           {/* TODO use transaction hash to implement explorer link*/}
           <a
             href={'#'}
-            // target="_blank"
-            // rel="noopener noreferrer"
+            target="_blank"
+            rel="noopener noreferrer"
             aria-label="View transaction on block explorer"
-            className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5"
+            className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 mb-4 sm:m-0 text-sm hover:text-turtle-level5"
           >
             <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
           </a>

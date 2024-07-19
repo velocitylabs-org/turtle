@@ -69,7 +69,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
         />
       </DialogTrigger>
       <DialogContent
-        className="ongoing-transfer-dialog max-w-[90vw] max-h-[80vh] rounded-4xl sm:max-w-[30.5rem] m-auto overflow-scroll"
+        className="ongoing-transfer-dialog max-w-[90vw] max-h-[85vh] rounded-4xl sm:max-w-[30.5rem] m-auto overflow-scroll"
         hideCloseButton={true}
       >
         {/* Modal header */}
@@ -94,7 +94,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               </div>
               <div className="text-sm">{transfer.sourceChain.name}</div>
             </div>
-            <ArrowRight className="h-2 w-2" fill={colors['turtle-secondary-dark']} />
+            <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
                 <Image
