@@ -98,7 +98,8 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 autoFocus
               />
             </div>
-            {trailing && <div className="ml-2">{trailing}</div>}
+            {/* Max button */}
+            {trailing && <div className="absolute right-0 ml-2 mr-3 bg-white">{trailing}</div>}
           </div>
         </Tooltip>
 
