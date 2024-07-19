@@ -7,9 +7,11 @@ export default function NavBar() {
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={40} />
         <p className="turtle-text-shadow text-[2rem] font-medium text-white">Turtle</p>
-        <span className="flex h-[19px] items-center justify-center rounded-[4px] border border-white px-[5px] text-[12px] font-bold text-white">
-          ALPHA
-        </span>
+        <div className='flex h-[19px] items-center justify-center rounded-[4px] border border-white px-[5px] bg-white box-shadow'>
+          <p className=" text-[12px] font-bold rainbow-text">
+            BETA
+          </p>
+        </div>
       </Link>
 
       <nav>
