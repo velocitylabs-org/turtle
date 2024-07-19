@@ -246,7 +246,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 <p>{feeToHuman(tx.fees)}</p>
                 <p>{tx.fees.token.symbol}</p>
                 {tx.fees.inDollars > 0 && (
-                  <div className="text-turtle-level5">{tx.fees.inDollars.toFixed(6)} $</div>
+                  <div className="text-turtle-level5">{tx.fees.inDollars.toFixed(3)} $</div>
                 )}
               </div>
             </div>

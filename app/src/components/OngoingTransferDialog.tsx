@@ -227,7 +227,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
                 <p>{feeToHuman(transfer.fees)}</p>
                 <p>{transfer.fees.token.symbol}</p>
                 {transfer.fees.inDollars >= 0 && (
-                  <div className="text-turtle-level5">{transfer.fees.inDollars.toFixed(6)} $</div>
+                  <div className="text-turtle-level5">{transfer.fees.inDollars.toFixed(3)} $</div>
                 )}
               </div>
             </div>
