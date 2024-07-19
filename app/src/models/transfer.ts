@@ -53,7 +53,6 @@ export type CompletedTransfer = {
   recipient: string
   date: Date
   explorerLink?: string
-  hashes?: string[]
   errors?: string[]
 }
 export type TransfersByDate = Record<string, CompletedTransfer[]>

@@ -82,7 +82,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
         />
       </DialogTrigger>
       <DialogContent
-        className="ongoing-transfer-dialog max-w-[90vw] max-h-[85vh] rounded-4xl sm:max-w-[30.5rem] m-auto overflow-scroll"
+        className="ongoing-transfer-dialog m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
         hideCloseButton={true}
       >
         {/* Modal header */}
@@ -142,7 +142,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             }
           >
             <div className="my-2 flex items-center justify-between">
-              <p className="font-bold text-turtle-secondary-dark text-left">{update}</p>
+              <p className="text-left font-bold text-turtle-secondary-dark">{update}</p>
               <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
             </div>
             <div className="mb-2 h-2 rounded-full bg-turtle-secondary-light">
@@ -205,7 +205,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
 
           {/* fees */}
           <div className="w-full gap-10">
-            <div className="mt-2 flex justify-between space-x-4 sm:flex-row px-1">
+            <div className="mt-2 flex justify-between space-x-4 px-1 sm:flex-row">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
@@ -221,7 +221,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
-            <div className="flex justify-between space-x-4 sm:flex-row px-1">
+            <div className="flex justify-between space-x-4 px-1 sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
                 <p>{feeToHuman(transfer.fees)}</p>
@@ -232,7 +232,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
-            <div className="flex justify-between space-x-4 sm:flex-row px-1">
+            <div className="flex justify-between space-x-4 px-1 sm:flex-row">
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
@@ -254,7 +254,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View transaction on block explorer"
-              className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 mb-4 sm:m-0 text-sm hover:text-turtle-level5"
+              className="mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5 sm:m-0"
             >
               <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
             </a>

@@ -41,12 +41,17 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     balanceData,
   } = useTransferForm()
-  const amountPlaceholder = !sourceWallet || tokenAmount?.token == null ? "Amount" : balanceData?.value == BigInt(0) ? "No balance :(" : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  const amountPlaceholder =
+    !sourceWallet || tokenAmount?.token == null
+      ? 'Amount'
+      : balanceData?.value == BigInt(0)
+        ? 'No balance :('
+        : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="z-20 flex flex-col gap-1 rounded-3xl bg-white p-5 shadow-lg backdrop-blur-sm sm:w-[31.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]"
+      className="z-20 flex flex-col gap-1 rounded-3xl bg-white p-5 px-[1.5rem] py-[2rem] shadow-lg backdrop-blur-sm sm:w-[31.5rem] sm:p-[2.5rem]"
     >
       <div className="flex flex-col gap-5">
         {/* Source Chain */}
@@ -155,7 +160,7 @@ const Transfer: FC = () => {
                 transition={{ duration: 0.07 }}
                 className="flex items-center gap-1 self-center pt-1"
               >
-                <AlertIcon/>
+                <AlertIcon />
                 <span className="text-xs">Double check address to avoid losing funds.</span>
               </motion.div>
             )}
@@ -177,30 +182,40 @@ const Transfer: FC = () => {
         disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
       />
 
-       {/* Credits */}
-      <div className="flex flex-row justify-center items-center mt-6 credits text-xs sm:text-sm text-turtle-level5">
-        Made with love by {' '} 
-        <a href="https://www.velocitylabs.org" target="_blank" rel="noopener noreferrer" className='px-2'>
-        <Image
-                src={"/velocitylabs.svg"}
-                alt={'Velocity Labs'}
-                width={24}
-                height={24}
-                className="rounded-full border-1"
-              />
-        </a>
-        {' ・ '} 
-        Powered by {' '}
-        <a href="https://docs.snowbridge.network/" target="_blank" rel="noopener noreferrer" className='px-2'>
+      {/* Credits */}
+      <div className="credits mt-6 flex flex-row items-center justify-center text-xs text-turtle-level5 sm:text-sm">
+        Made with love by{' '}
+        <a
+          href="https://www.velocitylabs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-2"
+        >
           <Image
-                  src={"/snowbridge.svg"}
-                  alt={'Snowbridge Network'}
-                  width={24}
-                  height={24}
-                  className="rounded-full border-1"
-                />
+            src={'/velocitylabs.svg'}
+            alt={'Velocity Labs'}
+            width={24}
+            height={24}
+            className="rounded-full border-1"
+          />
         </a>
-        </div>
+        {' ・ '}
+        Powered by{' '}
+        <a
+          href="https://docs.snowbridge.network/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-2"
+        >
+          <Image
+            src={'/snowbridge.svg'}
+            alt={'Snowbridge Network'}
+            width={24}
+            height={24}
+            className="rounded-full border-1"
+          />
+        </a>
+      </div>
       <SubstrateWalletModal />
     </form>
   )
