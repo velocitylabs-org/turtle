@@ -44,7 +44,7 @@ export const TransactionCard = ({
       )}
     >
       <div className="w-full space-y-2 ">
-        <div className="flex items-center justify-center sm:justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex max-w-xs space-x-2 overflow-x-auto">
             <div>{statusIcon(tx.result)}</div>
             <div
@@ -92,7 +92,7 @@ export const TransactionCard = ({
           </div>
           <div
             className={cn(
-              'hidden text-sm sm:block',
+              'sm:text-sm text-[10px] sm:block',
               tx.result === TxStatus.Succeeded ? 'text-turtle-level5' : 'text-turtle-error',
             )}
           >
@@ -101,7 +101,7 @@ export const TransactionCard = ({
         </div>
         <div
           className={cn(
-            'flex items-center justify-center space-x-4 sm:justify-start',
+            'flex items-center space-x-4 justify-start',
             tx.result === TxStatus.Failed && 'text-turtle-error-dark',
           )}
         >

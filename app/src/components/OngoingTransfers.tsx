@@ -20,7 +20,7 @@ const OngoingTransfers = ({
           <div className="self-center text-center text-3xl tracking-tight text-black">
             In Progress
           </div>
-          <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] bg-white p-[2.5rem] shadow-[0_2px_16px_0px_#00000026] sm:min-w-[31.5rem]">
+          <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] bg-white p-[2.5rem] shadow-[0_2px_16px_0px_#00000026] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => (
               <OngoingTransferDialog key={tx.id} transfer={tx} />
             ))}
