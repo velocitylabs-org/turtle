@@ -3,7 +3,7 @@
 export const TurtlesBackground: React.FC = () => {
   return (
     <div className="absolute top-0 z-0">
-      <div className="turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/bg.png')] bg-cover bg-bottom">
+      <div className="turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/turtle-background.svg')] bg-cover bg-bottom">
         <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center ">
         </div>
       </div>
