@@ -92,7 +92,7 @@ export const TransactionCard = ({
           </div>
           <div
             className={cn(
-              'sm:text-sm text-[10px] sm:block',
+              'text-[10px] sm:block sm:text-sm',
               tx.result === TxStatus.Succeeded ? 'text-turtle-level5' : 'text-turtle-error',
             )}
           >
@@ -101,7 +101,7 @@ export const TransactionCard = ({
         </div>
         <div
           className={cn(
-            'flex items-center space-x-4 justify-start',
+            'flex items-center justify-start space-x-4',
             tx.result === TxStatus.Failed && 'text-turtle-error-dark',
           )}
         >
