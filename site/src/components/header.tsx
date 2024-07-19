@@ -15,7 +15,7 @@ export default function Header() {
       <nav>
         <ul className="items-center space-x-6">
           <li>
-            <button className="btn btn-primary flex h-[56px] w-[122px] flex-row justify-center rounded-lg border-black text-xl font-medium hover:border-black">
+            <button className="btn btn-primary flex h-[20px] sm:h-[56px] w-[122px] flex-row justify-center rounded-lg border-black text-lg sm:text-xl font-medium hover:border-black">
               <a href="https://app.turtle.cool" target="_blank">
                 Transfer
               </a>
