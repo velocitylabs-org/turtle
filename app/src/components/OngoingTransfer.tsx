@@ -7,6 +7,7 @@ import Image from 'next/image'
 import LoadingIcon from './svg/LoadingIcon'
 import { colors } from '../../tailwind.config'
 import { truncateAddress } from '@/utils/address'
+import { ArrowRight } from './svg/ArrowRight'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
@@ -39,7 +40,7 @@ const OngoingTransfer: FC<{
           {toHuman(transfer.amount, transfer.token)} {transfer.token.symbol}
         </p>
         {/* From and to Chains */}
-        <div className="ml-2 flex h-[24px] items-center rounded-full border border-turtle-level3 p-1">
+        <div className="ml-2 space-x-1 flex h-[24px] items-center rounded-full border border-turtle-level3 p-1">
           <Image
             src={transfer.sourceChain.logoURI}
             alt="Source Chain"
@@ -47,7 +48,7 @@ const OngoingTransfer: FC<{
             height={16}
             className="h-[16px] rounded-full border border-turtle-secondary-dark"
           />
-          <i className="fas fa-arrow-right p-1.5 text-xs text-turtle-secondary-dark" />
+          <ArrowRight className="h-[0.45rem] w-[0.45rem]" fill={colors['turtle-secondary-dark']} />
           <Image
             src={transfer.destChain.logoURI}
             alt="Destination Chain"
