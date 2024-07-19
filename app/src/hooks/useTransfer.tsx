@@ -114,7 +114,7 @@ const useTransfer = () => {
 
       const tokenData = await getErc20TokenUSDValue(token.address)
       const tokenUSDValue =
-        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address].usd : 0
+        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
 
       addTransferToStorage({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): replace with actual messageId

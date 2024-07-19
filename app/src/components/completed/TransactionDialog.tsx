@@ -10,7 +10,7 @@ import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { formatDate, formatHours } from '@/utils/datetime'
-import { toHuman } from '@/utils/transfer'
+import { feeToHuman, toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
 
@@ -232,21 +232,22 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
                 <p>{tx.token.symbol}</p>
-                <p className="text-turtle-level5">
-                  {/* TODO register value in $ */}
-                  {tx.amountValue ? `$${tx.amountValue.toFixed(3)}` : 'TBD $'}
-                </p>
+                {typeof tx.tokenUSDValue == 'number' && (
+                  <p className="text-turtle-level5">
+                    {(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0)).toFixed(3)} $
+                  </p>
+                )}
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
             <div className="flex flex-col items-center justify-between sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(tx.fees.amount, tx.fees.token).toFixed(10)}</p>
+                <p>{feeToHuman(tx.fees)}</p>
                 <p>{tx.fees.token.symbol}</p>
-                <p className="text-turtle-level5">
-                  {tx.fees.inDollars ? `$${Number(tx.fees.inDollars).toFixed(3)}` : 'TBD $'}
-                </p>
+                {tx.fees.inDollars > 0 && (
+                  <div className="text-turtle-level5">{tx.fees.inDollars.toFixed(6)} $</div>
+                )}
               </div>
             </div>
 

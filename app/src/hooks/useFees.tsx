@@ -42,12 +42,12 @@ const useFees = (
       switch (direction) {
         case Direction.ToEthereum:
           const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
-          tokenUSDValue = dotUSDValue?.[Network.Polkadot.toLowerCase()].usd ?? 0
+          tokenUSDValue = dotUSDValue?.[Network.Polkadot?.toLowerCase()]?.usd ?? 0
           amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         case Direction.ToPolkadot:
           const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
-          tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()].usd ?? 0
+          tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()]?.usd ?? 0
           amount = (
             await Snowbridge.toPolkadot.getSendFee(
               snowbridgeContext,

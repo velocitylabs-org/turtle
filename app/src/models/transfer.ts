@@ -42,10 +42,10 @@ export type CompletedTransfer = {
   id: string
   result: TransferResult
   token: Token
+  tokenUSDValue?: number
   sourceChain: Chain
   destChain: Chain
   amount: string
-  amountValue?: number
   fees: Fees
   minTokenRecieved?: string
   minTokenRecievedValue?: number
