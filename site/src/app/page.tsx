@@ -9,7 +9,7 @@ export default function Home() {
       </section>
 
       {/* Features section */}
-      <section className="features relative z-40 bg-info pb-36 pt-20 md:pb-72 lg:pb-96 mt-[-20px]">
+      <section className="features relative z-40 mt-[-20px] bg-info pb-36 pt-20 md:pb-72 lg:pb-96">
         <Features />
       </section>
     </>
