@@ -21,7 +21,7 @@ export const HomeComponentSelect = () => {
         isCompletedTransactions={isCompletedTransactions}
       />
       {isNewTransaction ? (
-        <div className="z-15 relative">
+        <div className="z-15 relative max-w-[90vw]">
           <Transfer />
           <OngoingTransfers
             isNewTransaction={isNewTransaction}

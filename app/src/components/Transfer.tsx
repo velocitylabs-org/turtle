@@ -46,7 +46,7 @@ const Transfer: FC = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="z-20 flex flex-col gap-1 rounded-3xl bg-white p-5 shadow-lg backdrop-blur-sm sm:w-[31.5rem] sm:p-[2.5rem]"
+      className="z-20 flex flex-col gap-1 rounded-3xl bg-white p-5 shadow-lg backdrop-blur-sm sm:w-[31.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]"
     >
       <div className="flex flex-col gap-5">
         {/* Source Chain */}
@@ -178,7 +178,7 @@ const Transfer: FC = () => {
       />
 
        {/* Credits */}
-      <div className="flex flex-row justify-center mt-6 credits text-sm turtle-text-shadow text-turtle-level5">
+      <div className="flex flex-row justify-center items-center mt-6 credits text-xs sm:text-sm text-turtle-level5">
         Made with love by {' '} 
         <a href="https://www.velocitylabs.org" target="_blank" rel="noopener noreferrer" className='px-2'>
         <Image

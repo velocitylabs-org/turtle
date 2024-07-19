@@ -41,7 +41,7 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, hidden }) => {
               )}
             </div>
             <div className="flex items-center">
-              <div className="text-green-900">~30 mins</div>
+              <div className="text-turtle-foreground">~30 mins</div>
             </div>
           </div>
         </div>

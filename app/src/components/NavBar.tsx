@@ -1,26 +1,26 @@
-import { NavbarBrand, NavbarContent, NavbarItem, Navbar as NextNavbar } from '@nextui-org/react'
-import { FC } from 'react'
-import Button from './Button'
+import Link from 'next/link'
 import { TurtleIcon } from './svg/TurtleIcon'
 
-const Navbar: FC = async () => {
+export default function NavBar() {
   return (
-    <NextNavbar
-      position="static"
-      className="bg-transparent pb-10 sm:p-10"
-      maxWidth="full"
-      isBlurred={false}
-      classNames={{ wrapper: 'px-4 sm:px-6' }}
-    >
-      <NavbarBrand className="gap-2">
-        <TurtleIcon size={28} />
-        <p className="text-lg text-white sm:text-large">Turtle</p>
+    <header className="relative w-full z-50 flex items-center justify-between sm:px-10 sm:py-9 py-5 px-6">
+      <Link href="/" className="flex items-center space-x-2">
+        <TurtleIcon size={40} />
+        <p className="turtle-text-shadow text-[2rem] font-medium text-white">Turtle</p>
         <span className="flex h-[19px] items-center justify-center rounded-[4px] border border-white px-[5px] text-[12px] font-bold text-white">
           ALPHA
         </span>
-      </NavbarBrand>
-    </NextNavbar>
+      </Link>
+
+      <nav>
+        <ul className="items-center space-x-6">
+          <li>
+              <a href="https://turtle.cool" target="_blank" className='text-white turtle-text-shadow'>
+                About
+              </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
   )
 }
-
-export default Navbar
