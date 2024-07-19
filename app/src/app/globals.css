@@ -91,6 +91,14 @@
     letter-spacing: var(--letter-spacing-sm);
   }
 
+  h1.turtle-text-shadow {
+    text-shadow: #000000cc 0px 4px 44px;
+  }
+
+  .turtle-text-shadow {
+    text-shadow: #00000040 0px 0.91px 1.82px;
+  }
+
   .turtle-dark-overlay {
     background-color: rgba(0, 0, 0, 0.20);
     top: 0;

@@ -6,7 +6,7 @@ export default function Header() {
     <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={40} />
-        <p className="turtle-text-shadow text-[1.85rem] text-logo font-medium text-white">Turtle</p>
+        <p className="turtle-text-shadow text-[2rem] font-medium text-white">Turtle</p>
         <span className="flex h-[19px] items-center justify-center rounded-[4px] border border-white px-[5px] text-[12px] font-bold text-white">
           ALPHA
         </span>
