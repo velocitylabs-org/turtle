@@ -15,19 +15,10 @@ const Navbar: FC = async () => {
       <NavbarBrand className="gap-2">
         <TurtleIcon size={28} />
         <p className="text-lg text-white sm:text-large">Turtle</p>
-        <span className="flex h-[19px] items-center justify-center rounded-[4px] border-1 border-white px-[5px] text-[12px] font-bold text-white">
+        <span className="flex h-[19px] items-center justify-center rounded-[4px] border border-white px-[5px] text-[12px] font-bold text-white">
           ALPHA
         </span>
       </NavbarBrand>
-
-      <NavbarContent justify="end" className="gap-0 sm:gap-10">
-        <NavbarItem>
-          <Button label="Docs" size="md" variant="ghost" className="text-sm text-white" />
-        </NavbarItem>
-        <NavbarItem>
-          <Button label="About" size="md" variant="ghost" className="text-sm text-white" />
-        </NavbarItem>
-      </NavbarContent>
     </NextNavbar>
   )
 }

@@ -66,11 +66,11 @@ const config: Config = {
       },
       letterSpacing: {
         xs: '0.04em',
-        sm: '0.03em'
+        sm: '0.03em',
       },
       screens: {
-        '3xl': '2100px'
-      }
+        '3xl': '2100px',
+      },
     },
   },
 

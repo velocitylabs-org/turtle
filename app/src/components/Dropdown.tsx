@@ -16,7 +16,11 @@ const Dropdown: FC<DropdownProps> = ({ isOpen, dropdownRef, children }) => {
           initial={{ height: '3.6rem' }}
           animate={{
             height: 'auto',
-            transition: { type: 'spring', stiffness: 700, damping: 23 },
+            transition: {
+              type: 'spring',
+              bounce: 0.4,
+              duration: 0.3,
+            },
           }}
           exit={{
             height: '3.6rem',

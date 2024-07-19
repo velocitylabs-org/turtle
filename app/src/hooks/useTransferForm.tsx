@@ -255,6 +255,7 @@ const useTransferForm = () => {
     tokenAmountError,
     manualRecipientError,
     isBalanceAvailable: balanceData?.value && balanceData.value > 0,
+    balanceData,
   }
 }
 

@@ -5,7 +5,7 @@ import { WaveLine } from './assets/waves-lines'
 
 export default function Footer() {
   return (
-    <footer className="relative z-30">
+    <footer className="relative z-50">
       <WaveLine
         name="footerWave"
         withStroke={true}
@@ -15,20 +15,19 @@ export default function Footer() {
       <div className="absolute inset-0 lg:-top-24">
         <div className="flex flex-col items-center justify-center space-y-8 pb-20 2xl:pb-0">
           <div>
-            <TurtleIcon size={28} />
+            <TurtleIcon size={40} />
           </div>
 
           <h3 className="space-y-2 text-center text-4xl font-medium tracking-tighter sm:text-5xl md:text-h-sub md:leading-12">
-            <p>Built to last.</p>
-            <p>Built on Turtle.</p>
+            <p>Trustless, Simple, Turtle.</p>
           </h3>
 
           <div className="flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-10 md:space-y-0">
             <div className="space-x-5 text-sm underline md:space-x-10">
-              <a href="/" aria-label="Turle documentation">
-                Docs
-              </a>
-              <Link href="/" aria-label="Turle bridge decentralized application">
+              <Link
+                href="https://app.turtle.cool"
+                aria-label="Turle bridge decentralized application"
+              >
                 Start a transfer
               </Link>
             </div>

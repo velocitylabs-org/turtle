@@ -9,6 +9,7 @@ export interface SelectProps<T> {
   floatingLabel?: string
   placeholder?: string
   placeholderIcon?: ReactNode
+  secondPlaceholder?: string
   trailing?: ReactNode
   disabled?: boolean
   error?: string
