@@ -101,8 +101,29 @@
     text-shadow: #000000cc 0px 4px 44px;
   }
 
-  p.turtle-text-shadow {
-    text-shadow: #00000040 0px 0.91px 1.82px;
+  .turtle-text-shadow {
+    text-shadow: #00000040 0px 1px 2px;
+  }
+
+  .box-shadow {
+    box-shadow: 0px 2px 4px 0px #000000cc;
+  }
+
+  .rainbow-text {
+    background: linear-gradient(
+      to right,
+      #ef5350,
+      #f48fb1,
+      #7e57c2,
+      #2196f3,
+      #26c6da,
+      #43a047,
+      #eeff41,
+      #f9a825,
+      #ff5722
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .waves-container {
