@@ -1,7 +1,9 @@
+import { ethers } from 'ethers'
+
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Fees } from '@/models/transfer'
-import { ethers } from 'ethers'
+import { Fees, StoredTransfer } from '@/models/transfer'
+import { Environment } from '@/store/environmentStore'
 
 /**
  * Converts a user-specified amount to its corresponding value in the token's decimal base.
@@ -61,5 +63,52 @@ export async function lookupName(network: Network, address: string): Promise<str
       //todo(nuno)
       return null
     }
+  }
+}
+
+export const removeURLSlash = (url: string) => {
+  if (url.length === 0) return url
+  const lastChar = url.charAt(url.length - 1)
+  if (lastChar === '/') {
+    return url.slice(0, -1)
+  } else {
+    return url
+  }
+}
+
+const EXPLORERS: { [environment in Environment]: { [explorerName: string]: string } } = {
+  [Environment.Testnet]: {
+    etherscan: 'https://sepolia.etherscan.io/',
+    subscan_assethub: 'https://assethub-rococo.subscan.io/',
+    subscan_brigehub: 'https://bridgehub-rococo.subscan.io/',
+  },
+  [Environment.Mainnet]: {
+    etherscan: 'https://etherscan.io/',
+    subscan_assethub: 'https://assethub-polkadot.subscan.io/',
+    subscan_brigehub: 'https://bridgehub-polkadot.subscan.io/',
+  },
+}
+
+export function getExplorerLink(transfer: StoredTransfer): string | undefined {
+  const {
+    environment,
+    sourceChain: { network },
+    sendResult: result,
+    sender,
+  } = transfer
+  const explorersUrls = EXPLORERS[environment]
+  switch (network) {
+    case Network.Ethereum: {
+      if (result.success?.ethereum && 'blockNumber' in result.success.ethereum)
+        return `${removeURLSlash(explorersUrls.etherscan)}/block/${result.success.ethereum.blockNumber}`
+      return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
+    }
+    case Network.Polkadot: {
+      if (result.success?.assetHub && 'blockNumber' in result.success.assetHub)
+        return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.blockNumber.toString()}`
+      return `${removeURLSlash(explorersUrls.subscan_assethub)}/account/${sender}`
+    }
+    default:
+      console.log(`Unsupported network: ${network}`)
   }
 }

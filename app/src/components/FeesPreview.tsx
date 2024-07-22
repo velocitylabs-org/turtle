@@ -36,8 +36,9 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, hidden }) => {
               <div className="text-turtle-foreground">
                 {feeToHuman(fees)} {fees.token.symbol}
               </div>
-              {/* todo(nuno) */}
-              {/* <div className="text-turtle-level3">${state.fees.inDollars}</div> */}
+              {fees.inDollars > 0 && (
+                <div className="text-turtle-level3">${fees.inDollars.toFixed(3)}</div>
+              )}
             </div>
             <div className="flex items-center">
               <div className="text-turtle-foreground">~30 mins</div>

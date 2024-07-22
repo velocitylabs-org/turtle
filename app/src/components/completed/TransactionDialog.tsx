@@ -10,7 +10,7 @@ import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { formatDate, formatHours } from '@/utils/datetime'
-import { toHuman } from '@/utils/transfer'
+import { feeToHuman, toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
 
@@ -232,35 +232,36 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="flex space-x-1 text-sm">
                 <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
                 <p>{tx.token.symbol}</p>
-                <p className="text-turtle-level5">
-                  {/* TODO register value in $ */}
-                  {tx.amountValue ? `$${tx.amountValue.toFixed(3)}` : 'TBD $'}
-                </p>
+                {typeof tx.tokenUSDValue == 'number' && (
+                  <p className="text-turtle-level5">
+                    {(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0)).toFixed(3)} $
+                  </p>
+                )}
               </div>
             </div>
             <Separator className="my-4 bg-turtle-level3" />
             <div className="flex flex-row items-center justify-between px-1">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(tx.fees.amount, tx.fees.token).toFixed(10)}</p>
+                <p>{feeToHuman(tx.fees)}</p>
                 <p>{tx.fees.token.symbol}</p>
-                <p className="text-turtle-level5">
-                  {tx.fees.inDollars ? `$${Number(tx.fees.inDollars).toFixed(3)}` : 'TBD $'}
-                </p>
+                {tx.fees.inDollars > 0 && (
+                  <div className="text-turtle-level5">{tx.fees.inDollars.toFixed(3)} $</div>
+                )}
               </div>
             </div>
           </div>
-
-          {/* TODO use transaction hash to implement explorer link*/}
-          <a
-            href={'#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="View transaction on block explorer"
-            className="mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5 sm:m-0"
-          >
-            <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
-          </a>
+          {tx.explorerLink && (
+            <a
+              href={tx.explorerLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View your completed transaction on block explorer"
+              className="mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5 sm:m-0"
+            >
+              <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
+            </a>
+          )}
         </div>
       </DialogContent>
     </Dialog>

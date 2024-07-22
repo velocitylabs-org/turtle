@@ -1,14 +1,17 @@
+import { useCallback, useEffect, useState } from 'react'
 import { getNativeToken } from '@/config/registry'
 import { getContext, getEnvironment } from '@/context/snowbridge'
 import useNotification from '@/hooks/useNotification'
-import { Chain } from '@/models/chain'
+import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import * as Sentry from '@sentry/nextjs'
+import { getFeesTokenUSDValue } from '@/services/balance'
 import * as Snowbridge from '@snowbridge/api'
-import { useCallback, useEffect, useState } from 'react'
+import { toHuman } from '@/utils/transfer'
+
 import useEnvironment from './useEnvironment'
 
 const useFees = (
@@ -35,11 +38,16 @@ const useFees = (
     try {
       setLoading(true)
       let amount: string
+      let tokenUSDValue: number = 0
       switch (direction) {
         case Direction.ToEthereum:
+          const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
+          tokenUSDValue = dotUSDValue?.[Network.Polkadot?.toLowerCase()]?.usd ?? 0
           amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         case Direction.ToPolkadot:
+          const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
+          tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()]?.usd ?? 0
           amount = (
             await Snowbridge.toPolkadot.getSendFee(
               snowbridgeContext,
@@ -56,7 +64,7 @@ const useFees = (
       setFees({
         amount,
         token: nativeToken,
-        inDollars: 0, // TODO: update with actual value
+        inDollars: tokenUSDValue ? toHuman(amount, nativeToken) * tokenUSDValue : 0,
       })
     } catch (error) {
       setFees(null)
