@@ -353,6 +353,7 @@ async function trackToEthereum(
         sourceChain: transfer.sourceChain,
         destChain: transfer.destChain,
         amount: transfer.amount,
+        tokenUSDValue: transfer.tokenUSDValue ?? 0,
         fees: transfer.fees,
         sender: transfer.sender,
         recipient: transfer.recipient,
