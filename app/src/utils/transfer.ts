@@ -33,19 +33,30 @@ export const toHuman = (input: bigint | string, token: Token): number => {
   return Number(input) / 10 ** token.decimals
 }
 
-export const formatDate = (date: string | Date): string => {
-  const dateFrom = typeof date == 'string' ? new Date(date) : date
-  return dateFrom.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-  })
-}
-
 export function feeToHuman(fees: Fees): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
+}
+
+/**
+ * Formats a numerical amount into a human-readable, compact string representation.
+ * For numbers lower than 1, display fully with a maximum of 10 decimal places
+ * @param amount - The amount to be formatted. For example, `1234567`.
+ * @returns The amount formatted as a human-readable string. For example, `"1.23M"`.
+ */
+export const formatAmount = (amount: number): string => {
+  if (amount < 1) {
+    return new Intl.NumberFormat('en-US', {
+      // minimumFractionDigits: 1, // See once Snowbridge issue is fixed
+      maximumFractionDigits: 10,
+    }).format(amount)
+  } else {
+    return new Intl.NumberFormat('en-US', {
+      notation: 'compact',
+      compactDisplay: 'short',
+      // minimumFractionDigits: 2, // See once Snowbridge issue is fixed
+      maximumFractionDigits: 2,
+    }).format(amount)
+  }
 }
 
 export async function lookupName(network: Network, address: string): Promise<string | null> {
@@ -111,4 +122,15 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     default:
       console.log(`Unsupported network: ${network}`)
   }
+}
+
+export const formatDate = (date: string | Date): string => {
+  const dateFrom = typeof date == 'string' ? new Date(date) : date
+  return dateFrom.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  })
 }
