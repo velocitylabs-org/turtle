@@ -123,14 +123,3 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
       console.log(`Unsupported network: ${network}`)
   }
 }
-
-export const formatDate = (date: string | Date): string => {
-  const dateFrom = typeof date == 'string' ? new Date(date) : date
-  return dateFrom.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-  })
-}

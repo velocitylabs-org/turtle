@@ -13,7 +13,8 @@ import { Network } from '@/models/chain'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { formatAmount, formatDate, getExplorerLink, toHuman } from '@/utils/transfer'
+import { formatOngoingTransferDate } from '@/utils/datetime'
+import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -124,7 +125,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             <p>{transfer.token.symbol}</p>
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
-            <div>{formatDate(transfer.date)}</div>
+            <div>{formatOngoingTransferDate(transfer.date)}</div>
           </div>
         </DialogHeader>
 
@@ -138,7 +139,9 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
           >
             <div className="my-2 flex items-center justify-between">
               <p className="text-left font-bold text-turtle-secondary-dark">{update}</p>
-              <p className="text-normal text-turtle-secondary">{formatDate(transfer.date)}</p>
+              <p className="text-normal text-turtle-secondary">
+                {formatOngoingTransferDate(transfer.date)}
+              </p>
             </div>
             <div className="mb-2 h-2 rounded-full bg-turtle-secondary-light">
               <div

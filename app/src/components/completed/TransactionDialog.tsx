@@ -9,7 +9,7 @@ import { Network } from '@/models/chain'
 import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
-import { formatDate, formatHours } from '@/utils/datetime'
+import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
@@ -127,7 +127,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 : ' text-turtle-error-dark',
             )}
           >
-            <div>{formatDate(tx.date.toString().split('T')[0])}</div>
+            <div>{formatCompletedTransferDate(tx.date.toString().split('T')[0])}</div>
             <div>{formatHours(tx.date)}</div>
           </div>
         </DialogHeader>
