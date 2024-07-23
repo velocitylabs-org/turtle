@@ -10,7 +10,7 @@ import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { formatDate, formatHours } from '@/utils/datetime'
-import { feeToHuman, formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
 
@@ -230,7 +230,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div className="flex flex-row items-center justify-between space-x-4 px-1">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
-                <p>{formatAmount(toHuman(tx.amount, tx.token))}</p>
+                <p>{toHuman(tx.amount, tx.token)}</p>
                 <p>{tx.token.symbol}</p>
                 {typeof tx.tokenUSDValue == 'number' && (
                   <p className="text-turtle-level5">

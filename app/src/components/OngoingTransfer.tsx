@@ -1,8 +1,8 @@
 'use client'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 
 import { StoredTransfer } from '@/models/transfer'
-import { formatDate, toHuman } from '@/utils/transfer'
+import { formatAmount, formatDate, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
 import LoadingIcon from './svg/LoadingIcon'
 import { colors } from '../../tailwind.config'
@@ -12,9 +12,7 @@ import { ArrowRight } from './svg/ArrowRight'
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
   update: string | null
-  senderDisplay: string
-  recipientDisplay: string
-}> = ({ transfer, update, senderDisplay, recipientDisplay }) => {
+}> = ({ transfer, update }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -37,7 +35,7 @@ const OngoingTransfer: FC<{
           color={colors['turtle-secondary']}
         />
         <p className="text-turtle-foreground)] text-xl font-normal">
-          {toHuman(transfer.amount, transfer.token)} {transfer.token.symbol}
+          {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
         </p>
         {/* From and to Chains */}
         <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">

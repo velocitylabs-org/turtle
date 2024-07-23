@@ -47,7 +47,7 @@ export const formatAmount = (amount: number): string => {
   if (amount < 1) {
     return new Intl.NumberFormat('en-US', {
       // minimumFractionDigits: 1, // See once Snowbridge issue is fixed
-      maximumFractionDigits: 10,
+      maximumFractionDigits: 8,
     }).format(amount)
   } else {
     return new Intl.NumberFormat('en-US', {

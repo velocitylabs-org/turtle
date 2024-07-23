@@ -13,7 +13,7 @@ import { Network } from '@/models/chain'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
-import { feeToHuman, formatDate, getExplorerLink, toHuman } from '@/utils/transfer'
+import { formatAmount, formatDate, getExplorerLink, toHuman } from '@/utils/transfer'
 
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -74,12 +74,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer
-          transfer={transfer}
-          update={update}
-          senderDisplay={senderDisplay}
-          recipientDisplay={recipientDisplay}
-        />
+        <OngoingTransfer transfer={transfer} update={update} />
       </DialogTrigger>
       <DialogContent
         className="ongoing-transfer-dialog m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
@@ -125,7 +120,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
               'flex items-center space-x-1 text-3xl font-medium leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
-            <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
+            <p>{formatAmount(toHuman(transfer.amount, transfer.token))}</p>
             <p>{transfer.token.symbol}</p>
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
@@ -208,13 +203,13 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             <div className="mt-2 flex justify-between space-x-4 px-1 sm:flex-row">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
+                <p>{toHuman(transfer.amount, transfer.token)}</p>
                 <p>{transfer.token.symbol}</p>
                 {typeof transfer.tokenUSDValue == 'number' && (
                   <p className="text-turtle-level5">
-                    {(
-                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0)
-                    ).toFixed(3)}{' '}
+                    {formatAmount(
+                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
+                    )}{' '}
                     $
                   </p>
                 )}
@@ -224,10 +219,12 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             <div className="flex justify-between space-x-4 px-1 sm:flex-row">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{feeToHuman(transfer.fees)}</p>
+                <p>{formatAmount(toHuman(transfer.fees.amount, transfer.fees.token))}</p>
                 <p>{transfer.fees.token.symbol}</p>
                 {transfer.fees.inDollars >= 0 && (
-                  <div className="text-turtle-level5">{transfer.fees.inDollars.toFixed(3)} $</div>
+                  <div className="text-turtle-level5">
+                    {formatAmount(transfer.fees.inDollars)} $
+                  </div>
                 )}
               </div>
             </div>
@@ -235,13 +232,13 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
             <div className="flex justify-between space-x-4 px-1 sm:flex-row">
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(transfer.amount, transfer.token).toFixed(3)}</p>
+                <p>{formatAmount(toHuman(transfer.amount, transfer.token))}</p>
                 <p>{transfer.token.symbol}</p>
                 {typeof transfer.tokenUSDValue == 'number' && (
                   <p className="text-turtle-level5">
-                    {(
-                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0)
-                    ).toFixed(3)}{' '}
+                    {formatAmount(
+                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
+                    )}{' '}
                     $
                   </p>
                 )}
