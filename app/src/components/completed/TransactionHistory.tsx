@@ -1,5 +1,5 @@
 import { CompletedTransfer, TransfersByDate } from '@/models/transfer'
-import { formatDate } from '@/utils/datetime'
+import { formatCompletedTransferDate } from '@/utils/datetime'
 
 import { TransactionDialog } from './TransactionDialog'
 
@@ -24,7 +24,7 @@ export const TransactionHistory = ({ transactions }: { transactions: CompletedTr
       {mappedTransactionsByDate.map(({ date, transactions }, idx) => (
         <div key={idx + date + transactions.length}>
           <div className="w-full space-y-4">
-            <p className="text-sm">{formatDate(date)}</p>
+            <p className="text-sm">{formatCompletedTransferDate(date)}</p>
             {transactions.map((tx, idx) => (
               <TransactionDialog key={idx + tx.id + tx.sender} tx={tx} />
             ))}

@@ -1,14 +1,12 @@
 'use client'
 import Image from 'next/image'
-import { useEnsName } from 'wagmi'
 import Identicon from '@polkadot/react-identicon'
 
 import { TxStatus, CompletedTransfer, TransferResult } from '@/models/transfer'
 import { Network } from '@/models/chain'
-import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
-import { toHuman } from '@/utils/transfer'
+import { formatAmount, toHuman } from '@/utils/transfer'
 
 import { ArrowRight } from '../svg/ArrowRight'
 import { Fail } from '../svg/Fail'
@@ -53,7 +51,7 @@ export const TransactionCard = ({
                 tx.result === TxStatus.Failed && 'text-turtle-error',
               )}
             >
-              <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
+              <p>{formatAmount(toHuman(tx.amount, tx.token))}</p>
               <p>{tx.token.symbol}</p>
             </div>
             <div
