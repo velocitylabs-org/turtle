@@ -1,25 +1,28 @@
 'use client'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
+import Image from 'next/image'
 
 import { StoredTransfer } from '@/models/transfer'
-import { formatDate, toHuman } from '@/utils/transfer'
-import Image from 'next/image'
-import LoadingIcon from './svg/LoadingIcon'
-import { colors } from '../../tailwind.config'
 import { truncateAddress } from '@/utils/address'
+import { formatOngoingTransferDate } from '@/utils/datetime'
+import { formatAmount, toHuman } from '@/utils/transfer'
+
 import { ArrowRight } from './svg/ArrowRight'
+import LoadingIcon from './svg/LoadingIcon'
+
+import { colors } from '../../tailwind.config'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
   update: string | null
-  senderDisplay: string
-  recipientDisplay: string
-}> = ({ transfer, update, senderDisplay, recipientDisplay }) => {
+}> = ({ transfer, update }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
         <p className="text-left font-bold text-turtle-secondary-dark">{update ?? ''}</p>
-        <p className="text-normal text-right text-turtle-secondary">{formatDate(transfer.date)}</p>
+        <p className="text-normal text-right text-turtle-secondary">
+          {formatOngoingTransferDate(transfer.date)}
+        </p>
       </div>
       {/* Progress bar */}
       <div className="mb-4 h-2 rounded-full bg-turtle-secondary-light">
@@ -37,7 +40,7 @@ const OngoingTransfer: FC<{
           color={colors['turtle-secondary']}
         />
         <p className="text-turtle-foreground)] text-xl font-normal">
-          {toHuman(transfer.amount, transfer.token)} {transfer.token.symbol}
+          {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
         </p>
         {/* From and to Chains */}
         <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">

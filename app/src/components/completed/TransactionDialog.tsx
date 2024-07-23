@@ -9,8 +9,8 @@ import { Network } from '@/models/chain'
 import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
-import { formatDate, formatHours } from '@/utils/datetime'
-import { feeToHuman, toHuman } from '@/utils/transfer'
+import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
+import { formatAmount, toHuman } from '@/utils/transfer'
 
 import { TransactionCard } from './TransactionCard'
 
@@ -116,7 +116,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 : ' text-turtle-error-dark',
             )}
           >
-            <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
+            <p>{formatAmount(toHuman(tx.amount, tx.token))}</p>
             <p>{tx.token.symbol}</p>
           </h3>
           <div
@@ -127,7 +127,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 : ' text-turtle-error-dark',
             )}
           >
-            <div>{formatDate(tx.date.toString().split('T')[0])}</div>
+            <div>{formatCompletedTransferDate(tx.date.toString().split('T')[0])}</div>
             <div>{formatHours(tx.date)}</div>
           </div>
         </DialogHeader>
@@ -230,11 +230,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div className="flex flex-row items-center justify-between space-x-4 px-1">
               <p className="text-sm">Transfer amount</p>
               <div className="flex space-x-1 text-sm">
-                <p>{toHuman(tx.amount, tx.token).toFixed(3)}</p>
+                <p>{toHuman(tx.amount, tx.token)}</p>
                 <p>{tx.token.symbol}</p>
                 {typeof tx.tokenUSDValue == 'number' && (
                   <p className="text-turtle-level5">
-                    {(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0)).toFixed(3)} $
+                    {formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0))} $
                   </p>
                 )}
               </div>
@@ -243,10 +243,10 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div className="flex flex-row items-center justify-between px-1">
               <p className="text-sm">Fees</p>
               <div className="flex space-x-1 text-sm">
-                <p>{feeToHuman(tx.fees)}</p>
+                <p>{formatAmount(toHuman(tx.fees.amount, tx.fees.token))}</p>
                 <p>{tx.fees.token.symbol}</p>
                 {tx.fees.inDollars > 0 && (
-                  <div className="text-turtle-level5">{tx.fees.inDollars.toFixed(3)} $</div>
+                  <div className="text-turtle-level5">{formatAmount(tx.fees.inDollars)} $</div>
                 )}
               </div>
             </div>
