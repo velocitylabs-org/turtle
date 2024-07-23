@@ -54,7 +54,7 @@ export const formatAmount = (amount: number): string => {
       notation: 'compact',
       compactDisplay: 'short',
       // minimumFractionDigits: 2, // See once Snowbridge issue is fixed
-      maximumFractionDigits: 2,
+      maximumFractionDigits: 3,
     }).format(amount)
   }
 }
