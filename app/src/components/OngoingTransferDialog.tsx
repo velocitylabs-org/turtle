@@ -69,7 +69,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
     }
 
     pollUpdate()
-  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer])
+  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink])
 
   return (
     <Dialog>
