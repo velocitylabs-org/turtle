@@ -47,6 +47,9 @@ importers:
       '@sentry/nextjs':
         specifier: ^8.19.0
         version: 8.19.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.25.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.52.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.25.1(@opentelemetry/api@1.9.0))(next@14.2.3(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.93.0)
+      '@sentry/profiling-node':
+        specifier: ^8.19.0
+        version: 8.19.0
       '@snowbridge/api':
         specifier: ^0.1.5
         version: 0.1.15(bufferutil@4.0.8)(typechain@8.3.2(typescript@5.5.2))(typescript@5.5.2)(utf-8-validate@6.0.4)
@@ -3501,6 +3504,11 @@ packages:
       '@opentelemetry/sdk-trace-base': ^1.25.1
       '@opentelemetry/semantic-conventions': ^1.25.1
 
+  '@sentry/profiling-node@8.19.0':
+    resolution: {integrity: sha512-q2d/lXq/YQfMBAxlFMUJXS+1Gk7TNwtJFHNxbiiHBGP3dTQh/eCbRM4PkOOlKaJlfcxMSU7zjEvVwUuKEHeJ8g==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+
   '@sentry/react@8.19.0':
     resolution: {integrity: sha512-MzuMy4AEdSuIrBEyp3W7c4+v215+2MiU9ba7Y0KBKcC/Nrf1cGfRFRbjl9OYm/JIuxkaop7kgYs6sPMrVJVlrQ==}
     engines: {node: '>=14.18'}
@@ -6854,6 +6862,10 @@ packages:
   nock@13.5.4:
     resolution: {integrity: sha512-yAyTfdeNJGGBFxWdzSKCBYxs5FxLbCg5X5Q4ets974hcQzG1+qCxvIyOo4j2Ry6MUlhWVMX4OoYDefAIIwupjw==}
     engines: {node: '>= 10.13'}
+
+  node-abi@3.65.0:
+    resolution: {integrity: sha512-ThjYBfoDNr08AWx6hGaRbfPwxKV9kVzAzOzlLKbk2CuqXE2xnCh+cbAGnwM3t8Lq4v9rUB7VfondlkBckcJrVA==}
+    engines: {node: '>=10'}
 
   node-abort-controller@3.1.1:
     resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
@@ -14229,6 +14241,17 @@ snapshots:
       '@sentry/types': 8.19.0
       '@sentry/utils': 8.19.0
 
+  '@sentry/profiling-node@8.19.0':
+    dependencies:
+      '@sentry/core': 8.19.0
+      '@sentry/node': 8.19.0
+      '@sentry/types': 8.19.0
+      '@sentry/utils': 8.19.0
+      detect-libc: 2.0.3
+      node-abi: 3.65.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@sentry/react@8.19.0(react@18.3.1)':
     dependencies:
       '@sentry/browser': 8.19.0
@@ -18813,6 +18836,10 @@ snapshots:
       propagate: 2.0.1
     transitivePeerDependencies:
       - supports-color
+
+  node-abi@3.65.0:
+    dependencies:
+      semver: 7.6.2
 
   node-abort-controller@3.1.1: {}
 
