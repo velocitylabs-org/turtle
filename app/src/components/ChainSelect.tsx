@@ -1,12 +1,12 @@
 'use client'
-import { forwardRef, useRef, useState } from 'react'
 import Image from 'next/image'
+import { forwardRef, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-import { Chain } from '@/models/chain'
-import { ManualRecipient, SelectProps } from '@/models/select'
 import useLookupName from '@/hooks/useLookupName'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
+import { Chain } from '@/models/chain'
+import { ManualRecipient, SelectProps } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
 
 import Dropdown from './Dropdown'
@@ -68,7 +68,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
       (manualRecipient?.enabled && !manualRecipient.address)
 
     return (
-      <div ref={ref} className={twMerge('relative w-full', className)}>
+      <div ref={ref} className={twMerge('relative w-full', className)} data-cy="chain-select">
         {floatingLabel && (
           <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
             {floatingLabel}
@@ -82,6 +82,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
               disabled && 'opacity-30',
               error && 'border-turtle-error',
             )}
+            data-cy="chain-select-trigger"
             onClick={handleTriggerClick}
           >
             <div className="flex h-[3.5rem] flex-grow items-center gap-1">
@@ -94,7 +95,11 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     height={24}
                     className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
                   />
-                  {shouldShowChainName && <span className="text-nowrap">{value.name}</span>}
+                  {shouldShowChainName && (
+                    <span className="text-nowrap" data-cy="chain-select-value">
+                      {value.name}
+                    </span>
+                  )}
                 </>
               ) : (
                 <>
