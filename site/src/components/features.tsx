@@ -8,8 +8,8 @@ import chart from '../../public/chart.png'
 export const Features = () => {
   const mainFeatures = [
     {
-      title: 'Shell-hard security',
-      description: `We don't take security lightly, and neither should you. Turtle is built on solid general message passing (GMP) protocols like Snowbridge and XCMP, which leverage both Ethereum and Polkadot security.`,
+      title: 'Hard-shelled Security',
+      description: `Security should not be taken lightly! Turtle is built on solid General Message Passing (GMP) protocols Snowbridge and XCMP, leveraging both Ethereum and Polkadot security.`,
       icon: turtle,
     },
     {
@@ -18,7 +18,7 @@ export const Features = () => {
       icon: chart,
     },
     {
-      title: 'Seamless experience',
+      title: 'Unified Experience',
       description:
         'Transfer any token anywhere. Turtle is your go-to app for cross-chain transfers.',
       icon: record,
@@ -27,15 +27,15 @@ export const Features = () => {
 
   const secondaryFeatures = [
     {
-      title: 'Decentralized interoperability',
+      title: 'Fully decentralized infrastructure',
       description:
-        'We ensure reliability when it comes to interoperability. Turtle uses fully decentralized protocols for its token transfers.',
+        'Turtle uses fully decentralized protocols for its token transfers, ensuring reliable interoperability.',
       icon: locker,
     },
     {
       title: 'Multi-bridge support (coming soon)',
       description:
-        'Turtle will become bridge-agnostic and support additional bridges available on Polkadot. Users just need to specify the token and destination; Turtle will handle the rest',
+        'Turtle will become bridge-agnostic and support additional bridges available on Polkadot. Users just need to specify the token and destination; Turtle will handle the rest.',
       icon: chains,
       tags: [{ name: 'Ethereum' }, { name: 'Polkadot' }, { name: 'Snowbridge' }],
     },
