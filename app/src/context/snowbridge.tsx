@@ -1,5 +1,12 @@
-import { Environment } from '@/store/environmentStore'
 import * as Snowbridge from '@snowbridge/api'
+
+import { isDevelopment, isPreview } from '@/utils/env'
+import { Environment } from '@/store/environmentStore'
+import { SnowbridgeStatus } from '@/models/snowbridge'
+import { Direction } from '@/services/transfer'
+
+export const shouldUseTestnet = isDevelopment || isPreview
+export const currentEnvironement = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -57,4 +64,37 @@ export function toSnowbridgeNetwork(env: Environment): string {
     case Environment.Testnet:
       return 'rococo_sepolia'
   }
+}
+
+export async function getSnowBridgeContext(
+  environment = currentEnvironement,
+): Promise<Snowbridge.Context> {
+  const snowbridgeEnv = getEnvironment(environment)
+  return await getContext(snowbridgeEnv)
+}
+
+export async function getSnowBridgeStatus(): Promise<SnowbridgeStatus> {
+  const snowbridgCtx = await getSnowBridgeContext()
+  const bridgeStatus = await Snowbridge.status.bridgeStatusInfo(snowbridgCtx)
+  return {
+    ethBridgeStatus: bridgeStatus.toEthereum.latencySeconds,
+    polkadotBridgeStatus: bridgeStatus.toPolkadot.latencySeconds,
+  }
+}
+
+export const bridgeProgressionValue = (
+  bridgeStatus: SnowbridgeStatus,
+  transferDate: Date,
+  transferDirection: Direction,
+) => {
+  const filteredBridgeTimestamp =
+    transferDirection === Direction.ToPolkadot
+      ? bridgeStatus.polkadotBridgeStatus * 1000
+      : bridgeStatus.ethBridgeStatus * 1000
+  const targetTimestamp = filteredBridgeTimestamp + new Date(transferDate).getTime()
+
+  const currentTimestamp = new Date().getTime()
+  const diffTimeFromTransfer = targetTimestamp - currentTimestamp
+  const progression = (diffTimeFromTransfer / targetTimestamp) * 100
+  return progression
 }

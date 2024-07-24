@@ -1,10 +1,19 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 import useStore from '@/hooks/useStore'
 import { DisplaysTransfers } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 import OngoingTransferDialog from './OngoingTransferDialog'
+import { SnowbridgeStatus } from '@/models/snowbridge'
+import { getSnowBridgeStatus } from '@/context/snowbridge'
+
+const initBridgeStatus = {
+  ethBridgeStatus: 15,
+  polkadotBridgeStatus: 15,
+}
 
 const OngoingTransfers = ({
   isNewTransaction,
@@ -12,6 +21,32 @@ const OngoingTransfers = ({
   isCompletedTransactions,
 }: DisplaysTransfers) => {
   const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
+  const [bridgeStatus, setBridgeStatus] = useState<SnowbridgeStatus>(initBridgeStatus)
+
+  const DEFAULT_AVERAGE_BRIDGE_EXECUTION = 30
+
+  const getBridgeStatus = async () => {
+    try {
+      setBridgeStatus(await getSnowBridgeStatus())
+    } catch (error) {
+      const status = {
+        ethBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60,
+        polkadotBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60,
+      }
+      setBridgeStatus(status)
+      console.log('Set bridge status error: ', error)
+    }
+  }
+
+  useEffect(() => {
+    let shouldUpdate = true
+
+    shouldUpdate && getBridgeStatus()
+
+    return () => {
+      shouldUpdate = false
+    }
+  }, [ongoingTransfers])
 
   return (
     <div>
@@ -22,7 +57,7 @@ const OngoingTransfers = ({
           </div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] bg-white p-[2.5rem] px-[1.5rem] py-[2rem] shadow-[0_2px_16px_0px_#00000026] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => (
-              <OngoingTransferDialog key={tx.id} transfer={tx} />
+              <OngoingTransferDialog key={tx.id} transfer={tx} bridgeStatus={bridgeStatus} />
             ))}
 
             {isCompletedTransactions && (

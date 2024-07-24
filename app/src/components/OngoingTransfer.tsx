@@ -15,7 +15,8 @@ import { colors } from '../../tailwind.config'
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
   update: string | null
-}> = ({ transfer, update }) => {
+  progression: number
+}> = ({ transfer, update, progression }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -28,7 +29,7 @@ const OngoingTransfer: FC<{
       <div className="mb-4 h-2 rounded-full bg-turtle-secondary-light">
         <div
           className="h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
-          style={{ width: '60%' }}
+          style={{ width: `${progression}%` }}
         />
       </div>
       <div className="mb-2 flex items-center">
