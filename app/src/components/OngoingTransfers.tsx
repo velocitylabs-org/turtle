@@ -10,28 +10,23 @@ import OngoingTransferDialog from './OngoingTransferDialog'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { getSnowBridgeStatus } from '@/context/snowbridge'
 
-const initBridgeStatus = {
-  ethBridgeStatus: 15,
-  polkadotBridgeStatus: 15,
-}
-
 const OngoingTransfers = ({
   isNewTransaction,
   setIsNewTransaction,
   isCompletedTransactions,
 }: DisplaysTransfers) => {
   const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
-  const [bridgeStatus, setBridgeStatus] = useState<SnowbridgeStatus>(initBridgeStatus)
+  const [bridgeStatus, setBridgeStatus] = useState<SnowbridgeStatus | null>(null)
 
-  const DEFAULT_AVERAGE_BRIDGE_EXECUTION = 30
+  const DEFAULT_AVERAGE_BRIDGE_EXECUTION = 30 // minutes
 
   const getBridgeStatus = async () => {
     try {
       setBridgeStatus(await getSnowBridgeStatus())
     } catch (error) {
       const status = {
-        ethBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60,
-        polkadotBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60,
+        ethBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
+        polkadotBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
       }
       setBridgeStatus(status)
       console.log('Set bridge status error: ', error)
@@ -40,7 +35,6 @@ const OngoingTransfers = ({
 
   useEffect(() => {
     let shouldUpdate = true
-
     shouldUpdate && getBridgeStatus()
 
     return () => {

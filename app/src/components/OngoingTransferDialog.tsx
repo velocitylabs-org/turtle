@@ -1,9 +1,9 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import Identicon from '@polkadot/react-identicon'
 import * as Snowbridge from '@snowbridge/api'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
 
 import { bridgeProgressionValue, getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
@@ -37,7 +37,7 @@ export const OngoingTransferDialog = ({
   bridgeStatus,
 }: {
   transfer: StoredTransfer
-  bridgeStatus: SnowbridgeStatus
+  bridgeStatus: SnowbridgeStatus | null
 }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
@@ -45,7 +45,8 @@ export const OngoingTransferDialog = ({
   const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
 
   const [update, setUpdate] = useState<string | null>('Loading...')
-  const [progression, setProgression] = useState<number>(60)
+  const [progression, setProgression] = useState<number>(0)
+  const progressionIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const senderDisplay = senderName ? senderName : truncateAddress(transfer.sender, 4, 4)
   const recipientDisplay = recipientName ? recipientName : truncateAddress(transfer.recipient, 4, 4)
@@ -54,13 +55,22 @@ export const OngoingTransferDialog = ({
 
   const getProgression = () => {
     const transferProgression = bridgeProgressionValue(bridgeStatus, transfer.date, direction)
-    // setProgression(transferProgression)
-    // if (transferProgression >= 90) {
-    //   clearInterval(intervalId)
-    // }
+    setProgression(transferProgression)
+    if (transferProgression >= 90 && progressionIntervalRef.current) {
+      clearInterval(progressionIntervalRef.current)
+      progressionIntervalRef.current = null
+    }
   }
 
-  // const intervalId = setInterval(getProgression, 3000)
+  useEffect(() => {
+    progressionIntervalRef.current = setInterval(getProgression, 5000)
+    return () => {
+      if (progressionIntervalRef.current) {
+        clearInterval(progressionIntervalRef.current)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bridgeStatus, transfer, direction])
 
   useEffect(() => {
     const pollUpdate = async () => {
@@ -162,10 +172,12 @@ export const OngoingTransferDialog = ({
               </p>
             </div>
             <div className="mb-4 h-2 rounded-full border border-turtle-secondary bg-white">
-              <div
-                className="-ml-[1px] -mt-[1px] h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
-                style={{ width: `${progression}%` }}
-              />
+              {progression > 0 && (
+                <div
+                  className="-ml-[1px] -mt-[1px] h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
+                  style={{ width: `${progression}%` }}
+                />
+              )}
             </div>
           </div>
 

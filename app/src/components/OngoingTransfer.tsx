@@ -6,6 +6,7 @@ import { StoredTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
+import { cn } from '@/utils/cn'
 
 import { ArrowRight } from './svg/ArrowRight'
 import LoadingIcon from './svg/LoadingIcon'
@@ -26,11 +27,18 @@ const OngoingTransfer: FC<{
         </p>
       </div>
       {/* Progress bar */}
-      <div className="mb-4 h-2 rounded-full bg-turtle-secondary-light">
-        <div
-          className="h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
-          style={{ width: `${progression}%` }}
-        />
+      <div
+        className={cn(
+          'mb-4 h-2 rounded-full bg-turtle-secondary-light',
+          progression <= 0 && 'animate-pulse',
+        )}
+      >
+        {progression > 0 && (
+          <div
+            className="h-full rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-700 ease-in-out"
+            style={{ width: `${progression}%` }}
+          />
+        )}
       </div>
       <div className="mb-2 flex items-center">
         <LoadingIcon

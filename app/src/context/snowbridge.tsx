@@ -83,18 +83,28 @@ export async function getSnowBridgeStatus(): Promise<SnowbridgeStatus> {
 }
 
 export const bridgeProgressionValue = (
-  bridgeStatus: SnowbridgeStatus,
+  bridgeStatus: SnowbridgeStatus | null,
   transferDate: Date,
   transferDirection: Direction,
 ) => {
-  const filteredBridgeTimestamp =
-    transferDirection === Direction.ToPolkadot
-      ? bridgeStatus.polkadotBridgeStatus * 1000
-      : bridgeStatus.ethBridgeStatus * 1000
-  const targetTimestamp = filteredBridgeTimestamp + new Date(transferDate).getTime()
+  if (!bridgeStatus) return 0
 
+  const bridgeTimestamp = // seconds converted in miliseconds
+    transferDirection === Direction.ToPolkadot
+      ? bridgeStatus?.polkadotBridgeStatus * 1000
+      : bridgeStatus.ethBridgeStatus * 1000
+
+  const transferTimestamp = new Date(transferDate).getTime()
+  const targetTimestamp = bridgeTimestamp + transferTimestamp
   const currentTimestamp = new Date().getTime()
-  const diffTimeFromTransfer = targetTimestamp - currentTimestamp
-  const progression = (diffTimeFromTransfer / targetTimestamp) * 100
-  return progression
+
+  if (currentTimestamp > targetTimestamp) return 90
+
+  // time already spent between transfer start & current time
+  const diffTimeSinceTransfer = currentTimestamp - transferTimestamp
+  const progression = (diffTimeSinceTransfer / bridgeTimestamp) * 100
+
+  // To avoid displaying full progression bar, keep a 10% buffer.
+  // It returns 90% max and min 5% (to improve UI)
+  return Math.min(progression < 5 ? 5 : progression, 90)
 }
