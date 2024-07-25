@@ -9,6 +9,6 @@ describe('Form', () => {
     selectChain('source', 'Sepolia')
     selectChain('dest', 'Asset Hub')
     selectToken('wETH')
-    inputAmount('0.1')
+    inputAmount('0.12')
   })
 })

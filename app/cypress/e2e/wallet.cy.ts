@@ -1,28 +1,32 @@
 import { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
 import { clickWalletConnectButton, selectChain } from './helpers'
 
+const seed = Cypress.env('seed')
+const address = Cypress.env('address')
+
 const Alice = {
-  address: '5Fsaew2ZtsgpaCUWDmBnz8Jn8i49dvJFQUaJ5TZ6NGC1EBeS',
+  address,
   name: 'Alice',
   type: 'sr25519',
-  mnemonic: 'blame only east lunar valve mother link pill expect eight quote table',
+  mnemonic: seed,
 } as InjectedAccountWitMnemonic
 
 const EXAMPLE_DAPP_NAME = 'turtle'
-const CUSTOM_WALLET_NAME = 'My-custom-wallet'
-const TESTING_LANDING_PAGE = 'http://localhost:3000'
 
 describe('test cypress-polkadot-wallet plugin', () => {
+  beforeEach(() => {
+    cy.visit('/')
+  })
+
   it('should check if plugin is installed', () => {
     expect(cy).property('initWallet').to.be.a('function')
   })
 
   it('should connect polkadot wallet', () => {
-    cy.visit(TESTING_LANDING_PAGE)
     cy.initWallet([Alice])
     selectChain('source', 'Asset Hub')
     clickWalletConnectButton('source')
-    cy.contains('Polkadot.js').click()
+    cy.contains('Polkadot.js').click() // select extension
 
     cy.getAuthRequests().then(authRequests => {
       const requests = Object.values(authRequests)
@@ -33,7 +37,7 @@ describe('test cypress-polkadot-wallet plugin', () => {
       cy.approveAuth(requests[0].id, [Alice.address])
     })
 
-    cy.contains('Alice').click()
+    cy.contains('Alice').click() // select account
 
     // check that 'polkadot-js' is injected and that we get access to the
     // injected accounts. Note that the name of the injected wallet will default to polkadot-js
