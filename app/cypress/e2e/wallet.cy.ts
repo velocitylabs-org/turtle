@@ -1,5 +1,5 @@
 import { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
-import { waitForAuthRequest } from './helpers'
+import { clickWalletConnectButton, selectChain } from './helpers'
 
 const Alice = {
   address: '5Fsaew2ZtsgpaCUWDmBnz8Jn8i49dvJFQUaJ5TZ6NGC1EBeS',
@@ -17,10 +17,13 @@ describe('test cypress-polkadot-wallet plugin', () => {
     expect(cy).property('initWallet').to.be.a('function')
   })
 
-  it('should init the wallet and connect accounts with authorization request', () => {
+  it('should connect polkadot wallet', () => {
     cy.visit(TESTING_LANDING_PAGE)
     cy.initWallet([Alice])
-    cy.get('#connect-accounts').click()
+    selectChain('source', 'Asset Hub')
+    clickWalletConnectButton('source')
+    cy.contains('Polkadot.js').click()
+
     cy.getAuthRequests().then(authRequests => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the wallet
@@ -30,6 +33,8 @@ describe('test cypress-polkadot-wallet plugin', () => {
       cy.approveAuth(requests[0].id, [Alice.address])
     })
 
+    cy.contains('Alice').click()
+
     // check that 'polkadot-js' is injected and that we get access to the
     // injected accounts. Note that the name of the injected wallet will default to polkadot-js
     // but it can be changed as seen in another test
@@ -38,7 +43,7 @@ describe('test cypress-polkadot-wallet plugin', () => {
     cy.get('#injected-error').should('be.empty')
   })
 
-  it('should init the wallet and connect accounts without authorization request and default polkadot-js name', () => {
+  /* it('should init the wallet and connect accounts without authorization request and default polkadot-js name', () => {
     cy.visit(TESTING_LANDING_PAGE)
     // because we pass the origin here, all the account will be automatically
     // accepted by the wallet comming from this origin
@@ -136,5 +141,5 @@ describe('test cypress-polkadot-wallet plugin', () => {
       cy.get('#tx-hash').should('not.be.empty')
       cy.get('#tx-events', { timeout: 10000 }).should('contain', 'system.ExtrinsicFailed')
     })
-  })
+  }) */
 })

@@ -38,3 +38,8 @@ export const selectedTokenContains = (symbol: string) => {
 export const inputAmount = (amount: string) => {
   cy.get('[data-cy="amount-input"]').should('exist').type(amount)
 }
+
+export const clickWalletConnectButton = (type: 'source' | 'dest') => {
+  const index = type === 'source' ? 0 : 1
+  cy.get('[data-cy="connect-button"]').eq(index).find('button').click()
+}
