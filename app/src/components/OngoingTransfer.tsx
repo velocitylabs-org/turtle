@@ -29,16 +29,14 @@ const OngoingTransfer: FC<{
       {/* Progress bar */}
       <div
         className={cn(
-          'mb-4 h-2 rounded-full bg-turtle-secondary-light',
+          'mb-4 h-2 overflow-hidden rounded-full bg-turtle-secondary-light',
           progression <= 0 && 'animate-pulse',
         )}
       >
-        {progression > 0 && (
-          <div
-            className="h-full rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-700 ease-in-out"
-            style={{ width: `${progression}%` }}
-          />
-        )}
+        <div
+          className="h-full rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-700 ease-in-out"
+          style={{ transform: `translateX(-${100 - (progression || 0)}%)` }}
+        />
       </div>
       <div className="mb-2 flex items-center">
         <LoadingIcon
