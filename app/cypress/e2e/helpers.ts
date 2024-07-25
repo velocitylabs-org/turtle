@@ -1,3 +1,14 @@
+export const waitForAuthRequest = (timeout = 10000) =>
+  cy.waitUntil(
+    () =>
+      cy.getTxRequests().then(req => {
+        return Object.entries(req).length > 0
+      }),
+    {
+      timeout,
+    },
+  )
+
 export const selectChain = (type: 'source' | 'dest', chainName: string) => {
   const index = type === 'source' ? 0 : 1
   cy.get('[data-cy="chain-select-trigger"]').eq(index).should('exist').click()
