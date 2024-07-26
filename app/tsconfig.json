@@ -9,6 +9,8 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",

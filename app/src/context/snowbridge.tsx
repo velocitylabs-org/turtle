@@ -1,8 +1,9 @@
 import * as Snowbridge from '@snowbridge/api'
 
-import { Environment, currentEnvironement } from '@/store/environmentStore'
+import { Environment } from '@/store/environmentStore'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
+import { shouldUseTestnet } from '@/utils/env'
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -63,7 +64,7 @@ export function toSnowbridgeNetwork(env: Environment): string {
 }
 
 export async function getSnowBridgeContext(
-  environment = currentEnvironement,
+  environment = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet,
 ): Promise<Snowbridge.Context> {
   const snowbridgeEnv = getEnvironment(environment)
   return await getContext(snowbridgeEnv)

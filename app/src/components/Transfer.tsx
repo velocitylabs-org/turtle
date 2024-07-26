@@ -1,7 +1,6 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
 import useTransferForm from '@/hooks/useTransferForm'
-import Link from 'next/link'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
 import Button from './Button'
