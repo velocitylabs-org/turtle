@@ -21,17 +21,22 @@ export const selectChain = (type: 'source' | 'dest', chainName: string) => {
     .click()
 }
 
-export const selectedChainContains = (type: 'source' | 'dest', chainName: string) => {
+export const ensureSelectedChainContains = (type: 'source' | 'dest', chainName: string) => {
   const index = type === 'source' ? 0 : 1
   cy.get('[data-cy="chain-select-value"]').eq(index).should('contain', chainName)
 }
 
 export const selectToken = (symbol: string) => {
   cy.get('[data-cy="token-select-trigger"]').should('exist').click()
-  cy.get('[data-cy="token-select"]').get('ul').should('be.visible').contains(symbol).click()
+  cy.get('[data-cy="token-select"]')
+    .get('ul')
+    .should('be.visible')
+    .find('li')
+    .contains(symbol)
+    .click()
 }
 
-export const selectedTokenContains = (symbol: string) => {
+export const ensureSelectedTokenContains = (symbol: string) => {
   cy.get('[data-cy="token-select-symbol"]').should('contain', symbol)
 }
 

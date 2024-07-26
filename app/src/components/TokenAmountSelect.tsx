@@ -62,7 +62,6 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
           <div
             ref={triggerRef}
             onClick={handleTriggerClick}
-            data-cy="token-select-trigger"
             className={cn(
               'flex cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
               disabled && 'opacity-30',
@@ -71,25 +70,27 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
           >
             {/* Trigger Content */}
             <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-              {value?.token ? (
-                <>
-                  <Image
-                    src={value.token.logoURI}
-                    alt={value.token.name}
-                    width={24}
-                    height={24}
-                    className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
-                  />
-                  <span className="text-nowrap" data-cy="token-select-symbol">
-                    {value.token.symbol}
-                  </span>
-                </>
-              ) : (
-                <>
-                  {placeholderIcon}
-                  {placeholder}
-                </>
-              )}
+              <div className="flex items-center gap-1" data-cy="token-select-trigger">
+                {value?.token ? (
+                  <>
+                    <Image
+                      src={value.token.logoURI}
+                      alt={value.token.name}
+                      width={24}
+                      height={24}
+                      className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
+                    />
+                    <span className="text-nowrap" data-cy="token-select-symbol">
+                      {value.token.symbol}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    {placeholderIcon}
+                    {placeholder}
+                  </>
+                )}
+              </div>
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
               <input

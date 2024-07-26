@@ -1,4 +1,4 @@
-import { selectChain, selectedChainContains } from './helpers'
+import { ensureSelectedChainContains, selectChain } from './helpers'
 
 describe('Select Components', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('Select Components', () => {
     selectChain('source', 'Asset Hub')
 
     // Verify
-    selectedChainContains('source', 'Asset Hub')
-    selectedChainContains('dest', 'Sepolia')
+    ensureSelectedChainContains('source', 'Asset Hub')
+    ensureSelectedChainContains('dest', 'Sepolia')
   })
 })

@@ -5,7 +5,7 @@ describe('Form', () => {
     cy.visit('/')
   })
 
-  it('should fill out form and enable button', () => {
+  it('should fill out the form with manual recipient', () => {
     selectChain('source', 'Sepolia')
     selectChain('dest', 'Asset Hub')
     selectToken('wETH')
