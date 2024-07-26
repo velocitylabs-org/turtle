@@ -2,9 +2,12 @@ import {
   clickManualRecipientSwitch,
   ensureInvalidForm,
   inputAmount,
+  inputManualRecipient,
   selectChain,
   selectToken,
 } from './helpers'
+
+const manualRecipientAddress = Cypress.env('manualRecipientAddress')
 
 describe('Form', () => {
   beforeEach(() => {
@@ -12,11 +15,12 @@ describe('Form', () => {
   })
 
   it('should fill out the form with manual recipient', () => {
-    selectChain('source', 'Sepolia')
-    selectChain('dest', 'Asset Hub')
+    selectChain('source', 'Asset Hub')
+    selectChain('dest', 'Sepolia')
     selectToken('wETH')
-    inputAmount('0.12')
+    inputAmount('0.05')
     clickManualRecipientSwitch()
+    inputManualRecipient(manualRecipientAddress)
     ensureInvalidForm()
   })
 })

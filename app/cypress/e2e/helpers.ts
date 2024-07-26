@@ -60,3 +60,7 @@ export const ensureInvalidForm = () => {
 export const ensureValidForm = () => {
   cy.get('[data-cy="form-submit"]').should('not.be.disabled')
 }
+
+export const inputManualRecipient = (address: string) => {
+  cy.get('[data-cy="manual-recipient-input"]').type(address)
+}

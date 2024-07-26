@@ -5,6 +5,7 @@ dotenv.config({ path: '.env.test.local' })
 
 const seedPhrase = process.env.E2E_SEED_PHRASE || ''
 const accountAddress = process.env.E2E_ACCOUNT_ADDRESS || ''
+const manualRecipientAddress = process.env.E2E_MANUAL_RECIPIENT_ADDRESS || ''
 
 export default defineConfig({
   e2e: {
@@ -13,5 +14,6 @@ export default defineConfig({
   env: {
     seed: seedPhrase,
     address: accountAddress,
+    manualRecipientAddress: manualRecipientAddress,
   },
 })

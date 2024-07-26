@@ -121,6 +121,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     value={manualRecipient.address}
                     onChange={handleManualRecipientChange}
                     onClick={e => e.stopPropagation()}
+                    data-cy="manual-recipient-input"
                   />
                 </>
               )}
