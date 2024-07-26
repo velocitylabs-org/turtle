@@ -1,5 +1,5 @@
-import { isDevelopment, isPreview } from '@/utils/env'
 import { create } from 'zustand'
+import { shouldUseTestnet } from '@/utils/env'
 
 export enum Environment {
   /* Polkadot - Ethereum */
@@ -7,9 +7,6 @@ export enum Environment {
   /* Rococo - Sepolia */
   Testnet = 'testnet',
 }
-export const shouldUseTestnet = isDevelopment || isPreview
-export const currentEnvironement = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet
-
 interface State {
   // State
   current: Environment
@@ -20,7 +17,7 @@ interface State {
 
 export const useEnvironmentStore = create<State>(set => ({
   // State
-  current: currentEnvironement,
+  current: shouldUseTestnet ? Environment.Testnet : Environment.Mainnet,
 
   // Actions
   switchTo: environment =>

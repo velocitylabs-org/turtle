@@ -1,4 +1,4 @@
-import { isDevelopment, isPreview, projectId, vercelDomain } from '@/utils/env'
+import { isDevelopment, projectId, shouldUseTestnet, vercelDomain } from '@/utils/env'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 
 import { cookieStorage, createStorage } from 'wagmi'
@@ -6,8 +6,6 @@ import { mainnet, sepolia } from 'wagmi/chains'
 
 // Get projectId at https://cloud.walletconnect.com
 if (!projectId) throw new Error('Project ID is not defined')
-
-const shouldUseTestnet = isDevelopment || isPreview
 
 const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
 
