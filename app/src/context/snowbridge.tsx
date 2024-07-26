@@ -1,12 +1,8 @@
 import * as Snowbridge from '@snowbridge/api'
 
-import { isDevelopment, isPreview } from '@/utils/env'
-import { Environment } from '@/store/environmentStore'
+import { Environment, currentEnvironement } from '@/store/environmentStore'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
-
-export const shouldUseTestnet = isDevelopment || isPreview
-export const currentEnvironement = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
