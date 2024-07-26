@@ -12,6 +12,7 @@ import { ArrowRight } from './svg/ArrowRight'
 import LoadingIcon from './svg/LoadingIcon'
 
 import { colors } from '../../tailwind.config'
+import ProgressBar from './ProgressBar'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
@@ -27,17 +28,8 @@ const OngoingTransfer: FC<{
         </p>
       </div>
       {/* Progress bar */}
-      <div
-        className={cn(
-          'mb-4 h-2 overflow-hidden rounded-full bg-turtle-secondary-light',
-          progression <= 0 && 'animate-pulse',
-        )}
-      >
-        <div
-          className="h-full rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-700 ease-in-out"
-          style={{ transform: `translateX(-${100 - (progression || 0)}%)` }}
-        />
-      </div>
+      <ProgressBar progression={progression} outlinedProgressBar={false} />
+
       <div className="mb-2 flex items-center">
         <LoadingIcon
           className="mr-2 animate-spin"

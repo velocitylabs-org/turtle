@@ -31,6 +31,7 @@ import {
 import { Separator } from './ui/separator'
 
 import { colors } from '../../tailwind.config'
+import ProgressBar from './ProgressBar'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -171,14 +172,8 @@ export const OngoingTransferDialog = ({
                 {formatOngoingTransferDate(transfer.date)}
               </p>
             </div>
-            <div className="mb-4 h-2 rounded-full border border-turtle-secondary bg-white">
-              {progression > 0 && (
-                <div
-                  className="-ml-[1px] -mt-[1px] h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
-                  style={{ width: `${progression}%` }}
-                />
-              )}
-            </div>
+
+            <ProgressBar progression={progression} outlinedProgressBar={true} />
           </div>
 
           {/* sender */}
