@@ -11,7 +11,7 @@ const Alice = {
   mnemonic: seed,
 } as InjectedAccountWitMnemonic
 
-const EXAMPLE_DAPP_NAME = 'turtle'
+const DAPP_NAME = 'turtle'
 
 describe('test cypress-polkadot-wallet plugin', () => {
   beforeEach(() => {
@@ -32,8 +32,8 @@ describe('test cypress-polkadot-wallet plugin', () => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the wallet
       cy.wrap(requests.length).should('eq', 1)
-      // this request should be from the application EXAMPLE_DAPP_NAME
-      cy.wrap(requests[0].origin).should('eq', EXAMPLE_DAPP_NAME)
+      // this request should be from the application DAPP_NAME
+      cy.wrap(requests[0].origin).should('eq', DAPP_NAME)
       cy.approveAuth(requests[0].id, [Alice.address])
     })
 

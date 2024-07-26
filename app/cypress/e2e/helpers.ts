@@ -1,3 +1,18 @@
+import { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
+
+const DAPP_NAME = 'turtle'
+
+export const seed = Cypress.env('seed')
+export const seedAccountAddress = Cypress.env('address')
+export const manualRecipientAddress = Cypress.env('manualRecipientAddress')
+
+export const Alice = {
+  address: seedAccountAddress,
+  name: 'Alice',
+  type: 'sr25519',
+  mnemonic: seed,
+} as InjectedAccountWitMnemonic
+
 export const waitForAuthRequest = (timeout = 10000) =>
   cy.waitUntil(
     () =>
@@ -63,4 +78,21 @@ export const ensureValidForm = () => {
 
 export const inputManualRecipient = (address: string) => {
   cy.get('[data-cy="manual-recipient-input"]').type(address)
+}
+
+export const connectPJSWallet = (type: 'source' | 'dest') => {
+  cy.initWallet([Alice])
+  clickWalletConnectButton(type)
+  cy.contains('Polkadot.js').click() // select extension
+
+  cy.getAuthRequests().then(authRequests => {
+    const requests = Object.values(authRequests)
+    // we should have 1 connection request to the wallet
+    cy.wrap(requests.length).should('eq', 1)
+    // this request should be from the application DAPP_NAME
+    cy.wrap(requests[0].origin).should('eq', DAPP_NAME)
+    cy.approveAuth(requests[0].id, [Alice.address])
+  })
+
+  cy.contains('Alice').click() // select account
 }

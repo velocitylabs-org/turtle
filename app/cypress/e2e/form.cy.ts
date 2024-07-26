@@ -1,13 +1,14 @@
 import {
   clickManualRecipientSwitch,
+  connectPJSWallet,
   ensureInvalidForm,
+  ensureValidForm,
   inputAmount,
   inputManualRecipient,
+  manualRecipientAddress,
   selectChain,
   selectToken,
 } from './helpers'
-
-const manualRecipientAddress = Cypress.env('manualRecipientAddress')
 
 describe('Form', () => {
   beforeEach(() => {
@@ -18,9 +19,11 @@ describe('Form', () => {
     selectChain('source', 'Asset Hub')
     selectChain('dest', 'Sepolia')
     selectToken('wETH')
-    inputAmount('0.05')
+    inputAmount('0.03')
     clickManualRecipientSwitch()
     inputManualRecipient(manualRecipientAddress)
     ensureInvalidForm()
+    connectPJSWallet('source')
+    ensureValidForm() // Only if balance is enough
   })
 })
