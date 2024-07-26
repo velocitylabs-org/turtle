@@ -6,16 +6,19 @@ import { StoredTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
+import { cn } from '@/utils/cn'
 
 import { ArrowRight } from './svg/ArrowRight'
 import LoadingIcon from './svg/LoadingIcon'
 
 import { colors } from '../../tailwind.config'
+import ProgressBar from './ProgressBar'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
   update: string | null
-}> = ({ transfer, update }) => {
+  progression: number
+}> = ({ transfer, update, progression }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -25,12 +28,8 @@ const OngoingTransfer: FC<{
         </p>
       </div>
       {/* Progress bar */}
-      <div className="mb-4 h-2 rounded-full bg-turtle-secondary-light">
-        <div
-          className="h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
-          style={{ width: '60%' }}
-        />
-      </div>
+      <ProgressBar progression={progression} outlinedProgressBar={false} />
+
       <div className="mb-2 flex items-center">
         <LoadingIcon
           className="mr-2 animate-spin"

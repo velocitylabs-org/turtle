@@ -1,15 +1,16 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import Identicon from '@polkadot/react-identicon'
 import * as Snowbridge from '@snowbridge/api'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
 
-import { getContext, getEnvironment } from '@/context/snowbridge'
+import { bridgeProgressionValue, getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useLookupName from '@/hooks/useLookupName'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { Network } from '@/models/chain'
+import { SnowbridgeStatus } from '@/models/snowbridge'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
@@ -30,19 +31,47 @@ import {
 import { Separator } from './ui/separator'
 
 import { colors } from '../../tailwind.config'
+import ProgressBar from './ProgressBar'
 
-export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }) => {
+export const OngoingTransferDialog = ({
+  transfer,
+  bridgeStatus,
+}: {
+  transfer: StoredTransfer
+  bridgeStatus: SnowbridgeStatus | null
+}) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const senderName = useLookupName(transfer.sourceChain.network, transfer.sender)
   const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
 
   const [update, setUpdate] = useState<string | null>('Loading...')
+  const [progression, setProgression] = useState<number>(0)
+  const progressionIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const senderDisplay = senderName ? senderName : truncateAddress(transfer.sender, 4, 4)
   const recipientDisplay = recipientName ? recipientName : truncateAddress(transfer.recipient, 4, 4)
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
+
+  const getProgression = () => {
+    const transferProgression = bridgeProgressionValue(bridgeStatus, transfer.date, direction)
+    setProgression(transferProgression)
+    if (transferProgression >= 90 && progressionIntervalRef.current) {
+      clearInterval(progressionIntervalRef.current)
+      progressionIntervalRef.current = null
+    }
+  }
+
+  useEffect(() => {
+    progressionIntervalRef.current = setInterval(getProgression, 5000)
+    return () => {
+      if (progressionIntervalRef.current) {
+        clearInterval(progressionIntervalRef.current)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bridgeStatus, transfer, direction])
 
   useEffect(() => {
     const pollUpdate = async () => {
@@ -75,7 +104,7 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer transfer={transfer} update={update} />
+        <OngoingTransfer transfer={transfer} update={update} progression={progression} />
       </DialogTrigger>
       <DialogContent
         className="ongoing-transfer-dialog m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
@@ -143,12 +172,8 @@ export const OngoingTransferDialog = ({ transfer }: { transfer: StoredTransfer }
                 {formatOngoingTransferDate(transfer.date)}
               </p>
             </div>
-            <div className="mb-2 h-2 rounded-full bg-turtle-secondary-light">
-              <div
-                className="h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
-                style={{ width: '60%' }}
-              ></div>
-            </div>
+
+            <ProgressBar progression={progression} outlinedProgressBar={true} />
           </div>
 
           {/* sender */}

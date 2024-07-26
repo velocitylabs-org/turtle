@@ -1,5 +1,12 @@
-import { Environment } from '@/store/environmentStore'
 import * as Snowbridge from '@snowbridge/api'
+
+import { isDevelopment, isPreview } from '@/utils/env'
+import { Environment } from '@/store/environmentStore'
+import { SnowbridgeStatus } from '@/models/snowbridge'
+import { Direction } from '@/services/transfer'
+
+export const shouldUseTestnet = isDevelopment || isPreview
+export const currentEnvironement = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -57,4 +64,57 @@ export function toSnowbridgeNetwork(env: Environment): string {
     case Environment.Testnet:
       return 'rococo_sepolia'
   }
+}
+
+export async function getSnowBridgeContext(
+  environment = currentEnvironement,
+): Promise<Snowbridge.Context> {
+  const snowbridgeEnv = getEnvironment(environment)
+  return await getContext(snowbridgeEnv)
+}
+
+export async function getSnowBridgeStatus(): Promise<SnowbridgeStatus> {
+  const snowbridgCtx = await getSnowBridgeContext()
+  const bridgeStatus = await Snowbridge.status.bridgeStatusInfo(snowbridgCtx)
+  return {
+    ethBridgeStatus: bridgeStatus.toEthereum.latencySeconds,
+    polkadotBridgeStatus: bridgeStatus.toPolkadot.latencySeconds,
+  }
+}
+
+/**
+ * Calculates the progression value of snowbridge transfer based on its status,
+ * the transfer date, and the transfer direction.
+ *
+ * @param bridgeStatus - Snowbridge's last status. This object contains the bridge status
+ * in minutes for both Polkadot and Ethereum directions. If null, the function returns 0.
+ * @param transferDate - The date and time when the transfer was initiated.
+ * @param transferDirection - The direction of the transfer, either ToPolkadot or ToEthereum direction.
+ * @returns The progression value of the bridge transfer process, ranging between 5% and 90%.
+ */
+export const bridgeProgressionValue = (
+  bridgeStatus: SnowbridgeStatus | null,
+  transferDate: Date,
+  transferDirection: Direction,
+) => {
+  if (!bridgeStatus) return 0
+
+  const bridgeTimestamp = // seconds converted in miliseconds
+    transferDirection === Direction.ToPolkadot
+      ? bridgeStatus?.polkadotBridgeStatus * 1000
+      : bridgeStatus.ethBridgeStatus * 1000
+
+  const transferTimestamp = new Date(transferDate).getTime()
+  const targetTimestamp = bridgeTimestamp + transferTimestamp
+  const currentTimestamp = new Date().getTime()
+
+  if (currentTimestamp > targetTimestamp) return 90
+
+  // time already spent between transfer start & current time
+  const diffTimeSinceTransfer = currentTimestamp - transferTimestamp
+  const progression = (diffTimeSinceTransfer / bridgeTimestamp) * 100
+
+  // To avoid displaying full progression bar, keep a 10% buffer.
+  // It returns 90% max and min 5% (to improve UI)
+  return Math.min(progression < 5 ? 5 : progression, 90)
 }

@@ -1,5 +1,5 @@
 import { Fees } from '@/models/transfer'
-import { feeToHuman } from '@/utils/transfer'
+import { feeToHuman, formatAmount, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { spinnerSize } from './Button'
@@ -34,10 +34,10 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, hidden }) => {
           <div className="mt-4 flex items-center justify-between border-y border-turtle-level2 py-3">
             <div>
               <div className="text-turtle-foreground">
-                {feeToHuman(fees)} {fees.token.symbol}
+                {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
               </div>
               {fees.inDollars > 0 && (
-                <div className="text-turtle-level3">${fees.inDollars.toFixed(3)}</div>
+                <div className="text-turtle-level3">${formatAmount(fees.inDollars)}</div>
               )}
             </div>
             <div className="flex items-center">
