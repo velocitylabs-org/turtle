@@ -193,9 +193,9 @@
 
 /* Remove arrows from number input */
 input[type='number'] {
-  -moz-appearance: textfield; /* Firefox */
-  -webkit-appearance: none; /* Chrome, Safari */
   appearance: none; /* Standard */
+  -webkit-appearance: none; /* Chrome, Safari */
+  -moz-appearance: textfield; /* Firefox */
 }
 
 input[type='number']::-webkit-outer-spin-button,

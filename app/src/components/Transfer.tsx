@@ -1,19 +1,18 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
 import useTransferForm from '@/hooks/useTransferForm'
-import Link from 'next/link'
+import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
+import Credits from './Credits'
 import FeesPreview from './FeesPreview'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { AnimatePresence, motion } from 'framer-motion'
-import Image from 'next/image'
 
 const Transfer: FC = () => {
   const {
@@ -182,40 +181,7 @@ const Transfer: FC = () => {
         disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
       />
 
-      {/* Credits */}
-      <div className="credits mt-6 flex flex-row items-center justify-center text-xs text-turtle-level5 sm:text-sm">
-        Made with love by{' '}
-        <a
-          href="https://www.velocitylabs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-2"
-        >
-          <Image
-            src={'/velocitylabs.svg'}
-            alt={'Velocity Labs'}
-            width={24}
-            height={24}
-            className="rounded-full border-1"
-          />
-        </a>
-        {' ・ '}
-        Powered by{' '}
-        <a
-          href="https://docs.snowbridge.network/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-2"
-        >
-          <Image
-            src={'/snowbridge.svg'}
-            alt={'Snowbridge Network'}
-            width={24}
-            height={24}
-            className="rounded-full border-1"
-          />
-        </a>
-      </div>
+      <Credits />
       <SubstrateWalletModal />
     </form>
   )
