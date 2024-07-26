@@ -48,3 +48,15 @@ export const clickWalletConnectButton = (type: 'source' | 'dest') => {
   const index = type === 'source' ? 0 : 1
   cy.get('[data-cy="connect-button"]').eq(index).find('button').click()
 }
+
+export const clickManualRecipientSwitch = () => {
+  cy.get('[data-cy="switch"]').click()
+}
+
+export const ensureInvalidForm = () => {
+  cy.get('[data-cy="form-submit"]').should('be.disabled')
+}
+
+export const ensureValidForm = () => {
+  cy.get('[data-cy="form-submit"]').should('not.be.disabled')
+}

@@ -1,5 +1,5 @@
-import React from 'react'
 import { cn } from '@/utils/cn'
+import React from 'react'
 
 interface SwitchProps {
   /** The current state of the switch, true for on and false for off. */
@@ -27,6 +27,7 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label, disabled, cla
         role="switch"
         aria-checked={checked}
         disabled={disabled}
+        data-cy="switch"
         onClick={() => !disabled && onChange(!checked)}
       >
         <span

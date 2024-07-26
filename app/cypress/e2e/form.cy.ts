@@ -1,4 +1,10 @@
-import { inputAmount, selectChain, selectToken } from './helpers'
+import {
+  clickManualRecipientSwitch,
+  ensureInvalidForm,
+  inputAmount,
+  selectChain,
+  selectToken,
+} from './helpers'
 
 describe('Form', () => {
   beforeEach(() => {
@@ -10,5 +16,7 @@ describe('Form', () => {
     selectChain('dest', 'Asset Hub')
     selectToken('wETH')
     inputAmount('0.12')
+    clickManualRecipientSwitch()
+    ensureInvalidForm()
   })
 })
