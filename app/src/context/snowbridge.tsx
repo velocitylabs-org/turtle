@@ -82,6 +82,16 @@ export async function getSnowBridgeStatus(): Promise<SnowbridgeStatus> {
   }
 }
 
+/**
+ * Calculates the progression value of snowbridge transfer based on its status,
+ * the transfer date, and the transfer direction.
+ *
+ * @param bridgeStatus - Snowbridge's last status. This object contains the bridge status
+ * in minutes for both Polkadot and Ethereum directions. If null, the function returns 0.
+ * @param transferDate - The date and time when the transfer was initiated.
+ * @param transferDirection - The direction of the transfer, either ToPolkadot or ToEthereum direction.
+ * @returns The progression value of the bridge transfer process, ranging between 5% and 90%.
+ */
 export const bridgeProgressionValue = (
   bridgeStatus: SnowbridgeStatus | null,
   transferDate: Date,
