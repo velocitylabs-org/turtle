@@ -234,6 +234,8 @@ const useTransferForm = () => {
       !tokenAmountError &&
       !manualRecipientError &&
       sourceWallet?.isConnected &&
+      !loadingBalance &&
+      !!balanceData &&
       (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
       (manualRecipient.enabled || destinationWallet?.isConnected),
     isValidating,

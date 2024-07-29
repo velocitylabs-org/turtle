@@ -179,6 +179,7 @@ const Transfer: FC = () => {
         type="submit"
         loading={transferStatus !== 'Idle'}
         disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
+        cypressID="form-submit"
       />
 
       <Credits />
