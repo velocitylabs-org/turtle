@@ -2,11 +2,11 @@
 import { REGISTRY } from '@/config/registry'
 import useTransferForm from '@/hooks/useTransferForm'
 import { AnimatePresence, motion } from 'framer-motion'
-import Image from 'next/image'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
+import Credits from './Credits'
 import FeesPreview from './FeesPreview'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
@@ -182,40 +182,7 @@ const Transfer: FC = () => {
         cypressID="form-submit"
       />
 
-      {/* Credits */}
-      <div className="credits mt-6 flex flex-row items-center justify-center text-xs text-turtle-level5 sm:text-sm">
-        Made with love by{' '}
-        <a
-          href="https://www.velocitylabs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-2"
-        >
-          <Image
-            src={'/velocitylabs.svg'}
-            alt={'Velocity Labs'}
-            width={24}
-            height={24}
-            className="rounded-full border-1"
-          />
-        </a>
-        {' ・ '}
-        Powered by{' '}
-        <a
-          href="https://docs.snowbridge.network/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-2"
-        >
-          <Image
-            src={'/snowbridge.svg'}
-            alt={'Snowbridge Network'}
-            width={24}
-            height={24}
-            className="rounded-full border-1"
-          />
-        </a>
-      </div>
+      <Credits />
       <SubstrateWalletModal />
     </form>
   )

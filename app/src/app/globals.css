@@ -116,6 +116,7 @@
       #f9a825,
       #ff5722
     );
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -193,9 +194,9 @@
 
 /* Remove arrows from number input */
 input[type='number'] {
-  -moz-appearance: textfield; /* Firefox */
-  -webkit-appearance: none; /* Chrome, Safari */
   appearance: none; /* Standard */
+  -webkit-appearance: none; /* Chrome, Safari */
+  -moz-appearance: textfield; /* Firefox */
 }
 
 input[type='number']::-webkit-outer-spin-button,
