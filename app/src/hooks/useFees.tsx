@@ -1,18 +1,16 @@
-import { useCallback, useEffect, useState } from 'react'
 import { getNativeToken } from '@/config/registry'
-import { getContext, getEnvironment } from '@/context/snowbridge'
 import useNotification from '@/hooks/useNotification'
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
-import { Direction, resolveDirection } from '@/services/transfer'
-import * as Sentry from '@sentry/nextjs'
 import { getFeesTokenUSDValue } from '@/services/balance'
-import * as Snowbridge from '@snowbridge/api'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { toHuman } from '@/utils/transfer'
-
-import useEnvironment from './useEnvironment'
+import * as Sentry from '@sentry/nextjs'
+import * as Snowbridge from '@snowbridge/api'
+import { useCallback, useEffect, useState } from 'react'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -21,10 +19,8 @@ const useFees = (
 ) => {
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
-
-  const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
+  const snowbridgeContext = useSnowbridgeContext()
   const { addNotification } = useNotification()
-  const { environment } = useEnvironment()
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !snowbridgeContext) {
@@ -84,17 +80,6 @@ const useFees = (
   useEffect(() => {
     fetchFees()
   }, [sourceChain, destinationChain, token?.id, fetchFees])
-
-  // Load the Snowbridge context.
-  useEffect(() => {
-    const fetchContext = async () => {
-      const snowbridgeEnv = getEnvironment(environment)
-      const context = await getContext(snowbridgeEnv)
-      setSnowbridgeContext(context)
-    }
-
-    fetchContext()
-  }, [environment])
 
   return { fees, loading, refetch: fetchFees }
 }
