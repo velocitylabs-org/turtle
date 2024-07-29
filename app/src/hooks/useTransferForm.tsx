@@ -1,5 +1,4 @@
 import { REGISTRY } from '@/config/registry'
-import { getContext, getEnvironment } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
 import useErc20Balance from '@/hooks/useErc20Balance'
 import useNotification from '@/hooks/useNotification'
@@ -12,10 +11,10 @@ import { ManualRecipient, TokenAmount } from '@/models/select'
 import { isValidAddressOfNetwork } from '@/utils/address'
 import { convertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as Snowbridge from '@snowbridge/api'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -32,7 +31,7 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
+  const snowbridgeContext = useSnowbridgeContext()
   const { addNotification } = useNotification()
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
@@ -215,16 +214,6 @@ const useTransferForm = () => {
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, setValue])
-
-  useEffect(() => {
-    const fetchContext = async () => {
-      const snowbridgeEnv = getEnvironment(environment)
-      const context = await getContext(snowbridgeEnv)
-      setSnowbridgeContext(context)
-    }
-
-    fetchContext()
-  }, [environment])
 
   return {
     control,
