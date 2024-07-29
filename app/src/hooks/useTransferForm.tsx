@@ -75,7 +75,7 @@ const useTransferForm = () => {
     [sourceChain?.network, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
   )
 
-  const { data: balanceData } = useErc20Balance({
+  const { data: balanceData, loading: loadingBalance } = useErc20Balance({
     network: balanceParams.network,
     token: balanceParams.token ?? undefined,
     address: balanceParams.address,
