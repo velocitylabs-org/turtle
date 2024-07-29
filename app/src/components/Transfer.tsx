@@ -1,7 +1,8 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
 import useTransferForm from '@/hooks/useTransferForm'
-import Link from 'next/link'
+import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
 import Button from './Button'
@@ -12,8 +13,6 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { AnimatePresence, motion } from 'framer-motion'
-import Image from 'next/image'
 
 const Transfer: FC = () => {
   const {
@@ -180,6 +179,7 @@ const Transfer: FC = () => {
         type="submit"
         loading={transferStatus !== 'Idle'}
         disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
+        cypressID="form-submit"
       />
 
       {/* Credits */}

@@ -58,6 +58,7 @@ const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      data-cy="connect-button"
     >
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}

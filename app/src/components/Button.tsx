@@ -53,6 +53,8 @@ interface ButtonProps {
   children?: ReactNode
   /** The type of the button. */
   type?: 'button' | 'submit' | 'reset'
+  /** Cypress ID for testing. */
+  cypressID?: string
 }
 
 const Button: FC<ButtonProps> = ({
@@ -64,7 +66,8 @@ const Button: FC<ButtonProps> = ({
   variant = 'primary',
   size = 'lg',
   children,
-  type = 'button', // Default type is 'button'
+  type = 'button', // Default type is 'button',
+  cypressID,
 }) => {
   return (
     <NextButton
@@ -78,6 +81,7 @@ const Button: FC<ButtonProps> = ({
       style={{
         outline: 'none',
       }}
+      data-cy={cypressID}
     >
       {/** loading state */}
       {loading && (
