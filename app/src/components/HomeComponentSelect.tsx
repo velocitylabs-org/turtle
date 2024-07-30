@@ -5,38 +5,39 @@ import dynamic from 'next/dynamic'
 import Menu from '@/components/Menu'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import { TransferTabOptions, TransferTab } from '@/models/transfer'
 
 import OngoingTransfers from './OngoingTransfers'
 import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
 
-const TransactionHistory = dynamic(() => import('@/components/completed/TransactionHistory'), {
+const TransferHistory = dynamic(() => import('@/components/completed/TransactionHistory'), {
   loading: () => <TransactionLoaderSkeleton />,
 })
 
 export const HomeComponentSelect = () => {
   const { completedTransfers } = useCompletedTransfers()
-  const [isNewTransaction, setIsNewTransaction] = useState<boolean>(true)
-  const isCompletedTransactions = !!completedTransfers && completedTransfers.length > 0
+  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>(TransferTab.New)
+  const hasCompletedTransfers = !!completedTransfers && completedTransfers.length > 0
 
   return (
     <>
       <Menu
-        isNewTransaction={isNewTransaction}
-        setIsNewTransaction={setIsNewTransaction}
-        isCompletedTransactions={isCompletedTransactions}
+        newTransferInit={newTransferInit}
+        setNewTransferInit={setNewTransferInit}
+        hasCompletedTransfers={hasCompletedTransfers}
       />
-      {isNewTransaction ? (
+      {newTransferInit === TransferTab.New ? (
         <div className="z-15 relative max-w-[90vw]">
           <Transfer />
           <OngoingTransfers
-            isNewTransaction={isNewTransaction}
-            setIsNewTransaction={setIsNewTransaction}
-            isCompletedTransactions={isCompletedTransactions}
+            newTransferInit={newTransferInit}
+            setNewTransferInit={setNewTransferInit}
+            hasCompletedTransfers={hasCompletedTransfers}
           />
         </div>
       ) : (
-        isCompletedTransactions &&
-        completedTransfers && <TransactionHistory transactions={completedTransfers} />
+        hasCompletedTransfers &&
+        completedTransfers && <TransferHistory transactions={completedTransfers} />
       )}
     </>
   )

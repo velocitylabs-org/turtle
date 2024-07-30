@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import useStore from '@/hooks/useStore'
-import { DisplaysTransfers } from '@/models/transfer'
+import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 import OngoingTransferDialog from './OngoingTransferDialog'
@@ -11,9 +11,9 @@ import { SnowbridgeStatus } from '@/models/snowbridge'
 import { getSnowBridgeStatus } from '@/context/snowbridge'
 
 const OngoingTransfers = ({
-  isNewTransaction,
-  setIsNewTransaction,
-  isCompletedTransactions,
+  newTransferInit,
+  setNewTransferInit,
+  hasCompletedTransfers,
 }: DisplaysTransfers) => {
   const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
   const [bridgeStatus, setBridgeStatus] = useState<SnowbridgeStatus | null>(null)
@@ -54,10 +54,12 @@ const OngoingTransfers = ({
               <OngoingTransferDialog key={tx.id} transfer={tx} bridgeStatus={bridgeStatus} />
             ))}
 
-            {isCompletedTransactions && (
+            {hasCompletedTransfers && (
               <button
-                onClick={() => isNewTransaction && setIsNewTransaction(!isNewTransaction)}
-                disabled={!isCompletedTransactions}
+                onClick={() =>
+                  newTransferInit === TransferTab.New && setNewTransferInit(TransferTab.Completed)
+                }
+                disabled={!hasCompletedTransfers}
                 className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
               >
                 View completed transactions <i className="fas fa-arrow-right ml-1"></i>
