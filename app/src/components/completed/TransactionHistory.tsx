@@ -3,7 +3,7 @@ import { formatCompletedTransferDate } from '@/utils/datetime'
 
 import { TransactionDialog } from './TransactionDialog'
 
-export const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[] }) => {
+const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[] }) => {
   const transactionsByDate = transactions.reduce<TransfersByDate>((acc, transaction) => {
     const date = transaction.date.toString().split('T')[0]
     if (!acc[date]) {
@@ -34,3 +34,5 @@ export const TransactionHistory = ({ transactions }: { transactions: CompletedTr
     </div>
   )
 }
+
+export default TransactionHistory

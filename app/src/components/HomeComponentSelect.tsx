@@ -1,12 +1,17 @@
 'use client'
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 
 import Menu from '@/components/Menu'
 import Transfer from '@/components/Transfer'
-import { TransactionHistory } from '@/components/completed/TransactionHistory'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 
 import OngoingTransfers from './OngoingTransfers'
+import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
+
+const TransactionHistory = dynamic(() => import('@/components/completed/TransactionHistory'), {
+  loading: () => <TransactionLoaderSkeleton />,
+})
 
 export const HomeComponentSelect = () => {
   const { completedTransfers } = useCompletedTransfers()
