@@ -1,8 +1,19 @@
+import Image from 'next/image'
+
 export const TurtlesBackground: React.FC = () => {
   return (
-    <div className="absolute top-0 z-0">
-      <div className="turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/turtle-background.svg')] bg-cover bg-bottom">
-        <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center "></div>
+    <div className="absolute top-0 z-0 h-[80vh] w-full">
+      <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
+        <Image
+          src="/turtle-background.webp"
+          alt="Turtle Background"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+          sizes="100vw"
+          priority
+        />
+        <div className="turtle-dark-overlay flex h-full w-full flex-col items-center justify-center"></div>
       </div>
       <div>
         <div className="waves-container">

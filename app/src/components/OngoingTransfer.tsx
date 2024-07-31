@@ -6,7 +6,6 @@ import { StoredTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
-import { cn } from '@/utils/cn'
 
 import { ArrowRight } from './svg/ArrowRight'
 import LoadingIcon from './svg/LoadingIcon'

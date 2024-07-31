@@ -1,5 +1,5 @@
 import { Fees } from '@/models/transfer'
-import { feeToHuman, formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { spinnerSize } from './Button'
