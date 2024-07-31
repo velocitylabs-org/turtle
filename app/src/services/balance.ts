@@ -1,12 +1,12 @@
-import * as Snowbridge from '@snowbridge/api'
+import { Network } from '@/models/chain'
+import { Token } from '@/models/token'
+import { Context } from '@snowbridge/api'
 import {
   assetErc20Balance,
   erc20TokenToAssetLocation,
   palletAssetsBalance,
 } from '@snowbridge/api/dist/assets'
-import { Token } from '@/models/token'
 import { toHuman } from '../utils/transfer'
-import { Network } from '@/models/chain'
 
 export interface TokenValue {
   [key: string]: { usd: number }
@@ -20,7 +20,7 @@ export interface Erc20Balance {
 }
 
 export const fetchAssetHubBalance = async (
-  context: Snowbridge.Context,
+  context: Context,
   token: Token,
   address: string,
 ): Promise<Erc20Balance> => {
@@ -48,7 +48,7 @@ export const fetchAssetHubBalance = async (
 }
 
 export const fetchEthereumBalance = async (
-  context: Snowbridge.Context,
+  context: Context,
   token: Token,
   address: string,
 ): Promise<Erc20Balance> => {
