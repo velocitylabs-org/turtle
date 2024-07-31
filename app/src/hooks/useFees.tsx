@@ -7,8 +7,8 @@ import { Fees } from '@/models/transfer'
 import { getFeesTokenUSDValue } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { toHuman } from '@/utils/transfer'
-import * as Sentry from '@sentry/nextjs'
-import * as Snowbridge from '@snowbridge/api'
+import { captureException } from '@sentry/nextjs'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
@@ -39,14 +39,14 @@ const useFees = (
         case Direction.ToEthereum: {
           const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
           tokenUSDValue = dotUSDValue?.[Network.Polkadot?.toLowerCase()]?.usd ?? 0
-          amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
+          amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
         case Direction.ToPolkadot: {
           const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
           tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()]?.usd ?? 0
           amount = (
-            await Snowbridge.toPolkadot.getSendFee(
+            await toPolkadot.getSendFee(
               snowbridgeContext,
               token.address,
               destinationChain.chainId,
@@ -66,7 +66,7 @@ const useFees = (
       })
     } catch (error) {
       setFees(null)
-      Sentry.captureException(error)
+      captureException(error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',

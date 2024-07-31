@@ -1,10 +1,4 @@
 'use client'
-
-import Identicon from '@polkadot/react-identicon'
-import * as Snowbridge from '@snowbridge/api'
-import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
-
 import { bridgeProgressionValue, getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useLookupName from '@/hooks/useLookupName'
@@ -16,8 +10,13 @@ import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
-
+import Identicon from '@polkadot/react-identicon'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+import { colors } from '../../tailwind.config'
 import OngoingTransfer from './OngoingTransfer'
+import ProgressBar from './ProgressBar'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
 import {
@@ -29,9 +28,6 @@ import {
   DialogTrigger,
 } from './ui/dialog'
 import { Separator } from './ui/separator'
-
-import { colors } from '../../tailwind.config'
-import ProgressBar from './ProgressBar'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -303,9 +299,9 @@ async function trackToPolkadot(
   const context = await getContext(snowbridgeEnv)
   /* eslint-disable no-constant-condition */
   while (true) {
-    const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
+    const { status, result } = await toPolkadot.trackSendProgressPolling(
       context,
-      transfer.sendResult as Snowbridge.toPolkadot.SendResult,
+      transfer.sendResult as toPolkadot.SendResult,
     )
 
     if (status !== 'pending') {
@@ -367,9 +363,9 @@ async function trackToEthereum(
   const context = await getContext(snowbridgeEnv)
   /* eslint-disable no-constant-condition */
   while (true) {
-    const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
+    const { status, result } = await toEthereum.trackSendProgressPolling(
       context,
-      transfer.sendResult as Snowbridge.toEthereum.SendResult,
+      transfer.sendResult as toEthereum.SendResult,
     )
 
     if (status !== 'pending') {
