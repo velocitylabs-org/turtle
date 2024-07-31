@@ -1,5 +1,4 @@
 import { ReactNode } from 'react'
-import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 
 export interface SelectProps<T> {

@@ -1,7 +1,5 @@
-import { isDevelopment, isPreview } from '@/utils/env'
 import { create } from 'zustand'
-
-const shouldUseTestnet = isDevelopment || isPreview
+import { shouldUseTestnet } from '@/utils/env'
 
 export enum Environment {
   /* Polkadot - Ethereum */
@@ -9,7 +7,6 @@ export enum Environment {
   /* Rococo - Sepolia */
   Testnet = 'testnet',
 }
-
 interface State {
   // State
   current: Environment
