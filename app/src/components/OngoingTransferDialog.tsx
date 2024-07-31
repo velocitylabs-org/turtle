@@ -38,7 +38,7 @@ export const OngoingTransferDialog = ({
   bridgeStatus,
 }: {
   transfer: StoredTransfer
-  bridgeStatus: SnowbridgeStatus | null
+  bridgeStatus?: SnowbridgeStatus
 }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
@@ -55,7 +55,7 @@ export const OngoingTransferDialog = ({
   const explorerLink = getExplorerLink(transfer)
 
   const getProgression = () => {
-    const transferProgression = bridgeProgressionValue(bridgeStatus, transfer.date, direction)
+    const transferProgression = bridgeProgressionValue(transfer.date, direction, bridgeStatus)
     setProgression(transferProgression)
     if (transferProgression >= 90 && progressionIntervalRef.current) {
       clearInterval(progressionIntervalRef.current)
@@ -74,6 +74,9 @@ export const OngoingTransferDialog = ({
   }, [bridgeStatus, transfer, direction])
 
   useEffect(() => {
+    const abortController = new AbortController()
+    const abortSignal = abortController.signal
+
     const pollUpdate = async () => {
       try {
         if (direction == Direction.ToEthereum) {
@@ -83,6 +86,7 @@ export const OngoingTransferDialog = ({
             removeOngoingTransfer,
             addCompletedTransfer,
             explorerLink,
+            abortSignal,
           )
         } else if (direction == Direction.ToPolkadot) {
           await trackToPolkadot(
@@ -91,6 +95,7 @@ export const OngoingTransferDialog = ({
             removeOngoingTransfer,
             addCompletedTransfer,
             explorerLink,
+            abortSignal,
           )
         }
       } catch (error) {
@@ -99,6 +104,10 @@ export const OngoingTransferDialog = ({
     }
 
     pollUpdate()
+
+    return () => {
+      abortController.abort()
+    }
   }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink])
 
   return (
@@ -298,10 +307,11 @@ async function trackToPolkadot(
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: CompletedTransfer) => void,
   explorerLink: string | undefined,
+  abortSignal: AbortSignal,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
-  while (true) {
+  while (!abortSignal.aborted) {
     const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
       context,
       transfer.sendResult as Snowbridge.toPolkadot.SendResult,
@@ -360,10 +370,11 @@ async function trackToEthereum(
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: any) => void,
   explorerLink: string | undefined,
+  abortSignal: AbortSignal,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
-  while (true) {
+  while (!abortSignal.aborted) {
     const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
       context,
       transfer.sendResult as Snowbridge.toEthereum.SendResult,

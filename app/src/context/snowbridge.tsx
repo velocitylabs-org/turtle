@@ -93,9 +93,9 @@ export async function getSnowBridgeStatus(): Promise<SnowbridgeStatus> {
  * @returns The progression value of the bridge transfer process, ranging between 5% and 90%.
  */
 export const bridgeProgressionValue = (
-  bridgeStatus: SnowbridgeStatus | null,
   transferDate: Date,
   transferDirection: Direction,
+  bridgeStatus?: SnowbridgeStatus,
 ) => {
   if (!bridgeStatus) return 0
 
