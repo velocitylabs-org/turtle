@@ -359,6 +359,7 @@ async function trackToEthereum(
   transfer: StoredTransfer,
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addCompletedTransfer: (transfer: any) => void,
   explorerLink: string | undefined,
 ) {
