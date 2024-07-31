@@ -18,6 +18,8 @@
     "no-constant-condition": "warn",
     "unused-imports/no-unused-imports": "warn",
     "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-namespace": "off",
+    "import/no-namespace": "warn",
     "unused-imports/no-unused-vars": [
       "warn",
       {
