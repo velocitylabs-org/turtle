@@ -1,4 +1,3 @@
-import { Environment } from '@/store/environmentStore'
 import { useEnvironmentStore } from '@/store/environmentStore'
 
 const useEnvironment = () => {

@@ -1,8 +1,8 @@
+import { z } from 'zod'
+
 import { Chain, Network } from '@/models/chain'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { isValidAddressOfNetwork } from '@/utils/address'
-import { z } from 'zod'
 
 export const chainSchema: z.ZodType<Chain> = z.object({
   uid: z.string(),

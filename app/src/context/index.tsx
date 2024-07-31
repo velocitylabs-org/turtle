@@ -1,7 +1,7 @@
 'use client'
 
 import { config } from '@/config'
-import { isDevelopment, isPreview, projectId } from '@/utils/env'
+import { projectId, shouldUseTestnet } from '@/utils/env'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { ReactNode } from 'react'
@@ -12,8 +12,6 @@ import { colors } from '../../tailwind.config'
 // Setup queryClient
 const queryClient = new QueryClient()
 if (!projectId) throw new Error('Project ID is not defined')
-
-const shouldUseTestnet = isDevelopment || isPreview
 
 // Create modal
 export const wallet = createWeb3Modal({
