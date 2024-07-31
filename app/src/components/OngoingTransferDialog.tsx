@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
 import Identicon from '@polkadot/react-identicon'
 import * as Snowbridge from '@snowbridge/api'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
 import { bridgeProgressionValue, getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
@@ -301,6 +301,7 @@ async function trackToPolkadot(
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
+  /* eslint-disable no-constant-condition */
   while (true) {
     const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
       context,
@@ -338,13 +339,13 @@ async function trackToPolkadot(
       break
     }
 
-    if (!!success.destinationParachain?.events) {
+    if (success.destinationParachain?.events) {
       setUpdate(`Arriving at ${transfer.destChain.name}..."`)
-    } else if (!!success.bridgeHub.events) {
+    } else if (success.bridgeHub.events) {
       setUpdate('Arriving at BridgeHub...')
-    } else if (!!success.assetHub.events) {
+    } else if (success.assetHub.events) {
       setUpdate('Arriving at AssetHub...')
-    } else if (!!success.ethereum.events) {
+    } else if (success.ethereum.events) {
       setUpdate('Bridging in progress..')
     } else {
       setUpdate('Loading...')
@@ -363,6 +364,7 @@ async function trackToEthereum(
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
+  /* eslint-disable no-constant-condition */
   while (true) {
     const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
       context,
@@ -400,11 +402,11 @@ async function trackToEthereum(
       break
     }
 
-    if (!!success.sourceParachain?.events) {
+    if (success.sourceParachain?.events) {
       setUpdate('Sending...')
-    } else if (!!success.assetHub.events) {
+    } else if (success.assetHub.events) {
       setUpdate('Arriving at AssetHub...')
-    } else if (!!success.bridgeHub.events) {
+    } else if (success.bridgeHub.events) {
       setUpdate('Arriving at BridgeHub...')
     } else {
       setUpdate('Bridging in progress...')

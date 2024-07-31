@@ -36,12 +36,13 @@ const useFees = (
       let amount: string
       let tokenUSDValue: number = 0
       switch (direction) {
-        case Direction.ToEthereum:
+        case Direction.ToEthereum: {
           const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
           tokenUSDValue = dotUSDValue?.[Network.Polkadot?.toLowerCase()]?.usd ?? 0
           amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
           break
-        case Direction.ToPolkadot:
+        }
+        case Direction.ToPolkadot: {
           const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
           tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()]?.usd ?? 0
           amount = (
@@ -53,6 +54,7 @@ const useFees = (
             )
           ).toString()
           break
+        }
         default:
           throw new Error('Unsupported direction')
       }

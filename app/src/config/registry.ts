@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
-export module Mainnet {
+export namespace Mainnet {
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
@@ -112,7 +113,7 @@ export module Mainnet {
 }
 
 /* Testnet :: Rococo - Sepolia */
-export module Testnet {
+export namespace Testnet {
   /* Mainnet :: Polkadot - Ethereum */
   export const Sepolia: Chain = {
     uid: 'sepolia',
