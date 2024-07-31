@@ -41,7 +41,7 @@ const useTransferForm = () => {
     handleSubmit,
     setValue,
     reset,
-    formState: { errors, isValid, isValidating },
+    formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
     mode: 'onChange',
@@ -80,6 +80,16 @@ const useTransferForm = () => {
     address: balanceParams.address,
     context: balanceParams.context,
   })
+
+  const isFormValid =
+    isValidZodSchema &&
+    !tokenAmountError &&
+    !manualRecipientError &&
+    sourceWallet?.isConnected &&
+    !loadingBalance &&
+    !!balanceData &&
+    (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
+    (manualRecipient.enabled || destinationWallet?.isConnected)
 
   const handleSourceChainChange = useCallback(
     (newValue: Chain | null) => {
@@ -180,13 +190,13 @@ const useTransferForm = () => {
 
   // validate recipient address
   useEffect(() => {
-    if (
+    const isValidAddress =
       !manualRecipient.enabled ||
       !destinationChain ||
       isValidAddressOfNetwork(manualRecipient.address, destinationChain.network) ||
       manualRecipient.address === ''
-    )
-      setManualRecipientError('')
+
+    if (isValidAddress) setManualRecipientError('')
     else setManualRecipientError('Invalid Address')
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
@@ -218,16 +228,8 @@ const useTransferForm = () => {
   return {
     control,
     errors,
-    isValid:
-      isValid &&
-      !tokenAmountError &&
-      !manualRecipientError &&
-      sourceWallet?.isConnected &&
-      !loadingBalance &&
-      !!balanceData &&
-      (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
-      (manualRecipient.enabled || destinationWallet?.isConnected),
-    isValidating,
+    isValid: isFormValid,
+    isValidating, // Only includes validating zod schema atm
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
