@@ -26,9 +26,9 @@ export interface StoredTransfer {
 }
 
 export interface DisplaysTransfers {
-  isNewTransaction: boolean
-  setIsNewTransaction: Dispatch<SetStateAction<boolean>>
-  isCompletedTransactions: boolean
+  newTransferInit: TransferTab
+  setNewTransferInit: Dispatch<SetStateAction<TransferTab>>
+  hasCompletedTransfers: boolean
 }
 
 export enum TxStatus {
@@ -64,3 +64,9 @@ export interface Fees {
   /* the value in dollars */
   inDollars: number
 }
+
+export enum TransferTab {
+  New = 'New',
+  Completed = 'Completed',
+}
+export type TransferTabOptions = TransferTab
