@@ -1,7 +1,7 @@
 import { StoredTransfer } from '@/models/transfer'
+import { parse, stringify } from 'flatted'
 import { create } from 'zustand'
 import { persist, PersistStorage, StorageValue } from 'zustand/middleware'
-import { stringify, parse } from 'flatted'
 
 interface State {
   // State
@@ -17,6 +17,7 @@ function stringifyWithBigInt(value: StorageValue<StoredTransfer[]>) {
 }
 
 // Serialization - Parse function for BigInt
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseWithBigInt(value: any) {
   return parse(value, (_key, val) => {
     if (typeof val === 'string' && /^\d+n$/.test(val)) {

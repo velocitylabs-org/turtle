@@ -29,7 +29,7 @@ describe('Transfer', () => {
   })
 
   it('convert input amount to based back to humans', () => {
-    let inputs = [1, 10000, 123, 0.35]
+    const inputs = [1, 10000, 123, 0.35]
 
     inputs.forEach(x => {
       expect(toHuman(convertAmount(x, Mainnet.WETH)!, Mainnet.WETH)).toBe(x)

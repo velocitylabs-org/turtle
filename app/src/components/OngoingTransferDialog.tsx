@@ -1,10 +1,4 @@
 'use client'
-
-import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import Identicon from '@polkadot/react-identicon'
-import * as Snowbridge from '@snowbridge/api'
-
 import { bridgeProgressionValue, getContext, getEnvironment } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useLookupName from '@/hooks/useLookupName'
@@ -16,8 +10,13 @@ import { Direction, resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
-
+import Identicon from '@polkadot/react-identicon'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+import { colors } from '../../tailwind.config'
 import OngoingTransfer from './OngoingTransfer'
+import ProgressBar from './ProgressBar'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
 import {
@@ -29,9 +28,6 @@ import {
   DialogTrigger,
 } from './ui/dialog'
 import { Separator } from './ui/separator'
-
-import { colors } from '../../tailwind.config'
-import ProgressBar from './ProgressBar'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -301,10 +297,11 @@ async function trackToPolkadot(
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
+  /* eslint-disable no-constant-condition */
   while (true) {
-    const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
+    const { status, result } = await toPolkadot.trackSendProgressPolling(
       context,
-      transfer.sendResult as Snowbridge.toPolkadot.SendResult,
+      transfer.sendResult as toPolkadot.SendResult,
     )
 
     if (status !== 'pending') {
@@ -338,13 +335,13 @@ async function trackToPolkadot(
       break
     }
 
-    if (!!success.destinationParachain?.events) {
+    if (success.destinationParachain?.events) {
       setUpdate(`Arriving at ${transfer.destChain.name}..."`)
-    } else if (!!success.bridgeHub.events) {
+    } else if (success.bridgeHub.events) {
       setUpdate('Arriving at BridgeHub...')
-    } else if (!!success.assetHub.events) {
+    } else if (success.assetHub.events) {
       setUpdate('Arriving at AssetHub...')
-    } else if (!!success.ethereum.events) {
+    } else if (success.ethereum.events) {
       setUpdate('Bridging in progress..')
     } else {
       setUpdate('Loading...')
@@ -358,15 +355,17 @@ async function trackToEthereum(
   transfer: StoredTransfer,
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addCompletedTransfer: (transfer: any) => void,
   explorerLink: string | undefined,
 ) {
   const snowbridgeEnv = getEnvironment(transfer.environment)
   const context = await getContext(snowbridgeEnv)
+  /* eslint-disable no-constant-condition */
   while (true) {
-    const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
+    const { status, result } = await toEthereum.trackSendProgressPolling(
       context,
-      transfer.sendResult as Snowbridge.toEthereum.SendResult,
+      transfer.sendResult as toEthereum.SendResult,
     )
 
     if (status !== 'pending') {
@@ -400,11 +399,11 @@ async function trackToEthereum(
       break
     }
 
-    if (!!success.sourceParachain?.events) {
+    if (success.sourceParachain?.events) {
       setUpdate('Sending...')
-    } else if (!!success.assetHub.events) {
+    } else if (success.assetHub.events) {
       setUpdate('Arriving at AssetHub...')
-    } else if (!!success.bridgeHub.events) {
+    } else if (success.bridgeHub.events) {
       setUpdate('Arriving at BridgeHub...')
     } else {
       setUpdate('Bridging in progress...')

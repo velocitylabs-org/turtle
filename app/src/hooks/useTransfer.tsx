@@ -3,18 +3,18 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Fees, StoredTransfer } from '@/models/transfer'
+import { getErc20TokenUSDValue } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { captureException } from '@sentry/nextjs'
-import * as Snowbridge from '@snowbridge/api'
+import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { SendValidationCode } from '@snowbridge/api/dist/toPolkadot'
 import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { getErc20TokenUSDValue } from '@/services/balance'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -32,9 +32,7 @@ interface TransferParams {
 
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
 
-type ValidationResult =
-  | Snowbridge.toEthereum.SendValidationResult
-  | Snowbridge.toPolkadot.SendValidationResult
+type ValidationResult = toEthereum.SendValidationResult | toPolkadot.SendValidationResult
 
 const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
@@ -58,7 +56,7 @@ const useTransfer = () => {
 
   // Executes the transfer. Validation should happen before.
   const performTransfer = async (
-    context: Snowbridge.Context,
+    context: Context,
     sender: Sender,
     plan: ValidationResult,
     params: TransferParams,
@@ -80,18 +78,18 @@ const useTransfer = () => {
 
       switch (direction) {
         case Direction.ToPolkadot:
-          sendResult = await Snowbridge.toPolkadot.send(
+          sendResult = await toPolkadot.send(
             context,
             sender as Signer,
-            plan as Snowbridge.toPolkadot.SendValidationResult,
+            plan as toPolkadot.SendValidationResult,
           )
           break
 
         case Direction.ToEthereum:
-          sendResult = await Snowbridge.toEthereum.send(
+          sendResult = await toEthereum.send(
             context,
             sender as WalletOrKeypair,
-            plan as Snowbridge.toEthereum.SendValidationResult,
+            plan as toEthereum.SendValidationResult,
           )
           break
 
@@ -139,7 +137,7 @@ const useTransfer = () => {
 
   const validateTransfer = async (
     direction: Direction,
-    context: Snowbridge.Context,
+    context: Context,
     sender: Sender,
     sourceChain: Chain,
     token: Token,
@@ -150,7 +148,7 @@ const useTransfer = () => {
     setStatus('Validating')
     switch (direction) {
       case Direction.ToPolkadot:
-        return await Snowbridge.toPolkadot.validateSend(
+        return await toPolkadot.validateSend(
           context,
           sender as Signer,
           recipient,
@@ -161,7 +159,7 @@ const useTransfer = () => {
         )
 
       case Direction.ToEthereum:
-        return await Snowbridge.toEthereum.validateSend(
+        return await toEthereum.validateSend(
           context,
           sender as WalletOrKeypair,
           sourceChain.chainId,
@@ -206,12 +204,7 @@ const useTransfer = () => {
 
       if (plan.failure) {
         if (plan.failure.errors[0]?.code === SendValidationCode.ERC20SpendNotApproved) {
-          await Snowbridge.toPolkadot.approveTokenSpend(
-            context,
-            sender as Signer,
-            token.address,
-            amount,
-          )
+          await toPolkadot.approveTokenSpend(context, sender as Signer, token.address, amount)
           return
         }
         handleValidationFailure(plan)

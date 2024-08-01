@@ -1,18 +1,16 @@
-import { useCallback, useEffect, useState } from 'react'
 import { getNativeToken } from '@/config/registry'
-import { getContext, getEnvironment } from '@/context/snowbridge'
 import useNotification from '@/hooks/useNotification'
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
-import { Direction, resolveDirection } from '@/services/transfer'
-import * as Sentry from '@sentry/nextjs'
 import { getFeesTokenUSDValue } from '@/services/balance'
-import * as Snowbridge from '@snowbridge/api'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { toHuman } from '@/utils/transfer'
-
-import useEnvironment from './useEnvironment'
+import { captureException } from '@sentry/nextjs'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
+import { useCallback, useEffect, useState } from 'react'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -21,10 +19,8 @@ const useFees = (
 ) => {
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
-
-  const [snowbridgeContext, setSnowbridgeContext] = useState<Snowbridge.Context>()
+  const snowbridgeContext = useSnowbridgeContext()
   const { addNotification } = useNotification()
-  const { environment } = useEnvironment()
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !snowbridgeContext) {
@@ -40,16 +36,17 @@ const useFees = (
       let amount: string
       let tokenUSDValue: number = 0
       switch (direction) {
-        case Direction.ToEthereum:
+        case Direction.ToEthereum: {
           const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
           tokenUSDValue = dotUSDValue?.[Network.Polkadot?.toLowerCase()]?.usd ?? 0
-          amount = (await Snowbridge.toEthereum.getSendFee(snowbridgeContext)).toString()
+          amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
-        case Direction.ToPolkadot:
+        }
+        case Direction.ToPolkadot: {
           const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
           tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()]?.usd ?? 0
           amount = (
-            await Snowbridge.toPolkadot.getSendFee(
+            await toPolkadot.getSendFee(
               snowbridgeContext,
               token.address,
               destinationChain.chainId,
@@ -57,6 +54,7 @@ const useFees = (
             )
           ).toString()
           break
+        }
         default:
           throw new Error('Unsupported direction')
       }
@@ -68,7 +66,7 @@ const useFees = (
       })
     } catch (error) {
       setFees(null)
-      Sentry.captureException(error)
+      captureException(error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
@@ -84,17 +82,6 @@ const useFees = (
   useEffect(() => {
     fetchFees()
   }, [sourceChain, destinationChain, token?.id, fetchFees])
-
-  // Load the Snowbridge context.
-  useEffect(() => {
-    const fetchContext = async () => {
-      const snowbridgeEnv = getEnvironment(environment)
-      const context = await getContext(snowbridgeEnv)
-      setSnowbridgeContext(context)
-    }
-
-    fetchContext()
-  }, [environment])
 
   return { fees, loading, refetch: fetchFees }
 }
