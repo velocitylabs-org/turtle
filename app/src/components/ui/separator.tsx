@@ -1,7 +1,7 @@
 'use client'
 
-import SeparatorPrimitive from '@radix-ui/react-separator'
-import React from 'react'
+import * as React from 'react'
+import * as SeparatorPrimitive from '@radix-ui/react-separator'
 
 import { cn } from '@/utils/cn'
 
