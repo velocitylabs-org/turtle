@@ -93,6 +93,33 @@ export namespace Mainnet {
     address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
   }
 
+  export const USDT: Token = {
+    id: 'usdt',
+    name: 'Tether',
+    symbol: 'USDT',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    decimals: 6,
+    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+  }
+
+  export const USDC: Token = {
+    id: 'usdc',
+    name: 'USDC',
+    symbol: 'USDC',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    decimals: 6,
+    address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+  }
+
+  export const DAI: Token = {
+    id: 'dai',
+    name: 'DAI',
+    symbol: 'DAI',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
+    decimals: 18,
+    address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+  }
+
   export const DOT: Token = {
     id: 'dot',
     name: 'Polkadot',
@@ -175,11 +202,14 @@ export const REGISTRY = {
     tokens: [
       Mainnet.WETH,
       Mainnet.WBTC,
-      Mainnet.SHIB,
-      Mainnet.PEPE,
-      Mainnet.TON,
+      Mainnet.USDC,
+      Mainnet.USDT,
+      Mainnet.DAI,
       Mainnet.WSTETH,
       Mainnet.TBTC,
+      Mainnet.TON,
+      Mainnet.SHIB,
+      Mainnet.PEPE,
     ],
   },
   testnet: {
