@@ -70,8 +70,9 @@ export async function getSnowBridgeContext(
   return await getContext(snowbridgeEnv)
 }
 
-export async function getSnowBridgeStatus(): Promise<SnowbridgeStatus> {
-  const snowbridgCtx = await getSnowBridgeContext()
+export async function getSnowBridgeStatus(
+  snowbridgCtx: Snowbridge.Context,
+): Promise<SnowbridgeStatus> {
   const bridgeStatus = await Snowbridge.status.bridgeStatusInfo(snowbridgCtx)
   return {
     ethBridgeStatus: bridgeStatus.toEthereum.latencySeconds,

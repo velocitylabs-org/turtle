@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Identicon from '@polkadot/react-identicon'
 import * as Snowbridge from '@snowbridge/api'
 
-import { bridgeProgressionValue, getContext, getEnvironment } from '@/context/snowbridge'
+import { bridgeProgressionValue } from '@/context/snowbridge'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useLookupName from '@/hooks/useLookupName'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
@@ -32,12 +32,15 @@ import { Separator } from './ui/separator'
 
 import { colors } from '../../tailwind.config'
 import ProgressBar from './ProgressBar'
+// import { useQuery } from '@tanstack/react-query'
 
 export const OngoingTransferDialog = ({
   transfer,
+  bridgeContext,
   bridgeStatus,
 }: {
   transfer: StoredTransfer
+  bridgeContext: Snowbridge.Context
   bridgeStatus?: SnowbridgeStatus
 }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
@@ -62,6 +65,7 @@ export const OngoingTransferDialog = ({
       progressionIntervalRef.current = null
     }
   }
+  console.log('bridgeStatus:', bridgeStatus, 'progression', progression)
 
   useEffect(() => {
     progressionIntervalRef.current = setInterval(getProgression, 5000)
@@ -71,7 +75,7 @@ export const OngoingTransferDialog = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bridgeStatus, transfer, direction])
+  }, [bridgeStatus])
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -81,21 +85,23 @@ export const OngoingTransferDialog = ({
       try {
         if (direction == Direction.ToEthereum) {
           await trackToEthereum(
+            bridgeContext,
             transfer,
             setUpdate,
             removeOngoingTransfer,
             addCompletedTransfer,
-            explorerLink,
             abortSignal,
+            explorerLink,
           )
         } else if (direction == Direction.ToPolkadot) {
           await trackToPolkadot(
+            bridgeContext,
             transfer,
             setUpdate,
             removeOngoingTransfer,
             addCompletedTransfer,
-            explorerLink,
             abortSignal,
+            explorerLink,
           )
         }
       } catch (error) {
@@ -108,7 +114,17 @@ export const OngoingTransferDialog = ({
     return () => {
       abortController.abort()
     }
-  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink]) // // Does this make sense ? Registered Transfer will never change and direction relies on transfer data...
+
+  // const { error: pollError } = useQuery({
+  //   queryKey: ['pollData', transfer.id],
+  //   queryFn: async () => {
+  //     return await pollUpdate()
+  //   },
+  // })
+
+  // console.log('pollError', pollError)
 
   return (
     <Dialog>
@@ -299,21 +315,21 @@ export const OngoingTransferDialog = ({
   )
 }
 
-const POLL_UPDATE_INTERVAL_MS: number = 10_000
+const POLL_UPDATE_INTERVAL_MS: number = 120_000
 
 async function trackToPolkadot(
+  bridgeContext: Snowbridge.Context,
   transfer: StoredTransfer,
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: CompletedTransfer) => void,
-  explorerLink: string | undefined,
   abortSignal: AbortSignal,
+  explorerLink?: string,
 ) {
-  const snowbridgeEnv = getEnvironment(transfer.environment)
-  const context = await getContext(snowbridgeEnv)
+  // if (abortSignal.aborted) return
   while (!abortSignal.aborted) {
     const { status, result } = await Snowbridge.toPolkadot.trackSendProgressPolling(
-      context,
+      bridgeContext,
       transfer.sendResult as Snowbridge.toPolkadot.SendResult,
     )
 
@@ -365,18 +381,17 @@ async function trackToPolkadot(
 }
 
 async function trackToEthereum(
+  bridgeContext: Snowbridge.Context,
   transfer: StoredTransfer,
   setUpdate: (x: string) => void,
   removeOngoingTransfer: (id: string) => void,
   addCompletedTransfer: (transfer: any) => void,
-  explorerLink: string | undefined,
   abortSignal: AbortSignal,
+  explorerLink?: string,
 ) {
-  const snowbridgeEnv = getEnvironment(transfer.environment)
-  const context = await getContext(snowbridgeEnv)
   while (!abortSignal.aborted) {
     const { status, result } = await Snowbridge.toEthereum.trackSendProgressPolling(
-      context,
+      bridgeContext,
       transfer.sendResult as Snowbridge.toEthereum.SendResult,
     )
 

@@ -1,63 +1,49 @@
 'use client'
 
-// import { useEffect, useState } from 'react'
-
-import useStore from '@/hooks/useStore'
+import { useQuery } from '@tanstack/react-query'
+import { getSnowBridgeStatus } from '@/context/snowbridge'
+import useEnvironment from '@/hooks/useEnvironment'
 import { DisplaysTransfers } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-
 import OngoingTransferDialog from './OngoingTransferDialog'
-// import { SnowbridgeStatus } from '@/models/snowbridge'
-import { getSnowBridgeStatus } from '@/context/snowbridge'
-import { useQuery } from '@tanstack/react-query'
+
+// Could be registered if needed in a env variable:
+const DEFAULT_AVERAGE_BRIDGE_EXECUTION = 30 // minutes
+const DEFAULT_AVERAGE_BRIDGE_STATUS = {
+  ethBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
+  polkadotBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
+}
+const INITIAL_BRIDGE_STATUS = {
+  ethBridgeStatus: 0,
+  polkadotBridgeStatus: 0,
+}
 
 const OngoingTransfers = ({
   isNewTransaction,
   setIsNewTransaction,
   isCompletedTransactions,
 }: DisplaysTransfers) => {
-  const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
-  // const [bridgeStatus, setBridgeStatus] = useState<SnowbridgeStatus | null>(null)
+  const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useEnvironment()
 
-  const DEFAULT_AVERAGE_BRIDGE_EXECUTION = 30 // minutes
-  const DEFAULT_STATUS = {
-    ethBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
-    polkadotBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
-  }
+  const { data: bridgeStatus, error: bridgeStatusError } = useQuery({
+    queryKey: ['bridgeStatus', isSnowbridgeContextLoading],
+    queryFn: async () => {
+      if (snowbridgeContextError)
+        throw new Error(`Snowbridge fetch error: ${snowbridgeContextError.message}`)
 
-  // const getBridgeStatus = async () => {
-  //   try {
-  //     setBridgeStatus(await getSnowBridgeStatus())
-  //   } catch (error) {
-  //     setBridgeStatus(DEFAULT_STATUS)
-  //     console.log('Set bridge status error: ', error)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   let shouldUpdate = true
-  //   shouldUpdate && getBridgeStatus()
-
-  //   return () => {
-  //     shouldUpdate = false
-  //   }
-  // }, [ongoingTransfers])
-
-  const {
-    isLoading: bridgeStatusLoading,
-    data: bridgeStatus,
-    error: bridgeStatusError,
-  } = useQuery({
-    queryKey: ['bridgeStatus'],
-    queryFn: async ({ signal }) => {
-      // console.log('signal', signal)
-      return await getSnowBridgeStatus()
+      if (ongoingTransfers.length > 0 && !isSnowbridgeContextLoading && snowbridgeContext) {
+        return await getSnowBridgeStatus(snowbridgeContext)
+      }
+      return INITIAL_BRIDGE_STATUS
     },
+    staleTime: (DEFAULT_AVERAGE_BRIDGE_EXECUTION / 5) * (60 * 1000), // stale data for 6 mins in milisecs
+    gcTime: (DEFAULT_AVERAGE_BRIDGE_EXECUTION / 2) * (60 * 1000), // cache data for 15 min sin milisecs
   })
 
   return (
     <div>
-      {ongoingTransfers && ongoingTransfers.length > 0 && (
+      {snowbridgeContext && ongoingTransfers && ongoingTransfers.length > 0 && (
         <div className="my-20">
           <div className="self-center text-center text-3xl tracking-tight text-black">
             In Progress
@@ -67,7 +53,8 @@ const OngoingTransfers = ({
               <OngoingTransferDialog
                 key={tx.id}
                 transfer={tx}
-                bridgeStatus={bridgeStatusError ? DEFAULT_STATUS : bridgeStatus}
+                bridgeContext={snowbridgeContext}
+                bridgeStatus={bridgeStatusError ? DEFAULT_AVERAGE_BRIDGE_STATUS : bridgeStatus}
               />
             ))}
 
