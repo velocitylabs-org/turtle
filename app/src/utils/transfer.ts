@@ -68,6 +68,7 @@ export async function lookupName(network: Network, address: string): Promise<str
       } catch (error) {
         // Do not throw an error here
         console.log(error)
+        return null
       }
     }
     case Network.Polkadot: {

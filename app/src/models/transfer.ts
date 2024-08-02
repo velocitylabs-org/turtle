@@ -1,5 +1,5 @@
+import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Dispatch, SetStateAction } from 'react'
-import * as Snowbridge from '@snowbridge/api'
 
 import { Environment } from '@/store/environmentStore'
 
@@ -22,13 +22,13 @@ export interface StoredTransfer {
   environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
-  sendResult: Snowbridge.toEthereum.SendResult | Snowbridge.toPolkadot.SendResult
+  sendResult: toEthereum.SendResult | toPolkadot.SendResult
 }
 
 export interface DisplaysTransfers {
-  isNewTransaction: boolean
-  setIsNewTransaction: Dispatch<SetStateAction<boolean>>
-  isCompletedTransactions: boolean
+  newTransferInit: TransferTab
+  setNewTransferInit: Dispatch<SetStateAction<TransferTab>>
+  hasCompletedTransfers: boolean
 }
 
 export enum TxStatus {
@@ -64,3 +64,9 @@ export interface Fees {
   /* the value in dollars */
   inDollars: number
 }
+
+export enum TransferTab {
+  New = 'New',
+  Completed = 'Completed',
+}
+export type TransferTabOptions = TransferTab

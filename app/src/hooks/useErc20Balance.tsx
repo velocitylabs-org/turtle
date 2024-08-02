@@ -1,15 +1,15 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance, fetchAssetHubBalance, fetchEthereumBalance } from '@/services/balance'
-import * as Sentry from '@sentry/nextjs'
-import * as Snowbridge from '@snowbridge/api'
+import { captureException } from '@sentry/nextjs'
+import { Context } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 
 interface UseBalanceParams {
   network?: Network
   token?: Token // Could be extended to support multiple tokens
   address?: string
-  context?: Snowbridge.Context
+  context?: Context
 }
 
 /**
@@ -45,7 +45,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       setData(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
-      Sentry.captureException(error)
+      captureException(error)
     } finally {
       setLoading(false)
     }

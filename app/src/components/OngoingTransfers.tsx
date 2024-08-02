@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getSnowBridgeStatus } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
-import { DisplaysTransfers } from '@/models/transfer'
+import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
 
@@ -19,9 +19,9 @@ const INITIAL_BRIDGE_STATUS = {
 }
 
 const OngoingTransfers = ({
-  isNewTransaction,
-  setIsNewTransaction,
-  isCompletedTransactions,
+  newTransferInit,
+  setNewTransferInit,
+  hasCompletedTransfers,
 }: DisplaysTransfers) => {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useEnvironment()
@@ -58,10 +58,12 @@ const OngoingTransfers = ({
               />
             ))}
 
-            {isCompletedTransactions && (
+            {hasCompletedTransfers && (
               <button
-                onClick={() => isNewTransaction && setIsNewTransaction(!isNewTransaction)}
-                disabled={!isCompletedTransactions}
+                onClick={() =>
+                  newTransferInit === TransferTab.New && setNewTransferInit(TransferTab.Completed)
+                }
+                disabled={!hasCompletedTransfers}
                 className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
               >
                 View completed transactions <i className="fas fa-arrow-right ml-1"></i>

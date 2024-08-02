@@ -1,9 +1,8 @@
-import * as Snowbridge from '@snowbridge/api'
-
-import { Environment } from '@/store/environmentStore'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
+import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
+import { Context, contextFactory, environment, status } from '@snowbridge/api'
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -12,9 +11,9 @@ import { shouldUseTestnet } from '@/utils/env'
  * @param env - The environment in which the app is operating on
  * @returns The adequate SnowbridgeEnvironment for the given input
  */
-export function getEnvironment(env: Environment): Snowbridge.environment.SnowbridgeEnvironment {
+export function getEnvironment(env: Environment): environment.SnowbridgeEnvironment {
   const network = toSnowbridgeNetwork(env)
-  const x = Snowbridge.environment.SNOWBRIDGE_ENV[network]
+  const x = environment.SNOWBRIDGE_ENV[network]
 
   if (x === undefined) {
     throw Error(`Unknown environment`)
@@ -23,12 +22,10 @@ export function getEnvironment(env: Environment): Snowbridge.environment.Snowbri
   return x
 }
 
-export async function getContext(
-  environment: Snowbridge.environment.SnowbridgeEnvironment,
-): Promise<Snowbridge.Context> {
+export async function getContext(environment: environment.SnowbridgeEnvironment): Promise<Context> {
   const { config } = environment
 
-  return await Snowbridge.contextFactory({
+  return await contextFactory({
     ethereum: {
       execution_url: config.ETHEREUM_API('3Abd1KfeBZgvuM0YSAkoIwGRCC26z5lw'),
       beacon_url: config.BEACON_HTTP_API,
@@ -65,15 +62,13 @@ export function toSnowbridgeNetwork(env: Environment): string {
 
 export async function getSnowBridgeContext(
   environment = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet,
-): Promise<Snowbridge.Context> {
+): Promise<Context> {
   const snowbridgeEnv = getEnvironment(environment)
   return await getContext(snowbridgeEnv)
 }
 
-export async function getSnowBridgeStatus(
-  snowbridgCtx: Snowbridge.Context,
-): Promise<SnowbridgeStatus> {
-  const bridgeStatus = await Snowbridge.status.bridgeStatusInfo(snowbridgCtx)
+export async function getSnowBridgeStatus(snowbridgCtx: Context): Promise<SnowbridgeStatus> {
+  const bridgeStatus = await status.bridgeStatusInfo(snowbridgCtx)
   return {
     ethBridgeStatus: bridgeStatus.toEthereum.latencySeconds,
     polkadotBridgeStatus: bridgeStatus.toPolkadot.latencySeconds,

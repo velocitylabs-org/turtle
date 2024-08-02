@@ -30,14 +30,14 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
  */
 export const isValidAddressOfNetwork = (address: string, network: Network): boolean => {
   switch (network) {
-    case Network.Ethereum:
+    case Network.Ethereum: {
       const isEthereumValid = isValidEthereumAddress(address)
       return isEthereumValid
-
-    case Network.Polkadot:
+    }
+    case Network.Polkadot: {
       const isPolkadotValid = isValidSubstrateAddress(address)
       return isPolkadotValid
-
+    }
     default:
       console.log('Invalid network type:', network)
       return false
