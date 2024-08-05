@@ -188,6 +188,15 @@ export function getStatusByTransferResultToPolkadot(transferResult: ToPolkadotTr
   }
 }
 
+export function isCompletedTransfer(
+  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult,
+) {
+  return (
+    transferResult.status === TransferStatus.Complete ||
+    transferResult.status === TransferStatus.Failed
+  )
+}
+
 type StatusValue = 'Normal' | 'Halted' | 'Delayed'
 export type BridgeStatus = {
   statusInfo: status.BridgeStatusInfo
