@@ -6,13 +6,20 @@ export const maxDuration = 90 // Timout adter
 
 import { NextResponse } from 'next/server'
 import { unstable_cache } from 'next/cache'
+import {
+  HISTORY_IN_SECONDS,
+  SKIP_LIGHT_CLIENT_UPDATES,
+  getErrorMessage,
+  getTransferHistory,
+} from '@/utils/snowbridge'
 import { getEnvironment } from '@/context/snowbridge'
+import { Environment } from '@/store/environmentStore'
 
 const CACHE_REVALIDATE_IN_SECONDS = 5 * 60 // 5 minutes
 
 const getCachedTransferHistory = unstable_cache(
   () => {
-    const env = getEnvironment()
+    const env = getEnvironment(Environment.Mainnet) // TODO hardcoded for now
     try {
       return getTransferHistory(env, SKIP_LIGHT_CLIENT_UPDATES, HISTORY_IN_SECONDS)
     } catch (err) {
