@@ -132,7 +132,7 @@ export function getStatusByTransferResult(
   }
 }
 
-export function getStatusByTransferResultToEthereum(transferResult: ToEthereumTransferResult) {}
+export function getStatusByTransferResultToEthereum(_transferResult: ToEthereumTransferResult) {}
 
 export function getStatusByTransferResultToPolkadot(transferResult: ToPolkadotTransferResult) {
   const { status, submitted, inboundMessageReceived, assetHubMessageProcessed } = transferResult
