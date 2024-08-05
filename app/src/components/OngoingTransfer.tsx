@@ -3,6 +3,8 @@ import { FC } from 'react'
 import Image from 'next/image'
 
 import { StoredTransfer } from '@/models/transfer'
+import { SnowbridgeStatus } from '@/models/snowbridge'
+import { Direction } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
@@ -16,8 +18,9 @@ import ProgressBar from './ProgressBar'
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
   update: string | null
-  progression: number
-}> = ({ transfer, update, progression }) => {
+  direction: Direction
+  bridgeStatus?: SnowbridgeStatus
+}> = ({ transfer, update, direction, bridgeStatus }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -26,8 +29,14 @@ const OngoingTransfer: FC<{
           {formatOngoingTransferDate(transfer.date)}
         </p>
       </div>
+
       {/* Progress bar */}
-      <ProgressBar progression={progression} outlinedProgressBar={false} />
+      <ProgressBar
+        transfer={transfer}
+        direction={direction}
+        outlinedProgressBar={false}
+        bridgeStatus={bridgeStatus}
+      />
 
       <div className="mb-2 flex items-center">
         <LoadingIcon
