@@ -31,7 +31,7 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  const snowbridgeContext = useSnowbridgeContext()
+  const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
   const { environment } = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
@@ -166,12 +166,14 @@ const useTransferForm = () => {
         !destinationChain ||
         !tokenAmount?.token ||
         !amount ||
-        !fees
+        !fees ||
+        !snowbridgeContext
       )
         return
 
       transfer({
         environment,
+        context: snowbridgeContext,
         sender: sourceWallet.sender,
         sourceChain,
         destinationChain,
@@ -185,7 +187,15 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet?.sender?.address, fees, reset, sourceWallet?.sender, transfer, environment],
+    [
+      destinationWallet?.sender?.address,
+      fees,
+      reset,
+      sourceWallet?.sender,
+      transfer,
+      environment,
+      snowbridgeContext,
+    ],
   )
 
   // validate recipient address

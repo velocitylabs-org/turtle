@@ -1,23 +1,25 @@
-import { getContext, getEnvironment } from '@/context/snowbridge'
+import { useQuery } from '@tanstack/react-query'
+import { getSnowBridgeContext } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
-import { Context } from '@snowbridge/api'
-import { useEffect, useState } from 'react'
 
-const useSnowbridgeContext = (): Context | undefined => {
-  const [snowbridgeContext, setSnowbridgeContext] = useState<Context>()
+const useSnowbridgeContext = () => {
   const { environment } = useEnvironment()
 
-  useEffect(() => {
-    const fetchContext = async () => {
-      const snowbridgeEnv = getEnvironment(environment)
-      const context = await getContext(snowbridgeEnv)
-      setSnowbridgeContext(context)
-    }
+  const {
+    data: snowbridgeContext,
+    isLoading: isSnowbridgeContextLoading,
+    error: snowbridgeContextError,
+  } = useQuery({
+    queryKey: ['snowbridgeContext', environment],
+    queryFn: async () => {
+      return await getSnowBridgeContext()
+    },
+    staleTime: Infinity,
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+  })
 
-    fetchContext()
-  }, [environment])
-
-  return snowbridgeContext
+  return { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError }
 }
 
 export default useSnowbridgeContext

@@ -18,7 +18,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
   bridgeStatus,
   outlinedProgressBar,
 }) => {
-  const { progression } = useOngoingTransferProgression(transfer, direction, bridgeStatus)
+  const progression = useOngoingTransferProgression(transfer, direction, bridgeStatus)
 
   return (
     <>

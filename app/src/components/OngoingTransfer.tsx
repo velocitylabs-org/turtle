@@ -9,11 +9,11 @@ import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
+import ProgressBar from './ProgressBar'
 import { ArrowRight } from './svg/ArrowRight'
 import LoadingIcon from './svg/LoadingIcon'
 
 import { colors } from '../../tailwind.config'
-import ProgressBar from './ProgressBar'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer

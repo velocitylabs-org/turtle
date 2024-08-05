@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { getSnowBridgeStatus } from '@/context/snowbridge'
-import useEnvironment from '@/hooks/useEnvironment'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
@@ -24,7 +24,8 @@ const OngoingTransfers = ({
   hasCompletedTransfers,
 }: DisplaysTransfers) => {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
-  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useEnvironment()
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
+    useSnowbridgeContext()
 
   const { data: bridgeStatus, error: bridgeStatusError } = useQuery({
     queryKey: ['bridgeStatus', isSnowbridgeContextLoading],
@@ -38,7 +39,7 @@ const OngoingTransfers = ({
       return INITIAL_BRIDGE_STATUS
     },
     staleTime: (DEFAULT_AVERAGE_BRIDGE_EXECUTION / 5) * (60 * 1000), // stale data for 6 mins in milisecs
-    gcTime: (DEFAULT_AVERAGE_BRIDGE_EXECUTION / 2) * (60 * 1000), // cache data for 15 min sin milisecs
+    gcTime: (DEFAULT_AVERAGE_BRIDGE_EXECUTION / 2) * (60 * 1000), // cache data for 15 mins in milisecs
   })
 
   return (

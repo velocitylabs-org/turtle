@@ -31,7 +31,7 @@ const useOngoingTransferProgression = (
     }
   }, [bridgeStatus])
 
-  return { progression }
+  return progression
 }
 
 export default useOngoingTransferProgression
