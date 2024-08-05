@@ -2,6 +2,11 @@ import { u8aToHex } from '@polkadot/util'
 import { blake2AsU8a, encodeAddress } from '@polkadot/util-crypto'
 import { environment, subscan, history, status, Context, utils } from '@snowbridge/api'
 import { SnowbridgeEnvironment } from '@snowbridge/api/dist/environment'
+import {
+  ToEthereumTransferResult,
+  ToPolkadotTransferResult,
+  TransferStatus,
+} from '@snowbridge/api/dist/history'
 import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-types'
 import { AlchemyProvider } from 'ethers'
 
@@ -115,6 +120,42 @@ export interface AccountInfo {
   type: 'ethereum' | 'substrate'
   account: string
   balance: string
+}
+
+export function getStatusByTransferResult(
+  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult,
+) {
+  if (transferResult.info.destinationParachain == undefined) {
+    getStatusByTransferResultToEthereum(transferResult as ToEthereumTransferResult)
+  } else {
+    getStatusByTransferResultToPolkadot(transferResult as ToPolkadotTransferResult)
+  }
+}
+
+export function getStatusByTransferResultToEthereum(transferResult: ToEthereumTransferResult) {}
+
+export function getStatusByTransferResultToPolkadot(transferResult: ToPolkadotTransferResult) {
+  const { status, submitted, inboundMessageReceived, assetHubMessageProcessed } = transferResult
+
+  switch (status) {
+    case TransferStatus.Pending:
+      if (inboundMessageReceived) return 'Arriving at Asset Hub'
+      if (submitted) return 'Transfer initiated. Arriving at Bridge Hub'
+
+      return 'Pending'
+
+    case TransferStatus.Complete:
+      if (assetHubMessageProcessed && assetHubMessageProcessed.success)
+        return 'Arrived at Asset Hub. Transfer completed'
+
+      return 'Transfer completed'
+
+    case TransferStatus.Failed:
+      return 'Transfer Failed'
+
+    default: // Should never happen
+      return 'Unknown status'
+  }
 }
 
 type StatusValue = 'Normal' | 'Halted' | 'Delayed'
