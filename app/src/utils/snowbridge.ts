@@ -132,7 +132,37 @@ export function getStatusByTransferResult(
   }
 }
 
-export function getStatusByTransferResultToEthereum(_transferResult: ToEthereumTransferResult) {}
+export function getStatusByTransferResultToEthereum(transferResult: ToEthereumTransferResult) {
+  const {
+    status,
+    submitted,
+    bridgeHubXcmDelivered,
+    bridgeHubChannelDelivered,
+    ethereumMessageDispatched,
+  } = transferResult
+
+  switch (status) {
+    case TransferStatus.Pending:
+      if (bridgeHubChannelDelivered && bridgeHubChannelDelivered.success)
+        return 'Arriving at Ethereum'
+      if (bridgeHubXcmDelivered) return 'XCM sent. Arriving at Bridge Hub'
+      if (submitted) return 'Transfer initiated. Arriving at Bridge Hub'
+
+      return 'Pending'
+
+    case TransferStatus.Complete:
+      if (ethereumMessageDispatched && ethereumMessageDispatched.success)
+        return 'Arrived at Ethereum. Transfer completed'
+
+      return 'Transfer completed'
+
+    case TransferStatus.Failed:
+      return 'Transfer Failed'
+
+    default: // Should never happen
+      return 'Unknown status'
+  }
+}
 
 export function getStatusByTransferResultToPolkadot(transferResult: ToPolkadotTransferResult) {
   const { status, submitted, inboundMessageReceived, assetHubMessageProcessed } = transferResult
