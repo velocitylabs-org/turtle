@@ -125,11 +125,9 @@ export interface AccountInfo {
 export function getTransferStatus(
   transferResult: ToEthereumTransferResult | ToPolkadotTransferResult,
 ) {
-  if (transferResult.info.destinationParachain == undefined) {
-    getTransferStatusToEthereum(transferResult as ToEthereumTransferResult)
-  } else {
-    getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
-  }
+  if (transferResult.info.destinationParachain == undefined)
+    return getTransferStatusToEthereum(transferResult as ToEthereumTransferResult)
+  else return getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
 }
 
 export function getTransferStatusToEthereum(transferResult: ToEthereumTransferResult) {
