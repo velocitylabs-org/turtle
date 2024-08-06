@@ -5,7 +5,7 @@ import { SnowbridgeStatus } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 
-const useOngoingTransferProgression = (
+const useOngoingTransferProgress = (
   transfer: StoredTransfer,
   direction: Direction,
   bridgeStatus?: SnowbridgeStatus,
