@@ -13,6 +13,8 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import TokenSpend from './TokenSpend'
+import { Network } from '@/models/chain'
 
 const Transfer: FC = () => {
   const {
@@ -165,6 +167,12 @@ const Transfer: FC = () => {
             )}
           </AnimatePresence>
         </div>
+      )}
+
+      {/* ERC-20 Token Spend Approval */}
+      {/* todo(nuno): only show when form is valid + is erc20 token +  allowance <= amount */}
+      {sourceChain?.network === Network.Ethereum && !!tokenAmount && !!tokenAmount.token && (
+        <TokenSpend />
       )}
 
       {/* Fees */}
