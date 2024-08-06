@@ -300,7 +300,6 @@ async function trackToPolkadot(
   abortSignal: AbortSignal,
   explorerLink?: string,
 ) {
-  // if (abortSignal.aborted) return
   while (!abortSignal.aborted) {
     const { status, result } = await toPolkadot.trackSendProgressPolling(
       bridgeContext,
