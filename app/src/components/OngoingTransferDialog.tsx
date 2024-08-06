@@ -1,17 +1,14 @@
 'use client'
-import { bridgeProgressionValue, getContext, getEnvironment } from '@/context/snowbridge'
-import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import { bridgeProgressionValue } from '@/context/snowbridge'
 import useLookupName from '@/hooks/useLookupName'
-import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { Network } from '@/models/chain'
 import { SnowbridgeStatus } from '@/models/snowbridge'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-import { Direction, resolveDirection } from '@/services/transfer'
+import { StoredTransfer } from '@/models/transfer'
+import { resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 import Identicon from '@polkadot/react-identicon'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { colors } from '../../tailwind.config'
@@ -31,17 +28,16 @@ import { Separator } from './ui/separator'
 
 export const OngoingTransferDialog = ({
   transfer,
+  status = 'Loading...',
   bridgeStatus,
 }: {
   transfer: StoredTransfer
+  status?: string
   bridgeStatus: SnowbridgeStatus | null
 }) => {
-  const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
-  const { addCompletedTransfer } = useCompletedTransfers()
   const senderName = useLookupName(transfer.sourceChain.network, transfer.sender)
   const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
 
-  const [update, setUpdate] = useState<string | null>('Loading...')
   const [progression, setProgression] = useState<number>(0)
   const progressionIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -69,38 +65,10 @@ export const OngoingTransferDialog = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bridgeStatus, transfer, direction])
 
-  useEffect(() => {
-    const pollUpdate = async () => {
-      try {
-        if (direction == Direction.ToEthereum) {
-          await trackToEthereum(
-            transfer,
-            setUpdate,
-            removeOngoingTransfer,
-            addCompletedTransfer,
-            explorerLink,
-          )
-        } else if (direction == Direction.ToPolkadot) {
-          await trackToPolkadot(
-            transfer,
-            setUpdate,
-            removeOngoingTransfer,
-            addCompletedTransfer,
-            explorerLink,
-          )
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-
-    pollUpdate()
-  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink])
-
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer transfer={transfer} update={update} progression={progression} />
+        <OngoingTransfer transfer={transfer} status={status} progression={progression} />
       </DialogTrigger>
       <DialogContent
         className="ongoing-transfer-dialog m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
@@ -163,7 +131,7 @@ export const OngoingTransferDialog = ({
             }
           >
             <div className="my-2 flex items-center justify-between">
-              <p className="text-left font-bold text-turtle-secondary-dark">{update}</p>
+              <p className="text-left font-bold text-turtle-secondary-dark">{status}</p>
               <p className="text-normal text-turtle-secondary">
                 {formatOngoingTransferDate(transfer.date)}
               </p>
@@ -284,133 +252,6 @@ export const OngoingTransferDialog = ({
       </DialogContent>
     </Dialog>
   )
-}
-
-const POLL_UPDATE_INTERVAL_MS: number = 10_000
-
-async function trackToPolkadot(
-  transfer: StoredTransfer,
-  setUpdate: (x: string) => void,
-  removeOngoingTransfer: (id: string) => void,
-  addCompletedTransfer: (transfer: CompletedTransfer) => void,
-  explorerLink: string | undefined,
-) {
-  const snowbridgeEnv = getEnvironment(transfer.environment)
-  const context = await getContext(snowbridgeEnv)
-  /* eslint-disable no-constant-condition */
-  while (true) {
-    const { status, result } = await toPolkadot.trackSendProgressPolling(
-      context,
-      transfer.sendResult as toPolkadot.SendResult,
-    )
-
-    if (status !== 'pending') {
-      setUpdate('Done!')
-      // Adds the new completed tx to storage
-      addCompletedTransfer({
-        id: transfer.id,
-        result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
-        token: transfer.token,
-        sourceChain: transfer.sourceChain,
-        destChain: transfer.destChain,
-        amount: transfer.amount,
-        tokenUSDValue: transfer.tokenUSDValue ?? 0,
-        fees: transfer.fees,
-        sender: transfer.sender,
-        recipient: transfer.recipient,
-        date: transfer.date,
-        ...(explorerLink && { explorerLink }),
-      } satisfies CompletedTransfer)
-
-      // Removes the ongoing tx from storage
-      removeOngoingTransfer(transfer.id)
-      break
-    }
-
-    // Pending, keep track of progress
-    const { success } = result
-
-    if (result.failure || !success || !success.plan.success) {
-      setUpdate('This transfer failed!')
-      break
-    }
-
-    if (success.destinationParachain?.events) {
-      setUpdate(`Arriving at ${transfer.destChain.name}..."`)
-    } else if (success.bridgeHub.events) {
-      setUpdate('Arriving at BridgeHub...')
-    } else if (success.assetHub.events) {
-      setUpdate('Arriving at AssetHub...')
-    } else if (success.ethereum.events) {
-      setUpdate('Bridging in progress..')
-    } else {
-      setUpdate('Loading...')
-    }
-  }
-
-  await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
-}
-
-async function trackToEthereum(
-  transfer: StoredTransfer,
-  setUpdate: (x: string) => void,
-  removeOngoingTransfer: (id: string) => void,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addCompletedTransfer: (transfer: any) => void,
-  explorerLink: string | undefined,
-) {
-  const snowbridgeEnv = getEnvironment(transfer.environment)
-  const context = await getContext(snowbridgeEnv)
-  /* eslint-disable no-constant-condition */
-  while (true) {
-    const { status, result } = await toEthereum.trackSendProgressPolling(
-      context,
-      transfer.sendResult as toEthereum.SendResult,
-    )
-
-    if (status !== 'pending') {
-      //  Adds the new completed tx to storage
-      addCompletedTransfer({
-        id: transfer.id,
-        result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
-        token: transfer.token,
-        sourceChain: transfer.sourceChain,
-        destChain: transfer.destChain,
-        amount: transfer.amount,
-        tokenUSDValue: transfer.tokenUSDValue ?? 0,
-        fees: transfer.fees,
-        sender: transfer.sender,
-        recipient: transfer.recipient,
-        date: transfer.date,
-        ...(explorerLink && { explorerLink }),
-      } satisfies CompletedTransfer)
-
-      // Removes the ongoing tx from storage
-      removeOngoingTransfer(transfer.id)
-      break
-    }
-
-    // Pending, keep track of progress
-    const { success } = result
-
-    //TODO(nuno): This shouldn't really happen but we should handle this better
-    if (result.failure || !success || !success.plan.success) {
-      setUpdate('This transfer failed!')
-      break
-    }
-
-    if (success.sourceParachain?.events) {
-      setUpdate('Sending...')
-    } else if (success.assetHub.events) {
-      setUpdate('Arriving at AssetHub...')
-    } else if (success.bridgeHub.events) {
-      setUpdate('Arriving at BridgeHub...')
-    } else {
-      setUpdate('Bridging in progress...')
-    }
-
-    await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
-  }
 }
 
 export default OngoingTransferDialog

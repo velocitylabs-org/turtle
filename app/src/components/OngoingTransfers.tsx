@@ -9,6 +9,7 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { getSnowBridgeStatus } from '@/context/snowbridge'
+import useSnowbridgeTransferTracker from '@/hooks/useSnowbridgeTransferTracker'
 
 const OngoingTransfers = ({
   newTransferInit,
@@ -17,6 +18,7 @@ const OngoingTransfers = ({
 }: DisplaysTransfers) => {
   const ongoingTransfers = useStore(useOngoingTransfersStore, state => state.transfers)
   const [bridgeStatus, setBridgeStatus] = useState<SnowbridgeStatus | null>(null)
+  const { statusMessages } = useSnowbridgeTransferTracker()
 
   const DEFAULT_AVERAGE_BRIDGE_EXECUTION = 30 // minutes
 
@@ -51,7 +53,12 @@ const OngoingTransfers = ({
           </div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] bg-white p-[2.5rem] px-[1.5rem] py-[2rem] shadow-[0_2px_16px_0px_#00000026] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => (
-              <OngoingTransferDialog key={tx.id} transfer={tx} bridgeStatus={bridgeStatus} />
+              <OngoingTransferDialog
+                key={tx.id}
+                transfer={tx}
+                status={statusMessages[tx.id]}
+                bridgeStatus={bridgeStatus}
+              />
             ))}
 
             {hasCompletedTransfers && (

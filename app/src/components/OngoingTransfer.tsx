@@ -1,27 +1,24 @@
 'use client'
 import { FC } from 'react'
 import Image from 'next/image'
-
 import { StoredTransfer } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
-
 import { ArrowRight } from './svg/ArrowRight'
 import LoadingIcon from './svg/LoadingIcon'
-
 import { colors } from '../../tailwind.config'
 import ProgressBar from './ProgressBar'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
-  update: string | null
+  status: string | null
   progression: number
-}> = ({ transfer, update, progression }) => {
+}> = ({ transfer, status, progression }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-left font-bold text-turtle-secondary-dark">{update ?? ''}</p>
+        <p className="text-left font-bold text-turtle-secondary-dark">{status ?? ''}</p>
         <p className="text-normal text-right text-turtle-secondary">
           {formatOngoingTransferDate(transfer.date)}
         </p>
