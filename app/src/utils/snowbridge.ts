@@ -122,17 +122,17 @@ export interface AccountInfo {
   balance: string
 }
 
-export function getStatusByTransferResult(
+export function getTransferStatus(
   transferResult: ToEthereumTransferResult | ToPolkadotTransferResult,
 ) {
   if (transferResult.info.destinationParachain == undefined) {
-    getStatusByTransferResultToEthereum(transferResult as ToEthereumTransferResult)
+    getTransferStatusToEthereum(transferResult as ToEthereumTransferResult)
   } else {
-    getStatusByTransferResultToPolkadot(transferResult as ToPolkadotTransferResult)
+    getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
   }
 }
 
-export function getStatusByTransferResultToEthereum(transferResult: ToEthereumTransferResult) {
+export function getTransferStatusToEthereum(transferResult: ToEthereumTransferResult) {
   const {
     status,
     submitted,
@@ -164,7 +164,7 @@ export function getStatusByTransferResultToEthereum(transferResult: ToEthereumTr
   }
 }
 
-export function getStatusByTransferResultToPolkadot(transferResult: ToPolkadotTransferResult) {
+export function getTransferStatusToPolkadot(transferResult: ToPolkadotTransferResult) {
   const { status, submitted, inboundMessageReceived, assetHubMessageProcessed } = transferResult
 
   switch (status) {
