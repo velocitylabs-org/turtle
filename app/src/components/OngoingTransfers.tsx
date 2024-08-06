@@ -1,11 +1,8 @@
 'use client'
-
 import { useEffect, useState } from 'react'
-
 import useStore from '@/hooks/useStore'
 import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { getSnowBridgeStatus } from '@/context/snowbridge'

@@ -127,31 +127,22 @@ export function getTransferStatus(
 ) {
   if (transferResult.info.destinationParachain == undefined)
     return getTransferStatusToEthereum(transferResult as ToEthereumTransferResult)
-  else return getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
+  else {
+    return getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
+  }
 }
 
 export function getTransferStatusToEthereum(transferResult: ToEthereumTransferResult) {
-  const {
-    status,
-    submitted,
-    bridgeHubXcmDelivered,
-    bridgeHubChannelDelivered,
-    ethereumMessageDispatched,
-  } = transferResult
+  const { status, submitted, bridgeHubChannelDelivered } = transferResult
 
   switch (status) {
     case TransferStatus.Pending:
       if (bridgeHubChannelDelivered && bridgeHubChannelDelivered.success)
         return 'Arriving at Ethereum'
-      if (bridgeHubXcmDelivered) return 'XCM sent. Arriving at Bridge Hub'
-      if (submitted) return 'Transfer initiated. Arriving at Bridge Hub'
-
+      if (submitted) return 'Arriving at Bridge Hub'
       return 'Pending'
 
     case TransferStatus.Complete:
-      if (ethereumMessageDispatched && ethereumMessageDispatched.success)
-        return 'Arrived at Ethereum. Transfer completed'
-
       return 'Transfer completed'
 
     case TransferStatus.Failed:
@@ -163,26 +154,21 @@ export function getTransferStatusToEthereum(transferResult: ToEthereumTransferRe
 }
 
 export function getTransferStatusToPolkadot(transferResult: ToPolkadotTransferResult) {
-  const { status, submitted, inboundMessageReceived, assetHubMessageProcessed } = transferResult
+  const { status, submitted } = transferResult
 
   switch (status) {
     case TransferStatus.Pending:
-      if (inboundMessageReceived) return 'Arriving at Asset Hub'
-      if (submitted) return 'Transfer initiated. Arriving at Bridge Hub'
-
+      if (submitted) return 'Arriving at Bridge Hub'
       return 'Pending'
 
     case TransferStatus.Complete:
-      if (assetHubMessageProcessed && assetHubMessageProcessed.success)
-        return 'Arrived at Asset Hub. Transfer completed'
-
       return 'Transfer completed'
 
     case TransferStatus.Failed:
       return 'Transfer Failed'
 
     default: // Should never happen
-      return 'Unknown status'
+      return 'Unknown'
   }
 }
 

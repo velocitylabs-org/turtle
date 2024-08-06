@@ -1,4 +1,3 @@
-// Next.js serverless options
 export const fetchCache = 'default-no-store' // Dont cache fetches unless asked.
 export const dynamic = 'force-dynamic' // Always run dynamically
 export const revalidate = 120 // Keep cache for 2 minutes
@@ -12,14 +11,16 @@ import {
   getErrorMessage,
   getTransferHistory,
 } from '@/utils/snowbridge'
-import { getEnvironment } from '@/context/snowbridge'
 import { Environment } from '@/store/environmentStore'
+import { getEnvironment } from '@/context/snowbridge'
+import { shouldUseTestnet } from '@/utils/env'
 
 const CACHE_REVALIDATE_IN_SECONDS = 5 * 60 // 5 minutes
 
 const getCachedTransferHistory = unstable_cache(
   () => {
-    const env = getEnvironment(Environment.Mainnet) // TODO hardcoded for now
+    const env = getEnvironment(shouldUseTestnet ? Environment.Testnet : Environment.Mainnet)
+
     try {
       return getTransferHistory(env, SKIP_LIGHT_CLIENT_UPDATES, HISTORY_IN_SECONDS)
     } catch (err) {
