@@ -88,7 +88,7 @@ export const OngoingTransferDialog = ({
       abortController.abort()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink]) // // Does this make sense ? Registered Transfer will never change and direction relies on transfer data...
+  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink]) // // Does this make sense ? Ongoing Transfer will never change and direction relies on transfer data...
 
   return (
     <Dialog>
