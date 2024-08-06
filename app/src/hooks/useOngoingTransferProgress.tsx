@@ -8,13 +8,13 @@ import { Direction } from '@/services/transfer'
 const useOngoingTransferProgress = (
   transfer: StoredTransfer,
   direction: Direction,
-  bridgeStatus?: SnowbridgeStatus,
+  transferStatus?: SnowbridgeStatus,
 ) => {
   const [progress, setProgress] = useState<number>(0)
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const updateProgress = () => {
-    const transferProgress = getBridgeProgress(transfer.date, direction, bridgeStatus)
+    const transferProgress = getBridgeProgress(transfer.date, direction, transferStatus)
     setProgress(transferProgress)
     if (transferProgress >= 90 && progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current)
@@ -29,7 +29,7 @@ const useOngoingTransferProgress = (
         clearInterval(progressIntervalRef.current)
       }
     }
-  }, [bridgeStatus])
+  }, [transferStatus])
 
   return progress
 }
