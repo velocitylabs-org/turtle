@@ -16,9 +16,9 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { colors } from '../../tailwind.config'
 import OngoingTransfer from './OngoingTransfer'
-import ProgressBar from './ProgressBar'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
+import TransferEstimate from './TransferEstimate'
 import {
   Dialog,
   DialogContent,
@@ -167,7 +167,7 @@ export const OngoingTransferDialog = ({
               </p>
             </div>
 
-            <ProgressBar
+            <TransferEstimate
               transfer={transfer}
               transferStatus={transferStatus}
               direction={direction}

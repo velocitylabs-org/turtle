@@ -9,8 +9,8 @@ import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
-import ProgressBar from './ProgressBar'
 import { ArrowRight } from './svg/ArrowRight'
+import TransferEstimate from './TransferEstimate'
 import LoadingIcon from './svg/LoadingIcon'
 
 import { colors } from '../../tailwind.config'
@@ -30,8 +30,7 @@ const OngoingTransfer: FC<{
         </p>
       </div>
 
-      {/* Progress bar */}
-      <ProgressBar
+      <TransferEstimate
         transfer={transfer}
         direction={direction}
         outlinedProgressBar={false}

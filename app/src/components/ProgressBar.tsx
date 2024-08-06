@@ -1,25 +1,12 @@
 import { FC } from 'react'
-import useOngoingTransferProgress from '@/hooks/useOngoingTransferProgress'
-import { StoredTransfer } from '@/models/transfer'
-import { SnowbridgeStatus } from '@/models/snowbridge'
-import { Direction } from '@/services/transfer'
 import { cn } from '@/utils/cn'
 
 interface ProgressBarProps {
-  transfer: StoredTransfer
-  direction: Direction
+  progress: number
   outlinedProgressBar: boolean
-  transferStatus?: SnowbridgeStatus
 }
 
-const ProgressBar: FC<ProgressBarProps> = ({
-  transfer,
-  direction,
-  transferStatus,
-  outlinedProgressBar,
-}) => {
-  const progress = useOngoingTransferProgress(transfer, direction, transferStatus)
-
+const ProgressBar: FC<ProgressBarProps> = ({ progress, outlinedProgressBar }) => {
   return (
     <>
       {!outlinedProgressBar ? (
