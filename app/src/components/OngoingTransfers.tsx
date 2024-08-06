@@ -8,10 +8,10 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
 
 // Could be registered if needed in a env variable:
-const DEFAULT_AVERAGE_BRIDGE_EXECUTION = 30 // minutes
-const DEFAULT_AVERAGE_BRIDGE_STATUS = {
-  ethBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
-  polkadotBridgeStatus: DEFAULT_AVERAGE_BRIDGE_EXECUTION * 60, // converted to seconds
+const DEFAULT_AVERAGE_TRANSFER_EXECUTION = 30 // minutes
+const DEFAULT_AVERAGE_TRANSFER_STATUS = {
+  ethBridgeStatus: DEFAULT_AVERAGE_TRANSFER_EXECUTION * 60, // converted to seconds
+  polkadotBridgeStatus: DEFAULT_AVERAGE_TRANSFER_EXECUTION * 60, // converted to seconds
 }
 const INITIAL_BRIDGE_STATUS = {
   ethBridgeStatus: 0,
@@ -24,27 +24,30 @@ const OngoingTransfers = ({
   hasCompletedTransfers,
 }: DisplaysTransfers) => {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
-  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
-    useSnowbridgeContext()
+  const {
+    snowbridgeContext: transferContext,
+    isSnowbridgeContextLoading: transferContextLoading,
+    snowbridgeContextError: transferContextError,
+  } = useSnowbridgeContext()
 
-  const { data: bridgeStatus, error: bridgeStatusError } = useQuery({
-    queryKey: ['bridgeStatus', isSnowbridgeContextLoading],
+  const { data: transferStatus, error: transferStatusError } = useQuery({
+    queryKey: ['transferStatus', transferContextLoading],
     queryFn: async () => {
-      if (snowbridgeContextError)
-        throw new Error(`Snowbridge fetch error: ${snowbridgeContextError.message}`)
+      if (transferContextError)
+        throw new Error(`Transfer status fetch error: ${transferContextError.message}`)
 
-      if (ongoingTransfers.length > 0 && !isSnowbridgeContextLoading && snowbridgeContext) {
-        return await getSnowBridgeStatus(snowbridgeContext)
+      if (ongoingTransfers.length > 0 && !transferContextLoading && transferContext) {
+        return await getSnowBridgeStatus(transferContext)
       }
       return INITIAL_BRIDGE_STATUS
     },
-    staleTime: (DEFAULT_AVERAGE_BRIDGE_EXECUTION / 5) * (60 * 1000), // stale data for 6 mins in milisecs
-    gcTime: (DEFAULT_AVERAGE_BRIDGE_EXECUTION / 2) * (60 * 1000), // cache data for 15 mins in milisecs
+    staleTime: (DEFAULT_AVERAGE_TRANSFER_EXECUTION / 5) * (60 * 1000), // stale data for 6 mins in milisecs
+    gcTime: (DEFAULT_AVERAGE_TRANSFER_EXECUTION / 2) * (60 * 1000), // cache data for 15 mins in milisecs
   })
 
   return (
     <div>
-      {snowbridgeContext && ongoingTransfers && ongoingTransfers.length > 0 && (
+      {transferContext && ongoingTransfers && ongoingTransfers.length > 0 && (
         <div className="my-20">
           <div className="self-center text-center text-3xl tracking-tight text-black">
             In Progress
@@ -54,8 +57,10 @@ const OngoingTransfers = ({
               <OngoingTransferDialog
                 key={tx.id}
                 transfer={tx}
-                bridgeContext={snowbridgeContext}
-                bridgeStatus={bridgeStatusError ? DEFAULT_AVERAGE_BRIDGE_STATUS : bridgeStatus}
+                context={transferContext}
+                transferStatus={
+                  transferStatusError ? DEFAULT_AVERAGE_TRANSFER_STATUS : transferStatus
+                }
               />
             ))}
 

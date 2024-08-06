@@ -9,16 +9,16 @@ interface ProgressBarProps {
   transfer: StoredTransfer
   direction: Direction
   outlinedProgressBar: boolean
-  bridgeStatus?: SnowbridgeStatus
+  transferStatus?: SnowbridgeStatus
 }
 
 const ProgressBar: FC<ProgressBarProps> = ({
   transfer,
   direction,
-  bridgeStatus,
+  transferStatus,
   outlinedProgressBar,
 }) => {
-  const progress = useOngoingTransferProgress(transfer, direction, bridgeStatus)
+  const progress = useOngoingTransferProgress(transfer, direction, transferStatus)
 
   return (
     <>

@@ -19,8 +19,8 @@ const OngoingTransfer: FC<{
   transfer: StoredTransfer
   update: string | null
   direction: Direction
-  bridgeStatus?: SnowbridgeStatus
-}> = ({ transfer, update, direction, bridgeStatus }) => {
+  transferStatus?: SnowbridgeStatus
+}> = ({ transfer, update, direction, transferStatus }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -35,7 +35,7 @@ const OngoingTransfer: FC<{
         transfer={transfer}
         direction={direction}
         outlinedProgressBar={false}
-        bridgeStatus={bridgeStatus}
+        transferStatus={transferStatus}
       />
 
       <div className="mb-2 flex items-center">

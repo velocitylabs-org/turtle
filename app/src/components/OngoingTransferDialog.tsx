@@ -31,12 +31,12 @@ import { Separator } from './ui/separator'
 
 export const OngoingTransferDialog = ({
   transfer,
-  bridgeContext,
-  bridgeStatus,
+  context,
+  transferStatus,
 }: {
   transfer: StoredTransfer
-  bridgeContext: Context
-  bridgeStatus?: SnowbridgeStatus
+  context: Context
+  transferStatus?: SnowbridgeStatus
 }) => {
   const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
@@ -58,7 +58,7 @@ export const OngoingTransferDialog = ({
       try {
         if (direction == Direction.ToEthereum) {
           await trackToEthereum(
-            bridgeContext,
+            context,
             transfer,
             setUpdate,
             removeOngoingTransfer,
@@ -68,7 +68,7 @@ export const OngoingTransferDialog = ({
           )
         } else if (direction == Direction.ToPolkadot) {
           await trackToPolkadot(
-            bridgeContext,
+            context,
             transfer,
             setUpdate,
             removeOngoingTransfer,
@@ -96,7 +96,7 @@ export const OngoingTransferDialog = ({
         <OngoingTransfer
           transfer={transfer}
           update={update}
-          bridgeStatus={bridgeStatus}
+          transferStatus={transferStatus}
           direction={direction}
         />
       </DialogTrigger>
@@ -169,7 +169,7 @@ export const OngoingTransferDialog = ({
 
             <ProgressBar
               transfer={transfer}
-              bridgeStatus={bridgeStatus}
+              transferStatus={transferStatus}
               direction={direction}
               outlinedProgressBar={true}
             />
