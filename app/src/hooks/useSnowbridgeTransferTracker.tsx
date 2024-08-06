@@ -92,7 +92,7 @@ const useSnowbridgeTransferTracker = () => {
     return getTransferStatus(result)
   }
 
-  return { transfers, loading, statusMessages, getStatusMessage, fetchTransfers }
+  return { transfers, loading, statusMessages, fetchTransfers }
 }
 
 export default useSnowbridgeTransferTracker
