@@ -76,16 +76,16 @@ export async function getSnowBridgeStatus(snowbridgCtx: Context): Promise<Snowbr
 }
 
 /**
- * Calculates the progression value of snowbridge transfer based on its status,
+ * Calculates the progress value of snowbridge transfer based on its status,
  * the transfer date, and the transfer direction.
  *
  * @param bridgeStatus - Snowbridge's last status. This object contains the bridge status
  * in minutes for both Polkadot and Ethereum directions. If null, the function returns 0.
  * @param transferDate - The date and time when the transfer was initiated.
  * @param transferDirection - The direction of the transfer, either ToPolkadot or ToEthereum direction.
- * @returns The progression value of the bridge transfer process, ranging between 5% and 90%.
+ * @returns The progress value of the bridge transfer process, ranging between 5% and 90%.
  */
-export const bridgeProgressionValue = (
+export const getBridgeProgress = (
   transferDate: Date,
   transferDirection: Direction,
   bridgeStatus?: SnowbridgeStatus,
@@ -105,9 +105,9 @@ export const bridgeProgressionValue = (
 
   // time already spent between transfer start & current time
   const diffTimeSinceTransfer = currentTimestamp - transferTimestamp
-  const progression = (diffTimeSinceTransfer / bridgeTimestamp) * 100
+  const progress = (diffTimeSinceTransfer / bridgeTimestamp) * 100
 
-  // To avoid displaying full progression bar, keep a 10% buffer.
+  // To avoid displaying full progress bar, keep a 10% buffer.
   // It returns 90% max and min 5% (to improve UI)
-  return Math.min(progression < 5 ? 5 : progression, 90)
+  return Math.min(progress < 5 ? 5 : progress, 90)
 }
