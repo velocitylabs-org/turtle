@@ -1,14 +1,14 @@
+import { CompletedTransfer, TxStatus } from '@/models/transfer'
 import { getTransferStatus } from '@/utils/snowbridge'
+import { getExplorerLink } from '@/utils/transfer'
 import {
   ToEthereumTransferResult,
   ToPolkadotTransferResult,
   TransferStatus,
 } from '@snowbridge/api/dist/history'
-import { useState, useEffect, useCallback } from 'react'
-import useOngoingTransfers from './useOngoingTransfers'
+import { useCallback, useEffect, useState } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
-import { getExplorerLink } from '@/utils/transfer'
-import { CompletedTransfer, TxStatus } from '@/models/transfer'
+import useOngoingTransfers from './useOngoingTransfers'
 
 type ID = string
 type Message = string
@@ -35,13 +35,20 @@ const useSnowbridgeTransferTracker = () => {
     }
   }, [])
 
-  // initiate automatic updates every 2 minutes
+  // initiate automatic updates every 30s
   useEffect(() => {
     fetchTransfers()
-    const intervalId = setInterval(fetchTransfers, 120 * 1000)
+    const intervalId = setInterval(() => {
+      fetchTransfers()
+    }, 30 * 1000)
 
     return () => clearInterval(intervalId)
   }, [fetchTransfers])
+
+  // update on ongoing transfers change
+  useEffect(() => {
+    fetchTransfers()
+  }, [ongoingTransfers, fetchTransfers])
 
   // update ongoing and completed transfers
   useEffect(() => {
@@ -79,14 +86,13 @@ const useSnowbridgeTransferTracker = () => {
         // TODO: handle this case
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transfers, addCompletedTransfer, removeOngoingTransfer])
+  }, [transfers, addCompletedTransfer, removeOngoingTransfer, ongoingTransfers])
 
   const getStatusMessage = (result: ToEthereumTransferResult | ToPolkadotTransferResult) => {
     return getTransferStatus(result)
   }
 
-  return { transfers, loading, statusMessages, getStatusMessage }
+  return { transfers, loading, statusMessages, getStatusMessage, fetchTransfers }
 }
 
 export default useSnowbridgeTransferTracker
