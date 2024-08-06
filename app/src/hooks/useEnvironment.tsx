@@ -1,10 +1,9 @@
-import { useEnvironmentStore } from '@/store/environmentStore'
+import { Environment } from '@/store/environmentStore'
+import { shouldUseTestnet } from '@/utils/env'
 
 const useEnvironment = () => {
-  const environment = useEnvironmentStore(state => state.current)
-  const switchTo = useEnvironmentStore(state => state.switchTo)
-
-  return { environment, switchTo }
+  const environment = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet
+  return { environment }
 }
 
 export default useEnvironment

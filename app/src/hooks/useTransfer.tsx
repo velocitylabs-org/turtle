@@ -1,4 +1,3 @@
-import { getContext, getEnvironment } from '@/context/snowbridge'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
@@ -20,6 +19,7 @@ export type Sender = JsonRpcSigner | SubstrateAccount
 
 interface TransferParams {
   environment: Environment
+  context: Context
   sender: Sender
   sourceChain: Chain
   token: Token
@@ -176,6 +176,7 @@ const useTransfer = () => {
   // main transfer function which is exposed to the components.
   const transfer = async ({
     environment,
+    context,
     sender,
     sourceChain,
     token,
@@ -188,9 +189,6 @@ const useTransfer = () => {
     setStatus('Loading')
     try {
       const direction = resolveDirection(sourceChain, destinationChain)
-      const snowbridgeEnv = getEnvironment(environment)
-      const context = await getContext(snowbridgeEnv)
-
       const plan = await validateTransfer(
         direction,
         context,
@@ -217,6 +215,7 @@ const useTransfer = () => {
         plan,
         {
           environment,
+          context,
           sender,
           sourceChain,
           token,

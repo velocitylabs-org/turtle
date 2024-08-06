@@ -19,7 +19,7 @@ const useFees = (
 ) => {
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
-  const snowbridgeContext = useSnowbridgeContext()
+  const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
 
   const fetchFees = useCallback(async () => {
