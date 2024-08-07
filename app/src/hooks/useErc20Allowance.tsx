@@ -89,6 +89,10 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
         setTimeout(async () => {
           await fetchAllowance()
           setApproving(false)
+          addNotification({
+            message: 'Updated ERC-20 spend allowance',
+            severity: NotificationSeverity.Success,
+          })
         }, 10000)
       } catch (error) {
         console.log('Failed to approve ERC-20 spend:', error)
