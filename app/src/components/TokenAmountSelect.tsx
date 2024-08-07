@@ -10,7 +10,6 @@ import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
-import useBlurNumberInputOnScroll from '@/hooks/useBlurNumberInputOnScroll'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
@@ -37,7 +36,6 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
     const inputRef = useRef<HTMLInputElement>(null)
 
     useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
-    useBlurNumberInputOnScroll()
 
     const handleSelectionChange = (selectedToken: Token | null) => {
       onChange({ token: selectedToken, amount: value?.amount ?? null })
@@ -105,6 +103,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 value={value?.amount ?? ''}
                 onChange={handleAmountChange}
                 onClick={e => e.stopPropagation()}
+                onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
                 autoFocus
               />
             </div>
