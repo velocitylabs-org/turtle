@@ -1,7 +1,12 @@
+import { ContractTransactionResponse } from 'ethers'
 import Image from 'next/image'
 import { FC } from 'react'
 
-const TokenSpend: FC = () => {
+interface Props {
+  onClick: () => Promise<ContractTransactionResponse>
+}
+
+const TokenSpend: FC<Props> = ({ onClick }) => {
   return (
     <div className="mt-8 rounded-[20px] bg-turtle-secondary-light px-3 py-5">
       <div className="justify-items flex flex-row items-start">
@@ -14,7 +19,7 @@ const TokenSpend: FC = () => {
             We first need your approval to transfer this token from your wallet.
             <button
               className="ml-1 text-left text-small text-turtle-foreground underline"
-              onClick={() => console.log('todo(nuno')}
+              onClick={onClick}
             >
               Sign now
             </button>

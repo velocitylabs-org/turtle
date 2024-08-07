@@ -14,9 +14,13 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import TokenSpend from './TokenSpend'
-import { Network } from '@/models/chain'
+import { toPolkadot } from '@snowbridge/api'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
+import { Signer } from 'ethers'
+import { convertAmount } from '@/utils/transfer'
 
 const Transfer: FC = () => {
+  const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
     errors,
@@ -41,6 +45,7 @@ const Transfer: FC = () => {
     manualRecipientError,
     isBalanceAvailable,
     balanceData,
+    erc20SpendAllowance,
   } = useTransferForm()
   const amountPlaceholder =
     !sourceWallet || tokenAmount?.token == null || !sourceWallet.isConnected || !isBalanceAvailable
@@ -170,9 +175,17 @@ const Transfer: FC = () => {
       )}
 
       {/* ERC-20 Token Spend Approval */}
-      {/* todo(nuno): only show when form is valid + is erc20 token +  allowance <= amount */}
-      {sourceChain?.network === Network.Ethereum && !!tokenAmount && !!tokenAmount.token && (
-        <TokenSpend />
+      {erc20SpendAllowance && erc20SpendAllowance < tokenAmount!.amount! && (
+        <TokenSpend
+          onClick={() =>
+            toPolkadot.approveTokenSpend(
+              snowbridgeContext!,
+              sourceWallet?.sender as Signer,
+              tokenAmount!.token!.address,
+              convertAmount(tokenAmount!.amount, tokenAmount!.token) ?? BigInt(0),
+            )
+          }
+        />
       )}
 
       {/* Fees */}
