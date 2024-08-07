@@ -1,10 +1,11 @@
 import { Network } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { captureException } from '@sentry/nextjs'
-import { Context } from '@snowbridge/api'
+import { Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
-import { toHuman } from '../utils/transfer'
+import { convertAmount, toHuman } from '../utils/transfer'
+import { Signer } from 'ethers'
 
 interface Params {
   context?: Context
@@ -19,6 +20,7 @@ interface Params {
 const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => {
   const [allowance, setAllowance] = useState<number | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
+  const [approving, setApproving] = useState<boolean>(false)
 
   const fetchAllowance = useCallback(async () => {
     console.log('fetchAllowance')
@@ -56,7 +58,46 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
     fetchAllowance()
   }, [network, owner, tokenAmount, context])
 
-  return { allowance, loading: loading }
+  const approveAllowance = useCallback(
+    async (signer: Signer) => {
+      console.log('Enter approveAllowance')
+      setApproving(true)
+
+      if (
+        !context ||
+        !network ||
+        network !== Network.Ethereum ||
+        !tokenAmount ||
+        !tokenAmount.amount ||
+        tokenAmount.amount <= 0 ||
+        !tokenAmount.token
+      ) {
+        console.log('approveAllowance: Failed if')
+        setApproving(false)
+        return
+      }
+
+      try {
+        await toPolkadot.approveTokenSpend(
+          context,
+          signer,
+          tokenAmount!.token!.address,
+          convertAmount(tokenAmount!.amount, tokenAmount!.token) ?? BigInt(0),
+        )
+      } catch (error) {
+        console.log('Failed to approve ERC-20 spend:', error)
+        setApproving(false)
+      }
+
+      setTimeout(() => {
+        fetchAllowance()
+        setApproving(false)
+      }, 5500)
+    },
+    [network, tokenAmount, context],
+  )
+
+  return { allowance, loading: loading, approveAllowance, approving }
 }
 
 export default useErc20Allowance

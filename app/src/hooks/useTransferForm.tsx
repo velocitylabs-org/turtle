@@ -15,7 +15,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import useErc20Allowance from './useErc20Allowance'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -80,13 +79,6 @@ const useTransferForm = () => {
     token: balanceParams.token ?? undefined,
     address: balanceParams.address,
     context: balanceParams.context,
-  })
-
-  const { allowance: erc20SpendAllowance } = useErc20Allowance({
-    context: balanceParams.context,
-    network: sourceChain?.network,
-    tokenAmount,
-    owner: sourceWallet?.sender?.address,
   })
 
   const isFormValid =
@@ -267,7 +259,6 @@ const useTransferForm = () => {
     manualRecipientError,
     isBalanceAvailable: balanceData?.value && balanceData.value > 0,
     balanceData,
-    erc20SpendAllowance,
   }
 }
 

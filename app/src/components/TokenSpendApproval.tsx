@@ -1,14 +1,22 @@
+import { cn } from '@/utils/cn'
 import { ContractTransactionResponse } from 'ethers'
 import Image from 'next/image'
 import { FC } from 'react'
 
 interface Props {
   onClick: () => Promise<ContractTransactionResponse>
+  /* Whether the user is signing the token spend approval */
+  approving: boolean
 }
 
-const TokenSpend: FC<Props> = ({ onClick }) => {
+const TokenSpendApproval: FC<Props> = ({ onClick, approving }) => {
   return (
-    <div className="mt-8 rounded-[20px] bg-turtle-secondary-light px-3 py-5">
+    <div
+      className={cn(
+        'mt-8 rounded-[20px] bg-turtle-secondary-light px-3 py-5',
+        approving ? 'animate-pulse' : '',
+      )}
+    >
       <div className="justify-items flex flex-row items-start">
         <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
         <div className="justify-left ml-3 flex flex-col">
@@ -20,6 +28,7 @@ const TokenSpend: FC<Props> = ({ onClick }) => {
             <button
               className="ml-1 text-left text-small text-turtle-foreground underline"
               onClick={onClick}
+              disabled={approving}
             >
               Sign now
             </button>
@@ -30,4 +39,4 @@ const TokenSpend: FC<Props> = ({ onClick }) => {
   )
 }
 
-export default TokenSpend
+export default TokenSpendApproval

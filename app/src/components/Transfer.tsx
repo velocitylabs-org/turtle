@@ -13,11 +13,10 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import TokenSpend from './TokenSpend'
-import { toPolkadot } from '@snowbridge/api'
+import TokenSpendApproval from './TokenSpendApproval'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { Signer } from 'ethers'
-import { convertAmount } from '@/utils/transfer'
+import useErc20Allowance from '@/hooks/useErc20Allowance'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -45,14 +44,25 @@ const Transfer: FC = () => {
     manualRecipientError,
     isBalanceAvailable,
     balanceData,
-    erc20SpendAllowance,
   } = useTransferForm()
+  const {
+    allowance: erc20SpendAllowance,
+    approveAllowance,
+    approving: isApprovingErc20Spend,
+  } = useErc20Allowance({
+    context: snowbridgeContext,
+    network: sourceChain?.network,
+    tokenAmount,
+    owner: sourceWallet?.sender?.address,
+  })
   const amountPlaceholder =
     !sourceWallet || tokenAmount?.token == null || !sourceWallet.isConnected || !isBalanceAvailable
       ? 'Amount'
       : balanceData?.value == BigInt(0)
         ? 'No balance'
         : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  const requiresErc20SpendApproval =
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
 
   return (
     <form
@@ -175,21 +185,22 @@ const Transfer: FC = () => {
       )}
 
       {/* ERC-20 Token Spend Approval */}
-      {erc20SpendAllowance && erc20SpendAllowance < tokenAmount!.amount! && (
-        <TokenSpend
-          onClick={() =>
-            toPolkadot.approveTokenSpend(
-              snowbridgeContext!,
-              sourceWallet?.sender as Signer,
-              tokenAmount!.token!.address,
-              convertAmount(tokenAmount!.amount, tokenAmount!.token) ?? BigInt(0),
-            )
-          }
+      {requiresErc20SpendApproval && (
+        <TokenSpendApproval
+          onClick={() => {
+            console.log('Will approve')
+            approveAllowance(sourceWallet?.sender as Signer)
+          }}
+          approving={isApprovingErc20Spend}
         />
       )}
 
       {/* Fees */}
-      <FeesPreview hidden={!isValid} loading={loadingFees || !fees} fees={fees} />
+      <FeesPreview
+        hidden={!isValid || requiresErc20SpendApproval}
+        loading={loadingFees || !fees}
+        fees={fees}
+      />
 
       {/* Transfer Button */}
       <Button
@@ -199,7 +210,13 @@ const Transfer: FC = () => {
         variant="primary"
         type="submit"
         loading={transferStatus !== 'Idle'}
-        disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
+        disabled={
+          !isValid ||
+          isValidating ||
+          !fees ||
+          transferStatus !== 'Idle' ||
+          requiresErc20SpendApproval
+        }
         cypressID="form-submit"
       />
 
