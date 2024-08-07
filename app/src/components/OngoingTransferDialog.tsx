@@ -1,19 +1,15 @@
 'use client'
 
-import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useLookupName from '@/hooks/useLookupName'
-import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { Network } from '@/models/chain'
 import { SnowbridgeStatus } from '@/models/snowbridge'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-import { Direction, resolveDirection } from '@/services/transfer'
+import { StoredTransfer } from '@/models/transfer'
+import { resolveDirection } from '@/services/transfer'
 import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 import Identicon from '@polkadot/react-identicon'
-import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
 import { colors } from '../../tailwind.config'
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -31,72 +27,28 @@ import { Separator } from './ui/separator'
 
 export const OngoingTransferDialog = ({
   transfer,
-  context,
-  transferStatus,
+  transferStatus = 'Loading...',
+  estimatedTransferDuration,
 }: {
   transfer: StoredTransfer
-  context: Context
-  transferStatus?: SnowbridgeStatus
+  transferStatus?: string
+  estimatedTransferDuration?: SnowbridgeStatus
 }) => {
-  const { removeTransfer: removeOngoingTransfer } = useOngoingTransfers()
-  const { addCompletedTransfer } = useCompletedTransfers()
   const senderName = useLookupName(transfer.sourceChain.network, transfer.sender)
   const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
-
-  const [update, setUpdate] = useState<string | null>('Loading...')
 
   const senderDisplay = senderName ? senderName : truncateAddress(transfer.sender, 4, 4)
   const recipientDisplay = recipientName ? recipientName : truncateAddress(transfer.recipient, 4, 4)
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
-  useEffect(() => {
-    const abortController = new AbortController()
-    const abortSignal = abortController.signal
-
-    const pollUpdate = async () => {
-      try {
-        if (direction == Direction.ToEthereum) {
-          await trackToEthereum(
-            context,
-            transfer,
-            setUpdate,
-            removeOngoingTransfer,
-            addCompletedTransfer,
-            abortSignal,
-            explorerLink,
-          )
-        } else if (direction == Direction.ToPolkadot) {
-          await trackToPolkadot(
-            context,
-            transfer,
-            setUpdate,
-            removeOngoingTransfer,
-            addCompletedTransfer,
-            abortSignal,
-            explorerLink,
-          )
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-
-    pollUpdate()
-
-    return () => {
-      abortController.abort()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addCompletedTransfer, direction, removeOngoingTransfer, transfer, explorerLink]) // // Does this make sense ? Ongoing Transfer will never change and direction relies on transfer data...
-
   return (
     <Dialog>
       <DialogTrigger className="w-full">
         <OngoingTransfer
           transfer={transfer}
-          update={update}
           transferStatus={transferStatus}
+          estimatedTransferDuration={estimatedTransferDuration}
           direction={direction}
         />
       </DialogTrigger>
@@ -161,7 +113,7 @@ export const OngoingTransferDialog = ({
             }
           >
             <div className="my-2 flex items-center justify-between">
-              <p className="text-left font-bold text-turtle-secondary-dark">{update}</p>
+              <p className="text-left font-bold text-turtle-secondary-dark">{transferStatus}</p>
               <p className="text-normal text-turtle-secondary">
                 {formatOngoingTransferDate(transfer.date)}
               </p>
@@ -169,7 +121,7 @@ export const OngoingTransferDialog = ({
 
             <TransferEstimate
               transfer={transfer}
-              transferStatus={transferStatus}
+              estimatedTransferDuration={estimatedTransferDuration}
               direction={direction}
               outlinedProgressBar={true}
             />
@@ -287,130 +239,6 @@ export const OngoingTransferDialog = ({
       </DialogContent>
     </Dialog>
   )
-}
-
-const POLL_UPDATE_INTERVAL_MS: number = 120_000
-
-async function trackToPolkadot(
-  bridgeContext: Context,
-  transfer: StoredTransfer,
-  setUpdate: (x: string) => void,
-  removeOngoingTransfer: (id: string) => void,
-  addCompletedTransfer: (transfer: CompletedTransfer) => void,
-  abortSignal: AbortSignal,
-  explorerLink?: string,
-) {
-  while (!abortSignal.aborted) {
-    const { status, result } = await toPolkadot.trackSendProgressPolling(
-      bridgeContext,
-      transfer.sendResult as toPolkadot.SendResult,
-    )
-
-    if (status !== 'pending') {
-      setUpdate('Done!')
-      // Adds the new completed tx to storage
-      addCompletedTransfer({
-        id: transfer.id,
-        result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
-        token: transfer.token,
-        sourceChain: transfer.sourceChain,
-        destChain: transfer.destChain,
-        amount: transfer.amount,
-        tokenUSDValue: transfer.tokenUSDValue ?? 0,
-        fees: transfer.fees,
-        sender: transfer.sender,
-        recipient: transfer.recipient,
-        date: transfer.date,
-        ...(explorerLink && { explorerLink }),
-      } satisfies CompletedTransfer)
-
-      // Removes the ongoing tx from storage
-      removeOngoingTransfer(transfer.id)
-      break
-    }
-
-    // Pending, keep track of progress
-    const { success } = result
-
-    if (result.failure || !success || !success.plan.success) {
-      setUpdate('This transfer failed!')
-      break
-    }
-
-    if (success.destinationParachain?.events) {
-      setUpdate(`Arriving at ${transfer.destChain.name}..."`)
-    } else if (success.bridgeHub.events) {
-      setUpdate('Arriving at BridgeHub...')
-    } else if (success.assetHub.events) {
-      setUpdate('Arriving at AssetHub...')
-    } else if (success.ethereum.events) {
-      setUpdate('Bridging in progress..')
-    } else {
-      setUpdate('Loading...')
-    }
-  }
-
-  await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
-}
-
-async function trackToEthereum(
-  bridgeContext: Context,
-  transfer: StoredTransfer,
-  setUpdate: (x: string) => void,
-  removeOngoingTransfer: (id: string) => void,
-  addCompletedTransfer: (transfer: CompletedTransfer) => void,
-  abortSignal: AbortSignal,
-  explorerLink?: string,
-) {
-  while (!abortSignal.aborted) {
-    const { status, result } = await toEthereum.trackSendProgressPolling(
-      bridgeContext,
-      transfer.sendResult as toEthereum.SendResult,
-    )
-
-    if (status !== 'pending') {
-      //  Adds the new completed tx to storage
-      addCompletedTransfer({
-        id: transfer.id,
-        result: result?.failure ? TxStatus.Failed : TxStatus.Succeeded,
-        token: transfer.token,
-        sourceChain: transfer.sourceChain,
-        destChain: transfer.destChain,
-        amount: transfer.amount,
-        tokenUSDValue: transfer.tokenUSDValue ?? 0,
-        fees: transfer.fees,
-        sender: transfer.sender,
-        recipient: transfer.recipient,
-        date: transfer.date,
-        ...(explorerLink && { explorerLink }),
-      } satisfies CompletedTransfer)
-
-      // Removes the ongoing tx from storage
-      removeOngoingTransfer(transfer.id)
-      break
-    }
-
-    // Pending, keep track of progress
-    const { success } = result
-
-    //TODO(nuno): This shouldn't really happen but we should handle this better
-    if (result.failure || !success || !success.plan.success) {
-      setUpdate('This transfer failed!')
-      break
-    }
-
-    if (success.sourceParachain?.events) {
-      setUpdate('Sending...')
-    } else if (success.assetHub.events) {
-      setUpdate('Arriving at AssetHub...')
-    } else if (success.bridgeHub.events) {
-      setUpdate('Arriving at BridgeHub...')
-    } else {
-      setUpdate('Bridging in progress...')
-    }
-
-    await new Promise(r => setTimeout(r, POLL_UPDATE_INTERVAL_MS))
-  }
 }
 
 export default OngoingTransferDialog
