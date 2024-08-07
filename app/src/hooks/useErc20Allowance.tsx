@@ -28,6 +28,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
 
   const fetchAllowance = useCallback(async () => {
     if (network !== Network.Ethereum) {
+      console.log('will set to undefined:', network)
       setAllowance(undefined)
       return
     } else if (
@@ -63,9 +64,9 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
   // Fetch the erc20 spend allowance every 3s to be sure we don't miss behind the scenes changes
   // or cases where the user may have approved the right amount but the transaction only finalised
   // after our optimistic re-fetch timeout.
-  useEffect(() => {
-    setInterval(fetchAllowance, 3000)
-  }, [])
+  // useEffect(() => {
+  //   setInterval(fetchAllowance, 3000)
+  // }, [])
 
   const approveAllowance = useCallback(
     async (signer: Signer) => {
