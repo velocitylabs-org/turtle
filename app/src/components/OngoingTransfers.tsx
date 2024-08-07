@@ -6,6 +6,7 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
+import useSnowbridgeTransferTracker from '@/hooks/useSnowbridgeTransferTracker'
 
 // Could be registered if needed in a env variable:
 const DEFAULT_AVERAGE_TRANSFER_EXECUTION = 30 // minutes
@@ -29,6 +30,7 @@ const OngoingTransfers = ({
     isSnowbridgeContextLoading: transferContextLoading,
     snowbridgeContextError: transferContextError,
   } = useSnowbridgeContext()
+  const { statusMessages } = useSnowbridgeTransferTracker()
 
   const { data: transferStatus, error: transferStatusError } = useQuery({
     queryKey: ['transferStatus', transferContextLoading],
@@ -57,7 +59,7 @@ const OngoingTransfers = ({
               <OngoingTransferDialog
                 key={tx.id}
                 transfer={tx}
-                context={transferContext}
+                status={statusMessages[tx.id]}
                 transferStatus={
                   transferStatusError ? DEFAULT_AVERAGE_TRANSFER_STATUS : transferStatus
                 }

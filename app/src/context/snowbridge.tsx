@@ -4,6 +4,8 @@ import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
 import { Context, contextFactory, environment, status } from '@snowbridge/api'
 
+const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
+
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
  *
@@ -27,7 +29,7 @@ export async function getContext(environment: environment.SnowbridgeEnvironment)
 
   return await contextFactory({
     ethereum: {
-      execution_url: config.ETHEREUM_API('3Abd1KfeBZgvuM0YSAkoIwGRCC26z5lw'),
+      execution_url: config.ETHEREUM_API(ALCHEMY_API_KEY),
       beacon_url: config.BEACON_HTTP_API,
     },
     polkadot: {
