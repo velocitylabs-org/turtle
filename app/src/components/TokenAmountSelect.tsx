@@ -33,6 +33,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
     const [isOpen, setIsOpen] = useState(false)
     const triggerRef = useRef<HTMLDivElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
@@ -94,6 +95,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
               <input
+                ref={inputRef}
                 data-cy="amount-input"
                 type="number"
                 className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
@@ -101,6 +103,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 value={value?.amount ?? ''}
                 onChange={handleAmountChange}
                 onClick={e => e.stopPropagation()}
+                onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
                 autoFocus
               />
             </div>
