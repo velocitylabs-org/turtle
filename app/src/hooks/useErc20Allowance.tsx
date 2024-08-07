@@ -72,7 +72,6 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
         tokenAmount.amount <= 0 ||
         !tokenAmount.token
       ) {
-        console.log('approveAllowance: Failed if')
         setApproving(false)
         return
       }
@@ -82,17 +81,19 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
           context,
           signer,
           tokenAmount!.token!.address,
-          convertAmount(tokenAmount!.amount, tokenAmount!.token) ?? BigInt(0),
+          convertAmount(tokenAmount!.amount, tokenAmount!.token),
         )
+
+        // Now that the user has signed the approval, we wait 10s before fetching the new set value
+        // and cascade the appropriate UI updates.
+        setTimeout(async () => {
+          await fetchAllowance()
+          setApproving(false)
+        }, 10000)
       } catch (error) {
         console.log('Failed to approve ERC-20 spend:', error)
         setApproving(false)
       }
-
-      setTimeout(() => {
-        fetchAllowance()
-        setApproving(false)
-      }, 5500)
     },
     [network, tokenAmount, context],
   )
