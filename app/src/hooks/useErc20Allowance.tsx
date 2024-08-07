@@ -30,9 +30,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
     if (network !== Network.Ethereum) {
       setAllowance(undefined)
       return
-    }
-
-    if (
+    } else if (
       !context ||
       !network ||
       !tokenAmount ||
