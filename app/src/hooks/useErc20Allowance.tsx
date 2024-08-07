@@ -6,6 +6,8 @@ import { assetStatusInfo } from '@snowbridge/api/dist/assets'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
 import { Signer } from 'ethers'
+import useNotification from './useNotification'
+import { NotificationSeverity } from '@/models/notification'
 
 interface Params {
   context?: Context
@@ -18,12 +20,13 @@ interface Params {
  * Hook to fetch the ERC20 token spend allowance for a given token and owner account.
  */
 const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => {
+  const { addNotification } = useNotification()
+
   const [allowance, setAllowance] = useState<number | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const [approving, setApproving] = useState<boolean>(false)
 
   const fetchAllowance = useCallback(async () => {
-    console.log('fetchAllowance')
     if (
       !context ||
       !network ||
@@ -34,7 +37,6 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
       !tokenAmount.token ||
       !owner
     ) {
-      console.log('fetchAllowance: failed if')
       setAllowance(undefined)
       return
     }
@@ -54,13 +56,11 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
   }, [network, owner, tokenAmount, context])
 
   useEffect(() => {
-    console.log('fetchAllowance: useEffect')
     fetchAllowance()
   }, [network, owner, tokenAmount, context])
 
   const approveAllowance = useCallback(
     async (signer: Signer) => {
-      console.log('Enter approveAllowance')
       setApproving(true)
 
       if (
@@ -92,6 +92,11 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
         }, 10000)
       } catch (error) {
         console.log('Failed to approve ERC-20 spend:', error)
+        addNotification({
+          message: 'Failed to approve ERC-20 spend',
+          severity: NotificationSeverity.Error,
+        })
+        captureException(error)
         setApproving(false)
       }
     },
