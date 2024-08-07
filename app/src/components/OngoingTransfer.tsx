@@ -15,13 +15,13 @@ import { colors } from '../../tailwind.config'
 const OngoingTransfer: FC<{
   direction: Direction
   transfer: StoredTransfer
-  status: string | null
-  transferStatus?: SnowbridgeStatus
-}> = ({ transfer, status, direction, transferStatus }) => {
+  transferStatus: string | null
+  estimatedTransferDuration?: SnowbridgeStatus
+}> = ({ direction, transfer, transferStatus, estimatedTransferDuration }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-left font-bold text-turtle-secondary-dark">{status ?? ''}</p>
+        <p className="text-left font-bold text-turtle-secondary-dark">{transferStatus ?? ''}</p>
         <p className="text-normal text-right text-turtle-secondary">
           {formatOngoingTransferDate(transfer.date)}
         </p>
@@ -31,7 +31,7 @@ const OngoingTransfer: FC<{
         transfer={transfer}
         direction={direction}
         outlinedProgressBar={false}
-        transferStatus={transferStatus}
+        estimatedTransferDuration={estimatedTransferDuration}
       />
 
       <div className="mb-2 flex items-center">

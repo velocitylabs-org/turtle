@@ -9,16 +9,16 @@ interface TransferEstimateProps {
   transfer: StoredTransfer
   direction: Direction
   outlinedProgressBar: boolean
-  transferStatus?: SnowbridgeStatus
+  estimatedTransferDuration?: SnowbridgeStatus
 }
 
 const TransferEstimate: FC<TransferEstimateProps> = ({
   transfer,
   direction,
-  transferStatus,
+  estimatedTransferDuration,
   outlinedProgressBar,
 }) => {
-  const progress = useSnowbridgeTransferEstimate(transfer, direction, transferStatus)
+  const progress = useSnowbridgeTransferEstimate(transfer, direction, estimatedTransferDuration)
 
   return <ProgressBar progress={progress} outlinedProgressBar={outlinedProgressBar} />
 }

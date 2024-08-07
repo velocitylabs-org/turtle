@@ -32,7 +32,7 @@ const OngoingTransfers = ({
   } = useSnowbridgeContext()
   const { statusMessages } = useSnowbridgeTransferTracker()
 
-  const { data: transferStatus, error: transferStatusError } = useQuery({
+  const { data: estimatedTransferDuration, error: estimatedTransferDurationError } = useQuery({
     queryKey: ['transferStatus', transferContextLoading],
     queryFn: async () => {
       if (transferContextError)
@@ -59,9 +59,11 @@ const OngoingTransfers = ({
               <OngoingTransferDialog
                 key={tx.id}
                 transfer={tx}
-                status={statusMessages[tx.id]}
-                transferStatus={
-                  transferStatusError ? DEFAULT_AVERAGE_TRANSFER_STATUS : transferStatus
+                transferStatus={statusMessages[tx.id]}
+                estimatedTransferDuration={
+                  estimatedTransferDurationError
+                    ? DEFAULT_AVERAGE_TRANSFER_STATUS
+                    : estimatedTransferDuration
                 }
               />
             ))}

@@ -27,12 +27,12 @@ import { Separator } from './ui/separator'
 
 export const OngoingTransferDialog = ({
   transfer,
-  status = 'Loading...',
-  transferStatus,
+  transferStatus = 'Loading...',
+  estimatedTransferDuration,
 }: {
   transfer: StoredTransfer
-  status?: string
-  transferStatus?: SnowbridgeStatus
+  transferStatus?: string
+  estimatedTransferDuration?: SnowbridgeStatus
 }) => {
   const senderName = useLookupName(transfer.sourceChain.network, transfer.sender)
   const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
@@ -45,11 +45,10 @@ export const OngoingTransferDialog = ({
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        {/* <OngoingTransfer transfer={transfer} status={status} progression={progression} /> */}
         <OngoingTransfer
           transfer={transfer}
-          status={status}
           transferStatus={transferStatus}
+          estimatedTransferDuration={estimatedTransferDuration}
           direction={direction}
         />
       </DialogTrigger>
@@ -114,7 +113,7 @@ export const OngoingTransferDialog = ({
             }
           >
             <div className="my-2 flex items-center justify-between">
-              <p className="text-left font-bold text-turtle-secondary-dark">{status}</p>
+              <p className="text-left font-bold text-turtle-secondary-dark">{transferStatus}</p>
               <p className="text-normal text-turtle-secondary">
                 {formatOngoingTransferDate(transfer.date)}
               </p>
@@ -122,7 +121,7 @@ export const OngoingTransferDialog = ({
 
             <TransferEstimate
               transfer={transfer}
-              transferStatus={transferStatus}
+              estimatedTransferDuration={estimatedTransferDuration}
               direction={direction}
               outlinedProgressBar={true}
             />
