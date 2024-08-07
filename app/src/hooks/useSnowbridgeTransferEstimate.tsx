@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { getBridgeProgress } from '@/context/snowbridge'
+import { estimateBridgeProgress } from '@/context/snowbridge'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
@@ -14,7 +14,7 @@ const useSnowbridgeTransferEstimate = (
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const updateProgress = () => {
-    const transferProgress = getBridgeProgress(transfer.date, direction, transferStatus)
+    const transferProgress = estimateBridgeProgress(transfer.date, direction, transferStatus)
     setProgress(transferProgress)
     if (transferProgress >= 90 && progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current)

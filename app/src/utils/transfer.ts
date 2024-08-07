@@ -118,13 +118,13 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const explorersUrls = EXPLORERS[environment]
   switch (network) {
     case Network.Ethereum: {
-      if (result.success?.ethereum && 'blockNumber' in result.success.ethereum)
-        return `${removeURLSlash(explorersUrls.etherscan)}/block/${result.success.ethereum.blockNumber}`
+      if (result.success?.ethereum && 'transactionHash' in result.success.ethereum)
+        return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
     case Network.Polkadot: {
-      if (result.success?.assetHub && 'blockNumber' in result.success.assetHub)
-        return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.blockNumber.toString()}`
+      if (result.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
+        return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
       return `${removeURLSlash(explorersUrls.subscan_assethub)}/account/${sender}`
     }
     default:

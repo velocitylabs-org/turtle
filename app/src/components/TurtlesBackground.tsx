@@ -7,8 +7,8 @@ export const TurtlesBackground: React.FC = () => {
         <Image
           src="/turtle-background.webp"
           alt="Turtle Background"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
           quality={100}
           sizes="100vw"
           priority
