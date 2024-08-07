@@ -10,6 +10,7 @@ import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
+import useBlurNumberInputOnScroll from '@/hooks/useBlurNumberInputOnScroll'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
@@ -33,8 +34,10 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
     const [isOpen, setIsOpen] = useState(false)
     const triggerRef = useRef<HTMLDivElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
+    useBlurNumberInputOnScroll()
 
     const handleSelectionChange = (selectedToken: Token | null) => {
       onChange({ token: selectedToken, amount: value?.amount ?? null })
@@ -94,6 +97,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
               <input
+                ref={inputRef}
                 data-cy="amount-input"
                 type="number"
                 className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
