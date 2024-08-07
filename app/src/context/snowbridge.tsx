@@ -69,7 +69,9 @@ export async function getSnowBridgeContext(
   return await getContext(snowbridgeEnv)
 }
 
-export async function getSnowBridgeStatus(snowbridgCtx: Context): Promise<SnowbridgeStatus> {
+export async function getSnowBridgeEtimatedTransferDuration(
+  snowbridgCtx: Context,
+): Promise<SnowbridgeStatus> {
   const bridgeStatus = await status.bridgeStatusInfo(snowbridgCtx)
   return {
     ethBridgeStatus: bridgeStatus.toEthereum.latencySeconds,
@@ -87,7 +89,7 @@ export async function getSnowBridgeStatus(snowbridgCtx: Context): Promise<Snowbr
  * @param transferDirection - The direction of the transfer, either ToPolkadot or ToEthereum direction.
  * @returns The progress value of the bridge transfer process, ranging between 5% and 90%.
  */
-export const getBridgeProgress = (
+export const estimateBridgeProgress = (
   transferDate: Date,
   transferDirection: Direction,
   bridgeStatus?: SnowbridgeStatus,

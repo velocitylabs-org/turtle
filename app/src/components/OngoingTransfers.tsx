@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getSnowBridgeStatus } from '@/context/snowbridge'
+import { getSnowBridgeEtimatedTransferDuration } from '@/context/snowbridge'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
@@ -33,13 +33,13 @@ const OngoingTransfers = ({
   const { statusMessages } = useSnowbridgeTransferTracker()
 
   const { data: estimatedTransferDuration, error: estimatedTransferDurationError } = useQuery({
-    queryKey: ['transferStatus', transferContextLoading],
+    queryKey: ['transferStatus', transferContextLoading, ongoingTransfers.length],
     queryFn: async () => {
       if (transferContextError)
         throw new Error(`Transfer status fetch error: ${transferContextError.message}`)
 
       if (ongoingTransfers.length > 0 && !transferContextLoading && transferContext) {
-        return await getSnowBridgeStatus(transferContext)
+        return await getSnowBridgeEtimatedTransferDuration(transferContext)
       }
       return INITIAL_BRIDGE_STATUS
     },
