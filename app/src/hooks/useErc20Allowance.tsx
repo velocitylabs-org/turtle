@@ -27,20 +27,22 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
   const [approving, setApproving] = useState<boolean>(false)
 
   const fetchAllowance = useCallback(async () => {
+    if (network !== Network.Ethereum) {
+      setAllowance(undefined)
+      return
+    }
+
     if (
       !context ||
       !network ||
-      network !== Network.Ethereum ||
       !tokenAmount ||
       !tokenAmount.amount ||
       tokenAmount.amount <= 0 ||
       !tokenAmount.token ||
       !owner
     ) {
-      setAllowance(undefined)
       return
     }
-    console.log('will fetch')
 
     try {
       setLoading(true)
@@ -55,9 +57,17 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
     }
   }, [network, owner, tokenAmount, context])
 
+  // Reactively fetch the erc20 spend allowance when the relevant form fields change
   useEffect(() => {
     fetchAllowance()
   }, [network, owner, tokenAmount, context])
+
+  // Fetch the erc20 spend allowance every 3s to be sure we don't miss behind the scenes changes
+  // or cases where the user may have approved the right amount but the transaction only finalised
+  // after our optimistic re-fetch timeout.
+  useEffect(() => {
+    setInterval(fetchAllowance, 3000)
+  }, [])
 
   const approveAllowance = useCallback(
     async (signer: Signer) => {
