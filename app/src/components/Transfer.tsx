@@ -184,13 +184,26 @@ const Transfer: FC = () => {
         </div>
       )}
 
-      {/* ERC-20 Token Spend Approval */}
-      {requiresErc20SpendApproval && (
-        <TokenSpendApproval
-          onClick={() => approveAllowance(sourceWallet?.sender as Signer)}
-          approving={isApprovingErc20Spend}
-        />
-      )}
+      {/* ERC-20 Spend Approval */}
+      <AnimatePresence>
+        {requiresErc20SpendApproval && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <TokenSpendApproval
+              onClick={() => approveAllowance(sourceWallet?.sender as Signer)}
+              approving={isApprovingErc20Spend}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Fees */}
       <FeesPreview
