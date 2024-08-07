@@ -1,10 +1,9 @@
 import { cn } from '@/utils/cn'
-import { ContractTransactionResponse } from 'ethers'
 import Image from 'next/image'
 import { FC } from 'react'
 
 interface Props {
-  onClick: () => Promise<ContractTransactionResponse>
+  onClick: () => void
   /* Whether the user is signing the token spend approval */
   approving: boolean
 }

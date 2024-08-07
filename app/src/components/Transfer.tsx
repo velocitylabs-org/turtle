@@ -187,10 +187,7 @@ const Transfer: FC = () => {
       {/* ERC-20 Token Spend Approval */}
       {requiresErc20SpendApproval && (
         <TokenSpendApproval
-          onClick={() => {
-            console.log('Will approve')
-            approveAllowance(sourceWallet?.sender as Signer)
-          }}
+          onClick={() => approveAllowance(sourceWallet?.sender as Signer)}
           approving={isApprovingErc20Spend}
         />
       )}
