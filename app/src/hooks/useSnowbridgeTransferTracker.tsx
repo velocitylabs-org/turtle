@@ -53,6 +53,7 @@ const useSnowbridgeTransferTracker = () => {
   // update ongoing and completed transfers
   useEffect(() => {
     ongoingTransfers.forEach(ongoing => {
+      if (transfers && 'error' in transfers) return
       const foundTransfer = transfers.find(transfer => transfer.id === ongoing.id)
       if (foundTransfer) {
         const msg = getStatusMessage(foundTransfer)
