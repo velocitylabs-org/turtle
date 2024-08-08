@@ -86,23 +86,21 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
       }
 
       try {
-        await toPolkadot.approveTokenSpend(
-          context,
-          signer,
-          tokenAmount!.token!.address,
-          convertAmount(tokenAmount!.amount, tokenAmount!.token),
-        )
+        await toPolkadot
+          .approveTokenSpend(
+            context,
+            signer,
+            tokenAmount!.token!.address,
+            convertAmount(tokenAmount!.amount, tokenAmount!.token),
+          )
+          .then(x => x.wait())
+          .then(_ => fetchAllowance())
 
-        // Now that the user has signed the approval, we wait 10s before fetching the new set value
-        // and cascade the appropriate UI updates.
-        setTimeout(async () => {
-          await fetchAllowance()
-          setApproving(false)
-          addNotification({
-            message: 'Updated ERC-20 spend allowance',
-            severity: NotificationSeverity.Success,
-          })
-        }, 10000)
+        setApproving(false)
+        addNotification({
+          message: 'Updated ERC-20 spend allowance',
+          severity: NotificationSeverity.Success,
+        })
       } catch (error) {
         console.log('Failed to approve ERC-20 spend:', error)
         addNotification({
