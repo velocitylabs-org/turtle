@@ -6,7 +6,7 @@ import {
   ToPolkadotTransferResult,
   TransferStatus,
 } from '@snowbridge/api/dist/history'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
 import useOngoingTransfers from './useOngoingTransfers'
 
@@ -35,11 +35,13 @@ const useSnowbridgeTransferTracker = () => {
     }
   }, [])
 
+  const ongoingTransfersRef = useRef(ongoingTransfers)
+
   // initiate automatic updates every 30s
   useEffect(() => {
-    fetchTransfers()
+    if (ongoingTransfersRef.current.length > 0) fetchTransfers()
     const intervalId = setInterval(() => {
-      fetchTransfers()
+      if (ongoingTransfersRef.current.length > 0) fetchTransfers()
     }, 30 * 1000)
 
     return () => clearInterval(intervalId)
@@ -47,7 +49,8 @@ const useSnowbridgeTransferTracker = () => {
 
   // update on ongoing transfers change
   useEffect(() => {
-    fetchTransfers()
+    ongoingTransfersRef.current = ongoingTransfers
+    if (ongoingTransfers.length > 0) fetchTransfers()
   }, [ongoingTransfers, fetchTransfers])
 
   // update ongoing and completed transfers
