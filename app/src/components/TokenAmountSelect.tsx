@@ -128,6 +128,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   alt={option.token.name}
                   width={24}
                   height={24}
+                  priority
                   className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
                 />
                 <span className="text-sm">{option.token.symbol}</span>
