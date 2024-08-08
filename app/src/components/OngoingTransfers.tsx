@@ -7,6 +7,8 @@ import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import useSnowbridgeTransferTracker from '@/hooks/useSnowbridgeTransferTracker'
+import { ArrowRight } from './svg/ArrowRight'
+import { colors } from '../../tailwind.config'
 
 // Could be registered if needed in a env variable:
 const DEFAULT_AVERAGE_TRANSFER_EXECUTION = 30 // minutes
@@ -74,9 +76,13 @@ const OngoingTransfers = ({
                   newTransferInit === TransferTab.New && setNewTransferInit(TransferTab.Completed)
                 }
                 disabled={!hasCompletedTransfers}
-                className="text-turtle-foreground)] w-full rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
+                className="text-turtle-foreground)] flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
               >
-                View completed transactions <i className="fas fa-arrow-right ml-1"></i>
+                <span>View completed transactions</span>{' '}
+                <ArrowRight
+                  className="mx-2 h-[1.3rem] w-[1.3rem]"
+                  fill={colors['turtle-foreground']}
+                />
               </button>
             )}
           </div>
