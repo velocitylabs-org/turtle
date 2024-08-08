@@ -11,7 +11,7 @@ const useSnowbridgeTransferEstimate = (
   transferStatus?: SnowbridgeStatus,
 ) => {
   const [progress, setProgress] = useState<number>(
-    // Caluculate progress from cache if transferStatus is available
+    // Calculate progress from cache if transferStatus is available
     estimateBridgeProgress(transfer.date, direction, transferStatus),
   )
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
