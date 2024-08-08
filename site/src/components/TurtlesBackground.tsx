@@ -7,7 +7,7 @@ export const TurtlesBackground: React.FC<TurtlesBackgroundProps> = ({ header }) 
     <div className="absolute top-0 z-0">
       <div className="turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/bg.png')] bg-cover bg-bottom">
         <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center ">
-          <h1 className="turtle-text-shadow max-w-[1500px] text-center text-[7.5vb] leading-[100%] text-white md:text-[8.75rem]">
+          <h1 className="turtle-text-shadow m-[4vw] text-center text-[7.5vb] leading-[100%] text-white lg:text-[8.75rem]">
             {header}
           </h1>
         </div>
