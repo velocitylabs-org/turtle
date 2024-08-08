@@ -9,7 +9,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { isValidAddressOfNetwork } from '@/utils/address'
-import { convertAmount } from '@/utils/transfer'
+import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
@@ -157,7 +157,7 @@ const useTransferForm = () => {
       const recipient = manualRecipient.enabled
         ? manualRecipient.address
         : destinationWallet?.sender?.address
-      const amount = tokenAmount ? convertAmount(tokenAmount.amount, tokenAmount.token) : null
+      const amount = tokenAmount ? safeConvertAmount(tokenAmount.amount, tokenAmount.token) : null
 
       if (
         !sourceChain ||

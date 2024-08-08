@@ -13,8 +13,13 @@ import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import TokenSpendApproval from './TokenSpendApproval'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
+import { Signer } from 'ethers'
+import useErc20Allowance from '@/hooks/useErc20Allowance'
 
 const Transfer: FC = () => {
+  const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
     errors,
@@ -40,12 +45,24 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     balanceData,
   } = useTransferForm()
+  const {
+    allowance: erc20SpendAllowance,
+    approveAllowance,
+    approving: isApprovingErc20Spend,
+  } = useErc20Allowance({
+    context: snowbridgeContext,
+    network: sourceChain?.network,
+    tokenAmount,
+    owner: sourceWallet?.sender?.address,
+  })
   const amountPlaceholder =
     !sourceWallet || tokenAmount?.token == null || !sourceWallet.isConnected || !isBalanceAvailable
       ? 'Amount'
       : balanceData?.value == BigInt(0)
         ? 'No balance'
         : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  const requiresErc20SpendApproval =
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
 
   return (
     <form
@@ -167,8 +184,33 @@ const Transfer: FC = () => {
         </div>
       )}
 
+      {/* ERC-20 Spend Approval */}
+      <AnimatePresence>
+        {requiresErc20SpendApproval && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <TokenSpendApproval
+              onClick={() => approveAllowance(sourceWallet?.sender as Signer)}
+              approving={isApprovingErc20Spend}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Fees */}
-      <FeesPreview hidden={!isValid} loading={loadingFees || !fees} fees={fees} />
+      <FeesPreview
+        hidden={!isValid || requiresErc20SpendApproval}
+        loading={loadingFees || !fees}
+        fees={fees}
+      />
 
       {/* Transfer Button */}
       <Button
@@ -178,7 +220,13 @@ const Transfer: FC = () => {
         variant="primary"
         type="submit"
         loading={transferStatus !== 'Idle'}
-        disabled={!isValid || isValidating || !fees || transferStatus !== 'Idle'}
+        disabled={
+          !isValid ||
+          isValidating ||
+          !fees ||
+          transferStatus !== 'Idle' ||
+          requiresErc20SpendApproval
+        }
         cypressID="form-submit"
       />
 

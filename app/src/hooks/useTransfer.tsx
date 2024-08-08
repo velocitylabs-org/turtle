@@ -51,7 +51,10 @@ const useTransfer = () => {
   const handleSendError = (e: unknown) => {
     console.error('Transfer error:', e)
     captureException(e)
-    addNotification({ message: 'Transfer sending failed!', severity: NotificationSeverity.Error })
+    addNotification({
+      message: 'Failed to submit the transfer',
+      severity: NotificationSeverity.Error,
+    })
   }
 
   // Executes the transfer. Validation should happen before.
