@@ -68,7 +68,7 @@ const OngoingTransfer: FC<{
       <div className="flex items-center">
         <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
         <p className="text-turtle-foreground)]">{truncateAddress(transfer.sender, 4, 4)}</p>
-        <i className="fas fa-arrow-right mx-2 p-1.5 text-lg text-turtle-secondary-dark"></i>
+        <ArrowRight className="mx-3 h-[0.8rem] w-[0.8rem]" fill={colors['turtle-secondary-dark']} />
         <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
         <p className="text-turtle-foreground)]">{truncateAddress(transfer.recipient, 4, 4)}</p>
       </div>

@@ -13,7 +13,7 @@ const TokenSpendApproval: FC<Props> = ({ onClick, approving }) => {
     <div
       className={cn(
         'mt-8 rounded-[20px] bg-turtle-secondary-light px-3 py-5',
-        approving ? 'animate-pulse' : '',
+        approving ? 'animate-pulse cursor-progress' : '',
       )}
     >
       <div className="justify-items flex flex-row items-start">
@@ -25,7 +25,10 @@ const TokenSpendApproval: FC<Props> = ({ onClick, approving }) => {
           <div className="pb-2 text-left text-small text-turtle-foreground">
             We first need your approval to transfer this token from your wallet.
             <button
-              className="ml-1 text-left text-small text-turtle-foreground underline"
+              className={cn(
+                'ml-1 text-left text-small text-turtle-foreground underline',
+                approving ? 'cursor-not-allowed' : '',
+              )}
               onClick={onClick}
               disabled={approving}
             >
