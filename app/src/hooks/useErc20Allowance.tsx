@@ -28,7 +28,6 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
 
   const fetchAllowance = useCallback(async () => {
     if (network !== Network.Ethereum) {
-      console.log('will set to undefined:', network)
       setAllowance(undefined)
       return
     } else if (
