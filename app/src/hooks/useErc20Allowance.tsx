@@ -27,18 +27,16 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
   const [approving, setApproving] = useState<boolean>(false)
 
   const fetchAllowance = useCallback(async () => {
-    if (network !== Network.Ethereum) {
-      setAllowance(undefined)
-      return
-    } else if (
+    if (
       !context ||
-      !network ||
+      network !== Network.Ethereum ||
       !tokenAmount ||
       !tokenAmount.amount ||
       tokenAmount.amount <= 0 ||
       !tokenAmount.token ||
       !owner
     ) {
+      setAllowance(undefined)
       return
     }
 
