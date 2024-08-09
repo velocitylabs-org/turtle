@@ -1,5 +1,6 @@
 node_modules
 .next
+.github
 LICENSE
 docs
 pnpm-lock.yaml
