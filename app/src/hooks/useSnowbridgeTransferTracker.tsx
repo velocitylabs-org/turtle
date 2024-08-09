@@ -1,5 +1,5 @@
 import { CompletedTransfer, TxStatus } from '@/models/transfer'
-import { getTransferStatus } from '@/utils/snowbridge'
+import { getTransferStatus, isCompletedTransfer } from '@/utils/snowbridge'
 import { getExplorerLink } from '@/utils/transfer'
 import {
   ToEthereumTransferResult,
@@ -62,10 +62,7 @@ const useSnowbridgeTransferTracker = () => {
         const msg = getStatusMessage(foundTransfer)
         setStatusMessages(prev => ({ ...prev, [ongoing.id]: msg }))
 
-        if (
-          foundTransfer.status === TransferStatus.Complete ||
-          foundTransfer.status === TransferStatus.Failed
-        ) {
+        if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
 
           removeOngoingTransfer(ongoing.id)
