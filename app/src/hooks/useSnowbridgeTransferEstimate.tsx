@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-
 import { estimateBridgeProgress } from '@/context/snowbridge'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
@@ -38,6 +37,7 @@ const useSnowbridgeTransferEstimate = (
         clearInterval(progressIntervalRef.current)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transferStatus])
 
   return progress
