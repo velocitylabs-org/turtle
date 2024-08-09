@@ -8,8 +8,10 @@ const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[
     let date: string
     if (typeof transaction.date === 'string') {
       date = new Date(transaction.date).toISOString().split('T')[0]
-    } else {
+    } else if (transaction.date instanceof Date) {
       date = transaction.date.toISOString().split('T')[0]
+    } else {
+      date = 'Unknown date'
     }
 
     if (!acc[date]) {
