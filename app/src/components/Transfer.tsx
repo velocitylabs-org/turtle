@@ -43,6 +43,7 @@ const Transfer: FC = () => {
     tokenAmountError,
     manualRecipientError,
     isBalanceAvailable,
+    loadingBalance,
     balanceData,
   } = useTransferForm()
   const {
@@ -55,12 +56,20 @@ const Transfer: FC = () => {
     tokenAmount,
     owner: sourceWallet?.sender?.address,
   })
-  const amountPlaceholder =
-    !sourceWallet || tokenAmount?.token == null || !sourceWallet.isConnected || !isBalanceAvailable
-      ? 'Amount'
-      : balanceData?.value == BigInt(0)
-        ? 'No balance'
-        : `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  let amountPlaceholder: string
+
+  if (
+    !sourceWallet ||
+    !tokenAmount?.token ||
+    !sourceWallet.isConnected ||
+    !isBalanceAvailable ||
+    loadingBalance
+  )
+    amountPlaceholder = 'Amount'
+  else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
+  else
+    amountPlaceholder = `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+
   const requiresErc20SpendApproval =
     erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
 
@@ -112,6 +121,7 @@ const Transfer: FC = () => {
                     !sourceWallet?.isConnected ||
                     !tokenAmount?.token ||
                     !isBalanceAvailable ||
+                    balanceData?.value === 0n ||
                     transferStatus !== 'Idle'
                   }
                 />
