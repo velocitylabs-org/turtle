@@ -1,0 +1,41 @@
+name: Lint
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20.10.0
+
+      # ESLint and Prettier must be in `package.json`
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install Node.js dependencies
+        env:
+          CYPRESS_INSTALL_BINARY: 0  # This disables Cypress binary installation during pnpm install
+        run: pnpm i
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          prettier: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
