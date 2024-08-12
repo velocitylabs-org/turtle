@@ -212,7 +212,7 @@ const useTransferForm = () => {
 
   // validate token amount
   useEffect(() => {
-    if (!tokenAmount?.amount) setTokenAmountError('')
+    if (!tokenAmount?.amount || !sourceWallet?.isConnected) setTokenAmountError('')
     else if (balanceData && balanceData.value === BigInt(0))
       setTokenAmountError("That's more than you have in your wallet")
     else if (
@@ -222,7 +222,7 @@ const useTransferForm = () => {
     )
       setTokenAmountError("That's more than you have in your wallet")
     else setTokenAmountError('')
-  }, [tokenAmount?.amount, balanceData])
+  }, [tokenAmount?.amount, balanceData, sourceWallet])
 
   // reset token amount
   useEffect(() => {
@@ -257,7 +257,8 @@ const useTransferForm = () => {
     environment,
     tokenAmountError,
     manualRecipientError,
-    isBalanceAvailable: balanceData?.value && balanceData.value > 0,
+    isBalanceAvailable: balanceData?.value != undefined,
+    loadingBalance,
     balanceData,
   }
 }

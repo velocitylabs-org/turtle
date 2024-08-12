@@ -5,7 +5,15 @@ import { TransactionDialog } from './TransactionDialog'
 
 const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[] }) => {
   const transactionsByDate = transactions.reduce<TransfersByDate>((acc, transaction) => {
-    const date = transaction.date.toString().split('T')[0]
+    let date: string
+    if (typeof transaction.date === 'string') {
+      date = new Date(transaction.date).toISOString().split('T')[0]
+    } else if (transaction.date instanceof Date) {
+      date = transaction.date.toISOString().split('T')[0]
+    } else {
+      date = 'Unknown date'
+    }
+
     if (!acc[date]) {
       acc[date] = []
     }

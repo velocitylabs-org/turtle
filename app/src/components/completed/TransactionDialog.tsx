@@ -127,7 +127,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 : ' text-turtle-error-dark',
             )}
           >
-            <div>{formatCompletedTransferDate(tx.date.toString().split('T')[0])}</div>
+            <div>{formatCompletedTransferDate(tx.date)}</div>
             <div>{formatHours(tx.date)}</div>
           </div>
         </DialogHeader>

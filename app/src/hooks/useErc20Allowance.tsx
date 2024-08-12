@@ -21,7 +21,6 @@ interface Params {
  */
 const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
-
   const [allowance, setAllowance] = useState<number | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const [approving, setApproving] = useState<boolean>(false)
@@ -56,7 +55,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
   // Reactively fetch the erc20 spend allowance when the relevant form fields change
   useEffect(() => {
     fetchAllowance()
-  }, [network, owner, tokenAmount, context])
+  }, [fetchAllowance])
 
   const approveAllowance = useCallback(
     async (signer: Signer) => {
@@ -101,7 +100,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
         setApproving(false)
       }
     },
-    [network, tokenAmount, context],
+    [network, tokenAmount, context, fetchAllowance, addNotification],
   )
 
   return { allowance, loading: loading, approveAllowance, approving }
