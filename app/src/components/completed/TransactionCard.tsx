@@ -1,13 +1,11 @@
-'use client'
 import Image from 'next/image'
-import Identicon from '@polkadot/react-identicon'
 
 import { TxStatus, CompletedTransfer, TransferResult } from '@/models/transfer'
-import { Network } from '@/models/chain'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
+import Account from '../Account'
 import { ArrowRight } from '../svg/ArrowRight'
 import { Fail } from '../svg/Fail'
 import { Success } from '../svg/Success'
@@ -23,15 +21,7 @@ const statusIcon = (status: TransferResult) => {
   }
 }
 
-export const TransactionCard = ({
-  tx,
-  senderDisplay,
-  recipientDisplay,
-}: {
-  tx: CompletedTransfer
-  senderDisplay: string
-  recipientDisplay: string
-}) => {
+export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
   return (
     <div
       className={cn(
@@ -103,54 +93,24 @@ export const TransactionCard = ({
             tx.result === TxStatus.Failed && 'text-turtle-error-dark',
           )}
         >
-          <div className="flex items-center gap-x-1">
-            {tx.sourceChain.network === Network.Polkadot ? (
-              <Identicon
-                value={tx.sender}
-                size={14}
-                theme="polkadot"
-                className={cn(
-                  'rounded-full border',
-                  tx.result === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error-dark',
-                )}
-              />
-            ) : (
-              <div
-                className={cn(
-                  'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                  tx.result === TxStatus.Succeeded ? 'border-black ' : 'border-turtle-error-dark',
-                )}
-              />
-            )}
-            <p className="text-sm">{senderDisplay}</p>
-          </div>
+          <Account
+            network={tx.sourceChain.network}
+            address={tx.sender}
+            transferResult={tx.result}
+            allowCopy={false}
+          />
           <ArrowRight
             className="h-3 w-3"
             {...(tx.result === TxStatus.Succeeded
               ? { fill: colors['turtle-foreground'] }
               : { fill: colors['turtle-secondary-dark'] })}
           />
-          <div className="flex items-center gap-x-2">
-            {tx.destChain.network === Network.Polkadot ? (
-              <Identicon
-                value={tx.recipient}
-                size={14}
-                theme="polkadot"
-                className={cn(
-                  'rounded-full border',
-                  tx.result === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error-dark',
-                )}
-              />
-            ) : (
-              <div
-                className={cn(
-                  'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-                  tx.result === TxStatus.Succeeded ? 'border-black ' : 'border-turtle-error-dark',
-                )}
-              />
-            )}
-            <p className="text-sm">{recipientDisplay}</p>
-          </div>
+          <Account
+            network={tx.destChain.network}
+            address={tx.recipient}
+            transferResult={tx.result}
+            allowCopy={false}
+          />
         </div>
         {tx.result === TxStatus.Failed && (
           <p className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
