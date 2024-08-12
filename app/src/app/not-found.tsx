@@ -12,6 +12,7 @@ const NotFound = () => {
         fill
         style={{ objectFit: 'cover' }}
         sizes="100vw"
+        priority
       />
       {/* background overlay*/}
       <div className="turtle-dark-overlay absolute h-full w-full" />

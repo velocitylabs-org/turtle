@@ -5,11 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Navbar from '@/components/NavBar'
 
-interface GlobalErrorProps {
-  error: Error & { digest?: string }
-}
-
-const GlobalError: React.FC<GlobalErrorProps> = ({ error }) => {
+const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -24,7 +20,6 @@ const GlobalError: React.FC<GlobalErrorProps> = ({ error }) => {
           className="relative z-0"
           fill
           style={{ objectFit: 'cover' }}
-          quality={100}
           sizes="100vw"
           priority
         />
