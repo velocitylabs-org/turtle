@@ -4,14 +4,21 @@ on:
   push:
     branches:
       - '**'
+    paths:
+      - 'app/**'
   pull_request:
     branches:
       - '**'
+    paths:
+      - 'app/**'
 
 jobs:
   run-linters:
     name: Run linters
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
 
     steps:
       - name: Check out Git repository
