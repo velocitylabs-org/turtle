@@ -1,20 +1,20 @@
-name: Lint
+name: Lint and Prettier
 
 on:
   push:
     branches:
-      - '**'
+      - "**"
     paths:
-      - 'app/**'
+      - "app/**"
   pull_request:
     branches:
-      - '**'
+      - "**"
     paths:
-      - 'app/**'
+      - "app/**"
 
 jobs:
-  run-linters:
-    name: Run linters
+  run-lint-prettier:
+    name: Run lint and prettier
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,12 +35,11 @@ jobs:
 
       - name: Install Node.js dependencies
         env:
-          CYPRESS_INSTALL_BINARY: 0  # This disables Cypress binary installation during pnpm install
+          CYPRESS_INSTALL_BINARY: 0 # This disables Cypress binary installation during pnpm install
         run: pnpm i
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          eslint: true
-          prettier: true
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Running linter
+        run: pnpm lint
+
+      - name: Running Prettier check
+        run: pnpm format-check
