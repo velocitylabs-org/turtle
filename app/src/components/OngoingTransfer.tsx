@@ -1,12 +1,11 @@
-'use client'
 import { FC } from 'react'
 import Image from 'next/image'
 import { StoredTransfer } from '@/models/transfer'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
-import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
+import Account from './Account'
 import { ArrowRight } from './svg/ArrowRight'
 import TransferEstimate from './TransferEstimate'
 import LoadingIcon from './svg/LoadingIcon'
@@ -66,11 +65,17 @@ const OngoingTransfer: FC<{
       </div>
 
       <div className="flex items-center">
-        <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
-        <p className="text-turtle-foreground)]">{truncateAddress(transfer.sender, 4, 4)}</p>
+        <Account
+          network={transfer.sourceChain.network}
+          address={transfer.sender}
+          allowCopy={false}
+        />
         <ArrowRight className="mx-3 h-[0.8rem] w-[0.8rem]" fill={colors['turtle-secondary-dark']} />
-        <div className="mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300" />
-        <p className="text-turtle-foreground)]">{truncateAddress(transfer.recipient, 4, 4)}</p>
+        <Account
+          network={transfer.destChain.network}
+          address={transfer.recipient}
+          allowCopy={false}
+        />
       </div>
     </div>
   )

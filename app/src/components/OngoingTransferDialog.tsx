@@ -1,15 +1,10 @@
-'use client'
-
-import useLookupName from '@/hooks/useLookupName'
-import { Network } from '@/models/chain'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
-import { truncateAddress } from '@/utils/address'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
-import Identicon from '@polkadot/react-identicon'
 import Image from 'next/image'
+import Account from './Account'
 import { colors } from '../../tailwind.config'
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
@@ -34,11 +29,6 @@ export const OngoingTransferDialog = ({
   transferStatus?: string
   estimatedTransferDuration?: SnowbridgeStatus
 }) => {
-  const senderName = useLookupName(transfer.sourceChain.network, transfer.sender)
-  const recipientName = useLookupName(transfer.destChain.network, transfer.recipient)
-
-  const senderDisplay = senderName ? senderName : truncateAddress(transfer.sender, 4, 4)
-  const recipientDisplay = recipientName ? recipientName : truncateAddress(transfer.recipient, 4, 4)
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
@@ -133,47 +123,13 @@ export const OngoingTransferDialog = ({
               Sender
             </div>
             <div className="p-4 text-sm">
-              <div className="flex items-center gap-x-2">
-                {transfer.sourceChain.network == Network.Polkadot ? (
-                  <Identicon
-                    value={transfer.sender}
-                    size={16}
-                    theme="polkadot"
-                    className={'rounded-full border border-turtle-secondary-dark'}
-                  />
-                ) : (
-                  <div
-                    className={
-                      'h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300'
-                    }
-                  />
-                )}
-
-                <p className="text-sm">{senderDisplay}</p>
-              </div>
+              <Account network={transfer.sourceChain.network} address={transfer.sender} />
             </div>
-
             <div className="relative border-t p-4 text-sm">
               <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
                 Receiver
               </div>
-              <div className="flex items-center gap-x-2">
-                {transfer.destChain.name === Network.Polkadot ? (
-                  <Identicon
-                    value={transfer.recipient}
-                    size={16}
-                    theme="polkadot"
-                    className={'rounded-full border border-turtle-secondary-dark'}
-                  />
-                ) : (
-                  <div
-                    className={
-                      'h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300'
-                    }
-                  />
-                )}
-                <p className="text-sm">{recipientDisplay}</p>
-              </div>
+              <Account network={transfer.destChain.network} address={transfer.recipient} />
             </div>
           </div>
 

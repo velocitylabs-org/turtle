@@ -7,7 +7,7 @@ export default function NotificationSystem() {
   const { notifications, removeNotification } = useNotification()
 
   return (
-    <div className="pointer-events-none fixed right-[5vw] top-6 z-50 flex flex-col gap-2">
+    <div className="pointer-events-none fixed right-[5vw] top-6 z-[100] flex flex-col gap-2">
       <AnimatePresence>
         {notifications.map(n => (
           <NotificationToast key={n.id} notification={n} removeNotification={removeNotification} />
