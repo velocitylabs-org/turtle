@@ -2,7 +2,6 @@ import Identicon from '@polkadot/react-identicon'
 
 import useLookupName from '@/hooks/useLookupName'
 import { Network } from '@/models/chain'
-import { TransferResult, TxStatus } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 
@@ -11,12 +10,12 @@ import CopyAddress from './ClipboardCopy'
 function Account({
   network,
   address,
-  transferResult,
+  className,
   allowCopy = true,
 }: {
   network: Network
   address: string
-  transferResult?: TransferResult
+  className?: string
   allowCopy?: boolean
 }) {
   const accountName = useLookupName(network, address)
@@ -29,18 +28,13 @@ function Account({
           value={address}
           size={14}
           theme="polkadot"
-          className={cn(
-            'rounded-full border border-turtle-secondary-dark',
-            transferResult &&
-              (transferResult === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error-dark'),
-          )}
+          className={cn('rounded-full border border-turtle-secondary-dark', className)}
         />
       ) : (
         <div
           className={cn(
             'h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300',
-            transferResult &&
-              (transferResult === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error-dark'),
+            className,
           )}
         />
       )}

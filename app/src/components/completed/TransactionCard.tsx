@@ -22,11 +22,12 @@ const statusIcon = (status: TransferResult) => {
 }
 
 export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
+  const transferSucceeded = tx.result === TxStatus.Succeeded
   return (
     <div
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
-        tx.result === TxStatus.Succeeded
+        transferSucceeded
           ? 'border-turtle-level3  hover:bg-turtle-level1'
           : 'border-turtle-error  hover:border-turtle-error-dark',
       )}
@@ -57,7 +58,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.result === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error',
+                    transferSucceeded ? 'border-black' : 'border-turtle-error',
                   )}
                 />
               </div>
@@ -72,7 +73,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    tx.result === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error',
+                    transferSucceeded ? 'border-black' : 'border-turtle-error',
                   )}
                 />
               </div>
@@ -81,7 +82,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn(
               'text-[10px] sm:block sm:text-sm',
-              tx.result === TxStatus.Succeeded ? 'text-turtle-level5' : 'text-turtle-error',
+              transferSucceeded ? 'text-turtle-level5' : 'text-turtle-error',
             )}
           >
             {formatHours(tx.date)}
@@ -96,23 +97,23 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
           <Account
             network={tx.sourceChain.network}
             address={tx.sender}
-            transferResult={tx.result}
+            className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
             allowCopy={false}
           />
           <ArrowRight
             className="h-3 w-3"
-            {...(tx.result === TxStatus.Succeeded
+            {...(transferSucceeded
               ? { fill: colors['turtle-foreground'] }
               : { fill: colors['turtle-secondary-dark'] })}
           />
           <Account
             network={tx.destChain.network}
             address={tx.recipient}
-            transferResult={tx.result}
+            className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
             allowCopy={false}
           />
         </div>
-        {tx.result === TxStatus.Failed && (
+        {!transferSucceeded && (
           <p className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
             This transaction failed.{' '}
             <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">

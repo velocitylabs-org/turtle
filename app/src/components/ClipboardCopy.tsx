@@ -5,16 +5,16 @@ import { useEffect, useState } from 'react'
 
 function CopyAddress({ content, address }: { content: string; address: string }) {
   const { addNotification } = useNotification()
-  const [isCopyIndicator, setIsCopyIndicator] = useState(false)
+  const [showCopyIndicator, setShowCopyIndicator] = useState(false)
 
   useEffect(() => {
-    if (isCopyIndicator) {
+    if (showCopyIndicator) {
       const timer = setTimeout(() => {
-        setIsCopyIndicator(false)
+        setShowCopyIndicator(false)
       }, 1500)
       return () => clearTimeout(timer)
     }
-  }, [isCopyIndicator])
+  }, [showCopyIndicator])
 
   const handleClipboardCopy = (str: string) => {
     try {
@@ -32,12 +32,12 @@ function CopyAddress({ content, address }: { content: string; address: string })
   return (
     <div
       onClick={() => {
-        handleClipboardCopy(address), setIsCopyIndicator(true)
+        handleClipboardCopy(address), setShowCopyIndicator(true)
       }}
       className="flex cursor-pointer items-center space-x-2 text-sm"
     >
       <p>{content}</p>
-      {isCopyIndicator ? (
+      {showCopyIndicator ? (
         <CopyCheck className="h-3 w-3 text-turtle-secondary-dark" />
       ) : (
         <Copy className="h-3 w-3 text-turtle-level4" />
