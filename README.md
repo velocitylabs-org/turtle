@@ -10,7 +10,7 @@
   <h3 align="center">Turtle</h3>
 
   <p align="center">
-    Token transfers done right!
+    Frictionless cross-chain transfers
     <br />
     Made with 💚 by Velocity Labs
     <br/>
