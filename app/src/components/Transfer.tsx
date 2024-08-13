@@ -18,7 +18,7 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { Signer } from 'ethers'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import { resolveDirection } from '@/services/transfer'
-import { getEstimate } from '@/utils/transfer'
+import { getDurationEstimate } from '@/utils/transfer'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -77,7 +77,7 @@ const Transfer: FC = () => {
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
-  const estimate = direction ? getEstimate(direction) : undefined
+  const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
   return (
     <form
@@ -226,7 +226,7 @@ const Transfer: FC = () => {
         hidden={!isValid || requiresErc20SpendApproval}
         loading={loadingFees || !fees}
         fees={fees}
-        estimate={estimate}
+        durationEstimate={durationEstimate}
       />
 
       {/* Transfer Button */}

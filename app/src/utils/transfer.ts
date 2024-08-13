@@ -133,8 +133,8 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   }
 }
 
-//todo(team): query the right sdk to get the appropriate real-time estimate
-export function getEstimate(direction: Direction): string {
+//todo(team): query the right sdk to get the appropriate duration estimate
+export function getDurationEstimate(direction: Direction): string {
   switch (direction) {
     case Direction.ToEthereum:
       return '~30 min to 4 hours'
