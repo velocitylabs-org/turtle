@@ -75,9 +75,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Nuno (product & tech lead) - nuno@velocitylabs.org
 
-Noah (developer) - noah@velocitylabs.org
+Noah (software engineer) - noah@velocitylabs.org
 
-Victor (developer) - victor@velocitylabs.org
+Victor (software engineer) - victor@velocitylabs.org
 
 Brandon (design & UX) - https://brandonoxendine.com/
 
