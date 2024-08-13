@@ -17,6 +17,8 @@ import TokenSpendApproval from './TokenSpendApproval'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { Signer } from 'ethers'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
+import { resolveDirection } from '@/services/transfer'
+import { getEstimate } from '@/utils/transfer'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -72,6 +74,10 @@ const Transfer: FC = () => {
 
   const requiresErc20SpendApproval =
     erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
+
+  const direction =
+    sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
+  const estimate = direction ? getEstimate(direction) : undefined
 
   return (
     <form
@@ -220,6 +226,7 @@ const Transfer: FC = () => {
         hidden={!isValid || requiresErc20SpendApproval}
         loading={loadingFees || !fees}
         fees={fees}
+        estimate={estimate}
       />
 
       {/* Transfer Button */}

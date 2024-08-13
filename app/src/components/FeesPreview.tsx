@@ -8,10 +8,11 @@ import LoadingIcon from './svg/LoadingIcon'
 interface FeesPreviewProps {
   loading?: boolean
   fees?: Fees | null
+  estimate?: string
   hidden?: boolean
 }
 
-const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, hidden }) => {
+const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, estimate, hidden }) => {
   const renderContent = () => {
     if (loading) {
       return (
@@ -41,7 +42,7 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, hidden }) => {
               )}
             </div>
             <div className="flex items-center">
-              <div className="text-turtle-foreground">~30 mins</div>
+              {estimate && <div className="text-turtle-foreground">{estimate}</div>}
             </div>
           </div>
         </div>
