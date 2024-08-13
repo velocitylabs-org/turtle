@@ -79,6 +79,6 @@ Noah (software engineer) - noah@velocitylabs.org
 
 Victor (software engineer) - victor@velocitylabs.org
 
-Brandon (design & UX) - https://brandonoxendine.com/
+Brandon (design & ux) - https://brandonoxendine.com/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
