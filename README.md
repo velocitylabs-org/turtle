@@ -73,7 +73,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Nuno - nuno@velocitylabs.org
+Nuno (product & tech lead) - nuno@velocitylabs.org
 
 Noah - noah@velocitylabs.org
 
