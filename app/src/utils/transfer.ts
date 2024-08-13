@@ -4,6 +4,7 @@ import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Fees, StoredTransfer } from '@/models/transfer'
 import { Environment } from '@/store/environmentStore'
+import { Direction } from '@/services/transfer'
 
 /**
  * Safe version of `convertAmount` that handles `null` params
@@ -129,5 +130,26 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     }
     default:
       console.log(`Unsupported network: ${network}`)
+  }
+}
+
+//todo(team): query the right sdk to get the appropriate duration estimate
+export function getDurationEstimate(direction: Direction): string {
+  switch (direction) {
+    case Direction.ToEthereum:
+      return '~30 min to 4 hours'
+    case Direction.ToPolkadot:
+      return '~30 min'
+    // NOTE: We don't support these now but we are leaving a reasonable estimate anyways
+    // which is both safe and keeps us from needing to cascade a type-safe setup for these
+    // use cases in the meantime.
+    case Direction.WithinPolkadot:
+      return '~2 min'
+    case Direction.WithinEthereum:
+      return '~5 min'
+
+    // Should never happen
+    default:
+      return 'N/A'
   }
 }
