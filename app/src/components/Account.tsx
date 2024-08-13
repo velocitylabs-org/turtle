@@ -30,23 +30,17 @@ function Account({
           size={14}
           theme="polkadot"
           className={cn(
-            'rounded-full border',
-            !transferResult
-              ? 'border-turtle-secondary-dark'
-              : transferResult === TxStatus.Succeeded
-                ? 'border-black'
-                : 'border-turtle-error-dark',
+            'rounded-full border border-turtle-secondary-dark',
+            transferResult &&
+              (transferResult === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error-dark'),
           )}
         />
       ) : (
         <div
           className={cn(
-            'h-4 w-4 rounded-full border bg-gradient-to-r from-violet-400 to-purple-300',
-            !transferResult
-              ? 'border-turtle-secondary-dark'
-              : transferResult === TxStatus.Succeeded
-                ? 'border-black'
-                : 'border-turtle-error-dark',
+            'h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300',
+            transferResult &&
+              (transferResult === TxStatus.Succeeded ? 'border-black' : 'border-turtle-error-dark'),
           )}
         />
       )}
