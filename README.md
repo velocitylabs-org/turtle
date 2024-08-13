@@ -75,10 +75,10 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Nuno (product & tech lead) - nuno@velocitylabs.org
 
-Noah - noah@velocitylabs.org
+Noah (developer) - noah@velocitylabs.org
 
-Victor - victor@velocitylabs.org
+Victor (developer) - victor@velocitylabs.org
 
-Brandon (Design & UX) - https://brandonoxendine.com/
+Brandon (design & UX) - https://brandonoxendine.com/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
