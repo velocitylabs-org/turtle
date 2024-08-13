@@ -79,6 +79,6 @@ Noah - noah@velocitylabs.org
 
 Victor - victor@velocitylabs.org
 
-Brandon (Design) - https://www.brandonoxendine.com/
+Brandon (Design & UX) - https://brandonoxendine.com/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
