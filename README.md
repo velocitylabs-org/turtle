@@ -33,7 +33,7 @@ Features:
 - [Soon]: Seamless XCM Transfers between all Polkadot parachains
 
 <br/>
-Turtle was developed with Typescript, Nextjs, and React.
+Turtle is developed with Typescript, Nextjs, and React.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
