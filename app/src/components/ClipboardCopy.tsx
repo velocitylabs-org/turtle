@@ -38,9 +38,9 @@ function CopyAddress({ content, address }: { content: string; address: string })
     >
       <p>{content}</p>
       {isCopyIndicator ? (
-        <CopyCheck className="h-3 w-3 text-turtle-primary" />
+        <CopyCheck className="h-3 w-3 text-turtle-secondary-dark" />
       ) : (
-        <Copy className="h-3 w-3 text-turtle-secondary-dark" />
+        <Copy className="h-3 w-3 text-turtle-level4" />
       )}
     </div>
   )
