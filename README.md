@@ -21,7 +21,7 @@
 
 <!-- ABOUT THE PROJECT -->
 
-## About The Project
+## About
 
 Turtle is your go to app when it comes to cross-chain transfers that leverage fully trustless infrastructure. We aim to provide a unified experience to transfer tokens anywhere.
 
@@ -78,5 +78,7 @@ Nuno (product & tech lead) - nuno@velocitylabs.org
 Noah - noah@velocitylabs.org
 
 Victor - victor@velocitylabs.org
+
+Brandon (Design) - https://www.brandonoxendine.com/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
