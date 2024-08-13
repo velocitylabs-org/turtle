@@ -1,22 +1,45 @@
 'use client'
 import { captureException } from '@sentry/nextjs'
 import { useEffect } from 'react'
+import Image from 'next/image'
+import Navbar from '@/components/NavBar'
 
-interface GlobalErrorProps {
-  error: Error & { digest?: string }
-  reset: () => void
-}
-
-const GlobalError: React.FC<GlobalErrorProps> = ({ error, reset }) => {
+const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
   useEffect(() => {
     captureException(error)
   }, [error])
 
   return (
     <html>
-      <body>
-        <h2>Something went wrong!</h2>
-        <button onClick={() => reset()}>Try again</button>
+      <body className="w-full">
+        {/* background */}
+        <Image
+          src="/turtle-background.webp"
+          alt="Turtle Background"
+          className="relative z-0"
+          fill
+          style={{ objectFit: 'cover' }}
+          sizes="100vw"
+          priority
+        />
+        {/* background overlay*/}
+        <div className="turtle-dark-overlay absolute h-full w-full"></div>
+
+        {/* Header */}
+        <div className="absolute inset-x-0 top-0">
+          <Navbar />
+        </div>
+
+        {/* Content */}
+        <section className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center">
+          <div className="flex flex-col items-center justify-center gap-8 text-white">
+            <h1 className="text-xl font-bold leading-5">500</h1>
+            <h2 className="text-4xl font-medium leading-[56px] tracking-tighter sm:text-[56px]">
+              Turtle is temporary unavailable.
+            </h2>
+            <div className="text-xl leading-5 underline">Try again later</div>
+          </div>
+        </section>
       </body>
     </html>
   )
