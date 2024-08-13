@@ -41,8 +41,9 @@ Turtle is developed with Typescript, Nextjs, and React.
 
 ## Contributing
 
-If you have a suggestion that would make turtle even better, please fork the repo and create a pull request. You can also simply open an issue.
-Don't forget to give the project a star! Thanks again!
+If you have a suggestion or want to contribute to Turtle, either fork the repo and create a pull request or simply open an issue.
+
+Don't forget to give the project a star. Thanks for your support!
 
 ### Top contributors:
 
