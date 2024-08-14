@@ -17,6 +17,13 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
   const network = toSnowbridgeNetwork(env)
   const x = environment.SNOWBRIDGE_ENV[network]
 
+  // apply custom api endpoints
+  if (env === Environment.Mainnet) {
+    x.config.ASSET_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL || ''
+    x.config.BRIDGE_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_BRIDGE_HUB_API_URL || ''
+    x.config.RELAY_CHAIN_URL = process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || ''
+  }
+
   if (x === undefined) {
     throw Error(`Unknown environment`)
   }
