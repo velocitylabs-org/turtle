@@ -5,8 +5,6 @@ import { Network } from '@/models/chain'
 import { motion } from 'framer-motion'
 import React from 'react'
 import Button from './Button'
-import { WalletNotAccessible } from './WalletNotAccessible'
-import { cn } from '@/utils/cn'
 
 interface WalletButtonProps {
   /** The network to connect to. */
@@ -18,7 +16,7 @@ interface WalletButtonProps {
 /**
  * Wallet button component that is intended to support connecting to various different networks.
  */
-const WalletButton = ({ network, className }: WalletButtonProps) => {
+const WalletButton: React.FC<WalletButtonProps> = ({ network, className }) => {
   const {
     disconnect: disconnectEvm,
     isConnected: evmIsConnected,
@@ -67,16 +65,9 @@ const WalletButton = ({ network, className }: WalletButtonProps) => {
         variant={isConnected ? 'outline' : 'primary'}
         disabled={disabled}
         size="sm"
-        className={cn(
-          'text-sm',
-          isConnected ? '' : 'w-[4.875rem]',
-          network === Network.Polkadot && 'hidden lg:block',
-        )}
+        className={`${isConnected ? '' : 'w-[4.875rem]'} text-sm`}
         onClick={buttonFunction}
       />
-      {network === Network.Polkadot && (
-        <WalletNotAccessible disabled={disabled} isConnected={isConnected} />
-      )}
     </motion.div>
   )
 }

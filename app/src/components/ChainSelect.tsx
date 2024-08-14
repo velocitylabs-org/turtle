@@ -126,7 +126,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                 </>
               )}
             </div>
-            {trailing && <div className="absolute right-0 z-[60] ml-2 mr-3">{trailing}</div>}
+            {trailing && <div className="absolute right-0 ml-2 mr-3">{trailing}</div>}
           </div>
         </Tooltip>
 
