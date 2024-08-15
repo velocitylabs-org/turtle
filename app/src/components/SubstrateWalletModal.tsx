@@ -3,6 +3,7 @@ import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { Account } from '@/store/substrateWalletStore'
 import { WalletSelect } from '@talismn/connect-components'
 import { FC } from 'react'
+import { WalletNotAccessible } from './WalletNotAccessible'
 
 const SubstrateWalletModal: FC = () => {
   const { substrateAccount, setSubstrateAccount, isModalOpen, closeModal } = useSubstrateWallet()
@@ -21,6 +22,7 @@ const SubstrateWalletModal: FC = () => {
       dappName="turtle"
       showAccountsList={true}
       open={isModalOpen}
+      footer={<WalletNotAccessible />}
       onWalletConnectClose={() => closeModal()}
       onAccountSelected={account => setSubstrateAccount(account)}
       onUpdatedAccounts={handleUpdatedAccounts}

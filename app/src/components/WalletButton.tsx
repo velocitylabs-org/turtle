@@ -5,7 +5,6 @@ import { Network } from '@/models/chain'
 import { motion } from 'framer-motion'
 import React from 'react'
 import Button from './Button'
-import { WalletNotAccessible } from './WalletNotAccessible'
 import { cn } from '@/utils/cn'
 
 interface WalletButtonProps {
@@ -67,16 +66,9 @@ const WalletButton = ({ network, className }: WalletButtonProps) => {
         variant={isConnected ? 'outline' : 'primary'}
         disabled={disabled}
         size="sm"
-        className={cn(
-          'text-sm',
-          isConnected ? '' : 'w-[4.875rem]',
-          network === Network.Polkadot && 'hidden lg:block',
-        )}
+        className={cn('text-sm', isConnected ? '' : 'w-[4.875rem]')}
         onClick={buttonFunction}
       />
-      {network === Network.Polkadot && (
-        <WalletNotAccessible disabled={disabled} isConnected={isConnected} />
-      )}
     </motion.div>
   )
 }
