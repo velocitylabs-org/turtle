@@ -114,7 +114,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
         </Tooltip>
 
         {/* Dropdown */}
-        <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
+        <Dropdown isOpen={isOpen} dropdownRef={dropdownRef} disableScroll={options.length < 7}>
           {options.map(option => {
             if (option.token === null) return null
             return (

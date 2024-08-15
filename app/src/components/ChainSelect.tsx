@@ -130,7 +130,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
           </div>
         </Tooltip>
 
-        <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
+        <Dropdown isOpen={isOpen} dropdownRef={dropdownRef} disableScroll={options.length < 7}>
           {options.map(option => (
             <li
               key={option.uid}
