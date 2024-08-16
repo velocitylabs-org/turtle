@@ -6,6 +6,7 @@ import { getErc20TokenUSDValue } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { trackTransferMetrics } from '@/utils/analytics'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
@@ -116,6 +117,7 @@ const useTransfer = () => {
       const tokenData = await getErc20TokenUSDValue(token.address)
       const tokenUSDValue =
         tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+      const date = new Date()
 
       addTransferToStorage({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): replace with actual messageId
@@ -126,11 +128,26 @@ const useTransfer = () => {
         destChain: destinationChain,
         amount: amount.toString(),
         recipient,
-        date: new Date(),
+        date,
         environment,
         sendResult,
         fees,
       } satisfies StoredTransfer)
+
+      // metrics
+      if (environment === Environment.Mainnet) {
+        trackTransferMetrics({
+          sender: senderAddress,
+          sourceChain: sourceChain.name,
+          token: token.name,
+          amount: amount.toString(),
+          destinationChain: destinationChain.name,
+          usdValue: tokenUSDValue,
+          usdFees: fees.inDollars,
+          recipient: recipient,
+          date: date.toISOString(),
+        })
+      }
     } catch (e) {
       handleSendError(e)
     } finally {
