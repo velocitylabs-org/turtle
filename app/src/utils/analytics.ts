@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs'
+import { metrics } from '@sentry/nextjs'
 import { track } from '@vercel/analytics/react'
 
 export interface TransferMetric {
@@ -34,7 +34,7 @@ const trackTransferVercel = (data: TransferMetric) => {
 
 const trackTransferSentry = (data: TransferMetric) => {
   // Track the number of transfers (counter)
-  Sentry.metrics.increment('transfer_count', 1, {
+  metrics.increment('transfer_count', 1, {
     tags: {
       sender: data.sender,
       source_chain: data.sourceChain,
@@ -44,7 +44,7 @@ const trackTransferSentry = (data: TransferMetric) => {
   })
 
   // Track the USD value of the transfer (gauge)
-  Sentry.metrics.gauge('transfer_usd_value', data.usdValue, {
+  metrics.gauge('transfer_usd_value', data.usdValue, {
     tags: {
       source_chain: data.sourceChain,
       destination_chain: data.destinationChain,
@@ -54,7 +54,7 @@ const trackTransferSentry = (data: TransferMetric) => {
   })
 
   // Track the fees in USD (gauge)
-  Sentry.metrics.gauge('transfer_usd_fees', data.usdFees, {
+  metrics.gauge('transfer_usd_fees', data.usdFees, {
     tags: {
       source_chain: data.sourceChain,
       destination_chain: data.destinationChain,
@@ -64,5 +64,5 @@ const trackTransferSentry = (data: TransferMetric) => {
   })
 
   // Track unique senders (set)
-  Sentry.metrics.set('unique_senders', data.sender)
+  metrics.set('unique_senders', data.sender)
 }
