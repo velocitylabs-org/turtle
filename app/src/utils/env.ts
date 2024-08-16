@@ -4,3 +4,7 @@ export const projectId: string | undefined = process.env.NEXT_PUBLIC_WALLETCONNE
 export const vercelDomain: string | undefined = process.env.NEXT_PUBLIC_VERCEL_URL
 
 export const shouldUseTestnet = isDevelopment || isPreview
+
+export const isMobileDevice = (userAgent: string): boolean => {
+  return /android.+mobile|ip(hone|[oa]d)/i.test(userAgent)
+}
