@@ -10,10 +10,16 @@ import { headers } from 'next/headers'
 import { twMerge } from 'tailwind-merge'
 import { cookieToInitialState } from 'wagmi'
 import './globals.css'
+import { TURTLE_CONFIG } from '@/utils/turle.config'
 
 export const metadata: Metadata = {
-  title: 'Turtle',
-  description: 'Token transfers done right',
+  metadataBase: new URL(TURTLE_CONFIG.url!),
+  title: TURTLE_CONFIG.name,
+  description: TURTLE_CONFIG.description,
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
 }
 
 export default function RootLayout({
