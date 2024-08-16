@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export const WalletNotAccessible = () => {
   return (
-    <div className={cn('-mt-8 rounded-[20px] bg-turtle-secondary-light p-3 lg:hidden')}>
+    <div className={cn('-mt-8 rounded-[20px] bg-turtle-secondary-light p-3')}>
       <div className="justify-items flex flex-row items-center">
         <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
         <div className="justify-left ml-3 flex flex-col">
