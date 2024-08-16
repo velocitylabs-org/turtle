@@ -1,13 +1,13 @@
 import { Network } from '@/models/chain'
+import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
 import { captureException } from '@sentry/nextjs'
 import { Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
+import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
-import { Signer } from 'ethers'
 import useNotification from './useNotification'
-import { NotificationSeverity } from '@/models/notification'
 
 interface Params {
   context?: Context
@@ -91,12 +91,12 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
           severity: NotificationSeverity.Success,
         })
       } catch (error) {
-        console.log('Failed to approve ERC-20 spend:', error)
         addNotification({
           message: 'Failed to approve ERC-20 spend',
           severity: NotificationSeverity.Error,
         })
-        captureException(error)
+        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
+          captureException(error)
         setApproving(false)
       }
     },

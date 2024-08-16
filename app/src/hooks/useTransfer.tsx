@@ -10,7 +10,6 @@ import { trackTransferMetrics } from '@/utils/analytics'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
-import { SendValidationCode } from '@snowbridge/api/dist/toPolkadot'
 import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
 import useNotification from './useNotification'
@@ -51,7 +50,7 @@ const useTransfer = () => {
 
   const handleSendError = (e: unknown) => {
     console.error('Transfer error:', e)
-    captureException(e)
+    if (!(e instanceof Error) || !e.message.includes('ethers-user-denied')) captureException(e)
     addNotification({
       message: 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,
@@ -221,10 +220,6 @@ const useTransfer = () => {
       )
 
       if (plan.failure) {
-        if (plan.failure.errors[0]?.code === SendValidationCode.ERC20SpendNotApproved) {
-          await toPolkadot.approveTokenSpend(context, sender as Signer, token.address, amount)
-          return
-        }
         handleValidationFailure(plan)
         return
       }
