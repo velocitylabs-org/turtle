@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { shouldUseTestnet } from '@/utils/env'
+import { create } from 'zustand'
 
 export enum Environment {
   /* Polkadot - Ethereum */
