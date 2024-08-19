@@ -26,7 +26,7 @@ export namespace Mainnet {
     name: 'Moonbeam',
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 2004,
-    network: Network.Ethereum,
+    network: Network.Polkadot,
   }
 
   /*   export const Mythos: Chain = {

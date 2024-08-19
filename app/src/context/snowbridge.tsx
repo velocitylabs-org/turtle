@@ -35,7 +35,7 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
 export async function getContext(environment: environment.SnowbridgeEnvironment): Promise<Context> {
   const { config } = environment
 
-  return await contextFactory({
+  const ctx = await contextFactory({
     ethereum: {
       execution_url: config.ETHEREUM_API(ALCHEMY_API_KEY),
       beacon_url: config.BEACON_HTTP_API,
@@ -53,6 +53,8 @@ export async function getContext(environment: environment.SnowbridgeEnvironment)
       beefy: config.BEEFY_CONTRACT,
     },
   })
+
+  return ctx
 }
 
 /**
