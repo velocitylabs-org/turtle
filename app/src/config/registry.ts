@@ -21,6 +21,14 @@ export namespace Mainnet {
     network: Network.Polkadot,
   }
 
+  /*   export const Mythos: Chain = {
+    uid: 'mythos',
+    name: 'Mythos',
+    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+    chainId: 3369,
+    network: Network.Polkadot,
+  } */
+
   export const WETH: Token = {
     id: 'weth',
     name: 'Wrapped Ether',
