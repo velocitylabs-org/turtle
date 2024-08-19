@@ -6,10 +6,10 @@ import { getErc20TokenUSDValue } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { trackTransferMetrics } from '@/utils/analytics'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
-import { SendValidationCode } from '@snowbridge/api/dist/toPolkadot'
 import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
 import useNotification from './useNotification'
@@ -50,7 +50,7 @@ const useTransfer = () => {
 
   const handleSendError = (e: unknown) => {
     console.error('Transfer error:', e)
-    captureException(e)
+    if (!(e instanceof Error) || !e.message.includes('ethers-user-denied')) captureException(e)
     addNotification({
       message: 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,
@@ -116,6 +116,7 @@ const useTransfer = () => {
       const tokenData = await getErc20TokenUSDValue(token.address)
       const tokenUSDValue =
         tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+      const date = new Date()
 
       addTransferToStorage({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): replace with actual messageId
@@ -126,11 +127,26 @@ const useTransfer = () => {
         destChain: destinationChain,
         amount: amount.toString(),
         recipient,
-        date: new Date(),
+        date,
         environment,
         sendResult,
         fees,
       } satisfies StoredTransfer)
+
+      // metrics
+      if (environment === Environment.Mainnet) {
+        trackTransferMetrics({
+          sender: senderAddress,
+          sourceChain: sourceChain.name,
+          token: token.name,
+          amount: amount.toString(),
+          destinationChain: destinationChain.name,
+          usdValue: tokenUSDValue,
+          usdFees: fees.inDollars,
+          recipient: recipient,
+          date: date.toISOString(),
+        })
+      }
     } catch (e) {
       handleSendError(e)
     } finally {
@@ -204,10 +220,6 @@ const useTransfer = () => {
       )
 
       if (plan.failure) {
-        if (plan.failure.errors[0]?.code === SendValidationCode.ERC20SpendNotApproved) {
-          await toPolkadot.approveTokenSpend(context, sender as Signer, token.address, amount)
-          return
-        }
         handleValidationFailure(plan)
         return
       }
