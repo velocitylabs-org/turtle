@@ -21,6 +21,14 @@ export namespace Mainnet {
     network: Network.Polkadot,
   }
 
+  export const Moonbeam: Chain = {
+    uid: 'moonbeam',
+    name: 'Moonbeam',
+    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+    chainId: 2004,
+    network: Network.Ethereum,
+  }
+
   /*   export const Mythos: Chain = {
     uid: 'mythos',
     name: 'Mythos',
@@ -206,7 +214,7 @@ export namespace Testnet {
 
 export const REGISTRY = {
   mainnet: {
-    chains: [Mainnet.Ethereum, Mainnet.AssetHub],
+    chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Moonbeam],
     tokens: [
       Mainnet.WETH,
       Mainnet.WBTC,
