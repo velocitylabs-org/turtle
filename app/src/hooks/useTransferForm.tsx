@@ -8,7 +8,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
-import { isValidAddressOfNetwork } from '@/utils/address'
+import { isValidAddressOfType } from '@/utils/address'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -203,7 +203,7 @@ const useTransferForm = () => {
     const isValidAddress =
       !manualRecipient.enabled ||
       !destinationChain ||
-      isValidAddressOfNetwork(manualRecipient.address, destinationChain.network) ||
+      isValidAddressOfType(manualRecipient.address, destinationChain.addressType) ||
       manualRecipient.address === ''
 
     if (isValidAddress) setManualRecipientError('')
