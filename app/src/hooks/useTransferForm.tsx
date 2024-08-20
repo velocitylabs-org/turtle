@@ -33,7 +33,7 @@ const initValues: FormInputs = {
 const useTransferForm = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
-  const { environment } = useEnvironment()
+  const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
 
   const {

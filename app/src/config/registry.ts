@@ -250,6 +250,22 @@ export const REGISTRY = {
   },
 }
 
+export function getFilteredSourceChains(
+  _destinationChain?: Chain | null,
+  _token?: Token | null,
+): Chain[] {
+  return REGISTRY.mainnet.chains.filter(chain => chain !== Mainnet.Mythos)
+}
+
+export function getFilteredDestinationChains(
+  sourceChain?: Chain | null,
+  _token?: Token | null,
+): Chain[] {
+  if (sourceChain !== Mainnet.Ethereum)
+    return REGISTRY.mainnet.chains.filter(chain => chain !== Mainnet.Mythos)
+  return REGISTRY.mainnet.chains
+}
+
 export function getNativeToken(chain: Chain): Token {
   switch (chain.uid) {
     case 'rococo-assethub':

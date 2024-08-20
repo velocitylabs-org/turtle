@@ -1,5 +1,5 @@
 'use client'
-import { REGISTRY } from '@/config/registry'
+import { getFilteredDestinationChains, getFilteredSourceChains, REGISTRY } from '@/config/registry'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
@@ -93,7 +93,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleSourceChainChange}
-              options={REGISTRY[environment].chains}
+              options={getFilteredSourceChains(destinationChain, tokenAmount?.token)}
               floatingLabel="From"
               placeholder="Source"
               trailing={<WalletButton addressType={sourceChain?.addressType} />}
@@ -145,7 +145,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleDestinationChainChange}
-              options={REGISTRY[environment].chains}
+              options={getFilteredDestinationChains(sourceChain, tokenAmount?.token)}
               floatingLabel="To"
               placeholder="Destination"
               manualRecipient={manualRecipient}
