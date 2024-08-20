@@ -13,6 +13,7 @@ export interface Chain {
   chainId: number
   /** Network the chain belongs to, e.g., Polkadot, Ethereum. */
   network: Network
+  /** Optionnal parameter for parachain only */
   destinationFeeDOT?: number
 }
 
