@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { Chain, Network } from '@/models/chain'
+import { AddressType, Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
@@ -11,6 +11,7 @@ export namespace Mainnet {
       'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
     chainId: 1,
     network: Network.Ethereum,
+    addressType: AddressType.EVM,
   }
 
   export const AssetHub: Chain = {
@@ -19,6 +20,7 @@ export namespace Mainnet {
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
     network: Network.Polkadot,
+    addressType: AddressType.SS58,
   }
 
   /* export const Moonbeam: Chain = {
@@ -27,6 +29,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
     chainId: 2004,
     network: Network.Polkadot,
+    addressType: AddressType.EVM,
   } */
 
   export const Mythos: Chain = {
@@ -35,6 +38,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
     chainId: 3369,
     network: Network.Polkadot,
+    addressType: AddressType.EVM,
   }
 
   export const WETH: Token = {
@@ -174,6 +178,7 @@ export namespace Testnet {
       'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
     chainId: 11155111,
     network: Network.Ethereum,
+    addressType: AddressType.EVM,
   }
 
   export const RococoAssetHub: Chain = {
@@ -182,6 +187,7 @@ export namespace Testnet {
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
     network: Network.Polkadot,
+    addressType: AddressType.SS58,
   }
 
   export const WETH: Token = {

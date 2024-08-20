@@ -13,9 +13,16 @@ export interface Chain {
   chainId: number
   /** Network the chain belongs to, e.g., Polkadot, Ethereum. */
   network: Network
+  /** Address type for the chain. This is needed because, for example, Mythical belongs to the Polkadot network but uses 20byte eth addresses  */
+  addressType?: AddressType
 }
 
 export enum Network {
   Ethereum = 'Ethereum',
   Polkadot = 'Polkadot',
+}
+
+export enum AddressType {
+  EVM = 'EVM', // 20 byte
+  SS58 = 'SS58', // 32 byte
 }
