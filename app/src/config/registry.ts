@@ -21,21 +21,21 @@ export namespace Mainnet {
     network: Network.Polkadot,
   }
 
-  export const Moonbeam: Chain = {
+  /* export const Moonbeam: Chain = {
     uid: 'moonbeam',
     name: 'Moonbeam',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
     chainId: 2004,
     network: Network.Polkadot,
-  }
+  } */
 
-  /*   export const Mythos: Chain = {
+  export const Mythos: Chain = {
     uid: 'mythos',
     name: 'Mythos',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
     chainId: 3369,
     network: Network.Polkadot,
-  } */
+  }
 
   export const WETH: Token = {
     id: 'weth',
@@ -62,6 +62,15 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
     decimals: 8,
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+  }
+
+  export const MYTH: Token = {
+    id: 'mythos',
+    name: 'Mythos',
+    symbol: 'MYTH',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    decimals: 18,
+    address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
   }
 
   export const SHIB: Token = {
@@ -214,7 +223,7 @@ export namespace Testnet {
 
 export const REGISTRY = {
   mainnet: {
-    chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Moonbeam],
+    chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Mythos],
     tokens: [
       Mainnet.WETH,
       Mainnet.WBTC,
