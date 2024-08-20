@@ -158,7 +158,7 @@ const useTransfer = () => {
           token.address,
           destinationChain.chainId,
           amount,
-          BigInt(0),
+          500_000_000n,
         )
 
       case Direction.ToEthereum:
