@@ -14,7 +14,7 @@ export interface Chain {
   /** Network the chain belongs to, e.g., Polkadot, Ethereum. */
   network: Network
   /** Optional parameter for parachains only. Used for xcm transfers */
-  destinationFeeDOT?: number
+  destinationFeeDOT?: string
 }
 
 export enum Network {

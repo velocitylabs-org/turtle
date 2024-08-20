@@ -35,7 +35,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
     chainId: 3369,
     network: Network.Polkadot,
-    destinationFeeDOT: 500_000_000,
+    destinationFeeDOT: '500000000',
   }
 
   export const WETH: Token = {
