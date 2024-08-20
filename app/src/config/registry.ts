@@ -7,20 +7,45 @@ export namespace Mainnet {
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
-    logoURI:
-      'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     chainId: 1,
     network: Network.Ethereum,
     addressType: AddressType.EVM,
+    transferableTo: [Mainnet.AssetHub, Mainnet.Mythos],
+    receivableTokens: [
+      Mainnet.WETH,
+      Mainnet.WBTC,
+      Mainnet.USDC,
+      Mainnet.USDT,
+      Mainnet.DAI,
+      Mainnet.TON,
+      Mainnet.TBTC,
+      Mainnet.WSTETH,
+      Mainnet.PEPE,
+      Mainnet.SHIB,
+    ],
   }
 
   export const AssetHub: Chain = {
     uid: 'polkadot-assethub',
     name: 'Polkadot Asset Hub',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     chainId: 1000,
     network: Network.Polkadot,
     addressType: AddressType.SS58,
+    transferableTo: [Mainnet.Ethereum],
+    receivableTokens: [
+      Mainnet.WETH,
+      Mainnet.WBTC,
+      Mainnet.USDC,
+      Mainnet.USDT,
+      Mainnet.DAI,
+      Mainnet.TON,
+      Mainnet.TBTC,
+      Mainnet.WSTETH,
+      Mainnet.PEPE,
+      Mainnet.SHIB,
+    ],
   }
 
   /* export const Moonbeam: Chain = {
@@ -39,6 +64,8 @@ export namespace Mainnet {
     chainId: 3369,
     network: Network.Polkadot,
     addressType: AddressType.EVM,
+    transferableTo: [],
+    receivableTokens: [Mainnet.MYTH],
   }
 
   export const WETH: Token = {
@@ -179,6 +206,8 @@ export namespace Testnet {
     chainId: 11155111,
     network: Network.Ethereum,
     addressType: AddressType.EVM,
+    transferableTo: [Testnet.RococoAssetHub],
+    receivableTokens: [Testnet.WETH, Testnet.VETH],
   }
 
   export const RococoAssetHub: Chain = {
@@ -188,6 +217,8 @@ export namespace Testnet {
     chainId: 1000,
     network: Network.Polkadot,
     addressType: AddressType.SS58,
+    transferableTo: [Testnet.Sepolia],
+    receivableTokens: [Testnet.WETH, Testnet.VETH],
   }
 
   export const WETH: Token = {
@@ -248,22 +279,6 @@ export const REGISTRY = {
     chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
     tokens: [Testnet.WETH, Testnet.VETH],
   },
-}
-
-export function getFilteredSourceChains(
-  _destinationChain?: Chain | null,
-  _token?: Token | null,
-): Chain[] {
-  return REGISTRY.mainnet.chains.filter(chain => chain !== Mainnet.Mythos)
-}
-
-export function getFilteredDestinationChains(
-  sourceChain?: Chain | null,
-  _token?: Token | null,
-): Chain[] {
-  if (sourceChain !== Mainnet.Ethereum)
-    return REGISTRY.mainnet.chains.filter(chain => chain !== Mainnet.Mythos)
-  return REGISTRY.mainnet.chains
 }
 
 export function getNativeToken(chain: Chain): Token {

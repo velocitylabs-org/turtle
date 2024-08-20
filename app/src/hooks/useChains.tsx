@@ -6,9 +6,9 @@ import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 
 interface Params {
-  supportedToken?: Token
-  supportedSourceChain?: Chain
-  supportedDestChain?: Chain
+  supportedToken?: Token | null
+  supportedSourceChain?: Chain | null
+  supportedDestChain?: Chain | null
 }
 
 const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }: Params = {}) => {
@@ -20,11 +20,7 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
 
     if (supportedSourceChain)
       filteredChains = getFilteredDestinationChains(env, supportedSourceChain, supportedToken)
-    else if (supportedDestChain)
-      filteredChains = getFilteredSourceChains(env, supportedDestChain, supportedToken)
-    else
-      filteredChains =
-        env === Environment.Mainnet ? REGISTRY.mainnet.chains : REGISTRY.testnet.chains
+    else filteredChains = getFilteredSourceChains(env, supportedDestChain, supportedToken)
 
     setChains(filteredChains)
   }, [supportedToken, supportedSourceChain, supportedDestChain, env])
@@ -33,9 +29,7 @@ const useChains = ({ supportedToken, supportedSourceChain, supportedDestChain }:
     filterChains()
   }, [filterChains])
 
-  return {
-    chains,
-  }
+  return chains
 }
 
 export default useChains
@@ -48,7 +42,8 @@ export function getFilteredSourceChains(
   const availableChains =
     environment === Environment.Mainnet ? REGISTRY.mainnet.chains : REGISTRY.testnet.chains
 
-  return availableChains.filter(chain => chain !== Mainnet.Mythos)
+  // filter out some Parachains
+  return availableChains.filter(chain => chain.uid !== Mainnet.Mythos.uid)
 }
 
 export function getFilteredDestinationChains(
@@ -59,7 +54,10 @@ export function getFilteredDestinationChains(
   const availableChains =
     environment === Environment.Mainnet ? REGISTRY.mainnet.chains : REGISTRY.testnet.chains
 
-  if (sourceChain !== Mainnet.Ethereum)
-    return availableChains.filter(chain => chain !== Mainnet.Mythos)
+  // Filter out some Parachains if the sourceChain is not Ethereum
+  if (sourceChain && sourceChain.uid !== Mainnet.Ethereum.uid) {
+    return availableChains.filter(chain => chain.uid !== Mainnet.Mythos.uid)
+  }
+
   return availableChains
 }
