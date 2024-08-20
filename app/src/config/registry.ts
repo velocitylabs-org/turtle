@@ -4,6 +4,7 @@ import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
+  // Forward declare chains without `transferableTo`
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
@@ -11,19 +12,8 @@ export namespace Mainnet {
     chainId: 1,
     network: Network.Ethereum,
     addressType: AddressType.EVM,
-    transferableTo: [Mainnet.AssetHub, Mainnet.Mythos],
-    receivableTokens: [
-      Mainnet.WETH,
-      Mainnet.WBTC,
-      Mainnet.USDC,
-      Mainnet.USDT,
-      Mainnet.DAI,
-      Mainnet.TON,
-      Mainnet.TBTC,
-      Mainnet.WSTETH,
-      Mainnet.PEPE,
-      Mainnet.SHIB,
-    ],
+    transferableTo: [],
+    receivableTokens: [],
   }
 
   export const AssetHub: Chain = {
@@ -33,19 +23,19 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     addressType: AddressType.SS58,
-    transferableTo: [Mainnet.Ethereum],
-    receivableTokens: [
-      Mainnet.WETH,
-      Mainnet.WBTC,
-      Mainnet.USDC,
-      Mainnet.USDT,
-      Mainnet.DAI,
-      Mainnet.TON,
-      Mainnet.TBTC,
-      Mainnet.WSTETH,
-      Mainnet.PEPE,
-      Mainnet.SHIB,
-    ],
+    transferableTo: [],
+    receivableTokens: [],
+  }
+
+  export const Mythos: Chain = {
+    uid: 'mythos',
+    name: 'Mythos',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    chainId: 3369,
+    network: Network.Polkadot,
+    addressType: AddressType.EVM,
+    transferableTo: [],
+    receivableTokens: [],
   }
 
   /* export const Moonbeam: Chain = {
@@ -57,16 +47,9 @@ export namespace Mainnet {
     addressType: AddressType.EVM,
   } */
 
-  export const Mythos: Chain = {
-    uid: 'mythos',
-    name: 'Mythos',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
-    chainId: 3369,
-    network: Network.Polkadot,
-    addressType: AddressType.EVM,
-    transferableTo: [],
-    receivableTokens: [Mainnet.MYTH],
-  }
+  // populate the `transferableTo` properties
+  Ethereum.transferableTo = [AssetHub.uid, Mythos.uid]
+  AssetHub.transferableTo = [Ethereum.uid]
 
   export const WETH: Token = {
     id: 'weth',
@@ -193,6 +176,35 @@ export namespace Mainnet {
     decimals: 18,
     address: '',
   }
+
+  // populate `receivableTokens` property
+  Ethereum.receivableTokens = [
+    Mainnet.WETH,
+    Mainnet.WBTC,
+    Mainnet.USDC,
+    Mainnet.USDT,
+    Mainnet.DAI,
+    Mainnet.TON,
+    Mainnet.TBTC,
+    Mainnet.WSTETH,
+    Mainnet.PEPE,
+    Mainnet.SHIB,
+  ]
+
+  AssetHub.receivableTokens = [
+    Mainnet.WETH,
+    Mainnet.WBTC,
+    Mainnet.USDC,
+    Mainnet.USDT,
+    Mainnet.DAI,
+    Mainnet.TON,
+    Mainnet.TBTC,
+    Mainnet.WSTETH,
+    Mainnet.PEPE,
+    Mainnet.SHIB,
+  ]
+
+  Mythos.receivableTokens = [Mainnet.MYTH]
 }
 
 /* Testnet :: Rococo - Sepolia */
@@ -206,7 +218,7 @@ export namespace Testnet {
     chainId: 11155111,
     network: Network.Ethereum,
     addressType: AddressType.EVM,
-    transferableTo: [Testnet.RococoAssetHub],
+    transferableTo: [],
     receivableTokens: [Testnet.WETH, Testnet.VETH],
   }
 
@@ -217,9 +229,13 @@ export namespace Testnet {
     chainId: 1000,
     network: Network.Polkadot,
     addressType: AddressType.SS58,
-    transferableTo: [Testnet.Sepolia],
+    transferableTo: [],
     receivableTokens: [Testnet.WETH, Testnet.VETH],
   }
+
+  // populate the `transferableTo` properties
+  Sepolia.transferableTo = [RococoAssetHub.uid]
+  RococoAssetHub.transferableTo = [Sepolia.uid]
 
   export const WETH: Token = {
     id: 'weth',

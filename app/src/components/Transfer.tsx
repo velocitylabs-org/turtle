@@ -81,10 +81,16 @@ const Transfer: FC = () => {
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
   const sourceChains = destinationChain
-    ? REGISTRY[environment].chains.filter(chain => chain.transferableTo.includes(destinationChain))
+    ? REGISTRY[environment].chains.filter(chain =>
+        chain.transferableTo.includes(destinationChain.uid),
+      )
     : REGISTRY[environment].chains.filter(chain => chain.transferableTo.length > 0)
 
-  const destinationChains = sourceChain ? sourceChain.transferableTo : REGISTRY[environment].chains
+  const destinationChains = sourceChain
+    ? sourceChain.transferableTo.map(
+        uid => REGISTRY[environment].chains.find(chain => chain.uid === uid)!,
+      )
+    : REGISTRY[environment].chains
 
   const tokens = destinationChain ? destinationChain.receivableTokens : REGISTRY[environment].tokens
 

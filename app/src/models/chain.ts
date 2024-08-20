@@ -13,8 +13,8 @@ export interface Chain {
    * Different networks may have chains with the same chain ID.
    */
   chainId: number
-  /** Chains that tokens can be transferred to. */
-  transferableTo: Chain[]
+  /** Chain uids that tokens can be transferred to. */
+  transferableTo: string[] // uid
   /** Tokens that can be received on this chain. */
   receivableTokens: Token[]
   /** Network the chain belongs to, e.g., Polkadot, Ethereum. */
