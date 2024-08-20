@@ -80,6 +80,18 @@ const Transfer: FC = () => {
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
+  const sourceChains = destinationChain
+    ? REGISTRY[environment].chains.filter(chain => chain.transferableTo.includes(destinationChain))
+    : REGISTRY[environment].chains.filter(chain => chain.transferableTo.length > 0)
+
+  const destinationChains = sourceChain ? sourceChain.transferableTo : REGISTRY[environment].chains
+
+  const tokens = destinationChain ? destinationChain.receivableTokens : REGISTRY[environment].tokens
+
+  console.log('sourceChain', sourceChains)
+  console.log('destinationChain', destinationChains)
+  console.log('tokenAmount', tokens)
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -94,7 +106,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleSourceChainChange}
-              options={REGISTRY[environment].chains}
+              options={sourceChains}
               floatingLabel="From"
               placeholder="Source"
               trailing={<WalletButton addressType={sourceChain?.addressType} />}
@@ -112,7 +124,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <TokenAmountSelect
               {...field}
-              options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
+              options={tokens.map(token => ({ token, amount: null }))}
               floatingLabel="Amount"
               disabled={transferStatus !== 'Idle'}
               secondPlaceholder={amountPlaceholder}
@@ -146,7 +158,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleDestinationChainChange}
-              options={REGISTRY[environment].chains}
+              options={destinationChains}
               floatingLabel="To"
               placeholder="Destination"
               manualRecipient={manualRecipient}
