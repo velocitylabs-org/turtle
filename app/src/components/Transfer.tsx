@@ -1,6 +1,11 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
+import useErc20Allowance from '@/hooks/useErc20Allowance'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
+import { resolveDirection } from '@/services/transfer'
+import { getDurationEstimate } from '@/utils/transfer'
+import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
@@ -12,13 +17,8 @@ import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
-import WalletButton from './WalletButton'
 import TokenSpendApproval from './TokenSpendApproval'
-import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
-import { Signer } from 'ethers'
-import useErc20Allowance from '@/hooks/useErc20Allowance'
-import { resolveDirection } from '@/services/transfer'
-import { getDurationEstimate } from '@/utils/transfer'
+import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -96,7 +96,7 @@ const Transfer: FC = () => {
               options={REGISTRY[environment].chains}
               floatingLabel="From"
               placeholder="Source"
-              trailing={<WalletButton network={sourceChain?.network} />}
+              trailing={<WalletButton addressType={sourceChain?.addressType} />}
               walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
@@ -152,7 +152,9 @@ const Transfer: FC = () => {
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
+                !manualRecipient.enabled && (
+                  <WalletButton addressType={destinationChain?.addressType} />
+                )
               }
               walletAddress={destinationWallet?.sender?.address}
               className="z-30"

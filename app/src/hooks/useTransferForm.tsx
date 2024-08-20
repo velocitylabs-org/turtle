@@ -61,8 +61,8 @@ const useTransferForm = () => {
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
-  const sourceWallet = useWallet(sourceChain?.network)
-  const destinationWallet = useWallet(destinationChain?.network)
+  const sourceWallet = useWallet(sourceChain?.addressType)
+  const destinationWallet = useWallet(destinationChain?.addressType)
 
   const balanceParams = useMemo(
     () => ({
