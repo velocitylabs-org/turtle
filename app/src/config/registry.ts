@@ -230,6 +230,7 @@ export const REGISTRY = {
       Mainnet.USDC,
       Mainnet.USDT,
       Mainnet.DAI,
+      Mainnet.MYTH,
       Mainnet.WSTETH,
       Mainnet.TBTC,
       Mainnet.TON,
