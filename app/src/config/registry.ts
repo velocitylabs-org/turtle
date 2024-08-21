@@ -39,14 +39,17 @@ export namespace Mainnet {
     receivableTokens: [],
   }
 
-  /* export const Moonbeam: Chain = {
-    uid: 'moonbeam',
-    name: 'Moonbeam',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
-    chainId: 2004,
-    network: Network.Polkadot,
-    addressType: AddressType.EVM,
-  } */
+  // export const Moonbeam: Chain = {
+  //   uid: 'moonbeam',
+  //   name: 'Moonbeam',
+  //   logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+  //   chainId: 2004,
+  //   destinationFeeDOT: 'To be confirmed', // To do
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['evm'],
+  //   transferableTo: [],
+  //   receivableTokens: [],
+  // }
 
   // populate the `transferableTo` properties
   Ethereum.transferableTo = [AssetHub.uid, Mythos.uid]
@@ -87,6 +90,15 @@ export namespace Mainnet {
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
   }
+
+  // export const GLMR: Token = {
+  //   id: 'moonbeam',
+  //   name: 'Moonbeam',
+  //   symbol: 'GLMR',
+  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+  //   decimals: 18,
+  //   address: '',
+  // }
 
   export const SHIB: Token = {
     id: 'shib',
@@ -206,6 +218,8 @@ export namespace Mainnet {
   ]
 
   Mythos.receivableTokens = [Mainnet.MYTH]
+
+  // Moonbeam.receivableTokens = [Mainnet.GLMR]
 }
 
 /* Testnet :: Rococo - Sepolia */
