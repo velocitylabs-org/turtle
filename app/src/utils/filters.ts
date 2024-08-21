@@ -18,15 +18,20 @@ export const getFilteredSourceChains = (
 }
 
 /** Filters all chains by compatibility for the selected source and token. */
-// TODO: include Token
 export const getFilteredDestinationChains = (
   env: Environment,
   sourceChain: Chain | null,
-  _token: Token | null,
+  token: Token | null,
 ) => {
-  const destinationChains = sourceChain
+  let destinationChains = sourceChain
     ? sourceChain.transferableTo.map(uid => REGISTRY[env].chains.find(chain => chain.uid === uid)!)
     : REGISTRY[env].chains
+
+  if (token) {
+    destinationChains = destinationChains.filter(chain =>
+      chain.receivableTokens.some(receivableToken => receivableToken.id === token.id),
+    )
+  }
 
   return destinationChains
 }
