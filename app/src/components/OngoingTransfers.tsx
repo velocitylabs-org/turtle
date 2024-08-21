@@ -55,7 +55,7 @@ const OngoingTransfers = ({
     <div>
       {transferContext && ongoingTransfers && ongoingTransfers.length > 0 && (
         <div className="my-20">
-          <div className="self-center text-center text-3xl tracking-tight text-black">
+          <div className="xl-letter-spacing self-center text-center text-3xl text-black">
             In Progress
           </div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] bg-white p-[2.5rem] px-[1.5rem] py-[2rem] shadow-[0_2px_16px_0px_#00000026] sm:p-[2.5rem]">

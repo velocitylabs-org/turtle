@@ -92,12 +92,12 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           </div>
           <h3
             className={cn(
-              'flex items-center space-x-1 text-3xl font-medium leading-none sm:text-5xl ',
+              'xxl-letter-spacing flex items-center space-x-1 text-3xl font-medium leading-none sm:text-5xl',
               transferSucceeded ? 'text-turtle-success-dark' : ' text-turtle-error-dark',
             )}
           >
-            <p>{formatAmount(toHuman(tx.amount, tx.token))}</p>
-            <p>{tx.token.symbol}</p>
+            <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
+            <span>{tx.token.symbol}</span>
           </h3>
           <div
             className={cn(
