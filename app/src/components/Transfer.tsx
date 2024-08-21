@@ -1,9 +1,13 @@
 'use client'
-import { REGISTRY } from '@/config/registry'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
+import {
+  getFilteredDestinationChains,
+  getFilteredSourceChains,
+  getFilteredTokens,
+} from '@/utils/filters'
 import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -80,23 +84,14 @@ const Transfer: FC = () => {
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
-  const sourceChains = destinationChain
-    ? REGISTRY[environment].chains.filter(chain =>
-        chain.transferableTo.includes(destinationChain.uid),
-      )
-    : REGISTRY[environment].chains.filter(chain => chain.transferableTo.length > 0)
-
-  const destinationChains = sourceChain
-    ? sourceChain.transferableTo.map(
-        uid => REGISTRY[environment].chains.find(chain => chain.uid === uid)!,
-      )
-    : REGISTRY[environment].chains
-
-  const tokens = destinationChain ? destinationChain.receivableTokens : REGISTRY[environment].tokens
-
-  console.log('sourceChain', sourceChains)
-  console.log('destinationChain', destinationChains)
-  console.log('tokenAmount', tokens)
+  // filter chains and tokens
+  const sourceChains = getFilteredSourceChains(environment, destinationChain, tokenAmount!.token)
+  const destinationChains = getFilteredDestinationChains(
+    environment,
+    sourceChain,
+    tokenAmount!.token,
+  )
+  const tokens = getFilteredTokens(environment, sourceChain, destinationChain)
 
   return (
     <form
