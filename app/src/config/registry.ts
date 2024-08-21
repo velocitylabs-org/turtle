@@ -27,17 +27,17 @@ export namespace Mainnet {
     receivableTokens: [],
   }
 
-  export const Mythos: Chain = {
-    uid: 'mythos',
-    name: 'Mythos',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
-    chainId: 3369,
-    destinationFeeDOT: '500000000',
-    network: Network.Polkadot,
-    supportedAddressTypes: ['evm'],
-    transferableTo: [],
-    receivableTokens: [],
-  }
+  // export const Bifrost: Chain = {
+  //   uid: 'bifrost',
+  //   name: 'Bifrost',
+  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+  //   chainId: 2030,
+  //   destinationFeeDOT: '20000000',
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['ss58'],
+  //   transferableTo: [],
+  //   receivableTokens: [],
+  // }
 
   // export const Moonbeam: Chain = {
   //   uid: 'moonbeam',
@@ -50,6 +50,18 @@ export namespace Mainnet {
   //   transferableTo: [],
   //   receivableTokens: [],
   // }
+
+  export const Mythos: Chain = {
+    uid: 'mythos',
+    name: 'Mythos',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    chainId: 3369,
+    destinationFeeDOT: '500000000',
+    network: Network.Polkadot,
+    supportedAddressTypes: ['evm'],
+    transferableTo: [],
+    receivableTokens: [],
+  }
 
   // populate the `transferableTo` properties
   Ethereum.transferableTo = [AssetHub.uid, Mythos.uid]
@@ -220,6 +232,7 @@ export namespace Mainnet {
   Mythos.receivableTokens = [Mainnet.MYTH]
 
   // Moonbeam.receivableTokens = [Mainnet.GLMR]
+  // Bifrost.receivableTokens = [Mainnet.WETH]
 }
 
 /* Testnet :: Rococo - Sepolia */
