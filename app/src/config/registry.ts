@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { AddressType, Chain, Network } from '@/models/chain'
+import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
@@ -11,7 +11,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     chainId: 1,
     network: Network.Ethereum,
-    addressType: AddressType.EVM,
+    supportedAddressTypes: ['evm'],
     transferableTo: [],
     receivableTokens: [],
   }
@@ -22,7 +22,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     chainId: 1000,
     network: Network.Polkadot,
-    addressType: AddressType.SS58,
+    supportedAddressTypes: ['ss58'],
     transferableTo: [],
     receivableTokens: [],
   }
@@ -34,7 +34,7 @@ export namespace Mainnet {
     chainId: 3369,
     destinationFeeDOT: '500000000',
     network: Network.Polkadot,
-    addressType: AddressType.EVM,
+    supportedAddressTypes: ['evm'],
     transferableTo: [],
     receivableTokens: [],
   }
@@ -218,7 +218,7 @@ export namespace Testnet {
       'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
     chainId: 11155111,
     network: Network.Ethereum,
-    addressType: AddressType.EVM,
+    supportedAddressTypes: ['evm'],
     transferableTo: [],
     receivableTokens: [Testnet.WETH, Testnet.VETH],
   }
@@ -229,7 +229,7 @@ export namespace Testnet {
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
     network: Network.Polkadot,
-    addressType: AddressType.SS58,
+    supportedAddressTypes: ['ss58'],
     transferableTo: [],
     receivableTokens: [Testnet.WETH, Testnet.VETH],
   }

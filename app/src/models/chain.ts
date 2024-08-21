@@ -19,8 +19,8 @@ export interface Chain {
   receivableTokens: Token[]
   /** Network the chain belongs to, e.g., Polkadot, Ethereum. */
   network: Network
-  /** Address type for the chain. This is needed because, for example, Mythical belongs to the Polkadot network but uses 20byte eth addresses  */
-  addressType: AddressType
+  /** Address types for the chain. Multiple are supported.  */
+  supportedAddressTypes: AddressType[]
   /** Optional parameter for parachains only. Used for xcm transfers */
   destinationFeeDOT?: string
 }
@@ -30,7 +30,4 @@ export enum Network {
   Polkadot = 'Polkadot',
 }
 
-export enum AddressType {
-  EVM = 'EVM', // 20 byte
-  SS58 = 'SS58', // 32 byte
-}
+export type AddressType = 'evm' | 'ss58'

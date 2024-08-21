@@ -8,7 +8,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
-import { isValidAddressOfType } from '@/utils/address'
+import { isValidAddressOfTypes } from '@/utils/address'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -62,8 +62,8 @@ const useTransferForm = () => {
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
-  const sourceWallet = useWallet(sourceChain?.addressType)
-  const destinationWallet = useWallet(destinationChain?.addressType)
+  const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
+  const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
 
   const balanceParams = useMemo(
     () => ({
@@ -212,7 +212,7 @@ const useTransferForm = () => {
     const isValidAddress =
       !manualRecipient.enabled ||
       !destinationChain ||
-      isValidAddressOfType(manualRecipient.address, destinationChain.addressType) ||
+      isValidAddressOfTypes(manualRecipient.address, destinationChain.supportedAddressTypes) ||
       manualRecipient.address === ''
 
     if (isValidAddress) setManualRecipientError('')

@@ -115,7 +115,7 @@ const Transfer: FC = () => {
               options={sourceChains}
               floatingLabel="From"
               placeholder="Source"
-              trailing={<WalletButton addressType={sourceChain?.addressType} />}
+              trailing={<WalletButton addressType={sourceChain?.supportedAddressTypes.at(0)} />} // TODO: support all address types
               walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
@@ -171,8 +171,11 @@ const Transfer: FC = () => {
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                !manualRecipient.enabled && (
-                  <WalletButton addressType={destinationChain?.addressType} />
+                // TODO: support all address types
+                !manualRecipient.enabled &&
+                sourceChain?.supportedAddressTypes.at(0) !==
+                  destinationChain?.supportedAddressTypes.at(0) && (
+                  <WalletButton addressType={destinationChain?.supportedAddressTypes.at(0)} />
                 )
               }
               walletAddress={destinationWallet?.sender?.address}
