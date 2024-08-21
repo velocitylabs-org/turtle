@@ -41,6 +41,7 @@ const useTransferForm = () => {
     handleSubmit,
     setValue,
     reset,
+    resetField,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -122,9 +123,17 @@ const useTransferForm = () => {
           dismissible: true,
         })
       }
+      if (
+        tokenAmount &&
+        tokenAmount.token &&
+        destinationChain &&
+        !newValue?.receivableTokens.includes(tokenAmount.token)
+      ) {
+        resetField('tokenAmount')
+      }
       setValue('destinationChain', newValue)
     },
-    [sourceChain, environment, setValue, destinationChain, addNotification],
+    [sourceChain, environment, setValue, destinationChain, addNotification, tokenAmount],
   )
 
   const handleManualRecipientChange = useCallback(
