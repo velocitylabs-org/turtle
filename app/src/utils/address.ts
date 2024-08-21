@@ -25,25 +25,29 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
  * Validate if a given address is a legitimate address of a specific network.
  *
  * @param address - The address string to be validated.
- * @param type - The address type to validate the address against.
+ * @param types - The address types to validate the address against. Only one type needs to match.
  * @returns True if the address is a valid address of the network, false otherwise.
  */
-export const isValidAddressOfType = (address: string, type: AddressType): boolean => {
-  switch (type) {
-    case AddressType.EVM: {
-      const isEthereumValid = isValidEthereumAddress(address)
-      return isEthereumValid
+export const isValidAddressOfTypes = (address: string, types: AddressType[]): boolean => {
+  for (const type of types) {
+    switch (type) {
+      case 'evm': {
+        if (isValidEthereumAddress(address)) {
+          return true
+        }
+        break
+      }
+      case 'ss58': {
+        if (isValidSubstrateAddress(address)) {
+          return true
+        }
+        break
+      }
+      default:
+        console.log('Invalid type:', type)
     }
-
-    case AddressType.SS58: {
-      const isPolkadotValid = isValidSubstrateAddress(address)
-      return isPolkadotValid
-    }
-
-    default:
-      console.log('Invalid type:', type)
-      return false
   }
+  return false
 }
 
 /**

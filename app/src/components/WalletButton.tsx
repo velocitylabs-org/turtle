@@ -29,17 +29,17 @@ const WalletButton = ({ addressType, className }: WalletButtonProps) => {
 
   const { buttonFunction, isConnected, disabled } = (() => {
     switch (addressType) {
-      case AddressType.SS58:
-        return {
-          buttonFunction: substrateIsConnected ? disconnectSubstrate : () => openSubstrate(),
-          isConnected: substrateIsConnected,
-          disabled: false,
-        }
-
-      case AddressType.EVM:
+      case 'evm':
         return {
           buttonFunction: evmIsConnected ? disconnectEvm : () => openEvm(),
           isConnected: evmIsConnected,
+          disabled: false,
+        }
+
+      case 'ss58':
+        return {
+          buttonFunction: substrateIsConnected ? disconnectSubstrate : () => openSubstrate(),
+          isConnected: substrateIsConnected,
           disabled: false,
         }
 

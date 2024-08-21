@@ -29,7 +29,7 @@ const useWallet = (addressType?: AddressType): WalletInfo | undefined => {
   if (!addressType) return
 
   switch (addressType) {
-    case AddressType.EVM:
+    case 'evm':
       return {
         sender: signer,
         disconnect: evmDisconnect,
@@ -37,7 +37,7 @@ const useWallet = (addressType?: AddressType): WalletInfo | undefined => {
         openModal: openEvmModal,
         closeModal: closeEvmModal,
       }
-    case AddressType.SS58:
+    case 'ss58':
       return {
         sender: substrateAccount ?? undefined,
         disconnect: substrateDisconnect,
