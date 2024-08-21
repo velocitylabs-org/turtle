@@ -83,7 +83,7 @@ export const OngoingTransferDialog = ({
           </div>
           <h3
             className={
-              'xxl-letter-spacing flex items-center space-x-1 text-3xl font-medium leading-none text-turtle-secondary-dark sm:text-5xl'
+              'xxl-letter-spacing flex items-center space-x-1 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
             <span>{formatAmount(toHuman(transfer.amount, transfer.token))}</span>

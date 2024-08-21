@@ -38,7 +38,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
             <div>{statusIcon(tx.result)}</div>
             <div
               className={cn(
-                'no-letter-spacing flex items-center space-x-1 text-xl font-medium leading-none',
+                'no-letter-spacing flex items-center space-x-1 text-xl leading-none',
                 tx.result === TxStatus.Failed && 'text-turtle-error',
               )}
             >

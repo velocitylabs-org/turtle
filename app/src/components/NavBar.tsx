@@ -6,9 +6,7 @@ export default function NavBar() {
     <header className="relative z-50 flex w-full items-center justify-between px-6 py-5 sm:px-10 sm:py-9">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={40} />
-        <div className="turtle-text-shadow xl-letter-spacing text-[2rem] font-medium text-white">
-          Turtle
-        </div>
+        <div className="turtle-text-shadow xl-letter-spacing text-[2rem] text-white">Turtle</div>
         <div className="box-shadow flex h-[19px] items-center justify-center rounded-[4px] border border-white bg-white px-[5px]">
           <p className=" rainbow-text text-[12px] font-bold">BETA</p>
         </div>
