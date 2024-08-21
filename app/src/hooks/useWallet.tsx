@@ -1,5 +1,5 @@
 import useEvmWallet from '@/hooks/useEvmWallet'
-import { Network } from '@/models/chain'
+import { AddressType } from '@/models/chain'
 import useSubstrateWallet from './useSubstrateWallet'
 import { Sender } from './useTransfer'
 
@@ -11,7 +11,7 @@ export interface WalletInfo {
   closeModal: () => void
 }
 
-const useWallet = (network?: Network): WalletInfo | undefined => {
+const useWallet = (addressType?: AddressType): WalletInfo | undefined => {
   const {
     signer,
     disconnect: evmDisconnect,
@@ -26,10 +26,10 @@ const useWallet = (network?: Network): WalletInfo | undefined => {
     closeModal: closeSubstrateModal,
   } = useSubstrateWallet()
 
-  if (!network) return
+  if (!addressType) return
 
-  switch (network) {
-    case Network.Ethereum:
+  switch (addressType) {
+    case AddressType.EVM:
       return {
         sender: signer,
         disconnect: evmDisconnect,
@@ -37,7 +37,7 @@ const useWallet = (network?: Network): WalletInfo | undefined => {
         openModal: openEvmModal,
         closeModal: closeEvmModal,
       }
-    case Network.Polkadot:
+    case AddressType.SS58:
       return {
         sender: substrateAccount ?? undefined,
         disconnect: substrateDisconnect,

@@ -1,6 +1,11 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
+import useErc20Allowance from '@/hooks/useErc20Allowance'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
+import { resolveDirection } from '@/services/transfer'
+import { getDurationEstimate } from '@/utils/transfer'
+import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
@@ -12,13 +17,8 @@ import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
-import WalletButton from './WalletButton'
 import TokenSpendApproval from './TokenSpendApproval'
-import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
-import { Signer } from 'ethers'
-import useErc20Allowance from '@/hooks/useErc20Allowance'
-import { resolveDirection } from '@/services/transfer'
-import { getDurationEstimate } from '@/utils/transfer'
+import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -48,6 +48,7 @@ const Transfer: FC = () => {
     loadingBalance,
     balanceData,
   } = useTransferForm()
+
   const {
     allowance: erc20SpendAllowance,
     approveAllowance,
@@ -79,6 +80,24 @@ const Transfer: FC = () => {
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
+  const sourceChains = destinationChain
+    ? REGISTRY[environment].chains.filter(chain =>
+        chain.transferableTo.includes(destinationChain.uid),
+      )
+    : REGISTRY[environment].chains.filter(chain => chain.transferableTo.length > 0)
+
+  const destinationChains = sourceChain
+    ? sourceChain.transferableTo.map(
+        uid => REGISTRY[environment].chains.find(chain => chain.uid === uid)!,
+      )
+    : REGISTRY[environment].chains
+
+  const tokens = destinationChain ? destinationChain.receivableTokens : REGISTRY[environment].tokens
+
+  console.log('sourceChain', sourceChains)
+  console.log('destinationChain', destinationChains)
+  console.log('tokenAmount', tokens)
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -93,10 +112,10 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleSourceChainChange}
-              options={REGISTRY[environment].chains}
+              options={sourceChains}
               floatingLabel="From"
               placeholder="Source"
-              trailing={<WalletButton network={sourceChain?.network} />}
+              trailing={<WalletButton addressType={sourceChain?.addressType} />}
               walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
@@ -111,7 +130,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <TokenAmountSelect
               {...field}
-              options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
+              options={tokens.map(token => ({ token, amount: null }))}
               floatingLabel="Amount"
               disabled={transferStatus !== 'Idle'}
               secondPlaceholder={amountPlaceholder}
@@ -145,14 +164,16 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleDestinationChainChange}
-              options={REGISTRY[environment].chains}
+              options={destinationChains}
               floatingLabel="To"
               placeholder="Destination"
               manualRecipient={manualRecipient}
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
+                !manualRecipient.enabled && (
+                  <WalletButton addressType={destinationChain?.addressType} />
+                )
               }
               walletAddress={destinationWallet?.sender?.address}
               className="z-30"

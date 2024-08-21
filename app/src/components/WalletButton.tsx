@@ -1,28 +1,26 @@
 'use client'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import { Network } from '@/models/chain'
-import { motion } from 'framer-motion'
-import React from 'react'
-import Button from './Button'
+import { AddressType } from '@/models/chain'
 import { cn } from '@/utils/cn'
+import { motion } from 'framer-motion'
+import Button from './Button'
 
 interface WalletButtonProps {
-  /** The network to connect to. */
-  network?: Network
+  /** The address type of the chain. */
+  addressType?: AddressType
   /** Additional classes to apply to the button. */
   className?: string
 }
 
-/**
- * Wallet button component that is intended to support connecting to various different networks.
- */
-const WalletButton = ({ network, className }: WalletButtonProps) => {
+/** Wallet button component that is intended to support connecting to various different networks based on its address type. */
+const WalletButton = ({ addressType, className }: WalletButtonProps) => {
   const {
     disconnect: disconnectEvm,
     isConnected: evmIsConnected,
     openModal: openEvm,
   } = useEvmWallet()
+
   const {
     disconnect: disconnectSubstrate,
     isConnected: substrateIsConnected,
@@ -30,19 +28,21 @@ const WalletButton = ({ network, className }: WalletButtonProps) => {
   } = useSubstrateWallet()
 
   const { buttonFunction, isConnected, disabled } = (() => {
-    switch (network) {
-      case Network.Polkadot:
+    switch (addressType) {
+      case AddressType.SS58:
         return {
           buttonFunction: substrateIsConnected ? disconnectSubstrate : () => openSubstrate(),
           isConnected: substrateIsConnected,
           disabled: false,
         }
-      case Network.Ethereum:
+
+      case AddressType.EVM:
         return {
           buttonFunction: evmIsConnected ? disconnectEvm : () => openEvm(),
           isConnected: evmIsConnected,
           disabled: false,
         }
+
       default:
         return {
           buttonFunction: () => {},
@@ -54,7 +54,7 @@ const WalletButton = ({ network, className }: WalletButtonProps) => {
 
   return (
     <motion.div
-      key={network}
+      key={addressType}
       className={className}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
