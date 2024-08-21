@@ -171,8 +171,11 @@ const Transfer: FC = () => {
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                !manualRecipient.enabled && (
-                  <WalletButton addressType={destinationChain?.supportedAddressTypes.at(0)} /> // TODO: support all address types
+                // TODO: support all address types
+                !manualRecipient.enabled &&
+                sourceChain?.supportedAddressTypes.at(0) !==
+                  destinationChain?.supportedAddressTypes.at(0) && (
+                  <WalletButton addressType={destinationChain?.supportedAddressTypes.at(0)} />
                 )
               }
               walletAddress={destinationWallet?.sender?.address}

@@ -18,7 +18,7 @@ const useManualRecipientValidation = (
       isNotEnabled ||
       destChainNotSelected ||
       isEmptyAddress ||
-      isValidAddressOfTypes(manualRecipient.address, destinationChain.addressType)
+      isValidAddressOfTypes(manualRecipient.address, destinationChain.supportedAddressTypes)
 
     if (isValidAddress) setError('')
     else setError('Invalid Address')
