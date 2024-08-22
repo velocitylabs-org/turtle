@@ -27,6 +27,42 @@ export namespace Mainnet {
     receivableTokens: [],
   }
 
+  // export const Bifrost: Chain = {
+  //   uid: 'bifrost',
+  //   name: 'Bifrost',
+  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+  //   chainId: 2030,
+  //   destinationFeeDOT: '20000000',
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['ss58'],
+  //   transferableTo: [],
+  //   receivableTokens: [],
+  // }
+
+  // export const Hydration: Chain = {
+  //   uid: 'hydration',
+  //   name: 'Hydration',
+  //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+  //   chainId: 2034,
+  //   destinationFeeDOT: '', // To be confirmed
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['ss58'],
+  //   transferableTo: [],
+  //   receivableTokens: [],
+  // }
+
+  // export const Moonbeam: Chain = {
+  //   uid: 'moonbeam',
+  //   name: 'Moonbeam',
+  //   logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+  //   chainId: 2004,
+  //   destinationFeeDOT: '', // To be confirmed
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['evm'],
+  //   transferableTo: [],
+  //   receivableTokens: [],
+  // }
+
   export const Mythos: Chain = {
     uid: 'mythos',
     name: 'Mythos',
@@ -38,15 +74,6 @@ export namespace Mainnet {
     transferableTo: [],
     receivableTokens: [],
   }
-
-  /* export const Moonbeam: Chain = {
-    uid: 'moonbeam',
-    name: 'Moonbeam',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
-    chainId: 2004,
-    network: Network.Polkadot,
-    addressType: AddressType.EVM,
-  } */
 
   // populate the `transferableTo` properties
   Ethereum.transferableTo = [AssetHub.uid, Mythos.uid]
@@ -204,6 +231,12 @@ export namespace Mainnet {
     Mainnet.PEPE,
     Mainnet.SHIB,
   ]
+
+  // Bifrost.receivableTokens = [Mainnet.WETH]
+
+  // Hydration.receivableTokens = [""] // To be confirmed
+
+  // Moonbeam.receivableTokens = [Mainnet.WETH, Mainnet.WBTC, Mainnet.WSTETH]
 
   Mythos.receivableTokens = [Mainnet.MYTH]
 }
