@@ -30,12 +30,7 @@ export default function RootLayout({
   const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
     <html lang="en" className="h-full">
-      <body
-        className={twMerge(
-          dazzed.variable,
-          'min-h-full bg-turtle-tertiary font-dazzed font-medium',
-        )}
-      >
+      <body className={twMerge(dazzed.variable, 'min-h-full bg-turtle-tertiary font-dazzed')}>
         <Navbar />
         <NotificationSystem />
         <Web3ModalProvider initialState={initialState}>

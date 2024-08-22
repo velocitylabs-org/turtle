@@ -36,8 +36,9 @@
 
     --radius: 0.5rem;
 
-    --letter-spacing-xs: -0.04em;
-    --letter-spacing-sm: -0.03em;
+    --letter-spacing-xxl: -0.04em;
+    --letter-spacing-xl: -0.03em;
+    --letter-spacing-default: 0.03em;
   }
 
   .dark {
@@ -78,17 +79,27 @@
 
   body {
     @apply bg-background text-foreground;
+    letter-spacing: var(--letter-spacing-default);
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
-    letter-spacing: var(--letter-spacing-xs);
+  .xxl-letter-spacing {
+    letter-spacing: var(--letter-spacing-xxl);
+  }
+
+  .xl-letter-spacing {
+    letter-spacing: var(--letter-spacing-xl);
+  }
+
+  .default-letter-spacing {
+    letter-spacing: var(--letter-spacing-default);
+  }
+
+  .no-letter-spacing {
+    letter-spacing: 0;
   }
 
   p {
-    letter-spacing: var(--letter-spacing-sm);
+    letter-spacing: var(--letter-spacing-default);
   }
 
   h1.turtle-text-shadow {
