@@ -92,12 +92,12 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           </div>
           <h3
             className={cn(
-              'flex items-center space-x-1 text-3xl font-medium leading-none sm:text-5xl ',
+              'xxl-letter-spacing flex items-center space-x-1 text-3xl leading-none sm:text-5xl',
               transferSucceeded ? 'text-turtle-success-dark' : ' text-turtle-error-dark',
             )}
           >
-            <p>{formatAmount(toHuman(tx.amount, tx.token))}</p>
-            <p>{tx.token.symbol}</p>
+            <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
+            <span>{tx.token.symbol}</span>
           </h3>
           <div
             className={cn(
@@ -123,12 +123,12 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <ExclamationMark {...(!transferSucceeded && { fill: colors['turtle-error-dark'] })} />
             {transferSucceeded ? (
               <p>
-                <span className="pe-0.5 font-medium">Done!</span>
+                <span className="pe-0.5 font-semibold">Done!</span>
                 This transfer is completed.
               </p>
             ) : (
               <p className="w-5/6 space-x-0.5">
-                <span className="font-medium">This transfer failed.</span>
+                <span className="font-semibold">This transfer failed!</span>
                 {tx.errors?.length && tx.errors[tx.errors?.length - 1]}
                 <Link href={'/'} className="underline hover:text-turtle-error">
                   Try it again

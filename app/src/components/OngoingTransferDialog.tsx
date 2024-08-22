@@ -83,11 +83,11 @@ export const OngoingTransferDialog = ({
           </div>
           <h3
             className={
-              'flex items-center space-x-1 text-3xl font-medium leading-none text-turtle-secondary-dark sm:text-5xl'
+              'xxl-letter-spacing flex items-center space-x-1 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
-            <p>{formatAmount(toHuman(transfer.amount, transfer.token))}</p>
-            <p>{transfer.token.symbol}</p>
+            <span>{formatAmount(toHuman(transfer.amount, transfer.token))}</span>
+            <span>{transfer.token.symbol}</span>
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
             <div>{formatOngoingTransferDate(transfer.date)}</div>

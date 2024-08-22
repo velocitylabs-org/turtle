@@ -14,14 +14,14 @@ const Menu = ({
       <Button
         variant={initNewTransaction ? 'primary' : 'ghost'}
         size="lg"
-        className="relative z-10 rounded-2xl text-xl sm:text-large"
+        className="xl-letter-spacing relative z-10 rounded-2xl text-xl sm:text-large"
         onClick={() => !initNewTransaction && setNewTransferInit(TransferTab.New)}
       >
         <span className={cn(initNewTransaction ? 'text-black' : 'text-white')}>New</span>
       </Button>
       <Button
         variant={!initNewTransaction ? 'primary' : 'ghost'}
-        className="relative z-10 rounded-2xl text-xl sm:text-large"
+        className="xl-letter-spacing relative z-10 rounded-2xl text-xl sm:text-large"
         size="lg"
         disabled={!hasCompletedTransfers}
         onClick={() => initNewTransaction && setNewTransferInit(TransferTab.Completed)}
