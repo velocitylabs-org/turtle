@@ -39,12 +39,24 @@ export namespace Mainnet {
   //   receivableTokens: [],
   // }
 
+  // export const Hydration: Chain = {
+  //   uid: 'hydration',
+  //   name: 'Hydration',
+  //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+  //   chainId: 2034,
+  //   destinationFeeDOT: '', // To be confirmed
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['ss58'],
+  //   transferableTo: [],
+  //   receivableTokens: [],
+  // }
+
   // export const Moonbeam: Chain = {
   //   uid: 'moonbeam',
   //   name: 'Moonbeam',
   //   logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
   //   chainId: 2004,
-  //   destinationFeeDOT: 'To be confirmed', // To do
+  //   destinationFeeDOT: '', // To be confirmed
   //   network: Network.Polkadot,
   //   supportedAddressTypes: ['evm'],
   //   transferableTo: [],
@@ -102,15 +114,6 @@ export namespace Mainnet {
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
   }
-
-  // export const GLMR: Token = {
-  //   id: 'moonbeam',
-  //   name: 'Moonbeam',
-  //   symbol: 'GLMR',
-  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
-  //   decimals: 18,
-  //   address: '',
-  // }
 
   export const SHIB: Token = {
     id: 'shib',
@@ -229,10 +232,13 @@ export namespace Mainnet {
     Mainnet.SHIB,
   ]
 
-  Mythos.receivableTokens = [Mainnet.MYTH]
-
-  // Moonbeam.receivableTokens = [Mainnet.GLMR]
   // Bifrost.receivableTokens = [Mainnet.WETH]
+
+  // Hydration.receivableTokens = [""] // To be confirmed
+
+  // Moonbeam.receivableTokens = [Mainnet.WETH, Mainnet.WBTC, Mainnet.WSTETH]
+
+  Mythos.receivableTokens = [Mainnet.MYTH]
 }
 
 /* Testnet :: Rococo - Sepolia */
