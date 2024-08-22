@@ -6,6 +6,8 @@ const useCompletedTransfers = () => {
   const completedTransfers = useStore(useCompletedTransfersStore, state => state.completedTransfers)
   const addCompletedTransfer = useCompletedTransfersStore(state => state.addCompletedTransfer)
 
+  console.log('completedTransfers', completedTransfers)
+
   return { completedTransfers, addCompletedTransfer }
 }
 

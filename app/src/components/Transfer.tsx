@@ -1,13 +1,9 @@
 'use client'
+import { REGISTRY } from '@/config/registry'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
-import {
-  getFilteredDestinationChains,
-  getFilteredSourceChains,
-  getFilteredTokens,
-} from '@/utils/filters'
 import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -84,15 +80,6 @@ const Transfer: FC = () => {
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
-  // filter chains and tokens
-  const sourceChains = getFilteredSourceChains(environment, destinationChain, tokenAmount!.token)
-  const destinationChains = getFilteredDestinationChains(
-    environment,
-    sourceChain,
-    tokenAmount!.token,
-  )
-  const tokens = getFilteredTokens(environment, sourceChain, destinationChain)
-
   return (
     <form
       onSubmit={handleSubmit}
@@ -107,7 +94,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleSourceChainChange}
-              options={sourceChains}
+              options={REGISTRY[environment].chains}
               floatingLabel="From"
               placeholder="Source"
               trailing={<WalletButton addressType={sourceChain?.supportedAddressTypes.at(0)} />} // TODO: support all address types
@@ -125,7 +112,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <TokenAmountSelect
               {...field}
-              options={tokens.map(token => ({ token, amount: null }))}
+              options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
               floatingLabel="Amount"
               disabled={transferStatus !== 'Idle'}
               secondPlaceholder={amountPlaceholder}
@@ -159,7 +146,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleDestinationChainChange}
-              options={destinationChains}
+              options={REGISTRY[environment].chains}
               floatingLabel="To"
               placeholder="Destination"
               manualRecipient={manualRecipient}
