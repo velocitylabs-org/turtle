@@ -9,6 +9,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { isValidAddressType } from '@/utils/address'
+import { getAllowedDestinationChains, getAllowedSourceChains } from '@/utils/filters'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -92,6 +93,18 @@ const useTransferForm = () => {
     (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
     (manualRecipient.enabled || destinationWallet?.isConnected)
 
+  const canSwap = useCallback(() => {
+    if (!sourceChain || !destinationChain || !tokenAmount) return false
+    return (
+      getAllowedSourceChains(environment).some(
+        sc => sc.allowed && sc.chainId === destinationChain.chainId,
+      ) &&
+      getAllowedDestinationChains(environment, sourceChain, tokenAmount && tokenAmount.token).some(
+        dc => dc.allowed && dc.uid === destinationChain.uid, // Need to be confirmed & verified
+      )
+    )
+  }, [destinationChain, environment, sourceChain, tokenAmount])
+
   const handleSourceChainChange = useCallback(
     (newValue: Chain | null) => {
       if (newValue && newValue.uid === destinationChain?.uid) {
@@ -129,15 +142,10 @@ const useTransferForm = () => {
   )
 
   const handleSwapChains = useCallback(() => {
-    if (!sourceChain && !destinationChain) return
+    if (!sourceChain && !destinationChain && !canSwap()) return
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
-
-    // Reset selected token
-    if (tokenAmount && tokenAmount.token) {
-      resetField('tokenAmount')
-    }
   }, [sourceChain, destinationChain, setValue, tokenAmount, resetField])
 
   const handleManualRecipientChange = useCallback(
@@ -253,6 +261,7 @@ const useTransferForm = () => {
     errors,
     isValid: isFormValid,
     isValidating, // Only includes validating zod schema atm
+    canSwap,
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
