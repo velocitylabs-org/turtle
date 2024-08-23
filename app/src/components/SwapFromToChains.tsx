@@ -15,7 +15,7 @@ export const SwapChains = ({ handleChainChange }: { handleChainChange: () => voi
       className="-my-4 mx-auto flex cursor-pointer items-center justify-center space-x-0.5 p-2"
     >
       <Swap />
-      <p className="xl-letter-spacing text-sm text-turtle-level6">Swap From and To</p>
+      <p className="text-sm text-turtle-level6">Swap From and To</p>
     </motion.div>
   )
 }
