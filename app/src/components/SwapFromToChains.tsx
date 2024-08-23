@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Swap } from './svg/Swap'
 
-export const SwapFromToChains = ({ handleChainChange }: { handleChainChange: () => void }) => {
+export const SwapChains = ({ handleChainChange }: { handleChainChange: () => void }) => {
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
