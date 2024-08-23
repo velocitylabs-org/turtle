@@ -37,7 +37,7 @@ const SkeletonCard = () => {
       <div className="w-full space-y-2">
         {/* Transaction skeleton header */}
         <div className="flex items-center justify-between space-x-2 overflow-x-auto">
-          <div className="flex items-center space-x-1 text-xl font-medium leading-none">
+          <div className="flex items-center space-x-1 text-xl leading-none">
             {/* Transaction skeleton status */}
             <Skeleton className="h-5 w-6 rounded-lg" />
             {/* Transaction skeleton amount */}
