@@ -144,17 +144,12 @@ const useTransferForm = () => {
     ],
   )
 
-  const handleSwapFromToChains = useCallback(() => {
+  const handleSwapChains = useCallback(() => {
     if (!sourceChain && !destinationChain) return
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
-    // Notify swap chains
-    addNotification({
-      severity: NotificationSeverity.Default,
-      message: 'Chains swapped',
-      dismissible: true,
-    })
+
     // Reset selected token
     if (tokenAmount && tokenAmount.token) {
       resetField('tokenAmount')
@@ -277,7 +272,7 @@ const useTransferForm = () => {
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
-    handleSwapFromToChains,
+    handleSwapChains,
     handleManualRecipientChange,
     handleMaxButtonClick,
     sourceChain,

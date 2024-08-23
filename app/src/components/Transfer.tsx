@@ -19,7 +19,7 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import TokenSpendApproval from './TokenSpendApproval'
 import WalletButton from './WalletButton'
-import { SwapFromToChains } from './SwapFromToChains'
+import { SwapChains } from './SwapFromToChains'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -31,7 +31,7 @@ const Transfer: FC = () => {
     handleSubmit,
     handleSourceChainChange,
     handleDestinationChainChange,
-    handleSwapFromToChains,
+    handleSwapChains,
     handleManualRecipientChange,
     handleMaxButtonClick,
     sourceChain,
@@ -143,7 +143,7 @@ const Transfer: FC = () => {
         {/* Switch source and destination chains */}
         {sourceChain && destinationChain && (
           <AnimatePresence>
-            <SwapFromToChains handleChainChange={handleSwapFromToChains} />
+            <SwapChains handleChainChange={handleSwapChains} />
           </AnimatePresence>
         )}
 
