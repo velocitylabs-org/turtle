@@ -64,7 +64,8 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             ref={triggerRef}
             onClick={handleTriggerClick}
             className={cn(
-              'flex cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+              !disabled && 'cursor-pointer',
               disabled && 'opacity-30',
               error && 'border-turtle-error',
             )}
@@ -97,6 +98,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <input
                 ref={inputRef}
                 data-cy="amount-input"
+                disabled={disabled}
                 type="number"
                 className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
                 placeholder={secondPlaceholder ?? 'Amount'}
