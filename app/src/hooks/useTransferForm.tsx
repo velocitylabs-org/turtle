@@ -133,8 +133,28 @@ const useTransferForm = () => {
       }
       setValue('destinationChain', newValue)
     },
-    [sourceChain, environment, setValue, destinationChain, addNotification, tokenAmount],
+    [
+      sourceChain,
+      environment,
+      setValue,
+      destinationChain,
+      addNotification,
+      tokenAmount,
+      resetField,
+    ],
   )
+
+  const handleSwapChains = useCallback(() => {
+    if (!sourceChain && !destinationChain) return
+    // Swap chains values
+    setValue('sourceChain', destinationChain)
+    setValue('destinationChain', sourceChain)
+
+    // Reset selected token
+    if (tokenAmount && tokenAmount.token) {
+      resetField('tokenAmount')
+    }
+  }, [sourceChain, destinationChain, setValue, tokenAmount, addNotification, resetField])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
@@ -252,6 +272,7 @@ const useTransferForm = () => {
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
+    handleSwapChains,
     handleManualRecipientChange,
     handleMaxButtonClick,
     sourceChain,
