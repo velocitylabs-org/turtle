@@ -4,7 +4,7 @@ import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 
 /** Filters all chains by compatibility for the selected destination and token. */
-export const getFilteredSourceChains = (env: Environment) => {
+export const getFilteredSourceChains = (env: Environment): (Chain & { allowed: boolean })[] => {
   const routes = REGISTRY[env].routes
 
   const chains = REGISTRY[env].chains.map(chain => {
@@ -16,9 +16,7 @@ export const getFilteredSourceChains = (env: Environment) => {
     }
   })
 
-  return {
-    chains,
-  }
+  return chains
 }
 
 /** Filters all chains by compatibility for the selected source and token. */
@@ -47,20 +45,21 @@ export const getFilteredDestinationChains = (
 export const getFilteredTokens = (
   env: Environment,
   sourceChain: Chain | null,
-  destinationChain: Chain | null,
-) => {
-  if (!sourceChain || !destinationChain) return
+): (Token & { allowed: boolean })[] => {
+  const routes = REGISTRY[env].routes
 
-  const tokens: string[] = []
-  REGISTRY[env].routes.filter(r => {
-    if (r.from === sourceChain.uid && r.to === destinationChain.uid) {
-      tokens.push(...r.tokens)
+  const tokens = REGISTRY[env].tokens.map(token => {
+    const isAllowed = sourceChain
+      ? routes.some(route => route.from === sourceChain.uid && route.tokens.includes(token.id))
+      : false
+
+    return {
+      ...token,
+      allowed: isAllowed,
     }
   })
 
-  return {
-    tokens,
-  }
+  return tokens
 }
 
 /** Check is a route is allowed. */
