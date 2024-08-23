@@ -24,21 +24,25 @@ export const getAllowedDestinationChains = (
   env: Environment,
   sourceChain: Chain | null,
   token: Token | null,
-) => {
-  if (!sourceChain || !token) return
+): (Chain & { allowed: boolean })[] => {
+  const routes = REGISTRY[env].routes
 
-  const destinationChains: string[] = []
-  const destinationChainsData = REGISTRY[env].routes.filter(r => {
-    if (r.from === sourceChain.uid && r.tokens.includes(token.id)) {
-      destinationChains.push(r.to)
-      return r
+  return REGISTRY[env].chains.map(chain => {
+    const isAllowed =
+      sourceChain && token
+        ? routes.some(
+            route =>
+              route.from === sourceChain.uid &&
+              route.tokens.includes(token.id) &&
+              route.to === chain.uid,
+          )
+        : false
+
+    return {
+      ...chain,
+      allowed: isAllowed,
     }
   })
-
-  return {
-    destinationChainsData,
-    destinationChains,
-  }
 }
 
 /** Filters all tokens by by selected source chain and available routes */
@@ -60,24 +64,4 @@ export const getAllowedTokens = (
   })
 
   return tokens
-}
-
-/** Check is a route is allowed. */
-export const isRouteAllowed = (
-  env: Environment,
-  sourceChain: Chain | null,
-  destinationChain: Chain | null,
-  token: Token | null,
-) => {
-  if (!sourceChain || !destinationChain) return
-
-  const getRoute = REGISTRY[env].routes.filter(
-    r => r.from === destinationChain.uid && r.to === sourceChain.uid,
-  )
-  const isTokenInRoute = !!token && getRoute.length > 0 && getRoute[0].tokens.includes(token.id)
-
-  return {
-    isRouteAllowed: getRoute.length > 0,
-    isTokenInRoute,
-  }
 }
