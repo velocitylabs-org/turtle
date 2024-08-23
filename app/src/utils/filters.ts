@@ -3,8 +3,8 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 
-/** Filters all chains by compatibility for the selected destination and token. */
-export const getFilteredSourceChains = (env: Environment): (Chain & { allowed: boolean })[] => {
+/** Filters all chains by available routes. */
+export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: boolean })[] => {
   const routes = REGISTRY[env].routes
 
   const chains = REGISTRY[env].chains.map(chain => {
@@ -19,8 +19,8 @@ export const getFilteredSourceChains = (env: Environment): (Chain & { allowed: b
   return chains
 }
 
-/** Filters all chains by compatibility for the selected source and token. */
-export const getFilteredDestinationChains = (
+/** Filters all chains by selected source chain, selected token and available routes */
+export const getAllowedDestinationChains = (
   env: Environment,
   sourceChain: Chain | null,
   token: Token | null,
@@ -41,8 +41,8 @@ export const getFilteredDestinationChains = (
   }
 }
 
-/** Filters all tokens by compatibility for the selected source and destination chain. */
-export const getFilteredTokens = (
+/** Filters all tokens by by selected source chain and available routes */
+export const getAllowedTokens = (
   env: Environment,
   sourceChain: Chain | null,
 ): (Token & { allowed: boolean })[] => {
