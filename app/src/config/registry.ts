@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
-  // Forward declare chains without `transferableTo`
+  // Chains
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
@@ -12,8 +11,6 @@ export namespace Mainnet {
     chainId: 1,
     network: Network.Ethereum,
     supportedAddressTypes: ['evm'],
-    transferableTo: [],
-    receivableTokens: [],
   }
 
   export const AssetHub: Chain = {
@@ -23,8 +20,6 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    transferableTo: [],
-    receivableTokens: [],
   }
 
   // export const Bifrost: Chain = {
@@ -35,8 +30,6 @@ export namespace Mainnet {
   //   destinationFeeDOT: '20000000',
   //   network: Network.Polkadot,
   //   supportedAddressTypes: ['ss58'],
-  //   transferableTo: [],
-  //   receivableTokens: [],
   // }
 
   // export const Hydration: Chain = {
@@ -47,8 +40,6 @@ export namespace Mainnet {
   //   destinationFeeDOT: '', // To be confirmed
   //   network: Network.Polkadot,
   //   supportedAddressTypes: ['ss58'],
-  //   transferableTo: [],
-  //   receivableTokens: [],
   // }
 
   // export const Moonbeam: Chain = {
@@ -59,8 +50,6 @@ export namespace Mainnet {
   //   destinationFeeDOT: '', // To be confirmed
   //   network: Network.Polkadot,
   //   supportedAddressTypes: ['evm'],
-  //   transferableTo: [],
-  //   receivableTokens: [],
   // }
 
   export const Mythos: Chain = {
@@ -71,14 +60,9 @@ export namespace Mainnet {
     destinationFeeDOT: '500000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
-    transferableTo: [],
-    receivableTokens: [],
   }
 
-  // populate the `transferableTo` properties
-  Ethereum.transferableTo = [AssetHub.uid, Mythos.uid]
-  AssetHub.transferableTo = [Ethereum.uid]
-
+  // Tokens
   export const WETH: Token = {
     id: 'weth',
     name: 'Wrapped Ether',
@@ -204,46 +188,11 @@ export namespace Mainnet {
     decimals: 18,
     address: '',
   }
-
-  // populate `receivableTokens` property
-  Ethereum.receivableTokens = [
-    Mainnet.WETH,
-    Mainnet.WBTC,
-    Mainnet.USDC,
-    Mainnet.USDT,
-    Mainnet.DAI,
-    Mainnet.TON,
-    Mainnet.TBTC,
-    Mainnet.WSTETH,
-    Mainnet.PEPE,
-    Mainnet.SHIB,
-  ]
-
-  AssetHub.receivableTokens = [
-    Mainnet.WETH,
-    Mainnet.WBTC,
-    Mainnet.USDC,
-    Mainnet.USDT,
-    Mainnet.DAI,
-    Mainnet.TON,
-    Mainnet.TBTC,
-    Mainnet.WSTETH,
-    Mainnet.PEPE,
-    Mainnet.SHIB,
-  ]
-
-  // Bifrost.receivableTokens = [Mainnet.WETH]
-
-  // Hydration.receivableTokens = [""] // To be confirmed
-
-  // Moonbeam.receivableTokens = [Mainnet.WETH, Mainnet.WBTC, Mainnet.WSTETH]
-
-  Mythos.receivableTokens = [Mainnet.MYTH]
 }
 
 /* Testnet :: Rococo - Sepolia */
 export namespace Testnet {
-  /* Mainnet :: Polkadot - Ethereum */
+  // Chains
   export const Sepolia: Chain = {
     uid: 'sepolia',
     name: 'Sepolia',
@@ -252,8 +201,6 @@ export namespace Testnet {
     chainId: 11155111,
     network: Network.Ethereum,
     supportedAddressTypes: ['evm'],
-    transferableTo: [],
-    receivableTokens: [Testnet.WETH, Testnet.VETH],
   }
 
   export const RococoAssetHub: Chain = {
@@ -263,14 +210,9 @@ export namespace Testnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    transferableTo: [],
-    receivableTokens: [Testnet.WETH, Testnet.VETH],
   }
 
-  // populate the `transferableTo` properties
-  Sepolia.transferableTo = [RococoAssetHub.uid]
-  RococoAssetHub.transferableTo = [Sepolia.uid]
-
+  // Tokens
   export const WETH: Token = {
     id: 'weth',
     name: 'Wrapped Ether',
@@ -324,10 +266,58 @@ export const REGISTRY = {
       Mainnet.SHIB,
       Mainnet.PEPE,
     ],
+    routes: [
+      {
+        from: Mainnet.Ethereum.uid,
+        to: Mainnet.AssetHub.uid,
+        tokens: [
+          Mainnet.WETH.id,
+          Mainnet.WBTC.id,
+          Mainnet.USDC.id,
+          Mainnet.USDT.id,
+          Mainnet.DAI.id,
+          Mainnet.MYTH.id,
+          Mainnet.WSTETH.id,
+          Mainnet.TBTC.id,
+          Mainnet.TON.id,
+          Mainnet.SHIB.id,
+          Mainnet.PEPE.id,
+        ],
+      },
+      { from: Mainnet.Ethereum.uid, to: Mainnet.Mythos.uid, tokens: [Mainnet.MYTH.id] },
+      {
+        from: Mainnet.AssetHub.uid,
+        to: Mainnet.Ethereum.uid,
+        tokens: [
+          Mainnet.WETH.id,
+          Mainnet.WBTC.id,
+          Mainnet.USDC.id,
+          Mainnet.USDT.id,
+          Mainnet.DAI.id,
+          Mainnet.WSTETH.id,
+          Mainnet.TBTC.id,
+          Mainnet.TON.id,
+          Mainnet.SHIB.id,
+          Mainnet.PEPE.id,
+        ],
+      },
+    ],
   },
   testnet: {
     chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
     tokens: [Testnet.WETH, Testnet.VETH],
+    routes: [
+      {
+        from: Testnet.Sepolia.uid,
+        to: Testnet.RococoAssetHub.uid,
+        tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      },
+      {
+        from: Testnet.RococoAssetHub.uid,
+        to: Testnet.Sepolia.uid,
+        tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      },
+    ],
   },
 }
 

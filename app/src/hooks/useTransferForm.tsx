@@ -123,25 +123,9 @@ const useTransferForm = () => {
           dismissible: true,
         })
       }
-      if (
-        tokenAmount &&
-        tokenAmount.token &&
-        destinationChain &&
-        !newValue?.receivableTokens.includes(tokenAmount.token)
-      ) {
-        resetField('tokenAmount')
-      }
       setValue('destinationChain', newValue)
     },
-    [
-      sourceChain,
-      environment,
-      setValue,
-      destinationChain,
-      addNotification,
-      tokenAmount,
-      resetField,
-    ],
+    [sourceChain, environment, setValue, destinationChain, addNotification],
   )
 
   const handleSwapChains = useCallback(() => {
@@ -154,7 +138,7 @@ const useTransferForm = () => {
     if (tokenAmount && tokenAmount.token) {
       resetField('tokenAmount')
     }
-  }, [sourceChain, destinationChain, setValue, tokenAmount, addNotification, resetField])
+  }, [sourceChain, destinationChain, setValue, tokenAmount, resetField])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),

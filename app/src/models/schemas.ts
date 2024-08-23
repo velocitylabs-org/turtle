@@ -19,9 +19,7 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   logoURI: z.string(),
   chainId: z.number(),
   network: z.nativeEnum(Network),
-  receivableTokens: z.array(tokenSchema),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
-  transferableTo: z.array(z.string()),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({

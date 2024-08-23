@@ -1,5 +1,3 @@
-import { Token } from './token'
-
 export interface Chain {
   /** Unique identifier for the chain, a human-readable string like 'ethereum' or 'assethub'. */
   uid: string
@@ -13,10 +11,6 @@ export interface Chain {
    * Different networks may have chains with the same chain ID.
    */
   chainId: number
-  /** Chain uids that tokens can be transferred to. */
-  transferableTo: string[] // uid
-  /** Tokens that can be received on this chain. */
-  receivableTokens: Token[]
   /** Network the chain belongs to, e.g., Polkadot, Ethereum. */
   network: Network
   /** Address types for the chain. Multiple are supported.  */
