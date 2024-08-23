@@ -1,6 +1,11 @@
 'use client'
 import { REGISTRY } from '@/config/registry'
+import useErc20Allowance from '@/hooks/useErc20Allowance'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
+import { resolveDirection } from '@/services/transfer'
+import { getDurationEstimate } from '@/utils/transfer'
+import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
@@ -12,13 +17,9 @@ import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
-import WalletButton from './WalletButton'
 import TokenSpendApproval from './TokenSpendApproval'
-import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
-import { Signer } from 'ethers'
-import useErc20Allowance from '@/hooks/useErc20Allowance'
-import { resolveDirection } from '@/services/transfer'
-import { getDurationEstimate } from '@/utils/transfer'
+import WalletButton from './WalletButton'
+import { SwapChains } from './SwapFromToChains'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -30,6 +31,7 @@ const Transfer: FC = () => {
     handleSubmit,
     handleSourceChainChange,
     handleDestinationChainChange,
+    handleSwapChains,
     handleManualRecipientChange,
     handleMaxButtonClick,
     sourceChain,
@@ -48,6 +50,7 @@ const Transfer: FC = () => {
     loadingBalance,
     balanceData,
   } = useTransferForm()
+
   const {
     allowance: erc20SpendAllowance,
     approveAllowance,
@@ -96,7 +99,7 @@ const Transfer: FC = () => {
               options={REGISTRY[environment].chains}
               floatingLabel="From"
               placeholder="Source"
-              trailing={<WalletButton network={sourceChain?.network} />}
+              trailing={<WalletButton addressType={sourceChain?.supportedAddressTypes.at(0)} />} // TODO: support all address types
               walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
@@ -137,6 +140,13 @@ const Transfer: FC = () => {
           )}
         />
 
+        {/* Switch source and destination chains */}
+        {sourceChain && destinationChain && (
+          <AnimatePresence>
+            <SwapChains handleChainChange={handleSwapChains} />
+          </AnimatePresence>
+        )}
+
         {/* Destination Chain */}
         <Controller
           name="destinationChain"
@@ -152,7 +162,12 @@ const Transfer: FC = () => {
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                !manualRecipient.enabled && <WalletButton network={destinationChain?.network} />
+                // TODO: support all address types
+                !manualRecipient.enabled &&
+                sourceChain?.supportedAddressTypes.at(0) !==
+                  destinationChain?.supportedAddressTypes.at(0) && (
+                  <WalletButton addressType={destinationChain?.supportedAddressTypes.at(0)} />
+                )
               }
               walletAddress={destinationWallet?.sender?.address}
               className="z-30"

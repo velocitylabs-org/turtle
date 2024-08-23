@@ -4,14 +4,6 @@ import { Chain, Network } from '@/models/chain'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 
-export const chainSchema: z.ZodType<Chain> = z.object({
-  uid: z.string(),
-  name: z.string(),
-  logoURI: z.string(),
-  chainId: z.number(),
-  network: z.nativeEnum(Network),
-})
-
 export const tokenSchema: z.ZodType<Token> = z.object({
   id: z.string(),
   name: z.string(),
@@ -19,6 +11,15 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),
+})
+
+export const chainSchema: z.ZodType<Chain> = z.object({
+  uid: z.string(),
+  name: z.string(),
+  logoURI: z.string(),
+  chainId: z.number(),
+  network: z.nativeEnum(Network),
+  supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({

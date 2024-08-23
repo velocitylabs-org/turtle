@@ -1,26 +1,68 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
+  // Chains
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
-    logoURI:
-      'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     chainId: 1,
     network: Network.Ethereum,
+    supportedAddressTypes: ['evm'],
   }
 
   export const AssetHub: Chain = {
     uid: 'polkadot-assethub',
     name: 'Polkadot Asset Hub',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     chainId: 1000,
     network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
   }
 
+  // export const Bifrost: Chain = {
+  //   uid: 'bifrost',
+  //   name: 'Bifrost',
+  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+  //   chainId: 2030,
+  //   destinationFeeDOT: '20000000',
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['ss58'],
+  // }
+
+  // export const Hydration: Chain = {
+  //   uid: 'hydration',
+  //   name: 'Hydration',
+  //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+  //   chainId: 2034,
+  //   destinationFeeDOT: '', // To be confirmed
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['ss58'],
+  // }
+
+  // export const Moonbeam: Chain = {
+  //   uid: 'moonbeam',
+  //   name: 'Moonbeam',
+  //   logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+  //   chainId: 2004,
+  //   destinationFeeDOT: '', // To be confirmed
+  //   network: Network.Polkadot,
+  //   supportedAddressTypes: ['evm'],
+  // }
+
+  export const Mythos: Chain = {
+    uid: 'mythos',
+    name: 'Mythos',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    chainId: 3369,
+    destinationFeeDOT: '500000000',
+    network: Network.Polkadot,
+    supportedAddressTypes: ['evm'],
+  }
+
+  // Tokens
   export const WETH: Token = {
     id: 'weth',
     name: 'Wrapped Ether',
@@ -46,6 +88,15 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
     decimals: 8,
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+  }
+
+  export const MYTH: Token = {
+    id: 'mythos',
+    name: 'Mythos',
+    symbol: 'MYTH',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    decimals: 18,
+    address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
   }
 
   export const SHIB: Token = {
@@ -141,7 +192,7 @@ export namespace Mainnet {
 
 /* Testnet :: Rococo - Sepolia */
 export namespace Testnet {
-  /* Mainnet :: Polkadot - Ethereum */
+  // Chains
   export const Sepolia: Chain = {
     uid: 'sepolia',
     name: 'Sepolia',
@@ -149,6 +200,7 @@ export namespace Testnet {
       'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
     chainId: 11155111,
     network: Network.Ethereum,
+    supportedAddressTypes: ['evm'],
   }
 
   export const RococoAssetHub: Chain = {
@@ -157,8 +209,10 @@ export namespace Testnet {
     logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
     chainId: 1000,
     network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
   }
 
+  // Tokens
   export const WETH: Token = {
     id: 'weth',
     name: 'Wrapped Ether',
@@ -198,23 +252,72 @@ export namespace Testnet {
 
 export const REGISTRY = {
   mainnet: {
-    chains: [Mainnet.Ethereum, Mainnet.AssetHub],
+    chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Mythos],
     tokens: [
       Mainnet.WETH,
       Mainnet.WBTC,
       Mainnet.USDC,
       Mainnet.USDT,
       Mainnet.DAI,
+      Mainnet.MYTH,
       Mainnet.WSTETH,
       Mainnet.TBTC,
       Mainnet.TON,
       Mainnet.SHIB,
       Mainnet.PEPE,
     ],
+    routes: [
+      {
+        from: Mainnet.Ethereum.uid,
+        to: Mainnet.AssetHub.uid,
+        tokens: [
+          Mainnet.WETH.id,
+          Mainnet.WBTC.id,
+          Mainnet.USDC.id,
+          Mainnet.USDT.id,
+          Mainnet.DAI.id,
+          Mainnet.MYTH.id,
+          Mainnet.WSTETH.id,
+          Mainnet.TBTC.id,
+          Mainnet.TON.id,
+          Mainnet.SHIB.id,
+          Mainnet.PEPE.id,
+        ],
+      },
+      { from: Mainnet.Ethereum.uid, to: Mainnet.Mythos.uid, tokens: [Mainnet.MYTH.id] },
+      {
+        from: Mainnet.AssetHub.uid,
+        to: Mainnet.Ethereum.uid,
+        tokens: [
+          Mainnet.WETH.id,
+          Mainnet.WBTC.id,
+          Mainnet.USDC.id,
+          Mainnet.USDT.id,
+          Mainnet.DAI.id,
+          Mainnet.WSTETH.id,
+          Mainnet.TBTC.id,
+          Mainnet.TON.id,
+          Mainnet.SHIB.id,
+          Mainnet.PEPE.id,
+        ],
+      },
+    ],
   },
   testnet: {
     chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
     tokens: [Testnet.WETH, Testnet.VETH],
+    routes: [
+      {
+        from: Testnet.Sepolia.uid,
+        to: Testnet.RococoAssetHub.uid,
+        tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      },
+      {
+        from: Testnet.RococoAssetHub.uid,
+        to: Testnet.Sepolia.uid,
+        tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      },
+    ],
   },
 }
 

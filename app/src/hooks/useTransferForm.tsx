@@ -8,7 +8,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
-import { isValidAddressOfNetwork } from '@/utils/address'
+import { isValidAddressType } from '@/utils/address'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -33,7 +33,7 @@ const initValues: FormInputs = {
 const useTransferForm = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
-  const { environment } = useEnvironment()
+  const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
 
   const {
@@ -41,6 +41,7 @@ const useTransferForm = () => {
     handleSubmit,
     setValue,
     reset,
+    resetField,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -61,8 +62,8 @@ const useTransferForm = () => {
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
-  const sourceWallet = useWallet(sourceChain?.network)
-  const destinationWallet = useWallet(destinationChain?.network)
+  const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
+  const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
 
   const balanceParams = useMemo(
     () => ({
@@ -126,6 +127,18 @@ const useTransferForm = () => {
     },
     [sourceChain, environment, setValue, destinationChain, addNotification],
   )
+
+  const handleSwapChains = useCallback(() => {
+    if (!sourceChain && !destinationChain) return
+    // Swap chains values
+    setValue('sourceChain', destinationChain)
+    setValue('destinationChain', sourceChain)
+
+    // Reset selected token
+    if (tokenAmount && tokenAmount.token) {
+      resetField('tokenAmount')
+    }
+  }, [sourceChain, destinationChain, setValue, tokenAmount, resetField])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
@@ -203,7 +216,7 @@ const useTransferForm = () => {
     const isValidAddress =
       !manualRecipient.enabled ||
       !destinationChain ||
-      isValidAddressOfNetwork(manualRecipient.address, destinationChain.network) ||
+      isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
       manualRecipient.address === ''
 
     if (isValidAddress) setManualRecipientError('')
@@ -243,6 +256,7 @@ const useTransferForm = () => {
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
+    handleSwapChains,
     handleManualRecipientChange,
     handleMaxButtonClick,
     sourceChain,

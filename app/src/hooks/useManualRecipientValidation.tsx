@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { ManualRecipient } from '@/models/select'
-import { isValidAddressOfNetwork } from '@/utils/address'
+import { isValidAddressType } from '@/utils/address'
 import { useCallback, useEffect, useState } from 'react'
 
 const useManualRecipientValidation = (
@@ -18,7 +18,7 @@ const useManualRecipientValidation = (
       isNotEnabled ||
       destChainNotSelected ||
       isEmptyAddress ||
-      isValidAddressOfNetwork(manualRecipient.address, destinationChain.network)
+      isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes)
 
     if (isValidAddress) setError('')
     else setError('Invalid Address')

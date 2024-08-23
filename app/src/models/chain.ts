@@ -13,9 +13,15 @@ export interface Chain {
   chainId: number
   /** Network the chain belongs to, e.g., Polkadot, Ethereum. */
   network: Network
+  /** Address types for the chain. Multiple are supported.  */
+  supportedAddressTypes: AddressType[]
+  /** Optional parameter for parachains only. Used for xcm transfers */
+  destinationFeeDOT?: string
 }
 
 export enum Network {
   Ethereum = 'Ethereum',
   Polkadot = 'Polkadot',
 }
+
+export type AddressType = 'evm' | 'ss58'

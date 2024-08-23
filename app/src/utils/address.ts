@@ -1,4 +1,4 @@
-import { Network } from '@/models/chain'
+import { AddressType } from '@/models/chain'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { isAddress } from 'viem/utils'
@@ -22,26 +22,32 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
 }
 
 /**
- * Validate if a given address is a legitimate address of a specific network.
+ * Validate if a given address is a legitimate address of a specific address type such as ss58 or evm address.
  *
  * @param address - The address string to be validated.
- * @param network - The network to validate the address against.
+ * @param types - The address types to validate the address against. Only one type needs to match.
  * @returns True if the address is a valid address of the network, false otherwise.
  */
-export const isValidAddressOfNetwork = (address: string, network: Network): boolean => {
-  switch (network) {
-    case Network.Ethereum: {
-      const isEthereumValid = isValidEthereumAddress(address)
-      return isEthereumValid
+export const isValidAddressType = (address: string, types: AddressType[]): boolean => {
+  for (const type of types) {
+    switch (type) {
+      case 'evm': {
+        if (isValidEthereumAddress(address)) {
+          return true
+        }
+        break
+      }
+      case 'ss58': {
+        if (isValidSubstrateAddress(address)) {
+          return true
+        }
+        break
+      }
+      default:
+        console.log('Invalid type:', type)
     }
-    case Network.Polkadot: {
-      const isPolkadotValid = isValidSubstrateAddress(address)
-      return isPolkadotValid
-    }
-    default:
-      console.log('Invalid network type:', network)
-      return false
   }
+  return false
 }
 
 /**
