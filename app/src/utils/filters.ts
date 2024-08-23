@@ -4,33 +4,65 @@ import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 
 /** Filters all chains by compatibility for the selected destination and token. */
-// TODO
 export const getFilteredSourceChains = (
   env: Environment,
-  _destinationChain: Chain | null,
-  _token: Token | null,
+  destinationChain: Chain | null,
+  token: Token | null,
 ) => {
-  return REGISTRY[env].chains
+  if (!destinationChain || !token) return
+
+  const sourceChains: string[] = []
+  const sourceChainsData = REGISTRY[env].routes.filter(r => {
+    if (r.to === destinationChain.uid && r.tokens.includes(token.id)) {
+      sourceChains.push(r.from)
+      return r
+    }
+  })
+
+  return {
+    sourceChainsData,
+    sourceChains,
+  }
 }
 
 /** Filters all chains by compatibility for the selected source and token. */
-// TODO
 export const getFilteredDestinationChains = (
   env: Environment,
-  _sourceChain: Chain | null,
-  _token: Token | null,
+  sourceChain: Chain | null,
+  token: Token | null,
 ) => {
-  return REGISTRY[env].chains
+  if (!sourceChain || !token) return
+
+  const destinationChains: string[] = []
+  const destinationChainsData = REGISTRY[env].routes.filter(r => {
+    if (r.from === sourceChain.uid && r.tokens.includes(token.id)) {
+      destinationChains.push(r.to)
+      return r
+    }
+  })
+
+  return {
+    destinationChainsData,
+    destinationChains,
+  }
 }
 
 /** Filters all tokens by compatibility for the selected source and destination chain. */
-// TODO
 export const getFilteredTokens = (
   env: Environment,
-  _sourceChain: Chain | null,
-  _destinationChain: Chain | null,
+  sourceChain: Chain | null,
+  destinationChain: Chain | null,
 ) => {
-  const tokens = REGISTRY[env].tokens
+  if (!sourceChain || !destinationChain) return
 
-  return tokens
+  const tokens: string[] = []
+  REGISTRY[env].routes.filter(r => {
+    if (r.from === sourceChain.uid && r.to === destinationChain.uid) {
+      tokens.push(...r.tokens)
+    }
+  })
+
+  return {
+    tokens,
+  }
 }
