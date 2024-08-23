@@ -4,24 +4,20 @@ import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 
 /** Filters all chains by compatibility for the selected destination and token. */
-export const getFilteredSourceChains = (
-  env: Environment,
-  destinationChain: Chain | null,
-  token: Token | null,
-) => {
-  if (!destinationChain || !token) return
+export const getFilteredSourceChains = (env: Environment) => {
+  const routes = REGISTRY[env].routes
 
-  const sourceChains: string[] = []
-  const sourceChainsData = REGISTRY[env].routes.filter(r => {
-    if (r.to === destinationChain.uid && r.tokens.includes(token.id)) {
-      sourceChains.push(r.from)
-      return r
+  const chains = REGISTRY[env].chains.map(chain => {
+    const isAllowed = routes.some(route => route.from === chain.uid)
+
+    return {
+      ...chain,
+      allowed: isAllowed,
     }
   })
 
   return {
-    sourceChainsData,
-    sourceChains,
+    chains,
   }
 }
 
