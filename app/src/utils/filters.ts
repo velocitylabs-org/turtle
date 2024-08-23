@@ -79,10 +79,10 @@ export const isRouteAllowed = (
   const getRoute = REGISTRY[env].routes.filter(
     r => r.from === destinationChain.uid && r.to === sourceChain.uid,
   )
-  const isTokenInRoute = token && getRoute.length && getRoute[0].tokens.includes(token.id)
+  const isTokenInRoute = !!token && getRoute.length > 0 && getRoute[0].tokens.includes(token.id)
 
   return {
-    isRouteAllowed: getRoute.length,
+    isRouteAllowed: getRoute.length > 0,
     isTokenInRoute,
   }
 }
