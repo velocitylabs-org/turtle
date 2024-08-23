@@ -93,7 +93,7 @@ const useTransferForm = () => {
     (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
     (manualRecipient.enabled || destinationWallet?.isConnected)
 
-  const canSwap = useCallback(() => {
+  const allowSwap = useCallback(() => {
     if (!sourceChain || !destinationChain || !tokenAmount) return false
     return (
       getAllowedSourceChains(environment).some(
@@ -142,7 +142,7 @@ const useTransferForm = () => {
   )
 
   const handleSwapChains = useCallback(() => {
-    if (!sourceChain && !destinationChain && !canSwap()) return
+    if (!sourceChain && !destinationChain && !allowSwap()) return
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
@@ -261,7 +261,7 @@ const useTransferForm = () => {
     errors,
     isValid: isFormValid,
     isValidating, // Only includes validating zod schema atm
-    canSwap,
+    allowSwap,
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
