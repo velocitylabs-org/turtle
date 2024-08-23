@@ -66,3 +66,23 @@ export const getFilteredTokens = (
     tokens,
   }
 }
+
+/** Check is a route is allowed. */
+export const isRouteAllowed = (
+  env: Environment,
+  sourceChain: Chain | null,
+  destinationChain: Chain | null,
+  token: Token | null,
+) => {
+  if (!sourceChain || !destinationChain) return
+
+  const getRoute = REGISTRY[env].routes.filter(
+    r => r.from === destinationChain.uid && r.to === sourceChain.uid,
+  )
+  const isTokenInRoute = token && getRoute.length && getRoute[0].tokens.includes(token.id)
+
+  return {
+    isRouteAllowed: getRoute.length,
+    isTokenInRoute,
+  }
+}
