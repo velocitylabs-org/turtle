@@ -1,9 +1,13 @@
 'use client'
-import { REGISTRY } from '@/config/registry'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
+import {
+  getAllowedDestinationChains,
+  getAllowedSourceChains,
+  getAllowedTokens,
+} from '@/utils/filters'
 import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -15,11 +19,11 @@ import Credits from './Credits'
 import FeesPreview from './FeesPreview'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
+import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import TokenSpendApproval from './TokenSpendApproval'
 import WalletButton from './WalletButton'
-import { SwapChains } from './SwapFromToChains'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -96,7 +100,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleSourceChainChange}
-              options={REGISTRY[environment].chains}
+              options={getAllowedSourceChains(environment)}
               floatingLabel="From"
               placeholder="Source"
               trailing={<WalletButton addressType={sourceChain?.supportedAddressTypes.at(0)} />} // TODO: support all address types
@@ -114,9 +118,13 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <TokenAmountSelect
               {...field}
-              options={REGISTRY[environment].tokens.map(token => ({ token, amount: null }))}
+              options={getAllowedTokens(environment, sourceChain).map(token => ({
+                token,
+                amount: null,
+                allowed: token.allowed,
+              }))}
               floatingLabel="Amount"
-              disabled={transferStatus !== 'Idle'}
+              disabled={transferStatus !== 'Idle' || !sourceChain}
               secondPlaceholder={amountPlaceholder}
               error={errors.tokenAmount?.amount?.message || tokenAmountError}
               trailing={
@@ -155,7 +163,7 @@ const Transfer: FC = () => {
             <ChainSelect
               {...field}
               onChange={handleDestinationChainChange}
-              options={REGISTRY[environment].chains}
+              options={getAllowedDestinationChains(environment, sourceChain, tokenAmount!.token)}
               floatingLabel="To"
               placeholder="Destination"
               manualRecipient={manualRecipient}
@@ -171,7 +179,7 @@ const Transfer: FC = () => {
               }
               walletAddress={destinationWallet?.sender?.address}
               className="z-30"
-              disabled={transferStatus !== 'Idle'}
+              disabled={transferStatus !== 'Idle' || !sourceChain || !tokenAmount?.token}
             />
           )}
         />
