@@ -9,7 +9,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { isValidAddressType } from '@/utils/address'
-import { getAllowedDestinationChains, getAllowedSourceChains } from '@/utils/filters'
+import { isRouteAllowed } from '@/utils/filters'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -93,16 +93,14 @@ const useTransferForm = () => {
     (manualRecipient.enabled || destinationWallet?.isConnected)
 
   const allowSwap = useCallback(() => {
-    if (!sourceChain || !destinationChain || !tokenAmount) return false
     return (
-      getAllowedSourceChains(environment).some(
-        sc => sc.allowed && sc.chainId === destinationChain.chainId,
-      ) &&
-      getAllowedDestinationChains(environment, destinationChain, tokenAmount.token).some(
-        dc => dc.allowed && dc.uid === sourceChain.uid,
-      )
+      !!sourceChain &&
+      !!destinationChain &&
+      !!tokenAmount &&
+      isRouteAllowed(environment, destinationChain) &&
+      isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
     )
-  }, [destinationChain, environment, sourceChain, tokenAmount])
+  }, [environment, destinationChain, sourceChain, tokenAmount])
 
   const handleSourceChainChange = useCallback(
     (newValue: Chain | null) => {
