@@ -1,23 +1,22 @@
 import { Swap } from './svg/Swap'
 import { cn } from '@/utils/cn'
-import { colors } from '../../tailwind.config'
 
 export const SwapChains = ({
-  swapAllowed,
+  disabled,
   handleChainChange,
 }: {
-  swapAllowed: boolean
+  disabled: boolean
   handleChainChange: () => void
 }) => {
   return (
     <div
-      onClick={swapAllowed ? handleChainChange : undefined}
+      onClick={disabled ? handleChainChange : undefined}
       className={cn(
-        '-my-4 mx-auto flex  items-center justify-center space-x-0.5 p-2',
-        swapAllowed ? 'cursor-pointer text-turtle-level6' : 'cursor-not-allowed text-turtle-level3',
+        '-my-4 mx-auto flex  items-center justify-center space-x-0.5 p-2 text-turtle-level6',
+        disabled ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-40',
       )}
     >
-      <Swap fill={swapAllowed ? colors['turtle-level6'] : colors['turtle-level3']} />
+      <Swap />
       <p className="text-sm ">Swap From and To</p>
     </div>
   )
