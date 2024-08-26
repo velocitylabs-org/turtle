@@ -1,5 +1,6 @@
 import { REGISTRY } from '@/config/registry'
 import { Chain } from '@/models/chain'
+import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 
@@ -22,23 +23,21 @@ export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: bo
 /** Filters all chains by selected source chain, selected token and available routes */
 export const getAllowedDestinationChains = (
   env: Environment,
-  sourceChain: Chain | null,
+  chain: Chain | null,
   token: Token | null,
 ): (Chain & { allowed: boolean })[] => {
   const routes = REGISTRY[env].routes
 
-  const chains = REGISTRY[env].chains.map(chain => {
+  const chains = REGISTRY[env].chains.map(c => {
     const isAllowed =
-      sourceChain && token
+      chain && token
         ? routes.some(
             route =>
-              route.from === sourceChain.uid &&
-              route.tokens.includes(token.id) &&
-              route.to === chain.uid,
+              route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
           )
         : false
     return {
-      ...chain,
+      ...c,
       allowed: isAllowed,
     }
   })
@@ -69,4 +68,27 @@ export const getAllowedTokens = (
 
 const orderByAllowedTag = (list: { allowed: boolean }[]) => {
   return list.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
+}
+
+/** It checks if a route exists from the sourceChain when all parameters are provided */
+/** It checks if a route exists to the destinationChain when only the destinationChain parameter is provided */
+export const isRouteAllowed = (
+  environment: Environment,
+  destinationChain: Chain,
+  sourceChain?: Chain,
+  tokenAmount?: TokenAmount,
+) => {
+  if ((sourceChain && !tokenAmount) || (!sourceChain && tokenAmount)) {
+    throw new Error('Both sourceChain and tokenAmount must be defined')
+  }
+  /**  Sourcechain check */
+  if (tokenAmount && tokenAmount.token && sourceChain)
+    return getAllowedDestinationChains(environment, destinationChain, tokenAmount.token).some(
+      dc => dc.allowed && dc.uid === sourceChain.uid,
+    )
+  /**  DestinationChain check */ else {
+    return getAllowedSourceChains(environment).some(
+      sc => sc.allowed && sc.uid === destinationChain.uid,
+    )
+  }
 }
