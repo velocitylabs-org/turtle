@@ -1,11 +1,8 @@
-import { REGISTRY } from '@/config/registry'
 import useEnvironment from '@/hooks/useEnvironment'
 import useErc20Balance from '@/hooks/useErc20Balance'
-import useNotification from '@/hooks/useNotification'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
-import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { isValidAddressType } from '@/utils/address'
@@ -32,7 +29,6 @@ const initValues: FormInputs = {
 
 const useTransferForm = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
-  const { addNotification } = useNotification()
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
 
@@ -93,38 +89,21 @@ const useTransferForm = () => {
 
   const handleSourceChainChange = useCallback(
     (newValue: Chain | null) => {
-      if (newValue && newValue.uid === destinationChain?.uid) {
-        if (REGISTRY[environment].chains.length === 2)
-          setValue('destinationChain', sourceChain) // swap
-        else setValue('destinationChain', null) // reset
-
-        addNotification({
-          severity: NotificationSeverity.Default,
-          message: 'Updated destination chain',
-          dismissible: true,
-        })
-      }
       setValue('sourceChain', newValue)
+
+      if (newValue?.uid === sourceChain?.uid) return
+      // reset destination and token
+      setValue('destinationChain', null)
+      setValue('tokenAmount', { token: null, amount: null })
     },
-    [destinationChain, environment, setValue, sourceChain, addNotification],
+    [setValue, sourceChain],
   )
 
   const handleDestinationChainChange = useCallback(
     (newValue: Chain | null) => {
-      if (newValue && newValue.uid === sourceChain?.uid) {
-        if (REGISTRY[environment].chains.length === 2)
-          setValue('sourceChain', destinationChain) // swap
-        else setValue('sourceChain', null) // reset
-
-        addNotification({
-          severity: NotificationSeverity.Default,
-          message: 'Updated source chain',
-          dismissible: true,
-        })
-      }
       setValue('destinationChain', newValue)
     },
-    [sourceChain, environment, setValue, destinationChain, addNotification],
+    [setValue],
   )
 
   const handleSwapChains = useCallback(() => {
