@@ -22,24 +22,22 @@ export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: bo
 /** Filters all chains by selected source chain, selected token and available routes */
 export const getAllowedDestinationChains = (
   env: Environment,
-  sourceChain: Chain | null,
+  chain: Chain | null,
   token: Token | null,
 ): (Chain & { allowed: boolean })[] => {
   const routes = REGISTRY[env].routes
 
-  return REGISTRY[env].chains.map(chain => {
+  return REGISTRY[env].chains.map(c => {
     const isAllowed =
-      sourceChain && token
+      chain && token
         ? routes.some(
             route =>
-              route.from === sourceChain.uid &&
-              route.tokens.includes(token.id) &&
-              route.to === chain.uid,
+              route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
           )
         : false
 
     return {
-      ...chain,
+      ...c,
       allowed: isAllowed,
     }
   })

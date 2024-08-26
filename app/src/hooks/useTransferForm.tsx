@@ -99,8 +99,8 @@ const useTransferForm = () => {
       getAllowedSourceChains(environment).some(
         sc => sc.allowed && sc.chainId === destinationChain.chainId,
       ) &&
-      getAllowedDestinationChains(environment, sourceChain, tokenAmount && tokenAmount.token).some(
-        dc => dc.allowed && dc.uid === destinationChain.uid, // Need to be confirmed & verified
+      getAllowedDestinationChains(environment, destinationChain, tokenAmount.token).some(
+        dc => dc.allowed && dc.uid === sourceChain.uid,
       )
     )
   }, [destinationChain, environment, sourceChain, tokenAmount])
