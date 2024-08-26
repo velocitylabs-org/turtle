@@ -42,7 +42,6 @@ const useTransferForm = () => {
     handleSubmit,
     setValue,
     reset,
-    resetField,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -146,7 +145,7 @@ const useTransferForm = () => {
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
-  }, [sourceChain, destinationChain, setValue, tokenAmount, resetField, allowSwap])
+  }, [sourceChain, destinationChain, setValue, allowSwap])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
