@@ -133,11 +133,6 @@ const useTransferForm = () => {
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
-
-    // Reset selected token
-    if (tokenAmount && tokenAmount.token) {
-      resetField('tokenAmount')
-    }
   }, [sourceChain, destinationChain, setValue, tokenAmount, resetField])
 
   const handleManualRecipientChange = useCallback(
