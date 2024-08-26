@@ -65,25 +65,21 @@ export const getAllowedTokens = (
   return tokens
 }
 
-/** It checks if a route exists from the sourceChain when all parameters are provided */
-/** It checks if a route exists to the destinationChain when only the destinationChain parameter is provided */
+/** It checks if a route between two chains exists */
 export const isRouteAllowed = (
   environment: Environment,
-  destinationChain: Chain,
-  sourceChain?: Chain,
+  fromChain: Chain,
+  toChain: Chain,
   tokenAmount?: TokenAmount,
 ) => {
-  if ((sourceChain && !tokenAmount) || (!sourceChain && tokenAmount)) {
-    throw new Error('Both sourceChain and tokenAmount must be defined')
-  }
-  /**  Sourcechain check */
-  if (tokenAmount && tokenAmount.token && sourceChain)
-    return getAllowedDestinationChains(environment, destinationChain, tokenAmount.token).some(
-      dc => dc.allowed && dc.uid === sourceChain.uid,
+  const routes = REGISTRY[environment].routes
+
+  if (tokenAmount && tokenAmount.token) {
+    const { id } = tokenAmount.token
+    return routes.some(
+      r => r.from === fromChain.uid && r.to === toChain.uid && r.tokens.includes(id),
     )
-  /**  DestinationChain check */ else {
-    return getAllowedSourceChains(environment).some(
-      sc => sc.allowed && sc.uid === destinationChain.uid,
-    )
+  } else {
+    return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid)
   }
 }

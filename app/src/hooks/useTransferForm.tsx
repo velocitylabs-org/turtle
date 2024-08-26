@@ -97,7 +97,7 @@ const useTransferForm = () => {
       !!sourceChain &&
       !!destinationChain &&
       !!tokenAmount &&
-      isRouteAllowed(environment, destinationChain) &&
+      isRouteAllowed(environment, sourceChain, destinationChain) &&
       isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
     )
   }, [environment, destinationChain, sourceChain, tokenAmount])
