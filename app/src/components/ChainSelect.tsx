@@ -1,14 +1,13 @@
 'use client'
-import Image from 'next/image'
-import { forwardRef, useRef, useState } from 'react'
-import { twMerge } from 'tailwind-merge'
-
 import useLookupName from '@/hooks/useLookupName'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
-
+import { cn } from '@/utils/cn'
+import Image from 'next/image'
+import { forwardRef, useRef, useState } from 'react'
+import { twMerge } from 'tailwind-merge'
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
@@ -78,7 +77,8 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
           <div
             ref={triggerRef}
             className={twMerge(
-              'flex cursor-pointer items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm ',
+              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm ',
+              !disabled && 'cursor-pointer',
               disabled && 'opacity-30',
               error && 'border-turtle-error',
             )}
@@ -134,8 +134,11 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
           {options.map(option => (
             <li
               key={option.uid}
-              className="flex cursor-pointer items-center gap-1 p-2"
-              onClick={() => handleSelectionChange(option)}
+              className={cn(
+                'flex cursor-pointer items-center gap-1 p-2',
+                !option.allowed && 'cursor-not-allowed opacity-50',
+              )}
+              onClick={() => option.allowed && handleSelectionChange(option)}
             >
               <Image
                 src={option.logoURI}
