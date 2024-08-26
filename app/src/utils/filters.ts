@@ -92,3 +92,12 @@ export const isRouteAllowed = (
     )
   }
 }
+
+export const isTokenAvailableForSourceChain = (
+  env: Environment,
+  sourceChain?: Chain | null,
+  token?: Token | null,
+): boolean => {
+  if (!sourceChain || !token) return false
+  return getAllowedTokens(env, sourceChain).some(t => t.allowed && t.id === token.id)
+}

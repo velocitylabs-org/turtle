@@ -6,7 +6,7 @@ import { Chain } from '@/models/chain'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { isValidAddressType } from '@/utils/address'
-import { isRouteAllowed } from '@/utils/filters'
+import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/filters'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -102,12 +102,29 @@ const useTransferForm = () => {
     (newValue: Chain | null) => {
       setValue('sourceChain', newValue)
 
-      if (newValue?.uid === sourceChain?.uid) return
-      // reset destination and token
+      if (!newValue || newValue.uid === sourceChain?.uid) return
+
+      const isSameDestination = destinationChain?.uid === newValue.uid
+
+      if (
+        destinationChain &&
+        tokenAmount &&
+        !isSameDestination &&
+        isRouteAllowed(environment, destinationChain, newValue, tokenAmount)
+      )
+        return
+
+      if (
+        !isSameDestination &&
+        isTokenAvailableForSourceChain(environment, newValue, tokenAmount?.token)
+      )
+        return
+
+      // Reset destination and token only if the conditions above are not met
       setValue('destinationChain', null)
       setValue('tokenAmount', { token: null, amount: null })
     },
-    [setValue, sourceChain],
+    [setValue, sourceChain, destinationChain, tokenAmount, environment],
   )
 
   const handleDestinationChainChange = useCallback(
