@@ -9,6 +9,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { isValidAddressType } from '@/utils/address'
+import { isRouteAllowed } from '@/utils/filters'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -41,7 +42,6 @@ const useTransferForm = () => {
     handleSubmit,
     setValue,
     reset,
-    resetField,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -92,6 +92,16 @@ const useTransferForm = () => {
     (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
     (manualRecipient.enabled || destinationWallet?.isConnected)
 
+  const allowSwap = useCallback(() => {
+    return (
+      !!sourceChain &&
+      !!destinationChain &&
+      !!tokenAmount &&
+      isRouteAllowed(environment, destinationChain) &&
+      isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
+    )
+  }, [environment, destinationChain, sourceChain, tokenAmount])
+
   const handleSourceChainChange = useCallback(
     (newValue: Chain | null) => {
       if (newValue && newValue.uid === destinationChain?.uid) {
@@ -129,16 +139,11 @@ const useTransferForm = () => {
   )
 
   const handleSwapChains = useCallback(() => {
-    if (!sourceChain && !destinationChain) return
+    if (!sourceChain && !destinationChain && !allowSwap()) return
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
-
-    // Reset selected token
-    if (tokenAmount && tokenAmount.token) {
-      resetField('tokenAmount')
-    }
-  }, [sourceChain, destinationChain, setValue, tokenAmount, resetField])
+  }, [sourceChain, destinationChain, setValue, allowSwap])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
@@ -253,6 +258,7 @@ const useTransferForm = () => {
     errors,
     isValid: isFormValid,
     isValidating, // Only includes validating zod schema atm
+    allowSwap,
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,

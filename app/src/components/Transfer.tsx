@@ -32,6 +32,7 @@ const Transfer: FC = () => {
     errors,
     isValid,
     isValidating,
+    allowSwap,
     handleSubmit,
     handleSourceChainChange,
     handleDestinationChainChange,
@@ -149,11 +150,7 @@ const Transfer: FC = () => {
         />
 
         {/* Switch source and destination chains */}
-        {sourceChain && destinationChain && (
-          <AnimatePresence>
-            <SwapChains handleChainChange={handleSwapChains} />
-          </AnimatePresence>
-        )}
+        <SwapChains handleChainChange={handleSwapChains} disabled={!allowSwap()} />
 
         {/* Destination Chain */}
         <Controller
