@@ -16,9 +16,7 @@ export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: bo
     }
   })
 
-  const orderedChains = chains.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
-
-  return orderedChains
+  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
@@ -45,9 +43,7 @@ export const getAllowedDestinationChains = (
     }
   })
 
-  const orderedChains = chains.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
-
-  return orderedChains
+  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
 }
 
 /** Filters all tokens by by selected source chain and available routes */
@@ -68,7 +64,9 @@ export const getAllowedTokens = (
     }
   })
 
-  const orderedTokens = tokens.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
+  return orderByAllowedTag(tokens) as (Token & { allowed: boolean })[]
+}
 
-  return orderedTokens
+const orderByAllowedTag = (list: { allowed: boolean }[]) => {
+  return list.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
 }
