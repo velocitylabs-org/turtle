@@ -122,8 +122,11 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             return (
               <li
                 key={option.token.id}
-                className="flex cursor-pointer items-center gap-1 p-2"
-                onClick={() => handleSelectionChange(option.token)}
+                className={cn(
+                  'flex cursor-pointer items-center gap-1 p-2',
+                  !option.allowed && 'cursor-not-allowed opacity-50',
+                )}
+                onClick={() => option.allowed && handleSelectionChange(option.token)}
               >
                 <Image
                   src={option.token.logoURI}
