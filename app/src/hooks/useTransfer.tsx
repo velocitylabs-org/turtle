@@ -9,11 +9,16 @@ import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
-import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
+import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
 import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
+import { AssetTransferApi, constructApiPromise, TxResult } from '@substrate/asset-transfer-api'
+import * as PolkadotJS from '@polkadot/api'
+import { Codec, Signer as PolkaSigner } from '@polkadot/types/types'
+
+import { stringToU8a } from '@polkadot/util'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -177,7 +182,59 @@ const useTransfer = () => {
           BigInt(destinationChain.destinationFeeDOT || 0),
         )
 
-      case Direction.ToEthereum:
+      case Direction.ToEthereum: {
+        console.log('Sender is ', JSON.stringify(sender))
+
+        const { api, safeXcmVersion } = await constructApiPromise(
+          'wss://rococo-asset-hub-rpc.polkadot.io',
+        )
+        const assetApi = new AssetTransferApi(api, 'asset-hub-rococo', safeXcmVersion)
+
+        try {
+          const txResult: TxResult<'submittable'> = await assetApi.createTransferTransaction(
+            '0', // NOTE: The destination id is `0` noting that we are sending to the relay chain.
+            '5EWNeodpcQ6iYibJ3jmWVe85nsok1EDG8Kk3aFg8ZzpfY1qX',
+            ['ROC'],
+            ['1000000000000'],
+            {
+              format: 'submittable',
+              xcmVersion: safeXcmVersion,
+            },
+          )
+
+          console.log('AT API - txResult', txResult)
+          console.log('Sender is ', JSON.stringify(sender))
+
+          // const wsProvider = new PolkadotJS.WsProvider('wss://rococo-asset-hub-rpc.polkadot.io');
+          // const pjsApi = await PolkadotJS.ApiPromise.create({ provider: wsProvider });
+
+          const signer = sender as WalletOrKeypair
+
+          let addressOrPair: string | IKeyringPair
+          let walletSigner: PolkaSigner | undefined = undefined
+          if (isWallet(signer)) {
+            addressOrPair = signer.address
+            walletSigner = signer.signer
+          } else {
+            addressOrPair = signer
+          }
+
+          // const keyPair = addressOrPair // some key pair you have
+          // const txResult = await assetTransferApi.createTransferTransaction(...);
+          // const { signature } = txResult.tx.sign(keyPair);
+          // const extrinsic = assetTransferApi.api.registry.createType(
+          //   'Extrinsic',
+          //   { method: txResult.tx.method },
+          //   { version: 4 }
+          // );
+          // extrinsic.addSignature(keyPair.address, signature, txResult.tx.toHex());
+          const result = await assetApi.api
+            .tx(txResult.tx)
+            .signAsync(addressOrPair, { signer: walletSigner })
+        } catch (e) {
+          console.log('AT-API Error:', e)
+        }
+
         return await toEthereum.validateSend(
           context,
           sender as WalletOrKeypair,
@@ -186,7 +243,7 @@ const useTransfer = () => {
           token.address,
           amount,
         )
-
+      }
       default:
         throw new Error('Unsupported flow')
     }
@@ -257,3 +314,24 @@ const useTransfer = () => {
 }
 
 export default useTransfer
+
+export interface IKeyringPair {
+  readonly address: string
+  readonly addressRaw: Uint8Array
+  readonly publicKey: Uint8Array
+  sign: (data: Uint8Array, options?: SignOptions) => Uint8Array
+}
+
+// function toIKeyringPair(sender: SubstrateAccount): IKeyringPair {
+//   return {
+//     address: sender.address,
+//     addressRaw: stringToU8a() new TextEncoder().encode(sender.address),
+//     publicKey: new TextEncoder().encode(sender.address),
+//     sign: (data, options) => {}
+
+//   }
+// }
+
+function isWallet(walletOrKeypair: WalletSigner | IKeyringPair): walletOrKeypair is WalletSigner {
+  return (walletOrKeypair as WalletSigner).signer !== undefined
+}
