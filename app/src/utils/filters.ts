@@ -17,7 +17,7 @@ export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: bo
     }
   })
 
-  return chains
+  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
@@ -28,7 +28,7 @@ export const getAllowedDestinationChains = (
 ): (Chain & { allowed: boolean })[] => {
   const routes = REGISTRY[env].routes
 
-  return REGISTRY[env].chains.map(c => {
+  const chains = REGISTRY[env].chains.map(c => {
     const isAllowed =
       chain && token
         ? routes.some(
@@ -36,12 +36,13 @@ export const getAllowedDestinationChains = (
               route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
           )
         : false
-
     return {
       ...c,
       allowed: isAllowed,
     }
   })
+
+  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
 }
 
 /** Filters all tokens by by selected source chain and available routes */
@@ -62,7 +63,11 @@ export const getAllowedTokens = (
     }
   })
 
-  return tokens
+  return orderByAllowedTag(tokens) as (Token & { allowed: boolean })[]
+}
+
+const orderByAllowedTag = (list: { allowed: boolean }[]) => {
+  return list.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
 }
 
 /** It checks if a route exists from the sourceChain when all parameters are provided */
@@ -86,4 +91,13 @@ export const isRouteAllowed = (
       sc => sc.allowed && sc.uid === destinationChain.uid,
     )
   }
+}
+
+export const isTokenAvailableForSourceChain = (
+  env: Environment,
+  sourceChain?: Chain | null,
+  token?: Token | null,
+): boolean => {
+  if (!sourceChain || !token) return false
+  return getAllowedTokens(env, sourceChain).some(t => t.allowed && t.id === token.id)
 }
