@@ -150,7 +150,11 @@ const Transfer: FC = () => {
         />
 
         {/* Switch source and destination chains */}
-        <SwapChains handleChainChange={handleSwapChains} disabled={!allowSwap()} />
+        <SwapChains
+          handleChainChange={handleSwapChains}
+          disabled={!allowSwap()}
+          isTransferOngoing={transferStatus !== 'Idle'}
+        />
 
         {/* Destination Chain */}
         <Controller
