@@ -1,21 +1,23 @@
-import { motion } from 'framer-motion'
 import { Swap } from './svg/Swap'
+import { cn } from '@/utils/cn'
 
-export const SwapChains = ({ handleChainChange }: { handleChainChange: () => void }) => {
+export const SwapChains = ({
+  disabled,
+  handleChainChange,
+}: {
+  disabled: boolean
+  handleChainChange: () => void
+}) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{
-        opacity: 1,
-        height: 'auto',
-      }}
-      exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.07 }}
-      onClick={handleChainChange}
-      className="-my-4 mx-auto flex cursor-pointer items-center justify-center space-x-0.5 p-2"
+    <div
+      onClick={() => !disabled && handleChainChange()}
+      className={cn(
+        '-my-4 mx-auto flex  items-center justify-center space-x-0.5 p-2 text-turtle-level6',
+        disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100',
+      )}
     >
       <Swap />
-      <p className="text-sm text-turtle-level6">Swap From and To</p>
-    </motion.div>
+      <p className="text-sm ">Swap From and To</p>
+    </div>
   )
 }

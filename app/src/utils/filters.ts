@@ -1,5 +1,6 @@
 import { REGISTRY } from '@/config/registry'
 import { Chain } from '@/models/chain'
+import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 
@@ -16,33 +17,32 @@ export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: bo
     }
   })
 
-  return chains
+  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
 export const getAllowedDestinationChains = (
   env: Environment,
-  sourceChain: Chain | null,
+  chain: Chain | null,
   token: Token | null,
 ): (Chain & { allowed: boolean })[] => {
   const routes = REGISTRY[env].routes
 
-  return REGISTRY[env].chains.map(chain => {
+  const chains = REGISTRY[env].chains.map(c => {
     const isAllowed =
-      sourceChain && token
+      chain && token
         ? routes.some(
             route =>
-              route.from === sourceChain.uid &&
-              route.tokens.includes(token.id) &&
-              route.to === chain.uid,
+              route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
           )
         : false
-
     return {
-      ...chain,
+      ...c,
       allowed: isAllowed,
     }
   })
+
+  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
 }
 
 /** Filters all tokens by by selected source chain and available routes */
@@ -63,5 +63,37 @@ export const getAllowedTokens = (
     }
   })
 
-  return tokens
+  return orderByAllowedTag(tokens) as (Token & { allowed: boolean })[]
+}
+
+const orderByAllowedTag = (list: { allowed: boolean }[]) => {
+  return list.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
+}
+
+/** It checks if a route between two chains exists */
+export const isRouteAllowed = (
+  environment: Environment,
+  fromChain: Chain,
+  toChain: Chain,
+  tokenAmount?: TokenAmount,
+) => {
+  const routes = REGISTRY[environment].routes
+
+  if (tokenAmount && tokenAmount.token) {
+    const { id } = tokenAmount.token
+    return routes.some(
+      r => r.from === fromChain.uid && r.to === toChain.uid && r.tokens.includes(id),
+    )
+  } else {
+    return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid)
+  }
+}
+
+export const isTokenAvailableForSourceChain = (
+  env: Environment,
+  sourceChain?: Chain | null,
+  token?: Token | null,
+): boolean => {
+  if (!sourceChain || !token) return false
+  return getAllowedTokens(env, sourceChain).some(t => t.allowed && t.id === token.id)
 }
