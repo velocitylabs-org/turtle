@@ -29,13 +29,12 @@ export const getAllowedDestinationChains = (
   const routes = REGISTRY[env].routes
 
   const chains = REGISTRY[env].chains.map(c => {
-    const isAllowed =
-      chain && token
-        ? routes.some(
-            route =>
-              route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
-          )
-        : false
+    if (!chain || !token) return { ...c, allowed: false }
+
+    const isAllowed = routes.some(
+      route => route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
+    )
+
     return {
       ...c,
       allowed: isAllowed,
@@ -49,13 +48,19 @@ export const getAllowedDestinationChains = (
 export const getAllowedTokens = (
   env: Environment,
   sourceChain: Chain | null,
+  destinationChain: Chain | null,
 ): (Token & { allowed: boolean })[] => {
   const routes = REGISTRY[env].routes
 
   const tokens = REGISTRY[env].tokens.map(token => {
-    const isAllowed = sourceChain
-      ? routes.some(route => route.from === sourceChain.uid && route.tokens.includes(token.id))
-      : false
+    if (!sourceChain) return { ...token, allowed: false }
+
+    const isAllowed = routes.some(
+      route =>
+        route.from === sourceChain.uid &&
+        route.tokens.includes(token.id) &&
+        (!destinationChain || route.to === destinationChain.uid),
+    )
 
     return {
       ...token,
@@ -95,5 +100,5 @@ export const isTokenAvailableForSourceChain = (
   token?: Token | null,
 ): boolean => {
   if (!sourceChain || !token) return false
-  return getAllowedTokens(env, sourceChain).some(t => t.allowed && t.id === token.id)
+  return getAllowedTokens(env, sourceChain, null).some(t => t.allowed && t.id === token.id)
 }

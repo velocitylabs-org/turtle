@@ -119,7 +119,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <TokenAmountSelect
               {...field}
-              options={getAllowedTokens(environment, sourceChain).map(token => ({
+              options={getAllowedTokens(environment, sourceChain, destinationChain).map(token => ({
                 token,
                 amount: null,
                 allowed: token.allowed,
