@@ -193,9 +193,9 @@ const useTransfer = () => {
         try {
           const txResult: TxResult<'submittable'> = await assetApi.createTransferTransaction(
             '0', // NOTE: The destination id is `0` noting that we are sending to the relay chain.
-            '5EWNeodpcQ6iYibJ3jmWVe85nsok1EDG8Kk3aFg8ZzpfY1qX',
-            ['ROC'],
-            ['1000000000000'],
+            recipient,
+            ['ROC'], // todo(nuno): we need to pass the multilocation here
+            [amount.toString()],
             {
               format: 'submittable',
               xcmVersion: safeXcmVersion,
