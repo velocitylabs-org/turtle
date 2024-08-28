@@ -250,75 +250,103 @@ export namespace Testnet {
   }
 }
 
+export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi'
+
+export interface Registry {
+  chains: Chain[]
+  tokens: Token[]
+  routes: Route[]
+}
+
+export interface Route {
+  from: string
+  to: string
+  sdk: TransferSDK
+  tokens: string[]
+}
+
+export const mainnetRegistry: Registry = {
+  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Mythos],
+  tokens: [
+    Mainnet.WETH,
+    Mainnet.WBTC,
+    Mainnet.USDC,
+    Mainnet.USDT,
+    Mainnet.DAI,
+    Mainnet.MYTH,
+    Mainnet.WSTETH,
+    Mainnet.TBTC,
+    Mainnet.TON,
+    Mainnet.SHIB,
+    Mainnet.PEPE,
+  ],
+  routes: [
+    {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [
+        Mainnet.WETH.id,
+        Mainnet.WBTC.id,
+        Mainnet.USDC.id,
+        Mainnet.USDT.id,
+        Mainnet.DAI.id,
+        Mainnet.MYTH.id,
+        Mainnet.WSTETH.id,
+        Mainnet.TBTC.id,
+        Mainnet.TON.id,
+        Mainnet.SHIB.id,
+        Mainnet.PEPE.id,
+      ],
+    },
+    {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Mythos.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [Mainnet.MYTH.id],
+    },
+    {
+      from: Mainnet.AssetHub.uid,
+      to: Mainnet.Ethereum.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [
+        Mainnet.WETH.id,
+        Mainnet.WBTC.id,
+        Mainnet.USDC.id,
+        Mainnet.USDT.id,
+        Mainnet.DAI.id,
+        Mainnet.WSTETH.id,
+        Mainnet.TBTC.id,
+        Mainnet.TON.id,
+        Mainnet.SHIB.id,
+        Mainnet.PEPE.id,
+      ],
+    },
+  ],
+}
+
+export const testnetRegistry: Registry = {
+  chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
+  tokens: [Testnet.WETH, Testnet.VETH],
+  routes: [
+    {
+      from: Testnet.Sepolia.uid,
+      to: Testnet.RococoAssetHub.uid,
+      tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      sdk: 'SnowbridgeApi',
+    },
+    {
+      from: Testnet.RococoAssetHub.uid,
+      to: Testnet.Sepolia.uid,
+      tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      sdk: 'SnowbridgeApi',
+    },
+  ],
+}
+
 export const REGISTRY = {
-  mainnet: {
-    chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Mythos],
-    tokens: [
-      Mainnet.WETH,
-      Mainnet.WBTC,
-      Mainnet.USDC,
-      Mainnet.USDT,
-      Mainnet.DAI,
-      Mainnet.MYTH,
-      Mainnet.WSTETH,
-      Mainnet.TBTC,
-      Mainnet.TON,
-      Mainnet.SHIB,
-      Mainnet.PEPE,
-    ],
-    routes: [
-      {
-        from: Mainnet.Ethereum.uid,
-        to: Mainnet.AssetHub.uid,
-        tokens: [
-          Mainnet.WETH.id,
-          Mainnet.WBTC.id,
-          Mainnet.USDC.id,
-          Mainnet.USDT.id,
-          Mainnet.DAI.id,
-          Mainnet.MYTH.id,
-          Mainnet.WSTETH.id,
-          Mainnet.TBTC.id,
-          Mainnet.TON.id,
-          Mainnet.SHIB.id,
-          Mainnet.PEPE.id,
-        ],
-      },
-      { from: Mainnet.Ethereum.uid, to: Mainnet.Mythos.uid, tokens: [Mainnet.MYTH.id] },
-      {
-        from: Mainnet.AssetHub.uid,
-        to: Mainnet.Ethereum.uid,
-        tokens: [
-          Mainnet.WETH.id,
-          Mainnet.WBTC.id,
-          Mainnet.USDC.id,
-          Mainnet.USDT.id,
-          Mainnet.DAI.id,
-          Mainnet.WSTETH.id,
-          Mainnet.TBTC.id,
-          Mainnet.TON.id,
-          Mainnet.SHIB.id,
-          Mainnet.PEPE.id,
-        ],
-      },
-    ],
-  },
-  testnet: {
-    chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
-    tokens: [Testnet.WETH, Testnet.VETH],
-    routes: [
-      {
-        from: Testnet.Sepolia.uid,
-        to: Testnet.RococoAssetHub.uid,
-        tokens: [Testnet.WETH.id, Testnet.VETH.id],
-      },
-      {
-        from: Testnet.RococoAssetHub.uid,
-        to: Testnet.Sepolia.uid,
-        tokens: [Testnet.WETH.id, Testnet.VETH.id],
-      },
-    ],
-  },
+  mainnet: mainnetRegistry,
+  testnet: testnetRegistry,
 }
 
 export function getNativeToken(chain: Chain): Token {
