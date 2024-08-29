@@ -1,5 +1,5 @@
-import { Swap } from './svg/Swap'
 import { cn } from '@/utils/cn'
+import { Swap } from './svg/Swap'
 
 export const SwapChains = ({
   disabled,
@@ -12,7 +12,7 @@ export const SwapChains = ({
     <div
       onClick={() => !disabled && handleChainChange()}
       className={cn(
-        '-my-4 mx-auto flex  items-center justify-center space-x-0.5 p-2 text-turtle-level6',
+        '-my-4 mx-auto flex  select-none items-center justify-center space-x-0.5 p-2 text-turtle-level6',
         disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100',
       )}
     >
