@@ -200,15 +200,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [
-      destinationWallet?.sender?.address,
-      fees,
-      reset,
-      sourceWallet?.sender,
-      transfer,
-      environment,
-      snowbridgeContext,
-    ],
+    [destinationWallet?.sender?.address, fees, reset, sourceWallet?.sender, transfer, environment],
   )
 
   // validate recipient address
