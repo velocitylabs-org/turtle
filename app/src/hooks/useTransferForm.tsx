@@ -29,6 +29,7 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
+  //todo: can we remove and/or decouple basic logic such as balance lookup from the snowbridge context?
   const { snowbridgeContext } = useSnowbridgeContext()
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
@@ -180,14 +181,12 @@ const useTransferForm = () => {
         !destinationChain ||
         !tokenAmount?.token ||
         !amount ||
-        !fees ||
-        !snowbridgeContext
+        !fees
       )
         return
 
       transfer({
         environment,
-        context: snowbridgeContext,
         sender: sourceWallet.sender,
         sourceChain,
         destinationChain,

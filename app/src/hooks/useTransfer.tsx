@@ -9,18 +9,18 @@ import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
-import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
+import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { JsonRpcSigner, Signer } from 'ethers'
 import { useState } from 'react'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { getRoute, REGISTRY } from '@/config/registry'
+import { getRoute } from '@/config/registry'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
 interface TransferParams {
   environment: Environment
-  context: Context
   sender: Sender
   sourceChain: Chain
   token: Token
@@ -39,6 +39,7 @@ const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
   const { addNotification } = useNotification()
+  const { snowbridgeContext } = useSnowbridgeContext()
 
   const handleValidationFailure = (plan: ValidationResult) => {
     console.error('Validation failed:', plan)
@@ -61,7 +62,6 @@ const useTransfer = () => {
   // main transfer function which is exposed to the components.
   const transfer = async ({
     environment,
-    context,
     sender,
     sourceChain,
     token,
@@ -72,8 +72,6 @@ const useTransfer = () => {
     onSuccess,
   }: TransferParams) => {
     setStatus('Loading')
-
-    const direction = resolveDirection(sourceChain, destinationChain)
     const route = getRoute(environment, sourceChain, destinationChain)!
 
     switch (route.sdk) {
@@ -85,7 +83,6 @@ const useTransfer = () => {
       case 'SnowbridgeApi': {
         SnowbridgeSdk.transfer({
           environment,
-          context,
           sender,
           sourceChain,
           token,
@@ -100,11 +97,10 @@ const useTransfer = () => {
     }
   }
 
-  export namespace SnowbridgeSdk {
+  namespace SnowbridgeSdk {
     // main transfer function which is exposed to the components.
     export const transfer = async ({
       environment,
-      context,
       sender,
       sourceChain,
       token,
@@ -116,11 +112,19 @@ const useTransfer = () => {
     }: TransferParams) => {
       setStatus('Loading')
       try {
+        if (snowbridgeContext === undefined) {
+          addNotification({
+            message: 'Some nuts and bolts are not quite there yet',
+            severity: NotificationSeverity.Error,
+          })
+          return
+        }
+
         const direction = resolveDirection(sourceChain, destinationChain)
 
         const plan = await validate(
           direction,
-          context,
+          snowbridgeContext,
           sender,
           sourceChain,
           token,
@@ -135,12 +139,11 @@ const useTransfer = () => {
         }
 
         await performTransfer(
-          context,
+          snowbridgeContext,
           sender,
           plan,
           {
             environment,
-            context,
             sender,
             sourceChain,
             token,
