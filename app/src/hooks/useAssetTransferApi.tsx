@@ -7,11 +7,7 @@ import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
 import { AssetTransferApi, constructApiPromise, TxResult } from '@substrate/asset-transfer-api'
 import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
-
-import * as PolkadotJS from '@polkadot/api'
-import { Codec, IKeyringPair, Signer as PolkaSigner } from '@polkadot/types/types'
-
-import { stringToU8a } from '@polkadot/util'
+import { IKeyringPair, Signer } from '@polkadot/types/types'
 
 const useAssetTransferApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -62,7 +58,7 @@ const useAssetTransferApi = () => {
       //todo(nuno): clean this up, maybe move to separate function
       const signer = sender as WalletOrKeypair
       let addressOrPair: string | IKeyringPair
-      let walletSigner: PolkaSigner | undefined = undefined
+      let walletSigner: Signer | undefined = undefined
       if (isWallet(signer)) {
         addressOrPair = signer.address
         walletSigner = signer.signer
