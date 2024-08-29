@@ -20,6 +20,7 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   chainId: z.number(),
   network: z.nativeEnum(Network),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
+  destinationFeeDOT: z.string().optional(),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
