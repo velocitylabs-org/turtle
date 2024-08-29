@@ -6,7 +6,8 @@ import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
 import { getRoute } from '@/config/registry'
-import useSnowbridgeSdk from './useSnowbridgeSdk'
+import useSnowbridgeApi from './useSnowbridgeApi'
+import useAssetTransferApi from './useAssetTransferApi'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -26,7 +27,8 @@ export type Status = 'Idle' | 'Loading' | 'Validating' | 'Sending'
 
 const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
-  const snowbridgeSdk = useSnowbridgeSdk()
+  const snowbridgeApi = useSnowbridgeApi()
+  const assetTransferApi = useAssetTransferApi()
 
   // The entry point function which is exposed to the components
   const transfer = async ({
@@ -46,11 +48,26 @@ const useTransfer = () => {
     switch (route.sdk) {
       case 'AssetTransferApi': {
         //todo(nuno)
+        console.log('AssetTransferApi route')
+        assetTransferApi.transfer(
+          {
+            environment,
+            sender,
+            sourceChain,
+            token,
+            destinationChain,
+            recipient,
+            amount,
+            fees,
+            onSuccess,
+          },
+          setStatus,
+        )
         break
       }
 
       case 'SnowbridgeApi': {
-        snowbridgeSdk.transfer(
+        snowbridgeApi.transfer(
           {
             environment,
             sender,

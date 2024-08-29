@@ -340,7 +340,7 @@ export const testnetRegistry: Registry = {
       from: Testnet.RococoAssetHub.uid,
       to: Testnet.Sepolia.uid,
       tokens: [Testnet.WETH.id, Testnet.VETH.id],
-      sdk: 'SnowbridgeApi',
+      sdk: 'AssetTransferApi',
     },
   ],
 }

@@ -17,7 +17,7 @@ import { Sender, Status, TransferParams } from './useTransfer'
 
 type ValidationResult = toEthereum.SendValidationResult | toPolkadot.SendValidationResult
 
-const useSnowbridgeSdk = () => {
+const useSnowbridgeApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
   const { addNotification } = useNotification()
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -253,4 +253,4 @@ const useSnowbridgeSdk = () => {
   return { transfer }
 }
 
-export default useSnowbridgeSdk
+export default useSnowbridgeApi
