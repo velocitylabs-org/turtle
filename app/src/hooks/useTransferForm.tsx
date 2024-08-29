@@ -90,13 +90,15 @@ const useTransferForm = () => {
 
   const allowSwap = useCallback(() => {
     return (
+      !isValidating &&
+      transferStatus === 'Idle' &&
       !!sourceChain &&
       !!destinationChain &&
       !!tokenAmount &&
       isRouteAllowed(environment, sourceChain, destinationChain) &&
       isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
     )
-  }, [environment, destinationChain, sourceChain, tokenAmount])
+  }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
     (newValue: Chain | null) => {
@@ -135,11 +137,16 @@ const useTransferForm = () => {
   )
 
   const handleSwapChains = useCallback(() => {
-    if (!sourceChain && !destinationChain && !allowSwap()) return
+    if (
+      (!sourceChain && !destinationChain && !allowSwap()) ||
+      isValidating ||
+      transferStatus !== 'Idle'
+    )
+      return
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
-  }, [sourceChain, destinationChain, setValue, allowSwap])
+  }, [sourceChain, destinationChain, setValue, allowSwap, isValidating, transferStatus])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
