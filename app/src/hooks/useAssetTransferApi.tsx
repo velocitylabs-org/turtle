@@ -41,13 +41,15 @@ const useAssetTransferApi = () => {
       console.log('Will try to create transfer')
       setStatus('Sending')
       //todo(nuno): fix params here
-      const txResult: TxResult<'submittable'> = await atApi.createTransferTransaction(
-        getDestChainId(destinationChain),
-        recipient,
-        ['ROC'], // todo(nuno): we need to pass the multilocation here
-        ['1000'],
+      const txResult: TxResult<'call'> = await atApi.createTransferTransaction(
+        `{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}}}}`,
+        '0x6E733286C3Dc52C67b8DAdFDd634eD9c3Fb05B5B',
+        [
+          `{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}`,
+        ],
+        [amount.toString()],
         {
-          format: 'submittable',
+          format: 'call',
           xcmVersion: safeXcmVersion,
         },
       )
