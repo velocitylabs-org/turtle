@@ -2,12 +2,12 @@ import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Direction } from '@/services/transfer'
+import { IKeyringPair, Signer } from '@polkadot/types/types'
+import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
+import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-import { AssetTransferApi, constructApiPromise, TxResult } from '@substrate/asset-transfer-api'
-import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
-import { IKeyringPair, Signer } from '@polkadot/types/types'
 
 const useAssetTransferApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -41,15 +41,15 @@ const useAssetTransferApi = () => {
       console.log('Will try to create transfer')
       setStatus('Sending')
       //todo(nuno): fix params here
-      const txResult: TxResult<'call'> = await atApi.createTransferTransaction(
+      const txResult = await atApi.createTransferTransaction(
         `{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}}}}`,
-        '0x6E733286C3Dc52C67b8DAdFDd634eD9c3Fb05B5B',
+        '0xC1af060ab8213AD5EE2Dab1a5891245eBe756400',
         [
           `{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}`,
         ],
-        [amount.toString()],
+        ['100'],
         {
-          format: 'call',
+          format: 'submittable',
           xcmVersion: safeXcmVersion,
         },
       )
@@ -71,7 +71,7 @@ const useAssetTransferApi = () => {
       console.log('Will ask to sign')
       const result = await atApi.api
         .tx(txResult.tx)
-        .signAsync(addressOrPair, { signer: walletSigner })
+        .signAndSend(addressOrPair, { signer: walletSigner as any })
 
       console.log('result is ', result)
       //todo(nuno): follow up here - make sure it's submitted and add to ongoing transfers
