@@ -273,7 +273,7 @@ export namespace Testnet {
     decimals: 18,
     address: '',
     multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"todo"}}]}}',
+      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"todo"}}]}}',
   }
 
   export const ROC: Token = {
@@ -283,7 +283,7 @@ export namespace Testnet {
     symbol: 'ROC',
     decimals: 12,
     address: '',
-    multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    multilocation: '{"V2":{"parents":"11155111","interior":"Here"}}',
   }
 }
 
