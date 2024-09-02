@@ -38,18 +38,18 @@ const useAssetTransferApi = () => {
       )
       const atApi = new AssetTransferApi(api, 'asset-hub-rococo', safeXcmVersion)
 
-      console.log('Will try to create transfer')
       setStatus('Sending')
-      //todo(nuno): fix params here
+
       const txResult = await atApi.createTransferTransaction(
         getDestChainId(destinationChain),
         recipient,
         // asset id in its multilocation representation
+        //todo(nuno): pass from token
         [
           `{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}`,
         ],
         // the amount (pairs with the asset ids above)
-        ['100'],
+        [amount.toString()],
         {
           format: 'submittable',
           xcmVersion: safeXcmVersion,

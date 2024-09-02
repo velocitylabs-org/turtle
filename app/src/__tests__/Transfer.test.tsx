@@ -1,7 +1,7 @@
 import { Direction, resolveDirection } from '@/services/transfer'
 import '@testing-library/jest-dom'
 import { Mainnet, Testnet } from '../config/registry'
-import { safeConvertAmount, toHuman } from '@/utils/transfer'
+import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { getDestChainId } from '@/hooks/useAssetTransferApi'
 
 describe('Transfer', () => {
@@ -50,5 +50,9 @@ describe('Transfer', () => {
     expect(getDestChainId(Mainnet.AssetHub)).toBe(Mainnet.AssetHub.chainId.toString())
     expect(getDestChainId(Mainnet.Mythos)).toBe(Mainnet.Mythos.chainId.toString())
     expect(getDestChainId(Testnet.RococoAssetHub)).toBe(Testnet.RococoAssetHub.chainId.toString())
+  })
+
+  it('convert amount to string', () => {
+    expect(convertAmount(0.3, Mainnet.WETH).toString()).toBe('300000000000000000')
   })
 })
