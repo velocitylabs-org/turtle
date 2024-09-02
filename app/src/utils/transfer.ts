@@ -1,10 +1,10 @@
-import { ethers } from 'ethers'
-
+import { Sender } from '@/hooks/useTransfer'
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Fees, StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
+import { ethers, JsonRpcSigner } from 'ethers'
 
 /**
  * Safe version of `convertAmount` that handles `null` params
@@ -131,6 +131,14 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     default:
       console.log(`Unsupported network: ${network}`)
   }
+}
+
+export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
+  if (!(error instanceof Error)) return false
+
+  if (sender instanceof JsonRpcSigner)
+    return error.message.includes('ethers-user-denied') // Ethers connection
+  else return error.message.includes('Cancelled') // Substrate connection
 }
 
 //todo(team): query the right sdk to get the appropriate duration estimate

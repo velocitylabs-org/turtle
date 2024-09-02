@@ -6,6 +6,7 @@ import { getErc20TokenUSDValue } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
@@ -29,15 +30,6 @@ const useSnowbridgeApi = () => {
         ? plan.failure.errors[0].message
         : 'Transfer validation failed'
     addNotification({ message: errorMessage, severity: NotificationSeverity.Error })
-  }
-
-  const handleSendError = (e: unknown) => {
-    console.error('Transfer error:', e)
-    if (!(e instanceof Error) || !e.message.includes('ethers-user-denied')) captureException(e)
-    addNotification({
-      message: 'Failed to submit the transfer',
-      severity: NotificationSeverity.Error,
-    })
   }
 
   // main transfer function which is exposed to the components.
@@ -204,6 +196,7 @@ const useSnowbridgeApi = () => {
           date: date.toISOString(),
         })
     } catch (e) {
+      if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
     } finally {
       setStatus('Idle')
@@ -247,6 +240,14 @@ const useSnowbridgeApi = () => {
       default:
         throw new Error('Unsupported flow')
     }
+  }
+
+  const handleSendError = (e: unknown) => {
+    console.error('Transfer error:', e)
+    addNotification({
+      message: 'Failed to submit the transfer',
+      severity: NotificationSeverity.Error,
+    })
   }
 
   return { transfer }

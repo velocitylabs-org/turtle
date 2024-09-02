@@ -7,6 +7,7 @@ import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
@@ -115,6 +116,7 @@ const useAssetTransferApi = () => {
           date: date.toISOString(),
         })
     } catch (e) {
+      if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
     } finally {
       setStatus('Idle')
@@ -139,7 +141,6 @@ const useAssetTransferApi = () => {
 
   const handleSendError = (e: unknown) => {
     console.error('Transfer error:', e)
-    if (!(e instanceof Error) || !e.message.includes('Cancelled')) captureException(e)
     addNotification({
       message: 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,
