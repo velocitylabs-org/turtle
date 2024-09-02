@@ -238,6 +238,8 @@ export namespace Testnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
+    specName: 'asset-hub-rococo',
   }
 
   // Tokens

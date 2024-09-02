@@ -32,11 +32,11 @@ const useAssetTransferApi = () => {
     try {
       console.log('Sender is ', JSON.stringify(sender))
 
-      //todo(nuno): get the wss and specName from the source chain
-      const { api, safeXcmVersion } = await constructApiPromise(
-        'wss://rococo-asset-hub-rpc.polkadot.io',
-      )
-      const atApi = new AssetTransferApi(api, 'asset-hub-rococo', safeXcmVersion)
+      if (!sourceChain.rpcConnection || !sourceChain.specName)
+        throw new Error('Source chain is missing rpcConnection or specName')
+
+      const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
+      const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
       setStatus('Sending')
 
