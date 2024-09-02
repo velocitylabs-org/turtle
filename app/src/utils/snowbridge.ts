@@ -1,4 +1,4 @@
-import { environment, subscan, history, status } from '@snowbridge/api'
+import { environment, subscan, history } from '@snowbridge/api'
 import {
   ToEthereumTransferResult,
   ToPolkadotTransferResult,
@@ -176,29 +176,6 @@ export function isCompletedTransfer(
     transferResult.status === TransferStatus.Complete ||
     transferResult.status === TransferStatus.Failed
   )
-}
-
-type StatusValue = 'Normal' | 'Halted' | 'Delayed'
-export type BridgeStatus = {
-  statusInfo: status.BridgeStatusInfo
-  channelStatusInfos: { name: string; status: status.ChannelStatusInfo }[]
-  assetHubChannel: status.ChannelStatusInfo
-  relayers: AccountInfo[]
-  accounts: AccountInfo[]
-  summary: {
-    toPolkadot: {
-      lightClientLatencyIsAcceptable: boolean
-      bridgeOperational: boolean
-      channelOperational: boolean
-    }
-    toPolkadotOperatingMode: StatusValue
-    toEthereum: {
-      bridgeOperational: boolean
-      lightClientLatencyIsAcceptable: boolean
-    }
-    toEthereumOperatingMode: StatusValue
-    overallStatus: StatusValue
-  }
 }
 
 export function getErrorMessage(err: unknown) {
