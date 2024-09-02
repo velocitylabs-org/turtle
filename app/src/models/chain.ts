@@ -15,8 +15,12 @@ export interface Chain {
   network: Network
   /** Address types for the chain. Multiple are supported.  */
   supportedAddressTypes: AddressType[]
-  /** Optional parameter for parachains only. Used for xcm transfers */
+  /** Optional parameter for parachains only. Used for xcm transfers. */
   destinationFeeDOT?: string
+  /** Optional parameter for parachains only. Used for AT API transfers. */
+  specName?: string
+  /** Optional parameter for parachains only. Used for AT API transfers. */
+  rpcConnection?: string
 }
 
 export enum Network {
