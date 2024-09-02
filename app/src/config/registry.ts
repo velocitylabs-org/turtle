@@ -251,7 +251,7 @@ export namespace Testnet {
     decimals: 18,
     address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
     multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
+      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
   }
 
   export const VETH: Token = {
@@ -262,7 +262,7 @@ export namespace Testnet {
     decimals: 18,
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
     multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
+      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
   }
 
   export const ETH: Token = {
@@ -283,7 +283,7 @@ export namespace Testnet {
     symbol: 'ROC',
     decimals: 12,
     address: '',
-    multilocation: '{"V2":{"parents":"11155111","interior":"Here"}}',
+    multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
   }
 }
 
