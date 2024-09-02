@@ -32,6 +32,7 @@ const useAssetTransferApi = () => {
     try {
       console.log('Sender is ', JSON.stringify(sender))
 
+      console.log(sourceChain)
       if (!sourceChain.rpcConnection || !sourceChain.specName)
         throw new Error('Source chain is missing rpcConnection or specName')
 
