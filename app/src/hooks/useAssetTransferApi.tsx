@@ -42,11 +42,13 @@ const useAssetTransferApi = () => {
       setStatus('Sending')
       //todo(nuno): fix params here
       const txResult = await atApi.createTransferTransaction(
-        `{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}}}}`,
-        '0xC1af060ab8213AD5EE2Dab1a5891245eBe756400',
+        getDestChainId(destinationChain),
+        recipient,
+        // asset id in its multilocation representation
         [
           `{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}`,
         ],
+        // the amount (pairs with the asset ids above)
         ['100'],
         {
           format: 'submittable',
@@ -110,7 +112,7 @@ function isWallet(walletOrKeypair: WalletSigner | IKeyringPair): walletOrKeypair
 }
 
 /* Return the AssetTransferApi-compatible destChainId for a given destination chain */
-function getDestChainId(destChain: Chain): string {
+export function getDestChainId(destChain: Chain): string {
   switch (destChain.network) {
     case Network.Ethereum: {
       return `{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"${destChain.chainId}"}}}}}`
