@@ -3,8 +3,8 @@ import { ethers } from 'ethers'
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Fees, StoredTransfer } from '@/models/transfer'
-import { Environment } from '@/store/environmentStore'
 import { Direction } from '@/services/transfer'
+import { Environment } from '@/store/environmentStore'
 
 /**
  * Safe version of `convertAmount` that handles `null` params
@@ -119,12 +119,12 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const explorersUrls = EXPLORERS[environment]
   switch (network) {
     case Network.Ethereum: {
-      if (result.success?.ethereum && 'transactionHash' in result.success.ethereum)
+      if (result?.success?.ethereum && 'transactionHash' in result.success.ethereum)
         return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
     case Network.Polkadot: {
-      if (result.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
+      if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
       return `${removeURLSlash(explorersUrls.subscan_assethub)}/account/${sender}`
     }

@@ -5,9 +5,9 @@ import { StoredTransfer } from '@/models/transfer'
 import { getErc20TokenUSDValue } from '@/services/balance'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
+import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { trackTransferMetrics } from '@/utils/analytics'
-import { IKeyringPair, Signer } from '@polkadot/types/types'
-import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
+import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
 import { JsonRpcSigner } from 'ethers'
 import useNotification from './useNotification'
@@ -62,20 +62,12 @@ const useAssetTransferApi = () => {
       //todo(nuno): remove once done
       console.log('AT API - txResult', txResult)
 
-      //todo(nuno): clean this up, maybe move to separate function
-      const signer = sender as WalletOrKeypair
-      let addressOrPair: string | IKeyringPair
-      let walletSigner: Signer | undefined = undefined
-      if (isWallet(signer)) {
-        addressOrPair = signer.address
-        walletSigner = signer.signer
-      } else {
-        addressOrPair = signer
-      }
+      const account = sender as SubstrateAccount
 
       const hash = await atApi.api
         .tx(txResult.tx)
-        .signAndSend(addressOrPair, { signer: walletSigner as any })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .signAndSend(account.address, { signer: account.signer as any })
 
       if (!hash) throw new Error('Transfer failed')
       onSuccess?.()
@@ -149,10 +141,6 @@ const useAssetTransferApi = () => {
   }
 
   return { transfer }
-}
-
-function isWallet(walletOrKeypair: WalletSigner | IKeyringPair): walletOrKeypair is WalletSigner {
-  return (walletOrKeypair as WalletSigner).signer !== undefined
 }
 
 /* Return the AssetTransferApi-compatible destChainId for a given destination chain */
