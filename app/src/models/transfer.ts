@@ -22,7 +22,7 @@ export interface StoredTransfer {
   environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
-  sendResult: toEthereum.SendResult | toPolkadot.SendResult
+  sendResult?: toEthereum.SendResult | toPolkadot.SendResult
 }
 
 export interface DisplaysTransfers {

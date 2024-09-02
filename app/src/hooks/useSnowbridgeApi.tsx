@@ -191,7 +191,7 @@ const useSnowbridgeApi = () => {
       } satisfies StoredTransfer)
 
       // metrics
-      if (environment === Environment.Mainnet) {
+      if (environment === Environment.Mainnet)
         trackTransferMetrics({
           sender: senderAddress,
           sourceChain: sourceChain.name,
@@ -203,7 +203,6 @@ const useSnowbridgeApi = () => {
           recipient: recipient,
           date: date.toISOString(),
         })
-      }
     } catch (e) {
       handleSendError(e)
     } finally {

@@ -1,10 +1,15 @@
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
+import { StoredTransfer } from '@/models/transfer'
+import { getErc20TokenUSDValue } from '@/services/balance'
 import { Direction } from '@/services/transfer'
+import { Environment } from '@/store/environmentStore'
+import { trackTransferMetrics } from '@/utils/analytics'
 import { IKeyringPair, Signer } from '@polkadot/types/types'
 import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
+import { JsonRpcSigner } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
@@ -68,13 +73,54 @@ const useAssetTransferApi = () => {
         addressOrPair = signer
       }
 
-      console.log('Will ask to sign')
-      const result = await atApi.api
+      const hash = await atApi.api
         .tx(txResult.tx)
         .signAndSend(addressOrPair, { signer: walletSigner as any })
 
-      console.log('result is ', result)
-      //todo(nuno): follow up here - make sure it's submitted and add to ongoing transfers
+      if (!hash) throw new Error('Transfer failed')
+      onSuccess?.()
+      addNotification({
+        message: 'Transfer initiated. See below!',
+        severity: NotificationSeverity.Success,
+      })
+
+      const senderAddress =
+        sender instanceof JsonRpcSigner
+          ? await sender.getAddress()
+          : (sender as WalletOrKeypair).address
+
+      const tokenData = await getErc20TokenUSDValue(token.address)
+      const tokenUSDValue =
+        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+      const date = new Date()
+
+      addTransferToStorage({
+        id: hash.toString(),
+        sourceChain,
+        token,
+        tokenUSDValue,
+        sender: senderAddress,
+        destChain: destinationChain,
+        amount: amount.toString(),
+        recipient,
+        date,
+        environment,
+        fees,
+      } satisfies StoredTransfer)
+
+      // metrics
+      if (environment === Environment.Mainnet)
+        trackTransferMetrics({
+          sender: senderAddress,
+          sourceChain: sourceChain.name,
+          token: token.name,
+          amount: amount.toString(),
+          destinationChain: destinationChain.name,
+          usdValue: tokenUSDValue,
+          usdFees: fees.inDollars,
+          recipient: recipient,
+          date: date.toISOString(),
+        })
     } catch (e) {
       console.log('Transfer submition error:', e)
       addNotification({
@@ -86,7 +132,7 @@ const useAssetTransferApi = () => {
     }
   }
 
-  const validate = async (
+  const _validate = async (
     _direction: Direction,
     _sender: Sender,
     _sourceChain: Chain,
