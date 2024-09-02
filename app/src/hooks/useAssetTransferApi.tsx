@@ -1,9 +1,7 @@
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
 import { getErc20TokenUSDValue } from '@/services/balance'
-import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { trackTransferMetrics } from '@/utils/analytics'
@@ -14,7 +12,7 @@ import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer
 import { JsonRpcSigner } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { Sender, Status, TransferParams } from './useTransfer'
+import { Status, TransferParams } from './useTransfer'
 
 const useAssetTransferApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -123,7 +121,7 @@ const useAssetTransferApi = () => {
     }
   }
 
-  const _validate = async (
+  /*   const _validate = async (
     _direction: Direction,
     _sender: Sender,
     _sourceChain: Chain,
@@ -134,10 +132,9 @@ const useAssetTransferApi = () => {
     setStatus: (status: Status) => void,
   ): Promise<boolean> => {
     setStatus('Validating')
-
     //todo(noah)
     return false
-  }
+  } */
 
   const handleSendError = (e: unknown) => {
     console.error('Transfer error:', e)
