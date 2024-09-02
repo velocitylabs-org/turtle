@@ -25,6 +25,7 @@
     "@polkadot/react-identicon": "^3.6.6",
     "@polkadot/types": "^11.3.1",
     "@polkadot/util": "^12.6.2",
+    "@polkadot/util-crypto": "12.6.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-separator": "^1.0.3",
