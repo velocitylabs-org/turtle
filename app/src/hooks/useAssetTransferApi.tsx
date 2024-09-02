@@ -7,6 +7,7 @@ import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { captureException } from '@sentry/nextjs'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
 import { JsonRpcSigner } from 'ethers'
@@ -114,11 +115,7 @@ const useAssetTransferApi = () => {
           date: date.toISOString(),
         })
     } catch (e) {
-      console.log('Transfer submition error:', e)
-      addNotification({
-        message: 'Transfer failed!',
-        severity: NotificationSeverity.Error,
-      })
+      handleSendError(e)
     } finally {
       setStatus('Idle')
     }
@@ -138,6 +135,15 @@ const useAssetTransferApi = () => {
 
     //todo(noah)
     return false
+  }
+
+  const handleSendError = (e: unknown) => {
+    console.error('Transfer error:', e)
+    if (!(e instanceof Error) || !e.message.includes('Cancelled')) captureException(e)
+    addNotification({
+      message: 'Failed to submit the transfer',
+      severity: NotificationSeverity.Error,
+    })
   }
 
   return { transfer }
