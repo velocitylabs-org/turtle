@@ -53,8 +53,6 @@ const useDryRunValidation = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .dryRun(account.address, { signer: account.signer as any })
 
-      console.log(result.toHuman())
-
       // TODO: check result for success or failure
 
       addNotification({

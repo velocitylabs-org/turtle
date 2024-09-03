@@ -11,8 +11,10 @@ import {
 import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
+import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
@@ -22,7 +24,6 @@ import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
-import TokenSpendApproval from './TokenSpendApproval'
 import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
@@ -233,9 +234,15 @@ const Transfer: FC = () => {
             transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
           >
-            <TokenSpendApproval
+            <ActionBanner
+              disabled={isApprovingErc20Spend}
               onClick={() => approveAllowance(sourceWallet?.sender as Signer)}
-              approving={isApprovingErc20Spend}
+              buttonText="Sign now"
+              header="Approve ERC-20 token spend"
+              text="We first need your approval to transfer this token from your wallet."
+              image={
+                <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
+              }
             />
           </motion.div>
         )}
