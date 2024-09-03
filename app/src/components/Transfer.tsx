@@ -1,4 +1,5 @@
 'use client'
+import useDryRunValidation from '@/hooks/useDryRunValidation'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
@@ -67,8 +68,8 @@ const Transfer: FC = () => {
     tokenAmount,
     owner: sourceWallet?.sender?.address,
   })
-  let amountPlaceholder: string
 
+  let amountPlaceholder: string
   if (
     !sourceWallet ||
     !tokenAmount?.token ||
@@ -87,6 +88,21 @@ const Transfer: FC = () => {
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
+
+  const {
+    dryRun,
+    state: dryRunState,
+    hasDryRun,
+  } = useDryRunValidation({
+    sender: sourceWallet?.sender,
+    sourceChain,
+    token: tokenAmount?.token,
+    recipient: manualRecipient.enabled
+      ? manualRecipient.address
+      : destinationWallet?.sender?.address,
+    amount: tokenAmount?.amount,
+    destinationChain,
+  })
 
   return (
     <form
@@ -240,6 +256,33 @@ const Transfer: FC = () => {
               buttonText="Sign now"
               header="Approve ERC-20 token spend"
               text="We first need your approval to transfer this token from your wallet."
+              image={
+                <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
+              }
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Dry Run Validation banner */}
+      <AnimatePresence>
+        {hasDryRun && dryRunState !== 'Success' && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <ActionBanner
+              disabled={dryRunState === 'Loading'}
+              onClick={() => dryRun()}
+              buttonText="Run it now"
+              header="Recommended Validation"
+              text="Before making the transfer we recommend you dry run this cross chain transfer. We need your signature for that. It costs you nothing."
               image={
                 <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
               }

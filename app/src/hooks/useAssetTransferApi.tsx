@@ -1,6 +1,5 @@
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
 import { getErc20TokenUSDValue } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
@@ -11,15 +10,13 @@ import { captureException } from '@sentry/nextjs'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
 import { JsonRpcSigner } from 'ethers'
-import useDryRunValidation from './useDryRunValidation'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { Sender, Status, TransferParams } from './useTransfer'
+import { Status, TransferParams } from './useTransfer'
 
 const useAssetTransferApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
   const { addNotification } = useNotification()
-  const { dryRun } = useDryRunValidation()
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
@@ -60,17 +57,6 @@ const useAssetTransferApi = () => {
       )
 
       const account = sender as SubstrateAccount
-
-      // TODO remove again
-      const v = await validate(
-        sender,
-        sourceChain,
-        token,
-        destinationChain,
-        recipient,
-        amount,
-        setStatus,
-      )
 
       const hash = await atApi.api
         .tx(txResult.tx)
@@ -127,29 +113,6 @@ const useAssetTransferApi = () => {
     } finally {
       setStatus('Idle')
     }
-  }
-
-  const validate = async (
-    sender: Sender,
-    sourceChain: Chain,
-    token: Token,
-    destinationChain: Chain,
-    recipient: string,
-    amount: bigint,
-    setStatus: (status: Status) => void,
-  ): Promise<boolean> => {
-    setStatus('Validating')
-
-    const isSuccessful = await dryRun({
-      sender,
-      sourceChain,
-      token,
-      destinationChain,
-      recipient,
-      amount,
-    })
-
-    return isSuccessful
   }
 
   const handleSendError = (e: unknown) => {
