@@ -2,7 +2,7 @@ import { environment, subscan } from '@snowbridge/api'
 import { bnToU8a, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util'
 import { blake2AsU8a, keccak256AsU8a } from '@polkadot/util-crypto'
 
-type messagequeueProcessed = {
+type subscanEvent = {
   id: number
   block_timestamp: number
   event_index: string
@@ -30,7 +30,7 @@ export const paraIdToChannelId = (paraId: number): string => {
   return u8aToHex(channelId)
 }
 
-export async function getAssetHubData(
+export async function getAHTransferFromHash(
   hash: string,
   assetHubScan: subscan.SubscanApi,
   relaychainScan: subscan.SubscanApi,
@@ -96,38 +96,27 @@ export async function getAssetHubData(
   let tokenChainId: number | null = null
   for (const asset of assets.V3 ?? assets.V4 ?? []) {
     amount = asset.fun?.Fungible ?? null
-    if (amount === null) {
-      continue
-    }
+    if (amount === null) continue
 
     tokenParents = asset.id?.parents ?? asset.id?.Concrete?.parents ?? null
-    if (tokenParents === null) {
-      continue
-    }
+    if (tokenParents === null) continue
 
     const tokenX2 = asset.id?.interior?.X2 ?? Object.values(asset.id?.Concrete?.interior?.X2 ?? {})
-    if (tokenX2 === null || tokenX2.length !== 2) {
-      continue
-    }
+    if (tokenX2 === null || tokenX2.length !== 2) continue
 
     tokenChainId = tokenX2[0].GlobalConsensus?.Ethereum ?? null
-    if (tokenChainId === null) {
-      continue
-    }
+    if (tokenChainId === null) continue
 
     tokenAddress = tokenX2[1].AccountKey20?.key ?? null
-    if (tokenAddress === null) {
-      continue
-    }
+    if (tokenAddress === null) continue
 
     break
   }
 
   if (
     !(tokenParents === 2 && tokenChainId === ethChainId && tokenAddress !== null && amount !== null)
-  ) {
+  )
     return null
-  }
 
   return {
     status: subscanExtrinsicFetch.status,
@@ -151,15 +140,17 @@ export async function getAssetHubData(
   }
 }
 
-export async function getBridgeHubData(
+export async function getBHMessageQueueProccessed(
   bridgeHubScan: subscan.SubscanApi,
-  timestamp: number,
-  bridgeHubMessageId: string,
+  assetHubTransferTimestamp: number,
 ) {
-  const eventIds = ['Processed', 'ProcessingFailed', 'OverweightEnqueued']
+  const eventIds = ['Processed', 'ProcessingFailed', 'OverweightEnqueued'] // To check
 
   // implement an exponential retry mechanism
-  const fromBridgeHubBlock = await subscan.fetchBlockNearTimestamp(bridgeHubScan, timestamp)
+  const fromBridgeHubBlock = await subscan.fetchBlockNearTimestamp(
+    bridgeHubScan,
+    assetHubTransferTimestamp,
+  )
 
   const eventsBody = {
     module: 'messagequeue',
@@ -176,16 +167,14 @@ export async function getBridgeHubData(
   if (subscanEventFetch.json.data?.count === 0 || events.length === 0) return []
 
   const messageprocessedEvents = await Promise.all(
-    events.map(async (e: messagequeueProcessed) => {
+    events.map(async (e: subscanEvent) => {
       const eventParams = await bridgeHubScan.post('api/scan/event/params', {
         event_index: [e.event_index],
       })
       const { params } = eventParams.json.data[0]
 
       const messageId = params.find((e: any) => e.name === 'id')?.value
-      if (!messageId || messageId !== bridgeHubMessageId) {
-        return
-      }
+      if (!messageId) return
 
       const origin = params.find((e: any) => e.name === 'origin')?.value
       const sibling = origin?.Sibling ?? null
@@ -198,6 +187,48 @@ export async function getBridgeHubData(
     }),
   )
   return messageprocessedEvents.filter(e => !!e)
+}
+
+export async function getBHOutboundMessages(
+  bridgeHubScan: subscan.SubscanApi,
+  assetHubTransferTimestamp: number,
+  assetHubMessageId: string,
+) {
+  // implement an exponential retry mechanism
+  const fromBridgeHubBlock = await subscan.fetchBlockNearTimestamp(
+    bridgeHubScan,
+    assetHubTransferTimestamp,
+  )
+  const event_ids = ['MessageAccepted', 'MessageQueued']
+  const eventsBody = {
+    module: 'ethereumoutboundqueue',
+    block_range: `${fromBridgeHubBlock.block_num}-${fromBridgeHubBlock.block_num + 10}`,
+    row: 100,
+    page: 0,
+  }
+
+  // paginate the query with a loop that handles the page param
+  const subscanEventFetch = await bridgeHubScan.post('api/v2/scan/events', eventsBody)
+
+  const events = await subscanEventFetch.json.data.events
+  if (subscanEventFetch.json.data?.count === 0 || events.length === 0) return []
+
+  const ethOutboundQueueMessage = await Promise.all(
+    events.map(async (e: subscanEvent) => {
+      if (!event_ids.includes(e.event_id)) return
+      const eventParams = await bridgeHubScan.post('api/scan/event/params', {
+        event_index: [e.event_index],
+      })
+      const { params } = eventParams.json.data[0]
+
+      const messageId = params.find((e: any) => e.name === 'id')?.value
+      if (!messageId || messageId !== assetHubMessageId) return
+
+      const nonce = params.find((e: any) => e.name === 'nonce')?.value ?? null
+      return { ...e, messageId, nonce }
+    }),
+  )
+  return ethOutboundQueueMessage.filter(e => !!e)
 }
 
 export const getAhToParachainHistory = async (
@@ -217,7 +248,12 @@ export const getAhToParachainHistory = async (
   const bridgeHubScan = subscan.createApi(env.config.SUBSCAN_API.BRIDGE_HUB_URL, subscanKey)
 
   try {
-    const ahTransferData = await getAssetHubData(hash, assetHubScan, relaychainScan, env.ethChainId)
+    const ahTransferData = await getAHTransferFromHash(
+      hash,
+      assetHubScan,
+      relaychainScan,
+      env.ethChainId,
+    )
     if (!ahTransferData) return // TODO improve error
 
     const result: any = {
@@ -247,32 +283,78 @@ export const getAhToParachainHistory = async (
       },
     }
 
-    if (!result.submitted.success) {
-      result.status = 2 // === failed
-    }
+    if (!result.submitted.success) result.status = 2 // === failed
+    if (!result.submitted.bridgeHubMessageId) return // TODO improve error
 
-    if (!result.submitted.bridgeHubMessageId) {
-      return // TODO improve error
-    }
-
-    const bridgeHubXcmDelivered = await getBridgeHubData(
+    const bridgeHubMessageQueues = await getBHMessageQueueProccessed(
       bridgeHubScan,
       result.submitted.block_timestamp,
-      result.submitted.bridgeHubMessageId,
     )
 
-    if (bridgeHubXcmDelivered.length) {
+    const outboundMessages = await getBHOutboundMessages(
+      bridgeHubScan,
+      result.submitted.block_timestamp,
+      result.submitted.messageId,
+    )
+
+    const bridgeHubXcmDelivered = bridgeHubMessageQueues.find(
+      (e: any) =>
+        e.messageId === result.submitted.bridgeHubMessageId &&
+        e.sibling == env.config.ASSET_HUB_PARAID,
+    )
+
+    if (bridgeHubXcmDelivered) {
       result.bridgeHubXcmDelivered = {
-        block_timestamp: bridgeHubXcmDelivered[0].block_timestamp,
-        event_index: bridgeHubXcmDelivered[0].event_index,
-        extrinsic_hash: bridgeHubXcmDelivered[0].extrinsic_hash,
-        siblingParachain: bridgeHubXcmDelivered[0].sibling,
-        success: bridgeHubXcmDelivered[0].success,
+        block_timestamp: bridgeHubXcmDelivered.block_timestamp,
+        event_index: bridgeHubXcmDelivered.event_index,
+        extrinsic_hash: bridgeHubXcmDelivered.extrinsic_hash,
+        siblingParachain: bridgeHubXcmDelivered.sibling,
+        success: bridgeHubXcmDelivered.success,
       }
-      if (!result.bridgeHubXcmDelivered.success) {
-        result.status = 2 // === failed
+      if (!result.bridgeHubXcmDelivered.success) result.status = 2 // === failed
+    }
+
+    const assetHubChannelId = paraIdToChannelId(env.config.ASSET_HUB_PARAID)
+    const bridgeHubChannelDelivered = bridgeHubMessageQueues.find(
+      (e: any) =>
+        e.extrinsic_hash === result.bridgeHubXcmDelivered?.extrinsic_hash &&
+        e.channelId === assetHubChannelId &&
+        e.block_timestamp === result.bridgeHubXcmDelivered?.block_timestamp,
+    )
+    if (bridgeHubChannelDelivered) {
+      result.bridgeHubChannelDelivered = {
+        block_timestamp: bridgeHubChannelDelivered.block_timestamp,
+        event_index: bridgeHubChannelDelivered.event_index,
+        extrinsic_hash: bridgeHubChannelDelivered.extrinsic_hash,
+        channelId: bridgeHubChannelDelivered.channelId,
+        success: bridgeHubChannelDelivered.success,
+      }
+      if (!result.bridgeHubChannelDelivered.success) result.status = 2 // === failed
+    }
+
+    console.log('bridgeHubXcmDelivered', bridgeHubXcmDelivered)
+    console.log('bridgeHubChannelDelivered', bridgeHubChannelDelivered)
+
+    const bridgeHubMessageQueued = outboundMessages.find((e: any) => e.event_id === 'MessageQueued')
+    if (bridgeHubMessageQueued) {
+      result.bridgeHubMessageQueued = {
+        block_timestamp: bridgeHubMessageQueued.block_timestamp,
+        event_index: bridgeHubMessageQueued.event_index,
+        extrinsic_hash: bridgeHubMessageQueued.extrinsic_hash,
       }
     }
+    const bridgeHubMessageAccepted = outboundMessages.find(
+      (e: any) => e.event_id === 'MessageAccepted',
+    )
+    if (bridgeHubMessageAccepted) {
+      result.bridgeHubMessageAccepted = {
+        block_timestamp: bridgeHubMessageAccepted.block_timestamp,
+        event_index: bridgeHubMessageAccepted.event_index,
+        extrinsic_hash: bridgeHubMessageAccepted.extrinsic_hash,
+        nonce: bridgeHubMessageAccepted.nonce,
+      }
+    }
+
     return result
   } catch (error) {
     console.log(error)

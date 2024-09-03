@@ -12,7 +12,7 @@ const App: FC = async () => {
   const env = getEnvironment(shouldUseTestnet ? Environment.Testnet : Environment.Mainnet)
   const txHash = '0xcdefd199b2b88c8ae43130dd4e48d8a5d3407556edfa617dba259bd51505a588'
   const data = await getAhToParachainHistory(env, txHash)
-  console.log('AhToParachainHistory', data)
+  // console.log('AhToParachainHistory', data)
 
   return (
     <main>
