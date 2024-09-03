@@ -3,7 +3,7 @@ import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { getDestChainId } from './useAssetTransferApi'
 import useNotification from './useNotification'
 import { TransferParams } from './useTransfer'
@@ -13,18 +13,18 @@ type DryRunState = 'Success' | 'Error' | 'Loading' | 'Idle'
 /**
  * Hook to make an AT API dry run call for validation purposes.
  */
-const useDryRunValidation = ({
-  sender,
-  sourceChain,
-  token,
-  recipient,
-  amount,
-  destinationChain,
-}: Omit<TransferParams, 'fees' | 'onSuccess' | 'environment'>) => {
+const useDryRunValidation = () => {
   const { addNotification } = useNotification()
   const [state, setState] = useState<DryRunState>('Idle')
 
-  const dryRun = useCallback(async () => {
+  const dryRun = async ({
+    sender,
+    sourceChain,
+    token,
+    recipient,
+    amount,
+    destinationChain,
+  }: Omit<TransferParams, 'fees' | 'onSuccess' | 'environment'>) => {
     try {
       setState('Loading')
       if (!sourceChain.rpcConnection || !sourceChain.specName)
@@ -48,18 +48,22 @@ const useDryRunValidation = ({
 
       // sign and send tx
       const account = sender as SubstrateAccount
-      const _result = await atApi.api
+      const result = await atApi.api
         .tx(txResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .dryRun(account.address, { signer: account.signer as any })
 
+      console.log(result.toHuman())
+
       // TODO: check result for success or failure
 
       addNotification({
-        message: 'Validation initiated.',
+        message: 'Validation Successful. Continue with the transfer.',
         severity: NotificationSeverity.Success,
       })
       setState('Success')
+
+      return result.isOk
     } catch (e) {
       setState('Error')
       if (!txWasCancelled(sender, e)) captureException(e)
@@ -67,15 +71,11 @@ const useDryRunValidation = ({
         message: 'Sorry the validation failed.',
         severity: NotificationSeverity.Error,
       })
+      return false
     }
-  }, [sender, sourceChain, token, recipient, amount, destinationChain, addNotification])
+  }
 
-  // reset state when the dryRun function changes
-  useEffect(() => {
-    setState('Idle')
-  }, [dryRun])
-
-  return { state, validate: dryRun }
+  return { state, dryRun }
 }
 
 export default useDryRunValidation
