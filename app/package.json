@@ -32,7 +32,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@sentry/nextjs": "^8.19.0",
     "@sentry/profiling-node": "^8.19.0",
-    "@snowbridge/api": "^0.1.18",
+    "@snowbridge/api": "^0.1.19",
     "@snowbridge/contract-types": "^0.1.18",
     "@substrate/asset-transfer-api": "^0.3.1",
     "@talisman-connect/ui": "^1.1.1",
