@@ -94,6 +94,7 @@ const Transfer: FC = () => {
     state: dryRunState,
     hasDryRun,
   } = useDryRunValidation({
+    environment,
     sender: sourceWallet?.sender,
     sourceChain,
     token: tokenAmount?.token,
@@ -103,6 +104,10 @@ const Transfer: FC = () => {
     amount: tokenAmount?.amount,
     destinationChain,
   })
+  const isTransferAllowed =
+    isValid && !isValidating && fees && transferStatus === 'Idle' && !requiresErc20SpendApproval
+
+  const showDryRunBanner = hasDryRun && dryRunState !== 'Success' && isTransferAllowed
 
   return (
     <form
@@ -266,7 +271,7 @@ const Transfer: FC = () => {
 
       {/* Dry Run Validation banner */}
       <AnimatePresence>
-        {hasDryRun && dryRunState !== 'Success' && (
+        {showDryRunBanner && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{
@@ -307,13 +312,7 @@ const Transfer: FC = () => {
         variant="primary"
         type="submit"
         loading={transferStatus !== 'Idle'}
-        disabled={
-          !isValid ||
-          isValidating ||
-          !fees ||
-          transferStatus !== 'Idle' ||
-          requiresErc20SpendApproval
-        }
+        disabled={!isTransferAllowed}
         cypressID="form-submit"
       />
 

@@ -2,7 +2,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
-import { txWasCancelled } from '@/utils/transfer'
+import { safeConvertAmount, txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
 import { useCallback, useEffect, useState } from 'react'
@@ -20,7 +20,7 @@ interface Params {
   sourceChain?: Chain | null
   token?: Token | null
   recipient?: string | null
-  amount?: string | number | null
+  amount?: number | null
   destinationChain?: Chain | null
 }
 
@@ -46,6 +46,7 @@ const useDryRunValidation = ({
 
       if (!sourceChain?.rpcConnection || !sourceChain?.specName)
         throw new Error('Source chain is missing rpcConnection or specName')
+
       if (
         !sender ||
         !sourceChain ||
@@ -57,6 +58,8 @@ const useDryRunValidation = ({
       ) {
         throw new Error('Data is missing for dry run validation')
       }
+      const convertedAmount = safeConvertAmount(amount, token)
+      if (!convertedAmount) throw new Error('Failed to convert')
 
       // setup AT API
       const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
@@ -67,7 +70,7 @@ const useDryRunValidation = ({
         getDestChainId(destinationChain),
         recipient,
         [token.multilocation],
-        [amount.toString()],
+        [convertedAmount.toString()],
         {
           format: 'submittable',
           xcmVersion: safeXcmVersion,
@@ -81,13 +84,20 @@ const useDryRunValidation = ({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .dryRun(account.address, { signer: account.signer as any })
 
-      // TODO: check result for success or failure
-
-      addNotification({
-        message: 'Validation Successful. Continue with the transfer.',
-        severity: NotificationSeverity.Success,
-      })
-      setState('Success')
+      if (result.isOk) {
+        console.log('Dry Run Successful')
+        addNotification({
+          message: 'Validation Successful. Continue with the transfer.',
+          severity: NotificationSeverity.Success,
+        })
+        setState('Success')
+      } else {
+        console.log('Dry Run Not Successful')
+        addNotification({
+          message: 'Sorry the validation failed.',
+          severity: NotificationSeverity.Error,
+        })
+      }
 
       return result.isOk
     } catch (e) {
@@ -101,7 +111,6 @@ const useDryRunValidation = ({
     }
   }, [sourceChain, token, recipient, amount, destinationChain, sender, addNotification])
 
-  // TODO: use routes sdk to determine if dry run is supported
   const updateHasDryRun = useCallback(async () => {
     if (!sourceChain || !destinationChain) setHasDryRun(false)
     else {
