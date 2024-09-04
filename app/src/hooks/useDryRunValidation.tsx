@@ -94,7 +94,7 @@ const useDryRunValidation = ({
       } else {
         console.log('Dry Run Not Successful')
         addNotification({
-          message: 'Sorry the validation failed.',
+          message: 'Sorry the validation failed. Proceed at your own risk.',
           severity: NotificationSeverity.Error,
         })
       }
