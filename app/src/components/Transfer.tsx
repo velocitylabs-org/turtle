@@ -4,6 +4,7 @@ import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
+import { getRecipientAddress } from '@/utils/address'
 import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
@@ -98,9 +99,7 @@ const Transfer: FC = () => {
     sender: sourceWallet?.sender,
     sourceChain,
     token: tokenAmount?.token,
-    recipient: manualRecipient.enabled
-      ? manualRecipient.address
-      : destinationWallet?.sender?.address,
+    recipient: getRecipientAddress(manualRecipient, destinationWallet),
     amount: tokenAmount?.amount,
     destinationChain,
   })
