@@ -1,7 +1,9 @@
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
+import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { getRoute } from '@/utils/routes'
 import { safeConvertAmount, txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
@@ -9,8 +11,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { getDestChainId } from './useAssetTransferApi'
 import useNotification from './useNotification'
 import { Sender } from './useTransfer'
-import { getRoute } from '@/utils/routes'
-import { Environment } from '@/store/environmentStore'
 
 export type DryRunState = 'Success' | 'Error' | 'Loading' | 'Idle'
 
@@ -112,11 +112,11 @@ const useDryRunValidation = ({
   }, [sourceChain, token, recipient, amount, destinationChain, sender, addNotification])
 
   const updateHasDryRun = useCallback(async () => {
-    if (!sourceChain || !destinationChain) setHasDryRun(false)
-    else {
-      const route = getRoute(environment, sourceChain, destinationChain)
-      setHasDryRun(route?.sdk === 'AssetTransferApi')
-    }
+    setHasDryRun(
+      !!sourceChain &&
+        !!destinationChain &&
+        getRoute(environment, sourceChain, destinationChain)?.sdk === 'AssetTransferApi',
+    )
   }, [setHasDryRun, sourceChain, destinationChain, environment])
 
   // reset state on form change
