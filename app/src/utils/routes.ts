@@ -1,4 +1,4 @@
-import { REGISTRY } from '@/config/registry'
+import { REGISTRY, Route } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
@@ -103,7 +103,6 @@ export const isTokenAvailableForSourceChain = (
   return getAllowedTokens(env, sourceChain, null).some(t => t.allowed && t.id === token.id)
 }
 
-export const getRoute = (env: Environment, from: Chain, to: Chain) => {
-  const allRoutes = REGISTRY[env].routes
-  return allRoutes.find(route => route.from === from.uid && route.to === to.uid)
+export const getRoute = (env: Environment, from: Chain, to: Chain): Route | undefined => {
+  return REGISTRY[env].routes.find(route => route.from === from.uid && route.to === to.uid)
 }
