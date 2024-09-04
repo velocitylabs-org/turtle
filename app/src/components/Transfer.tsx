@@ -8,7 +8,7 @@ import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
   getAllowedTokens,
-} from '@/utils/filters'
+} from '@/utils/routes'
 import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'

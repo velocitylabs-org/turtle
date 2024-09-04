@@ -102,3 +102,8 @@ export const isTokenAvailableForSourceChain = (
   if (!sourceChain || !token) return false
   return getAllowedTokens(env, sourceChain, null).some(t => t.allowed && t.id === token.id)
 }
+
+export const getRoute = (env: Environment, from: Chain, to: Chain) => {
+  const allRoutes = REGISTRY[env].routes
+  return allRoutes.find(route => route.from === from.uid && route.to === to.uid)
+}

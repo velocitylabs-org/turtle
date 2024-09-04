@@ -9,10 +9,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { getDestChainId } from './useAssetTransferApi'
 import useNotification from './useNotification'
 import { Sender } from './useTransfer'
+import { getRoute } from '@/utils/routes'
+import { Environment } from '@/store/environmentStore'
 
 export type DryRunState = 'Success' | 'Error' | 'Loading' | 'Idle'
 
 interface Params {
+  environment: Environment
   sender?: Sender | null
   sourceChain?: Chain | null
   token?: Token | null
@@ -25,6 +28,7 @@ interface Params {
  * Hook to make an AT API dry run call for validation purposes.
  */
 const useDryRunValidation = ({
+  environment,
   sender,
   sourceChain,
   token,
@@ -98,7 +102,13 @@ const useDryRunValidation = ({
   }, [sourceChain, token, recipient, amount, destinationChain, sender, addNotification])
 
   // TODO: use routes sdk to determine if dry run is supported
-  const updateHasDryRun = useCallback(async () => {}, [])
+  const updateHasDryRun = useCallback(async () => {
+    if (!sourceChain || !destinationChain) setHasDryRun(false)
+    else {
+      const route = getRoute(environment, sourceChain, destinationChain)
+      setHasDryRun(route?.sdk === 'AssetTransferApi')
+    }
+  }, [setHasDryRun, sourceChain, destinationChain, environment])
 
   // reset state on form change
   useEffect(() => {

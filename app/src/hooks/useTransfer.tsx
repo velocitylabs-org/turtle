@@ -5,7 +5,7 @@ import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
-import { getRoute } from '@/config/registry'
+import { getRoute } from '@/utils/routes'
 import useSnowbridgeApi from './useSnowbridgeApi'
 import useAssetTransferApi from './useAssetTransferApi'
 
