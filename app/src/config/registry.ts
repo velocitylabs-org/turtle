@@ -211,10 +211,10 @@ export namespace Mainnet {
     name: 'Ethereum',
     symbol: 'ETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"TODO(nuno)"}}]}}',
     decimals: 18,
     address: '',
+    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
+    multilocation: '',
   }
 }
 
@@ -272,8 +272,8 @@ export namespace Testnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     decimals: 18,
     address: '',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"todo"}}]}}',
+    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
+    multilocation: '',
   }
 
   export const ROC: Token = {
