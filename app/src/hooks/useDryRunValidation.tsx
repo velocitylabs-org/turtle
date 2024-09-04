@@ -87,14 +87,14 @@ const useDryRunValidation = ({
       if (result.isOk) {
         console.log('Dry Run Successful')
         addNotification({
-          message: 'Validation Successful. Continue with the transfer.',
+          message: 'Looking good! Ready when you are,
           severity: NotificationSeverity.Success,
         })
         setState('Success')
       } else {
         console.log('Dry Run Not Successful')
         addNotification({
-          message: 'Sorry the validation failed. Proceed at your own risk.',
+          message: 'Something is off. Proceed at your own risk.',
           severity: NotificationSeverity.Error,
         })
       }
