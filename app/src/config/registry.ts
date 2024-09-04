@@ -1,5 +1,6 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Environment } from '../store/environmentStore'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
@@ -210,10 +211,10 @@ export namespace Mainnet {
     name: 'Ethereum',
     symbol: 'ETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"TODO(nuno)"}}]}}',
     decimals: 18,
     address: '',
+    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
+    multilocation: '',
   }
 }
 
@@ -271,8 +272,8 @@ export namespace Testnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     decimals: 18,
     address: '',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"todo"}}]}}',
+    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
+    multilocation: '',
   }
 
   export const ROC: Token = {
@@ -398,4 +399,8 @@ export function getNativeToken(chain: Chain): Token {
     default:
       throw Error('The impossible has happened!')
   }
+}
+
+export function getRoute(env: Environment, from: Chain, to: Chain): Route | undefined {
+  return REGISTRY[env].routes.find(r => r.from === from.uid && r.to === to.uid)
 }
