@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn'
 import { FC, ReactNode } from 'react'
 
-interface ActionBannerProps {
+interface Props {
   onClick: () => void
   disabled: boolean
   header: string
@@ -10,14 +10,7 @@ interface ActionBannerProps {
   image: ReactNode
 }
 
-const ActionBanner: FC<ActionBannerProps> = ({
-  onClick,
-  disabled,
-  header,
-  text,
-  buttonText,
-  image,
-}) => {
+const ActionBanner: FC<Props> = ({ onClick, disabled, header, text, buttonText, image }) => {
   return (
     <div
       className={cn(
