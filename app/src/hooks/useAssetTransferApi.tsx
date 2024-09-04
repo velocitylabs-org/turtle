@@ -35,9 +35,6 @@ const useAssetTransferApi = () => {
 
     setStatus('Loading')
     try {
-      console.log('Sender is ', JSON.stringify(sender))
-
-      console.log(sourceChain)
       if (!sourceChain.rpcConnection || !sourceChain.specName)
         throw new Error('Source chain is missing rpcConnection or specName')
 
@@ -58,9 +55,6 @@ const useAssetTransferApi = () => {
           xcmVersion: safeXcmVersion,
         },
       )
-
-      //todo(nuno): remove once done
-      console.log('AT API - txResult', txResult)
 
       const account = sender as SubstrateAccount
 
@@ -120,21 +114,6 @@ const useAssetTransferApi = () => {
       setStatus('Idle')
     }
   }
-
-  /*   const _validate = async (
-    _direction: Direction,
-    _sender: Sender,
-    _sourceChain: Chain,
-    _token: Token,
-    _destinationChain: Chain,
-    _recipient: string,
-    _amount: bigint,
-    setStatus: (status: Status) => void,
-  ): Promise<boolean> => {
-    setStatus('Validating')
-    //todo(noah)
-    return false
-  } */
 
   const handleSendError = (e: unknown) => {
     console.error('Transfer error:', e)

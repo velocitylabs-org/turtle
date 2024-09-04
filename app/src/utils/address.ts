@@ -1,4 +1,6 @@
+import { WalletInfo } from '@/hooks/useWallet'
 import { AddressType } from '@/models/chain'
+import { ManualRecipient } from '@/models/select'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { isAddress } from 'viem/utils'
@@ -73,4 +75,10 @@ export const isValidSubstrateAddress = (address: string): boolean => {
   } catch (error) {
     return false
   }
+}
+
+/** Get the recipient address based on the enabled manual input and the connected destination wallet. */
+export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: WalletInfo) => {
+  if (manualRecipient.enabled) return manualRecipient.address
+  return wallet?.sender?.address
 }
