@@ -87,7 +87,7 @@ const useDryRunValidation = ({
       if (result.isOk) {
         console.log('Dry Run Successful')
         addNotification({
-          message: 'Looking good! Ready when you are',
+          message: 'Looking good! Ready when you are.',
           severity: NotificationSeverity.Success,
         })
         setState('Success')
