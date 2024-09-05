@@ -211,28 +211,39 @@ export async function getBHETHOutboundMessages(
   assetHubTransferTimestamp: number,
   assetHubMessageId: string,
 ) {
-  // implement an exponential retry mechanism
+  const eventIds = ['MessageAccepted', 'MessageQueued']
+
+  // implement an exponential retry mechanism ?
   const fromBridgeHubBlock = await subscan.fetchBlockNearTimestamp(
     bridgeHubScan,
     assetHubTransferTimestamp,
   )
-  const event_ids = ['MessageAccepted', 'MessageQueued']
-  const eventsBody = {
-    module: 'ethereumoutboundqueue',
-    block_range: `${fromBridgeHubBlock.block_num}-${fromBridgeHubBlock.block_num + 50}`, // Arbitrary decision to add +50 blocks
-    row: 100,
-    page: 0,
+
+  const events = []
+  let page = 0
+  let keepFetching = true
+
+  while (keepFetching) {
+    const eventsBody = {
+      module: 'ethereumoutboundqueue',
+      block_range: `${fromBridgeHubBlock.block_num}-${fromBridgeHubBlock.block_num + 50}`, // Arbitrary decision to hardcode +50 blocks
+      row: 100,
+      page,
+    }
+    const eventsQuery = await bridgeHubScan.post('api/v2/scan/events', eventsBody)
+    const subscanEvents = eventsQuery.json.data.events ?? []
+    if (!subscanEvents.length) {
+      keepFetching = false
+    }
+    events.push(...subscanEvents)
+    page++
   }
 
-  // paginate the query with a loop that handles the page param
-  const subscanEventFetch = await bridgeHubScan.post('api/v2/scan/events', eventsBody)
-
-  const events = await subscanEventFetch.json.data.events
-  if (subscanEventFetch.json.data?.count === 0 || events.length === 0) return []
+  if (events.length === 0) return []
 
   const ethOutboundQueueMessage = await Promise.all(
     events.map(async (e: subscanEvent) => {
-      if (!event_ids.includes(e.event_id)) return
+      if (!eventIds.includes(e.event_id)) return
       const eventParams = await bridgeHubScan.post('api/scan/event/params', {
         event_index: [e.event_index],
       })
