@@ -5,8 +5,8 @@ import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
-import { isValidAddressType } from '@/utils/address'
-import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/filters'
+import { getRecipientAddress, isValidAddressType } from '@/utils/address'
+import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -91,13 +91,15 @@ const useTransferForm = () => {
 
   const allowSwap = useCallback(() => {
     return (
+      !isValidating &&
+      transferStatus === 'Idle' &&
       !!sourceChain &&
       !!destinationChain &&
       !!tokenAmount &&
       isRouteAllowed(environment, sourceChain, destinationChain) &&
       isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
     )
-  }, [environment, destinationChain, sourceChain, tokenAmount])
+  }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
     (newValue: Chain | null) => {
@@ -136,11 +138,16 @@ const useTransferForm = () => {
   )
 
   const handleSwapChains = useCallback(() => {
-    if (!sourceChain && !destinationChain && !allowSwap()) return
+    if (
+      (!sourceChain && !destinationChain && !allowSwap()) ||
+      isValidating ||
+      transferStatus !== 'Idle'
+    )
+      return
     // Swap chains values
     setValue('sourceChain', destinationChain)
     setValue('destinationChain', sourceChain)
-  }, [sourceChain, destinationChain, setValue, allowSwap])
+  }, [sourceChain, destinationChain, setValue, allowSwap, isValidating, transferStatus])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
@@ -169,9 +176,7 @@ const useTransferForm = () => {
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
     data => {
       const { sourceChain, destinationChain, tokenAmount, manualRecipient } = data
-      const recipient = manualRecipient.enabled
-        ? manualRecipient.address
-        : destinationWallet?.sender?.address
+      const recipient = getRecipientAddress(manualRecipient, destinationWallet)
       const amount = tokenAmount ? safeConvertAmount(tokenAmount.amount, tokenAmount.token) : null
 
       if (
@@ -200,7 +205,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet?.sender?.address, fees, reset, sourceWallet?.sender, transfer, environment],
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment],
   )
 
   // validate recipient address

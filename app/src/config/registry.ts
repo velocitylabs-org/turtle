@@ -211,10 +211,10 @@ export namespace Mainnet {
     name: 'Ethereum',
     symbol: 'ETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"TODO(nuno)"}}]}}',
     decimals: 18,
     address: '',
+    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
+    multilocation: '',
   }
 }
 
@@ -238,6 +238,8 @@ export namespace Testnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
+    specName: 'asset-hub-rococo',
   }
 
   // Tokens
@@ -249,7 +251,7 @@ export namespace Testnet {
     decimals: 18,
     address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
     multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
+      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
   }
 
   export const VETH: Token = {
@@ -260,7 +262,7 @@ export namespace Testnet {
     decimals: 18,
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
     multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
+      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
   }
 
   export const ETH: Token = {
@@ -270,8 +272,8 @@ export namespace Testnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     decimals: 18,
     address: '',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"todo"}}]}}',
+    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
+    multilocation: '',
   }
 
   export const ROC: Token = {

@@ -11,6 +11,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),
+  multilocation: z.string(),
 })
 
 export const chainSchema: z.ZodType<Chain> = z.object({
@@ -20,6 +21,9 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   chainId: z.number(),
   network: z.nativeEnum(Network),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
+  destinationFeeDOT: z.string().optional(),
+  rpcConnection: z.string().optional(),
+  specName: z.string().optional(),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({

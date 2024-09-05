@@ -1,13 +1,18 @@
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { Token } from '@/models/token'
-import { Direction } from '@/services/transfer'
-import { IKeyringPair, Signer } from '@polkadot/types/types'
-import { WalletOrKeypair, WalletSigner } from '@snowbridge/api/dist/toEthereum'
+import { StoredTransfer } from '@/models/transfer'
+import { getErc20TokenUSDValue } from '@/services/balance'
+import { Environment } from '@/store/environmentStore'
+import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { trackTransferMetrics } from '@/utils/analytics'
+import { txWasCancelled } from '@/utils/transfer'
+import { captureException } from '@sentry/nextjs'
+import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
+import { JsonRpcSigner } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { Sender, Status, TransferParams } from './useTransfer'
+import { Status, TransferParams } from './useTransfer'
 
 const useAssetTransferApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -30,13 +35,11 @@ const useAssetTransferApi = () => {
 
     setStatus('Loading')
     try {
-      console.log('Sender is ', JSON.stringify(sender))
+      if (!sourceChain.rpcConnection || !sourceChain.specName)
+        throw new Error('Source chain is missing rpcConnection or specName')
 
-      //todo(nuno): get the wss and specName from the source chain
-      const { api, safeXcmVersion } = await constructApiPromise(
-        'wss://rococo-asset-hub-rpc.polkadot.io',
-      )
-      const atApi = new AssetTransferApi(api, 'asset-hub-rococo', safeXcmVersion)
+      const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
+      const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
       setStatus('Sending')
 
@@ -53,59 +56,74 @@ const useAssetTransferApi = () => {
         },
       )
 
-      //todo(nuno): remove once done
-      console.log('AT API - txResult', txResult)
+      const account = sender as SubstrateAccount
 
-      //todo(nuno): clean this up, maybe move to separate function
-      const signer = sender as WalletOrKeypair
-      let addressOrPair: string | IKeyringPair
-      let walletSigner: Signer | undefined = undefined
-      if (isWallet(signer)) {
-        addressOrPair = signer.address
-        walletSigner = signer.signer
-      } else {
-        addressOrPair = signer
-      }
-
-      console.log('Will ask to sign')
-      const result = await atApi.api
+      const hash = await atApi.api
         .tx(txResult.tx)
-        .signAndSend(addressOrPair, { signer: walletSigner as any })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .signAndSend(account.address, { signer: account.signer as any })
 
-      console.log('result is ', result)
-      //todo(nuno): follow up here - make sure it's submitted and add to ongoing transfers
-    } catch (e) {
-      console.log('Transfer submition error:', e)
+      if (!hash) throw new Error('Transfer failed')
+      onSuccess?.()
       addNotification({
-        message: 'Transfer failed!',
-        severity: NotificationSeverity.Error,
+        message: 'Transfer initiated. See below!',
+        severity: NotificationSeverity.Success,
       })
+
+      const senderAddress =
+        sender instanceof JsonRpcSigner
+          ? await sender.getAddress()
+          : (sender as WalletOrKeypair).address
+
+      const tokenData = await getErc20TokenUSDValue(token.address)
+      const tokenUSDValue =
+        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+      const date = new Date()
+
+      addTransferToStorage({
+        id: hash.toString(),
+        sourceChain,
+        token,
+        tokenUSDValue,
+        sender: senderAddress,
+        destChain: destinationChain,
+        amount: amount.toString(),
+        recipient,
+        date,
+        environment,
+        fees,
+      } satisfies StoredTransfer)
+
+      // metrics
+      if (environment === Environment.Mainnet)
+        trackTransferMetrics({
+          sender: senderAddress,
+          sourceChain: sourceChain.name,
+          token: token.name,
+          amount: amount.toString(),
+          destinationChain: destinationChain.name,
+          usdValue: tokenUSDValue,
+          usdFees: fees.inDollars,
+          recipient: recipient,
+          date: date.toISOString(),
+        })
+    } catch (e) {
+      if (!txWasCancelled(sender, e)) captureException(e)
+      handleSendError(e)
     } finally {
       setStatus('Idle')
     }
   }
 
-  const validate = async (
-    _direction: Direction,
-    _sender: Sender,
-    _sourceChain: Chain,
-    _token: Token,
-    _destinationChain: Chain,
-    _recipient: string,
-    _amount: bigint,
-    setStatus: (status: Status) => void,
-  ): Promise<boolean> => {
-    setStatus('Validating')
-
-    //todo(noah)
-    return false
+  const handleSendError = (e: unknown) => {
+    console.error('Transfer error:', e)
+    addNotification({
+      message: 'Failed to submit the transfer',
+      severity: NotificationSeverity.Error,
+    })
   }
 
   return { transfer }
-}
-
-function isWallet(walletOrKeypair: WalletSigner | IKeyringPair): walletOrKeypair is WalletSigner {
-  return (walletOrKeypair as WalletSigner).signer !== undefined
 }
 
 /* Return the AssetTransferApi-compatible destChainId for a given destination chain */

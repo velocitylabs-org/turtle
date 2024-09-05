@@ -31,7 +31,7 @@ importers:
         version: 12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
       '@polkadot/react-identicon':
         specifier: ^3.6.6
-        version: 3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/networks@13.0.2)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
+        version: 3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@12.6.2))(@polkadot/networks@13.0.2)(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
       '@polkadot/types':
         specifier: ^11.3.1
         version: 11.3.1
@@ -3895,11 +3895,9 @@ packages:
 
   '@substrate/connect@0.7.0-alpha.0':
     resolution: {integrity: sha512-fvO7w++M8R95R/pGJFW9+cWOt8OYnnTfgswxtlPqSgzqX4tta8xcNQ51crC72FcL5agwSGkA1gc2/+eyTj7O8A==}
-    deprecated: versions below 1.x are no longer maintained
 
   '@substrate/connect@0.8.10':
     resolution: {integrity: sha512-DIyQ13DDlXqVFnLV+S6/JDgiGowVRRrh18kahieJxhgvzcWicw5eLc6jpfQ0moVVLBYkO7rctB5Wreldwpva8w==}
-    deprecated: versions below 1.x are no longer maintained
 
   '@substrate/light-client-extension-helpers@0.0.6':
     resolution: {integrity: sha512-girltEuxQ1BvkJWmc8JJlk4ZxnlGXc/wkLcNguhY+UoDEMBK0LsdtfzQKIfrIehi4QdeSBlFEFBoI4RqPmsZzA==}
