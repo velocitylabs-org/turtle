@@ -154,25 +154,34 @@ export async function getBHMessageQueueProccessed(
 ) {
   const eventIds = ['Processed', 'ProcessingFailed', 'OverweightEnqueued']
 
-  // implement an exponential retry mechanism
+  // implement an exponential retry mechanism ?
   const fromBridgeHubBlock = await subscan.fetchBlockNearTimestamp(
     bridgeHubScan,
     assetHubTransferTimestamp,
   )
 
-  const eventsBody = {
-    module: 'messagequeue',
-    block_range: `${fromBridgeHubBlock.block_num}-${fromBridgeHubBlock.block_num + 50}`, // Arbitrary decision to add +50 blocks
-    event_id: eventIds[0],
-    row: 100,
-    page: 0,
+  const events = []
+  let page = 0
+  let keepFetching = true
+
+  while (keepFetching) {
+    const eventsBody = {
+      module: 'messagequeue',
+      block_range: `${fromBridgeHubBlock.block_num}-${fromBridgeHubBlock.block_num + 50}`, // Arbitrary decision to hardcode +50 blocks
+      event_id: eventIds[0],
+      row: 100,
+      page,
+    }
+    const eventsQuery = await bridgeHubScan.post('api/v2/scan/events', eventsBody)
+    const subscanEvents = eventsQuery.json.data.events ?? []
+    if (!subscanEvents.length) {
+      keepFetching = false
+    }
+    events.push(...subscanEvents)
+    page++
   }
 
-  // paginate the query with a loop that handles the page param
-  const subscanEventFetch = await bridgeHubScan.post('api/v2/scan/events', eventsBody)
-
-  const events = await subscanEventFetch.json.data.events
-  if (subscanEventFetch.json.data?.count === 0 || events.length === 0) return []
+  if (events.length === 0) return []
 
   const messageprocessedEvents = await Promise.all(
     events.map(async (e: subscanEvent) => {
