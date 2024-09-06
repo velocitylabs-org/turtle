@@ -7,6 +7,7 @@ import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
   getAllowedTokens,
+  getRoute,
 } from '@/utils/routes'
 import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
@@ -25,6 +26,7 @@ import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import { env } from 'process'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -255,27 +257,30 @@ const Transfer: FC = () => {
 
       {/* Dry Run Validation banner */}
       <AnimatePresence>
-        {true && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: 1,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-1 self-center pt-1"
-          >
-            <ActionBanner
-              disabled={false}
-              header={'Watch it!'}
-              text={
-                'This flow is still on beta. It should work out fine but proceed at your own risk.'
-              }
-              image={<Image src={'/wip.png'} alt={'Warning'} width={64} height={64} />}
-            ></ActionBanner>
-          </motion.div>
-        )}
+        {environment &&
+          sourceChain &&
+          destinationChain &&
+          getRoute(environment, sourceChain, destinationChain)?.sdk === 'AssetTransferApi' && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: 1,
+                height: 'auto',
+              }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex items-center gap-1 self-center pt-1"
+            >
+              <ActionBanner
+                disabled={false}
+                header={'Watch it!'}
+                text={
+                  'This flow is still in beta. It should work out fine but proceed at your own risk.'
+                }
+                image={<Image src={'/wip.png'} alt={'Warning'} width={64} height={64} />}
+              ></ActionBanner>
+            </motion.div>
+          )}
       </AnimatePresence>
 
       {/* Fees */}
