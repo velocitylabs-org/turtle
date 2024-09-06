@@ -272,7 +272,7 @@ const Transfer: FC = () => {
               text={
                 'This flow is still on beta. It should work out fine but proceed at your own risk.'
               }
-              image={<Image src={'/bell.png'} alt={'Warning'} width={64} height={64} />}
+              image={<Image src={'/wip.png'} alt={'Warning'} width={64} height={64} />}
             ></ActionBanner>
           </motion.div>
         )}
