@@ -26,7 +26,6 @@ import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { env } from 'process'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
