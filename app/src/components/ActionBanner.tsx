@@ -2,15 +2,19 @@ import { cn } from '@/utils/cn'
 import { FC, ReactNode } from 'react'
 
 interface Props {
-  onClick: () => void
   disabled: boolean
   header: string
   text: string
-  buttonText: string
   image: ReactNode
+  btn?: Button
 }
 
-const ActionBanner: FC<Props> = ({ onClick, disabled, header, text, buttonText, image }) => {
+interface Button {
+  label: string
+  onClick: () => void
+}
+
+const ActionBanner: FC<Props> = ({ disabled, header, text, image, btn }) => {
   return (
     <div
       className={cn(
@@ -24,16 +28,21 @@ const ActionBanner: FC<Props> = ({ onClick, disabled, header, text, buttonText, 
           <div className="text-left text-small font-bold text-turtle-foreground">{header}</div>
           <div className="pb-2 text-left text-small text-turtle-foreground">
             {text}
-            <button
-              className={cn(
-                'ml-1 text-left text-small text-turtle-foreground underline',
-                disabled ? 'cursor-not-allowed' : '',
-              )}
-              onClick={onClick}
-              disabled={disabled}
-            >
-              {buttonText}
-            </button>
+
+            {btn && (
+              <button
+                className={cn(
+                  'ml-1 text-left text-small text-turtle-foreground underline',
+                  disabled ? 'cursor-not-allowed' : '',
+                )}
+                onClick={() => {
+                  btn.onClick
+                }}
+                disabled={disabled}
+              >
+                {btn.label}
+              </button>
+            )}
           </div>
         </div>
       </div>

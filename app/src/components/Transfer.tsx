@@ -239,13 +239,15 @@ const Transfer: FC = () => {
           >
             <ActionBanner
               disabled={isApprovingErc20Spend}
-              onClick={() => approveAllowance(sourceWallet?.sender as Signer)}
-              buttonText="Sign now"
               header="Approve ERC-20 token spend"
               text="We first need your approval to transfer this token from your wallet."
               image={
                 <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
               }
+              btn={{
+                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
+                label: 'Sign now',
+              }}
             />
           </motion.div>
         )}
@@ -264,7 +266,14 @@ const Transfer: FC = () => {
             transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
           >
-            warning to proceed at own risk
+            <ActionBanner
+              disabled={false}
+              header={'Watch it!'}
+              text={
+                'This flow is still on beta. It should work out fine but proceed at your own risk.'
+              }
+              image={<Image src={'/bell.png'} alt={'Warning'} width={64} height={64} />}
+            ></ActionBanner>
           </motion.div>
         )}
       </AnimatePresence>
