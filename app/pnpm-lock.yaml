@@ -31,7 +31,7 @@ importers:
         version: 12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)
       '@polkadot/react-identicon':
         specifier: ^3.6.6
-        version: 3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@12.6.2))(@polkadot/networks@13.0.2)(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
+        version: 3.6.6(@polkadot/keyring@12.6.2(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2))(@polkadot/networks@13.0.2)(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)
       '@polkadot/types':
         specifier: ^11.3.1
         version: 11.3.1
@@ -9942,7 +9942,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.25.4
       '@babel/helper-validator-option': 7.24.8
-      browserslist: 4.23.1
+      browserslist: 4.23.3
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -11038,26 +11038,26 @@ snapshots:
   '@formatjs/ecma402-abstract@2.0.0':
     dependencies:
       '@formatjs/intl-localematcher': 0.5.4
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@formatjs/fast-memoize@2.2.0':
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@formatjs/icu-messageformat-parser@2.7.8':
     dependencies:
       '@formatjs/ecma402-abstract': 2.0.0
       '@formatjs/icu-skeleton-parser': 1.8.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@formatjs/icu-skeleton-parser@1.8.2':
     dependencies:
       '@formatjs/ecma402-abstract': 2.0.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@formatjs/intl-localematcher@0.5.4':
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@hapi/hoek@9.3.0': {}
 
@@ -11568,7 +11568,7 @@ snapshots:
       '@motionone/easing': 10.18.0
       '@motionone/types': 10.17.1
       '@motionone/utils': 10.18.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@motionone/dom@10.18.0':
     dependencies:
@@ -11577,23 +11577,23 @@ snapshots:
       '@motionone/types': 10.17.1
       '@motionone/utils': 10.18.0
       hey-listen: 1.0.8
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@motionone/easing@10.18.0':
     dependencies:
       '@motionone/utils': 10.18.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@motionone/generators@10.18.0':
     dependencies:
       '@motionone/types': 10.17.1
       '@motionone/utils': 10.18.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@motionone/svelte@10.16.4':
     dependencies:
       '@motionone/dom': 10.18.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@motionone/types@10.17.1': {}
 
@@ -11601,12 +11601,12 @@ snapshots:
     dependencies:
       '@motionone/types': 10.17.1
       hey-listen: 1.0.8
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@motionone/vue@10.16.4':
     dependencies:
       '@motionone/dom': 10.18.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@next/env@14.2.3': {}
 
@@ -13221,7 +13221,7 @@ snapshots:
     dependencies:
       '@polkadot/util': 13.0.2
       '@substrate/ss58-registry': 1.49.0
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/networks@8.7.1':
     dependencies:
@@ -13243,7 +13243,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-is: 18.3.1
       styled-components: 6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tslib: 2.6.3
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@polkadot/networks'
 
@@ -13421,7 +13421,7 @@ snapshots:
       '@polkadot/types': 12.2.2
       '@polkadot/types-codec': 12.2.2
       '@polkadot/util': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/types-augment@12.4.2':
     dependencies:
@@ -13453,7 +13453,7 @@ snapshots:
     dependencies:
       '@polkadot/util': 13.0.2
       '@polkadot/x-bigint': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/types-codec@12.4.2':
     dependencies:
@@ -13482,7 +13482,7 @@ snapshots:
     dependencies:
       '@polkadot/types-codec': 12.2.2
       '@polkadot/util': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/types-create@12.4.2':
     dependencies:
@@ -13526,17 +13526,17 @@ snapshots:
   '@polkadot/types-support@11.3.1':
     dependencies:
       '@polkadot/util': 12.6.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/types-support@12.1.1':
     dependencies:
       '@polkadot/util': 12.6.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/types-support@12.2.2':
     dependencies:
       '@polkadot/util': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/types-support@7.15.1':
     dependencies:
@@ -13574,7 +13574,7 @@ snapshots:
       '@polkadot/util': 13.0.2
       '@polkadot/util-crypto': 13.0.2(@polkadot/util@13.0.2)
       rxjs: 7.8.1
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/types@12.4.2':
     dependencies:
@@ -13604,14 +13604,14 @@ snapshots:
       '@polkadot/util': 12.6.2
       eventemitter3: 5.0.1
       store: 2.0.12
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/ui-shared@3.6.6(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)':
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       colord: 2.9.3
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2)':
     dependencies:
@@ -13798,7 +13798,7 @@ snapshots:
   '@polkadot/x-bigint@13.0.2':
     dependencies:
       '@polkadot/x-global': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/x-bigint@8.7.1':
     dependencies:
@@ -13809,13 +13809,13 @@ snapshots:
     dependencies:
       '@polkadot/x-global': 12.6.2
       node-fetch: 3.3.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/x-fetch@13.0.2':
     dependencies:
       '@polkadot/x-global': 13.0.2
       node-fetch: 3.3.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/x-fetch@8.7.1':
     dependencies:
@@ -13832,7 +13832,7 @@ snapshots:
 
   '@polkadot/x-global@13.0.2':
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/x-global@8.7.1':
     dependencies:
@@ -13850,7 +13850,7 @@ snapshots:
       '@polkadot/util': 13.0.2
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@13.0.2)
       '@polkadot/x-global': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/x-randomvalues@8.7.1':
     dependencies:
@@ -13865,7 +13865,7 @@ snapshots:
   '@polkadot/x-textdecoder@13.0.2':
     dependencies:
       '@polkadot/x-global': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/x-textdecoder@8.7.1':
     dependencies:
@@ -13880,7 +13880,7 @@ snapshots:
   '@polkadot/x-textencoder@13.0.2':
     dependencies:
       '@polkadot/x-global': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   '@polkadot/x-textencoder@8.7.1':
     dependencies:
@@ -13890,7 +13890,7 @@ snapshots:
   '@polkadot/x-ws@12.6.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/x-global': 12.6.2
-      tslib: 2.6.3
+      tslib: 2.7.0
       ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
@@ -13899,7 +13899,7 @@ snapshots:
   '@polkadot/x-ws@13.0.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/x-global': 13.0.2
-      tslib: 2.6.3
+      tslib: 2.7.0
       ws: 8.17.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
@@ -17302,7 +17302,7 @@ snapshots:
 
   canvas-renderer@2.2.1:
     dependencies:
-      '@types/node': 20.14.9
+      '@types/node': 20.16.3
 
   caseless@0.12.0: {}
 
@@ -19170,7 +19170,7 @@ snapshots:
       '@formatjs/ecma402-abstract': 2.0.0
       '@formatjs/fast-memoize': 2.2.0
       '@formatjs/icu-messageformat-parser': 2.7.8
-      tslib: 2.6.3
+      tslib: 2.7.0
 
   invariant@2.2.4:
     dependencies:
@@ -22697,7 +22697,7 @@ snapshots:
       '@webassemblyjs/wasm-parser': 1.12.1
       acorn: 8.12.1
       acorn-import-attributes: 1.9.5(acorn@8.12.1)
-      browserslist: 4.23.1
+      browserslist: 4.23.3
       chrome-trace-event: 1.0.4
       enhanced-resolve: 5.17.1
       es-module-lexer: 1.5.4
