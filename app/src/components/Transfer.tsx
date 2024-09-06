@@ -1,10 +1,8 @@
 'use client'
-import useDryRunValidation from '@/hooks/useDryRunValidation'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
-import { getRecipientAddress } from '@/utils/address'
 import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
@@ -90,23 +88,8 @@ const Transfer: FC = () => {
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
-  const {
-    dryRun,
-    state: dryRunState,
-    hasDryRun,
-  } = useDryRunValidation({
-    environment,
-    sender: sourceWallet?.sender,
-    sourceChain,
-    token: tokenAmount?.token,
-    recipient: getRecipientAddress(manualRecipient, destinationWallet),
-    amount: tokenAmount?.amount,
-    destinationChain,
-  })
   const isTransferAllowed =
     isValid && !isValidating && fees && transferStatus === 'Idle' && !requiresErc20SpendApproval
-
-  const showDryRunBanner = hasDryRun && dryRunState !== 'Success' && isTransferAllowed
 
   return (
     <form
@@ -270,7 +253,7 @@ const Transfer: FC = () => {
 
       {/* Dry Run Validation banner */}
       <AnimatePresence>
-        {showDryRunBanner && (
+        {true && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{
@@ -281,16 +264,7 @@ const Transfer: FC = () => {
             transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
           >
-            <ActionBanner
-              disabled={dryRunState === 'Loading'}
-              onClick={() => dryRun()}
-              buttonText="Run it now"
-              header="Recommended Validation"
-              text="Before making the transfer we recommend you dry run this cross chain transfer. We need your signature for that. It costs you nothing."
-              image={
-                <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
-              }
-            />
+            warning to proceed at own risk
           </motion.div>
         )}
       </AnimatePresence>

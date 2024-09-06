@@ -2,8 +2,8 @@ import { cn } from '@/utils/cn'
 import { Swap } from './svg/Swap'
 
 export const SwapChains = ({
-  disabled,
   handleChainChange,
+  disabled,
 }: {
   disabled: boolean
   handleChainChange: () => void
