@@ -24,7 +24,7 @@ const getCachedTransferHistory = unstable_cache(
     const env = getEnvironment(shouldUseTestnet ? Environment.Testnet : Environment.Mainnet)
 
     try {
-      let transfers: PendingTransfers = {
+      const transfers: PendingTransfers = {
         toPolkadot: [],
         toEthereum: [],
       }

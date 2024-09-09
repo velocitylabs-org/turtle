@@ -83,7 +83,7 @@ export async function getTransferHistory(
     },
   }
 
-  let transfers: (ToEthereumTransferResult | ToPolkadotTransferResult)[] = []
+  const transfers: (ToEthereumTransferResult | ToPolkadotTransferResult)[] = []
 
   if (ongoingTransfers.toEthereum.length) {
     const toEthereum = await history.toEthereumHistory(
