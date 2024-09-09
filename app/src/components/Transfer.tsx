@@ -26,6 +26,8 @@ import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import { Network } from '../models/chain'
+import useEthToWEthSwap from '@/hooks/useEthToWEthSwap'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -63,6 +65,13 @@ const Transfer: FC = () => {
     approveAllowance,
     approving: isApprovingErc20Spend,
   } = useErc20Allowance({
+    context: snowbridgeContext,
+    network: sourceChain?.network,
+    tokenAmount,
+    owner: sourceWallet?.sender?.address,
+  })
+
+  const { ethBalance, swapEthtoWEth } = useEthToWEthSwap({
     context: snowbridgeContext,
     network: sourceChain?.network,
     tokenAmount,
@@ -284,29 +293,34 @@ const Transfer: FC = () => {
 
       {/* ETH to wETH Conversion */}
       <AnimatePresence>
-        {true && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: 1,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center gap-1 self-center pt-1"
-          >
-            <ActionBanner
-              disabled={false}
-              header={'Swap ETH to wETH'}
-              text={'Your wETH balance is insufficient but you got enough ETH.'}
-              image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
-              btn={{
-                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
-                label: `Swap now`,
+        {sourceWallet &&
+          sourceChain?.network === Network.Ethereum &&
+          tokenAmount?.amount &&
+          balanceData &&
+          Number(balanceData.formatted) < tokenAmount.amount &&
+          tokenAmount?.token?.symbol === 'wETH' && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: 1,
+                height: 'auto',
               }}
-            ></ActionBanner>
-          </motion.div>
-        )}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex items-center gap-1 self-center pt-1"
+            >
+              <ActionBanner
+                disabled={false}
+                header={'Swap ETH to wETH'}
+                text={'Your wETH balance is insufficient but you got enough ETH.'}
+                image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
+                btn={{
+                  onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer),
+                  label: `Swap now`,
+                }}
+              ></ActionBanner>
+            </motion.div>
+          )}
       </AnimatePresence>
 
       {/* Fees */}
