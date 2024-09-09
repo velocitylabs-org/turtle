@@ -6,12 +6,12 @@ export const maxDuration = 90 // Timout adter
 import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { getEnvironment } from '@/context/snowbridge'
+import { ongoingTransfersSchema } from '@/models/api-schemas'
 import { OngoingTransferWithDirection, PendingTransfers } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
 import {
-  HISTORY_IN_SECONDS,
   SKIP_LIGHT_CLIENT_UPDATES,
   getErrorMessage,
   getTransferHistory,
@@ -38,7 +38,7 @@ const getCachedTransferHistory = unstable_cache(
         return transfer
       })
 
-      return getTransferHistory(env, transfers, SKIP_LIGHT_CLIENT_UPDATES, HISTORY_IN_SECONDS)
+      return getTransferHistory(env, transfers, SKIP_LIGHT_CLIENT_UPDATES)
     } catch (err) {
       reportError(err)
       return Promise.resolve([])
@@ -53,9 +53,17 @@ const getCachedTransferHistory = unstable_cache(
 
 export async function POST(request: Request) {
   try {
-    // To Do: add a zod schema validator?
-    const { ongoingTransfers }: { ongoingTransfers: OngoingTransferWithDirection[] } = await request.json()
+    // Safe parses & valid the request body with our ZOD schema
+    const requestValue = await ongoingTransfersSchema.spa(await request.json());
+
+    // Returns 400 if body does not respect the expected schema
+    if (!requestValue.success) {
+      return NextResponse.json({ error: requestValue.error }, { status: 400 })
+    }
+    const { ongoingTransfers } = requestValue.data
+    // Returns 200 if ongoingTransfers is empty  
     if (!ongoingTransfers.length) return NextResponse.json([], { status: 200 })
+
     const history = await getCachedTransferHistory(ongoingTransfers)
     return NextResponse.json(history, { status: 200 })
   } catch (err) {

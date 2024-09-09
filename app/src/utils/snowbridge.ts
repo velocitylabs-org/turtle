@@ -17,7 +17,7 @@ export async function getTransferHistory(
   env: environment.SnowbridgeEnvironment,
   ongoingTransfers: PendingTransfers,
   skipLightClientUpdates: boolean,
-  historyInSeconds: number,
+  historyInSeconds = HISTORY_IN_SECONDS,
 ) {
   console.log('Fetching transfer history.')
   if (!env.config.SUBSCAN_API) {
