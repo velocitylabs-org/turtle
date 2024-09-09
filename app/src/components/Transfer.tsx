@@ -254,7 +254,7 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Dry Run Validation banner */}
+      {/* Beta warning */}
       <AnimatePresence>
         {environment &&
           sourceChain &&
@@ -280,6 +280,33 @@ const Transfer: FC = () => {
               ></ActionBanner>
             </motion.div>
           )}
+      </AnimatePresence>
+
+      {/* ETH to wETH Conversion */}
+      <AnimatePresence>
+        {true && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <ActionBanner
+              disabled={false}
+              header={'Swap ETH to wETH'}
+              text={'Your wETH balance is insufficient but you got enough ETH.'}
+              image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
+              btn={{
+                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
+                label: `Swap now`,
+              }}
+            ></ActionBanner>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Fees */}
