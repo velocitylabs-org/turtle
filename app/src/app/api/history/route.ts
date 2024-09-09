@@ -11,11 +11,7 @@ import { OngoingTransferWithDirection, PendingTransfers } from '@/models/transfe
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
-import {
-  SKIP_LIGHT_CLIENT_UPDATES,
-  getErrorMessage,
-  getTransferHistory,
-} from '@/utils/snowbridge'
+import { SKIP_LIGHT_CLIENT_UPDATES, getErrorMessage, getTransferHistory } from '@/utils/snowbridge'
 
 const CACHE_REVALIDATE_IN_SECONDS = 30
 
@@ -54,14 +50,14 @@ const getCachedTransferHistory = unstable_cache(
 export async function POST(request: Request) {
   try {
     // Safe parses & valid the request body with our ZOD schema
-    const requestValue = await ongoingTransfersSchema.spa(await request.json());
+    const requestValue = await ongoingTransfersSchema.spa(await request.json())
 
     // Returns 400 if body does not respect the expected schema
     if (!requestValue.success) {
       return NextResponse.json({ error: requestValue.error }, { status: 400 })
     }
     const { ongoingTransfers } = requestValue.data
-    // Returns 200 if ongoingTransfers is empty  
+    // Returns 200 if ongoingTransfers is empty
     if (!ongoingTransfers.length) return NextResponse.json([], { status: 200 })
 
     const history = await getCachedTransferHistory(ongoingTransfers)
