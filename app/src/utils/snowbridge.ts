@@ -1,3 +1,4 @@
+import { AlchemyProvider } from 'ethers'
 import { environment, subscan, history, status } from '@snowbridge/api'
 import {
   ToEthereumTransferResult,
@@ -5,7 +6,7 @@ import {
   TransferStatus,
 } from '@snowbridge/api/dist/history'
 import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-types'
-import { AlchemyProvider } from 'ethers'
+import { PendingTransfers } from '@/models/transfer'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
 export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 7 * 2 // 2 Weeks
@@ -14,6 +15,7 @@ export const ACCEPTABLE_BRIDGE_LATENCY = 28800 // 8 hours
 
 export async function getTransferHistory(
   env: environment.SnowbridgeEnvironment,
+  ongoingTransfers: PendingTransfers,
   skipLightClientUpdates: boolean,
   historyInSeconds: number,
 ) {
@@ -80,34 +82,40 @@ export async function getTransferHistory(
       toBlock: ethNowBlock.number,
     },
   }
-  console.log('Search ranges:', searchRange)
 
-  const toEthereum = await history.toEthereumHistory(
-    assetHubScan,
-    bridgeHubScan,
-    relaychainScan,
-    searchRange,
-    skipLightClientUpdates,
-    env.ethChainId,
-    assetHubParaId,
-    beefyClient,
-    gateway,
-  )
-  console.log('To Ethereum transfers:', toEthereum.length)
+  let transfers: (ToEthereumTransferResult | ToPolkadotTransferResult)[] = []
 
-  const toPolkadot = await history.toPolkadotHistory(
-    assetHubScan,
-    bridgeHubScan,
-    searchRange,
-    skipLightClientUpdates,
-    bridgeHubParaId,
-    gateway,
-    ethereumProvider,
-    beacon_url,
-  )
-  console.log('To Polkadot transfers:', toPolkadot.length)
+  if (ongoingTransfers.toEthereum.length) {
+    const toEthereum = await history.toEthereumHistory(
+      assetHubScan,
+      bridgeHubScan,
+      relaychainScan,
+      searchRange,
+      skipLightClientUpdates,
+      env.ethChainId,
+      assetHubParaId,
+      beefyClient,
+      gateway,
+    )
+    console.log('To Ethereum transfers:', toEthereum.length)
+    transfers.push(...toEthereum)
+  }
 
-  const transfers = [...toEthereum, ...toPolkadot]
+  if (ongoingTransfers.toPolkadot.length) {
+    const toPolkadot = await history.toPolkadotHistory(
+      assetHubScan,
+      bridgeHubScan,
+      searchRange,
+      skipLightClientUpdates,
+      bridgeHubParaId,
+      gateway,
+      ethereumProvider,
+      beacon_url,
+    )
+    console.log('To Polkadot transfers:', toPolkadot.length)
+    transfers.push(...toPolkadot)
+  }
+
   transfers.sort((a, b) => b.info.when.getTime() - a.info.when.getTime())
   return transfers
 }
