@@ -400,7 +400,3 @@ export function getNativeToken(chain: Chain): Token {
       throw Error('The impossible has happened!')
   }
 }
-
-export function getRoute(env: Environment, from: Chain, to: Chain): Route | undefined {
-  return REGISTRY[env].routes.find(r => r.from === from.uid && r.to === to.uid)
-}
