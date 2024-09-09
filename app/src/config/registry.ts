@@ -1,6 +1,5 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Environment } from '../store/environmentStore'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
