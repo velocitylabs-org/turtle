@@ -117,6 +117,7 @@ export async function getTransferHistory(
   }
 
   transfers.sort((a, b) => b.info.when.getTime() - a.info.when.getTime())
+  // return transfers.filter((t) => t.status === TransferStatus.Pending)
   return transfers
 }
 

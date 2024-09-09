@@ -1,4 +1,4 @@
-import { CompletedTransfer, TxStatus } from '@/models/transfer'
+import { CompletedTransfer, OngoingTransferWithDirection, TxStatus } from '@/models/transfer'
 import { getTransferStatus, isCompletedTransfer } from '@/utils/snowbridge'
 import { getExplorerLink } from '@/utils/transfer'
 import {
@@ -7,6 +7,7 @@ import {
   TransferStatus,
 } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { resolveDirection } from '@/services/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
 import useOngoingTransfers from './useOngoingTransfers'
 import { NotificationSeverity } from '@/models/notification'
@@ -26,9 +27,22 @@ const useSnowbridgeTransferTracker = () => {
   const { addNotification } = useNotification()
 
   const fetchTransfers = useCallback(async () => {
+    const formatTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
+      const { id, sourceChain, destChain, sender, recipient, token, date } = t
+      const direction = resolveDirection(t.sourceChain, t.destChain)
+      return { id, sourceChain, destChain, sender, recipient, token, date, direction }
+    })
+    if (!formatTransfers.length) return
+
     try {
       setLoading(true)
-      const response = await fetch('/api/history')
+      const response = await fetch('/api/history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ongoingTransfers: formatTransfers }),
+      })
       const data = await response.json()
       setTransfers(data)
     } catch (error) {
@@ -36,7 +50,7 @@ const useSnowbridgeTransferTracker = () => {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [ongoingTransfers])
 
   const ongoingTransfersRef = useRef(ongoingTransfers)
 
@@ -60,7 +74,11 @@ const useSnowbridgeTransferTracker = () => {
   useEffect(() => {
     ongoingTransfers.forEach(ongoing => {
       if (transfers && 'error' in transfers) return
-      const foundTransfer = transfers.find(transfer => transfer.id === ongoing.id)
+      const foundTransfer = transfers.find(transfer =>
+        'extrinsic_hash' in transfer.submitted
+          ? transfer.submitted.extrinsic_hash === ongoing.id
+          : transfer.id === ongoing.id,
+      )
       if (foundTransfer) {
         const msg = getStatusMessage(foundTransfer)
         setStatusMessages(prev => ({ ...prev, [ongoing.id]: msg }))
