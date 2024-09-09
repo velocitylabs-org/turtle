@@ -49,7 +49,7 @@ const getCachedTransferHistory = unstable_cache(
 
 export async function POST(request: Request) {
   try {
-    // Safe parses & valid the request body with our ZOD schema
+    // Safely parses & validates the request body with a ZOD schema
     const requestValue = await ongoingTransfersSchema.spa(await request.json())
 
     // Returns 400 if body does not respect the expected schema
