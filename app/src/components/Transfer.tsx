@@ -71,7 +71,11 @@ const Transfer: FC = () => {
     owner: sourceWallet?.sender?.address,
   })
 
-  const { ethBalance, swapEthtoWEth } = useEthToWEthSwap({
+  const {
+    ethBalance,
+    swapEthtoWEth,
+    swapping: isSwappingEthForWEth,
+  } = useEthToWEthSwap({
     context: snowbridgeContext,
     network: sourceChain?.network,
     tokenAmount,
@@ -322,7 +326,7 @@ const Transfer: FC = () => {
             className="flex items-center gap-1 self-center pt-1"
           >
             <ActionBanner
-              disabled={false}
+              disabled={isSwappingEthForWEth}
               header={'Swap ETH to wETH'}
               text={'Your wETH balance is insufficient but you got enough ETH.'}
               image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}

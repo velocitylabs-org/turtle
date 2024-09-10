@@ -99,6 +99,7 @@ const useEthToWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
         })
         if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
           captureException(error)
+      } finally {
         setSwapping(false)
       }
     },
