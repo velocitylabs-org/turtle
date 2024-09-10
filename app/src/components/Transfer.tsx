@@ -253,7 +253,8 @@ const Transfer: FC = () => {
         </div>
       )}
 
-      <div>${ethBalance ?? 0n}</div>
+      <div>Eth balance is ${ethBalance ?? 0n}</div>
+      <div>wETH balance is ${balanceData?.formatted ?? 0n}</div>
 
       {/* ERC-20 Spend Approval */}
       <AnimatePresence>
