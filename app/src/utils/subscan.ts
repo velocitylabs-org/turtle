@@ -10,6 +10,7 @@ import {
 } from '@snowbridge/contract-types'
 
 import { ETHEREUM_BLOCK_TIME_SECONDS, HISTORY_IN_SECONDS } from './snowbridge'
+import { ToPolkadotTransferResult } from '@snowbridge/api/dist/history'
 
 type subscanEvent = {
   id: number
@@ -49,6 +50,8 @@ export async function getAHTransferFromHash(
     hash,
     only_extrinsic_event: true,
   })
+  console.log("subscanExtrinsicFetch", subscanExtrinsicFetch)
+  if (!subscanExtrinsicFetch.json.data) return null
 
   const {
     event,
@@ -310,7 +313,7 @@ const getEthInboundMessagesDispatched = async (
 export const getAhToParachainHistory = async (
   env: environment.SnowbridgeEnvironment,
   hash: string,
-) => {
+): Promise<ToPolkadotTransferResult | undefined> => {
   if (!env.config.SUBSCAN_API) {
     throw new Error(`No subscan api urls configured for ${env.name}`)
   }
@@ -348,8 +351,8 @@ export const getAhToParachainHistory = async (
       info: {
         when: new Date(ahTransferData.data.block_timestamp * 1000),
         sourceAddress: ahTransferData.data.account_id,
-        tokenAddress: ahTransferData.data.tokenAddress,
         beneficiaryAddress: ahTransferData.data.beneficiaryAddress,
+        tokenAddress: ahTransferData.data.tokenAddress,
         amount: ahTransferData.data.amount,
       },
       submitted: {
