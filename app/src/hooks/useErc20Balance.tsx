@@ -26,10 +26,13 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
     try {
       setLoading(true)
       let fetchedBalance: Erc20Balance | undefined
+      console.log('Getting wETH balance')
 
       switch (network) {
         case Network.Ethereum: {
+          console.log('Getting wETH balance')
           fetchedBalance = await fetchEthereumBalance(context, token, address)
+          console.log('It is ', fetchedBalance.formatted)
           break
         }
 
@@ -55,7 +58,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
     fetchBalance()
   }, [network, token, address, fetchBalance])
 
-  return { data, loading: loading }
+  return { data, fetchBalance, loading: loading }
 }
 
 export default useErc20Balance

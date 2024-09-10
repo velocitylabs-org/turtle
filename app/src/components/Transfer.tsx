@@ -9,7 +9,7 @@ import {
   getAllowedTokens,
   getRoute,
 } from '@/utils/routes'
-import { getDurationEstimate } from '@/utils/transfer'
+import { getDurationEstimate, toHuman } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -77,6 +77,21 @@ const Transfer: FC = () => {
     tokenAmount,
     owner: sourceWallet?.sender?.address,
   })
+
+  const shouldDisplayEthToWEthSwap =
+    sourceWallet &&
+    sourceChain?.network === Network.Ethereum &&
+    tokenAmount?.token?.symbol === 'wETH' &&
+    tokenAmount?.amount &&
+    balanceData &&
+    ethBalance &&
+    // The user wants to send more than the balance available
+    tokenAmount.amount > Number(balanceData.formatted) &&
+    // but they have enough ETH to make it possible
+    tokenAmount.amount - Number(balanceData.formatted) < ethBalance
+  // How much balance the misses considering how much they wish to transfer
+  const missingBalance =
+    tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
 
   let amountPlaceholder: string
   if (
@@ -234,6 +249,8 @@ const Transfer: FC = () => {
         </div>
       )}
 
+      <div>${ethBalance ?? 0n}</div>
+
       {/* ERC-20 Spend Approval */}
       <AnimatePresence>
         {requiresErc20SpendApproval && (
@@ -293,34 +310,29 @@ const Transfer: FC = () => {
 
       {/* ETH to wETH Conversion */}
       <AnimatePresence>
-        {sourceWallet &&
-          sourceChain?.network === Network.Ethereum &&
-          tokenAmount?.amount &&
-          balanceData &&
-          Number(balanceData.formatted) < tokenAmount.amount &&
-          tokenAmount?.token?.symbol === 'wETH' && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: 1,
-                height: 'auto',
+        {shouldDisplayEthToWEthSwap && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <ActionBanner
+              disabled={false}
+              header={'Swap ETH to wETH'}
+              text={'Your wETH balance is insufficient but you got enough ETH.'}
+              image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
+              btn={{
+                onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance),
+                label: `Swap now`,
               }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex items-center gap-1 self-center pt-1"
-            >
-              <ActionBanner
-                disabled={false}
-                header={'Swap ETH to wETH'}
-                text={'Your wETH balance is insufficient but you got enough ETH.'}
-                image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
-                btn={{
-                  onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer),
-                  label: `Swap now`,
-                }}
-              ></ActionBanner>
-            </motion.div>
-          )}
+            ></ActionBanner>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* Fees */}
