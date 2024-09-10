@@ -83,17 +83,23 @@ const Transfer: FC = () => {
     owner: sourceWallet?.sender?.address,
   })
 
-  const shouldDisplayEthToWEthSwap =
-    sourceWallet &&
+  const requiresErc20SpendApproval =
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
+
+  const shouldDisplayEthToWEthSwap: boolean =
+    !!sourceWallet &&
     sourceChain?.network === Network.Ethereum &&
     tokenAmount?.token?.symbol === 'wETH' &&
-    tokenAmount?.amount &&
-    balanceData &&
-    ethBalance &&
+    !!tokenAmount?.amount &&
+    !!balanceData &&
+    !!ethBalance &&
     // The user wants to send more than the balance available
     tokenAmount.amount > Number(balanceData.formatted) &&
     // but they have enough ETH to make it possible
-    tokenAmount.amount - Number(balanceData.formatted) < ethBalance
+    tokenAmount.amount - Number(balanceData.formatted) < ethBalance &&
+    // We don't want two ActionBanners showing up at once
+    !requiresErc20SpendApproval
+
   // How much balance the misses considering how much they wish to transfer
   const missingBalance =
     tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
@@ -110,9 +116,6 @@ const Transfer: FC = () => {
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else
     amountPlaceholder = `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
-
-  const requiresErc20SpendApproval =
-    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
