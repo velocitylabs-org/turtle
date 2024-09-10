@@ -20,7 +20,7 @@ interface Params {
 /**
  * Hook to swap ETH to wETH
  */
-const useEthToWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
+const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const { fetchBalance: fetchWEthBalance } = useErc20Balance({
     network,
@@ -109,4 +109,4 @@ const useEthToWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
   return { ethBalance, loading: loading, swapEthtoWEth, swapping }
 }
 
-export default useEthToWEthSwap
+export default useEthForWEthSwap

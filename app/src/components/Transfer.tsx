@@ -27,7 +27,7 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import { Network } from '../models/chain'
-import useEthToWEthSwap from '@/hooks/useEthToWEthSwap'
+import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -75,7 +75,7 @@ const Transfer: FC = () => {
     ethBalance,
     swapEthtoWEth,
     swapping: isSwappingEthForWEth,
-  } = useEthToWEthSwap({
+  } = useEthForWEthSwap({
     context: snowbridgeContext,
     network: sourceChain?.network,
     tokenAmount,
