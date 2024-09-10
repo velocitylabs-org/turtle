@@ -22,14 +22,13 @@ interface Params {
  */
 const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
-  const { fetchBalance: fetchWEthBalance } = useErc20Balance({
+  const { fetchBalance: fetchWEthBalance, data: balanceData } = useErc20Balance({
     network,
     token: tokenAmount?.token ?? undefined,
     address: owner,
     context,
   })
   const [ethBalance, setEthBalance] = useState<number | undefined>()
-  const [loading, setLoading] = useState<boolean>(false)
   const [swapping, setSwapping] = useState<boolean>(false)
 
   const fetchEthBalance = useCallback(async () => {
@@ -46,12 +45,17 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
       return
     }
 
-    const balance = await context.ethereum.api.getBalance(owner).then(x => toHuman(x, Mainnet.ETH))
-    console.log('Eth balance is ', balance)
-    setEthBalance(balance)
-
-    //todo(nuno)
-  }, [network, owner, tokenAmount, context])
+    try {
+      const balance = await context.ethereum.api
+        .getBalance(owner)
+        .then(x => toHuman(x, Mainnet.ETH))
+      console.log('Eth balance is ', balance)
+      setEthBalance(balance)
+    } catch (error) {
+      if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
+        captureException(error)
+    }
+  }, [network, owner, tokenAmount, balanceData, context])
 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
@@ -103,10 +107,10 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
         setSwapping(false)
       }
     },
-    [network, tokenAmount, context, fetchEthBalance, addNotification],
+    [network, tokenAmount, context, fetchEthBalance, balanceData, addNotification],
   )
 
-  return { ethBalance, loading: loading, swapEthtoWEth, swapping }
+  return { ethBalance, swapEthtoWEth, swapping }
 }
 
 export default useEthForWEthSwap
