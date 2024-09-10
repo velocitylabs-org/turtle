@@ -100,7 +100,7 @@ const Transfer: FC = () => {
     // We don't want two ActionBanners showing up at once
     !requiresErc20SpendApproval
 
-  // How much balance the misses considering how much they wish to transfer
+  // How much balance is missing considering the desired transfer amount
   const missingBalance =
     tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
 
