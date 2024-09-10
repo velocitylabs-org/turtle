@@ -45,6 +45,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
           throw new Error('Unsupported network')
       }
 
+      console.log('Will set data to ', fetchedBalance.formatted)
       setData(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)

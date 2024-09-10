@@ -9,7 +9,7 @@ import {
   getAllowedTokens,
   getRoute,
 } from '@/utils/routes'
-import { getDurationEstimate, toHuman } from '@/utils/transfer'
+import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -58,6 +58,7 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     loadingBalance,
     balanceData,
+    fetchBalance,
   } = useTransferForm()
 
   const {
@@ -253,9 +254,6 @@ const Transfer: FC = () => {
         </div>
       )}
 
-      <div>Eth balance is ${ethBalance ?? 0n}</div>
-      <div>wETH balance is ${balanceData?.formatted ?? 0n}</div>
-
       {/* ERC-20 Spend Approval */}
       <AnimatePresence>
         {requiresErc20SpendApproval && (
@@ -332,7 +330,10 @@ const Transfer: FC = () => {
               text={'Your wETH balance is insufficient but you got enough ETH.'}
               image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
               btn={{
-                onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance),
+                onClick: () =>
+                  swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ =>
+                    fetchBalance(),
+                  ),
                 label: `Swap now`,
               }}
             ></ActionBanner>

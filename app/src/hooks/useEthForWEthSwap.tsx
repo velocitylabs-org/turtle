@@ -18,11 +18,11 @@ interface Params {
 }
 
 /**
- * Hook to swap ETH to wETH
+ * Hook to swap ETH for wETH
  */
 const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
-  const { fetchBalance: fetchWEthBalance, data: balanceData } = useErc20Balance({
+  const { data: tokenBalance } = useErc20Balance({
     network,
     token: tokenAmount?.token ?? undefined,
     address: owner,
@@ -35,11 +35,9 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
     if (
       !context ||
       network !== Network.Ethereum ||
+      !owner ||
       !tokenAmount ||
-      !tokenAmount.amount ||
-      tokenAmount.amount <= 0 ||
-      !tokenAmount.token ||
-      !owner
+      tokenAmount.token?.symbol !== 'wETH'
     ) {
       setEthBalance(undefined)
       return
@@ -49,31 +47,29 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
       const balance = await context.ethereum.api
         .getBalance(owner)
         .then(x => toHuman(x, Mainnet.ETH))
-      console.log('Eth balance is ', balance)
       setEthBalance(balance)
     } catch (error) {
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
         captureException(error)
     }
-  }, [network, owner, tokenAmount, balanceData, context])
+  }, [network, owner, tokenAmount, tokenBalance, context])
 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
     fetchEthBalance()
-  }, [fetchEthBalance])
+  }, [fetchEthBalance, tokenBalance])
 
   const swapEthtoWEth = useCallback(
     async (signer: Signer, amount: number) => {
       setSwapping(true)
 
-      console.log('swap amount:', amount)
       if (
         !context ||
-        !network ||
         network !== Network.Ethereum ||
-        !tokenAmount ||
-        !tokenAmount.token ||
-        tokenAmount.token.symbol !== 'wETH'
+        !owner ||
+        !ethBalance ||
+        ethBalance <= amount ||
+        tokenAmount?.token?.symbol !== 'wETH'
       ) {
         setSwapping(false)
         return
@@ -88,8 +84,6 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
             convertAmount(amount, Mainnet.ETH),
           )
           .then(x => x.wait())
-          // Fetch the wETH balance again to update the Transfer form
-          .then(_ => fetchWEthBalance())
 
         setSwapping(false)
         addNotification({
@@ -107,7 +101,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
         setSwapping(false)
       }
     },
-    [network, tokenAmount, context, fetchEthBalance, balanceData, addNotification],
+    [network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
   )
 
   return { ethBalance, swapEthtoWEth, swapping }
