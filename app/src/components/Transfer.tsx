@@ -337,7 +337,7 @@ const Transfer: FC = () => {
                   swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ =>
                     fetchBalance(),
                   ),
-                label: `Swap now`,
+                label: `Swap the difference`,
               }}
             ></ActionBanner>
           </motion.div>
