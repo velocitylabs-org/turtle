@@ -11,7 +11,7 @@ import { OngoingTransferWithDirection, PendingTransfers } from '@/models/transfe
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
-import { SKIP_LIGHT_CLIENT_UPDATES, getErrorMessage, getTransferHistory } from '@/utils/snowbridge'
+import { getErrorMessage, getTransferHistory } from '@/utils/snowbridge'
 
 const CACHE_REVALIDATE_IN_SECONDS = 30
 
@@ -34,7 +34,7 @@ const getCachedTransferHistory = unstable_cache(
         return transfer
       })
 
-      return getTransferHistory(env, transfers, SKIP_LIGHT_CLIENT_UPDATES)
+      return getTransferHistory(env, transfers)
     } catch (err) {
       reportError(err)
       return Promise.resolve([])
