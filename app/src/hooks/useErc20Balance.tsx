@@ -55,7 +55,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
     fetchBalance()
   }, [network, token, address, fetchBalance])
 
-  return { data, loading: loading }
+  return { data, fetchBalance, loading: loading }
 }
 
 export default useErc20Balance

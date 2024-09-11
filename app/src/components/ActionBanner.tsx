@@ -35,9 +35,7 @@ const ActionBanner: FC<Props> = ({ disabled, header, text, image, btn }) => {
                   'ml-1 text-left text-small text-turtle-foreground underline',
                   disabled ? 'cursor-not-allowed' : '',
                 )}
-                onClick={() => {
-                  btn.onClick
-                }}
+                onClick={btn.onClick}
                 disabled={disabled}
               >
                 {btn.label}
