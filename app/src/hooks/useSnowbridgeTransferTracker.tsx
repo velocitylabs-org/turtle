@@ -27,7 +27,7 @@ const useSnowbridgeTransferTracker = () => {
   const { addNotification } = useNotification()
 
   const fetchTransfers = useCallback(async () => {
-    const formatTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
+    const formattedTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
       const { id, sourceChain, destChain, sender, recipient, token, date } = t
       const direction = resolveDirection(t.sourceChain, t.destChain)
       return { id, sourceChain, destChain, sender, recipient, token, date, direction }
