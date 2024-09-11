@@ -32,7 +32,7 @@ export interface OngoingTransferWithDirection extends RawTransfer {
   direction: Direction
 }
 
-export interface PendingTransfers {
+export interface OngoingTransfers {
   toPolkadot: OngoingTransferWithDirection[]
   toEthereum: OngoingTransferWithDirection[]
 }
