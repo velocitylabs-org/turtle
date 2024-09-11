@@ -6,7 +6,7 @@ import {
   TransferStatus,
 } from '@snowbridge/api/dist/history'
 import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-types'
-import { PendingTransfers } from '@/models/transfer'
+import { OngoingTransfers } from '@/models/transfer'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
 export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 5 // 2 days
@@ -15,7 +15,7 @@ export const ACCEPTABLE_BRIDGE_LATENCY = 28800 // 8 hours
 
 export async function getTransferHistory(
   env: environment.SnowbridgeEnvironment,
-  ongoingTransfers: PendingTransfers,
+  ongoingTransfers: OngoingTransfers,
   skipLightClientUpdates = SKIP_LIGHT_CLIENT_UPDATES,
   historyInSeconds = HISTORY_IN_SECONDS,
 ) {

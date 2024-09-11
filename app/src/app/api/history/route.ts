@@ -7,7 +7,7 @@ import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { getEnvironment } from '@/context/snowbridge'
 import { ongoingTransfersSchema } from '@/models/api-schemas'
-import { OngoingTransferWithDirection, PendingTransfers } from '@/models/transfer'
+import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
@@ -20,7 +20,7 @@ const getCachedTransferHistory = unstable_cache(
     const env = getEnvironment(shouldUseTestnet ? Environment.Testnet : Environment.Mainnet)
 
     try {
-      const transfers: PendingTransfers = {
+      const transfers: OngoingTransfers = {
         toPolkadot: [],
         toEthereum: [],
       }
