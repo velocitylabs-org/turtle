@@ -32,7 +32,7 @@ const useSnowbridgeTransferTracker = () => {
       const direction = resolveDirection(t.sourceChain, t.destChain)
       return { id, sourceChain, destChain, sender, recipient, token, date, direction }
     })
-    if (!formatTransfers.length) return
+    if (!formattedTransfers.length) return
 
     try {
       setLoading(true)
@@ -41,7 +41,7 @@ const useSnowbridgeTransferTracker = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ongoingTransfers: formatTransfers }),
+        body: JSON.stringify({ ongoingTransfers: formattedTransfers }),
       })
       const data = await response.json()
       setTransfers(data)
