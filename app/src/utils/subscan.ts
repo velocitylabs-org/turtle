@@ -50,7 +50,6 @@ export async function getAHTransferFromHash(
     hash,
     only_extrinsic_event: true,
   })
-  console.log("subscanExtrinsicFetch", subscanExtrinsicFetch)
   if (!subscanExtrinsicFetch.json.data) return null
 
   const {
@@ -521,3 +520,42 @@ export const getAhToParachainHistory = async (
     console.log(error)
   }
 }
+
+
+export const getNewAPI = async (
+  env: environment.SnowbridgeEnvironment,
+  hash: string,
+) => {
+  if (!env.config.SUBSCAN_API) {
+    throw new Error(`No subscan api urls configured for ${env.name}`)
+  }
+  const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
+  if (!subscanKey) {
+    throw Error('Missing Subscan Key')
+  }
+
+  const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
+  try {
+    const list = await relaychainScan.post('api/scan/xcm/list', {
+      row: 10,
+      extrinsic_index: '6186188-2'
+    })
+    const unidIU = list.json.data.list[0].unique_id
+    const xcmdataFromUID = await relaychainScan.post('api/scan/xcm/info', {
+      unique_id: unidIU
+    })
+    console.log("xcmdataFromUID", xcmdataFromUID.json.data)
+
+    // const xcmdataFromHash = await relaychainScan.post('api/scan/xcm/check_hash', {
+    //   message_hash: "0x60155d7fd0d1b1003d5f72a5527661a32dec194054a9fe8b40dc510cec3b5a06",
+    // })
+    // console.log("xcmdataFromHash", xcmdataFromHash)
+
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// make transfer and use the extrinsic hash from parachain and first step here to look for
+// extrinsic_index
