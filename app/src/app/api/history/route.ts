@@ -26,12 +26,18 @@ const getCachedTransferHistory = unstable_cache(
       }
 
       ongoingTransfers.map(transfer => {
-        if (transfer.direction === Direction.ToEthereum) {
-          transfers.toEthereum.push(transfer)
-        } else {
-          transfers.toPolkadot.push(transfer)
+        switch (transfer.direction) {
+          case Direction.ToEthereum: {
+            transfers.toEthereum.push(transfer)
+            break
+          }
+          case Direction.ToPolkadot: {
+            transfers.toPolkadot.push(transfer)
+            break
+          }
+          default:
+            throw new Error('Direction not supported')
         }
-        return transfer
       })
 
       return getTransferHistory(env, transfers)
