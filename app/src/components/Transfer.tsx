@@ -75,7 +75,7 @@ const Transfer: FC = () => {
   const {
     ethBalance,
     swapEthtoWEth,
-    swapping: isSwappingEthForWEth,
+    isSwapping: isSwappingEthForWEth,
   } = useEthForWEthSwap({
     context: snowbridgeContext,
     network: sourceChain?.network,

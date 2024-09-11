@@ -29,7 +29,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
     context,
   })
   const [ethBalance, setEthBalance] = useState<number | undefined>()
-  const [swapping, setSwapping] = useState<boolean>(false)
+  const [isSwapping, SetIsSwapping] = useState<boolean>(false)
 
   const fetchEthBalance = useCallback(async () => {
     if (
@@ -61,7 +61,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
 
   const swapEthtoWEth = useCallback(
     async (signer: Signer, amount: number) => {
-      setSwapping(true)
+      SetIsSwapping(true)
 
       if (
         !context ||
@@ -71,7 +71,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
         ethBalance <= amount ||
         tokenAmount?.token?.symbol !== 'wETH'
       ) {
-        setSwapping(false)
+        SetIsSwapping(false)
         return
       }
 
@@ -85,7 +85,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
           )
           .then(x => x.wait())
 
-        setSwapping(false)
+        SetIsSwapping(false)
         addNotification({
           message: 'Swapped ETH for wETH',
           severity: NotificationSeverity.Success,
@@ -98,13 +98,13 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
         if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
           captureException(error)
       } finally {
-        setSwapping(false)
+        SetIsSwapping(false)
       }
     },
     [network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
   )
 
-  return { ethBalance, swapEthtoWEth, swapping }
+  return { ethBalance, swapEthtoWEth, isSwapping }
 }
 
 export default useEthForWEthSwap
