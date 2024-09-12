@@ -241,6 +241,18 @@ export namespace Testnet {
     specName: 'asset-hub-rococo',
   }
 
+  export const Muse: Chain = {
+    uid: 'muse',
+    name: 'Muse',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    chainId: 3369,
+    destinationFeeDOT: '200000000000',
+    network: Network.Polkadot,
+    supportedAddressTypes: ['evm'],
+    rpcConnection: 'https://rococo-muse-rpc.polkadot.io',
+    specName: 'muse',
+  }
+
   // Tokens
   export const WETH: Token = {
     id: 'weth',
@@ -251,6 +263,17 @@ export namespace Testnet {
     address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
+  }
+
+  export const MUSE: Token = {
+    id: 'muse',
+    name: 'Muse',
+    symbol: 'MUSE',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
+    decimals: 18,
+    address: '0xb34a6924a02100ba6ef12af1c798285e8f7a16ee',
+    multilocation:
+      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xb34a6924a02100ba6ef12af1c798285e8f7a16ee"}}]}}',
   }
 
   export const VETH: Token = {
@@ -362,8 +385,8 @@ export const mainnetRegistry: Registry = {
 }
 
 export const testnetRegistry: Registry = {
-  chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
-  tokens: [Testnet.WETH, Testnet.VETH],
+  chains: [Testnet.Sepolia, Testnet.RococoAssetHub, Testnet.Muse],
+  tokens: [Testnet.WETH, Testnet.VETH, Testnet.MUSE],
   routes: [
     {
       from: Testnet.Sepolia.uid,
