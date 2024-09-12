@@ -8,7 +8,12 @@ import {
   // BeefyClient,
   // BeefyClient__factory,
 } from '@snowbridge/contract-types'
-import { SubscanExtrinsicEvent, SubscanParams, SubscanEvent, ParachainToETHTransferResult } from '@/models/subscan'
+import {
+  SubscanExtrinsicEvent,
+  SubscanParams,
+  SubscanEvent,
+  ParachainToETHTransferResult,
+} from '@/models/subscan'
 
 import { ETHEREUM_BLOCK_TIME_SECONDS, HISTORY_IN_SECONDS } from './snowbridge'
 
@@ -69,7 +74,9 @@ export async function getAHTransferFromHash(
     }
   }
 
-  const { json: { data: relayBlock } } = await relaychainScan.post('api/scan/block', {
+  const {
+    json: { data: relayBlock },
+  } = await relaychainScan.post('api/scan/block', {
     block_timestamp: block_timestamp,
     only_head: true,
   })
@@ -177,15 +184,14 @@ export async function getBHMessageQueueProccessed(
       })
       const { params }: { params: SubscanParams[] } = eventParams.json.data[0]
 
-      const messageId = params.find((e) => e.name === 'id')?.value
+      const messageId = params.find(e => e.name === 'id')?.value
       if (!messageId) return
 
-      const origin = params.find((e) => e.name === 'origin')?.value
+      const origin = params.find(e => e.name === 'origin')?.value
       const sibling = origin?.Sibling ?? null
       const channelId = origin?.Snowbridge ?? null
       const success =
-        e.event_id === eventIds[0] &&
-        (params.find((e) => e.name === 'success')?.value ?? false)
+        e.event_id === eventIds[0] && (params.find(e => e.name === 'success')?.value ?? false)
 
       return { ...e, messageId, sibling, channelId, success }
     }),
@@ -236,10 +242,10 @@ export async function getBHEthOutboundMessages(
       })
       const { params }: { params: SubscanParams[] } = eventParams.json.data[0]
 
-      const messageId = params.find((e) => e.name === 'id')?.value
+      const messageId = params.find(e => e.name === 'id')?.value
       if (!messageId || messageId !== assetHubMessageId) return
 
-      const nonce = params.find((e) => e.name === 'nonce')?.value ?? null
+      const nonce = params.find(e => e.name === 'nonce')?.value ?? null
       return { ...e, messageId, nonce }
     }),
   )
@@ -331,7 +337,7 @@ export const trackAhToEthTransfer = async (
 
     const result: ParachainToETHTransferResult = {
       id: ahTransferData.data.messageId,
-      status: 0, // === pending 
+      status: 0, // === pending
       // info: {
       //   // beneficiaryAddress: ahTransferData.data.beneficiaryAddress,
       //   // tokenAddress: ahTransferData.data.tokenAddress,
@@ -550,9 +556,7 @@ export const trackAhToEthTransfer = async (
 //     // })
 //     // console.log("xcmdataFromHash", xcmdataFromHash)
 
-
 //   } catch (error) {
 //     console.log(error)
 //   }
 // }
-
