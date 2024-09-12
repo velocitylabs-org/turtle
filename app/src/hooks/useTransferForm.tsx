@@ -72,7 +72,11 @@ const useTransferForm = () => {
     [sourceChain?.network, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
   )
 
-  const { data: balanceData, loading: loadingBalance } = useErc20Balance({
+  const {
+    data: balanceData,
+    loading: loadingBalance,
+    fetchBalance,
+  } = useErc20Balance({
     network: balanceParams.network,
     token: balanceParams.token ?? undefined,
     address: balanceParams.address,
@@ -89,7 +93,7 @@ const useTransferForm = () => {
     (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
     (manualRecipient.enabled || destinationWallet?.isConnected)
 
-  const allowSwap = useCallback(() => {
+  const allowFromToSwap = useCallback(() => {
     return (
       !isValidating &&
       transferStatus === 'Idle' &&
@@ -137,17 +141,13 @@ const useTransferForm = () => {
     [setValue],
   )
 
-  const handleSwapChains = useCallback(() => {
-    if (
-      (!sourceChain && !destinationChain && !allowSwap()) ||
-      isValidating ||
-      transferStatus !== 'Idle'
-    )
-      return
-    // Swap chains values
-    setValue('sourceChain', destinationChain)
-    setValue('destinationChain', sourceChain)
-  }, [sourceChain, destinationChain, setValue, allowSwap, isValidating, transferStatus])
+  const swapFromTo = useCallback(() => {
+    if (allowFromToSwap()) {
+      // Swap chains values
+      setValue('sourceChain', destinationChain)
+      setValue('destinationChain', sourceChain)
+    }
+  }, [sourceChain, destinationChain, setValue, allowFromToSwap, isValidating, transferStatus])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
@@ -250,11 +250,11 @@ const useTransferForm = () => {
     errors,
     isValid: isFormValid,
     isValidating, // Only includes validating zod schema atm
-    allowSwap,
+    allowFromToSwap,
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
-    handleSwapChains,
+    swapFromTo,
     handleManualRecipientChange,
     handleMaxButtonClick,
     sourceChain,
@@ -272,6 +272,7 @@ const useTransferForm = () => {
     isBalanceAvailable: balanceData?.value != undefined,
     loadingBalance,
     balanceData,
+    fetchBalance,
   }
 }
 

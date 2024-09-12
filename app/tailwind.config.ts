@@ -39,6 +39,8 @@ export const colors = {
   [`${prefix}-error/10`]: '#ff35c31a',
   [`${prefix}-error-dark`]: '#8D1269',
   [`${prefix}-error-light`]: '#FFE1F6',
+
+  [`${prefix}-note-warn`]: '#FFFF0026',
 }
 
 const config: Config = {

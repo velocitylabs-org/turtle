@@ -1,14 +1,13 @@
 'use client'
-import useDryRunValidation from '@/hooks/useDryRunValidation'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
-import { getRecipientAddress } from '@/utils/address'
 import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
   getAllowedTokens,
+  getRoute,
 } from '@/utils/routes'
 import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
@@ -27,6 +26,8 @@ import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import { Network } from '../models/chain'
+import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -35,11 +36,11 @@ const Transfer: FC = () => {
     errors,
     isValid,
     isValidating,
-    allowSwap,
+    allowFromToSwap,
     handleSubmit,
     handleSourceChainChange,
     handleDestinationChainChange,
-    handleSwapChains,
+    swapFromTo,
     handleManualRecipientChange,
     handleMaxButtonClick,
     sourceChain,
@@ -57,6 +58,7 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     loadingBalance,
     balanceData,
+    fetchBalance,
   } = useTransferForm()
 
   const {
@@ -69,6 +71,38 @@ const Transfer: FC = () => {
     tokenAmount,
     owner: sourceWallet?.sender?.address,
   })
+
+  const {
+    ethBalance,
+    swapEthtoWEth,
+    isSwapping: isSwappingEthForWEth,
+  } = useEthForWEthSwap({
+    context: snowbridgeContext,
+    network: sourceChain?.network,
+    tokenAmount,
+    owner: sourceWallet?.sender?.address,
+  })
+
+  const requiresErc20SpendApproval =
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
+
+  const shouldDisplayEthToWEthSwap: boolean =
+    !!sourceWallet &&
+    sourceChain?.network === Network.Ethereum &&
+    tokenAmount?.token?.symbol === 'wETH' &&
+    !!tokenAmount?.amount &&
+    !!balanceData &&
+    !!ethBalance &&
+    // The user wants to send more than the balance available
+    tokenAmount.amount > Number(balanceData.formatted) &&
+    // but they have enough ETH to make it possible
+    tokenAmount.amount - Number(balanceData.formatted) < ethBalance &&
+    // We don't want two ActionBanners showing up at once
+    !requiresErc20SpendApproval
+
+  // How much balance is missing considering the desired transfer amount
+  const missingBalance =
+    tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
 
   let amountPlaceholder: string
   if (
@@ -83,30 +117,12 @@ const Transfer: FC = () => {
   else
     amountPlaceholder = `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
 
-  const requiresErc20SpendApproval =
-    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
-
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
-  const {
-    dryRun,
-    state: dryRunState,
-    hasDryRun,
-  } = useDryRunValidation({
-    environment,
-    sender: sourceWallet?.sender,
-    sourceChain,
-    token: tokenAmount?.token,
-    recipient: getRecipientAddress(manualRecipient, destinationWallet),
-    amount: tokenAmount?.amount,
-    destinationChain,
-  })
   const isTransferAllowed =
     isValid && !isValidating && fees && transferStatus === 'Idle' && !requiresErc20SpendApproval
-
-  const showDryRunBanner = hasDryRun && dryRunState !== 'Success' && isTransferAllowed
 
   return (
     <form
@@ -170,8 +186,8 @@ const Transfer: FC = () => {
           )}
         />
 
-        {/* Switch source and destination chains */}
-        <SwapChains handleChainChange={handleSwapChains} disabled={!allowSwap()} />
+        {/* Swap source and destination chains */}
+        <SwapChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
 
         {/* Destination Chain */}
         <Controller
@@ -256,21 +272,51 @@ const Transfer: FC = () => {
           >
             <ActionBanner
               disabled={isApprovingErc20Spend}
-              onClick={() => approveAllowance(sourceWallet?.sender as Signer)}
-              buttonText="Sign now"
               header="Approve ERC-20 token spend"
               text="We first need your approval to transfer this token from your wallet."
               image={
                 <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
               }
+              btn={{
+                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
+                label: 'Sign now',
+              }}
             />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Dry Run Validation banner */}
+      {/* Beta warning */}
       <AnimatePresence>
-        {showDryRunBanner && (
+        {environment &&
+          sourceChain &&
+          destinationChain &&
+          getRoute(environment, sourceChain, destinationChain)?.sdk === 'AssetTransferApi' && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: 1,
+                height: 'auto',
+              }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex items-center gap-1 self-center pt-1"
+            >
+              <ActionBanner
+                disabled={false}
+                header={'Watch it!'}
+                text={
+                  'This flow is still in beta. It should work out fine but proceed at your own risk.'
+                }
+                image={<Image src={'/wip.png'} alt={'Warning'} width={64} height={64} />}
+              ></ActionBanner>
+            </motion.div>
+          )}
+      </AnimatePresence>
+
+      {/* ETH to wETH Conversion */}
+      <AnimatePresence>
+        {shouldDisplayEthToWEthSwap && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{
@@ -282,15 +328,18 @@ const Transfer: FC = () => {
             className="flex items-center gap-1 self-center pt-1"
           >
             <ActionBanner
-              disabled={dryRunState === 'Loading'}
-              onClick={() => dryRun()}
-              buttonText="Run it now"
-              header="Recommended Validation"
-              text="Before making the transfer we recommend you dry run this cross chain transfer. We need your signature for that. It costs you nothing."
-              image={
-                <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
-              }
-            />
+              disabled={isSwappingEthForWEth}
+              header={'Swap ETH for wETH'}
+              text={'Your wETH balance is insufficient but you got enough ETH.'}
+              image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
+              btn={{
+                onClick: () =>
+                  swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ =>
+                    fetchBalance(),
+                  ),
+                label: `Swap the difference`,
+              }}
+            ></ActionBanner>
           </motion.div>
         )}
       </AnimatePresence>

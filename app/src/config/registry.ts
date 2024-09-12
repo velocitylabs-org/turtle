@@ -1,6 +1,5 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Environment } from '../store/environmentStore'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
@@ -399,8 +398,4 @@ export function getNativeToken(chain: Chain): Token {
     default:
       throw Error('The impossible has happened!')
   }
-}
-
-export function getRoute(env: Environment, from: Chain, to: Chain): Route | undefined {
-  return REGISTRY[env].routes.find(r => r.from === from.uid && r.to === to.uid)
 }
