@@ -3,26 +3,14 @@ import { blake2AsU8a, keccak256AsU8a } from '@polkadot/util-crypto'
 import { bnToU8a, hexToU8a, stringToU8a, u8aToHex } from '@polkadot/util'
 import { environment, subscan } from '@snowbridge/api'
 import {
-  BeefyClient,
-  BeefyClient__factory,
   IGateway,
   IGateway__factory,
+  // BeefyClient,
+  // BeefyClient__factory,
 } from '@snowbridge/contract-types'
+import { SubscanExtrinsicEvent, SubscanParams, SubscanEvent, ParachainToETHTransferResult } from '@/models/subscan'
 
 import { ETHEREUM_BLOCK_TIME_SECONDS, HISTORY_IN_SECONDS } from './snowbridge'
-import { ToPolkadotTransferResult } from '@snowbridge/api/dist/history'
-
-type subscanEvent = {
-  id: number
-  block_timestamp: number
-  event_index: string
-  extrinsic_index: string
-  phase: number
-  module_id: string
-  event_id: string
-  extrinsic_hash: string
-  finalized: boolean
-}
 
 export const forwardedTopicId = (messageId: string): string => {
   const typeEncoded = stringToU8a('forward_id_for')
@@ -44,30 +32,30 @@ export async function getAHTransferFromHash(
   hash: string,
   assetHubScan: subscan.SubscanApi,
   relaychainScan: subscan.SubscanApi,
-  ethChainId: number,
+  // ethChainId: number,
 ) {
   const subscanExtrinsicFetch = await assetHubScan.post('api/scan/extrinsic', {
     hash,
     only_extrinsic_event: true,
   })
-  if (!subscanExtrinsicFetch.json.data) return null
+  if (!subscanExtrinsicFetch?.json?.data) return null
 
   const {
     event,
     block_hash,
     account_id,
     block_timestamp,
-    params,
+    // params,
     block_num,
     extrinsic_index,
     extrinsic_hash,
   } = subscanExtrinsicFetch.json.data
 
   const xcmSentEvent = event.find(
-    (e: any) => e.module_id === 'polkadotxcm' && e.event_id === 'Sent',
+    (e: SubscanExtrinsicEvent) => e.module_id === 'polkadotxcm' && e.event_id === 'Sent',
   )
   const extrinsicSuccess = event.some(
-    (e: any) => e.module_id === 'system' && e.event_id === 'ExtrinsicSuccess',
+    (e: SubscanExtrinsicEvent) => e.module_id === 'system' && e.event_id === 'ExtrinsicSuccess',
   )
 
   let messageId: string | null = null
@@ -75,58 +63,56 @@ export async function getAHTransferFromHash(
 
   if (extrinsicSuccess && xcmSentEvent) {
     const event = JSON.parse(xcmSentEvent.params)
-    messageId = event.find((p: any) => p.name === 'message_id')?.value ?? null
+    messageId = event.find((p: SubscanParams) => p.name === 'message_id')?.value ?? null
     if (messageId) {
       bridgeHubMessageId = forwardedTopicId(messageId)
     }
   }
 
-  const {
-    json: { data: relayBlock },
-  } = await relaychainScan.post('api/scan/block', {
+  const { json: { data: relayBlock } } = await relaychainScan.post('api/scan/block', {
     block_timestamp: block_timestamp,
     only_head: true,
   })
 
-  const beneficiary = params.find((p: any) => p.name == 'beneficiary')?.value
-  const beneficiaryParents: number | null =
-    beneficiary.V3?.parents ?? beneficiary.V4?.parents ?? null
-  const beneficiaryAddress: string | null =
-    beneficiary.V3?.interior?.X1?.AccountKey20?.key ??
-    (beneficiary.V4?.interior?.X1 && beneficiary.V4?.interior?.X1[0])?.AccountKey20?.key ??
-    null
+  // const beneficiary = params.find((p: any) => p.name == 'beneficiary')?.value
+  // const beneficiaryParents: number | null =
+  //   beneficiary.V3?.parents ?? beneficiary.V4?.parents ?? null
+  // const beneficiaryAddress: string | null =
+  //   beneficiary.V3?.interior?.X1?.AccountKey20?.key ??
+  //   (beneficiary.V4?.interior?.X1 && beneficiary.V4?.interior?.X1[0])?.AccountKey20?.key ??
+  //   null
 
-  if (!(beneficiaryParents === 0 && beneficiaryAddress !== null)) return null
+  // if (!(beneficiaryParents === 0 && beneficiaryAddress !== null)) return null
 
-  const assets = params.find((p: any) => p.name == 'assets')?.value
+  // const assets = params.find((p: any) => p.name == 'assets')?.value
 
-  let amount: string | null = null
-  let tokenParents: number | null = null
-  let tokenAddress: string | null = null
-  let tokenChainId: number | null = null
-  for (const asset of assets.V3 ?? assets.V4 ?? []) {
-    amount = asset.fun?.Fungible ?? null
-    if (amount === null) continue
+  // let amount: string | null = null
+  // let tokenParents: number | null = null
+  // let tokenAddress: string | null = null
+  // let tokenChainId: number | null = null
+  // for (const asset of assets.V3 ?? assets.V4 ?? []) {
+  //   amount = asset.fun?.Fungible ?? null
+  //   if (amount === null) continue
 
-    tokenParents = asset.id?.parents ?? asset.id?.Concrete?.parents ?? null
-    if (tokenParents === null) continue
+  //   tokenParents = asset.id?.parents ?? asset.id?.Concrete?.parents ?? null
+  //   if (tokenParents === null) continue
 
-    const tokenX2 = asset.id?.interior?.X2 ?? Object.values(asset.id?.Concrete?.interior?.X2 ?? {})
-    if (tokenX2 === null || tokenX2.length !== 2) continue
+  //   const tokenX2 = asset.id?.interior?.X2 ?? Object.values(asset.id?.Concrete?.interior?.X2 ?? {})
+  //   if (tokenX2 === null || tokenX2.length !== 2) continue
 
-    tokenChainId = tokenX2[0].GlobalConsensus?.Ethereum ?? null
-    if (tokenChainId === null) continue
+  //   tokenChainId = tokenX2[0].GlobalConsensus?.Ethereum ?? null
+  //   if (tokenChainId === null) continue
 
-    tokenAddress = tokenX2[1].AccountKey20?.key ?? null
-    if (tokenAddress === null) continue
+  //   tokenAddress = tokenX2[1].AccountKey20?.key ?? null
+  //   if (tokenAddress === null) continue
 
-    break
-  }
+  //   break
+  // }
 
-  if (
-    !(tokenParents === 2 && tokenChainId === ethChainId && tokenAddress !== null && amount !== null)
-  )
-    return null
+  // if (
+  //   !(tokenParents === 2 && tokenChainId === ethChainId && tokenAddress !== null && amount !== null)
+  // )
+  //   return null
 
   return {
     status: subscanExtrinsicFetch.status,
@@ -139,13 +125,13 @@ export async function getAHTransferFromHash(
       block_hash,
       account_id,
       relayChain: { block_num: relayBlock.block_num, block_hash: relayBlock.hash },
-      tokenAddress,
-      beneficiaryAddress,
-      amount,
       block_timestamp,
       block_num,
       extrinsic_index,
       extrinsic_hash,
+      // tokenAddress,
+      // beneficiaryAddress,
+      // amount,
     },
   }
 }
@@ -156,7 +142,6 @@ export async function getBHMessageQueueProccessed(
 ) {
   const eventIds = ['Processed', 'ProcessingFailed', 'OverweightEnqueued']
 
-  // implement an exponential retry mechanism ?
   const fromBridgeHubBlock = await subscan.fetchBlockNearTimestamp(
     bridgeHubScan,
     assetHubTransferTimestamp,
@@ -169,13 +154,13 @@ export async function getBHMessageQueueProccessed(
   while (keepFetching) {
     const eventsBody = {
       module: 'messagequeue',
-      block_range: `${fromBridgeHubBlock.block_num}-${fromBridgeHubBlock.block_num + 50}`, // Arbitrary decision to hardcode +50 blocks
+      block_range: `${fromBridgeHubBlock.block_num}-${fromBridgeHubBlock.block_num + 50}`, // Arbitrary decision to hardcode +50 blocks corresponding to 5 mins
       event_id: eventIds[0],
       row: 100,
       page,
     }
     const eventsQuery = await bridgeHubScan.post('api/v2/scan/events', eventsBody)
-    const subscanEvents = eventsQuery.json.data.events ?? []
+    const subscanEvents = eventsQuery?.json?.data?.events ?? []
     if (!subscanEvents.length) {
       keepFetching = false
     }
@@ -186,21 +171,21 @@ export async function getBHMessageQueueProccessed(
   if (events.length === 0) return []
 
   const messageprocessedEvents = await Promise.all(
-    events.map(async (e: subscanEvent) => {
+    events.map(async (e: SubscanEvent) => {
       const eventParams = await bridgeHubScan.post('api/scan/event/params', {
         event_index: [e.event_index],
       })
-      const { params } = eventParams.json.data[0]
+      const { params }: { params: SubscanParams[] } = eventParams?.json?.data[0]
 
-      const messageId = params.find((e: any) => e.name === 'id')?.value
+      const messageId = params.find((e) => e.name === 'id')?.value
       if (!messageId) return
 
-      const origin = params.find((e: any) => e.name === 'origin')?.value
+      const origin = params.find((e) => e.name === 'origin')?.value
       const sibling = origin?.Sibling ?? null
       const channelId = origin?.Snowbridge ?? null
       const success =
         e.event_id === eventIds[0] &&
-        (params.find((e: any) => e.name === 'success')?.value ?? false)
+        (params.find((e) => e.name === 'success')?.value ?? false)
 
       return { ...e, messageId, sibling, channelId, success }
     }),
@@ -208,7 +193,7 @@ export async function getBHMessageQueueProccessed(
   return messageprocessedEvents.filter(e => !!e)
 }
 
-export async function getBHETHOutboundMessages(
+export async function getBHEthOutboundMessages(
   bridgeHubScan: subscan.SubscanApi,
   assetHubTransferTimestamp: number,
   assetHubMessageId: string,
@@ -233,7 +218,7 @@ export async function getBHETHOutboundMessages(
       page,
     }
     const eventsQuery = await bridgeHubScan.post('api/v2/scan/events', eventsBody)
-    const subscanEvents = eventsQuery.json.data.events ?? []
+    const subscanEvents = eventsQuery?.json?.data?.events ?? []
     if (!subscanEvents.length) {
       keepFetching = false
     }
@@ -244,46 +229,46 @@ export async function getBHETHOutboundMessages(
   if (events.length === 0) return []
 
   const ethOutboundQueueMessage = await Promise.all(
-    events.map(async (e: subscanEvent) => {
+    events.map(async (e: SubscanEvent) => {
       if (!eventIds.includes(e.event_id)) return
       const eventParams = await bridgeHubScan.post('api/scan/event/params', {
         event_index: [e.event_index],
       })
-      const { params } = eventParams.json.data[0]
+      const { params }: { params: SubscanParams[] } = eventParams?.json?.data[0]
 
-      const messageId = params.find((e: any) => e.name === 'id')?.value
+      const messageId = params.find((e) => e.name === 'id')?.value
       if (!messageId || messageId !== assetHubMessageId) return
 
-      const nonce = params.find((e: any) => e.name === 'nonce')?.value ?? null
+      const nonce = params.find((e) => e.name === 'nonce')?.value ?? null
       return { ...e, messageId, nonce }
     }),
   )
   return ethOutboundQueueMessage.filter(e => !!e)
 }
 
-const getBeefyClientUpdates = async (
-  beefyClient: BeefyClient,
-  fromBlock: number,
-  toBlock: number,
-) => {
-  const NewMMRRoot = beefyClient.getEvent('NewMMRRoot')
-  const roots = await beefyClient.queryFilter(NewMMRRoot, fromBlock, toBlock)
-  const updates = roots.map(r => {
-    return {
-      blockNumber: r.blockNumber,
-      blockHash: r.blockHash,
-      logIndex: r.index,
-      transactionIndex: r.transactionIndex,
-      transactionHash: r.transactionHash,
-      data: {
-        blockNumber: Number(r.args.blockNumber),
-        mmrRoot: r.args.mmrRoot,
-      },
-    }
-  })
-  updates.sort((a, b) => Number(a.data.blockNumber - b.data.blockNumber))
-  return updates
-}
+// const getBeefyClientUpdates = async (
+//   beefyClient: BeefyClient,
+//   fromBlock: number,
+//   toBlock: number,
+// ) => {
+//   const NewMMRRoot = beefyClient.getEvent('NewMMRRoot')
+//   const roots = await beefyClient.queryFilter(NewMMRRoot, fromBlock, toBlock)
+//   const updates = roots.map(r => {
+//     return {
+//       blockNumber: r.blockNumber,
+//       blockHash: r.blockHash,
+//       logIndex: r.index,
+//       transactionIndex: r.transactionIndex,
+//       transactionHash: r.transactionHash,
+//       data: {
+//         blockNumber: Number(r.args.blockNumber),
+//         mmrRoot: r.args.mmrRoot,
+//       },
+//     }
+//   })
+//   updates.sort((a, b) => Number(a.data.blockNumber - b.data.blockNumber))
+//   return updates
+// }
 
 const getEthInboundMessagesDispatched = async (
   gateway: IGateway,
@@ -309,10 +294,10 @@ const getEthInboundMessagesDispatched = async (
   })
 }
 
-export const getAhToParachainHistory = async (
+export const trackAhToEthTransfer = async (
   env: environment.SnowbridgeEnvironment,
   hash: string,
-): Promise<ToPolkadotTransferResult | undefined> => {
+): Promise<ParachainToETHTransferResult | undefined> => {
   if (!env.config.SUBSCAN_API) {
     throw new Error(`No subscan api urls configured for ${env.name}`)
   }
@@ -329,7 +314,7 @@ export const getAhToParachainHistory = async (
   const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
   const bridgeHubScan = subscan.createApi(env.config.SUBSCAN_API.BRIDGE_HUB_URL, subscanKey)
   const ethereumProvider = new AlchemyProvider(env.ethChainId, alchemyKey)
-  const beefyClient = BeefyClient__factory.connect(env.config.BEEFY_CONTRACT, ethereumProvider)
+  // const beefyClient = BeefyClient__factory.connect(env.config.BEEFY_CONTRACT, ethereumProvider)
   const gateway = IGateway__factory.connect(env.config.GATEWAY_CONTRACT, ethereumProvider)
 
   try {
@@ -338,35 +323,34 @@ export const getAhToParachainHistory = async (
       hash,
       assetHubScan,
       relaychainScan,
-      env.ethChainId,
+      // env.ethChainId,
     )
     if (!ahTransferData) {
       throw new Error('Failed to fetch AH transfer')
     }
 
-    const result: any = {
+    const result: ParachainToETHTransferResult = {
       id: ahTransferData.data.messageId,
-      status: 0, // === pending
-      info: {
+      status: 0, // === pending 
+      // info: {
+      //   // beneficiaryAddress: ahTransferData.data.beneficiaryAddress,
+      //   // tokenAddress: ahTransferData.data.tokenAddress,
+      //   // amount: ahTransferData.data.amount,
+      // },
+      submitted: {
         when: new Date(ahTransferData.data.block_timestamp * 1000),
         sourceAddress: ahTransferData.data.account_id,
-        beneficiaryAddress: ahTransferData.data.beneficiaryAddress,
-        tokenAddress: ahTransferData.data.tokenAddress,
-        amount: ahTransferData.data.amount,
-      },
-      submitted: {
-        extrinsic_index: ahTransferData.data.extrinsic_index,
-        extrinsic_hash: ahTransferData.data.extrinsic_hash,
-        block_hash: ahTransferData.data.block_hash,
-        account_id: ahTransferData.data.account_id,
-        block_num: ahTransferData.data.block_num,
-        block_timestamp: ahTransferData.data.block_timestamp,
+        extrinsicIndex: ahTransferData.data.extrinsic_index,
+        extrinsicHash: ahTransferData.data.extrinsic_hash,
+        blockHash: ahTransferData.data.block_hash,
+        blockNum: ahTransferData.data.block_num,
+        blockTimestamp: ahTransferData.data.block_timestamp,
         messageId: ahTransferData.data.messageId,
         bridgeHubMessageId: ahTransferData.data.bridgeHubMessageId,
         success: ahTransferData.data.success,
         relayChain: {
-          block_num: ahTransferData.data.relayChain.block_num,
-          block_hash: ahTransferData.data.relayChain.block_hash,
+          blockNum: ahTransferData.data.relayChain.block_num,
+          blockHash: ahTransferData.data.relayChain.block_hash,
         },
       },
     }
@@ -379,7 +363,7 @@ export const getAhToParachainHistory = async (
     // Get processed 'messagequeue' message on BridgeHub.
     const bridgeHubMessageQueues = await getBHMessageQueueProccessed(
       bridgeHubScan,
-      result.submitted.block_timestamp,
+      result.submitted.blockTimestamp,
     )
     // Parse bridgehub events, filter siblingParachain & update result.
     if (!bridgeHubMessageQueues || bridgeHubMessageQueues.length === 0) return result
@@ -392,9 +376,9 @@ export const getAhToParachainHistory = async (
     )
     if (bridgeHubXcmDelivered) {
       result.bridgeHubXcmDelivered = {
-        block_timestamp: bridgeHubXcmDelivered.block_timestamp,
-        event_index: bridgeHubXcmDelivered.event_index,
-        extrinsic_hash: bridgeHubXcmDelivered.extrinsic_hash,
+        blockTimestamp: bridgeHubXcmDelivered.block_timestamp,
+        eventIndex: bridgeHubXcmDelivered.event_index,
+        extrinsicHash: bridgeHubXcmDelivered.extrinsic_hash,
         siblingParachain: bridgeHubXcmDelivered.sibling,
         success: bridgeHubXcmDelivered.success,
       }
@@ -409,15 +393,15 @@ export const getAhToParachainHistory = async (
     const assetHubChannelId = paraIdToChannelId(env.config.ASSET_HUB_PARAID)
     const bridgeHubChannelDelivered = bridgeHubMessageQueues.find(
       e =>
-        e.extrinsic_hash === result.bridgeHubXcmDelivered?.extrinsic_hash &&
+        e.extrinsic_hash === result.bridgeHubXcmDelivered?.extrinsicHash &&
         e.channelId === assetHubChannelId &&
-        e.block_timestamp === result.bridgeHubXcmDelivered?.block_timestamp,
+        e.block_timestamp === result.bridgeHubXcmDelivered?.blockTimestamp,
     )
     if (bridgeHubChannelDelivered) {
       result.bridgeHubChannelDelivered = {
-        block_timestamp: bridgeHubChannelDelivered.block_timestamp,
-        event_index: bridgeHubChannelDelivered.event_index,
-        extrinsic_hash: bridgeHubChannelDelivered.extrinsic_hash,
+        blockTimestamp: bridgeHubChannelDelivered.block_timestamp,
+        eventIndex: bridgeHubChannelDelivered.event_index,
+        extrinsicHash: bridgeHubChannelDelivered.extrinsic_hash,
         channelId: bridgeHubChannelDelivered.channelId,
         success: bridgeHubChannelDelivered.success,
       }
@@ -427,61 +411,62 @@ export const getAhToParachainHistory = async (
       }
     }
 
-    // Get 'ethereumoutboundqueue' message on BridgeHub.
-    const outboundMessages = await getBHETHOutboundMessages(
+    // // Get 'ethereumoutboundqueue' message on BridgeHub.
+    const outboundMessages = await getBHEthOutboundMessages(
       bridgeHubScan,
-      result.submitted.block_timestamp,
+      result.submitted.blockTimestamp,
       result.submitted.messageId,
     )
 
-    // Parse bridgehub events, filter ethereumoutboundqueue = MessageQueued & update result.
-    const bridgeHubMessageQueued = outboundMessages.find(e => e.event_id === 'MessageQueued')
-    if (bridgeHubMessageQueued) {
-      result.bridgeHubMessageQueued = {
-        block_timestamp: bridgeHubMessageQueued.block_timestamp,
-        event_index: bridgeHubMessageQueued.event_index,
-        extrinsic_hash: bridgeHubMessageQueued.extrinsic_hash,
-      }
-    }
+    // // Parse bridgehub events, filter ethereumoutboundqueue = MessageQueued & update result.
+    // const bridgeHubMessageQueued = outboundMessages.find(e => e.event_id === 'MessageQueued')
+    // if (bridgeHubMessageQueued) {
+    //   result.bridgeHubMessageQueued = {
+    //     block_timestamp: bridgeHubMessageQueued.block_timestamp,
+    //     event_index: bridgeHubMessageQueued.event_index,
+    //     extrinsic_hash: bridgeHubMessageQueued.extrinsic_hash,
+    //   }
+    // }
+
     // Parse bridgehub events, filter ethereumoutboundqueue = MessageAccepted & update result.
     const bridgeHubMessageAccepted = outboundMessages.find(e => e.event_id === 'MessageAccepted')
     if (bridgeHubMessageAccepted) {
       result.bridgeHubMessageAccepted = {
-        block_timestamp: bridgeHubMessageAccepted.block_timestamp,
-        event_index: bridgeHubMessageAccepted.event_index,
-        extrinsic_hash: bridgeHubMessageAccepted.extrinsic_hash,
+        blockTimestamp: bridgeHubMessageAccepted.block_timestamp,
+        eventIndex: bridgeHubMessageAccepted.event_index,
+        extrinsicHash: bridgeHubMessageAccepted.extrinsic_hash,
         nonce: bridgeHubMessageAccepted.nonce,
       }
     }
 
-    //BEEFY light client check - Need to confirm how usefull is this
     const ethereumSearchPeriodBlocks = HISTORY_IN_SECONDS / ETHEREUM_BLOCK_TIME_SECONDS
     const ethNowBlock = await ethereumProvider.getBlock('latest', false)
     if (!ethNowBlock) return result
 
-    const beefyClientUpdates = await getBeefyClientUpdates(
-      beefyClient,
-      ethNowBlock.number - ethereumSearchPeriodBlocks,
-      ethNowBlock.number,
-    )
+    // //BEEFY light client check - Need to confirm how usefull is this
+    // const beefyClientUpdates = await getBeefyClientUpdates(
+    //   beefyClient,
+    //   ethNowBlock.number - ethereumSearchPeriodBlocks,
+    //   ethNowBlock.number,
+    // )
 
-    const secondsTillAcceptedByRelayChain = 6 /* 6 secs per block */ * 10 /* blocks */
-    const ethereumBeefyIncluded = beefyClientUpdates.find(
-      e =>
-        e.data.blockNumber >
-        result.submitted.relayChain.block_num + secondsTillAcceptedByRelayChain,
-    )
-    if (ethereumBeefyIncluded) {
-      result.ethereumBeefyIncluded = {
-        blockNumber: ethereumBeefyIncluded.blockNumber,
-        blockHash: ethereumBeefyIncluded.blockHash,
-        transactionHash: ethereumBeefyIncluded.transactionHash,
-        transactionIndex: ethereumBeefyIncluded.transactionIndex,
-        logIndex: ethereumBeefyIncluded.logIndex,
-        relayChainblockNumber: ethereumBeefyIncluded.data.blockNumber,
-        mmrRoot: ethereumBeefyIncluded.data.mmrRoot,
-      }
-    }
+    // const secondsTillAcceptedByRelayChain = 6 /* 6 secs per block */ * 10 /* blocks */
+    // const ethereumBeefyIncluded = beefyClientUpdates.find(
+    //   e =>
+    //     e.data.blockNumber >
+    //     result.submitted.relayChain.block_num + secondsTillAcceptedByRelayChain,
+    // )
+    // if (ethereumBeefyIncluded) {
+    //   result.ethereumBeefyIncluded = {
+    //     blockNumber: ethereumBeefyIncluded.blockNumber,
+    //     blockHash: ethereumBeefyIncluded.blockHash,
+    //     transactionHash: ethereumBeefyIncluded.transactionHash,
+    //     transactionIndex: ethereumBeefyIncluded.transactionIndex,
+    //     logIndex: ethereumBeefyIncluded.logIndex,
+    //     relayChainblockNumber: ethereumBeefyIncluded.data.blockNumber,
+    //     mmrRoot: ethereumBeefyIncluded.data.mmrRoot,
+    //   }
+    // }
 
     // Parse & filter gateway events & update final result.
     const ethInboundMessagesDispatched = await getEthInboundMessagesDispatched(
@@ -502,9 +487,9 @@ export const getAhToParachainHistory = async (
         blockHash: ethMessageDispatched.blockHash,
         transactionHash: ethMessageDispatched.transactionHash,
         transactionIndex: ethMessageDispatched.transactionIndex,
-        logIndex: ethMessageDispatched.logIndex,
-        messageId: ethMessageDispatched.data.messageId,
-        channelId: ethMessageDispatched.data.channelId,
+        // logIndex: ethMessageDispatched.logIndex,
+        // messageId: ethMessageDispatched.data.messageId,
+        // channelId: ethMessageDispatched.data.channelId,
         nonce: ethMessageDispatched.data.nonce,
         success: ethMessageDispatched.data.success,
       }
@@ -521,41 +506,53 @@ export const getAhToParachainHistory = async (
   }
 }
 
+// WIP
 
-export const getNewAPI = async (
-  env: environment.SnowbridgeEnvironment,
-  hash: string,
-) => {
-  if (!env.config.SUBSCAN_API) {
-    throw new Error(`No subscan api urls configured for ${env.name}`)
-  }
-  const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
-  if (!subscanKey) {
-    throw Error('Missing Subscan Key')
-  }
+// export const trackXcmTransfer = async (
+//   env: environment.SnowbridgeEnvironment,
+//   hash: string,
+// ) => {
+//   if (!env.config.SUBSCAN_API) {
+//     throw new Error(`No subscan api urls configured for ${env.name}`)
+//   }
+//   const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
+//   if (!subscanKey) {
+//     throw Error('Missing Subscan Key')
+//   }
 
-  const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
-  try {
-    const list = await relaychainScan.post('api/scan/xcm/list', {
-      row: 10,
-      extrinsic_index: '6186188-2'
-    })
-    const unidIU = list.json.data.list[0].unique_id
-    const xcmdataFromUID = await relaychainScan.post('api/scan/xcm/info', {
-      unique_id: unidIU
-    })
-    console.log("xcmdataFromUID", xcmdataFromUID.json.data)
+//   const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
+//   try {
+//     // const subscanExtrinsicFetch = await relaychainScan.post('api/scan/extrinsic', {
+//     //   hash,
+//     //   // only_extrinsic_event: true,
+//     // })
+//     // // if (!subscanExtrinsicFetch?.json?.data) return null
+//     // console.log("subscanExtrinsicFetch", subscanExtrinsicFetch)
+//     // const {
+//     //   extrinsic_index,
+//     // } = subscanExtrinsicFetch.json.data
+//     // console.log("extrinsic_index", extrinsic_index)
 
-    // const xcmdataFromHash = await relaychainScan.post('api/scan/xcm/check_hash', {
-    //   message_hash: "0x60155d7fd0d1b1003d5f72a5527661a32dec194054a9fe8b40dc510cec3b5a06",
-    // })
-    // console.log("xcmdataFromHash", xcmdataFromHash)
+//     const list = await relaychainScan.post('api/scan/xcm/list', {
+//       row: 10,
+//       address: "5HjV1mmZiv43j4nvMjzf27D6vwy7RY9X863qd8RuTVHA7gQ2"
+//       // extrinsic_index: '6186188-2'
+//     })
+//     console.log("list", list.json.data.list[0])
+//     const unidIU = list.json.data.list[0].unique_id
+//     const xcmdataFromUID = await relaychainScan.post('api/scan/xcm/info', {
+//       unique_id: unidIU
+//     })
+//     // console.log("xcmdataFromUID", xcmdataFromUID.json.data)
+
+//     // const xcmdataFromHash = await relaychainScan.post('api/scan/xcm/check_hash', {
+//     //   message_hash: "0x60155d7fd0d1b1003d5f72a5527661a32dec194054a9fe8b40dc510cec3b5a06",
+//     // })
+//     // console.log("xcmdataFromHash", xcmdataFromHash)
 
 
-  } catch (error) {
-    console.log(error)
-  }
-}
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
-// make transfer and use the extrinsic hash from parachain and first step here to look for
-// extrinsic_index
