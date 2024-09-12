@@ -27,6 +27,7 @@ export type SubscanExtrinsicEvent = {
 export type SubscanParams = {
     type: string,
     type_name: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     name: string
 }

@@ -175,7 +175,7 @@ export async function getBHMessageQueueProccessed(
       const eventParams = await bridgeHubScan.post('api/scan/event/params', {
         event_index: [e.event_index],
       })
-      const { params }: { params: SubscanParams[] } = eventParams?.json?.data[0]
+      const { params }: { params: SubscanParams[] } = eventParams.json.data[0]
 
       const messageId = params.find((e) => e.name === 'id')?.value
       if (!messageId) return
@@ -234,7 +234,7 @@ export async function getBHEthOutboundMessages(
       const eventParams = await bridgeHubScan.post('api/scan/event/params', {
         event_index: [e.event_index],
       })
-      const { params }: { params: SubscanParams[] } = eventParams?.json?.data[0]
+      const { params }: { params: SubscanParams[] } = eventParams.json.data[0]
 
       const messageId = params.find((e) => e.name === 'id')?.value
       if (!messageId || messageId !== assetHubMessageId) return
