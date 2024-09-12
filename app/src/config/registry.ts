@@ -250,7 +250,7 @@ export namespace Testnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
     rpcConnection: 'https://rococo-muse-rpc.polkadot.io',
-    specName: 'muse',
+    specName: 'muse', // todo: check if correct
   }
 
   // Tokens
@@ -269,7 +269,7 @@ export namespace Testnet {
     id: 'muse',
     name: 'Muse',
     symbol: 'MUSE',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
     decimals: 18,
     address: '0xb34a6924a02100ba6ef12af1c798285e8f7a16ee',
     multilocation:
@@ -399,6 +399,18 @@ export const testnetRegistry: Registry = {
       to: Testnet.Sepolia.uid,
       tokens: [Testnet.WETH.id, Testnet.VETH.id],
       sdk: 'AssetTransferApi',
+    },
+    {
+      from: Testnet.Muse.uid,
+      to: Testnet.Sepolia.uid,
+      tokens: [Testnet.MUSE.id],
+      sdk: 'AssetTransferApi',
+    },
+    {
+      from: Testnet.Sepolia.uid,
+      to: Testnet.Muse.uid,
+      tokens: [Testnet.MUSE.id],
+      sdk: 'SnowbridgeApi',
     },
   ],
 }
