@@ -31,7 +31,7 @@ export const HomeComponentSelect = () => {
       <div
         className={cn(
           'z-15 relative max-w-[90vw]',
-          newTransferInit !== TransferTab.New ? 'hidden' : '',
+          newTransferInit !== TransferTab.New && 'hidden',
         )}
       >
         <Transfer />
