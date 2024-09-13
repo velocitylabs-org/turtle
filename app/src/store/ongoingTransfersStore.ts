@@ -47,11 +47,26 @@ export const useOngoingTransfersStore = create<State>()(
       transfers: [],
 
       // Actions
-      addTransfer: transfer => {
-        if (!transfer) return
-        return set(state => ({
-          transfers: [...state.transfers, transfer],
-        }))
+      // addTransfer: transfer => {
+      //   if (!transfer) return
+      //   return set(state => ({
+      //     transfers: [...state.transfers, transfer],
+      //   }))
+      // },
+      addTransfer: newOngoingTransfer => {
+        if (!newOngoingTransfer) return
+        set(state => {
+          // Check if the newOngoingTransfer already exists in the local storage
+          const transferExists = state.transfers.some(
+            transfer => transfer.id === newOngoingTransfer.id,
+          )
+
+          if (transferExists) return { transfers: state.transfers }
+
+          return {
+            transfers: [...state.transfers, newOngoingTransfer],
+          }
+        })
       },
 
       removeTransfer: id => {
