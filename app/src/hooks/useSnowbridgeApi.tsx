@@ -225,6 +225,10 @@ const useSnowbridgeApi = () => {
           destinationChain.chainId,
           amount,
           BigInt(destinationChain.destinationFeeDOT || 0),
+          {
+            ignoreExistentialDeposit: destinationChain.skipExistentialDepositCheck,
+            maxConsumers: destinationChain.maxConsumers,
+          },
         )
 
       case Direction.ToEthereum:

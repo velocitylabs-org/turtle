@@ -251,6 +251,8 @@ export namespace Testnet {
     supportedAddressTypes: ['evm'],
     rpcConnection: 'https://rococo-muse-rpc.polkadot.io',
     specName: 'muse', // todo: check if correct
+    skipExistentialDepositCheck: true,
+    maxConsumers: 16,
   }
 
   // Tokens
