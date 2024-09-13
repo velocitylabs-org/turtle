@@ -24,6 +24,8 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   destinationFeeDOT: z.string().optional(),
   rpcConnection: z.string().optional(),
   specName: z.string().optional(),
+  skipExistentialDepositCheck: z.boolean().optional(),
+  maxConsumers: z.number().optional(),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
