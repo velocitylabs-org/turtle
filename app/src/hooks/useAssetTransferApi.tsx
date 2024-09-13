@@ -45,8 +45,10 @@ const useAssetTransferApi = () => {
 
       console.log(token.multilocation)
       console.log(getDestChainId(destinationChain))
+      console.log(recipient)
       setStatus('Sending')
 
+      // TODO here it fails on muse to eth transfer
       const txResult = await atApi.createTransferTransaction(
         getDestChainId(destinationChain),
         recipient,
