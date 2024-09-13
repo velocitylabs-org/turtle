@@ -57,56 +57,174 @@ const useAssetTransferApi = () => {
       )
 
       const account = sender as SubstrateAccount
+      let transferComplete = false
 
       const hash = await atApi.api
         .tx(txResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .signAndSend(account.address, { signer: account.signer as any })
+        .signAndSend(account.address, { signer: account.signer as any }, async result => {
+          if (!result.txHash) {
+            throw new Error('Transfer failed')
+          }
+          if (transferComplete) return
 
-      if (!hash) throw new Error('Transfer failed')
-      onSuccess?.()
-      addNotification({
-        message: 'Transfer initiated. See below!',
-        severity: NotificationSeverity.Success,
-      })
+          const isIncluded = result.status.isInBlock
+          const isFinalized = result.status.isFinalized
 
-      const senderAddress =
-        sender instanceof JsonRpcSigner
-          ? await sender.getAddress()
-          : (sender as WalletOrKeypair).address
+          if (isIncluded) {
+            let messageHash: string | undefined
+            let messageId: string | undefined
+            let extrinsicSuccess: boolean = false
 
-      const tokenData = await getErc20TokenUSDValue(token.address)
-      const tokenUSDValue =
-        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
-      const date = new Date()
+            result.events.forEach(({ event: { data, method, section } }) => {
+              if (
+                method === 'XcmpMessageSent' &&
+                section === 'xcmpQueue' &&
+                'messageHash' in data
+              ) {
+                messageHash = (data.messageHash as any).toString()
+              }
+              if (method === 'Sent' && section === 'polkadotXcm' && 'messageId' in data) {
+                messageId = (data.messageId as any).toString()
+              }
+              if (method === 'ExtrinsicSuccess' && section === 'system') {
+                extrinsicSuccess = true
+              }
+            })
 
-      addTransferToStorage({
-        id: hash.toString(),
-        sourceChain,
-        token,
-        tokenUSDValue,
-        sender: senderAddress,
-        destChain: destinationChain,
-        amount: amount.toString(),
-        recipient,
-        date,
-        environment,
-        fees,
-      } satisfies StoredTransfer)
+            console.log({ messageHash })
+            console.log({ messageId })
+            console.log({ extrinsicSuccess })
 
-      // metrics
-      if (environment === Environment.Mainnet)
-        trackTransferMetrics({
-          sender: senderAddress,
-          sourceChain: sourceChain.name,
-          token: token.name,
-          amount: amount.toString(),
-          destinationChain: destinationChain.name,
-          usdValue: tokenUSDValue,
-          usdFees: fees.inDollars,
-          recipient: recipient,
-          date: date.toISOString(),
+            const senderAddress =
+              sender instanceof JsonRpcSigner
+                ? await sender.getAddress()
+                : (sender as WalletOrKeypair).address
+
+            const tokenData = await getErc20TokenUSDValue(token.address)
+            const tokenUSDValue =
+              tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+            const date = new Date()
+
+            addTransferToStorage({
+              id: result.txHash.toString(),
+              sourceChain,
+              token,
+              tokenUSDValue,
+              sender: senderAddress,
+              destChain: destinationChain,
+              amount: amount.toString(),
+              recipient,
+              date,
+              environment,
+              fees,
+            } satisfies StoredTransfer)
+
+            onSuccess?.()
+            addNotification({
+              message: 'Transfer initiated. See below!',
+              severity: NotificationSeverity.Success,
+            })
+
+            // metrics
+            if (environment === Environment.Mainnet) {
+              trackTransferMetrics({
+                sender: senderAddress,
+                sourceChain: sourceChain.name,
+                token: token.name,
+                amount: amount.toString(),
+                destinationChain: destinationChain.name,
+                usdValue: tokenUSDValue,
+                usdFees: fees.inDollars,
+                recipient: recipient,
+                date: date.toISOString(),
+              })
+            }
+
+            // Mark the transfer as complete and return
+            transferComplete = true
+            return
+          }
+
+          if (isFinalized) {
+            console.log('Transaction finalized')
+            transferComplete = true
+            return
+          }
         })
+
+      // // Wrapping signAndSend in a Promise
+      // const hash = await new Promise((resolve, reject) => {
+      //   atApi.api
+      //     .tx(txResult.tx)
+      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //     .signAndSend(account.address, { signer: account.signer as any }, async result => {
+      //       try {
+      //         if (!result.txHash) {
+      //           reject(new Error('Transfer failed'))
+      //           return
+      //         }
+
+      //         const isWaitingInclusion = result.status.isInBlock
+
+      //         console.log('result.txHash', result.txHash.toString())
+
+      //         if (isWaitingInclusion) {
+      //           console.log('result: ', result.toHuman())
+
+      //           onSuccess?.()
+      //           addNotification({
+      //             message: 'Transfer initiated. See below!',
+      //             severity: NotificationSeverity.Success,
+      //           })
+
+      //           const senderAddress =
+      //             sender instanceof JsonRpcSigner
+      //               ? await sender.getAddress()
+      //               : (sender as WalletOrKeypair).address
+
+      //           const tokenData = await getErc20TokenUSDValue(token.address)
+      //           const tokenUSDValue =
+      //             tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+      //           const date = new Date()
+
+      //           addTransferToStorage({
+      //             id: result.txHash.toString(),
+      //             sourceChain,
+      //             token,
+      //             tokenUSDValue,
+      //             sender: senderAddress,
+      //             destChain: destinationChain,
+      //             amount: amount.toString(),
+      //             recipient,
+      //             date,
+      //             environment,
+      //             fees,
+      //           } satisfies StoredTransfer)
+
+      //           // metrics
+      //           if (environment === Environment.Mainnet) {
+      //             trackTransferMetrics({
+      //               sender: senderAddress,
+      //               sourceChain: sourceChain.name,
+      //               token: token.name,
+      //               amount: amount.toString(),
+      //               destinationChain: destinationChain.name,
+      //               usdValue: tokenUSDValue,
+      //               usdFees: fees.inDollars,
+      //               recipient: recipient,
+      //               date: date.toISOString(),
+      //             })
+      //           }
+
+      //           resolve(result.txHash.toString()) // Resolve the promise once the transfer is done
+      //         }
+      //       } catch (error) {
+      //         reject(error) // Reject the promise in case of error
+      //       }
+      //     })
+      // })
+      console.log('hash', hash)
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
