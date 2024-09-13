@@ -39,8 +39,12 @@ const useAssetTransferApi = () => {
         throw new Error('Source chain is missing rpcConnection or specName')
 
       const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
+      console.log('before')
       const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
+      console.log(atApi)
 
+      console.log(token.multilocation)
+      console.log(getDestChainId(destinationChain))
       setStatus('Sending')
 
       const txResult = await atApi.createTransferTransaction(
@@ -55,6 +59,7 @@ const useAssetTransferApi = () => {
           xcmVersion: safeXcmVersion,
         },
       )
+      console.log('after2')
 
       const account = sender as SubstrateAccount
 

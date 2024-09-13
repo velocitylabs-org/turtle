@@ -249,8 +249,8 @@ export namespace Testnet {
     destinationFeeDOT: '200000000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
-    rpcConnection: 'https://rococo-muse-rpc.polkadot.io',
-    specName: 'muse', // todo: check if correct
+    rpcConnection: 'wss://rococo-muse-rpc.polkadot.io',
+    specName: 'muse',
     skipExistentialDepositCheck: true,
     maxConsumers: 16,
   }
@@ -432,6 +432,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.DOT
     case 'ethereum':
       return Mainnet.ETH
+    case 'muse':
+      return Testnet.MUSE
     default:
       throw Error('The impossible has happened!')
   }

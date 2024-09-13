@@ -1,6 +1,6 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Erc20Balance, fetchAssetHubBalance, fetchEthereumBalance } from '@/services/balance'
+import { Erc20Balance, fetchEthereumBalance, fetchParachainNativeBalance } from '@/services/balance'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
@@ -34,7 +34,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
         }
 
         case Network.Polkadot: {
-          fetchedBalance = await fetchAssetHubBalance(context, token, address)
+          fetchedBalance = await fetchParachainNativeBalance(token, address) // TODO change
           break
         }
 
