@@ -69,9 +69,10 @@ const useAssetTransferApi = () => {
           if (transferComplete) return
 
           const isIncluded = result.status.isInBlock
-          const isFinalized = result.status.isFinalized
+          // const isFinalized = result.status.isFinalized
 
           if (isIncluded) {
+            // if (isIncluded || isFinalized) {
             let messageHash: string | undefined
             let messageId: string | undefined
             let extrinsicSuccess: boolean = false
@@ -92,9 +93,10 @@ const useAssetTransferApi = () => {
               }
             })
 
-            console.log({ messageHash })
-            console.log({ messageId })
-            console.log({ extrinsicSuccess })
+            if (!extrinsicSuccess)
+              throw new Error('Transfer failed. Returned extrinsicSuccess: false')
+            if (!messageHash) throw new Error('Crosschain messageHash missing')
+            if (!messageId) throw new Error('Parachain messageId missing')
 
             const senderAddress =
               sender instanceof JsonRpcSigner
@@ -118,6 +120,8 @@ const useAssetTransferApi = () => {
               date,
               environment,
               fees,
+              crosschainMessageHash: messageHash,
+              parachainMessageId: messageId,
             } satisfies StoredTransfer)
 
             onSuccess?.()
@@ -146,11 +150,11 @@ const useAssetTransferApi = () => {
             return
           }
 
-          if (isFinalized) {
-            console.log('Transaction finalized')
-            transferComplete = true
-            return
-          }
+          // if (isFinalized) {
+          //   console.log('Transaction finalized')
+          //   transferComplete = true
+          //   return
+          // }
         })
 
       // // Wrapping signAndSend in a Promise

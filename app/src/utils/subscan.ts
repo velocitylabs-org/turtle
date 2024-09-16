@@ -512,51 +512,52 @@ export const trackAhToEthTransfer = async (
   }
 }
 
-// WIP
+//WIP
 
-// export const trackXcmTransfer = async (
-//   env: environment.SnowbridgeEnvironment,
-//   hash: string,
-// ) => {
-//   if (!env.config.SUBSCAN_API) {
-//     throw new Error(`No subscan api urls configured for ${env.name}`)
-//   }
-//   const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
-//   if (!subscanKey) {
-//     throw Error('Missing Subscan Key')
-//   }
+export const trackXcmTransfer = async (
+  env: environment.SnowbridgeEnvironment,
+  // messageHash: string,
+) => {
+  if (!env.config.SUBSCAN_API) {
+    throw new Error(`No subscan api urls configured for ${env.name}`)
+  }
+  const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
+  if (!subscanKey) {
+    throw Error('Missing Subscan Key')
+  }
 
-//   const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
-//   try {
-//     // const subscanExtrinsicFetch = await relaychainScan.post('api/scan/extrinsic', {
-//     //   hash,
-//     //   // only_extrinsic_event: true,
-//     // })
-//     // // if (!subscanExtrinsicFetch?.json?.data) return null
-//     // console.log("subscanExtrinsicFetch", subscanExtrinsicFetch)
-//     // const {
-//     //   extrinsic_index,
-//     // } = subscanExtrinsicFetch.json.data
-//     // console.log("extrinsic_index", extrinsic_index)
+  const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
+  try {
+    // const subscanExtrinsicFetch = await relaychainScan.post('api/scan/extrinsic', {
+    //   hash,
+    //   // only_extrinsic_event: true,
+    // })
+    // // if (!subscanExtrinsicFetch?.json?.data) return null
+    // console.log("subscanExtrinsicFetch", subscanExtrinsicFetch)
+    // const {
+    //   extrinsic_index,
+    // } = subscanExtrinsicFetch.json.data
+    // console.log("extrinsic_index", extrinsic_index)
 
-//     const list = await relaychainScan.post('api/scan/xcm/list', {
-//       row: 10,
-//       address: "5HjV1mmZiv43j4nvMjzf27D6vwy7RY9X863qd8RuTVHA7gQ2"
-//       // extrinsic_index: '6186188-2'
-//     })
-//     console.log("list", list.json.data.list[0])
-//     const unidIU = list.json.data.list[0].unique_id
-//     const xcmdataFromUID = await relaychainScan.post('api/scan/xcm/info', {
-//       unique_id: unidIU
-//     })
-//     // console.log("xcmdataFromUID", xcmdataFromUID.json.data)
+    const list = await relaychainScan.post('api/scan/xcm/list', {
+      row: 25,
+      address: "5HjV1mmZiv43j4nvMjzf27D6vwy7RY9X863qd8RuTVHA7gQ2",
+      // message_hash: "0x8d7b488b991d0157f31a186d30f72fb671b356f28f28ecbe4ace53da5be92164",
+      //extrinsic_index: '6186188-2'
+    })
+    console.log("list", list.json.data.list.length && list.json.data.list)
+    // const unidIU = list.json.data.list[0].unique_id
+    // const xcmdataFromUID = await relaychainScan.post('api/scan/xcm/info', {
+    //   unique_id: unidIU
+    // })
+    // console.log("xcmdataFromUID", xcmdataFromUID.json.data)
 
-//     // const xcmdataFromHash = await relaychainScan.post('api/scan/xcm/check_hash', {
-//     //   message_hash: "0x60155d7fd0d1b1003d5f72a5527661a32dec194054a9fe8b40dc510cec3b5a06",
-//     // })
-//     // console.log("xcmdataFromHash", xcmdataFromHash)
+    // const xcmdataFromHash = await relaychainScan.post('api/scan/xcm/check_hash', {
+    //   message_hash: "0x8d7b488b991d0157f31a186d30f72fb671b356f28f28ecbe4ace53da5be92164",
+    // })
+    // console.log("xcmdataFromHash", xcmdataFromHash)
 
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
+  } catch (error) {
+    console.log(error)
+  }
+}

@@ -8,7 +8,7 @@ import { Token } from './token'
 import { Direction } from '@/services/transfer'
 
 export interface RawTransfer {
-  id: string
+  id: string // It must be a Substrate extrinsic hash or an Ethereum transaction hash
   sourceChain: Chain
   destChain: Chain
   sender: string
@@ -26,6 +26,9 @@ export interface StoredTransfer extends RawTransfer {
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
+  // For a transfer from a parachain using AT API
+  crosschainMessageHash?: string
+  parachainMessageId?: string
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
