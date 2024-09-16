@@ -19,6 +19,7 @@ export const HomeComponentSelect = () => {
   const { completedTransfers } = useCompletedTransfers()
   const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>(TransferTab.New)
   const hasCompletedTransfers = !!completedTransfers && completedTransfers.length > 0
+  const isCompletedTabSelected = newTransferInit === TransferTab.Completed
 
   return (
     <>
@@ -28,12 +29,7 @@ export const HomeComponentSelect = () => {
         hasCompletedTransfers={hasCompletedTransfers}
       />
 
-      <div
-        className={cn(
-          'z-15 relative max-w-[90vw]',
-          newTransferInit !== TransferTab.New && 'hidden',
-        )}
-      >
+      <div className={cn('z-15 relative max-w-[90vw]', isCompletedTabSelected && 'hidden')}>
         <Transfer />
         <OngoingTransfers
           newTransferInit={newTransferInit}
@@ -42,7 +38,7 @@ export const HomeComponentSelect = () => {
         />
       </div>
 
-      {hasCompletedTransfers && completedTransfers && (
+      {isCompletedTabSelected && hasCompletedTransfers && completedTransfers && (
         <TransferHistory transactions={completedTransfers!} />
       )}
     </>
