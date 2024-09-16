@@ -34,7 +34,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
         }
 
         case Network.Polkadot: {
-          fetchedBalance = await fetchParachainNativeBalance(token, address) // TODO change
+          fetchedBalance = await fetchParachainNativeBalance(token, address) // TODO change and support assethub, relay + other assets
           break
         }
 

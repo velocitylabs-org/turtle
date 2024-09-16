@@ -60,6 +60,8 @@ export namespace Mainnet {
     destinationFeeDOT: '500000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
+    specName: 'mythos',
+    rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
     skipExistentialDepositCheck: true,
     maxConsumers: 16,
   }
@@ -442,12 +444,15 @@ export function getNativeToken(chain: Chain): Token {
       return Testnet.ROC
     case 'sepolia':
       return Testnet.ETH
+    case 'muse':
+      return Testnet.MUSE
     case 'polkadot-assethub':
       return Mainnet.DOT
     case 'ethereum':
       return Mainnet.ETH
-    case 'muse':
-      return Testnet.MUSE
+    case 'mythos':
+      return Mainnet.MYTH
+
     default:
       throw Error('The impossible has happened!')
   }

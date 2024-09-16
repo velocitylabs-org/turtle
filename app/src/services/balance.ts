@@ -58,6 +58,7 @@ export const fetchParachainNativeBalance = async (
   })
 
   const account = (await api.query.system.account(address)).toPrimitive() as any
+  console.log('account', account)
 
   const balance = BigInt(account.data.free || 0)
 
