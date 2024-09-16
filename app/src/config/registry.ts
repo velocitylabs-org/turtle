@@ -217,7 +217,7 @@ export namespace Mainnet {
   }
 }
 
-/* Testnet :: Rococo - Sepolia */
+/* Testnet :: Paseo - Sepolia */
 export namespace Testnet {
   // Chains
   export const Sepolia: Chain = {
@@ -230,15 +230,15 @@ export namespace Testnet {
     supportedAddressTypes: ['evm'],
   }
 
-  export const RococoAssetHub: Chain = {
-    uid: 'rococo-assethub',
-    name: 'Rococo Asset Hub',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+  export const PaseoAssetHub: Chain = {
+    uid: 'paseo-assethub',
+    name: 'Paseo Asset Hub',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
-    specName: 'asset-hub-rococo',
+    rpcConnection: 'wss://asset-hub-paseo-rpc.dwellir.com',
+    specName: 'asset-hub-paseo',
   }
 
   // Tokens
@@ -253,17 +253,6 @@ export namespace Testnet {
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
   }
 
-  export const VETH: Token = {
-    id: 'veth',
-    name: 'Venus ETH',
-    symbol: 'vETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
-    decimals: 18,
-    address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
-  }
-
   export const ETH: Token = {
     id: 'seth',
     name: 'Sepolia Ether',
@@ -275,12 +264,12 @@ export namespace Testnet {
     multilocation: '',
   }
 
-  export const ROC: Token = {
-    id: 'roc',
-    name: 'Rococo',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
-    symbol: 'ROC',
-    decimals: 12,
+  export const PAS: Token = {
+    id: 'pas',
+    name: 'Paseo',
+    logoURI: 'https://imgur.com/MhQMspt',
+    symbol: 'PAS',
+    decimals: 10,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
   }
@@ -362,17 +351,17 @@ export const mainnetRegistry: Registry = {
 }
 
 export const testnetRegistry: Registry = {
-  chains: [Testnet.Sepolia, Testnet.RococoAssetHub],
+  chains: [Testnet.Sepolia, Testnet.PaseoAssetHub],
   tokens: [Testnet.WETH, Testnet.VETH],
   routes: [
     {
       from: Testnet.Sepolia.uid,
-      to: Testnet.RococoAssetHub.uid,
+      to: Testnet.PaseoAssetHub.uid,
       tokens: [Testnet.WETH.id, Testnet.VETH.id],
       sdk: 'SnowbridgeApi',
     },
     {
-      from: Testnet.RococoAssetHub.uid,
+      from: Testnet.PaseoAssetHub.uid,
       to: Testnet.Sepolia.uid,
       tokens: [Testnet.WETH.id, Testnet.VETH.id],
       sdk: 'AssetTransferApi',
@@ -387,7 +376,7 @@ export const REGISTRY = {
 
 export function getNativeToken(chain: Chain): Token {
   switch (chain.uid) {
-    case 'rococo-assethub':
+    case 'paseo-assethub':
       return Testnet.ROC
     case 'sepolia':
       return Testnet.ETH

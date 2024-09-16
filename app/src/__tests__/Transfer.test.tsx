@@ -49,7 +49,7 @@ describe('Transfer', () => {
     // Polkadot-native chains should result in a basic chain id
     expect(getDestChainId(Mainnet.AssetHub)).toBe(Mainnet.AssetHub.chainId.toString())
     expect(getDestChainId(Mainnet.Mythos)).toBe(Mainnet.Mythos.chainId.toString())
-    expect(getDestChainId(Testnet.RococoAssetHub)).toBe(Testnet.RococoAssetHub.chainId.toString())
+    expect(getDestChainId(Testnet.PaseoAssetHub)).toBe(Testnet.PaseoAssetHub.chainId.toString())
   })
 
   it('convert amount to string', () => {

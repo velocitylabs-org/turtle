@@ -66,7 +66,7 @@ export function toSnowbridgeNetwork(env: Environment): string {
     case Environment.Mainnet:
       return 'polkadot_mainnet'
     case Environment.Testnet:
-      return 'rococo_sepolia'
+      return 'paseo_sepolia'
   }
 }
 
