@@ -352,18 +352,18 @@ export const mainnetRegistry: Registry = {
 
 export const testnetRegistry: Registry = {
   chains: [Testnet.Sepolia, Testnet.PaseoAssetHub],
-  tokens: [Testnet.WETH, Testnet.VETH],
+  tokens: [Testnet.WETH],
   routes: [
     {
       from: Testnet.Sepolia.uid,
       to: Testnet.PaseoAssetHub.uid,
-      tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      tokens: [Testnet.WETH.id],
       sdk: 'SnowbridgeApi',
     },
     {
       from: Testnet.PaseoAssetHub.uid,
       to: Testnet.Sepolia.uid,
-      tokens: [Testnet.WETH.id, Testnet.VETH.id],
+      tokens: [Testnet.WETH.id],
       sdk: 'AssetTransferApi',
     },
   ],
@@ -377,7 +377,7 @@ export const REGISTRY = {
 export function getNativeToken(chain: Chain): Token {
   switch (chain.uid) {
     case 'paseo-assethub':
-      return Testnet.ROC
+      return Testnet.PAS
     case 'sepolia':
       return Testnet.ETH
     case 'polkadot-assethub':
