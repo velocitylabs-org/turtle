@@ -147,7 +147,7 @@ const useTransferForm = () => {
       setValue('sourceChain', destinationChain)
       setValue('destinationChain', sourceChain)
     }
-  }, [sourceChain, destinationChain, setValue, allowFromToSwap, isValidating, transferStatus])
+  }, [sourceChain, destinationChain, setValue, allowFromToSwap])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
