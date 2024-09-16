@@ -60,6 +60,8 @@ export namespace Mainnet {
     destinationFeeDOT: '500000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
+    skipExistentialDepositCheck: true,
+    maxConsumers: 16,
   }
 
   // Tokens
@@ -382,6 +384,18 @@ export const mainnetRegistry: Registry = {
         Mainnet.SHIB.id,
         Mainnet.PEPE.id,
       ],
+    },
+    {
+      from: Mainnet.Mythos.uid,
+      to: Mainnet.Ethereum.uid,
+      tokens: [Mainnet.MYTH.id],
+      sdk: 'AssetTransferApi',
+    },
+    {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Mythos.uid,
+      tokens: [Mainnet.MYTH.id],
+      sdk: 'SnowbridgeApi',
     },
   ],
 }
