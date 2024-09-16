@@ -6,7 +6,7 @@ import { Chain, Network } from '../models/chain'
  *
  */
 export enum Direction {
-  ToEthereum = 'ToThereum',
+  ToEthereum = 'ToEthereum',
   ToPolkadot = 'toPolkadot',
   WithinPolkadot = 'WithinPolkadot',
   WithinEthereum = 'WithinEthereum',
