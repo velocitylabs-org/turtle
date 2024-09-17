@@ -135,7 +135,7 @@ export type SubscanXCMTransferResult = {
   originBlockTimestamp: number
   relayedBlockTimestamp: number
   blockNum: number
-  status: string
+  extrinsicStatus: string
   relayedEventIndex: string
   destEventIndex: string
   destParaId: number
@@ -146,5 +146,6 @@ export type SubscanXCMTransferResult = {
   destExtrinsicIndex: string
   uniqueId: string
   metadata?: SubscanXCMMetadata
-  crossChainStatus: TransferStatus
+  status: TransferStatus
+  transferTimestamp: Date
 }

@@ -563,7 +563,7 @@ export const trackXcmTransfer = async (
         originBlockTimestamp: transferData[0].origin_block_timestamp,
         relayedBlockTimestamp: transferData[0].relayed_block_timestamp,
         blockNum: transferData[0].block_num,
-        status: transferData[0].status,
+        extrinsicStatus: transferData[0].status,
         relayedEventIndex: transferData[0].relayed_event_index,
         destEventIndex: transferData[0].dest_event_index,
         destParaId: transferData[0].dest_para_id,
@@ -580,7 +580,8 @@ export const trackXcmTransfer = async (
             messageId: transferData[0].metadata.message_id,
           },
         }),
-        crossChainStatus: xchainTransferStatus,
+        status: xchainTransferStatus,
+        transferTimestamp: transfer.date
       })
     }
 
