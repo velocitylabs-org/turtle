@@ -129,15 +129,15 @@ type SubscanXCMMetadata = {
 
 export type SubscanXCMTransferResult = {
   messageHash: string
-  originEventIndex: string
+  originEventIndex: string // Parachain/AH transfer block index
   fromAccountId: string
   originParaId: number
-  originBlockTimestamp: number
-  relayedBlockTimestamp: number
-  blockNum: number
+  originBlockTimestamp: number // Parachain/AH transfer timestamp
+  relayedBlockTimestamp: number // Relaychain transfer timestamp
+  blockNum: number // Relaychain transfer block number
   extrinsicStatus: string
   relayedEventIndex: string
-  destEventIndex: string
+  destEventIndex: string // BH transfer block index
   destParaId: number
   toAccountId: string
   confirmBlockTimestamp: number
@@ -147,5 +147,4 @@ export type SubscanXCMTransferResult = {
   uniqueId: string
   metadata?: SubscanXCMMetadata
   status: TransferStatus
-  transferTimestamp: Date
 }

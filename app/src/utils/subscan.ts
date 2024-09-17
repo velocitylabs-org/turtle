@@ -581,7 +581,6 @@ export const trackXcmTransfer = async (
           },
         }),
         status: xchainTransferStatus,
-        transferTimestamp: transfer.date
       })
     }
 
