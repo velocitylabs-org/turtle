@@ -13,9 +13,13 @@ import {
   SubscanParams,
   SubscanEvent,
   ParachainToETHTransferResult,
+  SubscanXCMTransferRawResponse,
+  SubscanXCMTransferResult,
 } from '@/models/subscan'
 
 import { ETHEREUM_BLOCK_TIME_SECONDS, HISTORY_IN_SECONDS } from './snowbridge'
+import { OngoingTransferWithDirection } from '@/models/transfer'
+import { TransferStatus } from '@snowbridge/api/dist/history'
 
 export const forwardedTopicId = (messageId: string): string => {
   const typeEncoded = stringToU8a('forward_id_for')
@@ -512,52 +516,77 @@ export const trackAhToEthTransfer = async (
   }
 }
 
-//WIP
-
 export const trackXcmTransfer = async (
-  env: environment.SnowbridgeEnvironment,
-  // messageHash: string,
+  relaychainScan: subscan.SubscanApi,
+  ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
-  if (!env.config.SUBSCAN_API) {
-    throw new Error(`No subscan api urls configured for ${env.name}`)
-  }
-  const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
-  if (!subscanKey) {
-    throw Error('Missing Subscan Key')
-  }
-
-  const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
   try {
-    // const subscanExtrinsicFetch = await relaychainScan.post('api/scan/extrinsic', {
-    //   hash,
-    //   // only_extrinsic_event: true,
-    // })
-    // // if (!subscanExtrinsicFetch?.json?.data) return null
-    // console.log("subscanExtrinsicFetch", subscanExtrinsicFetch)
-    // const {
-    //   extrinsic_index,
-    // } = subscanExtrinsicFetch.json.data
-    // console.log("extrinsic_index", extrinsic_index)
+    const xcmTransfers: SubscanXCMTransferResult[] = []
 
-    const list = await relaychainScan.post('api/scan/xcm/list', {
-      row: 25,
-      address: "5HjV1mmZiv43j4nvMjzf27D6vwy7RY9X863qd8RuTVHA7gQ2",
-      // message_hash: "0x8d7b488b991d0157f31a186d30f72fb671b356f28f28ecbe4ace53da5be92164",
-      //extrinsic_index: '6186188-2'
-    })
-    console.log("list", list.json.data.list.length && list.json.data.list)
-    // const unidIU = list.json.data.list[0].unique_id
-    // const xcmdataFromUID = await relaychainScan.post('api/scan/xcm/info', {
-    //   unique_id: unidIU
-    // })
-    // console.log("xcmdataFromUID", xcmdataFromUID.json.data)
+    for (const transfer of ongoingTransfers) {
+      const { crosschainMessageHash } = transfer
+      if (!crosschainMessageHash) throw new Error("Cross chain message undefined")
 
-    // const xcmdataFromHash = await relaychainScan.post('api/scan/xcm/check_hash', {
-    //   message_hash: "0x8d7b488b991d0157f31a186d30f72fb671b356f28f28ecbe4ace53da5be92164",
-    // })
-    // console.log("xcmdataFromHash", xcmdataFromHash)
+      const query = await relaychainScan.post('api/scan/xcm/list', {
+        message_hash: crosschainMessageHash,
+        row: 10, // should be 0 or 1
+      })
+      if (query.status !== 200) {
+        throw new Error(`Subscan API request failed`);
+      }
 
+      const transferData: SubscanXCMTransferRawResponse[] = query.json?.data?.list ?? []
+      if (!transferData.length || !transferData[0]) {
+        throw new Error(`No XCM transfer data found for message hash ${crosschainMessageHash}`);
+      }
+
+      let xchainTransferStatus: number = 1
+      switch (transferData[0].cross_chain_status) {
+        case 1:
+          xchainTransferStatus = TransferStatus.Pending
+          break;
+        case 2:
+          xchainTransferStatus = TransferStatus.Failed
+          break;
+        case 3:
+          xchainTransferStatus = TransferStatus.Complete
+          break;
+        default:
+          break
+      }
+
+      xcmTransfers.push({
+        messageHash: transferData[0].message_hash,
+        originEventIndex: transferData[0].origin_event_index,
+        fromAccountId: transferData[0].from_account_id,
+        originParaId: transferData[0].origin_para_id,
+        originBlockTimestamp: transferData[0].origin_block_timestamp,
+        relayedBlockTimestamp: transferData[0].relayed_block_timestamp,
+        blockNum: transferData[0].block_num,
+        status: transferData[0].status,
+        relayedEventIndex: transferData[0].relayed_event_index,
+        destEventIndex: transferData[0].dest_event_index,
+        destParaId: transferData[0].dest_para_id,
+        toAccountId: transferData[0].to_account_id,
+        confirmBlockTimestamp: transferData[0].confirm_block_timestamp,
+        extrinsicIndex: transferData[0].extrinsic_index,
+        relayedExtrinsicIndex: transferData[0].relayed_extrinsic_index,
+        destExtrinsicIndex: transferData[0].dest_extrinsic_index,
+        uniqueId: transferData[0].unique_id,
+        ...(transferData[0].metadata && {
+          metadata: {
+            sendAt: transferData[0].metadata.send_at,
+            txHash: transferData[0].metadata.tx_hash,
+            messageId: transferData[0].metadata.message_id,
+          },
+        }),
+        crossChainStatus: xchainTransferStatus
+      })
+    }
+
+    return xcmTransfers
   } catch (error) {
-    console.log(error)
+    console.error(`Subscan XCM transfers tracking error:`, error);
+    return [];
   }
 }
