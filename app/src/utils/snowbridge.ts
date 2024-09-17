@@ -7,6 +7,9 @@ import {
 } from '@snowbridge/api/dist/history'
 import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-types'
 import { OngoingTransfers } from '@/models/transfer'
+import { SubscanXCMTransferResult } from '@/models/subscan'
+
+import { trackXcmTransfer } from './subscan'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
 export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 2 // 2 days
@@ -83,9 +86,13 @@ export async function getTransferHistory(
     },
   }
 
-  const transfers: (ToEthereumTransferResult | ToPolkadotTransferResult)[] = []
+  const transfers: (
+    | ToEthereumTransferResult
+    | ToPolkadotTransferResult
+    | SubscanXCMTransferResult
+  )[] = []
 
-  if (ongoingTransfers.toEthereum.length) {
+  if (ongoingTransfers.toEthereum.fromAssetHub.length) {
     const toEthereum = await history.toEthereumHistory(
       assetHubScan,
       bridgeHubScan,
@@ -97,8 +104,23 @@ export async function getTransferHistory(
       beefyClient,
       gateway,
     )
-    console.log('To Ethereum transfers:', toEthereum.length)
+    console.log('From AH To Ethereum transfers:', toEthereum.length)
     transfers.push(...toEthereum)
+
+    // const fromAHTransfer = await trackXcmTransfer(
+    //   relaychainScan,
+    //   ongoingTransfers.toEthereum.fromAssetHub,
+    // )
+    // console.log('Find from AH To Ethereum transfer:', fromAHTransfer)
+  }
+
+  if (ongoingTransfers.toEthereum.fromParachain.length) {
+    const fromParachainTransfer = await trackXcmTransfer(
+      relaychainScan,
+      ongoingTransfers.toEthereum.fromParachain,
+    )
+    console.log('From Parachain/AH To Ethereum transfer:', fromParachainTransfer)
+    transfers.push(...fromParachainTransfer)
   }
 
   if (ongoingTransfers.toPolkadot.length) {
@@ -112,13 +134,16 @@ export async function getTransferHistory(
       ethereumProvider,
       beacon_url,
     )
-    console.log('To Polkadot transfers:', toPolkadot.length)
+    console.log('From ETH To Polkadot transfers:', toPolkadot.length)
     transfers.push(...toPolkadot)
   }
 
-  transfers.sort((a, b) => b.info.when.getTime() - a.info.when.getTime())
-  // return transfers.filter((t) => t.status === TransferStatus.Pending)
-  return transfers
+  transfers.sort((a, b) =>
+    'info' in b
+      ? b.info.when.getTime()
+      : b.originBlockTimestamp - ('info' in a ? a.info.when.getTime() : a.originBlockTimestamp),
+  )
+  return transfers.filter(t => t.status === TransferStatus.Pending)
 }
 
 export interface AccountInfo {
@@ -129,23 +154,36 @@ export interface AccountInfo {
 }
 
 export function getTransferStatus(
-  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult,
+  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
 ) {
-  if (transferResult.info.destinationParachain == undefined)
+  if ('info' in transferResult && transferResult.info.destinationParachain == undefined)
     return getTransferStatusToEthereum(transferResult as ToEthereumTransferResult)
-  else {
+  else if ('destEventIndex' in transferResult && !('info' in transferResult)) {
+    return getTransferStatusToEthereum(transferResult as SubscanXCMTransferResult)
+  } else {
     return getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
   }
 }
 
-export function getTransferStatusToEthereum(transferResult: ToEthereumTransferResult) {
-  const { status, submitted, bridgeHubChannelDelivered } = transferResult
+export function getTransferStatusToEthereum(
+  transferResult: ToEthereumTransferResult | SubscanXCMTransferResult,
+) {
+  const { status } = transferResult
 
   switch (status) {
     case TransferStatus.Pending:
-      if (bridgeHubChannelDelivered && bridgeHubChannelDelivered.success)
+      if (
+        ('bridgeHubChannelDelivered' in transferResult &&
+          transferResult.bridgeHubChannelDelivered?.success) ||
+        ('destEventIndex' in transferResult && transferResult.destEventIndex.length > 0)
+      )
         return 'Arriving at Ethereum'
-      if (submitted) return 'Arriving at Bridge Hub'
+      if (
+        'submitted' in transferResult ||
+        !transferResult.destEventIndex ||
+        ('destEventIndex' in transferResult && transferResult.destEventIndex.length === 0)
+      )
+        return 'Arriving at Bridge Hub'
       return 'Pending'
 
     case TransferStatus.Complete:
@@ -179,7 +217,7 @@ export function getTransferStatusToPolkadot(transferResult: ToPolkadotTransferRe
 }
 
 export function isCompletedTransfer(
-  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult,
+  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
 ) {
   return (
     transferResult.status === TransferStatus.Complete ||

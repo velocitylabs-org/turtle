@@ -63,15 +63,18 @@ const useAssetTransferApi = () => {
         .tx(txResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
+          console.log('in callback')
           if (!result.txHash) {
             throw new Error('Transfer failed')
           }
+          console.log({ transferComplete })
           if (transferComplete) return
 
           const isIncluded = result.status.isInBlock
           // const isFinalized = result.status.isFinalized
 
           if (isIncluded) {
+            console.log({ isIncluded })
             // if (isIncluded || isFinalized) {
             let messageHash: string | undefined
             let messageId: string | undefined
@@ -108,6 +111,7 @@ const useAssetTransferApi = () => {
               tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
             const date = new Date()
 
+            console.log('Addind to storage')
             addTransferToStorage({
               id: result.txHash.toString(),
               sourceChain,
@@ -144,17 +148,12 @@ const useAssetTransferApi = () => {
                 date: date.toISOString(),
               })
             }
-
+            console.log('mark transfer complete')
             // Mark the transfer as complete and return
             transferComplete = true
+            setStatus('Idle')
             return
           }
-
-          // if (isFinalized) {
-          //   console.log('Transaction finalized')
-          //   transferComplete = true
-          //   return
-          // }
         })
 
       // // Wrapping signAndSend in a Promise
@@ -228,11 +227,10 @@ const useAssetTransferApi = () => {
       //       }
       //     })
       // })
-      console.log('hash', hash)
+      console.log('log hash', hash)
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
-    } finally {
       setStatus('Idle')
     }
   }

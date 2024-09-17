@@ -529,7 +529,7 @@ export const trackXcmTransfer = async (
 
       const query = await relaychainScan.post('api/scan/xcm/list', {
         message_hash: crosschainMessageHash,
-        row: 10, // should be 0 or 1
+        row: 10,
       })
       if (query.status !== 200) {
         throw new Error(`Subscan API request failed`)
