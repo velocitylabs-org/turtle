@@ -110,10 +110,10 @@ export type SubscanXCMTransferRawResponse = {
   xcm_version: number
   from_chain: string
   dest_chain: string
-  metadata?: {
-    send_at: number
-    tx_hash: string
-    message_id: string
+  metadata: {
+    send_at?: number
+    tx_hash?: string
+    message_id?: string
   }
   cross_chain_status: 1 | 2 | 3
   bridge_type: string
@@ -122,9 +122,9 @@ export type SubscanXCMTransferRawResponse = {
 }
 
 type SubscanXCMMetadata = {
-  sendAt: number
-  txHash: string
-  messageId: string
+  sendAt?: number
+  txHash?: string
+  messageId?: string
 }
 
 export type SubscanXCMTransferResult = {
@@ -145,6 +145,6 @@ export type SubscanXCMTransferResult = {
   relayedExtrinsicIndex: string
   destExtrinsicIndex: string
   uniqueId: string
-  metadata?: SubscanXCMMetadata
+  metadata: SubscanXCMMetadata
   status: TransferStatus
 }

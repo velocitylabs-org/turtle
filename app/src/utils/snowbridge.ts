@@ -93,7 +93,8 @@ export async function getTransferHistory(
   )[] = []
 
   if (ongoingTransfers.toEthereum.fromAssetHub.length) {
-    console.log("fromAssetHub")
+    // Switch code below to test the other tracking method
+
     // const toEthereum = await history.toEthereumHistory(
     //   assetHubScan,
     //   bridgeHubScan,
@@ -108,11 +109,12 @@ export async function getTransferHistory(
     // console.log('From AH To Ethereum transfers:', toEthereum.length)
     // transfers.push(...toEthereum)
 
-    const fromAHTransfer = await trackXcmTransfer(
+    const toEthereum = await trackXcmTransfer(
       relaychainScan,
       ongoingTransfers.toEthereum.fromAssetHub,
     )
-    console.log('From AH To Ethereum transfer:', fromAHTransfer)
+    console.log('From AH To Ethereum transfer:', toEthereum.length)
+    transfers.push(...toEthereum)
   }
 
   if (ongoingTransfers.toEthereum.fromParachain.length) {
