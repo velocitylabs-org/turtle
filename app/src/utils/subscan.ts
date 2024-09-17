@@ -525,32 +525,32 @@ export const trackXcmTransfer = async (
 
     for (const transfer of ongoingTransfers) {
       const { crosschainMessageHash } = transfer
-      if (!crosschainMessageHash) throw new Error("Cross chain message undefined")
+      if (!crosschainMessageHash) throw new Error('Cross chain message undefined')
 
       const query = await relaychainScan.post('api/scan/xcm/list', {
         message_hash: crosschainMessageHash,
         row: 10, // should be 0 or 1
       })
       if (query.status !== 200) {
-        throw new Error(`Subscan API request failed`);
+        throw new Error(`Subscan API request failed`)
       }
 
       const transferData: SubscanXCMTransferRawResponse[] = query.json?.data?.list ?? []
       if (!transferData.length || !transferData[0]) {
-        throw new Error(`No XCM transfer data found for message hash ${crosschainMessageHash}`);
+        throw new Error(`No XCM transfer data found for message hash ${crosschainMessageHash}`)
       }
 
       let xchainTransferStatus: number = 1
       switch (transferData[0].cross_chain_status) {
         case 1:
           xchainTransferStatus = TransferStatus.Pending
-          break;
+          break
         case 2:
           xchainTransferStatus = TransferStatus.Failed
-          break;
+          break
         case 3:
           xchainTransferStatus = TransferStatus.Complete
-          break;
+          break
         default:
           break
       }
@@ -580,13 +580,13 @@ export const trackXcmTransfer = async (
             messageId: transferData[0].metadata.message_id,
           },
         }),
-        crossChainStatus: xchainTransferStatus
+        crossChainStatus: xchainTransferStatus,
       })
     }
 
     return xcmTransfers
   } catch (error) {
-    console.error(`Subscan XCM transfers tracking error:`, error);
-    return [];
+    console.error(`Subscan XCM transfers tracking error:`, error)
+    return []
   }
 }
