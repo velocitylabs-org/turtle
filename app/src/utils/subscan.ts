@@ -1,9 +1,6 @@
 import { subscan } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import {
-  SubscanXCMTransferRawResponse,
-  SubscanXCMTransferResult,
-} from '@/models/subscan'
+import { SubscanXCMTransferRawResponse, SubscanXCMTransferResult } from '@/models/subscan'
 import { OngoingTransferWithDirection } from '@/models/transfer'
 
 export const trackXcmTransfer = async (
@@ -74,7 +71,9 @@ export const trackXcmTransfer = async (
         metadata: {
           ...(transferData[0].metadata.send_at && { sendAt: transferData[0].metadata.send_at }),
           ...(transferData[0].metadata.tx_hash && { txHash: transferData[0].metadata.tx_hash }),
-          ...(transferData[0].metadata.message_id && { messageId: transferData[0].metadata.message_id }),
+          ...(transferData[0].metadata.message_id && {
+            messageId: transferData[0].metadata.message_id,
+          }),
         },
         status: xchainTransferStatus,
       })
@@ -87,7 +86,7 @@ export const trackXcmTransfer = async (
   }
 }
 
-// LEGACY CODE BELOW 
+// LEGACY CODE BELOW
 // TO KEEP UNTIL FURTHER NOTICE
 
 // import { AlchemyProvider } from 'ethers'

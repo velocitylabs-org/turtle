@@ -95,26 +95,26 @@ export async function getTransferHistory(
   if (ongoingTransfers.toEthereum.fromAssetHub.length) {
     // Switch code below to test the other tracking method
 
-    // const toEthereum = await history.toEthereumHistory(
-    //   assetHubScan,
-    //   bridgeHubScan,
-    //   relaychainScan,
-    //   searchRange,
-    //   skipLightClientUpdates,
-    //   env.ethChainId,
-    //   assetHubParaId,
-    //   beefyClient,
-    //   gateway,
-    // )
-    // console.log('From AH To Ethereum transfers:', toEthereum.length)
-    // transfers.push(...toEthereum)
-
-    const toEthereum = await trackXcmTransfer(
+    const toEthereum = await history.toEthereumHistory(
+      assetHubScan,
+      bridgeHubScan,
       relaychainScan,
-      ongoingTransfers.toEthereum.fromAssetHub,
+      searchRange,
+      skipLightClientUpdates,
+      env.ethChainId,
+      assetHubParaId,
+      beefyClient,
+      gateway,
     )
-    console.log('From AH To Ethereum transfer:', toEthereum.length)
+    console.log('From AH To Ethereum transfers:', toEthereum.length)
     transfers.push(...toEthereum)
+
+    // const toEthereum = await trackXcmTransfer(
+    //   relaychainScan,
+    //   ongoingTransfers.toEthereum.fromAssetHub,
+    // )
+    // console.log('From AH To Ethereum transfer:', toEthereum.length)
+    // transfers.push(...toEthereum)
   }
 
   if (ongoingTransfers.toEthereum.fromParachain.length) {
@@ -223,7 +223,12 @@ export function isCompletedTransfer(
   )
 }
 
-const getTimestamp = (transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult) => 'info' in transferResult ? transferResult.info.when.getTime() : transferResult.originBlockTimestamp;
+const getTimestamp = (
+  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
+) =>
+  'info' in transferResult
+    ? transferResult.info.when.getTime()
+    : transferResult.originBlockTimestamp
 
 export function getErrorMessage(err: unknown) {
   let message = 'Unknown error'

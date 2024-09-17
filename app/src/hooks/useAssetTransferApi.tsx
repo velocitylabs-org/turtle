@@ -59,23 +59,18 @@ const useAssetTransferApi = () => {
       const account = sender as SubstrateAccount
       let transferComplete = false
 
-      const hash = await atApi.api
+      await atApi.api
         .tx(txResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
-          console.log('in callback')
           if (!result.txHash) {
             throw new Error('Transfer failed')
           }
-          console.log("txHash", result.txHash.toString())
-          console.log({ transferComplete })
           if (transferComplete) return
 
           const isIncluded = result.status.isInBlock
           // const isFinalized = result.status.isFinalized
-
           if (isIncluded) {
-            console.log({ isIncluded })
             // if (isIncluded || isFinalized) {
             let messageHash: string | undefined
             let messageId: string | undefined
@@ -87,9 +82,11 @@ const useAssetTransferApi = () => {
                 section === 'xcmpQueue' &&
                 'messageHash' in data
               ) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 messageHash = (data.messageHash as any).toString()
               }
               if (method === 'Sent' && section === 'polkadotXcm' && 'messageId' in data) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 messageId = (data.messageId as any).toString()
               }
               if (method === 'ExtrinsicSuccess' && section === 'system') {
@@ -112,7 +109,6 @@ const useAssetTransferApi = () => {
               tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
             const date = new Date()
 
-            console.log('Addind to storage')
             addTransferToStorage({
               id: result.txHash.toString(),
               sourceChain,
@@ -149,86 +145,12 @@ const useAssetTransferApi = () => {
                 date: date.toISOString(),
               })
             }
-            console.log('mark transfer complete')
             // Mark the transfer as complete and return
             transferComplete = true
             setStatus('Idle')
             return
           }
         })
-
-      // // Wrapping signAndSend in a Promise
-      // const hash = await new Promise((resolve, reject) => {
-      //   atApi.api
-      //     .tx(txResult.tx)
-      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      //     .signAndSend(account.address, { signer: account.signer as any }, async result => {
-      //       try {
-      //         if (!result.txHash) {
-      //           reject(new Error('Transfer failed'))
-      //           return
-      //         }
-
-      //         const isWaitingInclusion = result.status.isInBlock
-
-      //         console.log('result.txHash', result.txHash.toString())
-
-      //         if (isWaitingInclusion) {
-      //           console.log('result: ', result.toHuman())
-
-      //           onSuccess?.()
-      //           addNotification({
-      //             message: 'Transfer initiated. See below!',
-      //             severity: NotificationSeverity.Success,
-      //           })
-
-      //           const senderAddress =
-      //             sender instanceof JsonRpcSigner
-      //               ? await sender.getAddress()
-      //               : (sender as WalletOrKeypair).address
-
-      //           const tokenData = await getErc20TokenUSDValue(token.address)
-      //           const tokenUSDValue =
-      //             tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
-      //           const date = new Date()
-
-      //           addTransferToStorage({
-      //             id: result.txHash.toString(),
-      //             sourceChain,
-      //             token,
-      //             tokenUSDValue,
-      //             sender: senderAddress,
-      //             destChain: destinationChain,
-      //             amount: amount.toString(),
-      //             recipient,
-      //             date,
-      //             environment,
-      //             fees,
-      //           } satisfies StoredTransfer)
-
-      //           // metrics
-      //           if (environment === Environment.Mainnet) {
-      //             trackTransferMetrics({
-      //               sender: senderAddress,
-      //               sourceChain: sourceChain.name,
-      //               token: token.name,
-      //               amount: amount.toString(),
-      //               destinationChain: destinationChain.name,
-      //               usdValue: tokenUSDValue,
-      //               usdFees: fees.inDollars,
-      //               recipient: recipient,
-      //               date: date.toISOString(),
-      //             })
-      //           }
-
-      //           resolve(result.txHash.toString()) // Resolve the promise once the transfer is done
-      //         }
-      //       } catch (error) {
-      //         reject(error) // Reject the promise in case of error
-      //       }
-      //     })
-      // })
-      console.log('log hash', hash)
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
