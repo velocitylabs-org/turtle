@@ -67,6 +67,7 @@ const useAssetTransferApi = () => {
           if (!result.txHash) {
             throw new Error('Transfer failed')
           }
+          console.log("txHash", result.txHash.toString())
           console.log({ transferComplete })
           if (transferComplete) return
 

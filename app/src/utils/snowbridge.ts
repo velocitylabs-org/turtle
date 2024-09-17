@@ -93,25 +93,26 @@ export async function getTransferHistory(
   )[] = []
 
   if (ongoingTransfers.toEthereum.fromAssetHub.length) {
-    const toEthereum = await history.toEthereumHistory(
-      assetHubScan,
-      bridgeHubScan,
-      relaychainScan,
-      searchRange,
-      skipLightClientUpdates,
-      env.ethChainId,
-      assetHubParaId,
-      beefyClient,
-      gateway,
-    )
-    console.log('From AH To Ethereum transfers:', toEthereum.length)
-    transfers.push(...toEthereum)
-
-    // const fromAHTransfer = await trackXcmTransfer(
+    console.log("fromAssetHub")
+    // const toEthereum = await history.toEthereumHistory(
+    //   assetHubScan,
+    //   bridgeHubScan,
     //   relaychainScan,
-    //   ongoingTransfers.toEthereum.fromAssetHub,
+    //   searchRange,
+    //   skipLightClientUpdates,
+    //   env.ethChainId,
+    //   assetHubParaId,
+    //   beefyClient,
+    //   gateway,
     // )
-    // console.log('Find from AH To Ethereum transfer:', fromAHTransfer)
+    // console.log('From AH To Ethereum transfers:', toEthereum.length)
+    // transfers.push(...toEthereum)
+
+    const fromAHTransfer = await trackXcmTransfer(
+      relaychainScan,
+      ongoingTransfers.toEthereum.fromAssetHub,
+    )
+    console.log('From AH To Ethereum transfer:', fromAHTransfer)
   }
 
   if (ongoingTransfers.toEthereum.fromParachain.length) {
@@ -138,12 +139,7 @@ export async function getTransferHistory(
     transfers.push(...toPolkadot)
   }
 
-  transfers.sort((a, b) =>
-    'info' in b
-      ? b.info.when.getTime()
-      : b.originBlockTimestamp - ('info' in a ? a.info.when.getTime() : a.originBlockTimestamp),
-  )
-  return transfers.filter(t => t.status === TransferStatus.Pending)
+  return transfers.sort((a, b) => getTimestamp(b) - getTimestamp(a))
 }
 
 export interface AccountInfo {
@@ -224,6 +220,8 @@ export function isCompletedTransfer(
     transferResult.status === TransferStatus.Failed
   )
 }
+
+const getTimestamp = (transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult) => 'info' in transferResult ? transferResult.info.when.getTime() : transferResult.originBlockTimestamp;
 
 export function getErrorMessage(err: unknown) {
   let message = 'Unknown error'
