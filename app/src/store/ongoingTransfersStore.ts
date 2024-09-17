@@ -47,12 +47,6 @@ export const useOngoingTransfersStore = create<State>()(
       transfers: [],
 
       // Actions
-      // addTransfer: transfer => {
-      //   if (!transfer) return
-      //   return set(state => ({
-      //     transfers: [...state.transfers, transfer],
-      //   }))
-      // },
       addTransfer: newOngoingTransfer => {
         if (!newOngoingTransfer) return
         set(state => {
