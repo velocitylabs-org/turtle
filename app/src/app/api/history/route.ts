@@ -22,13 +22,20 @@ const getCachedTransferHistory = unstable_cache(
     try {
       const transfers: OngoingTransfers = {
         toPolkadot: [],
-        toEthereum: [],
+        toEthereum: {
+          fromAssetHub: [],
+          fromParachain: [],
+        },
       }
 
       ongoingTransfers.map(transfer => {
         switch (transfer.direction) {
           case Direction.ToEthereum: {
-            transfers.toEthereum.push(transfer)
+            if (transfer.sourceChain.chainId === env.config.ASSET_HUB_PARAID) {
+              transfers.toEthereum.fromAssetHub.push(transfer)
+            } else {
+              transfers.toEthereum.fromParachain.push(transfer)
+            }
             break
           }
           case Direction.ToPolkadot: {

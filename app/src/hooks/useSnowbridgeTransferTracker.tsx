@@ -28,9 +28,19 @@ const useSnowbridgeTransferTracker = () => {
 
   const fetchTransfers = useCallback(async () => {
     const formattedTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
-      const { id, sourceChain, destChain, sender, recipient, token, date } = t
       const direction = resolveDirection(t.sourceChain, t.destChain)
-      return { id, sourceChain, destChain, sender, recipient, token, date, direction }
+      return {
+        id: t.id,
+        sourceChain: t.sourceChain,
+        destChain: t.destChain,
+        sender: t.sender,
+        recipient: t.recipient,
+        token: t.token,
+        date: t.date,
+        direction,
+        ...(t.crosschainMessageHash && { crosschainMessageHash: t.crosschainMessageHash }),
+        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+      }
     })
     if (!formattedTransfers.length) return
 

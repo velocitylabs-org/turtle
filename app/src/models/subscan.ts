@@ -1,4 +1,4 @@
-import { TransferStatus } from "@snowbridge/api/dist/history"
+import { TransferStatus } from '@snowbridge/api/dist/history'
 
 export type SubscanEvent = {
   id: number
@@ -83,7 +83,6 @@ export type ParachainToETHTransferResult = {
   }
 }
 
-
 export type SubscanXCMTransferRawResponse = {
   message_hash: string
   origin_event_index: string
@@ -98,32 +97,32 @@ export type SubscanXCMTransferRawResponse = {
   dest_para_id: number
   to_account_id: string
   confirm_block_timestamp: number
-  extrinsic_index: string,
-  relayed_extrinsic_index: string,
-  dest_extrinsic_index: string,
-  child_para_id: number,
-  child_dest: string,
-  protocol: string,
+  extrinsic_index: string
+  relayed_extrinsic_index: string
+  dest_extrinsic_index: string
+  child_para_id: number
+  child_dest: string
+  protocol: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  instructions: any,
-  message_type: string,
-  unique_id: string,
-  xcm_version: number,
-  from_chain: string,
-  dest_chain: string,
+  instructions: any
+  message_type: string
+  unique_id: string
+  xcm_version: number
+  from_chain: string
+  dest_chain: string
   metadata?: {
-    send_at: number,
+    send_at: number
     tx_hash: string
     message_id: string
-  },
-  cross_chain_status: 1 | 2 | 3,
-  bridge_type: string,
+  }
+  cross_chain_status: 1 | 2 | 3
+  bridge_type: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assets: any
 }
 
 type SubscanXCMMetadata = {
-  sendAt: number,
+  sendAt: number
   txHash: string
   messageId: string
 }
@@ -142,10 +141,10 @@ export type SubscanXCMTransferResult = {
   destParaId: number
   toAccountId: string
   confirmBlockTimestamp: number
-  extrinsicIndex: string,
-  relayedExtrinsicIndex: string,
-  destExtrinsicIndex: string,
-  uniqueId: string,
-  metadata?: SubscanXCMMetadata,
+  extrinsicIndex: string
+  relayedExtrinsicIndex: string
+  destExtrinsicIndex: string
+  uniqueId: string
+  metadata?: SubscanXCMMetadata
   crossChainStatus: TransferStatus
 }

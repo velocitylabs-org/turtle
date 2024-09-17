@@ -13,6 +13,8 @@ export const transferSchema: z.ZodType<OngoingTransferWithDirection> = z.object(
   token: tokenSchema,
   date: z.coerce.date(),
   direction: z.nativeEnum(Direction),
+  crosschainMessageHash: z.string().optional(),
+  parachainMessageId: z.string().optional(),
 })
 
 export const ongoingTransfersSchema = z.object({

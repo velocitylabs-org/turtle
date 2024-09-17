@@ -15,6 +15,8 @@ export interface RawTransfer {
   recipient: string
   token: Token
   date: Date
+  crosschainMessageHash?: string
+  parachainMessageId?: string
 }
 export interface StoredTransfer extends RawTransfer {
   // Params
@@ -26,9 +28,6 @@ export interface StoredTransfer extends RawTransfer {
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
-  // For a transfer from a parachain using AT API
-  crosschainMessageHash?: string
-  parachainMessageId?: string
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
@@ -37,7 +36,10 @@ export interface OngoingTransferWithDirection extends RawTransfer {
 
 export interface OngoingTransfers {
   toPolkadot: OngoingTransferWithDirection[]
-  toEthereum: OngoingTransferWithDirection[]
+  toEthereum: {
+    fromAssetHub: OngoingTransferWithDirection[]
+    fromParachain: OngoingTransferWithDirection[]
+  }
 }
 
 export interface DisplaysTransfers {
