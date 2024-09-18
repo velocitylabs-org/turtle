@@ -63,6 +63,7 @@ const useAssetTransferApi = () => {
         .tx(txResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
+          // verify transaction hash & transfer isn't completed
           if (!result.txHash) {
             throw new Error('Transfer failed')
           }
@@ -76,6 +77,7 @@ const useAssetTransferApi = () => {
             let messageId: string | undefined
             let extrinsicSuccess: boolean = false
 
+            // Filter the events to get the needed data
             result.events.forEach(({ event: { data, method, section } }) => {
               if (
                 method === 'XcmpMessageSent' &&
@@ -99,6 +101,7 @@ const useAssetTransferApi = () => {
             if (!messageHash) throw new Error('Crosschain messageHash missing')
             if (!messageId) throw new Error('Parachain messageId missing')
 
+            // Add transfer to storage
             const senderAddress =
               sender instanceof JsonRpcSigner
                 ? await sender.getAddress()
