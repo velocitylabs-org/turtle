@@ -96,7 +96,7 @@ const useAssetTransferApi = () => {
 
             if (!extrinsicSuccess)
               throw new Error('Transfer failed. Returned extrinsicSuccess: false')
-            if (!messageHash) throw new Error('Crosschain messageHash missing')
+            if (!messageHash) throw new Error('Cross chain messageHash missing')
             if (!messageId) throw new Error('Parachain messageId missing')
 
             // Add transfer to storage
