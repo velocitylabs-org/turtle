@@ -1,6 +1,7 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Erc20Balance, fetchAssetHubBalance, fetchEthereumBalance } from '@/services/balance'
+import { Erc20Balance, fetchAssetHubBalance } from '@/services/balance'
+import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
@@ -20,9 +21,12 @@ interface UseBalanceParams {
 const useErc20Balance = ({ network, token, address, context }: UseBalanceParams) => {
   const [data, setData] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
-  const { data: dataWagmi } = useBalance({
+  const { refetch: fetchEthereum, isLoading: loadingEthBalance } = useBalance({
     token: token?.address?.startsWith('0x') ? (token.address as `0x${string}`) : undefined,
     address: address?.startsWith('0x') ? (address as `0x${string}`) : undefined,
+    query: {
+      enabled: false, // disable auto-fetching
+    },
   })
 
   const fetchBalance = useCallback(async () => {
@@ -34,7 +38,9 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
 
       switch (network) {
         case Network.Ethereum: {
-          fetchedBalance = await fetchEthereumBalance(context, token, address)
+          fetchedBalance = (await fetchEthereum()).data
+          if (fetchedBalance)
+            fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString()
           break
         }
 
@@ -60,7 +66,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
     fetchBalance()
   }, [network, token, address, fetchBalance])
 
-  return { data, fetchBalance, loading: loading }
+  return { data, fetchBalance, loading: loading || loadingEthBalance }
 }
 
 export default useErc20Balance
