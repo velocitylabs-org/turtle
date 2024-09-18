@@ -4,6 +4,7 @@ import { Erc20Balance, fetchAssetHubBalance, fetchEthereumBalance } from '@/serv
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
+import { useBalance } from 'wagmi'
 
 interface UseBalanceParams {
   network?: Network
@@ -19,6 +20,10 @@ interface UseBalanceParams {
 const useErc20Balance = ({ network, token, address, context }: UseBalanceParams) => {
   const [data, setData] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
+  const { data: dataWagmi } = useBalance({
+    token: token?.address?.startsWith('0x') ? (token.address as `0x${string}`) : undefined,
+    address: address?.startsWith('0x') ? (address as `0x${string}`) : undefined,
+  })
 
   const fetchBalance = useCallback(async () => {
     if (!network || !token || !address || !context) return
