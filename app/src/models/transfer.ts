@@ -15,7 +15,7 @@ export interface RawTransfer {
   recipient: string
   token: Token
   date: Date
-  crosschainMessageHash?: string
+  crossChainMessageHash?: string
   parachainMessageId?: string
 }
 export interface StoredTransfer extends RawTransfer {

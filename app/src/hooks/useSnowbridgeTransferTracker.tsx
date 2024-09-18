@@ -47,7 +47,7 @@ const useSnowbridgeTransferTracker = () => {
         token: t.token,
         date: t.date,
         direction,
-        ...(t.crosschainMessageHash && { crosschainMessageHash: t.crosschainMessageHash }),
+        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
         ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
       }
     })
@@ -145,7 +145,7 @@ const findOngoingTransfer = (
       ? 'extrinsic_hash' in transfer.submitted
         ? transfer.submitted.extrinsic_hash === ongoingTransfer.id
         : transfer.id === ongoingTransfer.id
-      : transfer.messageHash === ongoingTransfer.crosschainMessageHash,
+      : transfer.messageHash === ongoingTransfer.crossChainMessageHash,
   )
 
 export default useSnowbridgeTransferTracker

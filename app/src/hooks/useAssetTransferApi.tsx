@@ -124,7 +124,7 @@ const useAssetTransferApi = () => {
               date,
               environment,
               fees,
-              crosschainMessageHash: messageHash,
+              crossChainMessageHash: messageHash,
               parachainMessageId: messageId,
             } satisfies StoredTransfer)
 
