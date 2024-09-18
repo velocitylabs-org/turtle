@@ -9,7 +9,7 @@ import { Direction } from '@/services/transfer'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
-  id: string 
+  id: string
   sourceChain: Chain
   destChain: Chain
   sender: string
