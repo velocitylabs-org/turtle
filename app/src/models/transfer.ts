@@ -8,7 +8,8 @@ import { Token } from './token'
 import { Direction } from '@/services/transfer'
 
 export interface RawTransfer {
-  id: string // It must be a Substrate extrinsic hash or an Ethereum transaction hash
+  /** Substrate extrinsic hash or Ethereum transaction hash */
+  id: string 
   sourceChain: Chain
   destChain: Chain
   sender: string
