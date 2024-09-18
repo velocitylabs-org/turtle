@@ -64,9 +64,7 @@ const useAssetTransferApi = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
           // verify transaction hash & transfer isn't completed
-          if (!result.txHash) {
-            throw new Error('Transfer failed')
-          }
+          if (!result.txHash) throw new Error('Transfer failed')
           if (transferComplete) return
 
           const isIncluded = result.status.isInBlock
