@@ -57,7 +57,7 @@ const useAssetTransferApi = () => {
       )
 
       const account = sender as SubstrateAccount
-      let transferComplete = false
+      let isComplete = false
 
       await atApi.api
         .tx(txResult.tx)
