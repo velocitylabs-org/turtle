@@ -4,12 +4,11 @@ import { StoredTransfer } from '@/models/transfer'
 import { getErc20TokenUSDValue } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
-import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
-import { JsonRpcSigner } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
@@ -101,8 +100,7 @@ const useAssetTransferApi = () => {
             if (!messageId) throw new Error('Parachain messageId missing')
 
             // Add transfer to storage
-            const senderAddress = await getAddress(sender)
-
+            const senderAddress = await getSenderAddress(sender)
             const tokenData = await getErc20TokenUSDValue(token.address)
             const tokenUSDValue =
               tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
