@@ -141,7 +141,7 @@ export async function getTransferHistory(
     transfers.push(...toPolkadot)
   }
 
-  return transfers.sort((a, b) => getTimestamp(b) - getTimestamp(a))
+  return transfers.sort((a, b) => getTransferTimestamp(b) - getTransferTimestamp(a))
 }
 
 export interface AccountInfo {
@@ -154,11 +154,19 @@ export interface AccountInfo {
 export function getTransferStatus(
   transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
 ) {
-  if ('info' in transferResult && transferResult.info.destinationParachain == undefined)
+  /** Retrieves the status of a transfer to ETH from a Snowbridge result */
+  const isSnowbridgeTrackingToEth =
+    'info' in transferResult && transferResult.info.destinationParachain == undefined
+  /** Retrieves the status of a transfer to ETH from a Subscan XCM result */
+  const isSubscanXCMTrackingToEth =
+    'destEventIndex' in transferResult && !('info' in transferResult)
+
+  if (isSnowbridgeTrackingToEth)
     return getTransferStatusToEthereum(transferResult as ToEthereumTransferResult)
-  else if ('destEventIndex' in transferResult && !('info' in transferResult)) {
+  else if (isSubscanXCMTrackingToEth) {
     return getTransferStatusToEthereum(transferResult as SubscanXCMTransferResult)
   } else {
+    /** Retrieves the status of a transfer to Polkadot from a Snowbridge result */
     return getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
   }
 }
@@ -166,22 +174,27 @@ export function getTransferStatus(
 export function getTransferStatusToEthereum(
   transferResult: ToEthereumTransferResult | SubscanXCMTransferResult,
 ) {
-  const { status } = transferResult
+  /** Bridge Hub Channel Message Delivered */
+  const isBHChannelMsgDeliveredInSnowbridgeRes =
+    'bridgeHubChannelDelivered' in transferResult &&
+    transferResult.bridgeHubChannelDelivered?.success
+  /** Destination Event Index available */
+  const isDestEventIdxInSubscanXCMRes =
+    'destEventIndex' in transferResult && transferResult.destEventIndex.length > 0
+  /** Transfer just submitted from AH */
+  const isTransferSubmittedInSnowbridgeRes = 'submitted' in transferResult
 
-  switch (status) {
+  switch (transferResult.status) {
     case TransferStatus.Pending:
-      if (
-        ('bridgeHubChannelDelivered' in transferResult &&
-          transferResult.bridgeHubChannelDelivered?.success) ||
-        ('destEventIndex' in transferResult && transferResult.destEventIndex.length > 0)
-      )
+      if (isBHChannelMsgDeliveredInSnowbridgeRes || isDestEventIdxInSubscanXCMRes)
         return 'Arriving at Ethereum'
       if (
-        'submitted' in transferResult ||
+        isTransferSubmittedInSnowbridgeRes ||
         !transferResult.destEventIndex ||
-        ('destEventIndex' in transferResult && transferResult.destEventIndex.length === 0)
+        !isDestEventIdxInSubscanXCMRes
       )
         return 'Arriving at Bridge Hub'
+      // Default when the above conditions are not met
       return 'Pending'
 
     case TransferStatus.Complete:
@@ -223,9 +236,10 @@ export function isCompletedTransfer(
   )
 }
 
-const getTimestamp = (
+const getTransferTimestamp = (
   transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
 ) =>
+  /** Get trasnfer timestamp from Snowbridge or Subscan XCM result */
   'info' in transferResult
     ? transferResult.info.when.getTime()
     : transferResult.originBlockTimestamp
