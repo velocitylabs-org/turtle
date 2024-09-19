@@ -64,8 +64,9 @@ const useAssetTransferApi = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
           // verify transaction hash & transfer isn't completed
-          if (!result.txHash) throw new Error('Transfer error: Failed to generate the transaction hash')
-          if (transferComplete) return
+          if (!result.txHash)
+            throw new Error('Transfer error: Failed to generate the transaction hash')
+          if (isComplete) return
 
           const isIncluded = result.status.isInBlock
           // const isFinalized = result.status.isFinalized
@@ -147,7 +148,7 @@ const useAssetTransferApi = () => {
               })
             }
             // Mark the transfer as complete and return
-            transferComplete = true
+            isComplete = true
             setStatus('Idle')
             return
           }
