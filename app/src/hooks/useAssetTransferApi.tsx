@@ -101,10 +101,7 @@ const useAssetTransferApi = () => {
             if (!messageId) throw new Error('Parachain messageId missing')
 
             // Add transfer to storage
-            const senderAddress =
-              sender instanceof JsonRpcSigner
-                ? await sender.getAddress()
-                : (sender as WalletOrKeypair).address
+            const senderAddress = await getAddress(sender)
 
             const tokenData = await getErc20TokenUSDValue(token.address)
             const tokenUSDValue =
