@@ -154,10 +154,10 @@ export interface AccountInfo {
 export function getTransferStatus(
   transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
 ) {
-  /** Retrieves the status of a transfer to ETH from a Snowbridge result */
+  /**  Checks if the transfer result has been tracked by Snowbridge for a transfer to Ethereum.*/
   const isSnowbridgeTrackingToEth =
     'info' in transferResult && transferResult.info.destinationParachain == undefined
-  /** Retrieves the status of a transfer to ETH from a Subscan XCM result */
+  /**  Checks if the transfer result has been tracked by Subscan for an XCM transfer to Ethereum.*/
   const isSubscanXCMTrackingToEth =
     'destEventIndex' in transferResult && !('info' in transferResult)
 
@@ -239,7 +239,7 @@ export function isCompletedTransfer(
 const getTransferTimestamp = (
   transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
 ) =>
-  /** Get trasnfer timestamp from Snowbridge or Subscan XCM result */
+  /** Get transfer timestamp from Snowbridge or Subscan XCM result */
   'info' in transferResult
     ? transferResult.info.when.getTime()
     : transferResult.originBlockTimestamp
