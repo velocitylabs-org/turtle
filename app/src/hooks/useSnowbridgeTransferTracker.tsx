@@ -98,7 +98,7 @@ const useSnowbridgeTransferTracker = () => {
 
       if (foundTransfer) {
         const status = getTransferStatus(foundTransfer)
-        setStatusMessages(prev => ({ ...prev, [ongoing.id]: msg }))
+        setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
