@@ -2,7 +2,7 @@ import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
 import { toHuman } from '@/utils/transfer'
-import { dot, dotAH } from '@polkadot-api/descriptors'
+import { dot, dotAh } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
 import { createClient, TypedApi } from 'polkadot-api'
@@ -95,7 +95,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
         console.log(finalizedBlock.number, finalizedBlock.hash),
       )
 
-      const dotAssetHubApi = client.getTypedApi(dotAH)
+      const dotAssetHubApi = client.getTypedApi(dotAh)
       setDotAssetHubApi(dotAssetHubApi)
     }
 
