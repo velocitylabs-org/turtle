@@ -1,11 +1,12 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Erc20Balance, fetchAssetHubBalance } from '@/services/balance'
+import { Erc20Balance } from '@/services/balance'
 import { toHuman } from '@/utils/transfer'
-import { dotAH } from '@polkadot-api/descriptors'
+import { dot, dotAH } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
 import { createClient, TypedApi } from 'polkadot-api'
+import { chainSpec as chainSpecRelay } from 'polkadot-api/chains/polkadot'
 import { chainSpec } from 'polkadot-api/chains/polkadot_asset_hub'
 import { getSmProvider } from 'polkadot-api/sm-provider'
 import { start } from 'polkadot-api/smoldot'
@@ -51,12 +52,13 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
         }
 
         case Network.Polkadot: {
-          const temp = dotAssetHubApi?.query['ForeignAssets'].Account.getValue(
+          /* const temp = await dotAssetHubApi?.query.ForeignAssets.Account.getValue(
             JSON.parse(token.multilocation),
             address,
-          )
-          console.log('temp', temp)
-          fetchedBalance = await fetchAssetHubBalance(context, token, address)
+          ) */
+          const temp = await dotAssetHubApi?.query.System.Account.getValue(address)
+          console.log('temp', temp?.data.free)
+          //fetchedBalance = await fetchAssetHubBalance(context, token, address)
           break
         }
 
@@ -80,7 +82,12 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
   useEffect(() => {
     const startClient = async () => {
       const smoldot = start()
-      const chain = await smoldot.addChain({ chainSpec: chainSpec })
+      console.log(dot)
+      const relayChain = await smoldot.addChain({ chainSpec: chainSpecRelay })
+      const chain = await smoldot.addChain({
+        chainSpec: chainSpec,
+        potentialRelayChains: [relayChain],
+      })
 
       const client = createClient(getSmProvider(chain))
 
