@@ -97,7 +97,7 @@ const useSnowbridgeTransferTracker = () => {
       const foundTransfer = findOngoingTransfer(transfers, ongoing)
 
       if (foundTransfer) {
-        const msg = getTransferStatus(foundTransfer)
+        const status = getTransferStatus(foundTransfer)
         setStatusMessages(prev => ({ ...prev, [ongoing.id]: msg }))
 
         if (isCompletedTransfer(foundTransfer)) {
