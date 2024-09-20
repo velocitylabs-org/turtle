@@ -2,8 +2,13 @@ import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance, fetchAssetHubBalance } from '@/services/balance'
 import { toHuman } from '@/utils/transfer'
+import { dotAH } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
+import { createClient, TypedApi } from 'polkadot-api'
+import { chainSpec } from 'polkadot-api/chains/polkadot_asset_hub'
+import { getSmProvider } from 'polkadot-api/sm-provider'
+import { start } from 'polkadot-api/smoldot'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance } from 'wagmi'
 
@@ -28,6 +33,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       enabled: false, // disable auto-fetching
     },
   })
+  const [dotAssetHubApi, setDotAssetHubApi] = useState<TypedApi<typeof dotAH>>()
 
   const fetchBalance = useCallback(async () => {
     if (!network || !token || !address || !context) return
@@ -45,6 +51,11 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
         }
 
         case Network.Polkadot: {
+          const temp = dotAssetHubApi?.query['ForeignAssets'].Account.getValue(
+            JSON.parse(token.multilocation),
+            address,
+          )
+          console.log('temp', temp)
           fetchedBalance = await fetchAssetHubBalance(context, token, address)
           break
         }
@@ -65,6 +76,24 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
   useEffect(() => {
     fetchBalance()
   }, [network, token, address, fetchBalance])
+
+  useEffect(() => {
+    const startClient = async () => {
+      const smoldot = start()
+      const chain = await smoldot.addChain({ chainSpec: chainSpec })
+
+      const client = createClient(getSmProvider(chain))
+
+      client.finalizedBlock$.subscribe(finalizedBlock =>
+        console.log(finalizedBlock.number, finalizedBlock.hash),
+      )
+
+      const dotAssetHubApi = client.getTypedApi(dotAH)
+      setDotAssetHubApi(dotAssetHubApi)
+    }
+
+    startClient()
+  }, [])
 
   return { data, fetchBalance, loading: loading || loadingEthBalance }
 }

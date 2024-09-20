@@ -1,0 +1,14 @@
+{
+  "version": 0,
+  "descriptorPath": ".papi/descriptors",
+  "entries": {
+    "dotAH": {
+      "chain": "polkadot_asset_hub",
+      "metadata": ".papi/metadata/dotAH.scale"
+    },
+    "dot": {
+      "chain": "polkadot",
+      "metadata": ".papi/metadata/dot.scale"
+    }
+  }
+}
