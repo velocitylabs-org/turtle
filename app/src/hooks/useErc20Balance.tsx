@@ -56,8 +56,14 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
             JSON.parse(token.multilocation),
             address,
           ) */
-          const temp = await dotAssetHubApi?.query.System.Account.getValue(address)
-          console.log('temp', temp?.data.free)
+          const result = await dotAssetHubApi?.query.System.Account.getValue(address)
+          console.log(result)
+          fetchedBalance = {
+            value: result?.data.free,
+            formatted: toHuman(result?.data.free, token).toString(),
+            decimals: token.decimals,
+            symbol: token.symbol,
+          }
           //fetchedBalance = await fetchAssetHubBalance(context, token, address)
           break
         }
