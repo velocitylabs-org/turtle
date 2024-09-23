@@ -1,17 +1,12 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
+import { convertEthMultilocation } from '@/utils/papi'
 import { toHuman } from '@/utils/transfer'
-import {
-  dotAh,
-  dotRelay,
-  XcmV3Junction,
-  XcmV3JunctionNetworkId,
-  XcmV3Junctions,
-} from '@polkadot-api/descriptors'
+import { dotAh, dotRelay } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
-import { createClient, FixedSizeBinary, TypedApi } from 'polkadot-api'
+import { createClient, TypedApi } from 'polkadot-api'
 import { chainSpec as chainSpecRelay } from 'polkadot-api/chains/polkadot'
 import { chainSpec } from 'polkadot-api/chains/polkadot_asset_hub'
 import { getSmProvider } from 'polkadot-api/sm-provider'
@@ -58,26 +53,10 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
         }
 
         case Network.Polkadot: {
-          console.log('before')
-          const parsed = JSON.parse(
-            '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
+          const result = await dotAssetHubApi?.query.ForeignAssets.Account.getValue(
+            convertEthMultilocation(token.multilocation),
+            address,
           )
-          const m2 = {
-            parents: 2,
-            interior: XcmV3Junctions.X2([
-              XcmV3Junction.GlobalConsensus(XcmV3JunctionNetworkId.Ethereum({ chain_id: 1n })),
-              XcmV3Junction.AccountKey20({
-                network: undefined,
-                key: new FixedSizeBinary(
-                  new Uint8Array(Buffer.from('a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'hex')),
-                ),
-              }),
-            ]),
-          }
-
-          console.log('parsed', parsed)
-
-          const result = await dotAssetHubApi?.query.ForeignAssets.Account.getValue(m2, address)
           if (result) {
             fetchedBalance = {
               value: result.balance,
@@ -87,7 +66,6 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
             }
           }
 
-          console.log('after')
           //const result = await dotAssetHubApi?.query.System.Account.getValue(address)
           console.log(result)
           if (result) {
