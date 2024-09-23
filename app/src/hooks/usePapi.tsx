@@ -1,4 +1,4 @@
-import { dotAh } from '@polkadot-api/descriptors'
+import { dotAh, mythos } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { createClient, TypedApi } from 'polkadot-api'
 import { chainSpec as chainSpecRelay } from 'polkadot-api/chains/polkadot'
@@ -7,13 +7,12 @@ import { getSmProvider } from 'polkadot-api/sm-provider'
 import { start } from 'polkadot-api/smoldot'
 import { useEffect, useState } from 'react'
 
-/**
- * A hook to expose a Polkadot API connection.
- * It handles the connection setup to the Polkadot Asset Hub and the relay chain.
- */
+/** All chains papi can connect to. */
+type SupportedChains = typeof dotAh | typeof mythos
+
+/** A hook to expose a Polkadot API connection. */
 const usePapi = () => {
-  // TODO: support multiple chains
-  const [api, setApi] = useState<TypedApi<typeof dotAh>>()
+  const [api, setApi] = useState<TypedApi<SupportedChains>>()
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -22,11 +21,11 @@ const usePapi = () => {
         setLoading(true)
         const smoldot = start()
 
-        const relayChain = await smoldot.addChain({ chainSpec: chainSpecRelay })
+        const relayChain = await smoldot.addChain({ chainSpec: chainSpecRelay }) // TODO support Paseo relay as well
         const assetHubChain = await smoldot.addChain({
           chainSpec: chainSpec,
           potentialRelayChains: [relayChain],
-        })
+        }) // TODO: support all chains of 'SupportedChains'
 
         const client = createClient(getSmProvider(assetHubChain))
 
