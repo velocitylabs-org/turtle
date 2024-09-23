@@ -3,16 +3,11 @@ import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
 import { convertEthMultilocation } from '@/utils/papi'
 import { toHuman } from '@/utils/transfer'
-import { dotAh, dotRelay } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
-import { createClient, TypedApi } from 'polkadot-api'
-import { chainSpec as chainSpecRelay } from 'polkadot-api/chains/polkadot'
-import { chainSpec } from 'polkadot-api/chains/polkadot_asset_hub'
-import { getSmProvider } from 'polkadot-api/sm-provider'
-import { start } from 'polkadot-api/smoldot'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance } from 'wagmi'
+import usePapi from './usePapi'
 
 interface UseBalanceParams {
   network?: Network
@@ -35,7 +30,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       enabled: false, // disable auto-fetching
     },
   })
-  const [dotAssetHubApi, setDotAssetHubApi] = useState<TypedApi<typeof dotAh>>()
+  const { api: dotAssetHubApi } = usePapi()
 
   const fetchBalance = useCallback(async () => {
     if (!network || !token || !address || !context) return
@@ -95,29 +90,6 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
   useEffect(() => {
     fetchBalance()
   }, [network, token, address, fetchBalance])
-
-  useEffect(() => {
-    const startClient = async () => {
-      const smoldot = start()
-      console.log(dotRelay)
-      const relayChain = await smoldot.addChain({ chainSpec: chainSpecRelay })
-      const chain = await smoldot.addChain({
-        chainSpec: chainSpec,
-        potentialRelayChains: [relayChain],
-      })
-
-      const client = createClient(getSmProvider(chain))
-
-      client.finalizedBlock$.subscribe(finalizedBlock =>
-        console.log(finalizedBlock.number, finalizedBlock.hash),
-      )
-
-      const dotAssetHubApi = client.getTypedApi(dotAh)
-      setDotAssetHubApi(dotAssetHubApi)
-    }
-
-    startClient()
-  }, [])
 
   return { data, fetchBalance, loading: loading || loadingEthBalance }
 }
