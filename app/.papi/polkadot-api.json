@@ -9,6 +9,10 @@
     "dotAh": {
       "chain": "polkadot_asset_hub",
       "metadata": ".papi/metadata/dotAh.scale"
+    },
+    "mythos": {
+      "wsUrl": "wss://polkadot-mythos-rpc.polkadot.io",
+      "metadata": ".papi/metadata/mythos.scale"
     }
   }
 }
