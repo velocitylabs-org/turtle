@@ -1,16 +1,25 @@
-import { CompletedTransfer, OngoingTransferWithDirection, TxStatus } from '@/models/transfer'
-import { getTransferStatus, isCompletedTransfer } from '@/utils/snowbridge'
-import { getExplorerLink } from '@/utils/transfer'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ToEthereumTransferResult,
   ToPolkadotTransferResult,
   TransferStatus,
 } from '@snowbridge/api/dist/history'
-import { useCallback, useEffect, useRef, useState } from 'react'
+
+import { NotificationSeverity } from '@/models/notification'
+import { SubscanXCMTransferResult } from '@/models/subscan'
+import {
+  CompletedTransfer,
+  OngoingTransferWithDirection,
+  StoredTransfer,
+  TxStatus,
+} from '@/models/transfer'
+
 import { resolveDirection } from '@/services/transfer'
+import { getTransferStatus, isCompletedTransfer } from '@/utils/snowbridge'
+import { getExplorerLink } from '@/utils/transfer'
+
 import useCompletedTransfers from './useCompletedTransfers'
 import useOngoingTransfers from './useOngoingTransfers'
-import { NotificationSeverity } from '@/models/notification'
 import useNotification from './useNotification'
 
 type ID = string
@@ -18,7 +27,7 @@ type Message = string
 
 const useSnowbridgeTransferTracker = () => {
   const [transfers, setTransfers] = useState<
-    (ToEthereumTransferResult | ToPolkadotTransferResult)[]
+    (ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult)[]
   >([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
@@ -28,9 +37,19 @@ const useSnowbridgeTransferTracker = () => {
 
   const fetchTransfers = useCallback(async () => {
     const formattedTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
-      const { id, sourceChain, destChain, sender, recipient, token, date } = t
       const direction = resolveDirection(t.sourceChain, t.destChain)
-      return { id, sourceChain, destChain, sender, recipient, token, date, direction }
+      return {
+        id: t.id,
+        sourceChain: t.sourceChain,
+        destChain: t.destChain,
+        sender: t.sender,
+        recipient: t.recipient,
+        token: t.token,
+        date: t.date,
+        direction,
+        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
+        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+      }
     })
     if (!formattedTransfers.length) return
 
@@ -74,14 +93,12 @@ const useSnowbridgeTransferTracker = () => {
   useEffect(() => {
     ongoingTransfers.forEach(ongoing => {
       if (transfers && 'error' in transfers) return
-      const foundTransfer = transfers.find(transfer =>
-        'extrinsic_hash' in transfer.submitted
-          ? transfer.submitted.extrinsic_hash === ongoing.id
-          : transfer.id === ongoing.id,
-      )
+
+      const foundTransfer = findOngoingTransfer(transfers, ongoing)
+
       if (foundTransfer) {
-        const msg = getStatusMessage(foundTransfer)
-        setStatusMessages(prev => ({ ...prev, [ongoing.id]: msg }))
+        const status = getTransferStatus(foundTransfer)
+        setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
@@ -116,11 +133,19 @@ const useSnowbridgeTransferTracker = () => {
     })
   }, [transfers, addCompletedTransfer, removeOngoingTransfer, ongoingTransfers, addNotification])
 
-  const getStatusMessage = (result: ToEthereumTransferResult | ToPolkadotTransferResult) => {
-    return getTransferStatus(result)
-  }
-
   return { transfers, loading, statusMessages, fetchTransfers }
 }
+
+const findOngoingTransfer = (
+  transfers: (ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult)[],
+  ongoingTransfer: StoredTransfer,
+) =>
+  transfers.find(transfer =>
+    'submitted' in transfer
+      ? 'extrinsic_hash' in transfer.submitted
+        ? transfer.submitted.extrinsic_hash === ongoingTransfer.id
+        : transfer.id === ongoingTransfer.id
+      : transfer.messageHash === ongoingTransfer.crossChainMessageHash,
+  )
 
 export default useSnowbridgeTransferTracker

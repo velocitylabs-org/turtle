@@ -5,12 +5,13 @@ import { StoredTransfer } from '@/models/transfer'
 import { getErc20TokenUSDValue } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
+import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
-import { JsonRpcSigner, Signer } from 'ethers'
+import { Signer } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -157,11 +158,7 @@ const useSnowbridgeApi = () => {
         severity: NotificationSeverity.Success,
       })
 
-      const senderAddress =
-        sender instanceof JsonRpcSigner
-          ? await sender.getAddress()
-          : (sender as WalletOrKeypair).address
-
+      const senderAddress = await getSenderAddress(sender)
       const tokenData = await getErc20TokenUSDValue(token.address)
       const tokenUSDValue =
         tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
