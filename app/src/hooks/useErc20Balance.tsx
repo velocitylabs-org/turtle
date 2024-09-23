@@ -1,7 +1,7 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
-import { convertEthMultilocation } from '@/utils/papi'
+import { getNonNativeBalance } from '@/utils/papi'
 import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
@@ -30,7 +30,7 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       enabled: false, // disable auto-fetching
     },
   })
-  const { api: dotAssetHubApi } = usePapi()
+  const { api } = usePapi()
 
   const fetchBalance = useCallback(async () => {
     if (!network || !token || !address || !context) return
@@ -42,35 +42,22 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       switch (network) {
         case Network.Ethereum: {
           fetchedBalance = (await fetchEthereum()).data
+
           if (fetchedBalance)
             fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString()
           break
         }
 
         case Network.Polkadot: {
-          const result = await dotAssetHubApi?.query.ForeignAssets.Account.getValue(
-            convertEthMultilocation(token.multilocation),
-            address,
-          )
-          if (result) {
+          const result = await getNonNativeBalance(api, token.multilocation, address)
+
+          if (result)
             fetchedBalance = {
               value: result.balance,
               formatted: toHuman(result.balance, token).toString(),
               decimals: token.decimals,
               symbol: token.symbol,
             }
-          }
-
-          //const result = await dotAssetHubApi?.query.System.Account.getValue(address)
-          console.log(result)
-          if (result) {
-            /* fetchedBalance = {
-              value: result.data.free,
-              formatted: toHuman(result.data.free, token).toString(),
-              decimals: token.decimals,
-              symbol: token.symbol,
-            } */
-          }
           break
         }
 

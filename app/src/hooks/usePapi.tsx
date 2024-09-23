@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
  */
 const usePapi = () => {
   // TODO: support multiple chains
-  const [api, setApi] = useState<TypedApi<typeof dotAh> | null>(null)
+  const [api, setApi] = useState<TypedApi<typeof dotAh>>()
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
