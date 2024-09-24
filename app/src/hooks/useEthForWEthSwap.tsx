@@ -1,4 +1,6 @@
 import { Mainnet } from '@/config/registry'
+import useErc20Balance from '@/hooks/useErc20Balance'
+import useNotification from '@/hooks/useNotification'
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
@@ -9,19 +11,17 @@ import { Signer } from 'ethers'
 import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
-import useErc20Balance from './useErc20Balance'
-import useNotification from './useNotification'
 
 interface Params {
   api?: TypedApi<SupportedChains>
   context?: Context
-  chain?: Chain
+  chain?: Chain | null
   tokenAmount: TokenAmount | null
   owner?: string
 }
 
 /** Hook to swap ETH for wETH */
-// TODO: Something is very odd in this hook. I dont expect it to work. Fix it.
+// TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
 const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const { data: tokenBalance } = useErc20Balance({
@@ -34,7 +34,6 @@ const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) 
   const [ethBalance, setEthBalance] = useState<number | undefined>()
   const [isSwapping, SetIsSwapping] = useState<boolean>(false)
 
-  // TODO: DRY this up
   const fetchEthBalance = useCallback(async () => {
     if (
       !context ||
@@ -56,7 +55,12 @@ const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) 
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
         captureException(error)
     }
-  }, [chain?.network, owner, tokenAmount, context])
+  }, [chain?.network, owner, tokenAmount, tokenBalance, context])
+
+  // Reactively fetch the eth balance when the relevant form fields change
+  useEffect(() => {
+    fetchEthBalance()
+  }, [fetchEthBalance, tokenBalance])
 
   const swapEthtoWEth = useCallback(
     async (signer: Signer, amount: number) => {
@@ -100,12 +104,8 @@ const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) 
         SetIsSwapping(false)
       }
     },
-    [chain, tokenAmount, context, addNotification, ethBalance, owner],
+    [chain?.network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
   )
-
-  useEffect(() => {
-    fetchEthBalance()
-  }, [fetchEthBalance])
 
   return { ethBalance, swapEthtoWEth, isSwapping }
 }
