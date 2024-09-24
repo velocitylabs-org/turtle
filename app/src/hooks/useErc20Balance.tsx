@@ -1,7 +1,8 @@
-import { Network } from '@/models/chain'
+import { getNativeToken } from '@/config/registry'
+import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
-import { getNonNativeBalance, SupportedChains } from '@/utils/papi'
+import { getNativeBalance, getNonNativeBalance, SupportedChains } from '@/utils/papi'
 import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
@@ -11,7 +12,7 @@ import { useBalance } from 'wagmi'
 
 interface UseBalanceParams {
   api?: TypedApi<SupportedChains>
-  network?: Network
+  chain?: Chain | null
   token?: Token // Could be extended to support multiple tokens
   address?: string
   context?: Context
@@ -21,7 +22,7 @@ interface UseBalanceParams {
  * hook to fetch ERC20 balance for a given address. Supports Ethereum and Polkadot networks.
  * @remarks Doesn't provide metadata like decimals as we use a static registy.
  */
-const useErc20Balance = ({ api, network, token, address, context }: UseBalanceParams) => {
+const useErc20Balance = ({ api, chain, token, address, context }: UseBalanceParams) => {
   const [data, setData] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const { refetch: fetchEthereum, isLoading: loadingEthBalance } = useBalance({
@@ -33,31 +34,41 @@ const useErc20Balance = ({ api, network, token, address, context }: UseBalancePa
   })
 
   const fetchBalance = useCallback(async () => {
-    if (!network || !token || !address || !context) return
+    if (!chain || !token || !address || !context) return
 
     try {
       setLoading(true)
       let fetchedBalance: Erc20Balance | undefined
 
-      switch (network) {
+      switch (chain.network) {
         case Network.Ethereum: {
           fetchedBalance = (await fetchEthereum()).data
 
           if (fetchedBalance)
-            fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString()
+            fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString() // override formatted value
           break
         }
 
         case Network.Polkadot: {
-          const result = await getNonNativeBalance(api, token.multilocation, address)
-
-          if (result)
+          if (getNativeToken(chain).id === token.id) {
+            const result = await getNativeBalance(api, address)
             fetchedBalance = {
-              value: result.balance,
-              formatted: toHuman(result.balance, token).toString(),
+              value: result?.data.free || 0n,
+              formatted: toHuman(result?.data.free || 0n, token).toString(),
               decimals: token.decimals,
               symbol: token.symbol,
             }
+          } else {
+            const result = await getNonNativeBalance(api, token.multilocation, address)
+
+            fetchedBalance = {
+              value: result?.balance || 0n,
+              formatted: toHuman(result?.balance || 0n, token).toString(),
+              decimals: token.decimals,
+              symbol: token.symbol,
+            }
+          }
+
           break
         }
 
@@ -72,11 +83,11 @@ const useErc20Balance = ({ api, network, token, address, context }: UseBalancePa
     } finally {
       setLoading(false)
     }
-  }, [network, address, token, context, fetchEthereum])
+  }, [api, chain, address, token, context, fetchEthereum])
 
   useEffect(() => {
     fetchBalance()
-  }, [network, token, address, fetchBalance])
+  }, [chain, token, address, fetchBalance])
 
   return { data, fetchBalance, loading: loading || loadingEthBalance }
 }

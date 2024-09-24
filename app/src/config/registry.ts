@@ -362,6 +362,12 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
+    {
+      from: Mainnet.Mythos.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'AssetTransferApi',
+      tokens: [Mainnet.MYTH.id],
+    },
   ],
 }
 
@@ -399,6 +405,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.DOT
     case 'ethereum':
       return Mainnet.ETH
+    case 'mythos':
+      return Mainnet.MYTH
     default:
       throw Error('The impossible has happened!')
   }

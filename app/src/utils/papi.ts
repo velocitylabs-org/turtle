@@ -36,13 +36,14 @@ export const convertEthMultilocation = (multilocationString: string) => {
 
 /** Fetch the native balance of a given address on the connected chain. */
 export const getNativeBalance = async (
-  api: TypedApi<typeof dotAh> | undefined,
+  api: TypedApi<SupportedChains> | undefined,
   address: string,
 ) => {
-  return await api?.query.System.Account.getValue(address)
+  const apiAssetHub = api as TypedApi<typeof dotAh> // treat it as AssetHub api for now to get types
+  return await apiAssetHub?.query.System.Account.getValue(address)
 }
 
-/** Fetch the non-native balance of a given address on the connected chain. */
+/** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
 export const getNonNativeBalance = async (
   api: TypedApi<SupportedChains> | undefined,
   tokenMultilocation: string,

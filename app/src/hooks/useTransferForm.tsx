@@ -67,18 +67,12 @@ const useTransferForm = () => {
   const balanceParams = useMemo(
     () => ({
       api,
-      network: sourceChain?.network,
+      chain: sourceChain,
       token: tokenAmount?.token,
       address: sourceWallet?.sender?.address,
       context: snowbridgeContext,
     }),
-    [
-      api,
-      sourceChain?.network,
-      tokenAmount?.token,
-      sourceWallet?.sender?.address,
-      snowbridgeContext,
-    ],
+    [api, sourceChain, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
   )
 
   const {
@@ -87,7 +81,7 @@ const useTransferForm = () => {
     fetchBalance,
   } = useErc20Balance({
     api: balanceParams.api,
-    network: balanceParams.network,
+    chain: balanceParams.chain,
     token: balanceParams.token ?? undefined,
     address: balanceParams.address,
     context: balanceParams.context,
