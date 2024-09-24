@@ -83,7 +83,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
     "prettier": "^3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.14",
+    "prettier-plugin-tailwindcss": "^0.6.6",
     "sentry-testkit": "^5.0.9",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.1.4",
