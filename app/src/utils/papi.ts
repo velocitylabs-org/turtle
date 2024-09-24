@@ -1,10 +1,14 @@
 import {
   dotAh,
+  mythos,
   XcmV3Junction,
   XcmV3JunctionNetworkId,
   XcmV3Junctions,
 } from '@polkadot-api/descriptors'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
+
+/** All chains papi can connect to. */
+export type SupportedChains = typeof dotAh | typeof mythos
 
 /** Convert a multilocation string to an XCM V3 PAPI object. Only supports Ethereum multilocations for now. */
 export const convertEthMultilocation = (multilocationString: string) => {
@@ -40,12 +44,13 @@ export const getNativeBalance = async (
 
 /** Fetch the non-native balance of a given address on the connected chain. */
 export const getNonNativeBalance = async (
-  api: TypedApi<typeof dotAh> | undefined, // treat it as AssetHub api for now to get types
+  api: TypedApi<SupportedChains> | undefined,
   tokenMultilocation: string,
   address: string,
 ) => {
   // TODO: Figure out which pallet to query. It is not always 'ForeignAssets'
-  return await api?.query.ForeignAssets.Account.getValue(
+  const apiAssetHub = api as TypedApi<typeof dotAh> // treat it as AssetHub api for now to get types
+  return await apiAssetHub?.query.ForeignAssets.Account.getValue(
     convertEthMultilocation(tokenMultilocation),
     address,
   )

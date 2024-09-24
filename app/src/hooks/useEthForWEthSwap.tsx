@@ -1,16 +1,19 @@
+import { Mainnet } from '@/config/registry'
 import { Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
+import { SupportedChains } from '@/utils/papi'
 import { captureException } from '@sentry/nextjs'
 import { Context, toPolkadot } from '@snowbridge/api'
 import { Signer } from 'ethers'
+import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
-import useNotification from './useNotification'
-import { Mainnet } from '@/config/registry'
 import useErc20Balance from './useErc20Balance'
+import useNotification from './useNotification'
 
 interface Params {
+  api?: TypedApi<SupportedChains>
   context?: Context
   network?: Network
   tokenAmount: TokenAmount | null
@@ -20,9 +23,10 @@ interface Params {
 /**
  * Hook to swap ETH for wETH
  */
-const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
+const useEthForWEthSwap = ({ api, network, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const { data: tokenBalance } = useErc20Balance({
+    api,
     network,
     token: tokenAmount?.token ?? undefined,
     address: owner,

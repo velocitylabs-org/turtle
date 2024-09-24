@@ -1,15 +1,16 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
-import { getNonNativeBalance } from '@/utils/papi'
+import { getNonNativeBalance, SupportedChains } from '@/utils/papi'
 import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
+import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance } from 'wagmi'
-import usePapi from './usePapi'
 
 interface UseBalanceParams {
+  api?: TypedApi<SupportedChains>
   network?: Network
   token?: Token // Could be extended to support multiple tokens
   address?: string
@@ -20,7 +21,7 @@ interface UseBalanceParams {
  * hook to fetch ERC20 balance for a given address. Supports Ethereum and Polkadot networks.
  * @remarks Doesn't provide metadata like decimals as we use a static registy.
  */
-const useErc20Balance = ({ network, token, address, context }: UseBalanceParams) => {
+const useErc20Balance = ({ api, network, token, address, context }: UseBalanceParams) => {
   const [data, setData] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const { refetch: fetchEthereum, isLoading: loadingEthBalance } = useBalance({
@@ -30,7 +31,6 @@ const useErc20Balance = ({ network, token, address, context }: UseBalanceParams)
       enabled: false, // disable auto-fetching
     },
   })
-  const { api } = usePapi()
 
   const fetchBalance = useCallback(async () => {
     if (!network || !token || !address || !context) return
