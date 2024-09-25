@@ -15,10 +15,9 @@ const usePapi = (chain?: Chain | null) => {
     const startClient = async () => {
       try {
         if (!chain || !chain.rpcConnection) return
+        
         setLoading(true)
-
         const jsonRpcProvider = getWsProvider(chain.rpcConnection)
-
         const client = createClient(jsonRpcProvider)
 
         // TODO: decide to remove these logs
