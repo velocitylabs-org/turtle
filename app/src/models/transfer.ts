@@ -8,6 +8,7 @@ import { Token } from './token'
 import { Direction } from '@/services/transfer'
 
 export interface RawTransfer {
+  /** Substrate extrinsic hash or Ethereum transaction hash */
   id: string
   sourceChain: Chain
   destChain: Chain
@@ -15,6 +16,8 @@ export interface RawTransfer {
   recipient: string
   token: Token
   date: Date
+  crossChainMessageHash?: string
+  parachainMessageId?: string
 }
 export interface StoredTransfer extends RawTransfer {
   // Params
@@ -34,7 +37,10 @@ export interface OngoingTransferWithDirection extends RawTransfer {
 
 export interface OngoingTransfers {
   toPolkadot: OngoingTransferWithDirection[]
-  toEthereum: OngoingTransferWithDirection[]
+  toEthereum: {
+    fromAssetHub: OngoingTransferWithDirection[]
+    fromParachain: OngoingTransferWithDirection[]
+  }
 }
 
 export interface DisplaysTransfers {
