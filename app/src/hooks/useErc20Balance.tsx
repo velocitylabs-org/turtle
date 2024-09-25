@@ -25,8 +25,16 @@ interface UseBalanceParams {
 const useErc20Balance = ({ api, chain, token, address, context }: UseBalanceParams) => {
   const [data, setData] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
-  const { refetch: fetchEthereum, isLoading: loadingEthBalance } = useBalance({
+  // Wagmi token balance
+  const { refetch: fetchErc20Balance, isLoading: loadingErc20Balance } = useBalance({
+    address: address?.startsWith('0x') ? (address as `0x${string}`) : undefined,
     token: token?.address?.startsWith('0x') ? (token.address as `0x${string}`) : undefined,
+    query: {
+      enabled: false, // disable auto-fetching
+    },
+  })
+  // Wagmi native balance
+  const { refetch: fetchEthBalance } = useBalance({
     address: address?.startsWith('0x') ? (address as `0x${string}`) : undefined,
     query: {
       enabled: false, // disable auto-fetching
@@ -42,7 +50,8 @@ const useErc20Balance = ({ api, chain, token, address, context }: UseBalancePara
 
       switch (chain.network) {
         case Network.Ethereum: {
-          fetchedBalance = (await fetchEthereum()).data
+          if (getNativeToken(chain).id === token.id) fetchedBalance = (await fetchEthBalance()).data
+          else fetchedBalance = (await fetchErc20Balance()).data
 
           if (fetchedBalance)
             fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString() // override formatted value
@@ -52,6 +61,7 @@ const useErc20Balance = ({ api, chain, token, address, context }: UseBalancePara
         case Network.Polkadot: {
           if (getNativeToken(chain).id === token.id) {
             const result = await getNativeBalance(api, address)
+
             fetchedBalance = {
               value: result?.data.free || 0n,
               formatted: toHuman(result?.data.free || 0n, token).toString(),
@@ -83,13 +93,13 @@ const useErc20Balance = ({ api, chain, token, address, context }: UseBalancePara
     } finally {
       setLoading(false)
     }
-  }, [api, chain, address, token, context, fetchEthereum])
+  }, [api, chain, address, token, context, fetchErc20Balance])
 
   useEffect(() => {
     fetchBalance()
   }, [chain, token, address, fetchBalance])
 
-  return { data, fetchBalance, loading: loading || loadingEthBalance }
+  return { data, fetchBalance, loading: loading || loadingErc20Balance }
 }
 
 export default useErc20Balance
