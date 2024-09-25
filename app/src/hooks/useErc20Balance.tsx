@@ -93,7 +93,7 @@ const useErc20Balance = ({ api, chain, token, address, context }: UseBalancePara
     } finally {
       setLoading(false)
     }
-  }, [api, chain, address, token, context, fetchErc20Balance])
+  }, [api, chain, address, token, context, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {
     fetchBalance()
