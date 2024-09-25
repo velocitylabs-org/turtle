@@ -56,5 +56,3 @@ export const getNonNativeBalance = async (
     address,
   )
 }
-
-// TODO: create generic balance fetching function. That calls the correct function based on the assetId/multilocation.
