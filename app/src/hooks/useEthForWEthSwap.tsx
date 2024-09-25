@@ -1,5 +1,5 @@
 import { Mainnet } from '@/config/registry'
-import useErc20Balance from '@/hooks/useErc20Balance'
+import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
@@ -24,7 +24,7 @@ interface Params {
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
 const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
-  const { data: tokenBalance } = useErc20Balance({
+  const { data: tokenBalance } = useBalance({
     api,
     chain,
     token: tokenAmount?.token ?? undefined,

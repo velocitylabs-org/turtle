@@ -1,5 +1,5 @@
 import useEnvironment from '@/hooks/useEnvironment'
-import useErc20Balance from '@/hooks/useErc20Balance'
+import useBalance from '@/hooks/useBalance'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
@@ -79,7 +79,7 @@ const useTransferForm = () => {
     data: balanceData,
     loading: loadingBalance,
     fetchBalance,
-  } = useErc20Balance({
+  } = useBalance({
     api: balanceParams.api,
     chain: balanceParams.chain,
     token: balanceParams.token ?? undefined,

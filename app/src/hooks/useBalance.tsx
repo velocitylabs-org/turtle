@@ -8,7 +8,7 @@ import { captureException } from '@sentry/nextjs'
 import { Context } from '@snowbridge/api'
 import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
-import { useBalance } from 'wagmi'
+import { useBalance as useBalanceWagmi } from 'wagmi'
 
 interface UseBalanceParams {
   api?: TypedApi<SupportedChains>
@@ -18,15 +18,12 @@ interface UseBalanceParams {
   context?: Context
 }
 
-/**
- * hook to fetch ERC20 balance for a given address. Supports Ethereum and Polkadot networks.
- * @remarks Doesn't provide metadata like decimals as we use a static registy.
- */
-const useErc20Balance = ({ api, chain, token, address, context }: UseBalanceParams) => {
-  const [data, setData] = useState<Erc20Balance | undefined>()
+/** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
+const useBalance = ({ api, chain, token, address, context }: UseBalanceParams) => {
+  const [balance, setBalance] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
-  const { refetch: fetchErc20Balance, isLoading: loadingErc20Balance } = useBalance({
+  const { refetch: fetchErc20Balance, isLoading: loadingErc20Balance } = useBalanceWagmi({
     address: address?.startsWith('0x') ? (address as `0x${string}`) : undefined,
     token: token?.address?.startsWith('0x') ? (token.address as `0x${string}`) : undefined,
     query: {
@@ -34,7 +31,7 @@ const useErc20Balance = ({ api, chain, token, address, context }: UseBalancePara
     },
   })
   // Wagmi native balance
-  const { refetch: fetchEthBalance } = useBalance({
+  const { refetch: fetchEthBalance, isLoading: loadingEthBalance } = useBalanceWagmi({
     address: address?.startsWith('0x') ? (address as `0x${string}`) : undefined,
     query: {
       enabled: false, // disable auto-fetching
@@ -86,7 +83,7 @@ const useErc20Balance = ({ api, chain, token, address, context }: UseBalancePara
           throw new Error('Unsupported network')
       }
 
-      setData(fetchedBalance)
+      setBalance(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
       captureException(error)
@@ -99,7 +96,7 @@ const useErc20Balance = ({ api, chain, token, address, context }: UseBalancePara
     fetchBalance()
   }, [chain, token, address, fetchBalance])
 
-  return { data, fetchBalance, loading: loading || loadingErc20Balance }
+  return { balance, fetchBalance, loading: loading || loadingErc20Balance || loadingEthBalance }
 }
 
-export default useErc20Balance
+export default useBalance
