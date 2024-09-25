@@ -13,7 +13,7 @@ import { useBalance as useBalanceWagmi } from 'wagmi'
 interface UseBalanceParams {
   api?: TypedApi<SupportedChains>
   chain?: Chain | null
-  token?: Token // Could be extended to support multiple tokens
+  token?: Token
   address?: string
   context?: Context
 }

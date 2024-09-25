@@ -76,7 +76,7 @@ const useTransferForm = () => {
   )
 
   const {
-    data: balanceData,
+    balance: balanceData,
     loading: loadingBalance,
     fetchBalance,
   } = useBalance({
