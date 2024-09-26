@@ -22,15 +22,15 @@ export namespace Mainnet {
     supportedAddressTypes: ['ss58'],
   }
 
-  // export const Bifrost: Chain = {
-  //   uid: 'bifrost',
-  //   name: 'Bifrost',
-  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
-  //   chainId: 2030,
-  //   destinationFeeDOT: '20000000',
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['ss58'],
-  // }
+  export const Bifrost: Chain = {
+    uid: 'bifrost',
+    name: 'Bifrost',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    chainId: 2030,
+    destinationFeeDOT: '20000000',
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+  }
 
   // export const Hydration: Chain = {
   //   uid: 'hydration',
@@ -302,7 +302,7 @@ export interface Route {
 }
 
 export const mainnetRegistry: Registry = {
-  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Mythos],
+  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Bifrost, Mainnet.Mythos],
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
@@ -342,6 +342,12 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.MYTH.id],
     },
     {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [Mainnet.WETH.id],
+    },
+    {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
       sdk: 'SnowbridgeApi',
@@ -357,6 +363,12 @@ export const mainnetRegistry: Registry = {
         Mainnet.SHIB.id,
         Mainnet.PEPE.id,
       ],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'AssetTransferApi',
+      tokens: [Mainnet.WETH.id],
     },
   ],
 }
