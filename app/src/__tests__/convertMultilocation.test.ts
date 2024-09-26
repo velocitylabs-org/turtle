@@ -1,5 +1,6 @@
-import { convertEthMultilocation } from '@/utils/papi' // Adjust the import according to your file structure
-import { captureException } from '@sentry/nextjs' // Mock this appropriately
+import { convertEthMultilocation } from '@/utils/papi'
+import { captureException } from '@sentry/nextjs'
+import { FixedSizeBinary } from 'polkadot-api'
 
 jest.mock('@sentry/nextjs', () => ({
   captureException: jest.fn(),
@@ -7,7 +8,7 @@ jest.mock('@sentry/nextjs', () => ({
 
 describe('convertEthMultilocation', () => {
   beforeEach(() => {
-    jest.clearAllMocks() // Clear mocks before each test to ensure isolation
+    jest.clearAllMocks()
   })
 
   it('should return a valid object when given a correct Ethereum multilocation string', () => {
@@ -23,7 +24,7 @@ describe('convertEthMultilocation', () => {
           {
             AccountKey20: {
               network: null,
-              key: '0x123456789abcdef',
+              key: '0x123456789',
             },
           },
         ],
@@ -32,11 +33,27 @@ describe('convertEthMultilocation', () => {
 
     const result = convertEthMultilocation(validMultilocation)
 
+    const keyAsUint8Array = new FixedSizeBinary(
+      new Uint8Array(Buffer.from('0x123456789'.slice(2), 'hex')),
+    )
+
     // Jest assertions
     expect(result).toBeInstanceOf(Object)
     expect(result).toHaveProperty('parents', 1)
-    // Check the array length on the "value" field of the interior object
-    expect(result?.interior?.value).toHaveLength(2)
+
+    const interior = result?.interior
+    expect(interior?.type).toBe('X2')
+    expect(interior?.value).toHaveLength(2)
+
+    const globalConsensus = interior?.value.at(0)
+    expect(globalConsensus?.type).toBe('GlobalConsensus')
+    expect(globalConsensus?.value?.type).toBe('Ethereum')
+    expect(globalConsensus?.value?.value).toHaveProperty('chain_id', BigInt(1))
+
+    const accountKey = interior?.value.at(1)
+    expect(accountKey?.type).toBe('AccountKey20')
+    expect(accountKey?.value).toHaveProperty('network', undefined)
+    expect(accountKey?.value.key.toString() === keyAsUint8Array.toString())
   })
 
   it('should return undefined and call captureException on invalid JSON', () => {
@@ -62,7 +79,7 @@ describe('convertEthMultilocation', () => {
     expect(captureException).toHaveBeenCalledTimes(1)
   })
 
-  it('should handle an edge case with an empty string', () => {
+  it('should handle an empty string', () => {
     const result = convertEthMultilocation('')
 
     // Jest assertions
