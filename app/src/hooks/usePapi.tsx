@@ -15,15 +15,10 @@ const usePapi = (chain?: Chain | null) => {
     const startClient = async () => {
       try {
         if (!chain || !chain.rpcConnection) return
-        
+
         setLoading(true)
         const jsonRpcProvider = getWsProvider(chain.rpcConnection)
         const client = createClient(jsonRpcProvider)
-
-        // TODO: decide to remove these logs
-        client.finalizedBlock$.subscribe(finalizedBlock =>
-          console.log(finalizedBlock.number, finalizedBlock.hash),
-        )
 
         const dotAssetHubApi = client.getTypedApi(dotAh)
         setApi(dotAssetHubApi)
