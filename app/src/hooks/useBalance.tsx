@@ -47,8 +47,10 @@ const useBalance = ({ api, chain, token, address, context }: UseBalanceParams) =
 
       switch (chain.network) {
         case Network.Ethereum: {
-          fetchedBalance = getNativeToken(chain).id === token.id ?
-              (await fetchEthBalance()).data : (await fetchErc20Balance()).data
+          fetchedBalance =
+            getNativeToken(chain).id === token.id
+              ? (await fetchEthBalance()).data
+              : (await fetchErc20Balance()).data
 
           if (fetchedBalance)
             fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString() // override formatted value
