@@ -1,5 +1,6 @@
 'use client'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
+import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
@@ -15,6 +16,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
+import { Network } from '../models/chain'
 import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
@@ -26,8 +28,6 @@ import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
-import { Network } from '../models/chain'
-import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -78,7 +78,7 @@ const Transfer: FC = () => {
     isSwapping: isSwappingEthForWEth,
   } = useEthForWEthSwap({
     context: snowbridgeContext,
-    network: sourceChain?.network,
+    chain: sourceChain,
     tokenAmount,
     owner: sourceWallet?.sender?.address,
   })
