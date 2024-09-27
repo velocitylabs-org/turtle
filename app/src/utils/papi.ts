@@ -106,7 +106,6 @@ export const getNonNativeBalance = async (
   // the account to lookup
   address: string,
 ): Promise<Balance | undefined> => {
-  console.log('Token is ', token)
   switch (chain.uid) {
     case 'bifrost': {
       const bifrostApi = api as TypedApi<typeof bifrost>
@@ -128,8 +127,8 @@ export const getNonNativeBalance = async (
 
 // todo(nuno): can we move this the registry? the assetId is chain+token dependant so we can't just hammer it on the token type
 function getAssetId(chain: Chain, token: Token): any | undefined {
-  switch ([chain.uid, token.id].join(',')) {
-    case 'bifrost,weth':
+  switch ([chain.uid, token.id].join(':')) {
+    case 'bifrost:weth':
       return Enum('Token2', 13)
     default:
       return undefined
