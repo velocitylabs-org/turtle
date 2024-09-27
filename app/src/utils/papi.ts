@@ -106,20 +106,32 @@ export const getNonNativeBalance = async (
   // the account to lookup
   address: string,
 ): Promise<Balance | undefined> => {
-
+  console.log('Token is ', token)
   switch (chain.uid) {
     case 'bifrost': {
       const bifrostApi = api as TypedApi<typeof bifrost>
-      // todo(nuno): obtain the asset id instead of hardcoding it
-      return await bifrostApi?.query.Tokens.Accounts.getValue(address, Enum("Token2", 13))
+      return await bifrostApi?.query.Tokens.Accounts.getValue(address, getAssetId(chain, token))
     }
     default: {
       const apiAssetHub = api as TypedApi<typeof dotAh>
       const convertedMultilocation = convertEthMultilocation(token.multilocation)
       if (!convertedMultilocation) return undefined
 
-      const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(convertedMultilocation, address)
+      const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
+        convertedMultilocation,
+        address,
+      )
       return { free: res?.balance ?? 0n }
     }
+  }
+}
+
+// todo(nuno): can we move this the registry? the assetId is chain+token dependant so we can't just hammer it on the token type
+function getAssetId(chain: Chain, token: Token): any | undefined {
+  switch ([chain.uid, token.id].join(',')) {
+    case 'bifrost,weth':
+      return Enum('Token2', 13)
+    default:
+      return undefined
   }
 }
