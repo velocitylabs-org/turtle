@@ -33,7 +33,7 @@ export namespace Mainnet {
     destinationFeeDOT: '20000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    rpcConnection: 'wss://bifrost-rpc.dwellir.com',
+    rpcConnection: 'wss://bifrost-polkadot.dotters.network',
   }
 
   // export const Hydration: Chain = {
@@ -120,7 +120,7 @@ export namespace Mainnet {
     decimals: 12,
     address: '',
     multilocation:
-      "{\"parents\":\"1\",\"interior\":{\"X2\":[{\"Parachain\":\"2030\"},{\"GeneralKey\":{\"length\":\"2\",\"data\":\"0x0001000000000000000000000000000000000000000000000000000000000000\"}}]}}",
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
   }
 
   export const SHIB: Token = {

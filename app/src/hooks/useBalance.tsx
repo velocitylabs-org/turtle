@@ -68,11 +68,11 @@ const useBalance = ({ api, chain, token, address, context }: UseBalanceParams) =
               symbol: token.symbol,
             }
           } else {
-            const result = await getNonNativeBalance(api, token.multilocation, address)
+            const result = await getNonNativeBalance(chain, api, token, address)
 
             fetchedBalance = {
-              value: result?.balance || 0n,
-              formatted: toHuman(result?.balance || 0n, token).toString(),
+              value: result?.free || 0n,
+              formatted: toHuman(result?.free || 0n, token).toString(),
               decimals: token.decimals,
               symbol: token.symbol,
             }

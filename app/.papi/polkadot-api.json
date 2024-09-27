@@ -15,7 +15,7 @@
       "metadata": ".papi/metadata/mythos.scale"
     },
     "bifrost": {
-      "wsUrl": "wss://bifrost-rpc.dwellir.com",
+      "wsUrl": "wss://bifrost-polkadot.dotters.network",
       "metadata": ".papi/metadata/bifrost.scale"
     }
   }

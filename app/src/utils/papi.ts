@@ -1,5 +1,6 @@
 import { Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
+import { Token } from '@/models/token'
 import {
   bifrost,
   dotAh,
@@ -90,21 +91,35 @@ export const getNativeBalance = async (
   return await apiAssetHub?.query.System.Account.getValue(address)
 }
 
+export interface Balance {
+  free: bigint
+}
+
 /** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
 export const getNonNativeBalance = async (
+  // the chain in which to look up the value
+  chain: Chain,
+  // the Papi api instance
   api: TypedApi<SupportedChains> | undefined,
-  tokenMultilocation: string,
+  // the token to lookup
+  token: Token,
+  // the account to lookup
   address: string,
-) => {
-  
-  const bifrostApi = api as TypedApi<typeof bifrost>
-  // TODO: Figure out which pallet to query. It is not always 'ForeignAssets'
-  // const apiAssetHub = api as TypedApi<typeof dotAh> // treat it as AssetHub api for now to get types
-  const convertedMultilocation = convertEthMultilocation(tokenMultilocation)
-  if (!convertedMultilocation) return undefined
+): Promise<Balance | undefined> => {
 
-  
-  console.log("BiFrost balance wETH is ", address, await bifrostApi?.query.Tokens.Accounts.getValue(address, Enum("Token2", 13)))
+  switch (chain.uid) {
+    case 'bifrost': {
+      const bifrostApi = api as TypedApi<typeof bifrost>
+      // todo(nuno): obtain the asset id instead of hardcoding it
+      return await bifrostApi?.query.Tokens.Accounts.getValue(address, Enum("Token2", 13))
+    }
+    default: {
+      const apiAssetHub = api as TypedApi<typeof dotAh>
+      const convertedMultilocation = convertEthMultilocation(token.multilocation)
+      if (!convertedMultilocation) return undefined
 
-  return await bifrostApi?.query.Tokens.Accounts.getValue(address, Enum("Token2", 13))
+      const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(convertedMultilocation, address)
+      return { free: res?.balance ?? 0n }
+    }
+  }
 }
