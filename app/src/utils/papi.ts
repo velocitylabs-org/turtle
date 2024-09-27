@@ -1,6 +1,7 @@
 import { Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import {
+  bifrost,
   dotAh,
   mythos,
   XcmV3Junction,
@@ -8,11 +9,11 @@ import {
   XcmV3Junctions,
 } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
-import { FixedSizeBinary, TypedApi } from 'polkadot-api'
+import { Enum, FixedSizeBinary, TypedApi } from 'polkadot-api'
 import { z } from 'zod'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */
-export type SupportedChains = typeof dotAh | typeof mythos
+export type SupportedChains = typeof dotAh | typeof mythos | typeof bifrost
 
 /** Get PAPI chain type by chain object. Only used for PAPI types. Only supports mainnet atm. */
 export const getApiDescriptorForChain = (chain: Chain) => {
@@ -21,6 +22,8 @@ export const getApiDescriptorForChain = (chain: Chain) => {
       return dotAh
     case Mainnet.Mythos.uid:
       return mythos
+    case Mainnet.Bifrost.uid:
+      return bifrost
 
     default:
       captureException(new Error(`Unsupported chain: ${chain}`))
@@ -93,10 +96,15 @@ export const getNonNativeBalance = async (
   tokenMultilocation: string,
   address: string,
 ) => {
+  
+  const bifrostApi = api as TypedApi<typeof bifrost>
   // TODO: Figure out which pallet to query. It is not always 'ForeignAssets'
-  const apiAssetHub = api as TypedApi<typeof dotAh> // treat it as AssetHub api for now to get types
+  // const apiAssetHub = api as TypedApi<typeof dotAh> // treat it as AssetHub api for now to get types
   const convertedMultilocation = convertEthMultilocation(tokenMultilocation)
   if (!convertedMultilocation) return undefined
 
-  return await apiAssetHub?.query.ForeignAssets.Account.getValue(convertedMultilocation, address)
+  
+  console.log("BiFrost balance wETH is ", address, await bifrostApi?.query.Tokens.Accounts.getValue(address, Enum("Token2", 13)))
+
+  return await bifrostApi?.query.Tokens.Accounts.getValue(address, Enum("Token2", 13))
 }

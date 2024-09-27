@@ -112,6 +112,17 @@ export namespace Mainnet {
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
   }
 
+  export const BNC: Token = {
+    id: 'bnc',
+    name: 'Bifrost Native Coin',
+    symbol: 'BNC',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    decimals: 12,
+    address: '',
+    multilocation:
+      "{\"parents\":\"1\",\"interior\":{\"X2\":[{\"Parachain\":\"2030\"},{\"GeneralKey\":{\"length\":\"2\",\"data\":\"0x0001000000000000000000000000000000000000000000000000000000000000\"}}]}}",
+  }
+
   export const SHIB: Token = {
     id: 'shib',
     name: 'Shiba Inu',
@@ -420,6 +431,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.ETH
     case 'mythos':
       return Mainnet.MYTH
+    case 'bifrost':
+      return Mainnet.BNC
     //nuno: handle BiFrost
     default:
       throw Error('The impossible has happened!')
