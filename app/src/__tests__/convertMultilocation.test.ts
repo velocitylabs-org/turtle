@@ -13,7 +13,7 @@ describe('convertEthMultilocation', () => {
 
   it('should return a valid object when given a correct Ethereum multilocation string', () => {
     const validMultilocation = JSON.stringify({
-      parents: 1,
+      parents: '1',
       interior: {
         X2: [
           {

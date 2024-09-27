@@ -29,7 +29,7 @@ export const getApiDescriptorForChain = (chain: Chain) => {
 }
 
 const ethMultilocationSchema = z.object({
-  parents: z.number(),
+  parents: z.string(),
   interior: z.object({
     X2: z.tuple([
       z.object({
