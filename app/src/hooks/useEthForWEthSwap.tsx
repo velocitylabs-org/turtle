@@ -1,29 +1,32 @@
-import { Network } from '@/models/chain'
+import { Mainnet } from '@/config/registry'
+import useBalance from '@/hooks/useBalance'
+import useNotification from '@/hooks/useNotification'
+import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
+import { SupportedChains } from '@/utils/papi'
 import { captureException } from '@sentry/nextjs'
 import { Context, toPolkadot } from '@snowbridge/api'
 import { Signer } from 'ethers'
+import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
-import useNotification from './useNotification'
-import { Mainnet } from '@/config/registry'
-import useErc20Balance from './useErc20Balance'
 
 interface Params {
+  api?: TypedApi<SupportedChains>
   context?: Context
-  network?: Network
+  chain?: Chain | null
   tokenAmount: TokenAmount | null
   owner?: string
 }
 
-/**
- * Hook to swap ETH for wETH
- */
-const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => {
+/** Hook to swap ETH for wETH */
+// TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
+const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
-  const { data: tokenBalance } = useErc20Balance({
-    network,
+  const { balance: tokenBalance } = useBalance({
+    api,
+    chain,
     token: tokenAmount?.token ?? undefined,
     address: owner,
     context,
@@ -34,7 +37,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
   const fetchEthBalance = useCallback(async () => {
     if (
       !context ||
-      network !== Network.Ethereum ||
+      chain?.network !== Network.Ethereum ||
       !owner ||
       !tokenAmount ||
       tokenAmount.token?.symbol !== 'wETH'
@@ -52,7 +55,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
         captureException(error)
     }
-  }, [network, owner, tokenAmount, tokenBalance, context])
+  }, [chain?.network, owner, tokenAmount, tokenBalance, context])
 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
@@ -65,7 +68,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
 
       if (
         !context ||
-        network !== Network.Ethereum ||
+        chain?.network !== Network.Ethereum ||
         !owner ||
         !ethBalance ||
         ethBalance <= amount ||
@@ -101,7 +104,7 @@ const useEthForWEthSwap = ({ network, tokenAmount, owner, context }: Params) => 
         SetIsSwapping(false)
       }
     },
-    [network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
+    [chain?.network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
   )
 
   return { ethBalance, swapEthtoWEth, isSwapping }
