@@ -13,6 +13,10 @@
     "mythos": {
       "wsUrl": "wss://polkadot-mythos-rpc.polkadot.io",
       "metadata": ".papi/metadata/mythos.scale"
+    },
+    "bifrost": {
+      "wsUrl": "wss://bifrost-rpc.dwellir.com",
+      "metadata": ".papi/metadata/bifrost.scale"
     }
   }
 }

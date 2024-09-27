@@ -33,6 +33,7 @@ export namespace Mainnet {
     destinationFeeDOT: '20000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    rpcConnection: 'wss://bifrost-rpc.dwellir.com',
   }
 
   // export const Hydration: Chain = {
@@ -419,6 +420,7 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.ETH
     case 'mythos':
       return Mainnet.MYTH
+    //nuno: handle BiFrost
     default:
       throw Error('The impossible has happened!')
   }
