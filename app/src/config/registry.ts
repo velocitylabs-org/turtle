@@ -20,6 +20,9 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    rpcConnection:
+      process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL ||
+      'wss://api-asset-hub-polkadot.dwellir.com',
   }
 
   export const Bifrost: Chain = {
@@ -60,6 +63,7 @@ export namespace Mainnet {
     destinationFeeDOT: '500000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
+    rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
   }
 
   // Tokens
@@ -370,6 +374,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'AssetTransferApi',
       tokens: [Mainnet.WETH.id],
     },
+    {
+      from: Mainnet.Mythos.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'AssetTransferApi',
+      tokens: [Mainnet.MYTH.id],
+    },
   ],
 }
 
@@ -407,6 +417,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.DOT
     case 'ethereum':
       return Mainnet.ETH
+    case 'mythos':
+      return Mainnet.MYTH
     default:
       throw Error('The impossible has happened!')
   }

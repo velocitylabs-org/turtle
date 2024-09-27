@@ -1,11 +1,7 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Context } from '@snowbridge/api'
-import {
-  assetErc20Balance,
-  erc20TokenToAssetLocation,
-  palletAssetsBalance,
-} from '@snowbridge/api/dist/assets'
+import { erc20TokenToAssetLocation, palletAssetsBalance } from '@snowbridge/api/dist/assets'
 import { toHuman } from '../utils/transfer'
 
 export interface TokenValue {
@@ -45,23 +41,6 @@ export const fetchAssetHubBalance = async (
     formatted: toHuman(balance ?? 0n, token).toString(),
   }
   return fetchedBalance
-}
-
-export const fetchEthereumBalance = async (
-  context: Context,
-  token: Token,
-  address: string,
-): Promise<Erc20Balance> => {
-  const res = await assetErc20Balance(context, token.address, address)
-
-  const balance = res?.balance ?? 0n
-
-  return {
-    value: balance,
-    decimals: token.decimals,
-    symbol: token.symbol,
-    formatted: toHuman(balance, token).toString(),
-  }
 }
 
 export const getFeesTokenUSDValue = async (networkToken: Network): Promise<TokenValue | null> => {
