@@ -1,3 +1,5 @@
+import { Mainnet } from '@/config/registry'
+import { Chain } from '@/models/chain'
 import {
   dotAh,
   mythos,
@@ -9,8 +11,22 @@ import { captureException } from '@sentry/nextjs'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
 import { z } from 'zod'
 
-/** All chains papi can connect to. */
+/** All chains PAPI can connect to. Only used for PAPI types. */
 export type SupportedChains = typeof dotAh | typeof mythos
+
+/** Get PAPI chain type by chain object. Only used for PAPI types. Only supports mainnet atm. */
+export const getApiDescriptorForChain = (chain: Chain) => {
+  switch (chain.uid) {
+    case Mainnet.AssetHub.uid:
+      return dotAh
+    case Mainnet.Mythos.uid:
+      return mythos
+
+    default:
+      captureException(new Error(`Unsupported chain: ${chain}`))
+      return dotAh // fallback
+  }
+}
 
 const ethMultilocationSchema = z.object({
   parents: z.number(),
