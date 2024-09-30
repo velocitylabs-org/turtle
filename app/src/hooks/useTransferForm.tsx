@@ -1,5 +1,5 @@
 import useEnvironment from '@/hooks/useEnvironment'
-import useErc20Balance from '@/hooks/useErc20Balance'
+import useBalance from '@/hooks/useBalance'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
+import usePapi from './usePapi'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 interface FormInputs {
@@ -61,23 +62,26 @@ const useTransferForm = () => {
   const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
   const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
+  const { api } = usePapi(sourceChain)
 
   const balanceParams = useMemo(
     () => ({
-      network: sourceChain?.network,
+      api,
+      chain: sourceChain,
       token: tokenAmount?.token,
       address: sourceWallet?.sender?.address,
       context: snowbridgeContext,
     }),
-    [sourceChain?.network, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
+    [api, sourceChain, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
   )
 
   const {
-    data: balanceData,
+    balance: balanceData,
     loading: loadingBalance,
     fetchBalance,
-  } = useErc20Balance({
-    network: balanceParams.network,
+  } = useBalance({
+    api: balanceParams.api,
+    chain: balanceParams.chain,
     token: balanceParams.token ?? undefined,
     address: balanceParams.address,
     context: balanceParams.context,
@@ -147,7 +151,7 @@ const useTransferForm = () => {
       setValue('sourceChain', destinationChain)
       setValue('destinationChain', sourceChain)
     }
-  }, [sourceChain, destinationChain, setValue, allowFromToSwap, isValidating, transferStatus])
+  }, [sourceChain, destinationChain, setValue, allowFromToSwap])
 
   const handleManualRecipientChange = useCallback(
     (newValue: ManualRecipient) => setValue('manualRecipient', newValue),

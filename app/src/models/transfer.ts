@@ -5,24 +5,42 @@ import { Environment } from '@/store/environmentStore'
 
 import { Chain } from './chain'
 import { Token } from './token'
-export interface StoredTransfer {
-  // Params
+import { Direction } from '@/services/transfer'
+
+export interface RawTransfer {
+  /** Substrate extrinsic hash or Ethereum transaction hash */
   id: string
   sourceChain: Chain
-  token: Token
-  tokenUSDValue?: number
-  sender: string
   destChain: Chain
-  amount: string
+  sender: string
   recipient: string
+  token: Token
   date: Date
+  crossChainMessageHash?: string
+  parachainMessageId?: string
+}
+export interface StoredTransfer extends RawTransfer {
+  // Params
+  tokenUSDValue?: number
+  amount: string
   fees: Fees
-
   // Contextual
   environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
+}
+
+export interface OngoingTransferWithDirection extends RawTransfer {
+  direction: Direction
+}
+
+export interface OngoingTransfers {
+  toPolkadot: OngoingTransferWithDirection[]
+  toEthereum: {
+    fromAssetHub: OngoingTransferWithDirection[]
+    fromParachain: OngoingTransferWithDirection[]
+  }
 }
 
 export interface DisplaysTransfers {

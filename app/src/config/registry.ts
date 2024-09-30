@@ -16,10 +16,13 @@ export namespace Mainnet {
   export const AssetHub: Chain = {
     uid: 'polkadot-assethub',
     name: 'Polkadot Asset Hub',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+    logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    rpcConnection:
+      process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL ||
+      'wss://api-asset-hub-polkadot.dwellir.com',
   }
 
   // export const Bifrost: Chain = {
@@ -237,7 +240,7 @@ export namespace Testnet {
   export const RococoAssetHub: Chain = {
     uid: 'rococo-assethub',
     name: 'Rococo Asset Hub',
-    logoURI: 'https://cnews24.ru/uploads/d41/d419a4c7028eaf6864f972e554d761e7b10e5d06.png',
+    logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
@@ -389,15 +392,9 @@ export const mainnetRegistry: Registry = {
     },
     {
       from: Mainnet.Mythos.uid,
-      to: Mainnet.Ethereum.uid,
+      to: Mainnet.AssetHub.uid,
       tokens: [Mainnet.MYTH.id],
       sdk: 'AssetTransferApi',
-    },
-    {
-      from: Mainnet.Ethereum.uid,
-      to: Mainnet.Mythos.uid,
-      tokens: [Mainnet.MYTH.id],
-      sdk: 'SnowbridgeApi',
     },
   ],
 }
@@ -452,7 +449,6 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.ETH
     case 'mythos':
       return Mainnet.MYTH
-
     default:
       throw Error('The impossible has happened!')
   }

@@ -1,12 +1,7 @@
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import { Context } from '@snowbridge/api'
-import {
-  assetErc20Balance,
-  erc20TokenToAssetLocation,
-  palletAssetsBalance,
-} from '@snowbridge/api/dist/assets'
+import { erc20TokenToAssetLocation, palletAssetsBalance } from '@snowbridge/api/dist/assets'
 import { toHuman } from '../utils/transfer'
 
 export interface TokenValue {
@@ -46,46 +41,6 @@ export const fetchAssetHubBalance = async (
     formatted: toHuman(balance ?? 0n, token).toString(),
   }
   return fetchedBalance
-}
-
-export const fetchParachainNativeBalance = async (
-  token: Token,
-  address: string,
-): Promise<Erc20Balance> => {
-  const wsProvider = new WsProvider('wss://rococo-muse-rpc.polkadot.io')
-  const api = await ApiPromise.create({
-    provider: wsProvider,
-  })
-
-  const account = (await api.query.system.account(address)).toPrimitive() as any
-  console.log('account', account)
-
-  const balance = BigInt(account.data.free || 0)
-
-  const fetchedBalance = {
-    value: balance ?? 0n,
-    decimals: token.decimals,
-    symbol: token.symbol,
-    formatted: toHuman(balance ?? 0n, token).toString(),
-  }
-  return fetchedBalance
-}
-
-export const fetchEthereumBalance = async (
-  context: Context,
-  token: Token,
-  address: string,
-): Promise<Erc20Balance> => {
-  const res = await assetErc20Balance(context, token.address, address)
-
-  const balance = res?.balance ?? 0n
-
-  return {
-    value: balance,
-    decimals: token.decimals,
-    symbol: token.symbol,
-    formatted: toHuman(balance, token).toString(),
-  }
 }
 
 export const getFeesTokenUSDValue = async (networkToken: Network): Promise<TokenValue | null> => {

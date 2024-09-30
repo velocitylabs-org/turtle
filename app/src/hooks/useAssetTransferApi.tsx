@@ -4,12 +4,11 @@ import { StoredTransfer } from '@/models/transfer'
 import { getErc20TokenUSDValue } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
-import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
-import { JsonRpcSigner } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
@@ -64,60 +63,101 @@ const useAssetTransferApi = () => {
       console.log('after2')
 
       const account = sender as SubstrateAccount
+      let isComplete = false
 
-      const hash = await atApi.api
+      await atApi.api
         .tx(txResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .signAndSend(account.address, { signer: account.signer as any })
+        .signAndSend(account.address, { signer: account.signer as any }, async result => {
+          // verify transaction hash & transfer isn't completed
+          if (!result.txHash)
+            throw new Error('Transfer error: Failed to generate the transaction hash')
+          if (isComplete) return
 
-      if (!hash) throw new Error('Transfer failed')
-      onSuccess?.()
-      addNotification({
-        message: 'Transfer initiated. See below!',
-        severity: NotificationSeverity.Success,
-      })
+          const isIncluded = result.status.isInBlock
+          // const isFinalized = result.status.isFinalized
+          if (isIncluded) {
+            // if (isIncluded || isFinalized) {
+            let messageHash: string | undefined
+            let messageId: string | undefined
+            let extrinsicSuccess: boolean = false
 
-      const senderAddress =
-        sender instanceof JsonRpcSigner
-          ? await sender.getAddress()
-          : (sender as WalletOrKeypair).address
+            // Filter the events to get the needed data
+            result.events.forEach(({ event: { data, method, section } }) => {
+              if (
+                method === 'XcmpMessageSent' &&
+                section === 'xcmpQueue' &&
+                'messageHash' in data
+              ) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                messageHash = (data.messageHash as any).toString()
+              }
+              if (method === 'Sent' && section === 'polkadotXcm' && 'messageId' in data) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                messageId = (data.messageId as any).toString()
+              }
+              if (method === 'ExtrinsicSuccess' && section === 'system') {
+                extrinsicSuccess = true
+              }
+            })
 
-      const tokenData = await getErc20TokenUSDValue(token.address)
-      const tokenUSDValue =
-        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
-      const date = new Date()
+            if (!extrinsicSuccess)
+              throw new Error('Transfer failed. Returned extrinsicSuccess: false')
+            if (!messageHash) throw new Error('Cross chain messageHash missing')
+            if (!messageId) throw new Error('Parachain messageId missing')
 
-      addTransferToStorage({
-        id: hash.toString(),
-        sourceChain,
-        token,
-        tokenUSDValue,
-        sender: senderAddress,
-        destChain: destinationChain,
-        amount: amount.toString(),
-        recipient,
-        date,
-        environment,
-        fees,
-      } satisfies StoredTransfer)
+            // Add transfer to storage
+            const senderAddress = await getSenderAddress(sender)
+            const tokenData = await getErc20TokenUSDValue(token.address)
+            const tokenUSDValue =
+              tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+            const date = new Date()
 
-      // metrics
-      if (environment === Environment.Mainnet)
-        trackTransferMetrics({
-          sender: senderAddress,
-          sourceChain: sourceChain.name,
-          token: token.name,
-          amount: amount.toString(),
-          destinationChain: destinationChain.name,
-          usdValue: tokenUSDValue,
-          usdFees: fees.inDollars,
-          recipient: recipient,
-          date: date.toISOString(),
+            addTransferToStorage({
+              id: result.txHash.toString(),
+              sourceChain,
+              token,
+              tokenUSDValue,
+              sender: senderAddress,
+              destChain: destinationChain,
+              amount: amount.toString(),
+              recipient,
+              date,
+              environment,
+              fees,
+              crossChainMessageHash: messageHash,
+              parachainMessageId: messageId,
+            } satisfies StoredTransfer)
+
+            onSuccess?.()
+            addNotification({
+              message: 'Transfer initiated. See below!',
+              severity: NotificationSeverity.Success,
+            })
+
+            // metrics
+            if (environment === Environment.Mainnet) {
+              trackTransferMetrics({
+                sender: senderAddress,
+                sourceChain: sourceChain.name,
+                token: token.name,
+                amount: amount.toString(),
+                destinationChain: destinationChain.name,
+                usdValue: tokenUSDValue,
+                usdFees: fees.inDollars,
+                recipient: recipient,
+                date: date.toISOString(),
+              })
+            }
+            // Mark the transfer as complete and return
+            isComplete = true
+            setStatus('Idle')
+            return
+          }
         })
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
-    } finally {
       setStatus('Idle')
     }
   }
