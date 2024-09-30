@@ -110,8 +110,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
+    multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"3369"}}}',
   }
 
   export const SHIB: Token = {

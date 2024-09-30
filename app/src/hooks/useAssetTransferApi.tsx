@@ -40,14 +40,10 @@ const useAssetTransferApi = () => {
       const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
       console.log('before')
       const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
-      console.log(atApi)
+      console.log('after')
 
-      console.log(token.multilocation)
-      console.log(getDestChainId(destinationChain))
-      console.log(recipient)
       setStatus('Sending')
 
-      // TODO here it fails on muse to eth transfer
       const txResult = await atApi.createTransferTransaction(
         getDestChainId(destinationChain),
         recipient,
