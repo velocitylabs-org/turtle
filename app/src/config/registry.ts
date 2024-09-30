@@ -407,9 +407,7 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.MYTH.id],
     },
   ],
-  localAssetId: new Map<string, Map<string, any>>([
-    [Mainnet.Bifrost.uid, new Map<string, any>([[Mainnet.WETH.id, Enum('Token2', 13)]])],
-  ]),
+  localAssetId: new Map([[Mainnet.Bifrost.uid, new Map([[Mainnet.WETH.id, Enum('Token2', 13)]])]]),
 }
 
 export const testnetRegistry: Registry = {
