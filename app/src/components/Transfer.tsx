@@ -77,6 +77,7 @@ const Transfer: FC = () => {
     swapEthtoWEth,
     isSwapping: isSwappingEthForWEth,
   } = useEthForWEthSwap({
+    env: environment,
     context: snowbridgeContext,
     chain: sourceChain,
     tokenAmount,

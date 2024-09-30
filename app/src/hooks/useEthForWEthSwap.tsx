@@ -6,13 +6,15 @@ import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
 import { SupportedChains } from '@/utils/papi'
 import { captureException } from '@sentry/nextjs'
-import { Context, toPolkadot } from '@snowbridge/api'
+import { Context, environment, toPolkadot } from '@snowbridge/api'
 import { Signer } from 'ethers'
 import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
+import { Environment } from '@/store/environmentStore'
 
 interface Params {
+  env: Environment
   api?: TypedApi<SupportedChains>
   context?: Context
   chain?: Chain | null
@@ -22,9 +24,10 @@ interface Params {
 
 /** Hook to swap ETH for wETH */
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
-const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) => {
+const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const { balance: tokenBalance } = useBalance({
+    env,
     api,
     chain,
     token: tokenAmount?.token ?? undefined,
@@ -36,6 +39,7 @@ const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) 
 
   const fetchEthBalance = useCallback(async () => {
     if (
+      !environment ||
       !context ||
       chain?.network !== Network.Ethereum ||
       !owner ||
@@ -55,7 +59,7 @@ const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) 
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
         captureException(error)
     }
-  }, [chain?.network, owner, tokenAmount, tokenBalance, context])
+  }, [environment, chain?.network, owner, tokenAmount, tokenBalance, context])
 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
@@ -67,6 +71,7 @@ const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) 
       SetIsSwapping(true)
 
       if (
+        !env ||
         !context ||
         chain?.network !== Network.Ethereum ||
         !owner ||
@@ -104,7 +109,7 @@ const useEthForWEthSwap = ({ api, chain, tokenAmount, owner, context }: Params) 
         SetIsSwapping(false)
       }
     },
-    [chain?.network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
+    [env, chain?.network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
   )
 
   return { ethBalance, swapEthtoWEth, isSwapping }

@@ -2,6 +2,7 @@ import { getNativeToken } from '@/config/registry'
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
+import { Environment } from '@/store/environmentStore'
 import { getNativeBalance, getNonNativeBalance, SupportedChains } from '@/utils/papi'
 import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
@@ -11,15 +12,17 @@ import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 
 interface UseBalanceParams {
+  env: Environment
   api?: TypedApi<SupportedChains>
   chain?: Chain | null
   token?: Token
   address?: string
+  //todo(nuno): can we remove this?
   context?: Context
 }
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
-const useBalance = ({ api, chain, token, address, context }: UseBalanceParams) => {
+const useBalance = ({ env, api, chain, token, address, context }: UseBalanceParams) => {
   const [balance, setBalance] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
@@ -39,7 +42,7 @@ const useBalance = ({ api, chain, token, address, context }: UseBalanceParams) =
   })
 
   const fetchBalance = useCallback(async () => {
-    if (!chain || !token || !address || !context) return
+    if (!env || !chain || !token || !address || !context) return
 
     try {
       setLoading(true)
@@ -68,7 +71,7 @@ const useBalance = ({ api, chain, token, address, context }: UseBalanceParams) =
               symbol: token.symbol,
             }
           } else {
-            const result = await getNonNativeBalance(chain, api, token, address)
+            const result = await getNonNativeBalance(env, api, chain, token, address)
 
             fetchedBalance = {
               value: result?.free || 0n,
@@ -92,7 +95,7 @@ const useBalance = ({ api, chain, token, address, context }: UseBalanceParams) =
     } finally {
       setLoading(false)
     }
-  }, [api, chain, address, token, context, fetchErc20Balance, fetchEthBalance])
+  }, [env, api, chain, address, token, context, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {
     fetchBalance()

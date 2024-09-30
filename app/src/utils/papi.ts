@@ -1,4 +1,4 @@
-import { Mainnet } from '@/config/registry'
+import { getLocalAssetId, Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import {
@@ -12,6 +12,8 @@ import {
 import { captureException } from '@sentry/nextjs'
 import { Enum, FixedSizeBinary, TypedApi } from 'polkadot-api'
 import { z } from 'zod'
+import { environment } from '@snowbridge/api'
+import { Environment } from '@/store/environmentStore'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */
 export type SupportedChains = typeof dotAh | typeof mythos | typeof bifrost
@@ -97,10 +99,12 @@ export interface Balance {
 
 /** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
 export const getNonNativeBalance = async (
-  // the chain in which to look up the value
-  chain: Chain,
+  // the environment the app is running on
+  env: Environment,
   // the Papi api instance
   api: TypedApi<SupportedChains> | undefined,
+  // the chain in which to look up the value
+  chain: Chain,
   // the token to lookup
   token: Token,
   // the account to lookup
@@ -108,8 +112,14 @@ export const getNonNativeBalance = async (
 ): Promise<Balance | undefined> => {
   switch (chain.uid) {
     case 'bifrost': {
+      console.log('Will check balance on bifros')
       const bifrostApi = api as TypedApi<typeof bifrost>
-      return await bifrostApi?.query.Tokens.Accounts.getValue(address, getAssetId(chain, token))
+      if (!bifrostApi) throw Error(`Couldn't reach BiFrost`)
+
+      const assetId = getLocalAssetId(env, chain, token)
+      if (!assetId) throw Error('This token misses a local assetId')
+
+      return await bifrostApi?.query.Tokens.Accounts.getValue(address, assetId as any)
     }
     default: {
       const apiAssetHub = api as TypedApi<typeof dotAh>
@@ -122,15 +132,5 @@ export const getNonNativeBalance = async (
       )
       return { free: res?.balance ?? 0n }
     }
-  }
-}
-
-// todo(nuno): can we move this the registry? the assetId is chain+token dependant so we can't just hammer it on the token type
-function getAssetId(chain: Chain, token: Token): any | undefined {
-  switch ([chain.uid, token.id].join(':')) {
-    case 'bifrost:weth':
-      return Enum('Token2', 13)
-    default:
-      return undefined
   }
 }
