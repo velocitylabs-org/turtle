@@ -10,9 +10,8 @@ import {
   XcmV3Junctions,
 } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
-import { Enum, FixedSizeBinary, TypedApi } from 'polkadot-api'
+import { FixedSizeBinary, TypedApi } from 'polkadot-api'
 import { z } from 'zod'
-import { environment } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */

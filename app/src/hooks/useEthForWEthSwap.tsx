@@ -32,7 +32,6 @@ const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Par
     chain,
     token: tokenAmount?.token ?? undefined,
     address: owner,
-    context,
   })
   const [ethBalance, setEthBalance] = useState<number | undefined>()
   const [isSwapping, SetIsSwapping] = useState<boolean>(false)

@@ -55,6 +55,14 @@ const useFees = (
           ).toString()
           break
         }
+        case Direction.WithinPolkadot: {
+          console.log('XCM direction')
+          amount = '0'
+          tokenUSDValue = 0
+          // TODO(nuno): Support fees fetching for xcm transfers
+          break
+        }
+
         default:
           throw new Error('Unsupported direction')
       }

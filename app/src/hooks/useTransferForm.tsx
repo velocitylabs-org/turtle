@@ -85,7 +85,6 @@ const useTransferForm = () => {
     chain: balanceParams.chain,
     token: balanceParams.token ?? undefined,
     address: balanceParams.address,
-    context: balanceParams.context,
   })
 
   const isFormValid =

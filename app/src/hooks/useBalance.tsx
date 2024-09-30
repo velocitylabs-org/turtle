@@ -6,7 +6,6 @@ import { Environment } from '@/store/environmentStore'
 import { getNativeBalance, getNonNativeBalance, SupportedChains } from '@/utils/papi'
 import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
-import { Context } from '@snowbridge/api'
 import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -17,12 +16,10 @@ interface UseBalanceParams {
   chain?: Chain | null
   token?: Token
   address?: string
-  //todo(nuno): can we remove this?
-  context?: Context
 }
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
-const useBalance = ({ env, api, chain, token, address, context }: UseBalanceParams) => {
+const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
   const [balance, setBalance] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
@@ -46,7 +43,7 @@ const useBalance = ({ env, api, chain, token, address, context }: UseBalancePara
     // chain or for another token while fetching the new one.
     setBalance(undefined)
 
-    if (!env || !chain || !token || !address || !context) return
+    if (!env || !chain || !token || !address) return
 
     try {
       setLoading(true)
@@ -99,7 +96,7 @@ const useBalance = ({ env, api, chain, token, address, context }: UseBalancePara
     } finally {
       setLoading(false)
     }
-  }, [env, api, chain, address, token, context, fetchErc20Balance, fetchEthBalance])
+  }, [env, api, chain, address, token, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {
     fetchBalance()
