@@ -21,6 +21,10 @@ export interface Chain {
   specName?: string
   /** Optional parameter for parachains only. Used for AT API transfers. */
   rpcConnection?: string
+  /** Optional parameter for parachains only. Used for Snowbridge transfers. */
+  skipExistentialDepositCheck?: boolean
+  /** Optional parameter for parachains only. Used for Snowbridge transfers. */
+  maxConsumers?: number
 }
 
 export enum Network {

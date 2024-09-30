@@ -212,6 +212,7 @@ const useSnowbridgeApi = () => {
     setStatus: (status: Status) => void,
   ): Promise<ValidationResult> => {
     setStatus('Validating')
+
     switch (direction) {
       case Direction.ToPolkadot:
         return await toPolkadot.validateSend(
@@ -222,6 +223,10 @@ const useSnowbridgeApi = () => {
           destinationChain.chainId,
           amount,
           BigInt(destinationChain.destinationFeeDOT || 0),
+          {
+            ignoreExistentialDeposit: destinationChain.skipExistentialDepositCheck,
+            maxConsumers: destinationChain.maxConsumers,
+          },
         )
 
       case Direction.ToEthereum:
