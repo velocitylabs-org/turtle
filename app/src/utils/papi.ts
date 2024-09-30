@@ -112,7 +112,6 @@ export const getNonNativeBalance = async (
 ): Promise<Balance | undefined> => {
   switch (chain.uid) {
     case 'bifrost': {
-      console.log('Will check balance on bifros')
       const bifrostApi = api as TypedApi<typeof bifrost>
       if (!bifrostApi) throw Error(`Couldn't reach BiFrost`)
 

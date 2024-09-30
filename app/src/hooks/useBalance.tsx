@@ -42,6 +42,10 @@ const useBalance = ({ env, api, chain, token, address, context }: UseBalancePara
   })
 
   const fetchBalance = useCallback(async () => {
+    // Reset balance first to avoid showing the balance on another
+    // chain or for another token while fetching the new one.
+    setBalance(undefined)
+
     if (!env || !chain || !token || !address || !context) return
 
     try {
