@@ -4,13 +4,15 @@ import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
-import { getFeesTokenUSDValue } from '@/services/balance'
+import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
+import { getDestChainId } from './useAssetTransferApi'
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -37,14 +39,12 @@ const useFees = (
       let tokenUSDValue: number = 0
       switch (direction) {
         case Direction.ToEthereum: {
-          const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
-          tokenUSDValue = dotUSDValue?.[Network.Polkadot?.toLowerCase()]?.usd ?? 0
+          tokenUSDValue = (await getTokenPrice('polkadot'))?.usd ?? 0
           amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
         case Direction.ToPolkadot: {
-          const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
-          tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()]?.usd ?? 0
+          tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
           amount = (
             await toPolkadot.getSendFee(
               snowbridgeContext,
@@ -56,7 +56,26 @@ const useFees = (
           break
         }
         case Direction.WithinPolkadot: {
-          console.log('XCM direction')
+          if (!sourceChain.rpcConnection || !sourceChain.specName)
+            throw new Error('Source chain is missing rpcConnection or specName')
+
+          const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
+          const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
+          const tx = await atApi.createTransferTransaction(
+            getDestChainId(destinationChain),
+            '13gXC9QmeFyZFY595TMnMLZsEAq34h13xpLTLCuqbrGnTNNv',
+            // asset id
+            ['WETH'],
+            // the amount (pairs with the asset ids above)
+            ['1000000000000000000'],
+            {
+              format: 'call',
+              xcmVersion: safeXcmVersion,
+            },
+          )
+          const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
+          console.log("FeesInfo: ", feesInfo?.toJSON() ?? "null");
+
           amount = '0'
           tokenUSDValue = 0
           // TODO(nuno): Support fees fetching for xcm transfers
@@ -75,6 +94,7 @@ const useFees = (
     } catch (error) {
       setFees(null)
       captureException(error)
+      console.log("Error is ", error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',

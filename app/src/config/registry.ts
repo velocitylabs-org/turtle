@@ -36,6 +36,7 @@ export namespace Mainnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
     rpcConnection: 'wss://bifrost-polkadot.dotters.network',
+    specName: 'bifrost_polkadot'
   }
 
   // export const Hydration: Chain = {
