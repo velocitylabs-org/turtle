@@ -92,8 +92,8 @@ const useFees = (
             },
           )
           console.log('Tx is ', tx.tx)
-          // const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
-          // console.log('FeesInfo: ', feesInfo?.toJSON() ?? 'null')
+          const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
+          console.log('FeesInfo: ', feesInfo?.toJSON() ?? 'null')
 
           amount = '0'
           tokenUSDValue = 0
