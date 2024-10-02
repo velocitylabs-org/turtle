@@ -106,13 +106,8 @@ const Transfer: FC = () => {
     tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
 
   let amountPlaceholder: string
-  if (
-    !sourceWallet ||
-    !tokenAmount?.token ||
-    !sourceWallet.isConnected ||
-    !isBalanceAvailable ||
-    loadingBalance
-  )
+  if (loadingBalance) amountPlaceholder = 'Loading...'
+  else if (!sourceWallet || !tokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable)
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else
