@@ -84,7 +84,7 @@ const useFees = (
             [convertAmount(tokenAmount.amount, tokenAmount.token).toString()],
             {
               format: 'call',
-              xcmVersion: 4,
+              xcmVersion: 4, //todo(nuno): how to define this safely
             },
           )
           console.log('Tx is ', tx.tx)
