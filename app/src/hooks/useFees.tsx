@@ -79,7 +79,6 @@ const useFees = (
           // TODO: Pass when querying the tokenPrice
           // const tokenCoingekoId = tokenAmount.token.coingekoId ?? tokenAmount.token.symbol
 
-
           const tx = await atApi.createTransferTransaction(
             getDestChainId(destinationChain),
             recipient,
