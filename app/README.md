@@ -32,6 +32,7 @@ Features:
 
 <br/>
 Turtle is developed with Typescript, Nextjs, and React.
+
 ## How to support a new parachain:
 
 **1. 📖 Update registry:** (_To support the new chain and tokens on the application_):
