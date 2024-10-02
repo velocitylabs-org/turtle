@@ -38,6 +38,7 @@ const useFees = (
     }
 
     const direction = resolveDirection(sourceChain, destinationChain)
+    // TODO: this should be the fee token, not necessirly the native token
     const nativeToken = getNativeToken(sourceChain)
 
     try {
@@ -88,8 +89,8 @@ const useFees = (
             },
           )
           console.log('Tx is ', tx.tx)
-          const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
-          console.log('FeesInfo: ', feesInfo?.toJSON() ?? 'null')
+          // const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
+          // console.log('FeesInfo: ', feesInfo?.toJSON() ?? 'null')
 
           amount = '0'
           tokenUSDValue = 0

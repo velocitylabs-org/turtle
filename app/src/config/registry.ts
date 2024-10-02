@@ -80,6 +80,7 @@ export namespace Mainnet {
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
+    coingekoId: 'weth'
   }
 
   export const VETH: Token = {
@@ -124,6 +125,7 @@ export namespace Mainnet {
     address: '',
     multilocation:
       '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    coingekoId: 'bifrost-native-token'
   }
 
   export const SHIB: Token = {
@@ -222,6 +224,7 @@ export namespace Mainnet {
     decimals: 10,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    coingekoId: 'polkadot'
   }
 
   export const ETH: Token = {
@@ -233,6 +236,7 @@ export namespace Mainnet {
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
     multilocation: '',
+    coingekoId: 'ethereum'
   }
 }
 
