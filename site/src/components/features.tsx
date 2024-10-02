@@ -13,7 +13,7 @@ export const Features = () => {
       icon: turtle,
     },
     {
-      title: 'Transparency all the way',
+      title: 'Trans&shy;parency all the way',
       description: `Keep an eye on your assets at every step of the way. The days of anxiously waiting for our funds to arrive are finally behind us!`,
       icon: chart,
     },
