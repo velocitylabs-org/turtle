@@ -48,10 +48,10 @@ export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null>
     const url = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId.toLocaleLowerCase()}&vs_currencies=usd`
     const options = { method: 'GET', headers: { accept: 'application/json' } }
     const result = await fetch(url, options)
-    
+
     if (!result.ok) throw new Error('Failed to fetch fees tokens value')
-    
-    return ((await result.json())[tokenId.toLocaleLowerCase()] as TokenPrice)
+
+    return (await result.json())[tokenId.toLocaleLowerCase()] as TokenPrice
   } catch (error) {
     console.log('Fees token value fetch error:', error)
     return null

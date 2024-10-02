@@ -52,17 +52,19 @@ const useTransferForm = () => {
   const destinationChain = useWatch({ control, name: 'destinationChain' })
   const manualRecipient = useWatch({ control, name: 'manualRecipient' })
   const tokenAmount = useWatch({ control, name: 'tokenAmount' })
-  const { fees, loading: loadingFees } = useFees(
-    sourceChain,
-    destinationChain,
-    tokenAmount?.token ?? null,
-  )
+
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
   const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
   const { api } = usePapi(sourceChain)
+  const { fees, loading: loadingFees } = useFees(
+    sourceChain,
+    destinationChain,
+    tokenAmount,
+    getRecipientAddress(manualRecipient, destinationWallet),
+  )
 
   const balanceParams = useMemo(
     () => ({

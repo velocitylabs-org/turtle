@@ -1,23 +1,24 @@
 import { getNativeToken } from '@/config/registry'
 import useNotification from '@/hooks/useNotification'
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { toHuman } from '@/utils/transfer'
+import { convertAmount, toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
 import { getDestChainId } from './useAssetTransferApi'
+import { TokenAmount } from '@/models/select'
 
 const useFees = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
-  token?: Token | null,
+  tokenAmount?: TokenAmount | null,
+  recipient?: string | null,
 ) => {
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
@@ -25,7 +26,13 @@ const useFees = (
   const { addNotification } = useNotification()
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token || !snowbridgeContext) {
+    if (
+      !sourceChain ||
+      !destinationChain ||
+      !tokenAmount?.token ||
+      !tokenAmount?.amount ||
+      !recipient
+    ) {
       setFees(null)
       return
     }
@@ -39,16 +46,20 @@ const useFees = (
       let tokenUSDValue: number = 0
       switch (direction) {
         case Direction.ToEthereum: {
+          if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
+
           tokenUSDValue = (await getTokenPrice('polkadot'))?.usd ?? 0
           amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
         case Direction.ToPolkadot: {
+          if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
+
           tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
           amount = (
             await toPolkadot.getSendFee(
               snowbridgeContext,
-              token.address,
+              tokenAmount.token.address,
               destinationChain.chainId,
               BigInt(0),
             )
@@ -60,21 +71,25 @@ const useFees = (
             throw new Error('Source chain is missing rpcConnection or specName')
 
           const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
-          const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
+          const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion, {
+            registryType: 'CDN',
+          })
+
           const tx = await atApi.createTransferTransaction(
             getDestChainId(destinationChain),
-            '13gXC9QmeFyZFY595TMnMLZsEAq34h13xpLTLCuqbrGnTNNv',
+            recipient,
             // asset id
-            ['WETH'],
+            [tokenAmount.token.symbol],
             // the amount (pairs with the asset ids above)
-            ['1000000000000000000'],
+            [convertAmount(tokenAmount.amount, tokenAmount.token).toString()],
             {
               format: 'call',
-              xcmVersion: safeXcmVersion,
+              xcmVersion: 4,
             },
           )
+          console.log('Tx is ', tx.tx)
           const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
-          console.log("FeesInfo: ", feesInfo?.toJSON() ?? "null");
+          console.log('FeesInfo: ', feesInfo?.toJSON() ?? 'null')
 
           amount = '0'
           tokenUSDValue = 0
@@ -94,7 +109,7 @@ const useFees = (
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.log("Error is ", error)
+      console.log('Error is ', error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
@@ -104,12 +119,20 @@ const useFees = (
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourceChain, destinationChain, token?.id, snowbridgeContext, addNotification])
+  }, [
+    sourceChain,
+    destinationChain,
+    tokenAmount?.token,
+    tokenAmount?.amount,
+    recipient,
+    snowbridgeContext,
+    addNotification,
+  ])
 
   // call fetch fees
   useEffect(() => {
     fetchFees()
-  }, [sourceChain, destinationChain, token?.id, fetchFees])
+  }, [sourceChain, destinationChain, tokenAmount?.token, tokenAmount?.amount, recipient, fetchFees])
 
   return { fees, loading, refetch: fetchFees }
 }

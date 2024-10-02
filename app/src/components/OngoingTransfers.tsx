@@ -29,6 +29,7 @@ const OngoingTransfers = ({
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
+  console.log('ongoing txs', ongoingTransfers)
   const {
     snowbridgeContext: transferContext,
     isSnowbridgeContextLoading: transferContextLoading,
