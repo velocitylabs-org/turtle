@@ -19,6 +19,19 @@
   </p>
 </div>
 
+## About
+
+Turtle is your go to app when it comes to cross-chain transfers that leverage fully trustless infrastructure. We aim to provide a unified experience to transfer tokens anywhere.
+
+Features:
+
+- Make transfers between blockchains in a decentralized and trustless way
+- Intuitive UI that helps you along the way
+- Bridge ERC20 tokens between Ethereum and Polkadot - Powered by Snowbridge
+- [Soon]: Seamless XCM Transfers between all Polkadot parachains
+
+<br/>
+Turtle is developed with Typescript, Nextjs, and React.
 ## How to support a new parachain:
 
 **1. 📖 Update registry:** (_To support the new chain and tokens on the application_):
@@ -36,10 +49,10 @@
 - add the new chain case to `getNativeToken()`. _Example_:
   - `case 'mythos': return Mainnet.MYTH`
 
-✋ Be careful to schemas when updating any type models. (It must not happen often).
+✋ Be careful to schemas when updating any type models. (It must not happen often).<br/>
 => Check chain swap on the app, sourcechain/destchain filters, sourcechain/tokens filters (UI checks in the transfer form).
 
-**2. 🔐 Env. Variables:** Do not forget to update `NEXT_PUBLIC_PARACHAIN_API_URLS`: in your local env, in the _.env.local.example_ **& Vercel**. ✋ Be aware that adding some _PARACHAIN_API_URLS_ might break the production if not supported (let's remember Muse testnet token/chain). Test locally by setting `shouldUseTestnet` constant to **`false`**
+**2. 🔐 Env. Variables:** Do not forget to update `NEXT_PUBLIC_PARACHAIN_API_URLS`: in your local env, in the _.env.local.example_ **& Vercel**. ✋ Be aware that adding some _PARACHAIN_API_URLS_ might break the production if not supported (let's remember Muse testnet token/chain). Test locally by setting `shouldUseTestnet` constant to **`false`**.
 
 **3. ⚙️ Update Polkadot API/PAPI configuration:** (To fetch the balances): 
 - codegen metadata: add the chain with `npx papi add chainName -w wss://blabla…` 
@@ -50,17 +63,3 @@
 - Wait for transfers to be completed, look for Explorer(s) (Etherscan or Subscan) - Transfer must be displayed in the completed transfer tab.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## About
-
-Turtle is your go to app when it comes to cross-chain transfers that leverage fully trustless infrastructure. We aim to provide a unified experience to transfer tokens anywhere.
-
-Features:
-
-- Make transfers between blockchains in a decentralized and trustless way
-- Intuitive UI that helps you along the way
-- Bridge ERC20 tokens between Ethereum and Polkadot - Powered by Snowbridge
-- [Soon]: Seamless XCM Transfers between all Polkadot parachains
-
-<br/>
-Turtle is developed with Typescript, Nextjs, and React.
