@@ -2,17 +2,17 @@ import { getNativeToken } from '@/config/registry'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
+import { TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { convertAmount, toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { useCallback, useEffect, useState } from 'react'
-import useSnowbridgeContext from './useSnowbridgeContext'
 import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
+import { useCallback, useEffect, useState } from 'react'
 import { getDestChainId } from './useAssetTransferApi'
-import { TokenAmount } from '@/models/select'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -72,9 +72,7 @@ const useFees = (
             throw new Error('Source chain is missing rpcConnection or specName')
 
           const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
-          const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion, {
-            registryType: 'CDN',
-          })
+          const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
           // TODO: Pass when querying the tokenPrice
           // const tokenCoingekoId = tokenAmount.token.coingekoId ?? tokenAmount.token.symbol
@@ -91,11 +89,9 @@ const useFees = (
               xcmVersion: 4, //todo(nuno): how to define this safely
             },
           )
-          console.log('Tx is ', tx.tx)
           const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
-          console.log('FeesInfo: ', feesInfo?.toJSON() ?? 'null')
 
-          amount = '0'
+          amount = feesInfo?.partialFee.toString() ?? '0'
           tokenUSDValue = 0
           // TODO(nuno): Support fees fetching for xcm transfers
           break

@@ -1,7 +1,7 @@
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
-import { getErc20TokenUSDValue, getTokenPrice } from '@/services/balance'
+import { getTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
@@ -66,6 +66,7 @@ const useAssetTransferApi = () => {
             throw new Error('Transfer error: Failed to generate the transaction hash')
           if (isComplete) return
 
+          console.log('Transfer result:', result)
           const isIncluded = result.status.isInBlock
           // const isFinalized = result.status.isFinalized
           if (isIncluded) {
@@ -76,6 +77,7 @@ const useAssetTransferApi = () => {
 
             // Filter the events to get the needed data
             result.events.forEach(({ event: { data, method, section } }) => {
+              console.log('Event:', method, section, data)
               if (
                 method === 'XcmpMessageSent' &&
                 section === 'xcmpQueue' &&

@@ -69,8 +69,8 @@ importers:
         specifier: ^0.1.18
         version: 0.1.18(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@substrate/asset-transfer-api':
-        specifier: ^0.4.0
-        version: 0.4.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^0.4.1
+        version: 0.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@talisman-connect/ui':
         specifier: ^1.1.1
         version: 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -91,7 +91,7 @@ importers:
         version: 1.3.1(next@14.2.3(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@web3modal/wagmi':
         specifier: ^4.2.1
-        version: 4.2.3(qytz547y3lizmrlsqs4gwafxra)
+        version: 4.2.3(@types/react@18.3.3)(@wagmi/connectors@5.0.19(@types/react@18.3.3)(@wagmi/core@2.11.5(@tanstack/query-core@5.48.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@3.29.4)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.11.5(@tanstack/query-core@5.48.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -4275,8 +4275,8 @@ packages:
   '@substrate/asset-transfer-api-registry@0.2.22':
     resolution: {integrity: sha512-xQ6Nf2doVdskwWAz4vVcI3/uz55brLNOT4fSuQ2VOY3XAlHESP3CXTUpD308u0XA48L1gw7JE2E+DEQqg7OIzw==}
 
-  '@substrate/asset-transfer-api@0.4.0':
-    resolution: {integrity: sha512-2JLslyASktRubzVLOUiz/ZxUUH4yHKdh6iyvNJqmBCjBEVrHz6/qtSecY8a6mDtJQ88ZyCN5vXpiwd1FG5D2/w==}
+  '@substrate/asset-transfer-api@0.4.1':
+    resolution: {integrity: sha512-njXys98IgP9p+uAl+JJtn81/RIIYOKvtg2yJHtrFqjxjcEOuqjJP7+3jBuEzsYv1NXYsxwbJV364jj/fL0DELw==}
     engines: {node: '>=18.14'}
 
   '@substrate/connect-extension-protocol@1.0.1':
@@ -4297,6 +4297,7 @@ packages:
 
   '@substrate/connect@0.8.11':
     resolution: {integrity: sha512-ofLs1PAO9AtDdPbdyTYj217Pe+lBfTLltdHDs3ds8no0BseoLeAGxpz1mHfi7zB4IxI3YyAiLjH6U8cw4pj4Nw==}
+    deprecated: versions below 1.x are no longer maintained
 
   '@substrate/light-client-extension-helpers@0.0.6':
     resolution: {integrity: sha512-girltEuxQ1BvkJWmc8JJlk4ZxnlGXc/wkLcNguhY+UoDEMBK0LsdtfzQKIfrIehi4QdeSBlFEFBoI4RqPmsZzA==}
@@ -16787,7 +16788,7 @@ snapshots:
 
   '@substrate/asset-transfer-api-registry@0.2.22': {}
 
-  '@substrate/asset-transfer-api@0.4.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@substrate/asset-transfer-api@0.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/api': 13.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@substrate/asset-transfer-api-registry': 0.2.22
@@ -17897,8 +17898,8 @@ snapshots:
       lit: 3.1.0
       qrcode: 1.5.3
 
-  '@web3modal/wagmi@4.2.3(qytz547y3lizmrlsqs4gwafxra)':
-    dependencies:
+  ? '@web3modal/wagmi@4.2.3(@types/react@18.3.3)(@wagmi/connectors@5.0.19(@types/react@18.3.3)(@wagmi/core@2.11.5(@tanstack/query-core@5.48.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@3.29.4)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(@wagmi/core@2.11.5(@tanstack/query-core@5.48.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))'
+  : dependencies:
       '@wagmi/connectors': 5.0.19(@types/react@18.3.3)(@wagmi/core@2.11.5(@tanstack/query-core@5.48.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-i18next@13.5.0(i18next@22.5.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1))(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.24.7(@babel/core@7.24.7))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(rollup@3.29.4)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
       '@wagmi/core': 2.11.5(@tanstack/query-core@5.48.0)(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.2)(utf-8-validate@5.0.10)(viem@2.16.2(bufferutil@4.0.8)(typescript@5.5.2)(utf-8-validate@5.0.10)(zod@3.22.4))(zod@3.22.4)
       '@walletconnect/ethereum-provider': 2.13.0(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)

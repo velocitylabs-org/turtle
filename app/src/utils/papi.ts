@@ -1,6 +1,7 @@
 import { getLocalAssetId, Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Environment } from '@/store/environmentStore'
 import {
   bifrost,
   dotAh,
@@ -12,7 +13,6 @@ import {
 import { captureException } from '@sentry/nextjs'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
 import { z } from 'zod'
-import { Environment } from '@/store/environmentStore'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */
 export type SupportedChains = typeof dotAh | typeof mythos | typeof bifrost
@@ -119,6 +119,7 @@ export const getNonNativeBalance = async (
 
       return await bifrostApi?.query.Tokens.Accounts.getValue(address, assetId as any)
     }
+
     default: {
       const apiAssetHub = api as TypedApi<typeof dotAh>
       const convertedMultilocation = convertEthMultilocation(token.multilocation)
