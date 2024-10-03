@@ -20,7 +20,7 @@ export const trackTransfers = async (
 
   if (ongoingTransfers.toEthereum.fromAssetHub.length) {
     const ahToEthereumTx = await trackFromParachainTx(env, ongoingTransfers.toEthereum.fromAssetHub)
-    console.log('From AH To Ethereum transfer:', ahToEthereumTx)
+    console.log('From AH To Ethereum transfer:', ahToEthereumTx.length)
     transfers.push(...ahToEthereumTx)
   }
 
@@ -31,7 +31,7 @@ export const trackTransfers = async (
       env,
       ongoingTransfers.toEthereum.fromParachain,
     )
-    console.log('From Parachain To AH transfer:', parachainToAhTx)
+    console.log('From Parachain To AH transfer:', parachainToAhTx.length)
     transfers.push(...parachainToAhTx)
   }
 
