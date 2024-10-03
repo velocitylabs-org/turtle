@@ -77,7 +77,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
           <div
             ref={triggerRef}
             className={twMerge(
-              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm ',
+              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
               !disabled && 'cursor-pointer',
               disabled && 'opacity-30',
               error && 'border-turtle-error',

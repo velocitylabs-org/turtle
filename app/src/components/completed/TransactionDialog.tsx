@@ -42,7 +42,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             'flex flex-col items-center justify-center space-y-6 rounded-t-4xl border py-5 sm:py-10',
             transferSucceeded
               ? 'border-turtle-success-dark bg-turtle-success-light'
-              : 'border-turtle-error-dark bg-turtle-error-light ',
+              : 'border-turtle-error-dark bg-turtle-error-light',
           )}
         >
           <DialogTitle className="sr-only">Completed transfer</DialogTitle>
@@ -52,7 +52,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn(
               'flex items-center justify-center space-x-4',
-              transferSucceeded ? ' text-turtle-success-dark' : 'text-turtle-error-dark ',
+              transferSucceeded ? 'text-turtle-success-dark' : 'text-turtle-error-dark',
             )}
           >
             <div className="turtle-success-dark flex items-center space-x-1">
@@ -63,7 +63,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark ',
+                    transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark',
                   )}
                 />
               </div>
@@ -83,7 +83,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border',
-                    transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark ',
+                    transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark',
                   )}
                 />
               </div>
@@ -93,7 +93,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <h3
             className={cn(
               'xxl-letter-spacing flex items-center space-x-1 text-3xl leading-none sm:text-5xl',
-              transferSucceeded ? 'text-turtle-success-dark' : ' text-turtle-error-dark',
+              transferSucceeded ? 'text-turtle-success-dark' : 'text-turtle-error-dark',
             )}
           >
             <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
@@ -102,7 +102,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn(
               'flex items-center space-x-4 text-sm',
-              transferSucceeded ? 'text-turtle-success-dark' : ' text-turtle-error-dark',
+              transferSucceeded ? 'text-turtle-success-dark' : 'text-turtle-error-dark',
             )}
           >
             <div>{formatCompletedTransferDate(tx.date)}</div>
