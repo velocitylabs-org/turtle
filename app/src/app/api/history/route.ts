@@ -11,8 +11,7 @@ import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfe
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
-import { getTransferHistory } from '@/utils/snowbridge'
-import { getErrorMessage } from '@/utils/transferTracking'
+import { getErrorMessage, trackTransfers } from '@/utils/transferTracking'
 
 const CACHE_REVALIDATE_IN_SECONDS = 30
 
@@ -48,7 +47,7 @@ const getCachedTransferHistory = unstable_cache(
         }
       })
 
-      return getTransferHistory(env, transfers)
+      return trackTransfers(env, transfers)
     } catch (err) {
       reportError(err)
       return Promise.resolve([])
