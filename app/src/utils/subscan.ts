@@ -1,14 +1,24 @@
 import { subscan } from '@snowbridge/api'
+import { environment } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { SubscanXCMTransferRawResponse, SubscanXCMTransferResult } from '@/models/subscan'
 import { OngoingTransferWithDirection } from '@/models/transfer'
 
-export const trackXcmTransfer = async (
-  relaychainScan: subscan.SubscanApi,
+export const trackParachainTx = async (
+  env: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
   try {
     const xcmTransfers: SubscanXCMTransferResult[] = []
+    if (!env.config.SUBSCAN_API) {
+      console.warn(`No subscan api urls configured for ${env.name}`)
+      return xcmTransfers
+    }
+    const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
+    if (!subscanKey) {
+      throw Error('Missing Subscan Key')
+    }
+    const relaychain = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
 
     for (const transfer of ongoingTransfers) {
       const { crossChainMessageHash } = transfer
@@ -18,7 +28,7 @@ export const trackXcmTransfer = async (
         return xcmTransfers
       }
 
-      const query = await relaychainScan.post('api/scan/xcm/list', {
+      const query = await relaychain.post('api/scan/xcm/list', {
         message_hash: crossChainMessageHash,
         row: 10,
       })
