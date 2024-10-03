@@ -1,10 +1,9 @@
-import { subscan } from '@snowbridge/api'
-import { environment } from '@snowbridge/api'
+import { subscan, environment } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { SubscanXCMTransferRawResponse, SubscanXCMTransferResult } from '@/models/subscan'
 import { OngoingTransferWithDirection } from '@/models/transfer'
 
-export const trackParachainTx = async (
+export const trackFromParachainTx = async (
   env: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
