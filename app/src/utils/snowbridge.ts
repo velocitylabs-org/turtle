@@ -1,53 +1,33 @@
 import { AlchemyProvider } from 'ethers'
 import { environment, subscan, history } from '@snowbridge/api'
-import {
-  ToEthereumTransferResult,
-  ToPolkadotTransferResult,
-  TransferStatus,
-} from '@snowbridge/api/dist/history'
-import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-types'
-import { OngoingTransfers } from '@/models/transfer'
-import { SubscanXCMTransferResult } from '@/models/subscan'
-
-import { trackXcmTransfer } from './subscan'
+import { IGateway__factory } from '@snowbridge/contract-types'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
 export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 2 // 2 days
 export const ETHEREUM_BLOCK_TIME_SECONDS = 12
 export const ACCEPTABLE_BRIDGE_LATENCY = 28800 // 8 hours
 
-export async function getTransferHistory(
+export async function trackFromEthTx(
   env: environment.SnowbridgeEnvironment,
-  ongoingTransfers: OngoingTransfers,
   skipLightClientUpdates = SKIP_LIGHT_CLIENT_UPDATES,
   historyInSeconds = HISTORY_IN_SECONDS,
-) {
-  console.log('Fetching transfer history.')
+): Promise<history.ToPolkadotTransferResult[]> {
   if (!env.config.SUBSCAN_API) {
     console.warn(`No subscan api urls configured for ${env.name}`)
     return []
   }
   const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
-  if (!alchemyKey) {
-    throw Error('Missing Alchemy Key')
-  }
+  if (!alchemyKey) throw Error('Missing Alchemy Key')
 
   const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
-  if (!subscanKey) {
-    throw Error('Missing Subscan Key')
-  }
+  if (!subscanKey) throw Error('Missing Subscan Key')
 
   const ethereumProvider = new AlchemyProvider(env.ethChainId, alchemyKey)
 
   const assetHubScan = subscan.createApi(env.config.SUBSCAN_API.ASSET_HUB_URL, subscanKey)
   const bridgeHubScan = subscan.createApi(env.config.SUBSCAN_API.BRIDGE_HUB_URL, subscanKey)
-  const relaychainScan = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
-
   const bridgeHubParaId = env.config.BRIDGE_HUB_PARAID
-  const assetHubParaId = env.config.ASSET_HUB_PARAID
   const beacon_url = env.config.BEACON_HTTP_API
-
-  const beefyClient = BeefyClient__factory.connect(env.config.BEEFY_CONTRACT, ethereumProvider)
   const gateway = IGateway__factory.connect(env.config.GATEWAY_CONTRACT, ethereumProvider)
   const ethereumSearchPeriodBlocks = historyInSeconds / ETHEREUM_BLOCK_TIME_SECONDS
 
@@ -86,169 +66,15 @@ export async function getTransferHistory(
     },
   }
 
-  const transfers: (
-    | ToEthereumTransferResult
-    | ToPolkadotTransferResult
-    | SubscanXCMTransferResult
-  )[] = []
-
-  if (ongoingTransfers.toEthereum.fromAssetHub.length) {
-    // Switch code below to test the other tracking method
-
-    const toEthereum = await history.toEthereumHistory(
-      assetHubScan,
-      bridgeHubScan,
-      relaychainScan,
-      searchRange,
-      skipLightClientUpdates,
-      env.ethChainId,
-      assetHubParaId,
-      beefyClient,
-      gateway,
-    )
-    console.log('From AH To Ethereum transfers:', toEthereum.length)
-    transfers.push(...toEthereum)
-
-    // const toEthereum = await trackXcmTransfer(
-    //   relaychainScan,
-    //   ongoingTransfers.toEthereum.fromAssetHub,
-    // )
-    // console.log('From AH To Ethereum transfer:', toEthereum.length)
-    // transfers.push(...toEthereum)
-  }
-
-  if (ongoingTransfers.toEthereum.fromParachain.length) {
-    const fromParachainTransfer = await trackXcmTransfer(
-      relaychainScan,
-      ongoingTransfers.toEthereum.fromParachain,
-    )
-    console.log('From Parachain/AH To Ethereum transfer:', fromParachainTransfer)
-    transfers.push(...fromParachainTransfer)
-  }
-
-  if (ongoingTransfers.toPolkadot.length) {
-    const toPolkadot = await history.toPolkadotHistory(
-      assetHubScan,
-      bridgeHubScan,
-      searchRange,
-      skipLightClientUpdates,
-      bridgeHubParaId,
-      gateway,
-      ethereumProvider,
-      beacon_url,
-    )
-    console.log('From ETH To Polkadot transfers:', toPolkadot.length)
-    transfers.push(...toPolkadot)
-  }
-
-  return transfers.sort((a, b) => getTransferTimestamp(b) - getTransferTimestamp(a))
-}
-
-export interface AccountInfo {
-  name: string
-  type: 'ethereum' | 'substrate'
-  account: string
-  balance: string
-}
-
-export function getTransferStatus(
-  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
-) {
-  /**  Checks if the transfer result has been tracked by Snowbridge for a transfer to Ethereum.*/
-  const isSnowbridgeTrackingToEth =
-    'info' in transferResult && transferResult.info.destinationParachain == undefined
-  /**  Checks if the transfer result has been tracked by Subscan for an XCM transfer to Ethereum.*/
-  const isSubscanXCMTrackingToEth =
-    'destEventIndex' in transferResult && !('info' in transferResult)
-
-  if (isSnowbridgeTrackingToEth)
-    return getTransferStatusToEthereum(transferResult as ToEthereumTransferResult)
-  else if (isSubscanXCMTrackingToEth) {
-    return getTransferStatusToEthereum(transferResult as SubscanXCMTransferResult)
-  } else {
-    /** Retrieves the status of a transfer to Polkadot from a Snowbridge result */
-    return getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
-  }
-}
-
-export function getTransferStatusToEthereum(
-  transferResult: ToEthereumTransferResult | SubscanXCMTransferResult,
-) {
-  /** Bridge Hub Channel Message Delivered */
-  const isBHChannelMsgDeliveredInSnowbridgeRes =
-    'bridgeHubChannelDelivered' in transferResult &&
-    transferResult.bridgeHubChannelDelivered?.success
-  /** Destination Event Index available */
-  const isDestEventIdxInSubscanXCMRes =
-    'destEventIndex' in transferResult && transferResult.destEventIndex.length > 0
-  /** Transfer just submitted from AH */
-  const isTransferSubmittedInSnowbridgeRes = 'submitted' in transferResult
-
-  switch (transferResult.status) {
-    case TransferStatus.Pending:
-      if (isBHChannelMsgDeliveredInSnowbridgeRes || isDestEventIdxInSubscanXCMRes)
-        return 'Arriving at Ethereum'
-      if (
-        isTransferSubmittedInSnowbridgeRes ||
-        !transferResult.destEventIndex ||
-        !isDestEventIdxInSubscanXCMRes
-      )
-        return 'Arriving at Bridge Hub'
-      // Default when the above conditions are not met
-      return 'Pending'
-
-    case TransferStatus.Complete:
-      return 'Transfer completed'
-
-    case TransferStatus.Failed:
-      return 'Transfer Failed'
-
-    default: // Should never happen
-      return 'Unknown status'
-  }
-}
-
-export function getTransferStatusToPolkadot(transferResult: ToPolkadotTransferResult) {
-  const { status, submitted } = transferResult
-
-  switch (status) {
-    case TransferStatus.Pending:
-      if (submitted) return 'Arriving at Bridge Hub'
-      return 'Pending'
-
-    case TransferStatus.Complete:
-      return 'Transfer completed'
-
-    case TransferStatus.Failed:
-      return 'Transfer Failed'
-
-    default: // Should never happen
-      return 'Unknown'
-  }
-}
-
-export function isCompletedTransfer(
-  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
-) {
-  return (
-    transferResult.status === TransferStatus.Complete ||
-    transferResult.status === TransferStatus.Failed
+  const transfers = await history.toPolkadotHistory(
+    assetHubScan,
+    bridgeHubScan,
+    searchRange,
+    skipLightClientUpdates,
+    bridgeHubParaId,
+    gateway,
+    ethereumProvider,
+    beacon_url,
   )
-}
-
-const getTransferTimestamp = (
-  transferResult: ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult,
-) =>
-  /** Get transfer timestamp from Snowbridge or Subscan XCM result */
-  'info' in transferResult
-    ? transferResult.info.when.getTime()
-    : transferResult.originBlockTimestamp
-
-export function getErrorMessage(err: unknown) {
-  let message = 'Unknown error'
-  if (err instanceof Error) {
-    message = err.message
-  }
-  console.error(message, err)
-  return message
+  return transfers
 }

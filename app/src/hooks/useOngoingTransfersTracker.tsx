@@ -1,21 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  ToEthereumTransferResult,
-  ToPolkadotTransferResult,
-  TransferStatus,
-} from '@snowbridge/api/dist/history'
+import { ToPolkadotTransferResult, TransferStatus } from '@snowbridge/api/dist/history'
 
 import { NotificationSeverity } from '@/models/notification'
 import { SubscanXCMTransferResult } from '@/models/subscan'
-import {
-  CompletedTransfer,
-  OngoingTransferWithDirection,
-  StoredTransfer,
-  TxStatus,
-} from '@/models/transfer'
+import { CompletedTransfer, OngoingTransferWithDirection, TxStatus } from '@/models/transfer'
 
 import { resolveDirection } from '@/services/transfer'
-import { getTransferStatus, isCompletedTransfer } from '@/utils/snowbridge'
+import {
+  findMatchingTransfer,
+  getTransferStatus,
+  isCompletedTransfer,
+} from '@/utils/transferTracking'
 import { getExplorerLink } from '@/utils/transfer'
 
 import useCompletedTransfers from './useCompletedTransfers'
@@ -25,9 +20,9 @@ import useNotification from './useNotification'
 type ID = string
 type Message = string
 
-const useSnowbridgeTransferTracker = () => {
+const useOngoingTransfersTracker = () => {
   const [transfers, setTransfers] = useState<
-    (ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult)[]
+    (ToPolkadotTransferResult | SubscanXCMTransferResult)[]
   >([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
@@ -94,7 +89,7 @@ const useSnowbridgeTransferTracker = () => {
     ongoingTransfers.forEach(ongoing => {
       if (transfers && 'error' in transfers) return
 
-      const foundTransfer = findOngoingTransfer(transfers, ongoing)
+      const foundTransfer = findMatchingTransfer(transfers, ongoing)
 
       if (foundTransfer) {
         const status = getTransferStatus(foundTransfer)
@@ -136,16 +131,4 @@ const useSnowbridgeTransferTracker = () => {
   return { transfers, loading, statusMessages, fetchTransfers }
 }
 
-const findOngoingTransfer = (
-  transfers: (ToEthereumTransferResult | ToPolkadotTransferResult | SubscanXCMTransferResult)[],
-  ongoingTransfer: StoredTransfer,
-) =>
-  transfers.find(transfer =>
-    'submitted' in transfer
-      ? 'extrinsic_hash' in transfer.submitted
-        ? transfer.submitted.extrinsic_hash === ongoingTransfer.id
-        : transfer.id === ongoingTransfer.id
-      : transfer.messageHash === ongoingTransfer.crossChainMessageHash,
-  )
-
-export default useSnowbridgeTransferTracker
+export default useOngoingTransfersTracker
