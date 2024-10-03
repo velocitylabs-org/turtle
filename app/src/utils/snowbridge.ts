@@ -17,14 +17,10 @@ export async function trackFromEthTx(
     return []
   }
   const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
-  if (!alchemyKey) {
-    throw Error('Missing Alchemy Key')
-  }
+  if (!alchemyKey) throw Error('Missing Alchemy Key')
 
   const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
-  if (!subscanKey) {
-    throw Error('Missing Subscan Key')
-  }
+  if (!subscanKey) throw Error('Missing Subscan Key')
 
   const ethereumProvider = new AlchemyProvider(env.ethChainId, alchemyKey)
 
