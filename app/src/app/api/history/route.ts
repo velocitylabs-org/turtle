@@ -11,7 +11,8 @@ import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfe
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { shouldUseTestnet } from '@/utils/env'
-import { getErrorMessage, getTransferHistory } from '@/utils/snowbridge'
+import { getTransferHistory } from '@/utils/snowbridge'
+import { getErrorMessage } from '@/utils/transferTracking'
 
 const CACHE_REVALIDATE_IN_SECONDS = 30
 
