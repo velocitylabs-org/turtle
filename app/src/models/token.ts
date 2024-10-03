@@ -13,5 +13,5 @@ export interface Token {
   //   - https://www.coingecko.com/en/coins/bifrost-native-coin
   //   - https://www.coingecko.com/en/coins/weth
   //   - https://www.coingecko.com/en/coins/ethereum
-  coingekoId?: string
+  coingeckoId?: string
 }

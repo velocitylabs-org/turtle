@@ -38,7 +38,7 @@ const useFees = (
     }
 
     const direction = resolveDirection(sourceChain, destinationChain)
-    // TODO: this should be the fee token, not necessirly the native token
+    // TODO: this should be the fee token, not necessirly the native token. Also adjust the USD value accordingly below.
     const nativeToken = getNativeToken(sourceChain)
 
     try {
@@ -74,9 +74,6 @@ const useFees = (
           const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
           const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
-          // TODO: Pass when querying the tokenPrice
-          // const tokenCoingekoId = tokenAmount.token.coingekoId ?? tokenAmount.token.symbol
-
           const tx = await atApi.createTransferTransaction(
             getDestChainId(destinationChain),
             recipient,
@@ -89,10 +86,13 @@ const useFees = (
               xcmVersion: 4, //todo(nuno): how to define this safely
             },
           )
+          // set token fees
           const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
-
           amount = feesInfo?.partialFee.toString() ?? '0'
-          tokenUSDValue = 0
+
+          // set USD fees
+          const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
+          tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
           // TODO(nuno): Support fees fetching for xcm transfers
           break
         }
