@@ -1,6 +1,6 @@
 import { subscan, environment } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { SubscanXCMTransferRawResponse, SubscanXCMTransferResult } from '@/models/subscan'
+import { SubscanTransferResponse, FromParachainTrackingRes } from '@/models/subscan'
 import { OngoingTransferWithDirection } from '@/models/transfer'
 
 export const trackFromParachainTx = async (
@@ -8,7 +8,7 @@ export const trackFromParachainTx = async (
   ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
   try {
-    const xcmTransfers: SubscanXCMTransferResult[] = []
+    const xcmTransfers: FromParachainTrackingRes[] = []
     if (!env.config.SUBSCAN_API) {
       console.warn(`No subscan api urls configured for ${env.name}`)
       return xcmTransfers
@@ -35,7 +35,7 @@ export const trackFromParachainTx = async (
         return xcmTransfers
       }
 
-      const transferData: SubscanXCMTransferRawResponse[] = query.json?.data?.list ?? []
+      const transferData: SubscanTransferResponse[] = query.json?.data?.list ?? []
       if (!transferData.length || !transferData[0]) {
         console.log(`No XCM transfer data found for message hash ${crossChainMessageHash}`)
         // Should not return an error as we want to continue looping to the others transfers
