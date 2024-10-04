@@ -170,7 +170,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 <p>{tx.token.symbol}</p>
                 {typeof tx.tokenUSDValue == 'number' && (
                   <p className="text-turtle-level5">
-                    {formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0))} $
+                    ${formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0))}
                   </p>
                 )}
               </div>
@@ -182,7 +182,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 <p>{formatAmount(toHuman(tx.fees.amount, tx.fees.token))}</p>
                 <p>{tx.fees.token.symbol}</p>
                 {tx.fees.inDollars > 0 && (
-                  <div className="text-turtle-level5">{formatAmount(tx.fees.inDollars)} $</div>
+                  <div className="text-turtle-level5">${formatAmount(tx.fees.inDollars)}</div>
                 )}
               </div>
             </div>
