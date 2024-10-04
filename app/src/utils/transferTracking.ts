@@ -27,10 +27,7 @@ export const trackTransfers = async (
 
   // Keep this until we can test & check tracking process for from Para to AH transfers
   if (ongoingTransfers.withinPolkadot.length) {
-    const parachainToAhTx = await trackFromParachainTx(
-      env,
-      ongoingTransfers.withinPolkadot,
-    )
+    const parachainToAhTx = await trackFromParachainTx(env, ongoingTransfers.withinPolkadot)
     console.log('From Parachain To AH transfer:', parachainToAhTx.length)
     transfers.push(...parachainToAhTx)
   }
