@@ -32,10 +32,11 @@ const useAssetTransferApi = () => {
       onSuccess,
     } = params
 
-    setStatus('Loading')
     try {
       if (!sourceChain.rpcConnection || !sourceChain.specName)
         throw new Error('Source chain is missing rpcConnection or specName')
+
+      const dryRunResult = await validate(params, setStatus)
 
       const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
       const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
@@ -153,6 +154,36 @@ const useAssetTransferApi = () => {
       handleSendError(e)
       setStatus('Idle')
     }
+  }
+
+  const validate = async (params: TransferParams, setStatus: (status: Status) => void) => {
+    setStatus('Validating')
+    const { sender, sourceChain, token, destinationChain, recipient, amount } = params
+
+    if (!sourceChain.rpcConnection || !sourceChain.specName)
+      throw new Error('Source chain is missing rpcConnection or specName')
+
+    const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
+    const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
+
+    const callInfo = await atApi.createTransferTransaction(
+      getDestChainId(destinationChain),
+      recipient,
+      // asset id
+      [token.symbol],
+      // the amount (pairs with the asset ids above)
+      [amount.toString()],
+      {
+        format: 'submittable',
+        xcmVersion: 4, //todo(nuno): pass safe value here
+        dryRunCall: true,
+        sendersAddr: sender.address,
+        xcmFeeAsset: 'BNC',
+      },
+    )
+
+    console.log('Dry run result:', callInfo)
+    return callInfo
   }
 
   const handleSendError = (e: unknown) => {
