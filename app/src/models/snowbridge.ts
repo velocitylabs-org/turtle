@@ -1,4 +1,4 @@
-import { history } from "@snowbridge/api"
+import { history } from '@snowbridge/api'
 
 export type SnowbridgeStatus = {
   ethBridgeStatus: number
