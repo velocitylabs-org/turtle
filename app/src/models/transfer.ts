@@ -37,11 +37,9 @@ export interface OngoingTransferWithDirection extends RawTransfer {
 }
 
 export interface OngoingTransfers {
-  toPolkadot: OngoingTransferWithDirection[]
-  toEthereum: {
-    fromAssetHub: OngoingTransferWithDirection[]
-    fromParachain: OngoingTransferWithDirection[]
-  }
+  toEthereum: OngoingTransferWithDirection[], // AH => Eth transfer
+  toPolkadot: OngoingTransferWithDirection[], // Eth => AH || Parachain transfer
+  withinPolkadot: OngoingTransferWithDirection[], // Parachain => AH transfer
 }
 
 export interface DisplaysTransfers {

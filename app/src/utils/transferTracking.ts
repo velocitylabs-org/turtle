@@ -19,18 +19,17 @@ export const trackTransfers = async (
     transfers.push(...ethToParaTx)
   }
 
-  if (ongoingTransfers.toEthereum.fromAssetHub.length) {
-    const ahToEthereumTx = await trackFromParachainTx(env, ongoingTransfers.toEthereum.fromAssetHub)
+  if (ongoingTransfers.toEthereum.length) {
+    const ahToEthereumTx = await trackFromParachainTx(env, ongoingTransfers.toEthereum)
     console.log('From AH To Ethereum transfer:', ahToEthereumTx.length)
     transfers.push(...ahToEthereumTx)
   }
 
-  // Keep this until we can test tracking from Para to AH
-  if (ongoingTransfers.toEthereum.fromParachain.length) {
-    // => TODO: need to rename toEthereum => toAH/refactor object
+  // Keep this until we can test & check tracking process for from Para to AH transfers
+  if (ongoingTransfers.withinPolkadot.length) {
     const parachainToAhTx = await trackFromParachainTx(
       env,
-      ongoingTransfers.toEthereum.fromParachain,
+      ongoingTransfers.withinPolkadot,
     )
     console.log('From Parachain To AH transfer:', parachainToAhTx.length)
     transfers.push(...parachainToAhTx)
