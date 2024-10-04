@@ -386,7 +386,7 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
-      sdk: 'AssetTransferApi',
+      sdk: 'SnowbridgeApi',
       tokens: [
         Mainnet.WETH.id,
         Mainnet.WBTC.id,
