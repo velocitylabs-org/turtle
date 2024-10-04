@@ -22,6 +22,7 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    specName: 'statemint',
     rpcConnection:
       process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL ||
       'wss://api-asset-hub-polkadot.dwellir.com',
@@ -385,7 +386,7 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
-      sdk: 'SnowbridgeApi',
+      sdk: 'AssetTransferApi',
       tokens: [
         Mainnet.WETH.id,
         Mainnet.WBTC.id,

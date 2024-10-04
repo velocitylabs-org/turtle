@@ -1,3 +1,4 @@
+import { getNativeToken } from '@/config/registry'
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
@@ -36,30 +37,18 @@ const useAssetTransferApi = () => {
       if (!sourceChain.rpcConnection || !sourceChain.specName)
         throw new Error('Source chain is missing rpcConnection or specName')
 
-      const dryRunResult = await validate(params, setStatus)
-
       const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
       const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
-      setStatus('Sending')
-      const txResult = await atApi.createTransferTransaction(
-        getDestChainId(destinationChain),
-        recipient,
-        // asset id
-        [token.symbol],
-        // the amount (pairs with the asset ids above)
-        [amount.toString()],
-        {
-          format: 'submittable',
-          xcmVersion: 4, //todo(nuno): pass safe value here
-        },
-      )
+      const dryRunResult = await validate(atApi, params, setStatus)
+      if (dryRunResult.xcmExecutionResult.isErr) throw new Error('Dry run failed')
 
+      setStatus('Sending')
       const account = sender as SubstrateAccount
       let isComplete = false
 
       await atApi.api
-        .tx(txResult.tx)
+        .tx(dryRunResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
           // verify transaction hash & transfer isn't completed
@@ -156,15 +145,13 @@ const useAssetTransferApi = () => {
     }
   }
 
-  const validate = async (params: TransferParams, setStatus: (status: Status) => void) => {
+  const validate = async (
+    atApi: AssetTransferApi,
+    params: TransferParams,
+    setStatus: (status: Status) => void,
+  ) => {
     setStatus('Validating')
     const { sender, sourceChain, token, destinationChain, recipient, amount } = params
-
-    if (!sourceChain.rpcConnection || !sourceChain.specName)
-      throw new Error('Source chain is missing rpcConnection or specName')
-
-    const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
-    const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
     const callInfo = await atApi.createTransferTransaction(
       getDestChainId(destinationChain),
@@ -178,11 +165,10 @@ const useAssetTransferApi = () => {
         xcmVersion: 4, //todo(nuno): pass safe value here
         dryRunCall: true,
         sendersAddr: sender.address,
-        xcmFeeAsset: 'BNC',
+        xcmFeeAsset: getNativeToken(sourceChain).symbol, // TODO: support other fee assets
       },
     )
 
-    console.log('Dry run result:', callInfo)
     return callInfo
   }
 
