@@ -44,7 +44,7 @@ _Parachain prerequisites coming soon._
 ✋ Be careful to schemas when updating any type models. (It must not happen often).<br/>
 => Check chain swap on the app, sourcechain/destchain filters, sourcechain/tokens filters (UI checks in the transfer form).
 
-**2. 🔐 Env. Variables:** Do not forget to update `NEXT_PUBLIC_PARACHAIN_API_URLS`, in your local env, in the _.env.local.example_ **& Vercel**. ✋ Be aware that adding some _PARACHAIN_API_URLS_ might break the production if not supported (let's remember Muse testnet token/chain with the duplicate parachain Id). Test locally by setting `shouldUseTestnet` constant to **`false`**.
+**2. 🔐 Env. Variables:** Do not forget to update `NEXT_PUBLIC_PARACHAIN_API_URLS`, in your local env, in the _.env.local.example_ **& Vercel**. ✋ Be aware that adding a duplicate parachain Id to _PARACHAIN_API_URLS_ might break production. Test locally by setting `shouldUseTestnet` constant to **`false`**.
 
 **3. ⚙️ Update Polkadot API/PAPI configuration:** (To fetch the balances)
 
