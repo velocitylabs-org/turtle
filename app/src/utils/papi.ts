@@ -1,5 +1,6 @@
 import { getLocalAssetId, Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
+import { ethMultilocationSchema } from '@/models/schemas'
 import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 import {
@@ -12,7 +13,6 @@ import {
 } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
-import { z } from 'zod'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */
 export type SupportedChains = typeof dotAh | typeof mythos | typeof bifrost
@@ -32,27 +32,6 @@ export const getApiDescriptorForChain = (chain: Chain) => {
       return dotAh // fallback
   }
 }
-
-const ethMultilocationSchema = z.object({
-  parents: z.string(),
-  interior: z.object({
-    X2: z.tuple([
-      z.object({
-        GlobalConsensus: z.object({
-          Ethereum: z.object({
-            chainId: z.string(),
-          }),
-        }),
-      }),
-      z.object({
-        AccountKey20: z.object({
-          network: z.nullable(z.string()),
-          key: z.string(),
-        }),
-      }),
-    ]),
-  }),
-})
 
 /** Convert a multilocation string to an XCM V3 PAPI object. Only supports Ethereum multilocations for now. */
 export const convertEthMultilocation = (multilocationString: string) => {
