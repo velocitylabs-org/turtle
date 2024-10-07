@@ -80,6 +80,10 @@
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--letter-spacing-default);
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-smooth: never;
   }
 
   .xxl-letter-spacing {
