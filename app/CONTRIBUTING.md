@@ -30,7 +30,7 @@ _Parachain prerequisites coming soon._
 - add chain or update existing chain with all the fields required by the chain type: find a reliable source for the logo, check the supported address type (evm, or substrate), destinationFeeDOT, specName, rpcConnection, skipExistentialDepositCheck, maxConsumers, etc.
   => Some missing information can be found on [Snowbridge SDK](https://github.com/Snowfork/snowbridge/blob/main/web/packages/api/src/environment.ts) or [AT API Registy.](https://github.dev/paritytech/asset-transfer-api-registry/blob/main/docs/registry.json)
 
-- add token if needed: again, find the logo from a reliable source, data (token address or an empty string if not available, multilocation (…))
+- add token if needed: again, find the logo from a reliable source, data (token address or an empty string if not available, multilocation, etc)
 
 - update testnet or mainnet registry constant:
 
