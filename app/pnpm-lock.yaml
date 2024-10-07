@@ -54,8 +54,8 @@ importers:
         specifier: ^0.1.19
         version: 0.1.19(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@substrate/asset-transfer-api':
-        specifier: ^0.4.1
-        version: 0.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+        specifier: ^0.4.2
+        version: 0.4.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@talisman-connect/ui':
         specifier: ^1.1.1
         version: 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4297,8 +4297,8 @@ packages:
   '@substrate/asset-transfer-api-registry@0.2.22':
     resolution: {integrity: sha512-xQ6Nf2doVdskwWAz4vVcI3/uz55brLNOT4fSuQ2VOY3XAlHESP3CXTUpD308u0XA48L1gw7JE2E+DEQqg7OIzw==}
 
-  '@substrate/asset-transfer-api@0.4.1':
-    resolution: {integrity: sha512-njXys98IgP9p+uAl+JJtn81/RIIYOKvtg2yJHtrFqjxjcEOuqjJP7+3jBuEzsYv1NXYsxwbJV364jj/fL0DELw==}
+  '@substrate/asset-transfer-api@0.4.2':
+    resolution: {integrity: sha512-uR31pvD5ZaZkv8f43GFQlSLAwvGPhiTJxYC4qvG9Ptwh66PtrfTnBofjFeex9zvBGY9F83LZGZQVUC0jdS9V1w==}
     engines: {node: '>=18.14'}
 
   '@substrate/connect-extension-protocol@1.0.1':
@@ -13994,9 +13994,9 @@ snapshots:
 
   '@polkadot-api/substrate-bindings@0.6.0':
     dependencies:
-      '@noble/hashes': 1.4.0
+      '@noble/hashes': 1.5.0
       '@polkadot-api/utils': 0.1.0
-      '@scure/base': 1.1.7
+      '@scure/base': 1.1.9
       scale-ts: 1.6.0
     optional: true
 
@@ -14767,15 +14767,15 @@ snapshots:
 
   '@polkadot/util-crypto@13.1.1(@polkadot/util@13.1.1)':
     dependencies:
-      '@noble/curves': 1.4.0
-      '@noble/hashes': 1.4.0
+      '@noble/curves': 1.6.0
+      '@noble/hashes': 1.5.0
       '@polkadot/networks': 13.1.1
       '@polkadot/util': 13.1.1
       '@polkadot/wasm-crypto': 7.3.2(@polkadot/util@13.1.1)(@polkadot/x-randomvalues@13.1.1(@polkadot/util@13.1.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.1.1)))
       '@polkadot/wasm-util': 7.3.2(@polkadot/util@13.1.1)
       '@polkadot/x-bigint': 13.1.1
       '@polkadot/x-randomvalues': 13.1.1(@polkadot/util@13.1.1)(@polkadot/wasm-util@7.3.2(@polkadot/util@13.1.1))
-      '@scure/base': 1.1.7
+      '@scure/base': 1.1.9
       tslib: 2.7.0
 
   '@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1)':
@@ -16897,7 +16897,7 @@ snapshots:
 
   '@substrate/asset-transfer-api-registry@0.2.22': {}
 
-  '@substrate/asset-transfer-api@0.4.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@substrate/asset-transfer-api@0.4.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/api': 13.2.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@substrate/asset-transfer-api-registry': 0.2.22
