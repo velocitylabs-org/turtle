@@ -19,7 +19,7 @@ We've setup linters and formatters to help catch errors and improve the developm
 
 **All modifications** must be made in a **pull-request** to solicit feedback from other contributors.
 
-## Information, contributors might be looking for
+## Guides
 
 ### How to support a new parachain
 
