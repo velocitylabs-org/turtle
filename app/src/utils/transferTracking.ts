@@ -1,10 +1,10 @@
 import { environment } from '@snowbridge/api'
 import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
 import { trackFromParachainTx } from './subscan'
-import { FromParachainTrackingRes } from '@/models/subscan'
+import { FromParachainTrackingResult } from '@/models/subscan'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { trackFromEthTx } from './snowbridge'
-import { FromEthTrackingRes } from '@/models/snowbridge'
+import { FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (
   env: environment.SnowbridgeEnvironment,
@@ -50,7 +50,7 @@ export function getTransferStatus(transferResult: TxTrackingResult) {
   return getTransferStatusToPolkadot(transferResult)
 }
 
-export function getTransferStatusFromParachain(transferResult: FromParachainTrackingRes) {
+export function getTransferStatusFromParachain(transferResult: FromParachainTrackingResult) {
   /** Destination Event Index available */
   const isDestEventIdxInSubscanXCMRes =
     'destEventIndex' in transferResult && transferResult.destEventIndex.length > 0
@@ -75,7 +75,7 @@ export function getTransferStatusFromParachain(transferResult: FromParachainTrac
   }
 }
 
-export function getTransferStatusToPolkadot(transferResult: FromEthTrackingRes) {
+export function getTransferStatusToPolkadot(transferResult: FromEthTrackingResult) {
   const { status, submitted } = transferResult
 
   switch (status) {

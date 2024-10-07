@@ -1,6 +1,6 @@
 import { subscan, environment } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { SubscanTransferResponse, FromParachainTrackingRes } from '@/models/subscan'
+import { SubscanTransferResponse, FromParachainTrackingResult } from '@/models/subscan'
 import { OngoingTransferWithDirection } from '@/models/transfer'
 
 export const trackFromParachainTx = async (
@@ -8,7 +8,7 @@ export const trackFromParachainTx = async (
   ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
   try {
-    const xcmTransfers: FromParachainTrackingRes[] = []
+    const xcmTransfers: FromParachainTrackingResult[] = []
     if (!env.config.SUBSCAN_API) {
       console.warn(`No subscan api urls configured for ${env.name}`)
       return xcmTransfers

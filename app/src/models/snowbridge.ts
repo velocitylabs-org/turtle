@@ -5,4 +5,4 @@ export type SnowbridgeStatus = {
   polkadotBridgeStatus: number
 }
 
-export type FromEthTrackingRes = history.ToPolkadotTransferResult
+export type FromEthTrackingResult = history.ToPolkadotTransferResult

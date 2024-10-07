@@ -4,8 +4,8 @@ import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
 
 import { Chain } from './chain'
-import { FromParachainTrackingRes } from './subscan'
-import { FromEthTrackingRes } from './snowbridge'
+import { FromParachainTrackingResult } from './subscan'
+import { FromEthTrackingResult } from './snowbridge'
 import { Token } from './token'
 
 export interface RawTransfer {
@@ -88,4 +88,4 @@ export enum TransferTab {
 }
 export type TransferTabOptions = TransferTab
 
-export type TxTrackingResult = FromEthTrackingRes | FromParachainTrackingRes
+export type TxTrackingResult = FromEthTrackingResult | FromParachainTrackingResult

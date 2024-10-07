@@ -44,7 +44,7 @@ type SubscanXCMMetadata = {
   messageId?: string
 }
 
-export type FromParachainTrackingRes = {
+export type FromParachainTrackingResult = {
   messageHash: string
   originEventIndex: string // Parachain/AH transfer block index
   fromAccountId: string

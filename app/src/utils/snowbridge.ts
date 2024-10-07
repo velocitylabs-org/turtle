@@ -1,7 +1,7 @@
 import { AlchemyProvider } from 'ethers'
 import { environment, subscan, history } from '@snowbridge/api'
 import { IGateway__factory } from '@snowbridge/contract-types'
-import { FromEthTrackingRes } from '@/models/snowbridge'
+import { FromEthTrackingResult } from '@/models/snowbridge'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
 export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 2 // 2 days
@@ -12,7 +12,7 @@ export async function trackFromEthTx(
   env: environment.SnowbridgeEnvironment,
   skipLightClientUpdates = SKIP_LIGHT_CLIENT_UPDATES,
   historyInSeconds = HISTORY_IN_SECONDS,
-): Promise<FromEthTrackingRes[]> {
+): Promise<FromEthTrackingResult[]> {
   if (!env.config.SUBSCAN_API) {
     console.warn(`No subscan api urls configured for ${env.name}`)
     return []
