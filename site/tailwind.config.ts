@@ -69,7 +69,8 @@ const config: Config = {
         sm: '0.03em',
       },
       screens: {
-        '3xl': '2100px',
+        '3xl': '1730px',
+        '4xl': '2100px',
       },
     },
   },
