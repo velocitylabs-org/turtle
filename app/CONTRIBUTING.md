@@ -48,7 +48,7 @@ _Parachain prerequisites coming soon._
 
 **3. ⚙️ Update Polkadot API/PAPI configuration:** (To fetch the balances)
 
-- codegen metadata: add the chain with `npx papi add chainName -w wss://blabla…`
+- codegen metadata: add the chain with `npx papi add chainName -w wss://example-endpoint…`
 - run `pnpm i` again
 - import chainName in the code. Update `src/utils/papi.ts` to support the new type.
 
