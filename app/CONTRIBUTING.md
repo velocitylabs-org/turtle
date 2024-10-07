@@ -6,7 +6,7 @@ Turtle is developed with Typescript, Nextjs, and React.
 
 ## Contribution Model
 
-The `main` branch refers to the last stable version of <a href="https://app.turtle.cool"><strong>Turtle app</strong></a>. Each pull request should be initiated against the `main` branch and must be approved by at least, one member of the tech team.
+The `main` branch refers to the last stable version of <a href="https://app.turtle.cool"><strong>Turtle app</strong></a>. Each pull request should be initiated against the `main` branch and must be approved by at least one member of the tech team.
 
 ## Code Guidelines
 
