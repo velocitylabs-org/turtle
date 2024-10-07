@@ -93,7 +93,6 @@ const useFees = (
           // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
-          // TODO(nuno): Support fees fetching for xcm transfers
           break
         }
 
