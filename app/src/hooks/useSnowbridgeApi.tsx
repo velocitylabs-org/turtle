@@ -160,8 +160,7 @@ const useSnowbridgeApi = () => {
 
       const senderAddress = await getSenderAddress(sender)
       const tokenData = await getErc20TokenUSDValue(token.address)
-      const tokenUSDValue =
-        tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+      const tokenUSDValue = tokenData && Object.keys(tokenData).length > 0 ? tokenData.usd : 0
       const date = new Date()
 
       addTransferToStorage({
