@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ToPolkadotTransferResult, TransferStatus } from '@snowbridge/api/dist/history'
+import { TransferStatus } from '@snowbridge/api/dist/history'
 
 import { NotificationSeverity } from '@/models/notification'
-import { SubscanXCMTransferResult } from '@/models/subscan'
-import { CompletedTransfer, OngoingTransferWithDirection, TxStatus } from '@/models/transfer'
+import {
+  CompletedTransfer,
+  OngoingTransferWithDirection,
+  TxStatus,
+  TxTrackingResult,
+} from '@/models/transfer'
 
 import { resolveDirection } from '@/services/transfer'
 import {
@@ -21,9 +25,7 @@ type ID = string
 type Message = string
 
 const useOngoingTransfersTracker = () => {
-  const [transfers, setTransfers] = useState<
-    (ToPolkadotTransferResult | SubscanXCMTransferResult)[]
-  >([])
+  const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
   const { removeTransfer: removeOngoingTransfer, ongoingTransfers } = useOngoingTransfers()
@@ -57,7 +59,7 @@ const useOngoingTransfersTracker = () => {
         },
         body: JSON.stringify({ ongoingTransfers: formattedTransfers }),
       })
-      const data = await response.json()
+      const data: TxTrackingResult[] = await response.json()
       setTransfers(data)
     } catch (error) {
       console.error(error)

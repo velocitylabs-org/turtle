@@ -1,11 +1,12 @@
-import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Dispatch, SetStateAction } from 'react'
-
+import { Direction } from '@/services/transfer'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
 
 import { Chain } from './chain'
+import { FromParachainTrackingResult } from './subscan'
+import { FromEthTrackingResult } from './snowbridge'
 import { Token } from './token'
-import { Direction } from '@/services/transfer'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
@@ -36,11 +37,9 @@ export interface OngoingTransferWithDirection extends RawTransfer {
 }
 
 export interface OngoingTransfers {
-  toPolkadot: OngoingTransferWithDirection[]
-  toEthereum: {
-    fromAssetHub: OngoingTransferWithDirection[]
-    fromParachain: OngoingTransferWithDirection[]
-  }
+  toEthereum: OngoingTransferWithDirection[] // AH => Eth transfer
+  toPolkadot: OngoingTransferWithDirection[] // Eth => AH || Parachain transfer
+  withinPolkadot: OngoingTransferWithDirection[] // Parachain => AH transfer
 }
 
 export interface DisplaysTransfers {
@@ -88,3 +87,5 @@ export enum TransferTab {
   Completed = 'Completed',
 }
 export type TransferTabOptions = TransferTab
+
+export type TxTrackingResult = FromEthTrackingResult | FromParachainTrackingResult

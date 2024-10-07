@@ -1,16 +1,17 @@
 import { environment } from '@snowbridge/api'
-import { OngoingTransfers, StoredTransfer } from '@/models/transfer'
+import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
 import { trackFromParachainTx } from './subscan'
-import { SubscanXCMTransferResult } from '@/models/subscan'
-import { ToPolkadotTransferResult, TransferStatus } from '@snowbridge/api/dist/history'
+import { FromParachainTrackingResult } from '@/models/subscan'
+import { TransferStatus } from '@snowbridge/api/dist/history'
 import { trackFromEthTx } from './snowbridge'
+import { FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (
   env: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransfers,
 ) => {
   console.log('Fetching transfer history.')
-  const transfers: (ToPolkadotTransferResult | SubscanXCMTransferResult)[] = []
+  const transfers: TxTrackingResult[] = []
 
   if (ongoingTransfers.toPolkadot.length) {
     const ethToParaTx = await trackFromEthTx(env)
@@ -18,19 +19,15 @@ export const trackTransfers = async (
     transfers.push(...ethToParaTx)
   }
 
-  if (ongoingTransfers.toEthereum.fromAssetHub.length) {
-    const ahToEthereumTx = await trackFromParachainTx(env, ongoingTransfers.toEthereum.fromAssetHub)
+  if (ongoingTransfers.toEthereum.length) {
+    const ahToEthereumTx = await trackFromParachainTx(env, ongoingTransfers.toEthereum)
     console.log('From AH To Ethereum transfer:', ahToEthereumTx.length)
     transfers.push(...ahToEthereumTx)
   }
 
-  // Keep this until we can test tracking from Para to AH
-  if (ongoingTransfers.toEthereum.fromParachain.length) {
-    // => TODO: need to rename toEthereum => toAH/refactor object
-    const parachainToAhTx = await trackFromParachainTx(
-      env,
-      ongoingTransfers.toEthereum.fromParachain,
-    )
+  // Keep this until we can test & check tracking process for from Para to AH transfers
+  if (ongoingTransfers.withinPolkadot.length) {
+    const parachainToAhTx = await trackFromParachainTx(env, ongoingTransfers.withinPolkadot)
     console.log('From Parachain To AH transfer:', parachainToAhTx.length)
     transfers.push(...parachainToAhTx)
   }
@@ -38,27 +35,22 @@ export const trackTransfers = async (
   return transfers.sort((a, b) => getTransferTimestamp(b) - getTransferTimestamp(a))
 }
 
-const getTransferTimestamp = (
-  transferResult: ToPolkadotTransferResult | SubscanXCMTransferResult,
-) =>
+const getTransferTimestamp = (transferResult: TxTrackingResult) =>
   /** Get transfer timestamp from or to prachain tx */
   'info' in transferResult
     ? transferResult.info.when.getTime()
     : transferResult.originBlockTimestamp
 
-export function getTransferStatus(
-  transferResult: ToPolkadotTransferResult | SubscanXCMTransferResult,
-) {
+export function getTransferStatus(transferResult: TxTrackingResult) {
   /**  Checks if the transfer from or to prachain tx*/
   const isFromParachainTx = 'destEventIndex' in transferResult && !('info' in transferResult)
   /** Retrieves the status of a transfer from a Parachain to AH or ETH */
-  if (isFromParachainTx)
-    return getTransferStatusFromParachain(transferResult as SubscanXCMTransferResult)
+  if (isFromParachainTx) return getTransferStatusFromParachain(transferResult)
   /** Retrieves the status of a transfer from Eth to a Parachain/AH */
-  return getTransferStatusToPolkadot(transferResult as ToPolkadotTransferResult)
+  return getTransferStatusToPolkadot(transferResult)
 }
 
-export function getTransferStatusFromParachain(transferResult: SubscanXCMTransferResult) {
+export function getTransferStatusFromParachain(transferResult: FromParachainTrackingResult) {
   /** Destination Event Index available */
   const isDestEventIdxInSubscanXCMRes =
     'destEventIndex' in transferResult && transferResult.destEventIndex.length > 0
@@ -83,7 +75,7 @@ export function getTransferStatusFromParachain(transferResult: SubscanXCMTransfe
   }
 }
 
-export function getTransferStatusToPolkadot(transferResult: ToPolkadotTransferResult) {
+export function getTransferStatusToPolkadot(transferResult: FromEthTrackingResult) {
   const { status, submitted } = transferResult
 
   switch (status) {
@@ -102,9 +94,7 @@ export function getTransferStatusToPolkadot(transferResult: ToPolkadotTransferRe
   }
 }
 
-export function isCompletedTransfer(
-  transferResult: ToPolkadotTransferResult | SubscanXCMTransferResult,
-) {
+export function isCompletedTransfer(transferResult: TxTrackingResult) {
   return (
     transferResult.status === TransferStatus.Complete ||
     transferResult.status === TransferStatus.Failed
@@ -112,7 +102,7 @@ export function isCompletedTransfer(
 }
 
 export const findMatchingTransfer = (
-  transfers: (ToPolkadotTransferResult | SubscanXCMTransferResult)[],
+  transfers: TxTrackingResult[],
   ongoingTransfer: StoredTransfer,
 ) =>
   transfers.find(transfer =>
