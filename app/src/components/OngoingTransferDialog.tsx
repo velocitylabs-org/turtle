@@ -142,10 +142,10 @@ export const OngoingTransferDialog = ({
                 <p>{transfer.token.symbol}</p>
                 {typeof transfer.tokenUSDValue == 'number' && (
                   <p className="text-turtle-level5">
+                    $
                     {formatAmount(
                       toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
                     )}{' '}
-                    $
                   </p>
                 )}
               </div>
@@ -157,9 +157,7 @@ export const OngoingTransferDialog = ({
                 <p>{formatAmount(toHuman(transfer.fees.amount, transfer.fees.token))}</p>
                 <p>{transfer.fees.token.symbol}</p>
                 {transfer.fees.inDollars >= 0 && (
-                  <div className="text-turtle-level5">
-                    {formatAmount(transfer.fees.inDollars)} $
-                  </div>
+                  <div className="text-turtle-level5">${formatAmount(transfer.fees.inDollars)}</div>
                 )}
               </div>
             </div>
@@ -171,10 +169,10 @@ export const OngoingTransferDialog = ({
                 <p>{transfer.token.symbol}</p>
                 {typeof transfer.tokenUSDValue == 'number' && (
                   <p className="text-turtle-level5">
+                    $
                     {formatAmount(
                       toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
                     )}{' '}
-                    $
                   </p>
                 )}
               </div>

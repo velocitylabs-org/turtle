@@ -36,9 +36,11 @@ export const FeatureCard = ({
         width={126}
         className="rounded-[26px] bg-secondary"
       />
-      <h3 className="max-w-xl break-words text-2xl font-medium sm:text-4xl xl:text-h-sub xl:leading-12 ">
-        {feature.title}
-      </h3>
+      <h3
+        lang="en"
+        className="max-w-xl hyphens-auto text-2xl font-medium sm:text-4xl xl:text-h-sub xl:leading-12"
+        dangerouslySetInnerHTML={{ __html: feature.title }}
+      ></h3>
       <p className="text-sm font-medium tracking-[0.03rem] sm:w-5/6">{feature.description}</p>
       {feature.tags && (
         <div className="flex space-x-1 sm:space-x-2">

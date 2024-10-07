@@ -6,7 +6,7 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
-import useSnowbridgeTransferTracker from '@/hooks/useSnowbridgeTransferTracker'
+import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 import { ArrowRight } from './svg/ArrowRight'
 import { colors } from '../../tailwind.config'
 
@@ -34,7 +34,7 @@ const OngoingTransfers = ({
     isSnowbridgeContextLoading: transferContextLoading,
     snowbridgeContextError: transferContextError,
   } = useSnowbridgeContext()
-  const { statusMessages } = useSnowbridgeTransferTracker()
+  const { statusMessages } = useOngoingTransfersTracker()
 
   const { data: estimatedTransferDuration, error: estimatedTransferDurationError } = useQuery({
     queryKey: ['transferStatus', transferContextLoading, ongoingTransfers.length],
