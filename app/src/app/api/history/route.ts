@@ -21,25 +21,29 @@ const getCachedTransferHistory = unstable_cache(
 
     try {
       const transfers: OngoingTransfers = {
-        toPolkadot: [],
-        toEthereum: {
-          fromAssetHub: [],
-          fromParachain: [],
-        },
+        toEthereum: [], // AH => Eth transfer
+        toPolkadot: [], // Eth => AH || Parachain transfer
+        withinPolkadot: [], // Parachain => AH transfer
       }
 
       ongoingTransfers.map(transfer => {
         switch (transfer.direction) {
           case Direction.ToEthereum: {
             if (transfer.sourceChain.chainId === env.config.ASSET_HUB_PARAID) {
-              transfers.toEthereum.fromAssetHub.push(transfer)
+              transfers.toEthereum.push(transfer)
             } else {
-              transfers.toEthereum.fromParachain.push(transfer)
+              console.log('Direct Parachain => Eth tracking to be implemented/verified')
+              // Confirm the tracking process for direct Para to Eth transfer once supported
+              // If tracking process: remove the if/else check
             }
             break
           }
           case Direction.ToPolkadot: {
             transfers.toPolkadot.push(transfer)
+            break
+          }
+          case Direction.WithinPolkadot: {
+            transfers.withinPolkadot.push(transfer)
             break
           }
           default:
