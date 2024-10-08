@@ -50,3 +50,24 @@ export const schema = z.object({
   tokenAmount: tokenAmountSchema,
   manualRecipient: manualRecipientSchema,
 })
+
+export const ethMultilocationSchema = z.object({
+  parents: z.string(),
+  interior: z.object({
+    X2: z.tuple([
+      z.object({
+        GlobalConsensus: z.object({
+          Ethereum: z.object({
+            chainId: z.string(),
+          }),
+        }),
+      }),
+      z.object({
+        AccountKey20: z.object({
+          network: z.nullable(z.string()),
+          key: z.string(),
+        }),
+      }),
+    ]),
+  }),
+})
