@@ -23,7 +23,7 @@ const getCachedTransferHistory = unstable_cache(
       const transfers: OngoingTransfers = {
         toEthereum: [], // AH => Eth transfer
         toPolkadot: [], // Eth => AH || Parachain transfer
-        withinPolkadot: [], // Parachain => AH transfer
+        withinPolkadot: [], // XCM transfer: Parachain to AH, AH to Parachain, Parachain to Parachain, etc
       }
 
       ongoingTransfers.map(transfer => {
