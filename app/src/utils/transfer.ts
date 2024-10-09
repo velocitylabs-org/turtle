@@ -119,20 +119,34 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     sendResult: result,
     sender,
     id,
+    uniqueTrackingId,
   } = transfer
   const explorersUrls = EXPLORERS[environment]
   switch (network) {
     case Network.Ethereum: {
       if (result?.success?.ethereum && 'transactionHash' in result.success.ethereum)
         return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
+
+      // Default Ethereum network explorer link:
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
     case Network.Polkadot: {
       if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
       const env = getEnvironment(environment)
+
+      if (uniqueTrackingId) {
+        const explorerLink =
+          environment === Environment.Mainnet
+            ? `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/polkadot-${uniqueTrackingId}`
+            : `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/rococo-${uniqueTrackingId}`
+        return explorerLink
+      }
+
       if (chainId === env.config.ASSET_HUB_PARAID)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${id}`
+
+      // Default Polkadot network explorer link:
       return `${removeURLSlash(explorersUrls.subscan_relaychain)}/account/${sender}?tab=xcm_transfer`
     }
     default:
