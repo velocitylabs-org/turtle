@@ -80,7 +80,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                       alt={value.token.name}
                       width={24}
                       height={24}
-                      className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
+                      className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
                     />
                     <span className="text-nowrap" data-cy="token-select-symbol">
                       {value.token.symbol}
@@ -134,7 +134,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   width={24}
                   height={24}
                   priority
-                  className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground"
+                  className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
                 />
                 <span className="text-sm">{option.token.symbol}</span>
               </li>
