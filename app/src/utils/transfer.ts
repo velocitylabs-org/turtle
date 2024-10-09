@@ -1,10 +1,11 @@
-import { ethers } from 'ethers'
-
+import { getEnvironment } from '@/context/snowbridge'
+import { Sender } from '@/hooks/useTransfer'
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Fees, StoredTransfer } from '@/models/transfer'
-import { Environment } from '@/store/environmentStore'
 import { Direction } from '@/services/transfer'
+import { Environment } from '@/store/environmentStore'
+import { ethers, JsonRpcSigner } from 'ethers'
 
 /**
  * Safe version of `convertAmount` that handles `null` params
@@ -101,36 +102,50 @@ const EXPLORERS: { [environment in Environment]: { [explorerName: string]: strin
     etherscan: 'https://sepolia.etherscan.io/',
     subscan_assethub: 'https://assethub-rococo.subscan.io/',
     subscan_brigehub: 'https://bridgehub-rococo.subscan.io/',
+    subscan_relaychain: 'https://rococo.subscan.io/',
   },
   [Environment.Mainnet]: {
     etherscan: 'https://etherscan.io/',
     subscan_assethub: 'https://assethub-polkadot.subscan.io/',
     subscan_brigehub: 'https://bridgehub-polkadot.subscan.io/',
+    subscan_relaychain: 'https://polkadot.subscan.io/',
   },
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const {
     environment,
-    sourceChain: { network },
+    sourceChain: { network, chainId },
     sendResult: result,
     sender,
+    id,
   } = transfer
   const explorersUrls = EXPLORERS[environment]
   switch (network) {
     case Network.Ethereum: {
-      if (result.success?.ethereum && 'transactionHash' in result.success.ethereum)
+      if (result?.success?.ethereum && 'transactionHash' in result.success.ethereum)
         return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
     case Network.Polkadot: {
-      if (result.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
+      if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
-      return `${removeURLSlash(explorersUrls.subscan_assethub)}/account/${sender}`
+      const env = getEnvironment(environment)
+      if (chainId === env.config.ASSET_HUB_PARAID)
+        return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${id}`
+      return `${removeURLSlash(explorersUrls.subscan_relaychain)}/account/${sender}?tab=xcm_transfer`
     }
     default:
       console.log(`Unsupported network: ${network}`)
   }
+}
+
+export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
+  if (!(error instanceof Error)) return false
+
+  if (sender instanceof JsonRpcSigner)
+    return error.message.includes('ethers-user-denied') // Ethers connection
+  else return error.message.includes('Cancelled') // Substrate connection
 }
 
 //todo(team): query the right sdk to get the appropriate duration estimate

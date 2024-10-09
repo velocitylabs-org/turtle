@@ -28,11 +28,11 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
         transferSucceeded
-          ? 'border-turtle-level3  hover:bg-turtle-level1'
-          : 'border-turtle-error  hover:border-turtle-error-dark',
+          ? 'border-turtle-level3 hover:bg-turtle-level1'
+          : 'border-turtle-error hover:border-turtle-error-dark',
       )}
     >
-      <div className="w-full space-y-2 ">
+      <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex max-w-xs space-x-2 overflow-x-auto">
             <div>{statusIcon(tx.result)}</div>

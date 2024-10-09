@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
 import { getSnowBridgeContext } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
+import { useQuery } from '@tanstack/react-query'
 
 const useSnowbridgeContext = () => {
-  const { environment } = useEnvironment()
+  const environment = useEnvironment()
 
   const {
     data: snowbridgeContext,

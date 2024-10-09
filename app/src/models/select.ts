@@ -1,10 +1,10 @@
-import { ReactNode } from 'react'
 import { Token } from '@/models/token'
+import { ReactNode } from 'react'
 
 export interface SelectProps<T> {
   value: T | null
   onChange: (newValue: T | null) => void
-  options: T[]
+  options: (T & { allowed: boolean })[]
   floatingLabel?: string
   placeholder?: string
   placeholderIcon?: ReactNode

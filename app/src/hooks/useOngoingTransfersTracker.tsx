@@ -1,24 +1,31 @@
-import { CompletedTransfer, TxStatus } from '@/models/transfer'
-import { getTransferStatus, isCompletedTransfer } from '@/utils/snowbridge'
-import { getExplorerLink } from '@/utils/transfer'
-import {
-  ToEthereumTransferResult,
-  ToPolkadotTransferResult,
-  TransferStatus,
-} from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { TransferStatus } from '@snowbridge/api/dist/history'
+
+import { NotificationSeverity } from '@/models/notification'
+import {
+  CompletedTransfer,
+  OngoingTransferWithDirection,
+  TxStatus,
+  TxTrackingResult,
+} from '@/models/transfer'
+
+import { resolveDirection } from '@/services/transfer'
+import {
+  findMatchingTransfer,
+  getTransferStatus,
+  isCompletedTransfer,
+} from '@/utils/transferTracking'
+import { getExplorerLink } from '@/utils/transfer'
+
 import useCompletedTransfers from './useCompletedTransfers'
 import useOngoingTransfers from './useOngoingTransfers'
-import { NotificationSeverity } from '@/models/notification'
 import useNotification from './useNotification'
 
 type ID = string
 type Message = string
 
-const useSnowbridgeTransferTracker = () => {
-  const [transfers, setTransfers] = useState<
-    (ToEthereumTransferResult | ToPolkadotTransferResult)[]
-  >([])
+const useOngoingTransfersTracker = () => {
+  const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
   const { removeTransfer: removeOngoingTransfer, ongoingTransfers } = useOngoingTransfers()
@@ -26,17 +33,40 @@ const useSnowbridgeTransferTracker = () => {
   const { addNotification } = useNotification()
 
   const fetchTransfers = useCallback(async () => {
+    const formattedTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
+      const direction = resolveDirection(t.sourceChain, t.destChain)
+      return {
+        id: t.id,
+        sourceChain: t.sourceChain,
+        destChain: t.destChain,
+        sender: t.sender,
+        recipient: t.recipient,
+        token: t.token,
+        date: t.date,
+        direction,
+        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
+        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+      }
+    })
+    if (!formattedTransfers.length) return
+
     try {
       setLoading(true)
-      const response = await fetch('/api/history')
-      const data = await response.json()
+      const response = await fetch('/api/history', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ongoingTransfers: formattedTransfers }),
+      })
+      const data: TxTrackingResult[] = await response.json()
       setTransfers(data)
     } catch (error) {
       console.error(error)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [ongoingTransfers])
 
   const ongoingTransfersRef = useRef(ongoingTransfers)
 
@@ -60,10 +90,12 @@ const useSnowbridgeTransferTracker = () => {
   useEffect(() => {
     ongoingTransfers.forEach(ongoing => {
       if (transfers && 'error' in transfers) return
-      const foundTransfer = transfers.find(transfer => transfer.id === ongoing.id)
+
+      const foundTransfer = findMatchingTransfer(transfers, ongoing)
+
       if (foundTransfer) {
-        const msg = getStatusMessage(foundTransfer)
-        setStatusMessages(prev => ({ ...prev, [ongoing.id]: msg }))
+        const status = getTransferStatus(foundTransfer)
+        setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
@@ -98,11 +130,7 @@ const useSnowbridgeTransferTracker = () => {
     })
   }, [transfers, addCompletedTransfer, removeOngoingTransfer, ongoingTransfers, addNotification])
 
-  const getStatusMessage = (result: ToEthereumTransferResult | ToPolkadotTransferResult) => {
-    return getTransferStatus(result)
-  }
-
   return { transfers, loading, statusMessages, fetchTransfers }
 }
 
-export default useSnowbridgeTransferTracker
+export default useOngoingTransfersTracker

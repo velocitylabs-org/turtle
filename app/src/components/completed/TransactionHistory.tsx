@@ -2,6 +2,7 @@ import { CompletedTransfer, TransfersByDate } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
 
 import { TransactionDialog } from './TransactionDialog'
+import { cn } from '@/utils/cn'
 
 const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[] }) => {
   const transactionsByDate = transactions.reduce<TransfersByDate>((acc, transaction) => {
@@ -32,7 +33,7 @@ const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[
       {mappedTransactionsByDate.map(({ date, transactions }, idx) => (
         <div key={idx + date + transactions.length}>
           <div className="w-full space-y-3">
-            <p className="tx-group-date mb-[-1] mt-5 text-sm">
+            <p className={cn('tx-group-date mb-[-1] text-sm', idx !== 0 && 'mt-5')}>
               {formatCompletedTransferDate(date)}
             </p>
             {transactions.map((tx, idx) => (

@@ -22,6 +22,7 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
     x.config.ASSET_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL || ''
     x.config.BRIDGE_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_BRIDGE_HUB_API_URL || ''
     x.config.RELAY_CHAIN_URL = process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || ''
+    x.config.PARACHAINS = JSON.parse(process.env.NEXT_PUBLIC_PARACHAIN_API_URLS || '')
   }
 
   if (x === undefined) {
