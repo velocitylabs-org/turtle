@@ -133,16 +133,14 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     case Network.Polkadot: {
       if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
+
+      if (uniqueTrackingId)
+        return environment === Environment.Mainnet
+          ? `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/polkadot-${uniqueTrackingId}`
+          : `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/rococo-${uniqueTrackingId}`
+
+
       const env = getEnvironment(environment)
-
-      if (uniqueTrackingId) {
-        const explorerLink =
-          environment === Environment.Mainnet
-            ? `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/polkadot-${uniqueTrackingId}`
-            : `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/rococo-${uniqueTrackingId}`
-        return explorerLink
-      }
-
       if (chainId === env.config.ASSET_HUB_PARAID)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${id}`
 

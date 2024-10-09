@@ -57,7 +57,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                   alt={`${tx.sourceChain.name}`}
                   fill={true}
                   className={cn(
-                    'rounded-full border',
+                    'rounded-full border bg-background',
                     transferSucceeded ? 'border-black' : 'border-turtle-error',
                   )}
                 />
@@ -72,7 +72,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                   alt={`${tx.destChain.name}`}
                   fill={true}
                   className={cn(
-                    'rounded-full border',
+                    'rounded-full border bg-background',
                     transferSucceeded ? 'border-black' : 'border-turtle-error',
                   )}
                 />
