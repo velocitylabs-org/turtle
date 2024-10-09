@@ -139,7 +139,6 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
           ? `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/polkadot-${uniqueTrackingId}`
           : `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/rococo-${uniqueTrackingId}`
 
-
       const env = getEnvironment(environment)
       if (chainId === env.config.ASSET_HUB_PARAID)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${id}`
