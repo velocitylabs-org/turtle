@@ -4,6 +4,8 @@ import { forwardRef, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import useLookupName from '@/hooks/useLookupName'
+import { useEnsAvatar } from 'wagmi'
+import { normalize } from 'viem/ens'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
@@ -48,6 +50,9 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
 
     const addressPlaceholder = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
     const accountName = addressLookup ? addressLookup : addressPlaceholder
+    const { data: ensAvatarUrl } = useEnsAvatar({
+      name: normalize(addressLookup || '') || undefined,
+    })
 
     const handleSelectionChange = (selectedChain: Chain) => {
       onChange(selectedChain)
@@ -107,8 +112,16 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                   {placeholder}
                 </>
               )}
-
-              <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+              <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1 mr-1" />
+              {ensAvatarUrl && (
+                <Image
+                  src={ensAvatarUrl}
+                  alt="ENS Avatar"
+                  width={24}
+                  height={24}
+                  className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
+                />
+              )}
               {!manualRecipient?.enabled && !!value && accountName}
               {manualRecipient && manualRecipient.enabled && (
                 <>
