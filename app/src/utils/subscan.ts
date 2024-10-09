@@ -9,10 +9,7 @@ export const trackFromParachainTx = async (
 ) => {
   try {
     const xcmTransfers: FromParachainTrackingResult[] = []
-    if (!env.config.SUBSCAN_API) {
-      console.warn(`No subscan api urls configured for ${env.name}`)
-      return xcmTransfers
-    }
+    if (!env.config.SUBSCAN_API) throw Error(`No subscan api urls configured for ${env.name}`)
     const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
     if (!subscanKey) throw Error('Missing Subscan Key')
     const relaychain = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
@@ -22,7 +19,7 @@ export const trackFromParachainTx = async (
       if (!crossChainMessageHash) {
         console.log('Cross chain message undefined')
         // Should not return an error as we want to continue looping to the others transfers
-        return xcmTransfers
+        continue
       }
 
       const query = await relaychain.post('api/scan/xcm/list', {
@@ -32,14 +29,14 @@ export const trackFromParachainTx = async (
       if (query.status !== 200) {
         console.log('Subscan API request failed')
         // Should not return an error as we want to continue looping to the others transfers
-        return xcmTransfers
+        continue
       }
 
       const transferData: SubscanTransferResponse[] = query.json?.data?.list ?? []
       if (!transferData.length || !transferData[0]) {
         console.log(`No XCM transfer data found for message hash ${crossChainMessageHash}`)
         // Should not return an error as we want to continue looping to the others transfers
-        return xcmTransfers
+        continue
       }
 
       let xchainTransferStatus: number = 1
