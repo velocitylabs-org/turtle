@@ -134,10 +134,10 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
       if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
 
-      if (uniqueTrackingId)
-        return environment === Environment.Mainnet
-          ? `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/polkadot-${uniqueTrackingId}`
-          : `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/rococo-${uniqueTrackingId}`
+      if (uniqueTrackingId) {
+        const path = getSubdomain(explorersUrls.subscan_relaychain)
+        return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
+      }
 
       const env = getEnvironment(environment)
       if (chainId === env.config.ASSET_HUB_PARAID)
@@ -149,6 +149,12 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     default:
       console.log(`Unsupported network: ${network}`)
   }
+}
+
+export const getSubdomain = (url: string) => {
+  const parsedUrl = new URL(url)
+  const hostname = parsedUrl.hostname
+  return hostname.split('.')[0]
 }
 
 export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
