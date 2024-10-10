@@ -30,6 +30,8 @@ export interface StoredTransfer extends RawTransfer {
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
+  // A subscan unique Id shared accross chains to track ongoing transfers
+  uniqueTrackingId?: string
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
@@ -39,7 +41,7 @@ export interface OngoingTransferWithDirection extends RawTransfer {
 export interface OngoingTransfers {
   toEthereum: OngoingTransferWithDirection[] // AH => Eth transfer
   toPolkadot: OngoingTransferWithDirection[] // Eth => AH || Parachain transfer
-  withinPolkadot: OngoingTransferWithDirection[] // Parachain => AH transfer
+  withinPolkadot: OngoingTransferWithDirection[] // XCM transfer: Parachain to AH, AH to Parachain, Parachain to Parachain, etc
 }
 
 export interface DisplaysTransfers {

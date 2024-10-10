@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 
+import { Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
@@ -28,7 +29,11 @@ const useOngoingTransfersTracker = () => {
   const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
-  const { removeTransfer: removeOngoingTransfer, ongoingTransfers } = useOngoingTransfers()
+  const {
+    removeTransfer: removeOngoingTransfer,
+    ongoingTransfers,
+    updateTransferUniqueId,
+  } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
 
@@ -94,8 +99,24 @@ const useOngoingTransfersTracker = () => {
       const foundTransfer = findMatchingTransfer(transfers, ongoing)
 
       if (foundTransfer) {
+        // Update transfer status
         const status = getTransferStatus(foundTransfer)
         setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
+
+        // Look for a subscan trackingUniqueId for any XCM or AH to ETH transfers,
+        // to eventually update ongoing transfer store
+        const trackingUniqueId =
+          'uniqueId' in foundTransfer && foundTransfer.uniqueId.length
+            ? foundTransfer.uniqueId
+            : undefined
+
+        if (
+          ongoing.sourceChain.network === Network.Polkadot &&
+          trackingUniqueId &&
+          !ongoing.uniqueTrackingId
+        ) {
+          updateTransferUniqueId(ongoing.id, trackingUniqueId)
+        }
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
@@ -128,7 +149,14 @@ const useOngoingTransfersTracker = () => {
         // TODO: handle this case
       }
     })
-  }, [transfers, addCompletedTransfer, removeOngoingTransfer, ongoingTransfers, addNotification])
+  }, [
+    transfers,
+    addCompletedTransfer,
+    removeOngoingTransfer,
+    ongoingTransfers,
+    addNotification,
+    updateTransferUniqueId,
+  ])
 
   return { transfers, loading, statusMessages, fetchTransfers }
 }

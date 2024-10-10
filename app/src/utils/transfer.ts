@@ -119,25 +119,39 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     sendResult: result,
     sender,
     id,
+    uniqueTrackingId,
   } = transfer
   const explorersUrls = EXPLORERS[environment]
   switch (network) {
     case Network.Ethereum: {
       if (result?.success?.ethereum && 'transactionHash' in result.success.ethereum)
         return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
+
+      // Default Ethereum network explorer link:
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
     case Network.Polkadot: {
-      if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
-        return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
+      if (uniqueTrackingId) {
+        const path = getSubdomainPath(explorersUrls.subscan_relaychain)
+        return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
+      }
+
       const env = getEnvironment(environment)
       if (chainId === env.config.ASSET_HUB_PARAID)
         return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${id}`
+
+      // Default Polkadot network explorer link:
       return `${removeURLSlash(explorersUrls.subscan_relaychain)}/account/${sender}?tab=xcm_transfer`
     }
     default:
       console.log(`Unsupported network: ${network}`)
   }
+}
+
+export const getSubdomainPath = (url: string) => {
+  const parsedUrl = new URL(url)
+  const hostname = parsedUrl.hostname
+  return hostname.split('.')[0]
 }
 
 export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
