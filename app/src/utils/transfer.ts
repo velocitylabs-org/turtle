@@ -132,7 +132,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     }
     case Network.Polkadot: {
       if (uniqueTrackingId) {
-        const path = getSubdomain(explorersUrls.subscan_relaychain)
+        const path = getSubdomainPath(explorersUrls.subscan_relaychain)
         return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
       }
 
@@ -148,7 +148,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   }
 }
 
-export const getSubdomain = (url: string) => {
+export const getSubdomainPath = (url: string) => {
   const parsedUrl = new URL(url)
   const hostname = parsedUrl.hostname
   return hostname.split('.')[0]
