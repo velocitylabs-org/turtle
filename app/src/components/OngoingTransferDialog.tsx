@@ -63,7 +63,7 @@ export const OngoingTransferDialog = ({
                   src={transfer.sourceChain.logoURI}
                   alt={`${transfer.sourceChain.name}`}
                   fill={true}
-                  className={'rounded-full border border-turtle-secondary-dark'}
+                  className={'rounded-full border border-turtle-secondary-dark bg-background'}
                 />
               </div>
               <div className="text-sm">{transfer.sourceChain.name}</div>
@@ -75,7 +75,7 @@ export const OngoingTransferDialog = ({
                   src={transfer.destChain.logoURI}
                   alt={`${transfer.destChain.name}`}
                   fill={true}
-                  className={'rounded-full border border-turtle-secondary-dark'}
+                  className={'rounded-full border border-turtle-secondary-dark bg-background'}
                 />
               </div>
               <div className="text-sm">{transfer.destChain.name}</div>
