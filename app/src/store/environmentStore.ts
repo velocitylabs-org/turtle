@@ -1,4 +1,3 @@
-import { shouldUseTestnet } from '@/utils/env'
 import { create } from 'zustand'
 
 export enum Environment {
@@ -17,7 +16,10 @@ interface State {
 
 export const useEnvironmentStore = create<State>(set => ({
   // State
-  current: shouldUseTestnet ? Environment.Testnet : Environment.Mainnet,
+  current:
+    process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet
+      ? Environment.Testnet
+      : Environment.Mainnet,
 
   // Actions
   switchTo: environment =>
@@ -26,13 +28,13 @@ export const useEnvironmentStore = create<State>(set => ({
     })),
 }))
 
-export function environmentFromStr(str: string): Environment | undefined {
+export function environmentFromStr(str: string): Environment {
   switch (str.toLowerCase()) {
     case 'mainnet':
       return Environment.Mainnet
     case 'testnet':
       return Environment.Testnet
     default:
-      return
+      return Environment.Mainnet // default to mainnet
   }
 }

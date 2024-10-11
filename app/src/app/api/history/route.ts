@@ -3,21 +3,20 @@ export const dynamic = 'force-dynamic' // Always run dynamically
 export const revalidate = 30 // Keep cache for 2 minutes
 export const maxDuration = 90 // Timout adter
 
-import { unstable_cache } from 'next/cache'
-import { NextResponse } from 'next/server'
 import { getEnvironment } from '@/context/snowbridge'
 import { ongoingTransfersSchema } from '@/models/api-schemas'
 import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
-import { Environment } from '@/store/environmentStore'
-import { shouldUseTestnet } from '@/utils/env'
+import { Environment, environmentFromStr } from '@/store/environmentStore'
 import { getErrorMessage, trackTransfers } from '@/utils/transferTracking'
+import { unstable_cache } from 'next/cache'
+import { NextResponse } from 'next/server'
 
 const CACHE_REVALIDATE_IN_SECONDS = 30
 
 const getCachedTransferHistory = unstable_cache(
-  (ongoingTransfers: OngoingTransferWithDirection[]) => {
-    const env = getEnvironment(shouldUseTestnet ? Environment.Testnet : Environment.Mainnet)
+  (env: Environment, ongoingTransfers: OngoingTransferWithDirection[]) => {
+    const snowbridgeEnv = getEnvironment(env)
 
     try {
       const transfers: OngoingTransfers = {
@@ -29,7 +28,7 @@ const getCachedTransferHistory = unstable_cache(
       ongoingTransfers.map(transfer => {
         switch (transfer.direction) {
           case Direction.ToEthereum: {
-            if (transfer.sourceChain.chainId === env.config.ASSET_HUB_PARAID) {
+            if (transfer.sourceChain.chainId === snowbridgeEnv.config.ASSET_HUB_PARAID) {
               transfers.toEthereum.push(transfer)
             } else {
               console.log('Direct Parachain => Eth tracking to be implemented/verified')
@@ -51,7 +50,7 @@ const getCachedTransferHistory = unstable_cache(
         }
       })
 
-      return trackTransfers(env, transfers)
+      return trackTransfers(snowbridgeEnv, transfers)
     } catch (err) {
       reportError(err)
       return Promise.resolve([])
@@ -68,6 +67,9 @@ export async function POST(request: Request) {
   try {
     // Safely parses & validates the request body with a ZOD schema
     const requestValue = await ongoingTransfersSchema.spa(await request.json())
+    const { searchParams } = new URL(request.url)
+    const envParam = searchParams.get('env')
+    const env = environmentFromStr(envParam || '')
 
     // Returns 400 if body does not respect the expected schema
     if (!requestValue.success) {
@@ -77,7 +79,7 @@ export async function POST(request: Request) {
     // Returns 200 if ongoingTransfers is empty
     if (!ongoingTransfers.length) return NextResponse.json([], { status: 200 })
 
-    const history = await getCachedTransferHistory(ongoingTransfers)
+    const history = await getCachedTransferHistory(env, ongoingTransfers)
     return NextResponse.json(history, { status: 200 })
   } catch (err) {
     return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 })
