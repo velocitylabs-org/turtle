@@ -37,7 +37,7 @@ export const trackTransfers = async (
 /**
  * Retrieves the transfer timestamp.
  * A transfer result from the Snowbridge API includes 'info' in the transferResult and covers:
- * both Eth => Parachain and AH => Eth transfer directions.
+ * both Eth to Parachain and AH to Eth transfer directions.
  *
  * The second condition returns the timestamp from an AT API transfer result.
  * @param txTrackingResult - A transfer tracking response from the Snowbridge API or Subscan API.
@@ -62,7 +62,7 @@ const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
  * @returns the transfer status as string
  */
 export function getTransferStatus(transferResult: TxTrackingResult) {
-  // Checks if the tracked AH => Ethereum transfer comes from Snowbridge API.
+  // Checks if the tracked AH to Ethereum transfer comes from Snowbridge API.
   const isAhToEthTransfer =
     'info' in transferResult && transferResult.info.destinationParachain == undefined
 
@@ -79,8 +79,8 @@ export function getTransferStatus(transferResult: TxTrackingResult) {
 
 /**
  * Retrieves the status of a transfer from:
- * A Parachain => AH (initiated with AT API and tracked with Subscan API)
- * The AH Parachain => Eth (initiated and tracked w Snowbridge API)
+ * A Parachain to AH (initiated with AT API and tracked with Subscan API)
+ * The AH Parachain to Eth (initiated and tracked w Snowbridge API)
  *
  * @param txTrackingResult - A Eth to Parachain/AH transfer tracking response from the Snowbridge API.
  * @returns the transfer status as string
@@ -166,8 +166,8 @@ export function isCompletedTransfer(txTrackingResult: TxTrackingResult) {
  * Finding a match relies on either the Snowbridge API or the AT API, and depends on the transfer direction.
  *
  * An ongoing transfer result from the Snowbridge API includes 'submitted' in the transferResult.
- * AH => Eth transfer direction includes 'extrinsic_hash' in its response.
- * The second condition finds a matching transfer for the Eth => Parachain direction.
+ * AH to Eth transfer direction includes 'extrinsic_hash' in its response.
+ * The second condition finds a matching transfer for the Eth to Parachain direction.
  *
  * If the ongoing transfer does not rely on the Snowbridge API but instead on the AT API, the ongoingTransfer covers an XCM transfer direction.
  *
