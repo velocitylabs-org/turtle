@@ -131,6 +131,9 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
     case Network.Polkadot: {
+      if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
+        return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
+
       if (uniqueTrackingId) {
         const path = getSubdomainPath(explorersUrls.subscan_relaychain)
         return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
