@@ -68,7 +68,7 @@ const useAssetTransferApi = () => {
           if (!txHash) throw new Error('Transfer error: Failed to generate the transaction hash')
           if (isComplete) return
 
-          // Wait until block to be finalized before handling transfer data
+          // Wait until block is finalized before handling transfer data
           if (status.isFinalized) {
             let messageHash: string | undefined
             let messageId: string | undefined
