@@ -148,9 +148,18 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   }
 }
 
+/**
+ * Extracts and returns the subdomain from a given URL.
+ * For example,'https://polkadot.subscan.io/' input, returns 'polkadot'.
+ * @param url - The URL from which the subdomain needs to be extracted. For example, "https://sub.example.com".
+ * @returns The subdomain string from the URL.
+ */
 export const getSubdomainPath = (url: string) => {
+  // Generate a constructor URL. Example: 'https://polkadot.subscan.io/'
   const parsedUrl = new URL(url)
+  // Filter hostname from URL: 'polkadot.subscan.io/'
   const hostname = parsedUrl.hostname
+  // Split hostname & extract subdomain path: 'polkadot'
   return hostname.split('.')[0]
 }
 
