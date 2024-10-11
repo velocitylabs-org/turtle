@@ -9,6 +9,7 @@ interface State {
   // Actions
   addTransfer: (transfer: StoredTransfer) => void
   removeTransfer: (id: string) => void
+  updateTransferUniqueId: (id: string, uniqueTrackingId: string) => void
 }
 
 // Serialization - Stringify function for BigInt
@@ -55,6 +56,20 @@ export const useOngoingTransfersStore = create<State>()(
 
           return {
             transfers: [...state.transfers, newOngoingTransfer],
+          }
+        })
+      },
+
+      updateTransferUniqueId: (id: string, uniqueTrackingId: string) => {
+        if (!id || !uniqueTrackingId) return
+        set(state => {
+          return {
+            transfers: state.transfers.map(transfer => {
+              if (transfer.id == id) {
+                transfer.uniqueTrackingId = uniqueTrackingId
+              }
+              return transfer
+            }),
           }
         })
       },
