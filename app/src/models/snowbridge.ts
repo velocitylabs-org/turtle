@@ -6,3 +6,4 @@ export type SnowbridgeStatus = {
 }
 
 export type FromEthTrackingResult = history.ToPolkadotTransferResult
+export type FromAhToEthTrackingResult = history.ToEthereumTransferResult

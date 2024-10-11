@@ -5,7 +5,7 @@ import { Environment } from '@/store/environmentStore'
 
 import { Chain } from './chain'
 import { FromParachainTrackingResult } from './subscan'
-import { FromEthTrackingResult } from './snowbridge'
+import { FromEthTrackingResult, FromAhToEthTrackingResult } from './snowbridge'
 import { Token } from './token'
 
 export interface RawTransfer {
@@ -90,4 +90,6 @@ export enum TransferTab {
 }
 export type TransferTabOptions = TransferTab
 
-export type TxTrackingResult = FromEthTrackingResult | FromParachainTrackingResult
+export type TxTrackingResult =
+  // Snowbridge API | Snowbridge API | Subscan API
+  FromEthTrackingResult | FromAhToEthTrackingResult | FromParachainTrackingResult
