@@ -1,8 +1,7 @@
 import { useEnvironmentStore } from '@/store/environmentStore'
 
 const useEnvironment = () => {
-  const current = useEnvironmentStore(state => state.current)
-  return current
+  return useEnvironmentStore(state => state.current)
 }
 
 export default useEnvironment
