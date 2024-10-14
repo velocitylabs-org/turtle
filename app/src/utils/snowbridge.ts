@@ -4,7 +4,7 @@ import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-ty
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
-export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 2 // 2 days
+export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 5 // 5 days
 export const ETHEREUM_BLOCK_TIME_SECONDS = 12
 export const ACCEPTABLE_BRIDGE_LATENCY = 28800 // 8 hours
 
