@@ -22,7 +22,7 @@ const chainsMainnet = [mainnet] as const
 // Create wagmiConfig
 export const config = defaultWagmiConfig({
   chains:
-    process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? chainsTestnet : chainsMainnet, // TODO: Figure out how to access envirnoment state here once needed.
+    process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? chainsTestnet : chainsMainnet, // TODO: Figure out how to access environment state here once needed.
   projectId,
   metadata,
   ssr: true,
