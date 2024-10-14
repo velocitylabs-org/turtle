@@ -40,8 +40,8 @@ export const trackTransfers = async (
  * both Eth to Parachain and AH to Eth transfer directions.
  *
  * The second condition returns the timestamp from an AT API transfer result.
- * @param {TxTrackingResult} txTrackingResult - A transfer tracking response from the Snowbridge API or Subscan API.
- * @returns {number} - The transfer timestamp in milliseconds.
+ * @param txTrackingResult - A transfer tracking response from the Snowbridge API or Subscan API.
+ * @returns - The transfer timestamp in milliseconds.
  */
 const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
   'info' in txTrackingResult
@@ -59,8 +59,8 @@ const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
  *
  * Default case return get transfer status for a transfer from Eth to a Parachain/AH
  *
- * @param {TxTrackingResult} transferResult - A transfer tracking response from the Snowbridge API or Subscan API.
- * @returns {string} - the transfer status
+ * @param transferResult - A transfer tracking response from the Snowbridge API or Subscan API.
+ * @returns - the transfer status
  */
 export function getTransferStatus(transferResult: TxTrackingResult) {
   // Checks if the tracked AH to Ethereum transfer comes from Snowbridge API.
@@ -83,8 +83,8 @@ export function getTransferStatus(transferResult: TxTrackingResult) {
  * The AH Parachain to Eth (initiated and tracked with Snowbridge API)
  * A Parachain to AH (initiated with AT API and tracked with Subscan API)
  *
- * @param {FromAhToEthTrackingResult | FromParachainTrackingResult} transferResult - The transfer tracking response from either the Subscan API (for Parachain to AH transfers) or the Snowbridge API (for AH to Ethereum transfers).
- * @returns {string} - the transfer status
+ * @param transferResult - The transfer tracking response from either the Subscan API (for Parachain to AH transfers) or the Snowbridge API (for AH to Ethereum transfers).
+ * @returns - the transfer status
  */
 export function getTransferStatusFromParachain(
   transferResult: FromAhToEthTrackingResult | FromParachainTrackingResult,
@@ -127,8 +127,8 @@ export function getTransferStatusFromParachain(
  * Retrieves the status of a transfer from:
  * Eth to a Parachain/AH (initiated and tracked w Snowbridge API)
  *
- * @param {FromEthTrackingResult} txTrackingResult - The transfer tracking response for an Eth to Parachain/AH transfer from the Snowbridge API.
- * @returns {string} - the transfer status
+ * @param txTrackingResult - The transfer tracking response for an Eth to Parachain/AH transfer from the Snowbridge API.
+ * @returns - the transfer status
  */
 export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingResult) => {
   const { status, submitted } = txTrackingResult
@@ -152,8 +152,8 @@ export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingRes
 /**
  * Verifies if a transfer is completed
  *
- * @param {TxTrackingResult} txTrackingResult - The transfer tracking response from the Snowbridge API, Subscan API, or other explorer services.
- * @returns {boolean} - `true` if the transfer has either completed or failed, otherwise `false` if it is still pending.
+ * @param txTrackingResult - The transfer tracking response from the Snowbridge API, Subscan API, or other explorer services.
+ * @returns - `true` if the transfer has either completed or failed, otherwise `false` if it is still pending.
  */
 export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
   return (
@@ -171,9 +171,9 @@ export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
  * - AT API:
  *   - Used for transfers in the XCM direction.
  *
- * @param {TxTrackingResult[]} transfers - The list of tracked transfers from the explorer's history (Subscan, Snowbridge history, etc.).
- * @param {StoredTransfer} ongoingTransfer - The ongoing transfer stored in the user's local storage.
- * @returns {TxTrackingResult | undefined} - The matching transfer from the explorer history list, or `undefined` if no match is found.
+ * @param transfers - The list of tracked transfers from the explorer's history (Subscan, Snowbridge history, etc.).
+ * @param ongoingTransfer - The ongoing transfer stored in the user's local storage.
+ * @returns - The matching transfer from the explorer history list, or `undefined` if no match is found.
  */
 export const findMatchingTransfer = (
   transfers: TxTrackingResult[],
