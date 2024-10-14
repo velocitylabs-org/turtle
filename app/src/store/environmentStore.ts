@@ -35,6 +35,6 @@ export function environmentFromStr(str: string): Environment {
     case 'testnet':
       return Environment.Testnet
     default:
-      return Environment.Mainnet // default to mainnet
+      return Environment.Mainnet
   }
 }
