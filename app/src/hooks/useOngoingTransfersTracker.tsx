@@ -1,6 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { TransferStatus } from '@snowbridge/api/dist/history'
-
 import { Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import {
@@ -9,18 +6,19 @@ import {
   TxStatus,
   TxTrackingResult,
 } from '@/models/transfer'
-
 import { resolveDirection } from '@/services/transfer'
+import { getExplorerLink } from '@/utils/transfer'
 import {
   findMatchingTransfer,
   getTransferStatus,
   isCompletedTransfer,
 } from '@/utils/transferTracking'
-import { getExplorerLink } from '@/utils/transfer'
-
+import { TransferStatus } from '@snowbridge/api/dist/history'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
-import useOngoingTransfers from './useOngoingTransfers'
+import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
+import useOngoingTransfers from './useOngoingTransfers'
 
 type ID = string
 type Message = string
@@ -36,6 +34,7 @@ const useOngoingTransfersTracker = () => {
   } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
+  const env = useEnvironment()
 
   const fetchTransfers = useCallback(async () => {
     const formattedTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
@@ -57,7 +56,7 @@ const useOngoingTransfersTracker = () => {
 
     try {
       setLoading(true)
-      const response = await fetch('/api/history', {
+      const response = await fetch(`/api/history?env=${env}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

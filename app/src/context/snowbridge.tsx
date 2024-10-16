@@ -1,7 +1,6 @@
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
-import { shouldUseTestnet } from '@/utils/env'
 import { Context, contextFactory, environment, status } from '@snowbridge/api'
 
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
@@ -70,9 +69,7 @@ export function toSnowbridgeNetwork(env: Environment): string {
   }
 }
 
-export async function getSnowBridgeContext(
-  environment = shouldUseTestnet ? Environment.Testnet : Environment.Mainnet,
-): Promise<Context> {
+export async function getSnowBridgeContext(environment: Environment): Promise<Context> {
   const snowbridgeEnv = getEnvironment(environment)
   return await getContext(snowbridgeEnv)
 }
