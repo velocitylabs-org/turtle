@@ -71,7 +71,7 @@ export namespace Mainnet {
     id: 'weth',
     name: 'Wrapped Ether',
     symbol: 'wETH',
-    logoURI: 'https://ucarecdn.com/c01c9021-a497-41b5-8597-9ab4e71440c1/wrapped-eth.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
     decimals: 18,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     multilocation:
@@ -227,8 +227,7 @@ export namespace Testnet {
   export const Sepolia: Chain = {
     uid: 'sepolia',
     name: 'Sepolia',
-    logoURI:
-      'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     chainId: 11155111,
     network: Network.Ethereum,
     supportedAddressTypes: ['evm'],
@@ -250,7 +249,7 @@ export namespace Testnet {
     id: 'weth',
     name: 'Wrapped Ether',
     symbol: 'wETH',
-    logoURI: 'https://ucarecdn.com/c01c9021-a497-41b5-8597-9ab4e71440c1/wrapped-eth.png',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
     decimals: 18,
     address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
     multilocation:
