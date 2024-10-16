@@ -4,7 +4,7 @@ import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-ty
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
-export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 5 // 5 days
+export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 3 // 3 days
 export const ETHEREUM_BLOCK_TIME_SECONDS = 12
 export const ACCEPTABLE_BRIDGE_LATENCY = 28800 // 8 hours
 
@@ -13,10 +13,8 @@ export async function trackFromEthTx(
   skipLightClientUpdates = SKIP_LIGHT_CLIENT_UPDATES,
   historyInSeconds = HISTORY_IN_SECONDS,
 ): Promise<FromEthTrackingResult[]> {
-  if (!env.config.SUBSCAN_API) {
-    console.warn(`No subscan api urls configured for ${env.name}`)
-    return []
-  }
+  if (!env.config.SUBSCAN_API) throw Error(`No subscan api urls configured for ${env.name}`)
+
   const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
   if (!alchemyKey) throw Error('Missing Alchemy Key')
 
@@ -83,10 +81,8 @@ export async function trackFromAhToEthTx(
   skipLightClientUpdates = SKIP_LIGHT_CLIENT_UPDATES,
   historyInSeconds = HISTORY_IN_SECONDS,
 ): Promise<FromAhToEthTrackingResult[]> {
-  if (!env.config.SUBSCAN_API) {
-    console.warn(`No subscan api urls configured for ${env.name}`)
-    return []
-  }
+  if (!env.config.SUBSCAN_API) throw Error(`No subscan api urls configured for ${env.name}`)
+
   const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
   if (!alchemyKey) throw Error('Missing Alchemy Key')
 
