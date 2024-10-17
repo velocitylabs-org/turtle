@@ -1,10 +1,10 @@
 import { getNativeToken } from '@/config/registry'
 import useNotification from '@/hooks/useNotification'
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
-import { getFeesTokenUSDValue } from '@/services/balance'
+import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
@@ -37,14 +37,12 @@ const useFees = (
       let tokenUSDValue: number = 0
       switch (direction) {
         case Direction.ToEthereum: {
-          const dotUSDValue = await getFeesTokenUSDValue(Network.Polkadot)
-          tokenUSDValue = dotUSDValue?.[Network.Polkadot?.toLowerCase()]?.usd ?? 0
+          tokenUSDValue = (await getTokenPrice('polkadot'))?.usd ?? 0
           amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
         case Direction.ToPolkadot: {
-          const ethUSDValue = await getFeesTokenUSDValue(Network.Ethereum)
-          tokenUSDValue = ethUSDValue?.[Network.Ethereum.toLowerCase()]?.usd ?? 0
+          tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
           amount = (
             await toPolkadot.getSendFee(
               snowbridgeContext,

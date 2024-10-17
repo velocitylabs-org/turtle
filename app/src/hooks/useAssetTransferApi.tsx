@@ -1,7 +1,7 @@
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
-import { getErc20TokenUSDValue } from '@/services/balance'
+import { getTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
@@ -100,9 +100,7 @@ const useAssetTransferApi = () => {
 
             // Add transfer to storage
             const senderAddress = await getSenderAddress(sender)
-            const tokenData = await getErc20TokenUSDValue(token.address)
-            const tokenUSDValue =
-              tokenData && Object.keys(tokenData).length > 0 ? tokenData[token.address]?.usd : 0
+            const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
             const date = new Date()
 
             addTransferToStorage({

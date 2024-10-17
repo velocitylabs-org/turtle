@@ -4,8 +4,8 @@ import { Context } from '@snowbridge/api'
 import { erc20TokenToAssetLocation, palletAssetsBalance } from '@snowbridge/api/dist/assets'
 import { toHuman } from '../utils/transfer'
 
-export interface TokenValue {
-  [key: string]: { usd: number }
+export interface TokenPrice {
+  usd: number
 }
 
 export interface Erc20Balance {
@@ -43,34 +43,17 @@ export const fetchAssetHubBalance = async (
   return fetchedBalance
 }
 
-export const getFeesTokenUSDValue = async (networkToken: Network): Promise<TokenValue | null> => {
+export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null> => {
   try {
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${networkToken.toLowerCase()}&vs_currencies=usd`
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId.toLocaleLowerCase()}&vs_currencies=usd`
     const options = { method: 'GET', headers: { accept: 'application/json' } }
     const result = await fetch(url, options)
-    if (!result.ok) {
-      throw new Error('Failed to fetch fees tokens value')
-    }
-    return (await result.json()) as TokenValue
+
+    if (!result.ok) throw new Error('Failed to fetch fees tokens value')
+
+    return (await result.json())[tokenId.toLocaleLowerCase()] as TokenPrice
   } catch (error) {
     console.log('Fees token value fetch error:', error)
-    return null
-  }
-}
-export const getErc20TokenUSDValue = async (
-  contract: Token['address'],
-  network = Network.Ethereum,
-): Promise<TokenValue | null> => {
-  try {
-    const url = `https://api.coingecko.com/api/v3/simple/token_price/${network.toLowerCase()}?contract_addresses=${contract.toLowerCase()}&vs_currencies=usd`
-    const options = { method: 'GET', headers: { accept: 'application/json' } }
-    const result = await fetch(url, options)
-    if (!result.ok) {
-      throw new Error('Failed to fetch ERC20 tokens value')
-    }
-    return (await result.json()) as TokenValue
-  } catch (error) {
-    console.log('ERC20 token value fetch error:', error)
     return null
   }
 }
