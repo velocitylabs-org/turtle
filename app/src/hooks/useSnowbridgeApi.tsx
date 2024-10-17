@@ -2,7 +2,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
-import { getErc20TokenUSDValue } from '@/services/balance'
+import { getErc20TokenUSDValue, getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { getSenderAddress } from '@/utils/address'
@@ -159,8 +159,9 @@ const useSnowbridgeApi = () => {
       })
 
       const senderAddress = await getSenderAddress(sender)
-      const tokenData = await getErc20TokenUSDValue(token.address)
-      const tokenUSDValue = tokenData && Object.keys(tokenData).length > 0 ? tokenData.usd : 0
+      // nuno fix
+      const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd
+
       const date = new Date()
 
       addTransferToStorage({
