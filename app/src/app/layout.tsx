@@ -3,6 +3,7 @@ import NotificationSystem from '@/components/NotificationSystem'
 import { dazzed } from '@/components/fonts/fonts'
 import { config } from '@/config'
 import Web3ModalProvider from '@/context'
+import { TURTLE_CONFIG } from '@/utils/turle.config'
 import { NextUIProvider } from '@nextui-org/react'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
@@ -10,7 +11,6 @@ import { headers } from 'next/headers'
 import { twMerge } from 'tailwind-merge'
 import { cookieToInitialState } from 'wagmi'
 import './globals.css'
-import { TURTLE_CONFIG } from '@/utils/turle.config'
 
 export const metadata: Metadata = {
   metadataBase: new URL(TURTLE_CONFIG.url!),
@@ -28,6 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const initialState = cookieToInitialState(config, headers().get('cookie'))
+
   return (
     <html lang="en" className="h-full">
       <body className={twMerge(dazzed.variable, 'min-h-full bg-turtle-tertiary font-dazzed')}>

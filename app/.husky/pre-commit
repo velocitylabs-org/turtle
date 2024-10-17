@@ -1,8 +1,4 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 cd "$(dirname -- "$0")/.."
 
 pnpm run format
-git add .
 pnpm run lint

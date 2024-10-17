@@ -8,7 +8,7 @@ export default function NavBar() {
         <TurtleIcon size={40} />
         <div className="turtle-text-shadow xl-letter-spacing text-[2rem] text-white">Turtle</div>
         <div className="box-shadow flex h-[19px] items-center justify-center rounded-[4px] border border-white bg-white px-[5px]">
-          <p className=" rainbow-text text-[12px] font-bold">BETA</p>
+          <p className="rainbow-text text-[12px] font-bold">BETA</p>
         </div>
       </Link>
 

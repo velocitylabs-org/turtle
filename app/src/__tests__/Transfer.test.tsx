@@ -1,7 +1,8 @@
 import { Direction, resolveDirection } from '@/services/transfer'
 import '@testing-library/jest-dom'
-import { Mainnet } from '../config/registry'
-import { safeConvertAmount, toHuman } from '@/utils/transfer'
+import { Mainnet, Testnet } from '../config/registry'
+import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
+import { getDestChainId } from '@/hooks/useAssetTransferApi'
 
 describe('Transfer', () => {
   it('direction ToEthereum', () => {
@@ -34,5 +35,24 @@ describe('Transfer', () => {
     inputs.forEach(x => {
       expect(toHuman(safeConvertAmount(x, Mainnet.WETH)!, Mainnet.WETH)).toBe(x)
     })
+  })
+
+  it('gets the right AT-API-compatible destChainId for any given chain', () => {
+    // Ethereum-based chains should result in a multilocation
+    expect(getDestChainId(Mainnet.Ethereum)).toBe(
+      '{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}}}}',
+    )
+    expect(getDestChainId(Testnet.Sepolia)).toBe(
+      '{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}}}}',
+    )
+
+    // Polkadot-native chains should result in a basic chain id
+    expect(getDestChainId(Mainnet.AssetHub)).toBe(Mainnet.AssetHub.chainId.toString())
+    expect(getDestChainId(Mainnet.Mythos)).toBe(Mainnet.Mythos.chainId.toString())
+    expect(getDestChainId(Testnet.RococoAssetHub)).toBe(Testnet.RococoAssetHub.chainId.toString())
+  })
+
+  it('convert amount to string', () => {
+    expect(convertAmount(0.3, Mainnet.WETH).toString()).toBe('300000000000000000')
   })
 })
