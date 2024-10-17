@@ -1,6 +1,10 @@
-import { Mainnet } from '@/config/registry'
+import { getLocalAssetId, Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
+import { ethMultilocationSchema } from '@/models/schemas'
+import { Token } from '@/models/token'
+import { Environment } from '@/store/environmentStore'
 import {
+  bifrost,
   dotAh,
   mythos,
   XcmV3Junction,
@@ -9,10 +13,9 @@ import {
 } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
-import { z } from 'zod'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */
-export type SupportedChains = typeof dotAh | typeof mythos
+export type SupportedChains = typeof dotAh | typeof mythos | typeof bifrost
 
 /** Get PAPI chain type by chain object. Only used for PAPI types. Only supports mainnet atm. */
 export const getApiDescriptorForChain = (chain: Chain) => {
@@ -21,33 +24,14 @@ export const getApiDescriptorForChain = (chain: Chain) => {
       return dotAh
     case Mainnet.Mythos.uid:
       return mythos
+    case Mainnet.Bifrost.uid:
+      return bifrost
 
     default:
       captureException(new Error(`Unsupported chain: ${chain}`))
       return dotAh // fallback
   }
 }
-
-const ethMultilocationSchema = z.object({
-  parents: z.string(),
-  interior: z.object({
-    X2: z.tuple([
-      z.object({
-        GlobalConsensus: z.object({
-          Ethereum: z.object({
-            chainId: z.string(),
-          }),
-        }),
-      }),
-      z.object({
-        AccountKey20: z.object({
-          network: z.nullable(z.string()),
-          key: z.string(),
-        }),
-      }),
-    ]),
-  }),
-})
 
 /** Convert a multilocation string to an XCM V3 PAPI object. Only supports Ethereum multilocations for now. */
 export const convertEthMultilocation = (multilocationString: string) => {
@@ -87,16 +71,44 @@ export const getNativeBalance = async (
   return await apiAssetHub?.query.System.Account.getValue(address)
 }
 
+export interface Balance {
+  free: bigint
+}
+
 /** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
 export const getNonNativeBalance = async (
+  // the environment the app is running on
+  env: Environment,
+  // the Papi api instance
   api: TypedApi<SupportedChains> | undefined,
-  tokenMultilocation: string,
+  // the chain in which to look up the value
+  chain: Chain,
+  // the token to lookup
+  token: Token,
+  // the account to lookup
   address: string,
-) => {
-  // TODO: Figure out which pallet to query. It is not always 'ForeignAssets'
-  const apiAssetHub = api as TypedApi<typeof dotAh> // treat it as AssetHub api for now to get types
-  const convertedMultilocation = convertEthMultilocation(tokenMultilocation)
-  if (!convertedMultilocation) return undefined
+): Promise<Balance | undefined> => {
+  switch (chain.uid) {
+    case 'bifrost': {
+      const bifrostApi = api as TypedApi<typeof bifrost>
+      if (!bifrostApi) throw Error(`Couldn't reach BiFrost`)
 
-  return await apiAssetHub?.query.ForeignAssets.Account.getValue(convertedMultilocation, address)
+      const assetId = getLocalAssetId(env, chain, token)
+      if (!assetId) throw Error('This token misses a local assetId')
+
+      return await bifrostApi?.query.Tokens.Accounts.getValue(address, assetId as any)
+    }
+
+    default: {
+      const apiAssetHub = api as TypedApi<typeof dotAh>
+      const convertedMultilocation = convertEthMultilocation(token.multilocation)
+      if (!convertedMultilocation) return undefined
+
+      const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
+        convertedMultilocation,
+        address,
+      )
+      return { free: res?.balance ?? 0n }
+    }
+  }
 }
