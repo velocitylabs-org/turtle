@@ -51,23 +51,20 @@ const useAssetTransferApi = () => {
         .tx(dryRunResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
+          const { txHash, status, events } = result
+
           // verify transaction hash & transfer isn't completed
-          if (!result.txHash)
-            throw new Error('Transfer error: Failed to generate the transaction hash')
+          if (!txHash) throw new Error('Transfer error: Failed to generate the transaction hash')
           if (isComplete) return
 
-          console.log('Transfer result:', result)
-          const isIncluded = result.status.isInBlock
-          // const isFinalized = result.status.isFinalized
-          if (isIncluded) {
-            // if (isIncluded || isFinalized) {
+          // Wait until block is finalized before handling transfer data
+          if (status.isFinalized) {
             let messageHash: string | undefined
             let messageId: string | undefined
             let extrinsicSuccess: boolean = false
 
             // Filter the events to get the needed data
-            result.events.forEach(({ event: { data, method, section } }) => {
-              console.log('Event:', method, section, data)
+            events.forEach(({ event: { data, method, section } }) => {
               if (
                 method === 'XcmpMessageSent' &&
                 section === 'xcmpQueue' &&
@@ -97,7 +94,7 @@ const useAssetTransferApi = () => {
             const date = new Date()
 
             addTransferToStorage({
-              id: result.txHash.toString(),
+              id: txHash.toString(),
               sourceChain,
               token,
               tokenUSDValue,

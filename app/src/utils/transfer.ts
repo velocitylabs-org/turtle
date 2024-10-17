@@ -1,3 +1,4 @@
+import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
@@ -101,36 +102,71 @@ const EXPLORERS: { [environment in Environment]: { [explorerName: string]: strin
     etherscan: 'https://sepolia.etherscan.io/',
     subscan_assethub: 'https://assethub-rococo.subscan.io/',
     subscan_brigehub: 'https://bridgehub-rococo.subscan.io/',
+    subscan_relaychain: 'https://rococo.subscan.io/',
   },
   [Environment.Mainnet]: {
     etherscan: 'https://etherscan.io/',
     subscan_assethub: 'https://assethub-polkadot.subscan.io/',
     subscan_brigehub: 'https://bridgehub-polkadot.subscan.io/',
+    subscan_relaychain: 'https://polkadot.subscan.io/',
   },
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const {
     environment,
-    sourceChain: { network },
+    sourceChain: { network, chainId },
     sendResult: result,
     sender,
+    id,
+    uniqueTrackingId,
   } = transfer
   const explorersUrls = EXPLORERS[environment]
   switch (network) {
     case Network.Ethereum: {
       if (result?.success?.ethereum && 'transactionHash' in result.success.ethereum)
         return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
+
+      // Default Ethereum network explorer link:
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
     case Network.Polkadot: {
-      if (result?.success?.assetHub && 'submittedAtHash' in result.success.assetHub)
-        return `${removeURLSlash(explorersUrls.subscan_assethub)}/block/${result.success.assetHub.submittedAtHash}`
-      return `${removeURLSlash(explorersUrls.subscan_assethub)}/account/${sender}`
+      const txHash =
+        result?.success?.assetHub && 'txHash' in result.success.assetHub
+          ? result.success.assetHub.txHash
+          : undefined
+      if (txHash) return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${txHash}`
+
+      if (uniqueTrackingId) {
+        const path = getSubdomainPath(explorersUrls.subscan_relaychain)
+        return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
+      }
+
+      const env = getEnvironment(environment)
+      if (chainId === env.config.ASSET_HUB_PARAID)
+        return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${id}`
+
+      // Default Polkadot network explorer link:
+      return `${removeURLSlash(explorersUrls.subscan_relaychain)}/account/${sender}?tab=xcm_transfer`
     }
     default:
       console.log(`Unsupported network: ${network}`)
   }
+}
+
+/**
+ * Extracts and returns the subdomain from a given URL.
+ * For example,'https://polkadot.subscan.io/' input, returns 'polkadot'.
+ * @param url - The URL from which the subdomain needs to be extracted. For example, "https://sub.example.com".
+ * @returns The subdomain string from the URL.
+ */
+export const getSubdomainPath = (url: string) => {
+  // Generate a constructor URL. Example: 'https://polkadot.subscan.io/'
+  const parsedUrl = new URL(url)
+  // Filter hostname from URL: 'polkadot.subscan.io/'
+  const hostname = parsedUrl.hostname
+  // Split hostname & extract subdomain path: 'polkadot'
+  return hostname.split('.')[0]
 }
 
 export const txWasCancelled = (sender: Sender, error: unknown): boolean => {

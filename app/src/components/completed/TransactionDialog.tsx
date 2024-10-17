@@ -62,7 +62,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   alt={`${tx.sourceChain.name}`}
                   fill={true}
                   className={cn(
-                    'rounded-full border',
+                    'rounded-full border bg-background',
                     transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark',
                   )}
                 />
@@ -82,7 +82,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   alt={`${tx.destChain.name}`}
                   fill={true}
                   className={cn(
-                    'rounded-full border',
+                    'rounded-full border bg-background',
                     transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark',
                   )}
                 />

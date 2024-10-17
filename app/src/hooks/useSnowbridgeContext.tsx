@@ -12,7 +12,7 @@ const useSnowbridgeContext = () => {
   } = useQuery({
     queryKey: ['snowbridgeContext', environment],
     queryFn: async () => {
-      return await getSnowBridgeContext()
+      return await getSnowBridgeContext(environment)
     },
     staleTime: Infinity,
     retry: 3,

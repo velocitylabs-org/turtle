@@ -1,6 +1,6 @@
-import { isDevelopment, projectId, shouldUseTestnet, vercelDomain } from '@/utils/env'
+import { Environment } from '@/store/environmentStore'
+import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
-
 import { cookieStorage, createStorage } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
 
@@ -21,7 +21,8 @@ const chainsMainnet = [mainnet] as const
 
 // Create wagmiConfig
 export const config = defaultWagmiConfig({
-  chains: shouldUseTestnet ? chainsTestnet : chainsMainnet,
+  chains:
+    process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? chainsTestnet : chainsMainnet, // TODO: Figure out how to access environment state here once needed.
   projectId,
   metadata,
   ssr: true,
