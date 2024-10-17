@@ -289,7 +289,7 @@ export namespace Testnet {
   }
 }
 
-export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi'
+export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi' | 'ParaspellApi'
 
 export interface Registry {
   chains: Chain[]
@@ -347,7 +347,7 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
-      sdk: 'SnowbridgeApi',
+      sdk: 'ParaspellApi',
       tokens: [
         Mainnet.WETH.id,
         Mainnet.WBTC.id,

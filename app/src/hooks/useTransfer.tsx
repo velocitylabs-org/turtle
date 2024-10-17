@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { getRoute } from '@/utils/routes'
 import useSnowbridgeApi from './useSnowbridgeApi'
 import useAssetTransferApi from './useAssetTransferApi'
+import useParaspellApi from './useParaspellApi'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 
@@ -29,6 +30,7 @@ const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
   const snowbridgeApi = useSnowbridgeApi()
   const assetTransferApi = useAssetTransferApi()
+  const paraspellApi = useParaspellApi()
 
   // The entry point function which is exposed to the components
   const transfer = async ({
@@ -82,6 +84,23 @@ const useTransfer = () => {
           setStatus,
         )
         break
+      }
+
+      case 'ParaspellApi': {
+        paraspellApi.transfer(
+          {
+            environment,
+            sender,
+            sourceChain,
+            token,
+            destinationChain,
+            recipient,
+            amount,
+            fees,
+            onSuccess,
+          },
+          setStatus,
+        )
       }
     }
   }
