@@ -69,6 +69,7 @@ export namespace Mainnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
+    specName: "mythos"
   }
 
   // Tokens
@@ -115,6 +116,7 @@ export namespace Mainnet {
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
+    coingeckoId: 'mythos',
   }
 
   export const BNC: Token = {
