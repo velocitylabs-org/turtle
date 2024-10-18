@@ -84,6 +84,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-smooth: never;
+
+    min-height: 110vh !important;
   }
 
   .xxl-letter-spacing {
