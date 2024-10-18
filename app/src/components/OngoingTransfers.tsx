@@ -6,7 +6,7 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { DisplaysTransfers, TransferTab } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
-import useSnowbridgeTransferTracker from '@/hooks/useSnowbridgeTransferTracker'
+import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 import { ArrowRight } from './svg/ArrowRight'
 import { colors } from '../../tailwind.config'
 
@@ -34,7 +34,7 @@ const OngoingTransfers = ({
     isSnowbridgeContextLoading: transferContextLoading,
     snowbridgeContextError: transferContextError,
   } = useSnowbridgeContext()
-  const { statusMessages } = useSnowbridgeTransferTracker()
+  const { statusMessages } = useOngoingTransfersTracker()
 
   const { data: estimatedTransferDuration, error: estimatedTransferDurationError } = useQuery({
     queryKey: ['transferStatus', transferContextLoading, ongoingTransfers.length],
@@ -58,7 +58,7 @@ const OngoingTransfers = ({
           <div className="xl-letter-spacing self-center text-center text-3xl text-black">
             In Progress
           </div>
-          <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] bg-white p-[2.5rem] px-[1.5rem] py-[2rem] shadow-[0_2px_16px_0px_#00000026] sm:p-[2.5rem]">
+          <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border-[1.3px] border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => (
               <OngoingTransferDialog
                 key={tx.id}

@@ -1,0 +1,18 @@
+{
+  "version": 0,
+  "descriptorPath": ".papi/descriptors",
+  "entries": {
+    "dotRelay": {
+      "chain": "polkadot",
+      "metadata": ".papi/metadata/dotRelay.scale"
+    },
+    "dotAh": {
+      "chain": "polkadot_asset_hub",
+      "metadata": ".papi/metadata/dotAh.scale"
+    },
+    "mythos": {
+      "wsUrl": "wss://polkadot-mythos-rpc.polkadot.io",
+      "metadata": ".papi/metadata/mythos.scale"
+    }
+  }
+}
