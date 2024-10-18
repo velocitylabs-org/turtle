@@ -1,5 +1,7 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Environment } from '@/store/environmentStore'
+import { Enum } from 'polkadot-api'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
@@ -20,20 +22,23 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    specName: 'statemint',
     rpcConnection:
       process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL ||
       'wss://api-asset-hub-polkadot.dwellir.com',
   }
 
-  // export const Bifrost: Chain = {
-  //   uid: 'bifrost',
-  //   name: 'Bifrost',
-  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
-  //   chainId: 2030,
-  //   destinationFeeDOT: '20000000',
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['ss58'],
-  // }
+  export const Bifrost: Chain = {
+    uid: 'bifrost',
+    name: 'Bifrost',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    chainId: 2030,
+    destinationFeeDOT: '20000000',
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: 'wss://bifrost-polkadot.dotters.network',
+    specName: 'bifrost_polkadot',
+  }
 
   // export const Hydration: Chain = {
   //   uid: 'hydration',
@@ -64,6 +69,7 @@ export namespace Mainnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
+    specName: "mythos"
   }
 
   // Tokens
@@ -76,6 +82,7 @@ export namespace Mainnet {
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
+    coingeckoId: 'weth',
   }
 
   export const VETH: Token = {
@@ -109,6 +116,19 @@ export namespace Mainnet {
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
+    coingeckoId: 'mythos',
+  }
+
+  export const BNC: Token = {
+    id: 'bnc',
+    name: 'Bifrost Native Coin',
+    symbol: 'BNC',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    decimals: 12,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    coingeckoId: 'bifrost-native-coin',
   }
 
   export const SHIB: Token = {
@@ -207,6 +227,7 @@ export namespace Mainnet {
     decimals: 10,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    coingeckoId: 'polkadot',
   }
 
   export const ETH: Token = {
@@ -218,6 +239,7 @@ export namespace Mainnet {
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
     multilocation: '',
+    coingeckoId: 'ethereum',
   }
 }
 
@@ -295,6 +317,18 @@ export interface Registry {
   chains: Chain[]
   tokens: Token[]
   routes: Route[]
+  // The local asset id of an asset at a given chain
+  // Eg: BiFrost (chain) > wETH (asset) > Token2(13) (local asset id)
+  localAssetId: Map<
+    // chain uuid
+    string,
+    Map<
+      // asset uuid
+      string,
+      // local asset id - papi compatible
+      any
+    >
+  >
 }
 
 export interface Route {
@@ -345,6 +379,12 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.MYTH.id],
     },
     {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [Mainnet.WETH.id],
+    },
+    {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
       sdk: 'SnowbridgeApi',
@@ -361,6 +401,12 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
+    // {
+    //   from: Mainnet.Bifrost.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'AssetTransferApi',
+    //   tokens: [Mainnet.WETH.id],
+    // },
     {
       from: Mainnet.Mythos.uid,
       to: Mainnet.AssetHub.uid,
@@ -368,6 +414,7 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.MYTH.id],
     },
   ],
+  localAssetId: new Map([[Mainnet.Bifrost.uid, new Map([[Mainnet.WETH.id, Enum('Token2', 13)]])]]),
 }
 
 export const testnetRegistry: Registry = {
@@ -387,6 +434,7 @@ export const testnetRegistry: Registry = {
       sdk: 'SnowbridgeApi',
     },
   ],
+  localAssetId: new Map(),
 }
 
 export const REGISTRY = {
@@ -406,7 +454,17 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.ETH
     case 'mythos':
       return Mainnet.MYTH
+    case 'bifrost':
+      return Mainnet.BNC
     default:
       throw Error('The impossible has happened!')
   }
+}
+
+export function getLocalAssetId(
+  env: Environment,
+  chain: Chain,
+  token: Token,
+): Enum<any> | undefined {
+  return REGISTRY[env].localAssetId.get(chain.uid)?.get(token.id)
 }

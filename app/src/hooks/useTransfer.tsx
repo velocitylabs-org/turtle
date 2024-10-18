@@ -47,8 +47,6 @@ const useTransfer = () => {
 
     switch (route.sdk) {
       case 'AssetTransferApi': {
-        //todo(nuno)
-        console.log('AssetTransferApi route')
         assetTransferApi.transfer(
           {
             environment,
