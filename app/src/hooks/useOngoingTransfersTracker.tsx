@@ -70,7 +70,7 @@ const useOngoingTransfersTracker = () => {
     } finally {
       setLoading(false)
     }
-  }, [ongoingTransfers])
+  }, [ongoingTransfers, env])
 
   const ongoingTransfersRef = useRef(ongoingTransfers)
 
