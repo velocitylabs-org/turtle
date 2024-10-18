@@ -12,6 +12,7 @@ import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
 import { Builder } from '@paraspell/sdk'
 import { ISubmittableResult } from '@polkadot/types/types'
+import { ApiPromise, WsProvider } from '@polkadot/api'
 
 const useParaspellApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -37,12 +38,43 @@ const useParaspellApi = () => {
     const isComplete = false
 
     try {
-      const txResult = await Builder()
-        .from('AssetHubPolkadot')
-        .to('Ethereum')
-        .currency({ symbol: 'WETH' }) //Any supported asset by bridge eg. WETH, WBTC, SHIB and more - {symbol: currencySymbol} | {id: currencyID}
-        .amount(amount)
-        .address(recipient) //AccountKey20 recipient address
+      //   const txResult = await Builder()
+      //     .from('AssetHubPolkadot')
+      //     .to('Ethereum')
+      //     .currency({ symbol: 'WETH' }) //Any supported asset by bridge eg. WETH, WBTC, SHIB and more - {symbol: currencySymbol} | {id: currencyID}
+      //     .amount(amount)
+      //     .address(recipient) //AccountKey20 recipient address
+      //     .build()
+
+      // const multilocationJson = {
+      //   parents: '1',
+      //   interior: {
+      //     X2: [
+      //       { Parachain: '2030' },
+      //       {
+      //         GeneralKey: {
+      //           length: '2',
+      //           data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+      //         },
+      //       },
+      //     ],
+      //   },
+      // }
+
+      const wsProvider = new WsProvider('wss://bifrost-polkadot.dotters.network')
+      const api = await ApiPromise.create({
+        provider: wsProvider,
+      })
+
+      const txResult = await Builder(api) //Api parameter is optional
+        .from('BifrostPolkadot') // Origin Parachain
+        .to('AssetHubPolkadot') // Destination Parachain //You can now add custom ParachainID eg. .to('Basilisk', 2024) or use custom Multilocation
+        .currency({ symbol: 'DOT' }) //{id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
+        // .currency({ multilocation: multilocationJson })
+        /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
+        .amount(amount) // Token amount
+        .address(recipient) // AccountId32 or AccountKey20 address or custom Multilocation
+        /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
         .build()
 
       await txResult.signAndSend(
@@ -126,16 +158,25 @@ const useParaspellApi = () => {
   }
 
   const handleSubmitableEvents = (result: ISubmittableResult, exitCallBack: boolean) => {
-    const { txHash, status, events, isError, internalError, isCompleted } = result
+    const { txHash, status, events, isError, internalError, isCompleted, dispatchError } = result
     // check for execution errors
     if (isError || internalError) throw new Error('Transfer failed')
     // verify transaction hash & transfer isn't completed
-    if (!txHash) throw new Error('Transfer error: Failed to generate the transaction hash')
-
+    if (!txHash) throw new Error('Failed to generate the transaction hash')
+    console.log('status', status.toJSON())
     // Wait until block is finalized before handling transfer data
     if (isCompleted && status.isFinalized) {
+      // check for extrinsic errors
+      if (dispatchError !== undefined) {
+        if (dispatchError.isModule) {
+          const { docs, section } = dispatchError.registry.findMetaError(dispatchError.asModule)
+          throw new Error(`Pallet '${section}' - ${docs.join(' ')}`)
+        }
+      }
+
+      // Verify extrinsic success
       const extrinsicSuccess = result.findRecord('system', 'ExtrinsicSuccess')
-      if (!extrinsicSuccess) throw new Error('Transfer failed. Returned extrinsicSuccess: false')
+      if (!extrinsicSuccess) throw new Error(`'ExtrinsicSuccess' event not found`)
 
       let messageHash: string | undefined
       let messageId: string | undefined
