@@ -11,6 +11,7 @@ import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
 import { Builder } from '@paraspell/sdk'
+import { ISubmittableResult } from '@polkadot/types/types'
 
 const useParaspellApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -33,7 +34,8 @@ const useParaspellApi = () => {
 
     setStatus('Loading')
     const account = sender as SubstrateAccount
-    let isComplete = false
+    const isComplete = false
+
     try {
       const txResult = await Builder()
         .from('AssetHubPolkadot')
@@ -42,55 +44,18 @@ const useParaspellApi = () => {
         .amount(amount)
         .address(recipient) //AccountKey20 recipient address
         .build()
-      console.log('txResult', txResult.toJSON())
 
       await txResult.signAndSend(
         account.address,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { signer: account.signer as any },
         async result => {
           try {
-            const { txHash, status, events, isError, internalError } = result
-            console.log('isError', isError)
-            console.log('internalError', internalError)
-
-            // verify transaction hash & transfer isn't completed
-            if (!txHash) throw new Error('Transfer error: Failed to generate the transaction hash')
-            console.log('txHash', txHash.toString())
-
             if (isComplete) return
 
-            console.log('status', status.toJSON())
-
-            // Wait until block is finalized before handling transfer data
-            if (status.isFinalized) {
-              let messageHash: string | undefined
-              let messageId: string | undefined
-              let extrinsicSuccess: boolean = false
-
-              // Filter the events to get the needed data
-              events.forEach(({ event: { data, method, section } }) => {
-                console.log('method:', method, 'section:', section, 'data', data.toJSON())
-                if (
-                  method === 'XcmpMessageSent' &&
-                  section === 'xcmpQueue' &&
-                  'messageHash' in data
-                ) {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  messageHash = (data.messageHash as any).toString()
-                }
-                if (method === 'Sent' && section === 'polkadotXcm' && 'messageId' in data) {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  messageId = (data.messageId as any).toString()
-                }
-                if (method === 'ExtrinsicSuccess' && section === 'system') {
-                  extrinsicSuccess = true
-                }
-              })
-
-              if (!extrinsicSuccess)
-                throw new Error('Transfer failed. Returned extrinsicSuccess: false')
-              if (!messageHash) throw new Error('Cross chain messageHash missing')
-              if (!messageId) throw new Error('Parachain messageId missing')
+            const data = handleSubmitableEvents(result, isComplete)
+            if (data) {
+              const { messageHash, messageId } = data
 
               // Add transfer to storage
               const senderAddress = await getSenderAddress(sender)
@@ -99,7 +64,7 @@ const useParaspellApi = () => {
               const date = new Date()
 
               addTransferToStorage({
-                id: txHash.toString(),
+                id: result.txHash.toString(),
                 sourceChain,
                 token,
                 tokenUSDValue,
@@ -134,8 +99,6 @@ const useParaspellApi = () => {
                   date: date.toISOString(),
                 })
               }
-              // Mark the transfer as complete and return
-              isComplete = true
               setStatus('Idle')
               return
             }
@@ -160,6 +123,41 @@ const useParaspellApi = () => {
       message: 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,
     })
+  }
+
+  const handleSubmitableEvents = (result: ISubmittableResult, exitCallBack: boolean) => {
+    const { txHash, status, events, isError, internalError, isCompleted } = result
+    // check for execution errors
+    if (isError || internalError) throw new Error('Transfer failed')
+    // verify transaction hash & transfer isn't completed
+    if (!txHash) throw new Error('Transfer error: Failed to generate the transaction hash')
+
+    // Wait until block is finalized before handling transfer data
+    if (isCompleted && status.isFinalized) {
+      const extrinsicSuccess = result.findRecord('system', 'ExtrinsicSuccess')
+      if (!extrinsicSuccess) throw new Error('Transfer failed. Returned extrinsicSuccess: false')
+
+      let messageHash: string | undefined
+      let messageId: string | undefined
+
+      // Filter the events to get the needed data
+      events.forEach(({ event: { data, method, section } }) => {
+        if (method === 'XcmpMessageSent' && section === 'xcmpQueue' && 'messageHash' in data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          messageHash = (data.messageHash as any).toString()
+        }
+        if (method === 'Sent' && section === 'polkadotXcm' && 'messageId' in data) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          messageId = (data.messageId as any).toString()
+        }
+      })
+      if (!messageHash) throw new Error('Cross chain messageHash missing')
+      if (!messageId) throw new Error('Parachain messageId missing')
+
+      // Mark the transfer as complete and return
+      exitCallBack = true
+      return { messageHash, messageId, exitCallBack }
+    }
   }
 
   return { transfer }
