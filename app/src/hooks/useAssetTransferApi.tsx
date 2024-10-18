@@ -89,8 +89,7 @@ const useAssetTransferApi = () => {
 
             // Add transfer to storage
             const senderAddress = await getSenderAddress(sender)
-            const tokenData = await getTokenPrice(token.coingeckoId ?? token.symbol)
-            const tokenUSDValue = tokenData && Object.keys(tokenData).length > 0 ? tokenData.usd : 0
+            const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
             const date = new Date()
 
             addTransferToStorage({

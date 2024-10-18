@@ -2,7 +2,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
-import { getErc20TokenUSDValue, getTokenPrice } from '@/services/balance'
+import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { getSenderAddress } from '@/utils/address'
@@ -159,13 +159,11 @@ const useSnowbridgeApi = () => {
       })
 
       const senderAddress = await getSenderAddress(sender)
-      // nuno fix
-      const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd
-
+      const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
       const date = new Date()
 
       addTransferToStorage({
-        id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): replace with actual messageId
+        id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?
         sourceChain,
         token,
         tokenUSDValue,
