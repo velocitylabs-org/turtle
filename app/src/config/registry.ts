@@ -69,7 +69,7 @@ export namespace Mainnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
-    specName: "mythos"
+    specName: 'mythos',
   }
 
   // Tokens
@@ -339,7 +339,7 @@ export interface Route {
 }
 
 export const mainnetRegistry: Registry = {
-  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Mythos],
+  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Bifrost, Mainnet.Mythos],
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
@@ -401,12 +401,12 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
-    // {
-    //   from: Mainnet.Bifrost.uid,
-    //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'AssetTransferApi',
-    //   tokens: [Mainnet.WETH.id],
-    // },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'AssetTransferApi',
+      tokens: [Mainnet.WETH.id],
+    },
     {
       from: Mainnet.Mythos.uid,
       to: Mainnet.AssetHub.uid,

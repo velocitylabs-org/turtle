@@ -71,7 +71,7 @@ const useFees = (
           if (!sourceChain.rpcConnection || !sourceChain.specName)
             throw new Error('Source chain is missing rpcConnection or specName')
 
-          console.log("Hello")
+          console.log('Hello')
           const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
           const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
@@ -88,7 +88,7 @@ const useFees = (
             },
           )
 
-          console.log("Goodbye")
+          console.log('Goodbye')
 
           // set token fees
           const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
@@ -96,7 +96,7 @@ const useFees = (
 
           // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
-          console.log("Token id to coingeko", tokenCoingeckoId)
+          console.log('Token id to coingeko', tokenCoingeckoId)
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
           break
         }
