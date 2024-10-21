@@ -12,7 +12,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   decimals: z.number(),
   address: z.string(),
   multilocation: z.string(),
-  coingekoId: z.string().optional(),
+  coingeckoId: z.string().optional(),
 })
 
 export const chainSchema: z.ZodType<Chain> = z.object({
