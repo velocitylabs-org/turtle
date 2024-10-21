@@ -173,6 +173,7 @@ export namespace Mainnet {
     address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"}}]}}',
+    coingeckoId: 'bridged-wrapped-lido-staked-ether-scroll',
   }
 
   export const TBTC: Token = {
@@ -227,7 +228,6 @@ export namespace Mainnet {
     decimals: 10,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
-    coingeckoId: 'polkadot',
   }
 
   export const ETH: Token = {
@@ -239,7 +239,6 @@ export namespace Mainnet {
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
     multilocation: '',
-    coingeckoId: 'ethereum',
   }
 }
 
@@ -276,6 +275,7 @@ export namespace Testnet {
     address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
+    coingeckoId: 'weth',
   }
 
   export const VETH: Token = {

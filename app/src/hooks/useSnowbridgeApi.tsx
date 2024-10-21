@@ -132,10 +132,13 @@ const useSnowbridgeApi = () => {
       switch (direction) {
         case Direction.ToPolkadot: {
           const coingekoId = getCoingekoId(token)
+          console.log("coingekoId registry vs obtained", token.coingeckoId, coingekoId)
 
           // token transfer amount
           const it = (await getTokenPrice(coingekoId))?.usd
           if (it === null || it === 0) throw new Error('Failed to fetch token price')
+
+          console.log("Price is ", it)
 
           sendResult = await toPolkadot.send(
             context,
