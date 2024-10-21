@@ -13,7 +13,6 @@ import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer
 import { useCallback, useEffect, useState } from 'react'
 import { getDestChainId } from './useAssetTransferApi'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import { getCoingekoId } from '@/models/token'
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -57,18 +56,8 @@ const useFees = (
         case Direction.ToPolkadot: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
 
-          console.log('Use fees - token: ', JSON.stringify(tokenAmount.token))
-
-          const coingekoId = tokenAmount.token.coingeckoId ?? getCoingekoId(tokenAmount.token)
-          console.log('useFees - coingekoId is ', coingekoId)
-          // token transfer amount
-          const it = (await getTokenPrice(coingekoId))?.usd
-          if (it === null || it === 0) throw new Error('Failed to fetch token price')
-          console.log('token price is ', it)
-
           // fee value
           tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
-          console.log('fee value is ', tokenUSDValue)
           amount = (
             await toPolkadot.getSendFee(
               snowbridgeContext,
