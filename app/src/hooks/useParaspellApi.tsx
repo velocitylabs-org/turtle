@@ -161,9 +161,11 @@ const useParaspellApi = () => {
     const { txHash, status, events, isError, internalError, isCompleted, dispatchError } = result
     // check for execution errors
     if (isError || internalError) throw new Error('Transfer failed')
-    // verify transaction hash & transfer isn't completed
+
+    // verify transaction hash
     if (!txHash) throw new Error('Failed to generate the transaction hash')
     console.log('status', status.toJSON())
+
     // Wait until block is finalized before handling transfer data
     if (isCompleted && status.isFinalized) {
       // check for extrinsic errors
