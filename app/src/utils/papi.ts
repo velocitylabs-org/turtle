@@ -89,13 +89,13 @@ export const getNonNativeBalance = async (
   // the account to lookup
   address: string,
 ): Promise<Balance | undefined> => {
-    const apiAssetHub = api as TypedApi<typeof dotAh>
-    const convertedMultilocation = convertEthMultilocation(token.multilocation)
-    if (!convertedMultilocation) return undefined
+  const apiAssetHub = api as TypedApi<typeof dotAh>
+  const convertedMultilocation = convertEthMultilocation(token.multilocation)
+  if (!convertedMultilocation) return undefined
 
-    const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
-      convertedMultilocation,
-      address,
-    )
-    return { free: res?.balance ?? 0n }
+  const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
+    convertedMultilocation,
+    address,
+  )
+  return { free: res?.balance ?? 0n }
 }
