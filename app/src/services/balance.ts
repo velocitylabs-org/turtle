@@ -1,4 +1,3 @@
-import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Context } from '@snowbridge/api'
 import { erc20TokenToAssetLocation, palletAssetsBalance } from '@snowbridge/api/dist/assets'

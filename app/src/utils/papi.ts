@@ -1,5 +1,7 @@
 import { Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
+import { ethMultilocationSchema } from '@/models/schemas'
+import { Token } from '@/models/token'
 import {
   dotAh,
   mythos,
@@ -9,7 +11,6 @@ import {
 } from '@polkadot-api/descriptors'
 import { captureException } from '@sentry/nextjs'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
-import { z } from 'zod'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */
 export type SupportedChains = typeof dotAh | typeof mythos
@@ -27,27 +28,6 @@ export const getApiDescriptorForChain = (chain: Chain) => {
       return dotAh // fallback
   }
 }
-
-const ethMultilocationSchema = z.object({
-  parents: z.string(),
-  interior: z.object({
-    X2: z.tuple([
-      z.object({
-        GlobalConsensus: z.object({
-          Ethereum: z.object({
-            chainId: z.string(),
-          }),
-        }),
-      }),
-      z.object({
-        AccountKey20: z.object({
-          network: z.nullable(z.string()),
-          key: z.string(),
-        }),
-      }),
-    ]),
-  }),
-})
 
 /** Convert a multilocation string to an XCM V3 PAPI object. Only supports Ethereum multilocations for now. */
 export const convertEthMultilocation = (multilocationString: string) => {
@@ -87,16 +67,29 @@ export const getNativeBalance = async (
   return await apiAssetHub?.query.System.Account.getValue(address)
 }
 
+export interface Balance {
+  free: bigint
+}
+
 /** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
+// TODO(team): this only works for AH. Can we use ParaSpell to do and fetch this for us?
 export const getNonNativeBalance = async (
+  // the Papi api instance
   api: TypedApi<SupportedChains> | undefined,
-  tokenMultilocation: string,
+  // the chain in which to look up the value
+  _chain: Chain,
+  // the token to lookup
+  token: Token,
+  // the account to lookup
   address: string,
-) => {
-  // TODO: Figure out which pallet to query. It is not always 'ForeignAssets'
-  const apiAssetHub = api as TypedApi<typeof dotAh> // treat it as AssetHub api for now to get types
-  const convertedMultilocation = convertEthMultilocation(tokenMultilocation)
+): Promise<Balance | undefined> => {
+  const apiAssetHub = api as TypedApi<typeof dotAh>
+  const convertedMultilocation = convertEthMultilocation(token.multilocation)
   if (!convertedMultilocation) return undefined
 
-  return await apiAssetHub?.query.ForeignAssets.Account.getValue(convertedMultilocation, address)
+  const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
+    convertedMultilocation,
+    address,
+  )
+  return { free: res?.balance ?? 0n }
 }

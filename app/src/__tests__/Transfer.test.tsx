@@ -1,8 +1,10 @@
 import { Direction, resolveDirection } from '@/services/transfer'
 import '@testing-library/jest-dom'
-import { Mainnet, Testnet } from '../config/registry'
+import { Mainnet, mainnetRegistry, Testnet } from '../config/registry'
 import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { getDestChainId } from '@/hooks/useAssetTransferApi'
+import { Enum } from 'polkadot-api'
+import { getTokenPrice } from '@/services/balance'
 
 describe('Transfer', () => {
   it('direction ToEthereum', () => {
@@ -54,5 +56,17 @@ describe('Transfer', () => {
 
   it('convert amount to string', () => {
     expect(convertAmount(0.3, Mainnet.WETH).toString()).toBe('300000000000000000')
+  })
+
+  it('looks up local asset id', () => {
+    expect(mainnetRegistry.localAssetId.get(Mainnet.Bifrost.uid)?.get(Mainnet.WETH.id)).toEqual(
+      Enum('Token2', 13),
+    )
+    //{"type": "Token2", "value": 13})
+  })
+
+  it('fetches the token price', () => {
+    expect(getTokenPrice(Mainnet.MYTH.coingeckoId!)).toEqual({ usd: 0.2 })
+    //{"type": "Token2", "value": 13})
   })
 })

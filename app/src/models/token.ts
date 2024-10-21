@@ -15,3 +15,7 @@ export interface Token {
   //   - https://www.coingecko.com/en/coins/ethereum
   coingeckoId?: string
 }
+
+export function getCoingekoId(token: Token): string {
+  return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
+}

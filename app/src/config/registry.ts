@@ -20,20 +20,23 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
+    specName: 'statemint',
     rpcConnection:
       process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL ||
       'wss://api-asset-hub-polkadot.dwellir.com',
   }
 
-  // export const Bifrost: Chain = {
-  //   uid: 'bifrost',
-  //   name: 'Bifrost',
-  //   logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
-  //   chainId: 2030,
-  //   destinationFeeDOT: '20000000',
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['ss58'],
-  // }
+  export const Bifrost: Chain = {
+    uid: 'bifrost',
+    name: 'Bifrost',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    chainId: 2030,
+    destinationFeeDOT: '20000000',
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: 'wss://bifrost-polkadot.dotters.network',
+    specName: 'bifrost_polkadot',
+  }
 
   // export const Hydration: Chain = {
   //   uid: 'hydration',
@@ -64,6 +67,7 @@ export namespace Mainnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
+    specName: 'mythos',
   }
 
   // Tokens
@@ -76,6 +80,7 @@ export namespace Mainnet {
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
+    coingeckoId: 'weth',
   }
 
   export const VETH: Token = {
@@ -109,6 +114,19 @@ export namespace Mainnet {
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
+    coingeckoId: 'mythos',
+  }
+
+  export const BNC: Token = {
+    id: 'bnc',
+    name: 'Bifrost Native Coin',
+    symbol: 'BNC',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    decimals: 12,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    coingeckoId: 'bifrost-native-coin',
   }
 
   export const SHIB: Token = {
@@ -153,6 +171,7 @@ export namespace Mainnet {
     address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"}}]}}',
+    coingeckoId: 'bridged-wrapped-lido-staked-ether-scroll',
   }
 
   export const TBTC: Token = {
@@ -254,6 +273,7 @@ export namespace Testnet {
     address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
+    coingeckoId: 'weth',
   }
 
   export const VETH: Token = {
@@ -305,7 +325,7 @@ export interface Route {
 }
 
 export const mainnetRegistry: Registry = {
-  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Mythos],
+  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Bifrost, Mainnet.Mythos],
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
@@ -345,6 +365,12 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.MYTH.id],
     },
     {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [Mainnet.WETH.id],
+    },
+    {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
       sdk: 'SnowbridgeApi',
@@ -354,6 +380,7 @@ export const mainnetRegistry: Registry = {
         Mainnet.USDC.id,
         Mainnet.USDT.id,
         Mainnet.DAI.id,
+        Mainnet.MYTH.id,
         Mainnet.WSTETH.id,
         Mainnet.TBTC.id,
         Mainnet.TON.id,
@@ -361,12 +388,18 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
-    {
-      from: Mainnet.Mythos.uid,
-      to: Mainnet.AssetHub.uid,
-      sdk: 'AssetTransferApi',
-      tokens: [Mainnet.MYTH.id],
-    },
+    // {
+    //   from: Mainnet.Bifrost.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'AssetTransferApi',
+    //   tokens: [Mainnet.WETH.id],
+    // },
+    // {
+    //   from: Mainnet.Mythos.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'AssetTransferApi',
+    //   tokens: [Mainnet.MYTH.id],
+    // },
   ],
 }
 
@@ -406,6 +439,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.ETH
     case 'mythos':
       return Mainnet.MYTH
+    case 'bifrost':
+      return Mainnet.BNC
     default:
       throw Error('The impossible has happened!')
   }

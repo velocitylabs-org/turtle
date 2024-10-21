@@ -1,3 +1,4 @@
+import { getNativeToken } from '@/config/registry'
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
@@ -32,7 +33,6 @@ const useAssetTransferApi = () => {
       onSuccess,
     } = params
 
-    setStatus('Loading')
     try {
       if (!sourceChain.rpcConnection || !sourceChain.specName)
         throw new Error('Source chain is missing rpcConnection or specName')
@@ -40,26 +40,15 @@ const useAssetTransferApi = () => {
       const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
       const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
+      const dryRunResult = await validate(atApi, params, setStatus)
+      if (dryRunResult.xcmExecutionResult.isErr) throw new Error('Dry run failed')
+
       setStatus('Sending')
-
-      const txResult = await atApi.createTransferTransaction(
-        getDestChainId(destinationChain),
-        recipient,
-        // asset id
-        [token.multilocation],
-        // the amount (pairs with the asset ids above)
-        [amount.toString()],
-        {
-          format: 'submittable',
-          xcmVersion: safeXcmVersion,
-        },
-      )
-
       const account = sender as SubstrateAccount
       let isComplete = false
 
       await atApi.api
-        .tx(txResult.tx)
+        .tx(dryRunResult.tx)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .signAndSend(account.address, { signer: account.signer as any }, async result => {
           const { txHash, status, events } = result
@@ -152,8 +141,35 @@ const useAssetTransferApi = () => {
     }
   }
 
+  const validate = async (
+    atApi: AssetTransferApi,
+    params: TransferParams,
+    setStatus: (status: Status) => void,
+  ) => {
+    setStatus('Validating')
+    const { sender, sourceChain, token, destinationChain, recipient, amount } = params
+
+    const callInfo = await atApi.createTransferTransaction(
+      getDestChainId(destinationChain),
+      recipient,
+      // asset id
+      [token.symbol],
+      // the amount (pairs with the asset ids above)
+      [amount.toString()],
+      {
+        format: 'submittable',
+        xcmVersion: 4, //todo(nuno): pass safe value here
+        dryRunCall: true,
+        sendersAddr: sender.address,
+        xcmFeeAsset: getNativeToken(sourceChain).symbol, // TODO: support other fee assets
+      },
+    )
+
+    return callInfo
+  }
+
   const handleSendError = (e: unknown) => {
-    console.error('Transfer error:', e)
+    console.log('Transfer error:', e)
     addNotification({
       message: 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,
