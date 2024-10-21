@@ -313,6 +313,10 @@ export namespace Testnet {
 
 export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi'
 
+export type AssetIds = {
+  Token2: number
+}
+
 export interface Registry {
   chains: Chain[]
   tokens: Token[]
@@ -326,8 +330,7 @@ export interface Registry {
       // asset uuid
       string,
       // local asset id - papi compatible
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      any
+      Enum<AssetIds>
     >
   >
 }
