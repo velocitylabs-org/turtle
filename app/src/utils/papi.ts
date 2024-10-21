@@ -1,4 +1,4 @@
-import { getLocalAssetId, Mainnet } from '@/config/registry'
+import { Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { ethMultilocationSchema } from '@/models/schemas'
 import { Token } from '@/models/token'
@@ -76,6 +76,7 @@ export interface Balance {
 }
 
 /** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
+// TODO(team): this only works for AH. Can we use ParaSpell to do and fetch this for us?
 export const getNonNativeBalance = async (
   // the environment the app is running on
   env: Environment,
@@ -88,27 +89,13 @@ export const getNonNativeBalance = async (
   // the account to lookup
   address: string,
 ): Promise<Balance | undefined> => {
-  switch (chain.uid) {
-    case 'bifrost': {
-      const bifrostApi = api as TypedApi<typeof bifrost>
-      if (!bifrostApi) throw Error(`Couldn't reach BiFrost`)
+    const apiAssetHub = api as TypedApi<typeof dotAh>
+    const convertedMultilocation = convertEthMultilocation(token.multilocation)
+    if (!convertedMultilocation) return undefined
 
-      const assetId = getLocalAssetId(env, chain, token)
-      if (!assetId) throw Error('This token misses a local assetId')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return await bifrostApi?.query.Tokens.Accounts.getValue(address, assetId as any)
-    }
-
-    default: {
-      const apiAssetHub = api as TypedApi<typeof dotAh>
-      const convertedMultilocation = convertEthMultilocation(token.multilocation)
-      if (!convertedMultilocation) return undefined
-
-      const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
-        convertedMultilocation,
-        address,
-      )
-      return { free: res?.balance ?? 0n }
-    }
-  }
+    const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
+      convertedMultilocation,
+      address,
+    )
+    return { free: res?.balance ?? 0n }
 }

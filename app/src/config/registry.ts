@@ -1,7 +1,5 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Environment } from '@/store/environmentStore'
-import { Enum } from 'polkadot-api'
 
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
@@ -321,18 +319,6 @@ export interface Registry {
   chains: Chain[]
   tokens: Token[]
   routes: Route[]
-  // The local asset id of an asset at a given chain
-  // Eg: BiFrost (chain) > wETH (asset) > Token2(13) (local asset id)
-  localAssetId: Map<
-    // chain uuid
-    string,
-    Map<
-      // asset uuid
-      string,
-      // local asset id - papi compatible
-      Enum<AssetIds>
-    >
-  >
 }
 
 export interface Route {
@@ -419,7 +405,6 @@ export const mainnetRegistry: Registry = {
     //   tokens: [Mainnet.MYTH.id],
     // },
   ],
-  localAssetId: new Map([[Mainnet.Bifrost.uid, new Map([[Mainnet.WETH.id, Enum('Token2', 13)]])]]),
 }
 
 export const testnetRegistry: Registry = {
@@ -439,7 +424,6 @@ export const testnetRegistry: Registry = {
       sdk: 'SnowbridgeApi',
     },
   ],
-  localAssetId: new Map(),
 }
 
 export const REGISTRY = {
@@ -464,13 +448,4 @@ export function getNativeToken(chain: Chain): Token {
     default:
       throw Error('The impossible has happened!')
   }
-}
-
-export function getLocalAssetId(
-  env: Environment,
-  chain: Chain,
-  token: Token,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Enum<any> | undefined {
-  return REGISTRY[env].localAssetId.get(chain.uid)?.get(token.id)
 }
