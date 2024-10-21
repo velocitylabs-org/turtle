@@ -10,7 +10,7 @@ import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
-import { assets, Builder } from '@paraspell/sdk'
+import { assets, Builder, Extrinsic } from '@paraspell/sdk'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 
@@ -38,15 +38,23 @@ const useParaspellApi = () => {
     const isComplete = false
 
     try {
+      // Creates a submittable extrinsic tx hash using Paraspell Builder
       const txResult = await createTx(params)
+
+      // Signs and submit the tx hash
+      // Inits an execution callback and process transfer
       await txResult.signAndSend(
         account.address,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { signer: account.signer as any },
         async result => {
           try {
+            // Prevents unnecessary callback loops
             if (isComplete) return
 
+            // Handles transfer execution,
+            // Parses events and catch execution and extrinsic errors,
+            // Extract messageHash and messageId from events
             const eventsData = handleSubmittableEvents(result, isComplete)
             if (eventsData) {
               const { messageHash, messageId } = eventsData
@@ -122,6 +130,14 @@ const useParaspellApi = () => {
   return { transfer }
 }
 
+/**
+ * Processes blockchain events and handles extrinsic success or failure.
+ * It listens to the transaction process, checks for errors, and filters relevant data.
+ *
+ * @param result - The blockchain result returned by the signAndSend() method.
+ * @param exitCallBack - A boolean flag to manual mark the process as completed, exit the callback and prevent unnecessary loops.
+ * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
+ */
 const handleSubmittableEvents = (result: ISubmittableResult, exitCallBack: boolean) => {
   const { txHash, status, events, isError, internalError, isCompleted, dispatchError } = result
   // check for execution errors
@@ -168,7 +184,14 @@ const handleSubmittableEvents = (result: ISubmittableResult, exitCallBack: boole
   }
 }
 
-const createTx = async (params: TransferParams, wssEndpoint?: string) => {
+/**
+ * Creates a submittable extrinsic transaction hash using Paraspell Builder.
+ *
+ * @param params - The transfer parameters
+ * @param wssEndpoint - An optional WebSocket endpoint to connect to a specific blockchain. // Should not be needed.
+ * @returns - A Promise that resolves a submittable extrinsic transaction.
+ */
+const createTx = async (params: TransferParams, wssEndpoint?: string): Promise<Extrinsic> => {
   let api: ApiPromise | undefined = undefined
   if (wssEndpoint) {
     const wsProvider = new WsProvider(wssEndpoint)
