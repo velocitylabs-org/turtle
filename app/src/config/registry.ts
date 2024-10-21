@@ -311,10 +311,6 @@ export namespace Testnet {
 
 export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi'
 
-export type AssetIds = {
-  Token2: number
-}
-
 export interface Registry {
   chains: Chain[]
   tokens: Token[]

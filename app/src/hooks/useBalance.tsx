@@ -72,7 +72,7 @@ const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
               symbol: token.symbol,
             }
           } else {
-            const result = await getNonNativeBalance(env, api, chain, token, address)
+            const result = await getNonNativeBalance(api, chain, token, address)
 
             fetchedBalance = {
               value: result?.free || 0n,

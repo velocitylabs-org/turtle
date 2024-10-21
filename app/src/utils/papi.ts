@@ -2,9 +2,7 @@ import { Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { ethMultilocationSchema } from '@/models/schemas'
 import { Token } from '@/models/token'
-import { Environment } from '@/store/environmentStore'
 import {
-  bifrost,
   dotAh,
   mythos,
   XcmV3Junction,
@@ -15,7 +13,7 @@ import { captureException } from '@sentry/nextjs'
 import { FixedSizeBinary, TypedApi } from 'polkadot-api'
 
 /** All chains PAPI can connect to. Only used for PAPI types. */
-export type SupportedChains = typeof dotAh | typeof mythos | typeof bifrost
+export type SupportedChains = typeof dotAh | typeof mythos
 
 /** Get PAPI chain type by chain object. Only used for PAPI types. Only supports mainnet atm. */
 export const getApiDescriptorForChain = (chain: Chain) => {
@@ -24,8 +22,6 @@ export const getApiDescriptorForChain = (chain: Chain) => {
       return dotAh
     case Mainnet.Mythos.uid:
       return mythos
-    case Mainnet.Bifrost.uid:
-      return bifrost
 
     default:
       captureException(new Error(`Unsupported chain: ${chain}`))
@@ -78,12 +74,10 @@ export interface Balance {
 /** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
 // TODO(team): this only works for AH. Can we use ParaSpell to do and fetch this for us?
 export const getNonNativeBalance = async (
-  // the environment the app is running on
-  env: Environment,
   // the Papi api instance
   api: TypedApi<SupportedChains> | undefined,
   // the chain in which to look up the value
-  chain: Chain,
+  _chain: Chain,
   // the token to lookup
   token: Token,
   // the account to lookup
