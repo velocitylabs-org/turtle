@@ -131,17 +131,12 @@ const useSnowbridgeApi = () => {
 
       switch (direction) {
         case Direction.ToPolkadot: {
-          console.log("Token is ", JSON.stringify(token))
-          console.log("on registry coin id is ", token.coingeckoId)
-
           const coingekoId = getCoingekoId(token)
-          console.log("useFees - coingekoId is ", coingekoId)
+
           // token transfer amount
           const it = (await getTokenPrice(coingekoId))?.usd
+          if (it === null || it === 0) throw new Error('Failed to fetch token price')
 
-          if (it === null || it === 0) throw new Error("Failed to fetch token price")
-          console.log("it is ", it)
-        
           sendResult = await toPolkadot.send(
             context,
             sender as Signer,
@@ -168,16 +163,12 @@ const useSnowbridgeApi = () => {
         message: 'Transfer initiated. See below!',
         severity: NotificationSeverity.Success,
       })
-
-      console.log("Will get token price for ", JSON.stringify(token))
-      const coingekoId = token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
-      console.log("coin id is ", token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-'))
-
+      const coingekoId = getCoingekoId(token)
       const senderAddress = await getSenderAddress(sender)
       const tokenUSDValue = (await getTokenPrice(coingekoId))?.usd
 
-      if (tokenUSDValue === null || tokenUSDValue === 0) throw new Error("Failed to fetch token price")
-      console.log("tokenUSDValue is ", token.symbol,tokenUSDValue)
+      if (tokenUSDValue === null || tokenUSDValue === 0)
+        throw new Error('Failed to fetch token price')
       const date = new Date()
 
       addTransferToStorage({
