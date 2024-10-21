@@ -66,9 +66,7 @@ describe('Transfer', () => {
   })
 
   it('fetches the token price', () => {
-    expect(getTokenPrice(Mainnet.MYTH.coingeckoId!)).toEqual(
-      { usd: 0.2 }
-    )
+    expect(getTokenPrice(Mainnet.MYTH.coingeckoId!)).toEqual({ usd: 0.2 })
     //{"type": "Token2", "value": 13})
   })
 })

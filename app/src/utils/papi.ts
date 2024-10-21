@@ -95,7 +95,7 @@ export const getNonNativeBalance = async (
 
       const assetId = getLocalAssetId(env, chain, token)
       if (!assetId) throw Error('This token misses a local assetId')
-
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return await bifrostApi?.query.Tokens.Accounts.getValue(address, assetId as any)
     }
 

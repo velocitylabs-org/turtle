@@ -4,6 +4,7 @@ import useNotification from '@/hooks/useNotification'
 import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
+import { Environment } from '@/store/environmentStore'
 import { SupportedChains } from '@/utils/papi'
 import { captureException } from '@sentry/nextjs'
 import { Context, environment, toPolkadot } from '@snowbridge/api'
@@ -11,7 +12,6 @@ import { Signer } from 'ethers'
 import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
-import { Environment } from '@/store/environmentStore'
 
 interface Params {
   env: Environment
@@ -58,7 +58,7 @@ const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Par
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
         captureException(error)
     }
-  }, [environment, chain?.network, owner, tokenAmount, tokenBalance, context])
+  }, [chain?.network, owner, tokenAmount, context])
 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
@@ -108,7 +108,7 @@ const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Par
         SetIsSwapping(false)
       }
     },
-    [env, chain?.network, tokenAmount, context, fetchEthBalance, tokenBalance, addNotification],
+    [env, chain?.network, tokenAmount, context, ethBalance, owner, addNotification],
   )
 
   return { ethBalance, swapEthtoWEth, isSwapping }

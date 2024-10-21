@@ -326,6 +326,7 @@ export interface Registry {
       // asset uuid
       string,
       // local asset id - papi compatible
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       any
     >
   >
@@ -466,6 +467,7 @@ export function getLocalAssetId(
   env: Environment,
   chain: Chain,
   token: Token,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Enum<any> | undefined {
   return REGISTRY[env].localAssetId.get(chain.uid)?.get(token.id)
 }

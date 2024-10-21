@@ -16,7 +16,6 @@ export interface Token {
   coingeckoId?: string
 }
 
-
 export function getCoingekoId(token: Token): string {
   return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
 }
