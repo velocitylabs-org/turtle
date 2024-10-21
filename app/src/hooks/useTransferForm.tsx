@@ -196,6 +196,9 @@ const useTransferForm = () => {
       )
         return
 
+
+      console.log('Token is', tokenAmount.token)
+      
       transfer({
         environment,
         sender: sourceWallet.sender,

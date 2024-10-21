@@ -394,6 +394,7 @@ export const mainnetRegistry: Registry = {
         Mainnet.USDC.id,
         Mainnet.USDT.id,
         Mainnet.DAI.id,
+        Mainnet.MYTH.id,
         Mainnet.WSTETH.id,
         Mainnet.TBTC.id,
         Mainnet.TON.id,
@@ -401,18 +402,18 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
-    {
-      from: Mainnet.Bifrost.uid,
-      to: Mainnet.AssetHub.uid,
-      sdk: 'AssetTransferApi',
-      tokens: [Mainnet.WETH.id],
-    },
-    {
-      from: Mainnet.Mythos.uid,
-      to: Mainnet.AssetHub.uid,
-      sdk: 'AssetTransferApi',
-      tokens: [Mainnet.MYTH.id],
-    },
+    // {
+    //   from: Mainnet.Bifrost.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'AssetTransferApi',
+    //   tokens: [Mainnet.WETH.id],
+    // },
+    // {
+    //   from: Mainnet.Mythos.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'AssetTransferApi',
+    //   tokens: [Mainnet.MYTH.id],
+    // },
   ],
   localAssetId: new Map([[Mainnet.Bifrost.uid, new Map([[Mainnet.WETH.id, Enum('Token2', 13)]])]]),
 }

@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { Token } from '@/models/token'
+import { getCoingekoId, Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -130,22 +130,33 @@ const useSnowbridgeApi = () => {
       let sendResult
 
       switch (direction) {
-        case Direction.ToPolkadot:
+        case Direction.ToPolkadot: {
+          console.log("Token is ", JSON.stringify(token))
+          console.log("on registry coin id is ", token.coingeckoId)
+
+          const coingekoId = getCoingekoId(token)
+          console.log("useFees - coingekoId is ", coingekoId)
+          // token transfer amount
+          const it = (await getTokenPrice(coingekoId))?.usd
+
+          if (it === null || it === 0) throw new Error("Failed to fetch token price")
+          console.log("it is ", it)
+        
           sendResult = await toPolkadot.send(
             context,
             sender as Signer,
             plan as toPolkadot.SendValidationResult,
           )
           break
-
-        case Direction.ToEthereum:
+        }
+        case Direction.ToEthereum: {
           sendResult = await toEthereum.send(
             context,
             sender as WalletOrKeypair,
             plan as toEthereum.SendValidationResult,
           )
           break
-
+        }
         default:
           throw new Error('Unsupported flow')
       }
@@ -158,8 +169,15 @@ const useSnowbridgeApi = () => {
         severity: NotificationSeverity.Success,
       })
 
+      console.log("Will get token price for ", JSON.stringify(token))
+      const coingekoId = token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
+      console.log("coin id is ", token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-'))
+
       const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
+      const tokenUSDValue = (await getTokenPrice(coingekoId))?.usd
+
+      if (tokenUSDValue === null || tokenUSDValue === 0) throw new Error("Failed to fetch token price")
+      console.log("tokenUSDValue is ", token.symbol,tokenUSDValue)
       const date = new Date()
 
       addTransferToStorage({
@@ -185,7 +203,7 @@ const useSnowbridgeApi = () => {
           token: token.name,
           amount: amount.toString(),
           destinationChain: destinationChain.name,
-          usdValue: tokenUSDValue,
+          usdValue: tokenUSDValue ?? 0,
           usdFees: fees.inDollars,
           recipient: recipient,
           date: date.toISOString(),
