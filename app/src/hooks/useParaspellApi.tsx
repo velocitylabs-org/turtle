@@ -61,14 +61,14 @@ const useParaspellApi = () => {
       //   },
       // }
 
-      const wsProvider = new WsProvider('wss://bifrost-polkadot.dotters.network')
-      const api = await ApiPromise.create({
-        provider: wsProvider,
-      })
+      // const wsProvider = new WsProvider('wss://bifrost-polkadot.dotters.network')
+      // const api = await ApiPromise.create({
+      //   provider: wsProvider,
+      // })
 
-      const txResult = await Builder(api) //Api parameter is optional
+      const txResult = await Builder() //Api parameter is optional
         .from('BifrostPolkadot') // Origin Parachain
-        .to('AssetHubPolkadot') // Destination Parachain //You can now add custom ParachainID eg. .to('Basilisk', 2024) or use custom Multilocation
+        .to('Hydration') // Destination Parachain //You can now add custom ParachainID eg. .to('Basilisk', 2024) or use custom Multilocation
         .currency({ symbol: 'DOT' }) //{id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
         // .currency({ multilocation: multilocationJson })
         /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
