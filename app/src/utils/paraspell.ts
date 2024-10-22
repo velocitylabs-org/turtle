@@ -29,8 +29,6 @@ export const createTx = async (
   // console.log('All good', tokenSymbol, 'from:', sourceChainFromId, 'to: ', destinationChainFromId)
 
   return await Builder(api) // Api parameter is optional
-    // .from('BifrostPolkadot')
-    // .to('Hydration')
     .from(sourceChainFromId)
     .to(destinationChainFromId)
     .currency({ symbol: tokenSymbol }) //{id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
