@@ -38,7 +38,6 @@ const useParaspellApi = () => {
     const isComplete = false
 
     try {
-      // Creates a submittable extrinsic tx hash using Paraspell Builder
       const txResult = await createTx(params)
 
       // Signs and submit the tx hash
