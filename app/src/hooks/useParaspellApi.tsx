@@ -37,9 +37,9 @@ const useParaspellApi = () => {
     const isComplete = false
 
     try {
-      const txResult = await createTx(params)
+      const tx = await createTx(params)
 
-      await txResult.signAndSend(
+      await tx.signAndSend(
         account.address,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { signer: account.signer as any },
