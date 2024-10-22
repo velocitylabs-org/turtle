@@ -1,4 +1,5 @@
-import { assets, Builder, Extrinsic } from '@paraspell/sdk'
+import { assets, Builder, Extrinsic, TNodeWithRelayChains } from '@paraspell/sdk'
+import { Token } from '@/models/token'
 import { TransferParams } from '@/hooks/useTransfer'
 import { getApiPromise } from './polkadot'
 
@@ -22,11 +23,7 @@ export const createTx = async (
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
 
-  // To be tested + write some test
-  const supportedAssets = assets.getAllAssetsSymbols(sourceChainFromId)
-  const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
-  if (!tokenSymbol) throw new Error('Transfer failed: Token symbol not supported.')
-  // console.log('All good', tokenSymbol, 'from:', sourceChainFromId, 'to: ', destinationChainFromId)
+  const tokenSymbol = getTokenSymbol(sourceChainFromId, token)
 
   return await Builder(api) // Api parameter is optional
     .from(sourceChainFromId)
@@ -37,4 +34,13 @@ export const createTx = async (
     .address(recipient)
     /*.xcmVersion(Version.V1/V2/V3/V4)*/
     .build()
+}
+
+const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+  // TODO(victor): write some tests
+  const supportedAssets = assets.getAllAssetsSymbols(sourceChain)
+  const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
+  if (!tokenSymbol) throw new Error('Transfer failed: Token symbol not supported.')
+
+  return tokenSymbol
 }
