@@ -19,7 +19,7 @@
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@hookform/resolvers": "3.9.0",
     "@nextui-org/react": "^2.4.8",
-    "@paraspell/sdk": "^6.2.0",
+    "@paraspell/sdk": "^6.2.1",
     "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot/api": "^14.0.1",
     "@polkadot/api-base": "^14.0.1",

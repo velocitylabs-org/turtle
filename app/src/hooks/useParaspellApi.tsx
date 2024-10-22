@@ -188,10 +188,12 @@ const handleSubmittableEvents = (result: ISubmittableResult, exitCallBack: boole
  * Creates a submittable extrinsic transaction hash using Paraspell Builder.
  *
  * @param params - The transfer parameters
- * @param wssEndpoint - An optional WebSocket endpoint to connect to a specific blockchain. // Should not be needed.
+ * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain. // Should not be needed.
  * @returns - A Promise that resolves a submittable extrinsic transaction.
  */
 const createTx = async (params: TransferParams, wssEndpoint?: string): Promise<Extrinsic> => {
+  const { sourceChain, destinationChain, token, amount, recipient } = params
+
   let api: ApiPromise | undefined = undefined
   if (wssEndpoint) {
     const wsProvider = new WsProvider(wssEndpoint)
@@ -200,13 +202,21 @@ const createTx = async (params: TransferParams, wssEndpoint?: string): Promise<E
     })
   }
 
-  const { sourceChain, destinationChain, token, amount, recipient } = params
+  // write some test
   const sourceChainFromId = assets.getTNode(sourceChain.chainId)
   const destinationChainFromId = assets.getTNode(destinationChain.chainId)
   if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer creation failed: chain is missing.')
+    throw new Error('Transfer failed: chain id not found.')
 
-  // ✋ TODO: verify currency, feeAsset && xcmVersion parameters
+  // To be tested + write some test
+  const tokenSymbol = token.symbol.toUpperCase()
+  const supportedAssets = assets.getAllAssetsSymbols(sourceChainFromId)
+  if (!supportedAssets.includes(tokenSymbol))
+    throw new Error('Transfer failed: Token symbol not supported.')
+
+  // console.log('All good', tokenSymbol, 'from:', sourceChainFromId, 'to: ', destinationChainFromId)
+
+  // ✋ TODO: verify feeAsset && xcmVersion parameters
   return await Builder(api) // Api parameter is optional
     .from(sourceChainFromId)
     .to(destinationChainFromId)
