@@ -32,7 +32,6 @@ const useParaspellApi = () => {
       onSuccess,
     } = params
 
-    setStatus('Loading')
     const account = sender as SubstrateAccount
     const isComplete = false
 
