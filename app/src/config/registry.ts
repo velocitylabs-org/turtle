@@ -373,7 +373,7 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
-      sdk: 'ParaspellApi',
+      sdk: 'SnowbridgeApi',
       tokens: [
         Mainnet.WETH.id,
         Mainnet.WBTC.id,
@@ -417,7 +417,7 @@ export const testnetRegistry: Registry = {
       from: Testnet.RococoAssetHub.uid,
       to: Testnet.Sepolia.uid,
       tokens: [Testnet.WETH.id, Testnet.VETH.id],
-      sdk: 'ParaspellApi',
+      sdk: 'SnowbridgeApi',
     },
   ],
 }
