@@ -75,7 +75,7 @@ export namespace Mainnet {
     id: 'weth',
     name: 'Wrapped Ether',
     symbol: 'wETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
+    logoURI: 'https://static.simpleswap.io/images/currencies-logo/weth.svg',
     decimals: 18,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     multilocation:
