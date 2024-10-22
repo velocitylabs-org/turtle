@@ -49,7 +49,7 @@ export const OngoingTransferDialog = ({
         {/* Modal header */}
         <DialogHeader
           className={
-            'flex flex-col items-center justify-center space-y-6 rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-5 sm:py-10'
+            'flex flex-col items-center justify-center space-y-4 rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-6'
           }
         >
           <DialogTitle className="sr-only">Ongoing transfer</DialogTitle>

@@ -29,7 +29,7 @@ const TransactionHistory = ({ transactions }: { transactions: CompletedTransfer[
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   return (
-    <div className="z-20 mb-12 flex max-w-[90vw] flex-col gap-4 rounded-3xl border-[1.3px] border-turtle-foreground bg-white p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
+    <div className="z-20 mb-12 flex max-w-[90vw] flex-col gap-4 rounded-3xl border-1 border-turtle-foreground bg-white p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
       {mappedTransactionsByDate.map(({ date, transactions }, idx) => (
         <div key={idx + date + transactions.length}>
           <div className="w-full space-y-3">
