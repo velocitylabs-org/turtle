@@ -1,6 +1,6 @@
 import { assets, Builder, Extrinsic } from '@paraspell/sdk'
-import { ApiPromise, WsProvider } from '@polkadot/api'
 import { TransferParams } from '@/hooks/useTransfer'
+import { getApiPromise } from './polkadot'
 
 /**
  * Creates a submittable extrinsic transaction hash using Paraspell Builder.
@@ -14,14 +14,7 @@ export const createTx = async (
   wssEndpoint?: string,
 ): Promise<Extrinsic> => {
   const { sourceChain, destinationChain, token, amount, recipient } = params
-
-  let api: ApiPromise | undefined = undefined
-  if (wssEndpoint) {
-    const wsProvider = new WsProvider(wssEndpoint)
-    api = await ApiPromise.create({
-      provider: wsProvider,
-    })
-  }
+  const api = await getApiPromise(wssEndpoint)
 
   // write some test
   const sourceChainFromId = assets.getTNode(sourceChain.chainId)
