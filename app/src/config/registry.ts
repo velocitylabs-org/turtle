@@ -309,7 +309,7 @@ export namespace Testnet {
   }
 }
 
-export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi'
+export type TransferSDK = 'SnowbridgeApi'
 
 export interface Registry {
   chains: Chain[]
@@ -391,13 +391,13 @@ export const mainnetRegistry: Registry = {
     // {
     //   from: Mainnet.Bifrost.uid,
     //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'AssetTransferApi',
+    //   sdk: 'ParaSpellApi',
     //   tokens: [Mainnet.WETH.id],
     // },
     // {
     //   from: Mainnet.Mythos.uid,
     //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'AssetTransferApi',
+    //   sdk: 'ParaSpellApi',
     //   tokens: [Mainnet.MYTH.id],
     // },
   ],

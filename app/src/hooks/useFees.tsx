@@ -6,12 +6,10 @@ import { TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { convertAmount, toHuman } from '@/utils/transfer'
+import { toHuman } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { AssetTransferApi, constructApiPromise } from '@substrate/asset-transfer-api'
 import { useCallback, useEffect, useState } from 'react'
-import { getDestChainId } from './useAssetTransferApi'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
@@ -72,25 +70,8 @@ const useFees = (
           if (!sourceChain.rpcConnection || !sourceChain.specName)
             throw new Error('Source chain is missing rpcConnection or specName')
 
-          const { api, safeXcmVersion } = await constructApiPromise(sourceChain.rpcConnection)
-          const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
-
-          const tx = await atApi.createTransferTransaction(
-            getDestChainId(destinationChain),
-            recipient,
-            // asset id
-            [tokenAmount.token.symbol],
-            // the amount (pairs with the asset ids above)
-            [convertAmount(tokenAmount.amount, tokenAmount.token).toString()],
-            {
-              format: 'call',
-              xcmVersion: 4, //todo(nuno): how to define this safely
-            },
-          )
-
-          // set token fees
-          const feesInfo = await atApi.fetchFeeInfo(tx.tx, 'call')
-          amount = feesInfo?.partialFee.toString() ?? '0'
+          //todo(team): calculate fees for this transfer using ParaSpell
+          amount = '0'
 
           // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
