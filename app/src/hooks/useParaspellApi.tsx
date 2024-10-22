@@ -98,7 +98,6 @@ const useParaspellApi = () => {
               return
             }
           } catch (callbackError) {
-            // Handle errors occurring in the async callback
             if (!txWasCancelled(sender, callbackError)) captureException(callbackError)
             handleSendError(callbackError)
             setStatus('Idle')
