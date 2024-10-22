@@ -39,7 +39,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
       >
         <DialogHeader
           className={cn(
-            'flex flex-col items-center justify-center space-y-6 rounded-t-4xl border py-5 sm:py-10',
+            'flex flex-col items-center justify-center space-y-4 rounded-t-4xl border py-6',
             transferSucceeded
               ? 'border-turtle-success-dark bg-turtle-success-light'
               : 'border-turtle-error-dark bg-turtle-error-light',

@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { Token } from '@/models/token'
+import { getCoingekoId, Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -130,22 +130,22 @@ const useSnowbridgeApi = () => {
       let sendResult
 
       switch (direction) {
-        case Direction.ToPolkadot:
+        case Direction.ToPolkadot: {
           sendResult = await toPolkadot.send(
             context,
             sender as Signer,
             plan as toPolkadot.SendValidationResult,
           )
           break
-
-        case Direction.ToEthereum:
+        }
+        case Direction.ToEthereum: {
           sendResult = await toEthereum.send(
             context,
             sender as WalletOrKeypair,
             plan as toEthereum.SendValidationResult,
           )
           break
-
+        }
         default:
           throw new Error('Unsupported flow')
       }
@@ -157,10 +157,14 @@ const useSnowbridgeApi = () => {
         message: 'Transfer initiated. See below!',
         severity: NotificationSeverity.Success,
       })
+      const coingekoId = getCoingekoId(token)
+      const tokenUSDValue = (await getTokenPrice(coingekoId))?.usd
 
-      const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
+      if (tokenUSDValue === null || tokenUSDValue === 0)
+        throw new Error('Failed to fetch token price')
+
       const date = new Date()
+      const senderAddress = await getSenderAddress(sender)
 
       addTransferToStorage({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?
@@ -185,7 +189,7 @@ const useSnowbridgeApi = () => {
           token: token.name,
           amount: amount.toString(),
           destinationChain: destinationChain.name,
-          usdValue: tokenUSDValue,
+          usdValue: tokenUSDValue ?? 0,
           usdFees: fees.inDollars,
           recipient: recipient,
           date: date.toISOString(),
