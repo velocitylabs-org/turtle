@@ -16,7 +16,7 @@ export const createTx = async (
   const { sourceChain, destinationChain, token, amount, recipient } = params
   const api = await getApiPromise(wssEndpoint)
 
-  // write some test
+  // TODO(victor): write some tests
   const sourceChainFromId = assets.getTNode(sourceChain.chainId)
   const destinationChainFromId = assets.getTNode(destinationChain.chainId)
   if (!sourceChainFromId || !destinationChainFromId)
