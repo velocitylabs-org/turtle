@@ -37,23 +37,16 @@ const useParaspellApi = () => {
     const isComplete = false
 
     try {
-      // Creates a submittable extrinsic tx hash using Paraspell Builder
       const txResult = await createTx(params)
 
-      // Signs and submit the tx hash
-      // Inits an execution callback and process transfer
       await txResult.signAndSend(
         account.address,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { signer: account.signer as any },
         async result => {
           try {
-            // Prevents unnecessary callback loops
             if (isComplete) return
 
-            // Handles transfer execution,
-            // Parses events and catch execution and extrinsic errors,
-            // Extract messageHash and messageId from events
             const eventsData = handleSubmittableEvents(result, isComplete)
             if (eventsData) {
               const { messageHash, messageId } = eventsData
@@ -104,7 +97,6 @@ const useParaspellApi = () => {
               return
             }
           } catch (callbackError) {
-            // Handle errors occurring in the async callback
             if (!txWasCancelled(sender, callbackError)) captureException(callbackError)
             handleSendError(callbackError)
             setStatus('Idle')
