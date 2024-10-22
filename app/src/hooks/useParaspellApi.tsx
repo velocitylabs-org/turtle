@@ -40,8 +40,6 @@ const useParaspellApi = () => {
     try {
       const txResult = await createTx(params)
 
-      // Signs and submit the tx hash
-      // Inits an execution callback and process transfer
       await txResult.signAndSend(
         account.address,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
