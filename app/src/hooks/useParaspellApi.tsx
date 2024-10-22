@@ -50,7 +50,7 @@ const useParaspellApi = () => {
             if (eventsData) {
               const { messageHash, messageId } = eventsData
 
-              // Add transfer to storage
+              // Get the current token price
               const senderAddress = await getSenderAddress(sender)
               const tokenUSDValue =
                 (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
