@@ -209,18 +209,17 @@ const createTx = async (params: TransferParams, wssEndpoint?: string): Promise<E
     throw new Error('Transfer failed: chain id not found.')
 
   // To be tested + write some test
-  const tokenSymbol = token.symbol.toUpperCase()
   const supportedAssets = assets.getAllAssetsSymbols(sourceChainFromId)
-  if (!supportedAssets.includes(tokenSymbol))
-    throw new Error('Transfer failed: Token symbol not supported.')
-
+  const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
+  if (!tokenSymbol) throw new Error('Transfer failed: Token symbol not supported.')
   // console.log('All good', tokenSymbol, 'from:', sourceChainFromId, 'to: ', destinationChainFromId)
 
-  // ✋ TODO: verify feeAsset && xcmVersion parameters
   return await Builder(api) // Api parameter is optional
+    // .from('BifrostPolkadot')
+    // .to('Hydration')
     .from(sourceChainFromId)
     .to(destinationChainFromId)
-    .currency({ symbol: token.symbol.toUpperCase() }) //{id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
+    .currency({ symbol: tokenSymbol }) //{id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
     /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
     .amount(amount) // Token amount
     .address(recipient) // AccountId32 or AccountKey20 address or custom Multilocation
