@@ -46,7 +46,6 @@ const useParaspellApi = () => {
         { signer: account.signer as any },
         async result => {
           try {
-            // Prevents unnecessary callback loops
             if (isComplete) return
 
             // Handles transfer execution,
