@@ -84,7 +84,7 @@ const useTransfer = () => {
         break
       }
 
-      case 'ParaspellApi': {
+      case 'ParaSpellApi': {
         paraspellApi.transfer(
           {
             environment,
