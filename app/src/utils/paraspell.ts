@@ -16,7 +16,7 @@ export const createTx = async (
   const { sourceChain, destinationChain, token, amount, recipient } = params
   const api = await getApiPromise(wssEndpoint)
 
-  // write some test
+  // TODO(victor): write some tests
   const sourceChainFromId = assets.getTNode(sourceChain.chainId)
   const destinationChainFromId = assets.getTNode(destinationChain.chainId)
   if (!sourceChainFromId || !destinationChainFromId)
@@ -29,14 +29,12 @@ export const createTx = async (
   // console.log('All good', tokenSymbol, 'from:', sourceChainFromId, 'to: ', destinationChainFromId)
 
   return await Builder(api) // Api parameter is optional
-    // .from('BifrostPolkadot')
-    // .to('Hydration')
     .from(sourceChainFromId)
     .to(destinationChainFromId)
-    .currency({ symbol: tokenSymbol }) //{id: currencyID} | {symbol: currencySymbol}, | {multilocation: multilocationJson} | {multiasset: multilocationJsonArray}
-    /*.feeAsset(feeAsset) - Parameter required when using MultilocationArray*/
-    .amount(amount) // Token amount
-    .address(recipient) // AccountId32 or AccountKey20 address or custom Multilocation
-    /*.xcmVersion(Version.V1/V2/V3/V4)  //Optional parameter for manual override of XCM Version used in call*/
+    .currency({ symbol: tokenSymbol })
+    /*.feeAsset(feeAsset) */
+    .amount(amount)
+    .address(recipient)
+    /*.xcmVersion(Version.V1/V2/V3/V4)*/
     .build()
 }
