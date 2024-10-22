@@ -6,10 +6,9 @@ import { ISubmittableResult } from '@polkadot/types/types'
  * It listens to the transaction process, checks for errors, and filters relevant data.
  *
  * @param result - The blockchain result returned by the signAndSend() method.
- * @param exitCallBack - A boolean flag to manual mark the process as completed, exit the callback and prevent unnecessary loops.
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
-export const handleSubmittableEvents = (result: ISubmittableResult, exitCallBack: boolean) => {
+export const handleSubmittableEvents = (result: ISubmittableResult) => {
   const { txHash, status, events, isError, internalError, isCompleted, dispatchError } = result
   // check for execution errors
   if (isError || internalError) throw new Error('Transfer failed')
@@ -49,9 +48,7 @@ export const handleSubmittableEvents = (result: ISubmittableResult, exitCallBack
     if (!messageHash) throw new Error('Cross chain messageHash missing')
     if (!messageId) throw new Error('Parachain messageId missing')
 
-    // Mark the transfer as complete and return
-    exitCallBack = true
-    return { messageHash, messageId, exitCallBack }
+    return { messageHash, messageId }
   }
 }
 

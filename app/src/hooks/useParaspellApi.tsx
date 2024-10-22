@@ -33,20 +33,16 @@ const useParaspellApi = () => {
     } = params
 
     const account = sender as SubstrateAccount
-    const isComplete = false
 
     try {
       const tx = await createTx(params)
-
       await tx.signAndSend(
         account.address,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { signer: account.signer as any },
         async result => {
           try {
-            if (isComplete) return
-
-            const eventsData = handleSubmittableEvents(result, isComplete)
+            const eventsData = handleSubmittableEvents(result)
             if (eventsData) {
               const { messageHash, messageId } = eventsData
 
