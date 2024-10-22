@@ -48,9 +48,6 @@ const useParaspellApi = () => {
           try {
             if (isComplete) return
 
-            // Handles transfer execution,
-            // Parses events and catch execution and extrinsic errors,
-            // Extract messageHash and messageId from events
             const eventsData = handleSubmittableEvents(result, isComplete)
             if (eventsData) {
               const { messageHash, messageId } = eventsData
