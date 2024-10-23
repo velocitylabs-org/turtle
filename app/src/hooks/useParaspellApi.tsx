@@ -36,7 +36,6 @@ const useParaspellApi = () => {
 
     try {
       const tx = await createTx(params)
-      console.log(await tx.paymentInfo)
       await tx.signAndSend(
         account.address,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
