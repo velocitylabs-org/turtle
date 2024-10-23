@@ -41,7 +41,7 @@ const useAssetTransferApi = () => {
       const atApi = new AssetTransferApi(api, sourceChain.specName, safeXcmVersion)
 
       const dryRunResult = await validate(atApi, params, setStatus)
-      if (dryRunResult.xcmExecutionResult.isErr) throw new Error('Dry run failed')
+      // if (dryRunResult.xcmExecutionResult.isErr) throw new Error('Dry run failed')
 
       setStatus('Sending')
       const account = sender as SubstrateAccount

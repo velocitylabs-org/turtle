@@ -309,7 +309,7 @@ export namespace Testnet {
   }
 }
 
-export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi'
+export type TransferSDK = 'AssetTransferApi' | 'SnowbridgeApi' | 'ParaSpellApi'
 
 export interface Registry {
   chains: Chain[]

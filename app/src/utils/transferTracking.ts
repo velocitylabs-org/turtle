@@ -3,7 +3,7 @@ import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/tra
 import { trackFromParachainTx } from './subscan'
 import { FromParachainTrackingResult } from '@/models/subscan'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { trackFromEthTx, trackFromAhToEthTx } from './snowbridge'
+import { trackFromAhToEthTx, trackFromEthTx } from './snowbridge'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (
