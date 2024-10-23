@@ -26,6 +26,18 @@ export namespace Mainnet {
       'wss://api-asset-hub-polkadot.dwellir.com',
   }
 
+  export const RelayChain: Chain = {
+    uid: 'polkadot',
+    name: 'Polkadot Relay Chain',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+    chainId: 0,
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    specName: 'polkadot',
+    rpcConnection:
+      process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || 'wss://api-polkadot.dwellir.com',
+  }
+
   export const Bifrost: Chain = {
     uid: 'bifrost',
     name: 'Bifrost',

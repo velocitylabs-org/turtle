@@ -5,13 +5,13 @@ import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { createTx } from '@/utils/paraspell'
+import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
-import { createTx } from '@/utils/paraspell'
-import { handleSubmittableEvents } from '@/utils/polkadot'
 
 const useParaspellApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -36,6 +36,7 @@ const useParaspellApi = () => {
 
     try {
       const tx = await createTx(params)
+      console.log(await tx.paymentInfo)
       await tx.signAndSend(
         account.address,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
