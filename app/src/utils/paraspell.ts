@@ -51,7 +51,7 @@ export const createTx = async (
   }
 }
 
-const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   // TODO(victor): write some tests
   const supportedAssets = assets.getAllAssetsSymbols(sourceChain)
   const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())

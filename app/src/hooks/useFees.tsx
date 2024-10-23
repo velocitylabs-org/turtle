@@ -6,13 +6,16 @@ import { TokenAmount } from '@/models/select'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
+import { assets, getTransferInfo, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
+  senderAddress?: string | null,
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   tokenAmount?: TokenAmount | null,
@@ -29,7 +32,8 @@ const useFees = (
       !destinationChain ||
       !tokenAmount?.token ||
       !tokenAmount?.amount ||
-      !recipient
+      !recipient ||
+      !senderAddress
     ) {
       setFees(null)
       return
@@ -43,6 +47,7 @@ const useFees = (
       setLoading(true)
       let amount: string
       let tokenUSDValue: number = 0
+
       switch (direction) {
         case Direction.ToEthereum: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
@@ -51,6 +56,7 @@ const useFees = (
           amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
+
         case Direction.ToPolkadot: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
 
@@ -66,12 +72,31 @@ const useFees = (
           ).toString()
           break
         }
-        case Direction.WithinPolkadot: {
-          if (!sourceChain.rpcConnection || !sourceChain.specName)
-            throw new Error('Source chain is missing rpcConnection or specName')
 
-          //todo(team): calculate fees for this transfer using ParaSpell
-          amount = '0'
+        case Direction.WithinPolkadot: {
+          const sourceChainNode =
+            sourceChain.chainId === 0
+              ? 'Polkadot' // relay chain
+              : (assets.getTNode(sourceChain.chainId) as TNodeDotKsmWithRelayChains) // para chain
+
+          const destinationChainNode =
+            destinationChain.chainId === 0
+              ? 'Polkadot' // relay chain
+              : (assets.getTNode(destinationChain.chainId) as TNodeDotKsmWithRelayChains) // para chain
+
+          const tokenSymbol = getTokenSymbol(sourceChainNode, tokenAmount.token)
+
+          const info = await getTransferInfo(
+            sourceChainNode,
+            destinationChainNode,
+            senderAddress,
+            recipient,
+            { id: tokenSymbol },
+            tokenAmount.amount.toString(),
+          )
+
+          console.log('Transfer info', info)
+          amount = info.originFeeBalance.xcmFee.xcmFee.toString()
 
           // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
@@ -92,7 +117,7 @@ const useFees = (
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.log('Error is ', error)
+      console.log('Error: ', error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
