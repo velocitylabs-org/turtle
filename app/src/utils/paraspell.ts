@@ -1,5 +1,6 @@
 import { TransferParams } from '@/hooks/useTransfer'
 import { Token } from '@/models/token'
+import { Environment } from '@/store/environmentStore'
 import { assets, Builder, Extrinsic, TNodeWithRelayChains } from '@paraspell/sdk'
 import { getApiPromise } from './polkadot'
 
@@ -58,4 +59,14 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
   if (!tokenSymbol) throw new Error('Transfer failed: Token symbol not supported.')
 
   return tokenSymbol
+}
+
+export const getRelayNode = (env: Environment): 'Polkadot' => {
+  switch (env) {
+    case Environment.Mainnet:
+      return 'Polkadot'
+
+    case Environment.Testnet:
+      return 'Polkadot' // TODO: change to Paseo once supported.
+  }
 }

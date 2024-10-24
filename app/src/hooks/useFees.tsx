@@ -6,12 +6,13 @@ import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getTokenSymbol } from '@/utils/paraspell'
+import { getRelayNode, getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { assets, getTransferInfo, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
+import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
@@ -25,6 +26,7 @@ const useFees = (
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext } = useSnowbridgeContext()
+  const env = useEnvironment()
   const { addNotification } = useNotification()
 
   const fetchFees = useCallback(async () => {
@@ -70,17 +72,17 @@ const useFees = (
         case Direction.WithinPolkadot: {
           const sourceChainNode =
             sourceChain.chainId === 0
-              ? 'Polkadot' // relay chain
+              ? getRelayNode(env) // relay chain
               : (assets.getTNode(sourceChain.chainId) as TNodeDotKsmWithRelayChains) // parachain
 
           const destinationChainNode =
             destinationChain.chainId === 0
-              ? 'Polkadot' // relay chain
+              ? getRelayNode(env) // relay chain
               : (assets.getTNode(destinationChain.chainId) as TNodeDotKsmWithRelayChains) // parachain
 
           const tokenSymbol = getTokenSymbol(sourceChainNode, token)
 
-          // TODO: Try replace getTransferInfo with getOriginFeeDetails once available
+          // TODO: Try replace getTransferInfo with getOriginFeeDetails once available. Should be faster.
           const info = await getTransferInfo(
             sourceChainNode,
             destinationChainNode,
@@ -89,12 +91,10 @@ const useFees = (
             { symbol: tokenSymbol },
             amount.toString(),
           )
-
           fees = info.originFeeBalance.xcmFee.xcmFee.toString()
 
           // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
-          console.log('Token id to coingeko', tokenCoingeckoId)
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
           break
         }
