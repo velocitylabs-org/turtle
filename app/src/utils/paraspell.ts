@@ -1,6 +1,14 @@
 import { TransferParams } from '@/hooks/useTransfer'
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { assets, Builder, Extrinsic, TNodeWithRelayChains } from '@paraspell/sdk'
+import {
+  assets,
+  Builder,
+  determineRelayChain,
+  Extrinsic,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk'
 import { getApiPromise } from './polkadot'
 
 /**
@@ -58,4 +66,26 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
   if (!tokenSymbol) throw new Error('Transfer failed: Token symbol not supported.')
 
   return tokenSymbol
+}
+
+/**
+ * Helper function to determine the correct chain node
+ *
+ * @param chain chain to determine the node for
+ * @param parachainToDetermineRelay parachain to determine the correct relay chain. If not provided, chain node defaults to polkadot if it is a relay chain.
+ * @returns the Paraspell chain node
+ */
+export const getChainNode = (
+  chain: Chain,
+  parachainToDetermineRelay?: Chain,
+): TNodeDotKsmWithRelayChains => {
+  // relay chain
+  if (chain.chainId === 0)
+    return parachainToDetermineRelay
+      ? determineRelayChain(
+          assets.getTNode(parachainToDetermineRelay.chainId) as TNodeDotKsmWithRelayChains,
+        )
+      : 'Polkadot'
+
+  return assets.getTNode(chain.chainId) as TNodeDotKsmWithRelayChains // parachain
 }

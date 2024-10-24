@@ -6,18 +6,12 @@ import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getTokenSymbol } from '@/utils/paraspell'
+import { getChainNode, getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import {
-  assets,
-  determineRelayChain,
-  getTransferInfo,
-  TNodeDotKsmWithRelayChains,
-} from '@paraspell/sdk'
+import { getTransferInfo } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const DEBOUNCE_DELAY_MS = 500
@@ -33,7 +27,6 @@ const useFees = (
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext } = useSnowbridgeContext()
-  const env = useEnvironment()
   const { addNotification } = useNotification()
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -77,18 +70,8 @@ const useFees = (
         }
 
         case Direction.WithinPolkadot: {
-          const sourceChainNode =
-            sourceChain.chainId === 0
-              ? determineRelayChain(
-                  assets.getTNode(destinationChain.chainId) as TNodeDotKsmWithRelayChains,
-                ) // relay chain
-              : (assets.getTNode(sourceChain.chainId) as TNodeDotKsmWithRelayChains) // parachain
-
-          const destinationChainNode =
-            destinationChain.chainId === 0
-              ? determineRelayChain(sourceChainNode) // relay chain
-              : (assets.getTNode(destinationChain.chainId) as TNodeDotKsmWithRelayChains) // parachain
-
+          const sourceChainNode = getChainNode(sourceChain, destinationChain)
+          const destinationChainNode = getChainNode(destinationChain, sourceChain)
           const tokenSymbol = getTokenSymbol(sourceChainNode, token)
 
           // TODO: Try replace getTransferInfo with getOriginFeeDetails once available. Should be faster.
@@ -135,7 +118,6 @@ const useFees = (
     amount,
     recipient,
     snowbridgeContext,
-    env,
     senderAddress,
     addNotification,
   ])
