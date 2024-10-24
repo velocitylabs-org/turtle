@@ -80,7 +80,7 @@ const useFees = (
             {
               symbol: tokenSymbol,
             },
-            amount,
+            amount.toString(),
             senderAddress,
           )
           fees = info.xcmFee.toString()
