@@ -63,7 +63,8 @@ const useTransferForm = () => {
     sourceWallet?.sender?.address,
     sourceChain,
     destinationChain,
-    tokenAmount,
+    tokenAmount?.token,
+    safeConvertAmount(tokenAmount?.amount, tokenAmount?.token),
     getRecipientAddress(manualRecipient, destinationWallet),
   )
 
