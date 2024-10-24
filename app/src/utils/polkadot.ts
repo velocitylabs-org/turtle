@@ -36,6 +36,11 @@ export const handleSubmittableEvents = (result: ISubmittableResult) => {
 
     // Filter the events to get the needed data
     events.forEach(({ event: { data, method, section } }) => {
+      // Supports x-tokens pallet
+      if (method === 'UpwardMessageSent' && section === 'parachainSystem') {
+        messageHash = data[0].toString()
+      }
+      // Supports XCM-polkadot pallet
       if (method === 'XcmpMessageSent' && section === 'xcmpQueue' && 'messageHash' in data) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messageHash = (data.messageHash as any).toString()
@@ -46,7 +51,6 @@ export const handleSubmittableEvents = (result: ISubmittableResult) => {
       }
     })
     if (!messageHash) throw new Error('Cross chain messageHash missing')
-    if (!messageId) throw new Error('Parachain messageId missing')
 
     return { messageHash, messageId }
   }
