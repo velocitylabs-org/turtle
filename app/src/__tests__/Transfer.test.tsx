@@ -1,8 +1,7 @@
 import { Direction, resolveDirection } from '@/services/transfer'
 import '@testing-library/jest-dom'
-import { Mainnet, mainnetRegistry, Testnet } from '../config/registry'
+import { Mainnet, Testnet } from '../config/registry'
 import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
-import { Enum } from 'polkadot-api'
 import { getTokenPrice } from '@/services/balance'
 import { getDestChainId } from '@/models/chain'
 

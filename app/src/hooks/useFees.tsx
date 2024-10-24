@@ -75,7 +75,6 @@ const useFees = (
 
           // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
-          console.log('Token id to coingeko', tokenCoingeckoId)
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
           break
         }
