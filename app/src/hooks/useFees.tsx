@@ -11,9 +11,11 @@ import { toHuman } from '@/utils/transfer'
 import { assets, getTransferInfo, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
+
+const DEBOUNCE_DELAY_MS = 500
 
 const useFees = (
   senderAddress?: string | null,
@@ -28,6 +30,7 @@ const useFees = (
   const { snowbridgeContext } = useSnowbridgeContext()
   const env = useEnvironment()
   const { addNotification } = useNotification()
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !amount || !recipient || !senderAddress) {
@@ -56,7 +59,6 @@ const useFees = (
         case Direction.ToPolkadot: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
 
-          // fee value
           tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
           fees = (
             await toPolkadot.getSendFee(
@@ -93,7 +95,6 @@ const useFees = (
           )
           fees = info.originFeeBalance.xcmFee.xcmFee.toString()
 
-          // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
           break
@@ -120,13 +121,35 @@ const useFees = (
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourceChain, destinationChain, token, amount, recipient, snowbridgeContext, addNotification])
+  }, [
+    sourceChain,
+    destinationChain,
+    token,
+    amount,
+    recipient,
+    snowbridgeContext,
+    env,
+    senderAddress,
+    addNotification,
+  ])
 
-  // call fetch fees
+  // Debounced fetch fees
   useEffect(() => {
-    fetchFees()
-  }, [sourceChain, destinationChain, token, amount, recipient, fetchFees])
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      fetchFees()
+    }, DEBOUNCE_DELAY_MS)
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+    }
+  }, [amount, fetchFees])
 
   return { fees, loading, refetch: fetchFees }
 }
