@@ -117,7 +117,12 @@ const Transfer: FC = () => {
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
   const isTransferAllowed =
-    isValid && !isValidating && fees && transferStatus === 'Idle' && !requiresErc20SpendApproval
+    isValid &&
+    !isValidating &&
+    fees &&
+    transferStatus === 'Idle' &&
+    !requiresErc20SpendApproval &&
+    !loadingFees
 
   return (
     <form
