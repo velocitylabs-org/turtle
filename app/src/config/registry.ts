@@ -26,6 +26,18 @@ export namespace Mainnet {
       'wss://api-asset-hub-polkadot.dwellir.com',
   }
 
+  export const RelayChain: Chain = {
+    uid: 'polkadot',
+    name: 'Polkadot Relay Chain',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+    chainId: 0,
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    specName: 'polkadot',
+    rpcConnection:
+      process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || 'wss://api-polkadot.dwellir.com',
+  }
+
   export const Bifrost: Chain = {
     uid: 'bifrost',
     name: 'Bifrost',
@@ -325,12 +337,13 @@ export interface Route {
 }
 
 export const mainnetRegistry: Registry = {
-  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Bifrost, Mainnet.Mythos],
+  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.RelayChain, Mainnet.Bifrost, Mainnet.Mythos],
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
     Mainnet.USDC,
     Mainnet.USDT,
+    Mainnet.DOT,
     Mainnet.DAI,
     Mainnet.MYTH,
     Mainnet.WSTETH,
@@ -388,6 +401,18 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.AssetHub.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
     // {
     //   from: Mainnet.Bifrost.uid,
     //   to: Mainnet.AssetHub.uid,
@@ -433,6 +458,8 @@ export function getNativeToken(chain: Chain): Token {
       return Testnet.ROC
     case 'sepolia':
       return Testnet.ETH
+    case 'polkadot':
+      return Mainnet.DOT
     case 'polkadot-assethub':
       return Mainnet.DOT
     case 'ethereum':

@@ -1,5 +1,5 @@
-import useEnvironment from '@/hooks/useEnvironment'
 import useBalance from '@/hooks/useBalance'
+import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
@@ -60,9 +60,11 @@ const useTransferForm = () => {
   const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
   const { api } = usePapi(sourceChain)
   const { fees, loading: loadingFees } = useFees(
+    sourceWallet?.sender?.address,
     sourceChain,
     destinationChain,
-    tokenAmount,
+    tokenAmount?.token,
+    safeConvertAmount(tokenAmount?.amount, tokenAmount?.token),
     getRecipientAddress(manualRecipient, destinationWallet),
   )
 

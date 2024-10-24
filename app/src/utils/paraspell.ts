@@ -1,6 +1,14 @@
-import { assets, Builder, Extrinsic, TNodeWithRelayChains } from '@paraspell/sdk'
-import { Token } from '@/models/token'
 import { TransferParams } from '@/hooks/useTransfer'
+import { Chain } from '@/models/chain'
+import { Token } from '@/models/token'
+import {
+  assets,
+  Builder,
+  determineRelayChain,
+  Extrinsic,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+} from '@paraspell/sdk'
 import { getApiPromise } from './polkadot'
 
 /**
@@ -18,29 +26,66 @@ export const createTx = async (
   const api = await getApiPromise(wssEndpoint)
 
   // TODO(victor): write some tests
-  const sourceChainFromId = assets.getTNode(sourceChain.chainId)
-  const destinationChainFromId = assets.getTNode(destinationChain.chainId)
-  if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer failed: chain id not found.')
+  // from relay chain
+  if (sourceChain.chainId === 0) {
+    const destinationChainFromId = assets.getTNode(destinationChain.chainId)
+    if (!destinationChainFromId) throw new Error('Transfer failed: destination chain id not found.')
 
-  const tokenSymbol = getTokenSymbol(sourceChainFromId, token)
+    return await Builder(api).to(destinationChainFromId).amount(amount).address(recipient).build()
+  }
+  // to relay chain
+  else if (destinationChain.chainId === 0) {
+    const sourceChainFromId = assets.getTNode(sourceChain.chainId)
+    if (!sourceChainFromId) throw new Error('Transfer failed: source chain id not found.')
 
-  return await Builder(api) // Api parameter is optional
-    .from(sourceChainFromId)
-    .to(destinationChainFromId)
-    .currency({ symbol: tokenSymbol })
-    /*.feeAsset(feeAsset) */
-    .amount(amount)
-    .address(recipient)
-    /*.xcmVersion(Version.V1/V2/V3/V4)*/
-    .build()
+    return await Builder(api).from(sourceChainFromId).amount(amount).address(recipient).build()
+  }
+  // para to para
+  else {
+    const sourceChainFromId = assets.getTNode(sourceChain.chainId)
+    const destinationChainFromId = assets.getTNode(destinationChain.chainId)
+    if (!sourceChainFromId || !destinationChainFromId)
+      throw new Error('Transfer failed: chain id not found.')
+
+    const tokenSymbol = getTokenSymbol(sourceChainFromId, token)
+
+    return await Builder(api)
+      .from(sourceChainFromId)
+      .to(destinationChainFromId)
+      .currency({ symbol: tokenSymbol })
+      .amount(amount)
+      .address(recipient)
+      .build()
+  }
 }
 
-const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   // TODO(victor): write some tests
   const supportedAssets = assets.getAllAssetsSymbols(sourceChain)
   const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
   if (!tokenSymbol) throw new Error('Transfer failed: Token symbol not supported.')
 
   return tokenSymbol
+}
+
+/**
+ * Helper function to determine the correct chain node
+ *
+ * @param chain - chain to determine the node for
+ * @param parachainToDetermineRelay - parachain to determine the correct relay chain. If not provided, chain node defaults to polkadot if it is a relay chain.
+ * @returns the Paraspell chain node
+ */
+export const getChainNode = (
+  chain: Chain,
+  parachainToDetermineRelay?: Chain,
+): TNodeDotKsmWithRelayChains => {
+  // relay chain
+  if (chain.chainId === 0)
+    return parachainToDetermineRelay
+      ? determineRelayChain(
+          assets.getTNode(parachainToDetermineRelay.chainId) as TNodeDotKsmWithRelayChains,
+        )
+      : 'Polkadot'
+
+  return assets.getTNode(chain.chainId) as TNodeDotKsmWithRelayChains // parachain
 }
