@@ -2,35 +2,36 @@ import { getNativeToken } from '@/config/registry'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { TokenAmount } from '@/models/select'
+import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { getChainNode, getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
+import { getOriginFeeDetails } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
+const DEBOUNCE_DELAY_MS = 500
+
 const useFees = (
+  senderAddress?: string | null,
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
-  tokenAmount?: TokenAmount | null,
+  token?: Token | null,
+  amount?: bigint | null,
   recipient?: string | null,
 ) => {
   const [fees, setFees] = useState<Fees | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const fetchFees = useCallback(async () => {
-    if (
-      !sourceChain ||
-      !destinationChain ||
-      !tokenAmount?.token ||
-      !tokenAmount?.amount ||
-      !recipient
-    ) {
+    if (!sourceChain || !destinationChain || !token || !amount || !recipient || !senderAddress) {
       setFees(null)
       return
     }
@@ -41,41 +42,50 @@ const useFees = (
 
     try {
       setLoading(true)
-      let amount: string
+      let fees: string
       let tokenUSDValue: number = 0
+
       switch (direction) {
         case Direction.ToEthereum: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
 
           tokenUSDValue = (await getTokenPrice('polkadot'))?.usd ?? 0
-          amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
+          fees = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
+
         case Direction.ToPolkadot: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
 
-          // fee value
           tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
-          amount = (
+          fees = (
             await toPolkadot.getSendFee(
               snowbridgeContext,
-              tokenAmount.token.address,
+              token.address,
               destinationChain.chainId,
               BigInt(0),
             )
           ).toString()
           break
         }
+
         case Direction.WithinPolkadot: {
-          if (!sourceChain.rpcConnection || !sourceChain.specName)
-            throw new Error('Source chain is missing rpcConnection or specName')
+          const sourceChainNode = getChainNode(sourceChain, destinationChain)
+          const destinationChainNode = getChainNode(destinationChain, sourceChain)
+          const tokenSymbol = getTokenSymbol(sourceChainNode, token)
 
-          //todo(team): calculate fees for this transfer using ParaSpell
-          amount = '0'
+          const info = await getOriginFeeDetails(
+            sourceChainNode,
+            destinationChainNode,
+            {
+              symbol: tokenSymbol,
+            },
+            amount.toString(),
+            senderAddress,
+          )
+          fees = info.xcmFee.toString()
 
-          // set USD fees
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
-          console.log('Token id to coingeko', tokenCoingeckoId)
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
           break
         }
@@ -85,14 +95,14 @@ const useFees = (
       }
 
       setFees({
-        amount,
+        amount: fees,
         token: nativeToken,
-        inDollars: tokenUSDValue ? toHuman(amount, nativeToken) * tokenUSDValue : 0,
+        inDollars: tokenUSDValue ? toHuman(fees, nativeToken) * tokenUSDValue : 0,
       })
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.log('Error is ', error)
+      console.log('Error: ', error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
@@ -101,21 +111,34 @@ const useFees = (
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sourceChain,
     destinationChain,
-    tokenAmount?.token,
-    tokenAmount?.amount,
+    token,
+    amount,
     recipient,
     snowbridgeContext,
+    senderAddress,
     addNotification,
   ])
 
-  // call fetch fees
+  // Debounced fetch fees
   useEffect(() => {
-    fetchFees()
-  }, [sourceChain, destinationChain, tokenAmount?.token, tokenAmount?.amount, recipient, fetchFees])
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      fetchFees()
+    }, DEBOUNCE_DELAY_MS)
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+    }
+  }, [amount, fetchFees])
 
   return { fees, loading, refetch: fetchFees }
 }

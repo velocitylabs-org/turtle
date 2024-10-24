@@ -5,13 +5,13 @@ import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { createTx } from '@/utils/paraspell'
+import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
-import { createTx } from '@/utils/paraspell'
-import { handleSubmittableEvents } from '@/utils/polkadot'
 
 const useParaspellApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()

@@ -8,12 +8,12 @@ import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
 
 /**
- * Safe version of `convertAmount` that handles `null` params
+ * Safe version of `convertAmount` that handles `null` and `undefined` params
  */
-export const safeConvertAmount = (input: number | null, token: Token | null): bigint | null => {
+export const safeConvertAmount = (input?: number | null, token?: Token | null): bigint | null => {
   if (input == null || !token) return null
 
-  return BigInt(input * 10 ** token.decimals)
+  return BigInt(Math.floor(input * 10 ** token.decimals))
 }
 
 /**
