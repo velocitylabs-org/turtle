@@ -71,8 +71,8 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
 /**
  * Helper function to determine the correct chain node
  *
- * @param chain chain to determine the node for
- * @param parachainToDetermineRelay parachain to determine the correct relay chain. If not provided, chain node defaults to polkadot if it is a relay chain.
+ * @param chain - chain to determine the node for
+ * @param parachainToDetermineRelay - parachain to determine the correct relay chain. If not provided, chain node defaults to polkadot if it is a relay chain.
  * @returns the Paraspell chain node
  */
 export const getChainNode = (
