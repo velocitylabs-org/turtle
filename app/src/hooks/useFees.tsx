@@ -6,9 +6,14 @@ import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getRelayNode, getTokenSymbol } from '@/utils/paraspell'
+import { getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { assets, getTransferInfo, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import {
+  assets,
+  determineRelayChain,
+  getTransferInfo,
+  TNodeDotKsmWithRelayChains,
+} from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -74,12 +79,14 @@ const useFees = (
         case Direction.WithinPolkadot: {
           const sourceChainNode =
             sourceChain.chainId === 0
-              ? getRelayNode(env) // relay chain
+              ? determineRelayChain(
+                  assets.getTNode(destinationChain.chainId) as TNodeDotKsmWithRelayChains,
+                ) // relay chain
               : (assets.getTNode(sourceChain.chainId) as TNodeDotKsmWithRelayChains) // parachain
 
           const destinationChainNode =
             destinationChain.chainId === 0
-              ? getRelayNode(env) // relay chain
+              ? determineRelayChain(sourceChainNode) // relay chain
               : (assets.getTNode(destinationChain.chainId) as TNodeDotKsmWithRelayChains) // parachain
 
           const tokenSymbol = getTokenSymbol(sourceChainNode, token)
