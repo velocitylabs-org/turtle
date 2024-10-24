@@ -8,7 +8,7 @@ import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getChainNode, getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { getTransferInfo } from '@paraspell/sdk'
+import { getOriginFeeDetails } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -74,16 +74,16 @@ const useFees = (
           const destinationChainNode = getChainNode(destinationChain, sourceChain)
           const tokenSymbol = getTokenSymbol(sourceChainNode, token)
 
-          // TODO: Try replace getTransferInfo with getOriginFeeDetails once available. Should be faster.
-          const info = await getTransferInfo(
+          const info = await getOriginFeeDetails(
             sourceChainNode,
             destinationChainNode,
+            {
+              symbol: tokenSymbol,
+            },
+            amount,
             senderAddress,
-            recipient,
-            { symbol: tokenSymbol },
-            amount.toString(),
           )
-          fees = info.originFeeBalance.xcmFee.xcmFee.toString()
+          fees = info.xcmFee.toString()
 
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
