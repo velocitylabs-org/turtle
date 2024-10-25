@@ -78,6 +78,61 @@ export namespace Mainnet {
     rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
   }
 
+  export const Interlay: Chain = {
+    uid: 'interlay',
+    name: 'Interlay',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+    chainId: 2032,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-interlay.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const Acala: Chain = {
+    uid: 'acala',
+    name: 'Acala',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+    chainId: 2000,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-acala.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const Polimec: Chain = {
+    uid: 'polimec',
+    name: 'Polimec',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/28501.png',
+    chainId: 3344,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: ``, // TODO
+  }
+
+  export const Centrifuge: Chain = {
+    uid: 'centrifuge',
+    name: 'Centrifuge',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+    chainId: 2031,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-centrifuge.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const Astar: Chain = {
+    uid: 'astar',
+    name: 'Astar',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+    chainId: 2006,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-astar.dwellir.com/${DWELLIR_KEY}`,
+  }
+
   export const Mythos: Chain = {
     uid: 'mythos',
     name: 'Mythos',
