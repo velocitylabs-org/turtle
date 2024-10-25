@@ -3,8 +3,10 @@ import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { getNativeBalance, getNonNativeBalance, SupportedChains } from '@/utils/papi'
+import { SupportedChains } from '@/utils/papi'
+import { getChainNode, getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
+import { getAssetBalance } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
@@ -62,24 +64,16 @@ const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
         }
 
         case Network.Polkadot: {
-          if (getNativeToken(chain).id === token.id) {
-            const result = await getNativeBalance(api, address)
+          const node = getChainNode(chain)
+          const tokenSymbol = getTokenSymbol(node, token)
 
-            fetchedBalance = {
-              value: result?.data.free || 0n,
-              formatted: toHuman(result?.data.free || 0n, token).toString(),
-              decimals: token.decimals,
-              symbol: token.symbol,
-            }
-          } else {
-            const result = await getNonNativeBalance(api, chain, token, address)
+          const balance = await getAssetBalance(address, node, { symbol: tokenSymbol })
 
-            fetchedBalance = {
-              value: result?.free || 0n,
-              formatted: toHuman(result?.free || 0n, token).toString(),
-              decimals: token.decimals,
-              symbol: token.symbol,
-            }
+          fetchedBalance = {
+            value: balance ?? 0n,
+            decimals: token.decimals,
+            symbol: token.symbol,
+            formatted: toHuman(balance ?? 0n, token).toString(),
           }
 
           break
