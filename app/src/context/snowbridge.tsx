@@ -1,3 +1,4 @@
+import { Mainnet, rpcConnectionAsHttp, SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/config/registry'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
@@ -18,11 +19,12 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
 
   // apply custom api endpoints
   if (env === Environment.Mainnet) {
-    x.config.ASSET_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL || ''
-    x.config.BRIDGE_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_BRIDGE_HUB_API_URL || ''
-    x.config.RELAY_CHAIN_URL = process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || ''
-    x.config.PARACHAINS = JSON.parse(process.env.NEXT_PUBLIC_PARACHAIN_API_URLS || '')
+    x.config.ASSET_HUB_URL = Mainnet.AssetHub.rpcConnection || ''
+    x.config.BRIDGE_HUB_URL = rpcConnectionAsHttp(Mainnet.BridgeHub.rpcConnection)
+    x.config.RELAY_CHAIN_URL = rpcConnectionAsHttp(Mainnet.RelayChain.rpcConnection)
+    x.config.PARACHAINS = SNOWBRIDGE_MAINNET_PARACHAIN_URLS
   }
+  // TODO support Paseo testnet
 
   if (x === undefined) {
     throw Error(`Unknown environment`)

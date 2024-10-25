@@ -1,6 +1,8 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 
+const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
+
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
   // Chains
@@ -20,10 +22,7 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    specName: 'statemint',
-    rpcConnection:
-      process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL ||
-      'wss://api-asset-hub-polkadot.dwellir.com',
+    rpcConnection: `wss://api-asset-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
   }
 
   export const RelayChain: Chain = {
@@ -33,9 +32,17 @@ export namespace Mainnet {
     chainId: 0,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    specName: 'polkadot',
-    rpcConnection:
-      process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || 'wss://api-polkadot.dwellir.com',
+    rpcConnection: `wss://api-polkadot.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const BridgeHub: Chain = {
+    uid: 'polkadot-bridgehub',
+    name: 'Polkadot Bridge Hub',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+    chainId: 1002,
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-bridge-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
   }
 
   export const Bifrost: Chain = {
@@ -46,19 +53,19 @@ export namespace Mainnet {
     destinationFeeDOT: '20000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    rpcConnection: 'wss://bifrost-polkadot.dotters.network',
-    specName: 'bifrost_polkadot',
+    rpcConnection: `wss://api-bifrost-polkadot.dwellir.com/${DWELLIR_KEY}`,
   }
 
-  // export const Hydration: Chain = {
-  //   uid: 'hydration',
-  //   name: 'Hydration',
-  //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
-  //   chainId: 2034,
-  //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['ss58'],
-  // }
+  export const Hydration: Chain = {
+    uid: 'hydration',
+    name: 'Hydration',
+    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    chainId: 2034,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-hydradx.dwellir.com/${DWELLIR_KEY}`,
+  }
 
   // export const Moonbeam: Chain = {
   //   uid: 'moonbeam',
@@ -79,7 +86,6 @@ export namespace Mainnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
-    specName: 'mythos',
   }
 
   // Tokens
@@ -272,7 +278,6 @@ export namespace Testnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
     rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
-    specName: 'asset-hub-rococo',
   }
 
   // Tokens
@@ -452,6 +457,12 @@ export const REGISTRY = {
   testnet: testnetRegistry,
 }
 
+export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
+  rpcConnectionAsHttp(Mainnet.Mythos.rpcConnection),
+  rpcConnectionAsHttp(Mainnet.Bifrost.rpcConnection),
+  rpcConnectionAsHttp(Mainnet.Hydration.rpcConnection),
+]
+
 export function getNativeToken(chain: Chain): Token {
   switch (chain.uid) {
     case 'rococo-assethub':
@@ -471,4 +482,9 @@ export function getNativeToken(chain: Chain): Token {
     default:
       throw Error('The impossible has happened!')
   }
+}
+
+export function rpcConnectionAsHttp(rpc?: string): string {
+  if (!rpc) return ''
+  return rpc.replace('wss://', 'https://')
 }
