@@ -9,7 +9,8 @@ import { ISubmittableResult } from '@polkadot/types/types'
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
 export const handleSubmittableEvents = (result: ISubmittableResult) => {
-  const { txHash, status, events, isError, internalError, isCompleted, dispatchError } = result
+  const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } =
+    result
   // check for execution errors
   if (isError || internalError) throw new Error('Transfer failed')
 
@@ -30,6 +31,12 @@ export const handleSubmittableEvents = (result: ISubmittableResult) => {
     // Verify extrinsic success
     const extrinsicSuccess = result.findRecord('system', 'ExtrinsicSuccess')
     if (!extrinsicSuccess) throw new Error(`'ExtrinsicSuccess' event not found`)
+
+    const blockNumber: string | undefined =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      'blockNumber' in result ? (result.blockNumber as any).toJSON() : undefined
+    const extrinsicIndex: string | undefined =
+      blockNumber && txIndex ? `${blockNumber}-${txIndex}` : undefined
 
     let messageHash: string | undefined
     let messageId: string | undefined
@@ -56,9 +63,10 @@ export const handleSubmittableEvents = (result: ISubmittableResult) => {
         messageId = (data.messageId as any).toString()
       }
     })
-    if (!messageHash && !messageId) throw new Error('MessageHash & MessageId are both missing')
+    if (!messageHash && !messageId && !extrinsicIndex)
+      throw new Error('MessageHash, MessageId and ExtrinsicIndex are all missing')
 
-    return { messageHash, messageId }
+    return { messageHash, messageId, extrinsicIndex }
   }
 }
 
