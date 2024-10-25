@@ -5,17 +5,14 @@ import { Chain, Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
 import { Environment } from '@/store/environmentStore'
-import { SupportedChains } from '@/utils/papi'
 import { captureException } from '@sentry/nextjs'
 import { Context, environment, toPolkadot } from '@snowbridge/api'
 import { Signer } from 'ethers'
-import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
 
 interface Params {
   env: Environment
-  api?: TypedApi<SupportedChains>
   context?: Context
   chain?: Chain | null
   tokenAmount: TokenAmount | null
@@ -24,11 +21,10 @@ interface Params {
 
 /** Hook to swap ETH for wETH */
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
-const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Params) => {
+const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const { balance: tokenBalance } = useBalance({
     env,
-    api,
     chain,
     token: tokenAmount?.token ?? undefined,
     address: owner,
