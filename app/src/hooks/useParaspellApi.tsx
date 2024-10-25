@@ -64,7 +64,7 @@ const useParaspellApi = () => {
                 date,
                 environment,
                 fees,
-                crossChainMessageHash: messageHash,
+                ...(messageHash && { crossChainMessageHash: messageHash }),
                 ...(messageId && { parachainMessageId: messageId }),
               } satisfies StoredTransfer)
 
