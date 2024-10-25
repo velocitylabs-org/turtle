@@ -179,11 +179,19 @@ export const findMatchingTransfer = (
   transfers: TxTrackingResult[],
   ongoingTransfer: StoredTransfer,
 ) =>
-  transfers.find(transfer =>
-    'submitted' in transfer
-      ? transfer.id === ongoingTransfer.id
-      : transfer.messageHash === ongoingTransfer.crossChainMessageHash,
-  )
+  transfers.find(transfer => {
+    const findByTxId = 'submitted' in transfer
+    const findByMessageHash = !!ongoingTransfer.crossChainMessageHash
+    const findByextrinsicIndex = !!ongoingTransfer.sourceChainExtrinsicIndex
+    if (findByTxId) return transfer.id === ongoingTransfer.id
+
+    if (findByMessageHash) return transfer.messageHash === ongoingTransfer.crossChainMessageHash
+
+    if (findByextrinsicIndex)
+      return transfer.extrinsicIndex === ongoingTransfer.sourceChainExtrinsicIndex
+
+    return undefined
+  })
 
 export function getErrorMessage(err: unknown) {
   let message = 'Unknown error'
