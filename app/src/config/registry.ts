@@ -67,15 +67,16 @@ export namespace Mainnet {
     rpcConnection: `wss://api-hydradx.dwellir.com/${DWELLIR_KEY}`,
   }
 
-  // export const Moonbeam: Chain = {
-  //   uid: 'moonbeam',
-  //   name: 'Moonbeam',
-  //   logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
-  //   chainId: 2004,
-  //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['evm'],
-  // }
+  export const Moonbeam: Chain = {
+    uid: 'moonbeam',
+    name: 'Moonbeam',
+    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+    chainId: 2004,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['evm'],
+    rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
+  }
 
   export const Mythos: Chain = {
     uid: 'mythos',
@@ -458,9 +459,10 @@ export const REGISTRY = {
 }
 
 export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
-  rpcConnectionAsHttp(Mainnet.Mythos.rpcConnection),
-  rpcConnectionAsHttp(Mainnet.Bifrost.rpcConnection),
-  rpcConnectionAsHttp(Mainnet.Hydration.rpcConnection),
+  rpcConnectionAsHttps(Mainnet.Mythos.rpcConnection),
+  rpcConnectionAsHttps(Mainnet.Bifrost.rpcConnection),
+  rpcConnectionAsHttps(Mainnet.Hydration.rpcConnection),
+  rpcConnectionAsHttps(Mainnet.Moonbeam.rpcConnection),
 ]
 
 export function getNativeToken(chain: Chain): Token {
@@ -484,7 +486,7 @@ export function getNativeToken(chain: Chain): Token {
   }
 }
 
-export function rpcConnectionAsHttp(rpc?: string): string {
+export function rpcConnectionAsHttps(rpc?: string): string {
   if (!rpc) return ''
   return rpc.replace('wss://', 'https://')
 }
