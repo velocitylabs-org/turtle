@@ -50,6 +50,7 @@ const useOngoingTransfersTracker = () => {
         direction,
         ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
         ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+        ...(t.sourceChainExtrinsicIndex && { sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex }),
       }
     })
     if (!formattedTransfers.length) return
