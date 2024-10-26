@@ -50,15 +50,15 @@ export namespace Mainnet {
     specName: 'bifrost_polkadot',
   }
 
-  // export const Hydration: Chain = {
-  //   uid: 'hydration',
-  //   name: 'Hydration',
-  //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
-  //   chainId: 2034,
-  //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['ss58'],
-  // }
+  export const Hydration: Chain = {
+    uid: 'hydration',
+    name: 'Hydration',
+    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    chainId: 2034,
+    destinationFeeDOT: '20000000',
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+  }
 
   // export const Moonbeam: Chain = {
   //   uid: 'moonbeam',
@@ -337,7 +337,14 @@ export interface Route {
 }
 
 export const mainnetRegistry: Registry = {
-  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.RelayChain, Mainnet.Bifrost, Mainnet.Mythos],
+  chains: [
+    Mainnet.Ethereum,
+    Mainnet.AssetHub,
+    Mainnet.RelayChain,
+    Mainnet.Bifrost,
+    Mainnet.Mythos,
+    Mainnet.Hydration,
+  ],
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
@@ -413,12 +420,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
-    // {
-    //   from: Mainnet.Bifrost.uid,
-    //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.WETH.id],
-    // },
+    {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+    },
     // {
     //   from: Mainnet.Mythos.uid,
     //   to: Mainnet.AssetHub.uid,

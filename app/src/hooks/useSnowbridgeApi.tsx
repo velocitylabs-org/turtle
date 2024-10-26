@@ -242,7 +242,7 @@ const useSnowbridgeApi = () => {
   }
 
   const handleSendError = (e: unknown) => {
-    console.error('Transfer error:', e)
+    console.log('Transfer error:', e)
     addNotification({
       message: 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,
