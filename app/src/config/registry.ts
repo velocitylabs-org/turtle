@@ -300,6 +300,7 @@ export namespace Mainnet {
     decimals: 10,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    coingeckoId: 'polkadot',
   }
 
   export const ETH: Token = {
@@ -311,6 +312,7 @@ export namespace Mainnet {
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
     multilocation: '',
+    coingeckoId: 'ethereum',
   }
 }
 
