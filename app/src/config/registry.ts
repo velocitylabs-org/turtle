@@ -203,6 +203,17 @@ export namespace Mainnet {
     coingeckoId: 'bifrost-native-coin',
   }
 
+  export const HDX: Token = {
+    id: 'hdx',
+    name: 'Hydration',
+    symbol: 'HDX',
+    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    decimals: 12,
+    address: '',
+    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
+    coingeckoId: 'hydration',
+  }
+
   export const SHIB: Token = {
     id: 'shib',
     name: 'Shiba Inu',
@@ -489,6 +500,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'SnowbridgeApi',
       tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
     },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+    },
     // {
     //   from: Mainnet.Mythos.uid,
     //   to: Mainnet.AssetHub.uid,
@@ -545,6 +562,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.MYTH
     case 'bifrost':
       return Mainnet.BNC
+    case 'hydration':
+      return Mainnet.HDX
     default:
       throw Error('The impossible has happened!')
   }

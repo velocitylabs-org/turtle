@@ -2,7 +2,7 @@ import { getNativeToken } from '@/config/registry'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { Token } from '@/models/token'
+import { getCoingekoId, Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -85,7 +85,7 @@ const useFees = (
           )
           fees = info.xcmFee.toString()
 
-          const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
+          const tokenCoingeckoId = getCoingekoId(nativeToken)
           tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
           break
         }

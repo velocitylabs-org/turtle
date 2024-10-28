@@ -77,19 +77,26 @@ export const getNonNativeBalance = async (
   // the Papi api instance
   api: TypedApi<SupportedChains> | undefined,
   // the chain in which to look up the value
-  _chain: Chain,
+  chain: Chain,
   // the token to lookup
   token: Token,
   // the account to lookup
   address: string,
 ): Promise<Balance | undefined> => {
-  const apiAssetHub = api as TypedApi<typeof dotAh>
-  const convertedMultilocation = convertEthMultilocation(token.multilocation)
-  if (!convertedMultilocation) return undefined
+  //todo(nuno): refactor using paraspell or papi unsafe
+  switch (chain.uid) {
+    case 'hydration':
+      return { free: 1000000000000000n }
+    default: {
+      const apiAssetHub = api as TypedApi<typeof dotAh>
+      const convertedMultilocation = convertEthMultilocation(token.multilocation)
+      if (!convertedMultilocation) return undefined
 
-  const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
-    convertedMultilocation,
-    address,
-  )
-  return { free: res?.balance ?? 0n }
+      const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
+        convertedMultilocation,
+        address,
+      )
+      return { free: res?.balance ?? 0n }
+    }
+  }
 }
