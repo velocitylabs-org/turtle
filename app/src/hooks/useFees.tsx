@@ -106,7 +106,7 @@ const useFees = (
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.log('Error: ', error)
+      console.log('Fetch fees error: ', error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
