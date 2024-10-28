@@ -15,15 +15,16 @@ export const trackFromParachainTx = async (
     const relaychain = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
 
     for (const transfer of ongoingTransfers) {
-      const { crossChainMessageHash } = transfer
-      if (!crossChainMessageHash) {
-        console.log('Cross chain message undefined')
+      const { crossChainMessageHash, sourceChainExtrinsicIndex } = transfer
+      if (!crossChainMessageHash && !sourceChainExtrinsicIndex) {
+        console.log('Both crossChainMessageHash and sourceChainExtrinsicIndex are undefined')
         // Should not return an error as we want to continue looping to the others transfers
         continue
       }
 
       const query = await relaychain.post('api/scan/xcm/list', {
-        message_hash: crossChainMessageHash,
+        ...(crossChainMessageHash && { message_hash: crossChainMessageHash }),
+        ...(sourceChainExtrinsicIndex && { extrinsic_index: sourceChainExtrinsicIndex }),
         row: 10,
       })
       if (query.status !== 200) {
@@ -34,7 +35,9 @@ export const trackFromParachainTx = async (
 
       const transferData: SubscanTransferResponse[] = query.json?.data?.list ?? []
       if (!transferData.length || !transferData[0]) {
-        console.log(`No XCM transfer data found for message hash ${crossChainMessageHash}`)
+        console.log(
+          `XCM transfer not found for ${crossChainMessageHash ? `message hash: ${crossChainMessageHash}` : `extrinsic id: ${sourceChainExtrinsicIndex}`}.`,
+        )
         // Should not return an error as we want to continue looping to the others transfers
         continue
       }

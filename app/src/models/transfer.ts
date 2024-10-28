@@ -19,6 +19,7 @@ export interface RawTransfer {
   date: Date
   crossChainMessageHash?: string
   parachainMessageId?: string
+  sourceChainExtrinsicIndex?: string
 }
 export interface StoredTransfer extends RawTransfer {
   // Params
