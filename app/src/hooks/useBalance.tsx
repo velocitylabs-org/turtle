@@ -66,13 +66,13 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           if (!node) throw new Error('Node not found')
 
           const tokenSymbol = getTokenSymbol(node, token)
-          const balance = await getAssetBalance(address, node, { symbol: tokenSymbol })
+          const balance = (await getAssetBalance(address, node, { symbol: tokenSymbol })) ?? 0n
 
           fetchedBalance = {
-            value: balance ?? 0n,
+            value: balance,
             decimals: token.decimals,
             symbol: token.symbol,
-            formatted: toHuman(balance ?? 0n, token).toString(),
+            formatted: toHuman(balance, token).toString(),
           }
 
           break
