@@ -27,7 +27,7 @@ _Parachain prerequisites coming soon._
 
 **1. 📖 Update registry:** (_To support the new chain and tokens on the application_)
 
-- add chain or update existing chain with all the fields required by the chain type: find a reliable source for the logo, check the supported address type (evm, or substrate), destinationFeeDOT, specName, rpcConnection, skipExistentialDepositCheck, maxConsumers, etc.
+- add chain or update existing chain with all the fields required by the chain type: find a reliable source for the logo, check the supported address type (evm, or substrate), destinationFeeDOT, rpcConnection, skipExistentialDepositCheck, maxConsumers, etc.
   => Some missing information can be found on [Snowbridge SDK](https://github.com/Snowfork/snowbridge/blob/main/web/packages/api/src/environment.ts).
 
 - add token if needed: again, find the logo from a reliable source, data (token address or an empty string if not available, multilocation, etc)
@@ -44,7 +44,7 @@ _Parachain prerequisites coming soon._
 ✋ Be careful to schemas when updating any type models. (It must not happen often).<br/>
 => Check chain swap on the app, sourcechain/destchain filters, sourcechain/tokens filters (UI checks in the transfer form).
 
-**2. 🔐 Env. Variables:** Do not forget to update `NEXT_PUBLIC_PARACHAIN_API_URLS`, in your local env, in the _.env.local.example_ **& Vercel**. ✋ Be aware that adding a duplicate parachain Id to _PARACHAIN_API_URLS_ might break production. Test locally by setting the environment to `testnet`.
+**2. 🔐 Variables:** Do not forget to update `SNOWBRIDGE_MAINNET_PARACHAIN_URLS` in our registry so snowbridge can connect to the rpc. **& Vercel**. ✋ Be aware that adding a duplicate parachain Id to _PARACHAIN_API_URLS_ might break production. Test locally by setting the environment to `testnet`.
 
 **3. ⚙️ Update Polkadot API/PAPI configuration:** (To fetch the balances)
 

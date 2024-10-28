@@ -1,6 +1,8 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 
+const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
+
 /* Mainnet :: Polkadot - Ethereum */
 export namespace Mainnet {
   // Chains
@@ -20,10 +22,7 @@ export namespace Mainnet {
     chainId: 1000,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    specName: 'statemint',
-    rpcConnection:
-      process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL ||
-      'wss://api-asset-hub-polkadot.dwellir.com',
+    rpcConnection: `wss://api-asset-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
   }
 
   export const RelayChain: Chain = {
@@ -33,9 +32,17 @@ export namespace Mainnet {
     chainId: 0,
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    specName: 'polkadot',
-    rpcConnection:
-      process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || 'wss://api-polkadot.dwellir.com',
+    rpcConnection: `wss://api-polkadot.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const BridgeHub: Chain = {
+    uid: 'polkadot-bridgehub',
+    name: 'Polkadot Bridge Hub',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+    chainId: 1002,
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-bridge-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
   }
 
   export const Bifrost: Chain = {
@@ -46,29 +53,85 @@ export namespace Mainnet {
     destinationFeeDOT: '20000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
-    rpcConnection: 'wss://bifrost-polkadot.dotters.network',
-    specName: 'bifrost_polkadot',
+    rpcConnection: `wss://api-bifrost-polkadot.dwellir.com/${DWELLIR_KEY}`,
   }
 
-  // export const Hydration: Chain = {
-  //   uid: 'hydration',
-  //   name: 'Hydration',
-  //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
-  //   chainId: 2034,
-  //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['ss58'],
-  // }
+  export const Hydration: Chain = {
+    uid: 'hydration',
+    name: 'Hydration',
+    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    chainId: 2034,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-hydradx.dwellir.com/${DWELLIR_KEY}`,
+  }
 
-  // export const Moonbeam: Chain = {
-  //   uid: 'moonbeam',
-  //   name: 'Moonbeam',
-  //   logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
-  //   chainId: 2004,
-  //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['evm'],
-  // }
+  export const Moonbeam: Chain = {
+    uid: 'moonbeam',
+    name: 'Moonbeam',
+    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+    chainId: 2004,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['evm'],
+    rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const Interlay: Chain = {
+    uid: 'interlay',
+    name: 'Interlay',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+    chainId: 2032,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-interlay.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const Acala: Chain = {
+    uid: 'acala',
+    name: 'Acala',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+    chainId: 2000,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-acala.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const Polimec: Chain = {
+    uid: 'polimec',
+    name: 'Polimec',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/28501.png',
+    chainId: 3344,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: ``, // TODO
+  }
+
+  export const Centrifuge: Chain = {
+    uid: 'centrifuge',
+    name: 'Centrifuge',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+    chainId: 2031,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-centrifuge.dwellir.com/${DWELLIR_KEY}`,
+  }
+
+  export const Astar: Chain = {
+    uid: 'astar',
+    name: 'Astar',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+    chainId: 2006,
+    destinationFeeDOT: '', // TODO
+    network: Network.Polkadot,
+    supportedAddressTypes: ['ss58'],
+    rpcConnection: `wss://api-astar.dwellir.com/${DWELLIR_KEY}`,
+  }
 
   export const Mythos: Chain = {
     uid: 'mythos',
@@ -79,7 +142,6 @@ export namespace Mainnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
-    specName: 'mythos',
   }
 
   // Tokens
@@ -238,6 +300,7 @@ export namespace Mainnet {
     decimals: 10,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    coingeckoId: 'polkadot',
   }
 
   export const ETH: Token = {
@@ -249,6 +312,7 @@ export namespace Mainnet {
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
     multilocation: '',
+    coingeckoId: 'ethereum',
   }
 }
 
@@ -272,7 +336,6 @@ export namespace Testnet {
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
     rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
-    specName: 'asset-hub-rococo',
   }
 
   // Tokens
@@ -452,6 +515,13 @@ export const REGISTRY = {
   testnet: testnetRegistry,
 }
 
+export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
+  rpcConnectionAsHttps(Mainnet.Mythos.rpcConnection),
+  rpcConnectionAsHttps(Mainnet.Bifrost.rpcConnection),
+  rpcConnectionAsHttps(Mainnet.Hydration.rpcConnection),
+  rpcConnectionAsHttps(Mainnet.Moonbeam.rpcConnection),
+]
+
 export function getNativeToken(chain: Chain): Token {
   switch (chain.uid) {
     case 'rococo-assethub':
@@ -471,4 +541,9 @@ export function getNativeToken(chain: Chain): Token {
     default:
       throw Error('The impossible has happened!')
   }
+}
+
+export function rpcConnectionAsHttps(rpc?: string): string {
+  if (!rpc) return ''
+  return rpc.replace('wss://', 'https://')
 }
