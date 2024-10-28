@@ -3,9 +3,9 @@ import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { getChainNode, getTokenSymbol } from '@/utils/paraspell'
+import { getRelayNode, getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { getAssetBalance } from '@paraspell/sdk'
+import { assets, getAssetBalance } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -61,9 +61,11 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
         }
 
         case Network.Polkadot: {
-          const node = getChainNode(chain)
-          const tokenSymbol = getTokenSymbol(node, token)
+          const relay = getRelayNode(env)
+          const node = assets.getTNode(chain.chainId, relay)
+          if (!node) throw new Error('Node not found')
 
+          const tokenSymbol = getTokenSymbol(node, token)
           const balance = await getAssetBalance(address, node, { symbol: tokenSymbol })
 
           fetchedBalance = {
