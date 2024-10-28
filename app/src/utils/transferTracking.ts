@@ -93,24 +93,19 @@ export function getTransferStatusFromParachain(
   const isBHChannelMsgDeliveredInSnowbridgeRes =
     'bridgeHubChannelDelivered' in transferResult &&
     transferResult.bridgeHubChannelDelivered?.success
-  /** Destination Event Index available */
-  const isDestEventIdxInSubscanXCMRes =
-    'destEventIndex' in transferResult && transferResult.destEventIndex.length > 0
+  /** Destination chain is Ethereum in XCM transfer*/
+  const isDestChainEThInSubscanXCMRes =
+    'destChain' in transferResult && transferResult.destChain === 'ethereum'
   /** Transfer just submitted from AH */
   const isTransferSubmittedInSnowbridgeRes = 'submitted' in transferResult
 
   switch (transferResult.status) {
     case TransferStatus.Pending:
-      if (isBHChannelMsgDeliveredInSnowbridgeRes || isDestEventIdxInSubscanXCMRes)
+      if (isBHChannelMsgDeliveredInSnowbridgeRes || isDestChainEThInSubscanXCMRes)
         return 'Arriving at Ethereum'
-      if (
-        isTransferSubmittedInSnowbridgeRes ||
-        !transferResult.destEventIndex ||
-        !isDestEventIdxInSubscanXCMRes
-      )
-        return 'Arriving at Bridge Hub'
+      if (isTransferSubmittedInSnowbridgeRes) return 'Arriving at Bridge Hub'
       // Default when the above conditions are not met
-      return 'Pending'
+      return 'Transfer pending'
 
     case TransferStatus.Complete:
       return 'Transfer completed'
@@ -136,7 +131,7 @@ export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingRes
   switch (status) {
     case TransferStatus.Pending:
       if (submitted) return 'Arriving at Bridge Hub'
-      return 'Pending'
+      return 'Transfer pending'
 
     case TransferStatus.Complete:
       return 'Transfer completed'

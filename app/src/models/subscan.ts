@@ -8,7 +8,7 @@ export type SubscanTransferResponse = {
   origin_block_timestamp: number
   relayed_block_timestamp: number
   block_num: number
-  status: string
+  status: 'pending' | 'relayed' | 'success' | 'failed'
   relayed_event_index: string
   dest_event_index: string
   dest_para_id: number
@@ -54,7 +54,8 @@ export type FromParachainTrackingResult = {
   blockNum: number // Relaychain transfer block number
   extrinsicStatus: string
   relayedEventIndex: string
-  destEventIndex: string // BH transfer block index
+  destChain: string
+  destEventIndex: string
   destParaId: number
   toAccountId: string
   confirmBlockTimestamp: number
