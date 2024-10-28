@@ -180,13 +180,10 @@ export const findMatchingTransfer = (
   ongoingTransfer: StoredTransfer,
 ) =>
   transfers.find(transfer => {
-    const findByTxId = 'submitted' in transfer
-    const findByMessageHash = !!ongoingTransfer.crossChainMessageHash
-    const findByextrinsicIndex = !!ongoingTransfer.sourceChainExtrinsicIndex
-    if (findByTxId) return transfer.id === ongoingTransfer.id
-
-    if (findByMessageHash) return transfer.messageHash === ongoingTransfer.crossChainMessageHash
-
+    if ( 'submitted' in transfer) 
+      return transfer.id === ongoingTransfer.id
+    if (!!ongoingTransfer.crossChainMessageHash) 
+      return transfer.messageHash === ongoingTransfer.crossChainMessageHash
     if (findByextrinsicIndex)
       return transfer.extrinsicIndex === ongoingTransfer.sourceChainExtrinsicIndex
 
