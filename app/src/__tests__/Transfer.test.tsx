@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom'
 import { getDestChainId } from '@/models/chain'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
