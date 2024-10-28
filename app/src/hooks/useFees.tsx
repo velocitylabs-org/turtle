@@ -6,12 +6,13 @@ import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getChainNode, getTokenSymbol } from '@/utils/paraspell'
+import { getRelayNode, getTokenSymbol } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { getOriginFeeDetails } from '@paraspell/sdk'
+import { assets, getOriginFeeDetails } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const DEBOUNCE_DELAY_MS = 500
@@ -29,6 +30,7 @@ const useFees = (
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !amount || !recipient || !senderAddress) {
@@ -70,10 +72,12 @@ const useFees = (
         }
 
         case Direction.WithinPolkadot: {
-          const sourceChainNode = getChainNode(sourceChain, destinationChain)
-          const destinationChainNode = getChainNode(destinationChain, sourceChain)
-          const tokenSymbol = getTokenSymbol(sourceChainNode, token)
+          const relay = getRelayNode(env)
+          const sourceChainNode = assets.getTNode(sourceChain.chainId, relay)
+          const destinationChainNode = assets.getTNode(destinationChain.chainId, relay)
+          if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
 
+          const tokenSymbol = getTokenSymbol(sourceChainNode, token)
           const info = await getOriginFeeDetails(
             sourceChainNode,
             destinationChainNode,
@@ -112,6 +116,7 @@ const useFees = (
       setLoading(false)
     }
   }, [
+    env,
     sourceChain,
     destinationChain,
     token,

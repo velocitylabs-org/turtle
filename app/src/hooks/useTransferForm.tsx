@@ -85,7 +85,6 @@ const useTransferForm = () => {
     fetchBalance,
   } = useBalance({
     env: environment,
-    api: balanceParams.api,
     chain: balanceParams.chain,
     token: balanceParams.token ?? undefined,
     address: balanceParams.address,
