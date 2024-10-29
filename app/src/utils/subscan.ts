@@ -46,10 +46,10 @@ export const trackFromParachainTx = async (
       }
 
       const { status, protocol, unique_id } = transferData[0]
-      console.log("protocol and status", protocol, status)
+      console.log('protocol and status', protocol, status)
 
       if (status === 'success' && protocol === 'UMP') {
-        console.log("protocol in UMP", protocol)
+        console.log('protocol in UMP', protocol)
         const body = {
           unique_id,
         }
@@ -64,11 +64,11 @@ export const trackFromParachainTx = async (
           console.log(`XCM transfer not found for unique_id: ${unique_id}`)
           continue
         }
-        console.log("child_message status", uniqueIdData.child_message?.status)
+        console.log('child_message status', uniqueIdData.child_message?.status)
         xcmTransfers.push(formatTransferData(transferData[0], uniqueIdData.child_message?.status))
         continue
       }
-      console.log("classic xcmTransfers push")
+      console.log('classic xcmTransfers push')
       xcmTransfers.push(formatTransferData(transferData[0]))
     }
 
@@ -80,7 +80,7 @@ export const trackFromParachainTx = async (
 }
 
 const formatTransferData = (data: SubscanTransferResponse, txStatus?: Status) => {
-  console.log("txStatus in formatXcmTransfer", txStatus)
+  console.log('txStatus in formatXcmTransfer', txStatus)
   return {
     messageHash: data.message_hash,
     originEventIndex: data.origin_event_index,
