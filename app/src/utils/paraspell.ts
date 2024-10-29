@@ -48,7 +48,7 @@ export const createTx = async (
     return await Builder(api)
       .from(sourceChainFromId as Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>)
       .to(destinationChainFromId as Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>)
-      .currency({ symbol: tokenSymbol })
+      .currency({ id: '1000189' })
       .amount(amount)
       .address(recipient)
       .build()
