@@ -24,7 +24,9 @@ export const trackFromParachainTx = async (
 
       const query = await relaychain.post('api/scan/xcm/list', {
         ...(crossChainMessageHash && { message_hash: crossChainMessageHash }),
-        ...(sourceChainExtrinsicIndex && { extrinsic_index: sourceChainExtrinsicIndex }),
+        // Only fetch by ExtrinsicIndex if sourceChain is Relay chain & crossChainMessageHash is undefined
+        ...(!crossChainMessageHash &&
+          sourceChainExtrinsicIndex && { extrinsic_index: sourceChainExtrinsicIndex }),
         row: 10,
       })
       if (query.status !== 200) {
@@ -42,18 +44,34 @@ export const trackFromParachainTx = async (
         continue
       }
 
-      let xchainTransferStatus: number = 1
-      switch (transferData[0].cross_chain_status) {
-        case 1:
-          xchainTransferStatus = TransferStatus.Pending
-          break
-        case 2:
+      let xchainTransferStatus: number = 0
+
+      // switch (transferData[0].cross_chain_status) {
+      //   case 1:
+      //     xchainTransferStatus = TransferStatus.Pending
+      //     break
+      //   case 2:
+      //     xchainTransferStatus = TransferStatus.Failed
+      //     break
+      //   case 3:
+      //     xchainTransferStatus = TransferStatus.Complete
+      //     break
+      //   default:
+      //     break
+      // }
+
+      switch (transferData[0].status) {
+        case 'failed':
           xchainTransferStatus = TransferStatus.Failed
           break
-        case 3:
+        case 'success':
           xchainTransferStatus = TransferStatus.Complete
           break
+        // case ("relayed"):
+        //   xchainTransferStatus = TransferStatus.Complete
+        //   break
         default:
+          xchainTransferStatus = TransferStatus.Pending
           break
       }
 
@@ -67,6 +85,7 @@ export const trackFromParachainTx = async (
         blockNum: transferData[0].block_num,
         extrinsicStatus: transferData[0].status,
         relayedEventIndex: transferData[0].relayed_event_index,
+        destChain: transferData[0].dest_chain,
         destEventIndex: transferData[0].dest_event_index,
         destParaId: transferData[0].dest_para_id,
         toAccountId: transferData[0].to_account_id,
