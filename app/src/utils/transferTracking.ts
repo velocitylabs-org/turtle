@@ -94,7 +94,7 @@ export function getTransferStatusFromParachain(
     'bridgeHubChannelDelivered' in transferResult &&
     transferResult.bridgeHubChannelDelivered?.success
   /** Destination chain is Ethereum in XCM transfer*/
-  const isDestChainEThInSubscanXCMRes =
+  const isDestChainEthInSubscanXcmRes =
     'destChain' in transferResult && transferResult.destChain === 'ethereum'
   /** Transfer just submitted from AH */
   const isTransferSubmittedInSnowbridgeRes = 'submitted' in transferResult
