@@ -101,8 +101,7 @@ export function getTransferStatusFromParachain(
 
   switch (transferResult.status) {
     case TransferStatus.Pending:
-      if (isBHChannelMsgDelivered || isDestChainEthereum)
-        return 'Arriving at Ethereum'
+      if (isBHChannelMsgDelivered || isDestChainEthereum) return 'Arriving at Ethereum'
       if (isBridgeTransferSubmitted) return 'Arriving at Bridge Hub'
       // Default when the above conditions are not met
       return 'Transfer pending'
