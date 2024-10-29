@@ -532,6 +532,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
   ],
 }
 
