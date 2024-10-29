@@ -48,15 +48,17 @@ export namespace Mainnet {
   //   supportedAddressTypes: ['ss58'],
   // }
 
-  // export const Moonbeam: Chain = {
-  //   uid: 'moonbeam',
-  //   name: 'Moonbeam',
-  //   logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
-  //   chainId: 2004,
-  //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
-  //   supportedAddressTypes: ['evm'],
-  // }
+  export const Moonbeam: Chain = {
+    uid: 'moonbeam',
+    name: 'Moonbeam',
+    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+    chainId: 2004,
+    destinationFeeDOT: '500000000', // To be confirmed
+    network: Network.Polkadot,
+    supportedAddressTypes: ['evm'],
+    rpcConnection: 'wss://wss.api.moonbeam.network',
+    specName: 'moonbeam',
+  }
 
   export const Mythos: Chain = {
     uid: 'mythos',
@@ -325,7 +327,7 @@ export interface Route {
 }
 
 export const mainnetRegistry: Registry = {
-  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Bifrost, Mainnet.Mythos],
+  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.Bifrost, Mainnet.Mythos, Mainnet.Moonbeam],
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
@@ -363,6 +365,12 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Mythos.uid,
       sdk: 'SnowbridgeApi',
       tokens: [Mainnet.MYTH.id],
+    },
+    {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
     },
     {
       from: Mainnet.Ethereum.uid,

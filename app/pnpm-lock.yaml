@@ -13868,7 +13868,7 @@ snapshots:
       '@polkadot/api-augment': 7.15.1
       '@polkadot/api-base': 7.15.1
       '@polkadot/api-derive': 7.15.1
-      '@polkadot/keyring': 8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
+      '@polkadot/keyring': 8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@8.7.1)
       '@polkadot/rpc-augment': 7.15.1
       '@polkadot/rpc-core': 7.15.1
       '@polkadot/rpc-provider': 7.15.1
@@ -13947,7 +13947,7 @@ snapshots:
       '@polkadot/util-crypto': 8.7.1(@polkadot/util@8.7.1)
       tslib: 2.8.0
 
-  '@polkadot/keyring@8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)':
+  '@polkadot/keyring@8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@8.7.1)':
     dependencies:
       '@babel/runtime': 7.25.9
       '@polkadot/util': 8.7.1
@@ -14082,7 +14082,7 @@ snapshots:
   '@polkadot/rpc-provider@7.15.1':
     dependencies:
       '@babel/runtime': 7.25.9
-      '@polkadot/keyring': 8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
+      '@polkadot/keyring': 8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@8.7.1)
       '@polkadot/types': 7.15.1
       '@polkadot/types-support': 7.15.1
       '@polkadot/util': 8.7.1
@@ -14212,7 +14212,7 @@ snapshots:
   '@polkadot/types@7.15.1':
     dependencies:
       '@babel/runtime': 7.25.9
-      '@polkadot/keyring': 8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@8.7.1))(@polkadot/util@8.7.1)
+      '@polkadot/keyring': 8.7.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@8.7.1)
       '@polkadot/types-augment': 7.15.1
       '@polkadot/types-codec': 7.15.1
       '@polkadot/types-create': 7.15.1
