@@ -211,7 +211,7 @@ export namespace Mainnet {
     decimals: 12,
     address: '',
     multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
-    coingeckoId: 'hydration',
+    coingeckoId: 'hydra',
   }
 
   export const SHIB: Token = {
