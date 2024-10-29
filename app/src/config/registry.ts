@@ -51,7 +51,7 @@ export namespace Mainnet {
   export const Moonbeam: Chain = {
     uid: 'moonbeam',
     name: 'Moonbeam',
-    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
     chainId: 2004,
     destinationFeeDOT: '500000000', // To be confirmed
     network: Network.Polkadot,
