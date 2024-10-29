@@ -90,20 +90,20 @@ export function getTransferStatusFromParachain(
   transferResult: FromAhToEthTrackingResult | FromParachainTrackingResult,
 ) {
   /** Bridge Hub Channel Message Delivered */
-  const isBHChannelMsgDeliveredInSnowbridgeRes =
+  const isBHChannelMsgDelivered =
     'bridgeHubChannelDelivered' in transferResult &&
     transferResult.bridgeHubChannelDelivered?.success
   /** Destination chain is Ethereum in XCM transfer*/
-  const isDestChainEthInSubscanXcmRes =
+  const isDestChainEthereum =
     'destChain' in transferResult && transferResult.destChain === 'ethereum'
   /** Transfer just submitted from AH */
-  const isTransferSubmittedInSnowbridgeRes = 'submitted' in transferResult
+  const isBridgeTransferSubmitted = 'submitted' in transferResult
 
   switch (transferResult.status) {
     case TransferStatus.Pending:
-      if (isBHChannelMsgDeliveredInSnowbridgeRes || isDestChainEThInSubscanXCMRes)
+      if (isBHChannelMsgDelivered || isDestChainEthereum)
         return 'Arriving at Ethereum'
-      if (isTransferSubmittedInSnowbridgeRes) return 'Arriving at Bridge Hub'
+      if (isBridgeTransferSubmitted) return 'Arriving at Bridge Hub'
       // Default when the above conditions are not met
       return 'Transfer pending'
 
