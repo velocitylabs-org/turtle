@@ -12,7 +12,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
-import usePapi from './usePapi'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 interface FormInputs {
@@ -58,7 +57,6 @@ const useTransferForm = () => {
   const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
   const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
-  const { api } = usePapi(sourceChain)
   const { fees, loading: loadingFees } = useFees(
     sourceWallet?.sender?.address,
     sourceChain,
@@ -70,13 +68,12 @@ const useTransferForm = () => {
 
   const balanceParams = useMemo(
     () => ({
-      api,
       chain: sourceChain,
       token: tokenAmount?.token,
       address: sourceWallet?.sender?.address,
       context: snowbridgeContext,
     }),
-    [api, sourceChain, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
+    [sourceChain, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
   )
 
   const {
