@@ -9,7 +9,8 @@ import { ISubmittableResult } from '@polkadot/types/types'
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
 export const handleSubmittableEvents = (result: ISubmittableResult) => {
-  const { txHash, status, events, isError, internalError, isCompleted, dispatchError } = result
+  const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } =
+    result
   // check for execution errors
   if (isError || internalError) throw new Error('Transfer failed')
 
@@ -31,28 +32,41 @@ export const handleSubmittableEvents = (result: ISubmittableResult) => {
     const extrinsicSuccess = result.findRecord('system', 'ExtrinsicSuccess')
     if (!extrinsicSuccess) throw new Error(`'ExtrinsicSuccess' event not found`)
 
+    const blockNumber: string | undefined =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      'blockNumber' in result ? (result.blockNumber as any).toJSON() : undefined
+    const extrinsicIndex: string | undefined =
+      blockNumber && txIndex ? `${blockNumber}-${txIndex}` : undefined
+
     let messageHash: string | undefined
     let messageId: string | undefined
 
     // Filter the events to get the needed data
     events.forEach(({ event: { data, method, section } }) => {
-      // Supports x-tokens pallet
+      // Get messageHash from parachainSystem pallet (ex: DOT from Para to Para )
       if (method === 'UpwardMessageSent' && section === 'parachainSystem') {
         messageHash = data[0].toString()
       }
-      // Supports XCM-polkadot pallet
+      // Get messageHash from xcmpQueue pallet (ex: AH to ETH)
       if (method === 'XcmpMessageSent' && section === 'xcmpQueue' && 'messageHash' in data) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messageHash = (data.messageHash as any).toString()
       }
+      // Get messageId from xcmPallet pallet (ex: Relay Chain to AH)
+      if (method === 'Sent' && section === 'xcmPallet' && 'messageId' in data) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        messageId = (data.messageId as any).toString()
+      }
+      // Get messageId from polkadotXcm pallet (ex: AH to Relay Chain or ETH)
       if (method === 'Sent' && section === 'polkadotXcm' && 'messageId' in data) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messageId = (data.messageId as any).toString()
       }
     })
-    if (!messageHash) throw new Error('Cross chain messageHash missing')
+    if (!messageHash && !messageId && !extrinsicIndex)
+      throw new Error('MessageHash, MessageId and ExtrinsicIndex are all missing')
 
-    return { messageHash, messageId }
+    return { messageHash, messageId, extrinsicIndex }
   }
 }
 

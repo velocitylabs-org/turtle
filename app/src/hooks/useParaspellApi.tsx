@@ -44,7 +44,7 @@ const useParaspellApi = () => {
           try {
             const eventsData = handleSubmittableEvents(result)
             if (eventsData) {
-              const { messageHash, messageId } = eventsData
+              const { messageHash, messageId, extrinsicIndex } = eventsData
 
               // Get the current token price
               const senderAddress = await getSenderAddress(sender)
@@ -64,8 +64,9 @@ const useParaspellApi = () => {
                 date,
                 environment,
                 fees,
-                crossChainMessageHash: messageHash,
+                ...(messageHash && { crossChainMessageHash: messageHash }),
                 ...(messageId && { parachainMessageId: messageId }),
+                ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
               } satisfies StoredTransfer)
 
               onSuccess?.()
