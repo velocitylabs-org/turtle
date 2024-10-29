@@ -3,7 +3,7 @@ import { TransferStatus } from '@snowbridge/api/dist/history'
 import { SubscanTransferResponse, FromParachainTrackingResult, Status } from '@/models/subscan'
 import { OngoingTransferWithDirection } from '@/models/transfer'
 
-export const trackFromParachainTx = async (
+export const trackWithinPolkadotTx = async (
   env: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
@@ -44,31 +44,27 @@ export const trackFromParachainTx = async (
         // Should not return an error as we want to continue looping to the others transfers
         continue
       }
-
       const { status, protocol, unique_id } = transferData[0]
-      console.log('protocol and status', protocol, status)
 
       if (status === 'success' && protocol === 'UMP') {
-        console.log('protocol in UMP', protocol)
         const body = {
           unique_id,
         }
-        const infoQuery = await relaychain.post('api/scan/xcm/info', body)
-        if (infoQuery.status !== 200) {
+        const uniqueIdQuery = await relaychain.post('api/scan/xcm/info', body)
+        if (uniqueIdQuery.status !== 200) {
           console.log(`Subscan API info request failed for unique_id: ${unique_id}`)
           continue
         }
 
-        const uniqueIdData: SubscanTransferResponse = infoQuery.json?.data
+        const uniqueIdData: SubscanTransferResponse = uniqueIdQuery.json?.data
         if (!uniqueIdData) {
           console.log(`XCM transfer not found for unique_id: ${unique_id}`)
           continue
         }
-        console.log('child_message status', uniqueIdData.child_message?.status)
+
         xcmTransfers.push(formatTransferData(transferData[0], uniqueIdData.child_message?.status))
         continue
       }
-      console.log('classic xcmTransfers push')
       xcmTransfers.push(formatTransferData(transferData[0]))
     }
 
@@ -80,7 +76,6 @@ export const trackFromParachainTx = async (
 }
 
 const formatTransferData = (data: SubscanTransferResponse, txStatus?: Status) => {
-  console.log('txStatus in formatXcmTransfer', txStatus)
   return {
     messageHash: data.message_hash,
     originEventIndex: data.origin_event_index,

@@ -1,6 +1,6 @@
 import { environment } from '@snowbridge/api'
 import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
-import { trackFromParachainTx } from './subscan'
+import { trackWithinPolkadotTx } from './subscan'
 import { FromParachainTrackingResult } from '@/models/subscan'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { trackFromAhToEthTx, trackFromEthTx } from './snowbridge'
@@ -20,15 +20,15 @@ export const trackTransfers = async (
 
   if (ongoingTransfers.toEthereum.length) {
     const ahToEthereumTx = await trackFromAhToEthTx(env)
-    console.log('From AH To Ethereum transfer:', ahToEthereumTx.length)
+    console.log('From AH To Ethereum transfers:', ahToEthereumTx.length)
     transfers.push(...ahToEthereumTx)
   }
 
   // Keep this until we can test & check tracking process for from Para to AH transfers
   if (ongoingTransfers.withinPolkadot.length) {
-    const parachainToAhTx = await trackFromParachainTx(env, ongoingTransfers.withinPolkadot)
-    console.log('From Parachain To AH transfer:', parachainToAhTx.length)
-    transfers.push(...parachainToAhTx)
+    const withinPolkadotTx = await trackWithinPolkadotTx(env, ongoingTransfers.withinPolkadot)
+    console.log('Whithin Polkadot transfers:', withinPolkadotTx.length)
+    transfers.push(...withinPolkadotTx)
   }
 
   return transfers.sort((a, b) => getTransferTimestamp(b) - getTransferTimestamp(a))
