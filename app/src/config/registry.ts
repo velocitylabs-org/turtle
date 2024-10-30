@@ -567,6 +567,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
   ],
 }
 
