@@ -435,6 +435,7 @@ export const mainnetRegistry: Registry = {
     Mainnet.Interlay,
     Mainnet.Polimec,
     Mainnet.Centrifuge,
+    Mainnet.Astar,
   ],
   tokens: [
     Mainnet.WETH,
@@ -557,6 +558,12 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Centrifuge.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Astar.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
