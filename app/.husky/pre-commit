@@ -1,6 +1,0 @@
-cd "$(dirname -- "$0")/.."
-
-pnpm run format
-pnpm run lint
-
-git add .
