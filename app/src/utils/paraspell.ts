@@ -56,7 +56,8 @@ export const createTx = async (
     // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
     // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
     const currencyId = registry.isAssetHub(destinationChain)
-      ? { symbol: getTokenSymbol(destinationChainFromId, token) }
+      ? //todo(nuno): probably need to pass multilocation when it's AH dest
+        { symbol: getTokenSymbol(destinationChainFromId, token) }
       : getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(api)

@@ -147,7 +147,7 @@ export namespace Mainnet {
 
   // Tokens
   export const WETH: Token = {
-    id: 'weth',
+    id: 'weth.e',
     name: 'Wrapped Ether',
     symbol: 'wETH',
     logoURI: 'https://static.simpleswap.io/images/currencies-logo/weth.svg',
