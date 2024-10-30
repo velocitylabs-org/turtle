@@ -506,12 +506,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'SnowbridgeApi',
       tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
     },
-    {
-      from: Mainnet.Hydration.uid,
-      to: Mainnet.AssetHub.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
-    },
+    // {
+    //   from: Mainnet.Hydration.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'ParaSpellApi',
+    //   tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+    // },
     // {
     //   from: Mainnet.Mythos.uid,
     //   to: Mainnet.AssetHub.uid,
