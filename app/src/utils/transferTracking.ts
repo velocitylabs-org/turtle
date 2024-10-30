@@ -26,7 +26,7 @@ export const trackTransfers = async (
 
   // Keep this until we can test & check tracking process for from Para to AH transfers
   if (ongoingTransfers.withinPolkadot.length) {
-    const withinPolkadotTx = await trackWithinPolkadotTx(env, ongoingTransfers.withinPolkadot)
+    const xcmTx = await trackWithinPolkadotTx(env, ongoingTransfers.withinPolkadot)
     console.log('Whithin Polkadot transfers:', withinPolkadotTx.length)
     transfers.push(...withinPolkadotTx)
   }
