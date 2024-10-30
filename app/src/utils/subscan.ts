@@ -3,7 +3,7 @@ import { TransferStatus } from '@snowbridge/api/dist/history'
 import { SubscanTransferResponse, FromParachainTrackingResult, Status } from '@/models/subscan'
 import { OngoingTransferWithDirection } from '@/models/transfer'
 
-export const trackWithinPolkadotTx = async (
+export const trackXcm = async (
   env: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
