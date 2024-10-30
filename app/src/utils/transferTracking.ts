@@ -1,6 +1,6 @@
 import { environment } from '@snowbridge/api'
 import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
-import { trackWithinPolkadotTx } from './subscan'
+import { trackXcm } from './subscan'
 import { FromParachainTrackingResult } from '@/models/subscan'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { trackFromAhToEthTx, trackFromEthTx } from './snowbridge'
@@ -26,7 +26,7 @@ export const trackTransfers = async (
 
   // Keep this until we can test & check tracking process for from Para to AH transfers
   if (ongoingTransfers.withinPolkadot.length) {
-    const withinPolkadotTx = await trackWithinPolkadotTx(env, ongoingTransfers.withinPolkadot)
+    const withinPolkadotTx = await trackXcm(env, ongoingTransfers.withinPolkadot)
     console.log('Whithin Polkadot transfers:', withinPolkadotTx.length)
     transfers.push(...withinPolkadotTx)
   }
