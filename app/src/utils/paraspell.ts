@@ -9,7 +9,6 @@ import {
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk'
 import { getApiPromise } from './polkadot'
-import { Chain } from '@/models/chain'
 import * as registry from '@/config/registry'
 
 /**
@@ -51,12 +50,19 @@ export const createTx = async (
   }
   // para to para
   else {
-    const tokenSymbol = getTokenSymbol(sourceChainFromId, token)
+    // Resolve the currencyId for the ParaSpell SDK. When sending a token to AssetHub,
+    // this currency id must be specified in a way that's known to AssetHub rather than
+    // providing an identifier relative to the source chain. To quote Dudo's message: 
+    // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to 
+    // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
+    const currencyId = registry.isAssetHub(destinationChain) 
+      ? { symbol: getTokenSymbol(destinationChainFromId, token) } 
+      : getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(api)
       .from(sourceChainFromId as Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>)
       .to(destinationChainFromId as Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>)
-      .currency({ id: tokenSymbol })
+      .currency(currencyId)
       .amount(amount)
       .address(recipient)
       .build()

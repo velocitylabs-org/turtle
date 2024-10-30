@@ -585,3 +585,7 @@ export function rpcConnectionAsHttps(rpc?: string): string {
 export function getAssetId(env: Environment, chainId: string, tokenId: string): string | undefined {
   return REGISTRY[env].assetId.get(chainId)?.get(tokenId)
 }
+
+export function isAssetHub(chain: Chain): boolean {
+  return chain.network == Network.Polkadot && chain.chainId === 1000
+}
