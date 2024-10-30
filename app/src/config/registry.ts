@@ -432,6 +432,9 @@ export const mainnetRegistry: Registry = {
     Mainnet.Acala,
     Mainnet.Moonbeam,
     Mainnet.Hydration,
+    Mainnet.Interlay,
+    Mainnet.Polimec,
+    Mainnet.Centrifuge,
   ],
   tokens: [
     Mainnet.WETH,
@@ -535,6 +538,25 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Interlay.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    // Not working
+    // {
+    //   from: Mainnet.RelayChain.uid,
+    //   to: Mainnet.Polimec.uid,
+    //   sdk: 'ParaSpellApi',
+    //   tokens: [Mainnet.DOT.id],
+    // },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Centrifuge.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
