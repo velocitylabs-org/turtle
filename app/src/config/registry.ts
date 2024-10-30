@@ -60,7 +60,7 @@ export namespace Mainnet {
   export const Hydration: Chain = {
     uid: 'hydration',
     name: 'Hydration',
-    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6753.png',
     chainId: 2034,
     destinationFeeDOT: '20000000',
     network: Network.Polkadot,
