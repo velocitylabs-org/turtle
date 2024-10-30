@@ -1,5 +1,6 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Environment } from '../store/environmentStore'
 
 const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
 
@@ -401,6 +402,11 @@ export interface Registry {
   chains: Chain[]
   tokens: Token[]
   routes: Route[]
+  // Assets are often uniquely identified by a "asset id" at each chain, making it a chain-dependant value.
+  // The SDKs we use accept the token symbol as the indexing value to work with a given token but some chains
+  // have multiple tokens with the same symbol, in which case we need this map to provide the exact asset id
+  // to disambiguate. The map is Chain id -> Turtle token id -> Local Asset Id.
+  assetId: Map<string, Map<string, string>>
 }
 
 export interface Route {
@@ -513,6 +519,7 @@ export const mainnetRegistry: Registry = {
     //   tokens: [Mainnet.MYTH.id],
     // },
   ],
+  assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
 }
 
 export const testnetRegistry: Registry = {
@@ -532,6 +539,7 @@ export const testnetRegistry: Registry = {
       sdk: 'SnowbridgeApi',
     },
   ],
+  assetId: new Map(),
 }
 
 export const REGISTRY = {
@@ -572,4 +580,8 @@ export function getNativeToken(chain: Chain): Token {
 export function rpcConnectionAsHttps(rpc?: string): string {
   if (!rpc) return ''
   return rpc.replace('wss://', 'https://')
+}
+
+export function getAssetId(env: Environment, chainId: string, tokenId: string): string | undefined {
+  return REGISTRY[env].assetId.get(chainId)?.get(tokenId)
 }
