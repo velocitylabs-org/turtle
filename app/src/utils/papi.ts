@@ -1,7 +1,6 @@
 import { Mainnet } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { ethMultilocationSchema } from '@/models/schemas'
-import { Token } from '@/models/token'
 import {
   dotAh,
   mythos,
@@ -70,4 +69,3 @@ export const getNativeBalance = async (
 export interface Balance {
   free: bigint
 }
-
