@@ -26,9 +26,9 @@ export const trackTransfers = async (
 
   // Keep this until we can test & check tracking process for from Para to AH transfers
   if (ongoingTransfers.withinPolkadot.length) {
-    const withinPolkadotTx = await trackXcm(env, ongoingTransfers.withinPolkadot)
-    console.log('Whithin Polkadot transfers:', withinPolkadotTx.length)
-    transfers.push(...withinPolkadotTx)
+    const xcmTx = await trackXcm(env, ongoingTransfers.withinPolkadot)
+    console.log('Whithin Polkadot transfers:', xcmTx.length)
+    transfers.push(...xcmTx)
   }
 
   return transfers.sort((a, b) => getTransferTimestamp(b) - getTransferTimestamp(a))
