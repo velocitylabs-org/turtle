@@ -71,32 +71,3 @@ export interface Balance {
   free: bigint
 }
 
-/** Fetch the non-native balance of a given address on the connected chain. Returns undefined if no balance exists. */
-// TODO(team): this only works for AH. Can we use ParaSpell to do and fetch this for us?
-export const getNonNativeBalance = async (
-  // the Papi api instance
-  api: TypedApi<SupportedChains> | undefined,
-  // the chain in which to look up the value
-  chain: Chain,
-  // the token to lookup
-  token: Token,
-  // the account to lookup
-  address: string,
-): Promise<Balance | undefined> => {
-  //todo(nuno): refactor using paraspell or papi unsafe
-  switch (chain.uid) {
-    case 'hydration':
-      return { free: 1000000000000000n }
-    default: {
-      const apiAssetHub = api as TypedApi<typeof dotAh>
-      const convertedMultilocation = convertEthMultilocation(token.multilocation)
-      if (!convertedMultilocation) return undefined
-
-      const res = await apiAssetHub?.query.ForeignAssets.Account.getValue(
-        convertedMultilocation,
-        address,
-      )
-      return { free: res?.balance ?? 0n }
-    }
-  }
-}
