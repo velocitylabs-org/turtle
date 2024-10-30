@@ -4,8 +4,8 @@ import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
-import Account from './Account'
 import { colors } from '../../tailwind.config'
+import Account from './Account'
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
@@ -161,7 +161,7 @@ export const OngoingTransferDialog = ({
                 )}
               </div>
             </div>
-            <Separator className="my-4 bg-turtle-level3" />
+            {/* <Separator className="my-4 bg-turtle-level3" />
             <div className="flex justify-between space-x-4 px-1 sm:flex-row">
               <p className="text-sm">Min receive</p>
               <div className="flex space-x-1 text-sm">
@@ -176,7 +176,7 @@ export const OngoingTransferDialog = ({
                   </p>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
           {explorerLink && (
             <a

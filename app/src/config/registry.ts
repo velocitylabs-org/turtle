@@ -203,6 +203,40 @@ export namespace Mainnet {
     coingeckoId: 'bifrost-native-coin',
   }
 
+  export const ACA: Token = {
+    id: 'aca',
+    name: 'Acala Token',
+    symbol: 'ACA',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+    decimals: 12,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
+    coingeckoId: 'acala',
+  }
+
+  export const GLMR: Token = {
+    id: 'glmr',
+    name: 'GLMR',
+    symbol: 'GLMR',
+    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+    decimals: 18,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
+    coingeckoId: 'moonbeam',
+  }
+  export const INTR: Token = {
+    id: 'intr',
+    name: 'INTR',
+    symbol: 'INTR',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+    decimals: 10,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    coingeckoId: 'interlay',
+  }
   export const SHIB: Token = {
     id: 'shib',
     name: 'Shiba Inu',
@@ -400,7 +434,20 @@ export interface Route {
 }
 
 export const mainnetRegistry: Registry = {
-  chains: [Mainnet.Ethereum, Mainnet.AssetHub, Mainnet.RelayChain, Mainnet.Bifrost, Mainnet.Mythos],
+  chains: [
+    Mainnet.Ethereum,
+    Mainnet.AssetHub,
+    Mainnet.RelayChain,
+    Mainnet.Bifrost,
+    Mainnet.Mythos,
+    Mainnet.Acala,
+    Mainnet.Moonbeam,
+    Mainnet.Hydration,
+    Mainnet.Interlay,
+    Mainnet.Polimec,
+    Mainnet.Centrifuge,
+    Mainnet.Astar,
+  ],
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
@@ -416,6 +463,7 @@ export const mainnetRegistry: Registry = {
     Mainnet.PEPE,
   ],
   routes: [
+    // Snowbridge routes
     {
       from: Mainnet.Ethereum.uid,
       to: Mainnet.AssetHub.uid,
@@ -464,6 +512,8 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
+
+    // Relay to Para
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.AssetHub.uid,
@@ -471,23 +521,79 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.DOT.id],
     },
     {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Acala.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Interlay.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Centrifuge.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Astar.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.RelayChain.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+
+    // Para to Relay
+    {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
-    // {
-    //   from: Mainnet.Bifrost.uid,
-    //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.WETH.id],
-    // },
-    // {
-    //   from: Mainnet.Mythos.uid,
-    //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.MYTH.id],
-    // },
+    {
+      from: Mainnet.Acala.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Interlay.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
   ],
 }
 
@@ -522,6 +628,7 @@ export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
   rpcConnectionAsHttps(Mainnet.Moonbeam.rpcConnection),
 ]
 
+// TODO: Check if Paraspell supports this out of the box
 export function getNativeToken(chain: Chain): Token {
   switch (chain.uid) {
     case 'rococo-assethub':
@@ -538,8 +645,14 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.MYTH
     case 'bifrost':
       return Mainnet.BNC
+    case 'acala':
+      return Mainnet.ACA
+    case 'moonbeam':
+      return Mainnet.GLMR
+    case 'interlay':
+      return Mainnet.INTR
     default:
-      throw Error('The impossible has happened!')
+      throw Error('Native Token not defined.')
   }
 }
 
