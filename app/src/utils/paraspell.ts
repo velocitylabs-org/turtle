@@ -52,11 +52,11 @@ export const createTx = async (
   else {
     // Resolve the currencyId for the ParaSpell SDK. When sending a token to AssetHub,
     // this currency id must be specified in a way that's known to AssetHub rather than
-    // providing an identifier relative to the source chain. To quote Dudo's message: 
-    // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to 
+    // providing an identifier relative to the source chain. To quote Dudo's message:
+    // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
     // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
-    const currencyId = registry.isAssetHub(destinationChain) 
-      ? { symbol: getTokenSymbol(destinationChainFromId, token) } 
+    const currencyId = registry.isAssetHub(destinationChain)
+      ? { symbol: getTokenSymbol(destinationChainFromId, token) }
       : getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(api)
