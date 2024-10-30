@@ -398,6 +398,14 @@ export namespace Testnet {
 
 export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi'
 
+// A Turtle-defined unique chain identifier
+type ChainUId = string
+// A Turtle-defined unique token identifier
+type TokenId = string
+// The asset id of an asset at a given chain
+// NOTE: We might need to make it more type-safe in the future
+type LocalAssetId = string
+
 export interface Registry {
   chains: Chain[]
   tokens: Token[]
@@ -405,8 +413,8 @@ export interface Registry {
   // Assets are often uniquely identified by a "asset id" at each chain, making it a chain-dependant value.
   // The SDKs we use accept the token symbol as the indexing value to work with a given token but some chains
   // have multiple tokens with the same symbol, in which case we need this map to provide the exact asset id
-  // to disambiguate. The map is Chain id -> Turtle token id -> Local Asset Id.
-  assetId: Map<string, Map<string, string>>
+  // to disambiguate. The map is Turtle chain uid -> Turtle token id -> Local Asset Id.
+  assetId: Map<ChainUId, Map<TokenId, LocalAssetId>>
 }
 
 export interface Route {
