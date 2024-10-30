@@ -226,6 +226,17 @@ export namespace Mainnet {
       '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
     coingeckoId: 'moonbeam',
   }
+  export const INTR: Token = {
+    id: 'intr',
+    name: 'INTR',
+    symbol: 'INTR',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+    decimals: 10,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    coingeckoId: 'interlay',
+  }
   export const SHIB: Token = {
     id: 'shib',
     name: 'Shiba Inu',
@@ -533,13 +544,6 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
-    // Not working
-    // {
-    //   from: Mainnet.RelayChain.uid,
-    //   to: Mainnet.Polimec.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.DOT.id],
-    // },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Centrifuge.uid,
@@ -574,6 +578,18 @@ export const mainnetRegistry: Registry = {
     },
     {
       from: Mainnet.Hydration.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Interlay.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
@@ -633,6 +649,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.ACA
     case 'moonbeam':
       return Mainnet.GLMR
+    case 'interlay':
+      return Mainnet.INTR
     default:
       throw Error('Native Token not defined.')
   }
