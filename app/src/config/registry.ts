@@ -452,6 +452,7 @@ export const mainnetRegistry: Registry = {
     Mainnet.PEPE,
   ],
   routes: [
+    // Snowbridge routes
     {
       from: Mainnet.Ethereum.uid,
       to: Mainnet.AssetHub.uid,
@@ -500,15 +501,11 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
+
+    // Relay to Para
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.AssetHub.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
-    },
-    {
-      from: Mainnet.AssetHub.uid,
-      to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
@@ -527,18 +524,6 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Hydration.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
-    },
-    {
-      from: Mainnet.Acala.uid,
-      to: Mainnet.RelayChain.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
-    },
-    {
-      from: Mainnet.Hydration.uid,
-      to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
@@ -570,6 +555,26 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+
+    // Para to Relay
+    {
+      from: Mainnet.AssetHub.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Acala.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
