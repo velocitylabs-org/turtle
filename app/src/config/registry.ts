@@ -1,5 +1,6 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
+import { Environment } from '../store/environmentStore'
 
 const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
 
@@ -59,9 +60,9 @@ export namespace Mainnet {
   export const Hydration: Chain = {
     uid: 'hydration',
     name: 'Hydration',
-    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6753.png',
     chainId: 2034,
-    destinationFeeDOT: '', // TODO
+    destinationFeeDOT: '20000000',
     network: Network.Polkadot,
     supportedAddressTypes: ['ss58'],
     rpcConnection: `wss://api-hydradx.dwellir.com/${DWELLIR_KEY}`,
@@ -146,7 +147,7 @@ export namespace Mainnet {
 
   // Tokens
   export const WETH: Token = {
-    id: 'weth',
+    id: 'weth.e',
     name: 'Wrapped Ether',
     symbol: 'wETH',
     logoURI: 'https://static.simpleswap.io/images/currencies-logo/weth.svg',
@@ -201,6 +202,17 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
     coingeckoId: 'bifrost-native-coin',
+  }
+
+  export const HDX: Token = {
+    id: 'hdx',
+    name: 'Hydration',
+    symbol: 'HDX',
+    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    decimals: 12,
+    address: '',
+    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
+    coingeckoId: 'hydra',
   }
 
   export const ACA: Token = {
@@ -420,10 +432,23 @@ export namespace Testnet {
 
 export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi'
 
+// A Turtle-defined unique chain identifier
+type ChainUId = string
+// A Turtle-defined unique token identifier
+type TokenId = string
+// The asset id of an asset at a given chain
+// NOTE: We might need to make it more type-safe in the future
+type LocalAssetId = string
+
 export interface Registry {
   chains: Chain[]
   tokens: Token[]
   routes: Route[]
+  // Assets are often uniquely identified by a "asset id" at each chain, making it a chain-dependant value.
+  // The SDKs we use accept the token symbol as the indexing value to work with a given token but some chains
+  // have multiple tokens with the same symbol, in which case we need this map to provide the exact asset id
+  // to disambiguate. The map is Turtle chain uid -> Turtle token id -> Local Asset Id.
+  assetId: Map<ChainUId, Map<TokenId, LocalAssetId>>
 }
 
 export interface Route {
@@ -440,6 +465,7 @@ export const mainnetRegistry: Registry = {
     Mainnet.RelayChain,
     Mainnet.Bifrost,
     Mainnet.Mythos,
+    Mainnet.Hydration,
     Mainnet.Acala,
     Mainnet.Moonbeam,
     Mainnet.Hydration,
@@ -496,6 +522,12 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.WETH.id],
     },
     {
+      from: Mainnet.Ethereum.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'SnowbridgeApi',
+      tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+    },
+    {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
       sdk: 'SnowbridgeApi',
@@ -513,7 +545,6 @@ export const mainnetRegistry: Registry = {
         Mainnet.PEPE.id,
       ],
     },
-
     // Relay to Para
     {
       from: Mainnet.RelayChain.uid,
@@ -571,6 +602,18 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
+    // {
+    //   from: Mainnet.Hydration.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'ParaSpellApi',
+    //   tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+    // },
+    // {
+    //   from: Mainnet.Mythos.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'ParaSpellApi',
+    //   tokens: [Mainnet.MYTH.id],
+    // },
     {
       from: Mainnet.Acala.uid,
       to: Mainnet.RelayChain.uid,
@@ -608,6 +651,7 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.DOT.id],
     },
   ],
+  assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
 }
 
 export const testnetRegistry: Registry = {
@@ -627,6 +671,7 @@ export const testnetRegistry: Registry = {
       sdk: 'SnowbridgeApi',
     },
   ],
+  assetId: new Map(),
 }
 
 export const REGISTRY = {
@@ -658,6 +703,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.MYTH
     case 'bifrost':
       return Mainnet.BNC
+    case 'hydration':
+      return Mainnet.HDX
     case 'acala':
       return Mainnet.ACA
     case 'moonbeam':
@@ -672,4 +719,12 @@ export function getNativeToken(chain: Chain): Token {
 export function rpcConnectionAsHttps(rpc?: string): string {
   if (!rpc) return ''
   return rpc.replace('wss://', 'https://')
+}
+
+export function getAssetId(env: Environment, chainId: string, tokenId: string): string | undefined {
+  return REGISTRY[env].assetId.get(chainId)?.get(tokenId)
+}
+
+export function isAssetHub(chain: Chain): boolean {
+  return chain.network == Network.Polkadot && chain.chainId === 1000
 }

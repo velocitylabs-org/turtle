@@ -48,11 +48,11 @@ export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null>
     const options = { method: 'GET', headers: { accept: 'application/json' } }
     const result = await fetch(url, options)
 
-    if (!result.ok) throw new Error('Failed to fetch fees tokens value')
+    if (!result.ok) throw new Error('Failed to fetch token price')
 
     return (await result.json())[tokenId.toLocaleLowerCase()] as TokenPrice
   } catch (error) {
-    console.log('Fees token value fetch error:', error)
+    console.log('getTokenPrice error:', error)
     return null
   }
 }
