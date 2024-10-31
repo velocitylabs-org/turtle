@@ -1,4 +1,6 @@
+import * as registry from '@/config/registry'
 import { TransferParams } from '@/hooks/useTransfer'
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 import {
@@ -9,7 +11,6 @@ import {
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk'
 import { getApiPromise } from './polkadot'
-import * as registry from '@/config/registry'
 
 /**
  * Creates a submittable extrinsic transaction hash using Paraspell Builder.
@@ -50,15 +51,13 @@ export const createTx = async (
   }
   // para to para
   else {
-    // Resolve the currencyId for the ParaSpell SDK. When sending a token to AssetHub,
-    // this currency id must be specified in a way that's known to AssetHub rather than
-    // providing an identifier relative to the source chain. To quote Dudo's message:
-    // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
-    // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
-    const currencyId = registry.isAssetHub(destinationChain)
-      ? //todo(nuno): probably need to pass multilocation when it's AH dest
-        { symbol: getTokenSymbol(destinationChainFromId, token) }
-      : getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+    const currencyId = getCurrencyId(
+      environment,
+      sourceChainFromId,
+      sourceChain.uid,
+      token,
+      destinationChain,
+    )
 
     return await Builder(api)
       .from(sourceChainFromId as Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>)
@@ -92,15 +91,32 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
   }
 }
 
-// Get the ParaSpell currency id in the form of `TCurrencyCore`.
-// We prioritize an local asset id if specified in our registry and otherwise default to the paraspell token symbol
+/**
+ * Get the ParaSpell currency id in the form of `TCurrencyCore`.
+ *
+ * @remarks We prioritize an local asset id if specified in our registry and otherwise default to the paraspell token symbol. AH edge case is handled.
+ *
+ * */
 export function getCurrencyId(
   env: Environment,
   node: TNodeDotKsmWithRelayChains,
   chainId: string,
   token: Token,
+  destinationChain?: Chain,
 ): TCurrencyCore {
-  const localAssetId = registry.getAssetId(env, chainId, token.id)
+  if (destinationChain && registry.isAssetHub(destinationChain)) {
+    // When sending a token to AssetHub,
+    // this currency id must be specified in a way that's known to AssetHub rather than
+    // providing an identifier relative to the source chain. To quote Dudo's message:
+    // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
+    // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
+    // TODO(nuno): probably need to pass multilocation when it's AH dest
+    const relay = getRelayNode(env)
+    const destinationChainNode = assets.getTNode(destinationChain.chainId, relay)
+    if (!destinationChainNode) throw new Error('Transfer failed: chain id not found.')
+    return { symbol: getTokenSymbol(destinationChainNode, token) }
+  }
 
-  return localAssetId ? { id: localAssetId } : { symbol: getTokenSymbol(node, token) }
+  const localAssetId = registry.getAssetId(env, chainId, token.id)
+  return localAssetId ? { id: localAssetId } : { symbol: getTokenSymbol(node, token) } // Fallback to token symbol
 }

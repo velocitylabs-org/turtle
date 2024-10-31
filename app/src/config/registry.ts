@@ -227,6 +227,17 @@ export namespace Mainnet {
     coingeckoId: 'acala',
   }
 
+  export const ASTR: Token = {
+    id: 'astr',
+    name: 'ASTR',
+    symbol: 'ASTR',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+    decimals: 18,
+    address: '',
+    multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
+    coingeckoId: 'astar',
+  }
+
   export const GLMR: Token = {
     id: 'glmr',
     name: 'GLMR',
@@ -468,7 +479,6 @@ export const mainnetRegistry: Registry = {
     Mainnet.Hydration,
     Mainnet.Acala,
     Mainnet.Moonbeam,
-    Mainnet.Hydration,
     Mainnet.Interlay,
     Mainnet.Polimec,
     Mainnet.Centrifuge,
@@ -637,6 +647,14 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
+
+    // Para to Para
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.WETH.id],
+    },
   ],
   assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
 }
@@ -698,6 +716,8 @@ export function getNativeToken(chain: Chain): Token {
       return Mainnet.GLMR
     case 'interlay':
       return Mainnet.INTR
+    case 'astar':
+      return Mainnet.ASTR
     default:
       throw Error('Native Token not defined.')
   }
