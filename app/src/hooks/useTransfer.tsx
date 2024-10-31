@@ -43,7 +43,8 @@ const useTransfer = () => {
     onSuccess,
   }: TransferParams) => {
     setStatus('Loading')
-    const route = getRoute(environment, sourceChain, destinationChain)!
+    const route = getRoute(environment, sourceChain, destinationChain)
+    if (!route) throw new Error('Route not supported')
 
     switch (route.sdk) {
       case 'SnowbridgeApi': {

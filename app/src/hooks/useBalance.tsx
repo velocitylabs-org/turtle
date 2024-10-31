@@ -3,7 +3,7 @@ import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { getRelayNode, getTokenSymbol } from '@/utils/paraspell'
+import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { assets, getAssetBalance } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -64,9 +64,9 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           const relay = getRelayNode(env)
           const node = assets.getTNode(chain.chainId, relay)
           if (!node) throw new Error('Node not found')
+          const currencyId = getCurrencyId(env, node, chain.uid, token)
 
-          const tokenSymbol = getTokenSymbol(node, token)
-          const balance = (await getAssetBalance(address, node, { symbol: tokenSymbol })) ?? 0n
+          const balance = (await getAssetBalance(address, node, currencyId)) ?? 0n
 
           fetchedBalance = {
             value: balance,
