@@ -212,7 +212,7 @@ export namespace Mainnet {
     decimals: 12,
     address: '',
     multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
-    coingeckoId: 'hydra',
+    coingeckoId: 'hydradx',
   }
 
   export const ACA: Token = {
@@ -489,12 +489,13 @@ export const mainnetRegistry: Registry = {
     Mainnet.WBTC,
     Mainnet.USDC,
     Mainnet.USDT,
+    Mainnet.WSTETH,
+    Mainnet.TBTC,
     Mainnet.DOT,
     Mainnet.DAI,
     Mainnet.ACA,
     Mainnet.MYTH,
-    Mainnet.WSTETH,
-    Mainnet.TBTC,
+    Mainnet.HDX,
     Mainnet.TON,
     Mainnet.SHIB,
     Mainnet.PEPE,
@@ -643,6 +644,12 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.ACA.id, Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.HDX.id],
     },
   ],
   assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
