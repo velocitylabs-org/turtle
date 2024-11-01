@@ -1,5 +1,7 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
+import { getRelayNode } from '@/utils/paraspell'
+import { assets, getNativeAssetSymbol } from '@paraspell/sdk'
 import { Environment } from '../store/environmentStore'
 
 const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
@@ -694,36 +696,19 @@ export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
   rpcConnectionAsHttps(Mainnet.Moonbeam.rpcConnection),
 ]
 
-// TODO: Check if Paraspell supports this out of the box
 export function getNativeToken(chain: Chain): Token {
-  switch (chain.uid) {
-    case 'rococo-assethub':
-      return Testnet.ROC
-    case 'sepolia':
-      return Testnet.ETH
-    case 'polkadot':
-      return Mainnet.DOT
-    case 'polkadot-assethub':
-      return Mainnet.DOT
-    case 'ethereum':
-      return Mainnet.ETH
-    case 'mythos':
-      return Mainnet.MYTH
-    case 'bifrost':
-      return Mainnet.BNC
-    case 'hydration':
-      return Mainnet.HDX
-    case 'acala':
-      return Mainnet.ACA
-    case 'moonbeam':
-      return Mainnet.GLMR
-    case 'interlay':
-      return Mainnet.INTR
-    case 'astar':
-      return Mainnet.ASTR
-    default:
-      throw Error('Native Token not defined.')
-  }
+  const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
+    ? Environment.Testnet
+    : Environment.Mainnet
+
+  const relay = getRelayNode(env)
+  const chainNode = assets.getTNode(chain.chainId, relay)
+  if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
+
+  const symbol = getNativeAssetSymbol(chainNode)
+  const token = REGISTRY[env].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  if (!token) throw Error(`Native Token for ${chain.uid} not found`)
+  return token
 }
 
 export function rpcConnectionAsHttps(rpc?: string): string {
