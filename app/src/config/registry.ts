@@ -491,7 +491,6 @@ export const mainnetRegistry: Registry = {
     Mainnet.USDT,
     Mainnet.DOT,
     Mainnet.DAI,
-    Mainnet.ACA,
     Mainnet.MYTH,
     Mainnet.WSTETH,
     Mainnet.TBTC,
@@ -612,6 +611,18 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
+    // {
+    //   from: Mainnet.Hydration.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'ParaSpellApi',
+    //   tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+    // },
+    // {
+    //   from: Mainnet.Mythos.uid,
+    //   to: Mainnet.AssetHub.uid,
+    //   sdk: 'ParaSpellApi',
+    //   tokens: [Mainnet.MYTH.id],
+    // },
     {
       from: Mainnet.Acala.uid,
       to: Mainnet.RelayChain.uid,
@@ -639,10 +650,10 @@ export const mainnetRegistry: Registry = {
 
     // Para to Para
     {
-      from: Mainnet.Acala.uid,
-      to: Mainnet.Hydration.uid,
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Bifrost.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.ACA.id, Mainnet.DOT.id],
+      tokens: [Mainnet.WETH.id],
     },
   ],
   assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),

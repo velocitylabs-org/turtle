@@ -1,4 +1,4 @@
-import { getAssetId, isAssetHub } from '@/config/registry'
+import * as registry from '@/config/registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
@@ -104,7 +104,7 @@ export function getCurrencyId(
   token: Token,
   destinationChain?: Chain,
 ): TCurrencyCore {
-  if (destinationChain && isAssetHub(destinationChain)) {
+  if (destinationChain && registry.isAssetHub(destinationChain)) {
     // When sending a token to AssetHub,
     // this currency id must be specified in a way that's known to AssetHub rather than
     // providing an identifier relative to the source chain. To quote Dudo's message:
@@ -117,6 +117,6 @@ export function getCurrencyId(
     return { symbol: getTokenSymbol(destinationChainNode, token) }
   }
 
-  const localAssetId = getAssetId(env, chainId, token.id)
+  const localAssetId = registry.getAssetId(env, chainId, token.id)
   return localAssetId ? { id: localAssetId } : { symbol: getTokenSymbol(node, token) } // Fallback to token symbol
 }
