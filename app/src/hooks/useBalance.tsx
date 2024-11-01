@@ -6,6 +6,7 @@ import { Environment } from '@/store/environmentStore'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { assets, getAssetBalance } from '@paraspell/sdk'
+import { ApiPromise, WsProvider } from '@polkadot/api'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -66,7 +67,15 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           if (!node) throw new Error('Node not found')
           const currencyId = getCurrencyId(env, node, chain.uid, token)
 
-          const balance = (await getAssetBalance(address, node, currencyId)) ?? 0n
+          const wsProvider = new WsProvider(chain.rpcConnection)
+          const api = await ApiPromise.create({ provider: wsProvider })
+          const balance =
+            (await getAssetBalance({
+              address,
+              node,
+              currency: currencyId,
+              api: api,
+            })) ?? 0n
 
           fetchedBalance = {
             value: balance,
