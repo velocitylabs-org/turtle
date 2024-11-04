@@ -638,9 +638,7 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.DOT.id],
     },
   ],
-  assetId: new Map([
-    [Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])],
-  ]),
+  assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
 }
 
 export const testnetRegistry: Registry = {
