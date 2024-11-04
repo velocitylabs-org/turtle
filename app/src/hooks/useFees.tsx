@@ -6,7 +6,7 @@ import { getCoingekoId, Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getRelayNode, getTokenSymbol } from '@/utils/paraspell'
+import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { assets, getOriginFeeDetails } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -77,13 +77,17 @@ const useFees = (
           const destinationChainNode = assets.getTNode(destinationChain.chainId, relay)
           if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
 
-          const tokenSymbol = getTokenSymbol(sourceChainNode, token)
+          const currencyId = getCurrencyId(
+            env,
+            sourceChainNode,
+            sourceChain.uid,
+            token,
+            destinationChain,
+          )
           const info = await getOriginFeeDetails(
             sourceChainNode,
             destinationChainNode,
-            {
-              symbol: tokenSymbol,
-            },
+            currencyId,
             amount.toString(),
             senderAddress,
           )

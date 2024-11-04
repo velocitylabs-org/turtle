@@ -1,5 +1,7 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
+import { getRelayNode } from '@/utils/paraspell'
+import { assets, getNativeAssetSymbol } from '@paraspell/sdk'
 import { Environment } from '../store/environmentStore'
 
 const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
@@ -212,7 +214,7 @@ export namespace Mainnet {
     decimals: 12,
     address: '',
     multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
-    coingeckoId: 'hydra',
+    coingeckoId: 'hydradx',
   }
 
   export const ACA: Token = {
@@ -225,6 +227,17 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
     coingeckoId: 'acala',
+  }
+
+  export const ASTR: Token = {
+    id: 'astr',
+    name: 'ASTR',
+    symbol: 'ASTR',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+    decimals: 18,
+    address: '',
+    multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
+    coingeckoId: 'astar',
   }
 
   export const GLMR: Token = {
@@ -468,7 +481,6 @@ export const mainnetRegistry: Registry = {
     Mainnet.Hydration,
     Mainnet.Acala,
     Mainnet.Moonbeam,
-    Mainnet.Hydration,
     Mainnet.Interlay,
     Mainnet.Polimec,
     Mainnet.Centrifuge,
@@ -479,11 +491,16 @@ export const mainnetRegistry: Registry = {
     Mainnet.WBTC,
     Mainnet.USDC,
     Mainnet.USDT,
-    Mainnet.DOT,
-    Mainnet.DAI,
-    Mainnet.MYTH,
     Mainnet.WSTETH,
     Mainnet.TBTC,
+    Mainnet.DOT,
+    Mainnet.DAI,
+    Mainnet.ACA,
+    Mainnet.BNC,
+    Mainnet.GLMR,
+    Mainnet.INTR,
+    Mainnet.MYTH,
+    Mainnet.HDX,
     Mainnet.TON,
     Mainnet.SHIB,
     Mainnet.PEPE,
@@ -601,18 +618,6 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
-    // {
-    //   from: Mainnet.Hydration.uid,
-    //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
-    // },
-    // {
-    //   from: Mainnet.Mythos.uid,
-    //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.MYTH.id],
-    // },
     {
       from: Mainnet.Acala.uid,
       to: Mainnet.RelayChain.uid,
@@ -636,6 +641,44 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
+    },
+
+    // Para to Para
+    {
+      from: Mainnet.Acala.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.ACA.id, Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.HDX.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.HDX.id, Mainnet.GLMR.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.BNC.id],
+    },
+    {
+      from: Mainnet.Interlay.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Interlay.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.INTR.id],
     },
   ],
   assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
@@ -673,34 +716,19 @@ export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
   rpcConnectionAsHttps(Mainnet.Moonbeam.rpcConnection),
 ]
 
-// TODO: Check if Paraspell supports this out of the box
 export function getNativeToken(chain: Chain): Token {
-  switch (chain.uid) {
-    case 'rococo-assethub':
-      return Testnet.ROC
-    case 'sepolia':
-      return Testnet.ETH
-    case 'polkadot':
-      return Mainnet.DOT
-    case 'polkadot-assethub':
-      return Mainnet.DOT
-    case 'ethereum':
-      return Mainnet.ETH
-    case 'mythos':
-      return Mainnet.MYTH
-    case 'bifrost':
-      return Mainnet.BNC
-    case 'hydration':
-      return Mainnet.HDX
-    case 'acala':
-      return Mainnet.ACA
-    case 'moonbeam':
-      return Mainnet.GLMR
-    case 'interlay':
-      return Mainnet.INTR
-    default:
-      throw Error('Native Token not defined.')
-  }
+  const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
+    ? Environment.Testnet
+    : Environment.Mainnet
+
+  const relay = getRelayNode(env)
+  const chainNode = assets.getTNode(chain.chainId, relay)
+  if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
+
+  const symbol = getNativeAssetSymbol(chainNode)
+  const token = REGISTRY[env].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  if (!token) throw Error(`Native Token for ${chain.uid} not found`)
+  return token
 }
 
 export function rpcConnectionAsHttps(rpc?: string): string {
