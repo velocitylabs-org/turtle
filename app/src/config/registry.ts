@@ -503,7 +503,6 @@ export const mainnetRegistry: Registry = {
     Mainnet.TON,
     Mainnet.SHIB,
     Mainnet.PEPE,
-    Mainnet.BNC,
   ],
   routes: [
     // Snowbridge routes
@@ -636,12 +635,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
-    // {
-    //   from: Mainnet.Bifrost.uid,
-    //   to: Mainnet.AssetHub.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.DOT.id, Mainnet.WETH.id, Mainnet.USDC.id],
-    // },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.WETH.id, Mainnet.USDC.id, Mainnet.USDT.id],
+    },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.Hydration.uid,
