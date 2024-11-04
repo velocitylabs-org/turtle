@@ -6,14 +6,14 @@ import { getCoingekoId, Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getRelayNode, getTokenSymbol } from '@/utils/paraspell'
+import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { assets, getOriginFeeDetails } from '@paraspell/sdk'
+import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import useEnvironment from './useEnvironment'
 
 const DEBOUNCE_DELAY_MS = 500
 
@@ -73,24 +73,27 @@ const useFees = (
 
         case Direction.WithinPolkadot: {
           const relay = getRelayNode(env)
-          const sourceChainNode = assets.getTNode(sourceChain.chainId, relay)
-          const destinationChainNode = assets.getTNode(destinationChain.chainId, relay)
+          const sourceChainNode = getTNode(sourceChain.chainId, relay)
+          const destinationChainNode = getTNode(destinationChain.chainId, relay)
           if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
-
-          const tokenSymbol = getTokenSymbol(sourceChainNode, token)
-          const info = await getOriginFeeDetails(
+          const currency = getCurrencyId(
+            env,
             sourceChainNode,
-            destinationChainNode,
-            {
-              symbol: tokenSymbol,
-            },
-            amount.toString(),
-            senderAddress,
+            sourceChain.uid,
+            token,
+            destinationChain,
           )
+
+          const info = await getOriginFeeDetails({
+            origin: sourceChainNode,
+            destination: destinationChainNode,
+            currency,
+            amount: amount.toString(),
+            account: senderAddress,
+          })
           fees = info.xcmFee.toString()
 
-          const tokenCoingeckoId = getCoingekoId(nativeToken)
-          tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
+          tokenUSDValue = (await getTokenPrice(getCoingekoId(nativeToken)))?.usd ?? 0
           break
         }
 
@@ -106,7 +109,7 @@ const useFees = (
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.log('Fetch fees error: ', error)
+      console.log('Error: ', error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
@@ -116,7 +119,6 @@ const useFees = (
       setLoading(false)
     }
   }, [
-    env,
     sourceChain,
     destinationChain,
     token,
