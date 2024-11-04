@@ -251,6 +251,7 @@ export namespace Mainnet {
       '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
     coingeckoId: 'moonbeam',
   }
+
   export const INTR: Token = {
     id: 'intr',
     name: 'INTR',
@@ -262,6 +263,19 @@ export namespace Mainnet {
       '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
     coingeckoId: 'interlay',
   }
+
+  export const CFG: Token = {
+    id: 'cfg',
+    name: 'Centrifuge',
+    symbol: 'CFG',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+    decimals: 18,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2031"},{"GeneralKey":"0x0001"}]}}',
+    coingeckoId: 'centrifuge',
+  }
+
   export const SHIB: Token = {
     id: 'shib',
     name: 'Shiba Inu',
@@ -497,6 +511,7 @@ export const mainnetRegistry: Registry = {
     Mainnet.DOT,
     Mainnet.DAI,
     Mainnet.ACA,
+    Mainnet.CFG,
     Mainnet.BNC,
     Mainnet.GLMR,
     Mainnet.INTR,
@@ -686,6 +701,12 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Acala.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id, Mainnet.ACA.id, Mainnet.HDX.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Centrifuge.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.CFG.id],
     },
   ],
   assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
