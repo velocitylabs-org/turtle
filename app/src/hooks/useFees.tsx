@@ -6,13 +6,14 @@ import { Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getTokenSymbol } from '@/utils/paraspell'
+import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import useEnvironment from './useEnvironment'
 
 const DEBOUNCE_DELAY_MS = 500
 
@@ -29,6 +30,7 @@ const useFees = (
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !amount || !recipient || !senderAddress) {
@@ -70,14 +72,22 @@ const useFees = (
         }
 
         case Direction.WithinPolkadot: {
-          const sourceChainNode = getTNode(sourceChain.chainId, 'polkadot')!
-          const destinationChainNode = getTNode(destinationChain.chainId, 'polkadot')!
-          const tokenSymbol = getTokenSymbol(sourceChainNode, token)
+          const relay = getRelayNode(env)
+          const sourceChainNode = getTNode(sourceChain.chainId, relay)
+          const destinationChainNode = getTNode(destinationChain.chainId, relay)
+          if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
+          const currency = getCurrencyId(
+            env,
+            sourceChainNode,
+            sourceChain.uid,
+            token,
+            destinationChain,
+          )
 
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
-            currency: { symbol: tokenSymbol },
+            currency,
             amount: amount.toString(),
             account: senderAddress,
           })
