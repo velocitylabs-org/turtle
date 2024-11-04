@@ -61,7 +61,6 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
         }
 
         case Network.Polkadot: {
-          console.log('Hello')
           const relay = getRelayNode(env)
           const node = assets.getTNode(chain.chainId, relay)
           if (!node) throw new Error('Node not found')
