@@ -679,7 +679,7 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.INTR.id],
+      tokens: [Mainnet.DOT.id, Mainnet.INTR.id, Mainnet.HDX.id],
     },
     {
       from: Mainnet.Hydration.uid,

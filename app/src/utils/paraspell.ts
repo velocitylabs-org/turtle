@@ -73,7 +73,7 @@ export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: T
   // TODO(victor): write some tests
   const supportedAssets = assets.getAllAssetsSymbols(sourceChain)
   const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
-  if (!tokenSymbol) throw new Error('Transfer failed: Token symbol not supported.')
+  if (!tokenSymbol) throw new Error('Token symbol not supported.')
 
   return tokenSymbol
 }
