@@ -77,10 +77,10 @@ const useFees = (
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
-            currency: { symbol: tokenSymbol},
+            currency: { symbol: tokenSymbol },
             amount: amount.toString(),
             account: senderAddress,
-        })
+          })
           fees = info.xcmFee.toString()
 
           const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol

@@ -648,7 +648,7 @@ export const mainnetRegistry: Registry = {
   assetId: new Map([
     [Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])],
     [Mainnet.Moonbeam.uid, new Map([[Mainnet.DOT.id, '42259045809535163221576417993425387648']])],
-]),
+  ]),
 }
 
 export const testnetRegistry: Registry = {
