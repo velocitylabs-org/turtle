@@ -61,12 +61,15 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
         }
 
         case Network.Polkadot: {
+          console.log("Hello")
           const relay = getRelayNode(env)
           const node = assets.getTNode(chain.chainId, relay)
           if (!node) throw new Error('Node not found')
-          const currencyId = getCurrencyId(env, node, chain.uid, token)
+          const currency = getCurrencyId(env, node, chain.uid, token)
 
-          const balance = (await getAssetBalance(address, node, currencyId)) ?? 0n
+          console.log("Assetbalance - curId ", currency)
+
+          const balance = (await getAssetBalance({address, node, currency})) ?? 0n
 
           fetchedBalance = {
             value: balance,
