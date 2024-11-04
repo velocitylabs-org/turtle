@@ -317,7 +317,7 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x18084fbA666a33d37592fA2633fD49a74DD93a88"}}]}}',
   }
-
+  // Snowbridge USDT
   export const USDT: Token = {
     id: 'usdt',
     name: 'Tether',
@@ -329,6 +329,7 @@ export namespace Mainnet {
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xdac17f958d2ee523a2206206994597c13d831ec7"}}]}}',
   }
 
+  // Snowbridge USDC
   export const USDC: Token = {
     id: 'usdc',
     name: 'USDC',
@@ -679,6 +680,12 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Interlay.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id, Mainnet.INTR.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Acala.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.ACA.id, Mainnet.HDX.id],
     },
   ],
   assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
