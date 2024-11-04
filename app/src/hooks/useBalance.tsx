@@ -67,8 +67,6 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           if (!node) throw new Error('Node not found')
           const currency = getCurrencyId(env, node, chain.uid, token)
 
-          console.log('Assetbalance - curId ', currency)
-
           const balance = (await getAssetBalance({ address, node, currency })) ?? 0n
 
           fetchedBalance = {

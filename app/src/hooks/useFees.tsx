@@ -70,7 +70,7 @@ const useFees = (
         }
 
         case Direction.WithinPolkadot: {
-          const sourceChainNode = getTNode(sourceChain.chainId, 'polkadot')! //todo(nuno)
+          const sourceChainNode = getTNode(sourceChain.chainId, 'polkadot')!
           const destinationChainNode = getTNode(destinationChain.chainId, 'polkadot')!
           const tokenSymbol = getTokenSymbol(sourceChainNode, token)
 

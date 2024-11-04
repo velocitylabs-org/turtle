@@ -637,17 +637,9 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
-    {
-      from: Mainnet.Moonbeam.uid,
-      to: Mainnet.RelayChain.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
-    },
   ],
-  //42,259,045,809,535,163,221,576,417,993,425,387,648
   assetId: new Map([
     [Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])],
-    [Mainnet.Moonbeam.uid, new Map([[Mainnet.DOT.id, '42259045809535163221576417993425387648']])],
   ]),
 }
 
