@@ -484,6 +484,7 @@ export const mainnetRegistry: Registry = {
     Mainnet.Polimec,
     Mainnet.Centrifuge,
     Mainnet.Astar,
+    Mainnet.Hydration
   ],
   tokens: [
     Mainnet.WETH,
@@ -652,6 +653,12 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Moonbeam.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id, Mainnet.BNC.id], //Mainnet.WETH.id, Mainnet.USDC.id
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.Interlay.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.BNC.id], // INTR, IBTC
     },
     {
       from: Mainnet.Interlay.uid,
