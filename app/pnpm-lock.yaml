@@ -18,8 +18,8 @@ importers:
         specifier: ^2.4.8
         version: 2.4.8(@types/react@18.3.12)(framer-motion@11.11.10(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3)))
       '@paraspell/sdk':
-        specifier: ^6.2.3
-        version: 6.2.4(@polkadot/api-base@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/apps-config@0.145.1(@polkadot/keyring@13.2.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@13.2.1))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10))(@polkadot/types@14.1.1)(@polkadot/util@13.2.1)(bufferutil@4.0.8)(typechain@8.3.2(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10)
+        specifier: ^7.1.0
+        version: 7.1.0(@polkadot/api-base@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/apps-config@0.145.1(@polkadot/keyring@13.2.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@13.2.1))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10))(@polkadot/types@14.1.1)(@polkadot/util@13.2.1)(bufferutil@4.0.8)(polkadot-api@1.6.4(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.4.47)(rxjs@7.8.1)(smoldot@2.0.22(bufferutil@4.0.8)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)(yaml@2.6.0))(typechain@8.3.2(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10)
       '@polkadot-api/descriptors':
         specifier: file:.papi/descriptors
         version: file:.papi/descriptors(polkadot-api@1.6.4(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.4.47)(rxjs@7.8.1)(smoldot@2.0.22(bufferutil@4.0.8)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)(yaml@2.6.0))
@@ -2444,14 +2444,26 @@ packages:
   '@parallel-finance/type-definitions@2.0.1':
     resolution: {integrity: sha512-fC1QfhFFd8oSZqdIh6kmoMNvTxZdQGw1sTAbdYSINyVxyCxKiDg47ZP9bAZFDexL7POqnXnn4pYM7kUAnsT+8Q==}
 
-  '@paraspell/sdk@6.2.4':
-    resolution: {integrity: sha512-VqOhte6t9n1idmTk1qjZ9eEUs3Nv65IO4BegWQnB1Aj7oHkxduT8u7J8UeGR1tgL/v8xBkYOvRMrxMMdWrmdqA==}
+  '@paraspell/sdk@7.1.0':
+    resolution: {integrity: sha512-Kv5r1+R5ieajagcNPUEna/8nCX/3ARs8VoXpoYQRF7I3smBmEAja/bgA9bNDp6JiCG1zWzdYeURfdWpQ4i5plA==}
     peerDependencies:
       '@polkadot/api': '>= 12.4 < 13'
       '@polkadot/api-base': '>= 12.4 < 13'
-      '@polkadot/apps-config': '>= 0.144'
+      '@polkadot/apps-config': '>= 0.145'
       '@polkadot/types': '>= 12.4 < 13'
       '@polkadot/util': '>= 13'
+      polkadot-api: '>= 1.6.5 < 2'
+    peerDependenciesMeta:
+      '@polkadot/api':
+        optional: true
+      '@polkadot/api-base':
+        optional: true
+      '@polkadot/types':
+        optional: true
+      '@polkadot/util':
+        optional: true
+      polkadot-api:
+        optional: true
 
   '@parcel/watcher-android-arm64@2.4.1':
     resolution: {integrity: sha512-LOi/WTbbh3aTn2RYddrO8pnapixAziFl6SMxHM69r3tvdSm94JtCenaKgk1GRg5FJ5wpMCpHeW+7yqPlvZv7kg==}
@@ -13962,15 +13974,17 @@ snapshots:
     dependencies:
       '@open-web3/orml-type-definitions': 2.0.1
 
-  '@paraspell/sdk@6.2.4(@polkadot/api-base@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/apps-config@0.145.1(@polkadot/keyring@13.2.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@13.2.1))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10))(@polkadot/types@14.1.1)(@polkadot/util@13.2.1)(bufferutil@4.0.8)(typechain@8.3.2(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10)':
+  '@paraspell/sdk@7.1.0(@polkadot/api-base@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/api@14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@polkadot/apps-config@0.145.1(@polkadot/keyring@13.2.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@13.2.1))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10))(@polkadot/types@14.1.1)(@polkadot/util@13.2.1)(bufferutil@4.0.8)(polkadot-api@1.6.4(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.4.47)(rxjs@7.8.1)(smoldot@2.0.22(bufferutil@4.0.8)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)(yaml@2.6.0))(typechain@8.3.2(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10)':
     dependencies:
-      '@polkadot/api': 14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@polkadot/api-base': 14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@polkadot/apps-config': 0.145.1(@polkadot/keyring@13.2.1(@polkadot/util-crypto@8.7.1(@polkadot/util@13.2.1))(@polkadot/util@13.2.1))(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1)(utf-8-validate@5.0.10)
-      '@polkadot/types': 14.1.1
-      '@polkadot/util': 13.2.1
       '@snowbridge/api': 0.1.23(bufferutil@4.0.8)(typechain@8.3.2(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10)
       ethers: 6.13.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+    optionalDependencies:
+      '@polkadot/api': 14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/api-base': 14.1.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@polkadot/types': 14.1.1
+      '@polkadot/util': 13.2.1
+      polkadot-api: 1.6.4(bufferutil@4.0.8)(jiti@2.3.3)(postcss@8.4.47)(rxjs@7.8.1)(smoldot@2.0.22(bufferutil@4.0.8)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)(yaml@2.6.0)
     transitivePeerDependencies:
       - bufferutil
       - supports-color

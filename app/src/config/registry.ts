@@ -643,7 +643,7 @@ export const mainnetRegistry: Registry = {
     },
     {
       from: Mainnet.Hydration.uid,
-      to: Mainnet.RelayChain.uid,
+      to: Mainnet.AssetHub.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
