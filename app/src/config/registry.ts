@@ -652,7 +652,7 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.BNC.id], //Mainnet.WETH.id, Mainnet.USDC.id
+      tokens: [Mainnet.DOT.id, Mainnet.BNC.id, Mainnet.GLMR.id], //Mainnet.WETH.id, Mainnet.USDC.id
     },
     {
       from: Mainnet.Bifrost.uid,
