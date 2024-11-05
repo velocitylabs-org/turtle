@@ -76,7 +76,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <div className="flex items-center gap-1" data-cy="token-select-trigger">
                 {value?.token ? (
                   <>
-                    <TokenLogo token={value.token} size={{logo: 32, label: 16 }}  />
+                    <TokenLogo token={value.token} size={{ logo: 32, label: 16 }} />
                     <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
                       {value.token.symbol}
                     </span>
@@ -118,12 +118,12 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <li
                 key={option.token.id}
                 className={cn(
-                  'flex cursor-pointer items-center gap-1 p-2',
+                  'flex cursor-pointer items-center gap-1 p-2 hover:bg-turtle-level1 rounded-[5px]',
                   !option.allowed && 'cursor-not-allowed opacity-50',
                 )}
                 onClick={() => option.allowed && handleSelectionChange(option.token)}
               >
-                <TokenLogo token={option.token} size={{logo: 32, label: 16 }}  />
+                <TokenLogo token={option.token} size={{ logo: 32, label: 16 }} />
                 <span className="text-sm">{option.token.symbol}</span>
               </li>
             )
