@@ -484,7 +484,7 @@ export const mainnetRegistry: Registry = {
     Mainnet.Polimec,
     Mainnet.Centrifuge,
     Mainnet.Astar,
-    Mainnet.Hydration
+    Mainnet.Hydration,
   ],
   tokens: [
     Mainnet.WETH,
@@ -659,6 +659,12 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Interlay.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id, Mainnet.BNC.id], // INTR, IBTC
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.Acala.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
     },
     {
       from: Mainnet.Interlay.uid,
