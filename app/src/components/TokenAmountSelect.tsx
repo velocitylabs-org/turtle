@@ -3,7 +3,6 @@ import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { SelectProps, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { cn } from '@/utils/cn'
-import Image from 'next/image'
 import { forwardRef, useRef, useState } from 'react'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
@@ -76,7 +75,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <div className="flex items-center gap-1" data-cy="token-select-trigger">
                 {value?.token ? (
                   <>
-                    <TokenLogo token={value.token} size={{ logo: 32, label: 16 }} />
+                    <TokenLogo token={value.token} label={{alt: 'todo', logoURI: 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp'}} />
                     <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
                       {value.token.symbol}
                     </span>
@@ -118,12 +117,12 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <li
                 key={option.token.id}
                 className={cn(
-                  'flex cursor-pointer items-center gap-1 p-2 hover:bg-turtle-level1 rounded-[5px]',
+                  'flex cursor-pointer items-center gap-1 rounded-[5px] p-2 hover:bg-turtle-level1',
                   !option.allowed && 'cursor-not-allowed opacity-50',
                 )}
                 onClick={() => option.allowed && handleSelectionChange(option.token)}
               >
-                <TokenLogo token={option.token} size={{ logo: 32, label: 16 }} />
+                <TokenLogo token={option.token} label={{alt: 'todo', logoURI: 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp'}}/>
                 <span className="text-sm">{option.token.symbol}</span>
               </li>
             )
