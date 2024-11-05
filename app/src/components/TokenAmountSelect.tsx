@@ -10,6 +10,7 @@ import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
+import { TokenLogo } from './TokenLogo'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
 
@@ -75,26 +76,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <div className="flex items-center gap-1" data-cy="token-select-trigger">
                 {value?.token ? (
                   <>
-                    <div className="group/list-item peer/list-item gap-squid-xs rounded-squid-s px-squid-xs py-squid-xxs bg-material-light-thin hover:bg-material-light-thin relative flex w-full max-w-full items-center justify-start">
-                      <Image
-                        src={value.token.logoURI}
-                        alt={value.token.name}
-                        width={24}
-                        height={24}
-                        className="token-logo h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                      />
-                      <div className="translate-x-2/5 absolute bottom-[0px] right-0 h-fit w-fit">
-                        <div className="relative">
-                          <Image
-                            alt=""
-                            width={12}
-                            height={12}
-                            src="https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp"
-                            className="w-squid-m rounded-squid-xxs outline-grey-900 relative block aspect-square max-w-full rounded-full border-1 border-white object-cover outline outline-2 transition-[width,height] duration-300"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    <TokenLogo token={value.token}/>
                     <span className="ml-2 text-nowrap" data-cy="token-select-symbol">
                       {value.token.symbol}
                     </span>
@@ -162,3 +144,4 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
 TokenAmountSelect.displayName = 'TokenAmountSelect'
 
 export default TokenAmountSelect
+
