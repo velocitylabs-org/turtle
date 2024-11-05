@@ -12,8 +12,8 @@ import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import useSnowbridgeContext from './useSnowbridgeContext'
 import useEnvironment from './useEnvironment'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 const DEBOUNCE_DELAY_MS = 500
 
@@ -83,6 +83,12 @@ const useFees = (
             token,
             destinationChain,
           )
+
+          console.log('sourceChainNode', sourceChainNode)
+          console.log('destinationChainNode', destinationChainNode)
+          console.log('currency', currency)
+          console.log('amount', amount.toString())
+          console.log('senderAddress', senderAddress)
 
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
