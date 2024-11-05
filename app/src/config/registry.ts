@@ -191,7 +191,7 @@ export namespace Mainnet {
     id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     multilocation:
@@ -202,7 +202,7 @@ export namespace Mainnet {
     id: 'usdc',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
     decimals: 6,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     multilocation:
