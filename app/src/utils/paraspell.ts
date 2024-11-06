@@ -1,4 +1,4 @@
-import { getAssetId, isAssetHub } from '@/config/registry'
+import { getAssetUid, isAssetHub } from '@/config/registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
@@ -117,6 +117,6 @@ export function getCurrencyId(
     return { symbol: getTokenSymbol(destinationChainNode, token) }
   }
 
-  const localAssetId = getAssetId(env, chainId, token.id)
-  return localAssetId ? { id: localAssetId } : { symbol: getTokenSymbol(node, token) } // Fallback to token symbol
+  const localAssetId = getAssetUid(env, chainId, token.id)
+  return localAssetId ?? { symbol: getTokenSymbol(node, token) } // Fallback to token symbol
 }

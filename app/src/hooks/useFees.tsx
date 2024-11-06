@@ -96,6 +96,7 @@ const useFees = (
             currency,
             amount: amount.toString(),
             account: senderAddress,
+            accountDestination: recipient,
           })
           fees = info.xcmFee.toString()
 
