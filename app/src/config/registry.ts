@@ -1,7 +1,7 @@
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { getRelayNode } from '@/utils/paraspell'
-import { assets, getNativeAssetSymbol } from '@paraspell/sdk'
+import { assets, getNativeAssetSymbol, TCurrencyCore } from '@paraspell/sdk'
 import { Environment } from '../store/environmentStore'
 
 const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
@@ -161,7 +161,7 @@ export namespace Mainnet {
   }
 
   export const VETH: Token = {
-    id: 'veth',
+    id: 'veth.e',
     name: 'Venus ETH',
     symbol: 'vETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
@@ -172,7 +172,7 @@ export namespace Mainnet {
   }
 
   export const WBTC: Token = {
-    id: 'wbtc',
+    id: 'wbtc.e',
     name: 'Wrapped Bitcoin',
     symbol: 'WBTC',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
@@ -183,7 +183,7 @@ export namespace Mainnet {
   }
 
   export const MYTH: Token = {
-    id: 'mythos',
+    id: 'myth.e',
     name: 'Mythos',
     symbol: 'MYTH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
@@ -263,7 +263,7 @@ export namespace Mainnet {
     coingeckoId: 'interlay',
   }
   export const SHIB: Token = {
-    id: 'shib',
+    id: 'shib.e',
     name: 'Shiba Inu',
     symbol: 'SHIB',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png',
@@ -274,7 +274,7 @@ export namespace Mainnet {
   }
 
   export const PEPE: Token = {
-    id: 'pepe',
+    id: 'pepe.e',
     name: 'Pepe',
     symbol: 'PEPE',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24478.png',
@@ -285,7 +285,7 @@ export namespace Mainnet {
   }
 
   export const TON: Token = {
-    id: 'ton',
+    id: 'ton.e',
     name: 'Toncoin',
     symbol: 'TON',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
@@ -296,7 +296,7 @@ export namespace Mainnet {
   }
 
   export const WSTETH: Token = {
-    id: 'wsteth',
+    id: 'wsteth.e',
     name: 'Lido wstETH',
     symbol: 'WSTETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12409.png',
@@ -308,7 +308,7 @@ export namespace Mainnet {
   }
 
   export const TBTC: Token = {
-    id: 'tbtc',
+    id: 'tbtc.e',
     name: 'tBTC',
     symbol: 'TBTC',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5776.png',
@@ -319,7 +319,7 @@ export namespace Mainnet {
   }
 
   export const USDT: Token = {
-    id: 'usdt',
+    id: 'usdt.e',
     name: 'Tether',
     symbol: 'USDT',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
@@ -330,7 +330,7 @@ export namespace Mainnet {
   }
 
   export const USDC: Token = {
-    id: 'usdc',
+    id: 'usdc.e',
     name: 'USDC',
     symbol: 'USDC',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
@@ -341,7 +341,7 @@ export namespace Mainnet {
   }
 
   export const DAI: Token = {
-    id: 'dai',
+    id: 'dai.e',
     name: 'DAI',
     symbol: 'DAI',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
@@ -399,7 +399,7 @@ export namespace Testnet {
 
   // Tokens
   export const WETH: Token = {
-    id: 'weth',
+    id: 'weth.e',
     name: 'Wrapped Ether',
     symbol: 'wETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
@@ -411,7 +411,7 @@ export namespace Testnet {
   }
 
   export const VETH: Token = {
-    id: 'veth',
+    id: 'veth.e',
     name: 'Venus ETH',
     symbol: 'vETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
@@ -449,9 +449,9 @@ export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi'
 type ChainUId = string
 // A Turtle-defined unique token identifier
 type TokenId = string
-// The asset id of an asset at a given chain
-// NOTE: We might need to make it more type-safe in the future
-type LocalAssetId = string
+// An unambiguous reference to a an asset within the local context of a chain,
+// either the token symbol or the asset id at a given chain
+type LocalAssetUid = TCurrencyCore
 
 export interface Registry {
   chains: Chain[]
@@ -459,9 +459,10 @@ export interface Registry {
   routes: Route[]
   // Assets are often uniquely identified by a "asset id" at each chain, making it a chain-dependant value.
   // The SDKs we use accept the token symbol as the indexing value to work with a given token but some chains
-  // have multiple tokens with the same symbol, in which case we need this map to provide the exact asset id
-  // to disambiguate. The map is Turtle chain uid -> Turtle token id -> Local Asset Id.
-  assetId: Map<ChainUId, Map<TokenId, LocalAssetId>>
+  // might have said token registered with a different symbol (for example with a different pre or suffix),
+  // or have multiple tokens with the same symbol, in which case we need this map to provide the exact asset
+  // symbol or id at that given chain to disambiguate.
+  assetUid: Map<ChainUId, Map<TokenId, LocalAssetUid>>
 }
 
 export interface Route {
@@ -711,7 +712,18 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.DOT.id, Mainnet.INTR.id],
     },
   ],
-  assetId: new Map([[Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, '1000189']])]]),
+  assetUid: new Map([
+    [Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, { id: '1000189' } as LocalAssetUid]])],
+    [
+      Mainnet.AssetHub.uid,
+      new Map([
+        [Mainnet.USDC.id, { symbol: 'USDC.e' }],
+        [Mainnet.WETH.id, { symbol: 'WETH.e' }],
+        [Mainnet.WBTC.id, { symbol: 'WBTC.e' }],
+        [Mainnet.USDT.id, { symbol: 'USDT.e' }],
+      ]),
+    ],
+  ]),
 }
 
 export const testnetRegistry: Registry = {
@@ -731,7 +743,7 @@ export const testnetRegistry: Registry = {
       sdk: 'SnowbridgeApi',
     },
   ],
-  assetId: new Map(),
+  assetUid: new Map(),
 }
 
 export const REGISTRY = {
@@ -766,8 +778,12 @@ export function rpcConnectionAsHttps(rpc?: string): string {
   return rpc.replace('wss://', 'https://')
 }
 
-export function getAssetId(env: Environment, chainId: string, tokenId: string): string | undefined {
-  return REGISTRY[env].assetId.get(chainId)?.get(tokenId)
+export function getAssetUid(
+  env: Environment,
+  chainId: string,
+  tokenId: string,
+): LocalAssetUid | undefined {
+  return REGISTRY[env].assetUid.get(chainId)?.get(tokenId)
 }
 
 export function isAssetHub(chain: Chain): boolean {
