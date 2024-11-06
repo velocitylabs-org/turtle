@@ -79,9 +79,8 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                       token={value.token}
                       label={{
                         alt: 'todo',
-                        logoURI:
-                        '/snowbridge.svg'
-                          // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
+                        logoURI: '/snowbridge.svg',
+                        // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
                       }}
                     />
                     <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
@@ -134,9 +133,8 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   token={option.token}
                   label={{
                     alt: 'todo',
-                    logoURI:
-                    '/snowbridge.svg'
-                      // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
+                    logoURI: '/snowbridge.svg',
+                    // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
                   }}
                 />
                 <span className="text-sm">{option.token.symbol}</span>

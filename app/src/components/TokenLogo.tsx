@@ -27,18 +27,18 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, label }) => {
       {/* The origin label - either the origin chain or the bridge that has wrapped this token */}
       <div className="absolute bottom-[-2px] right-[-1px] h-fit w-fit">
         <div className="relative">
-        <Tooltip content={'Snowbridge'}>
-          <Image
-            alt={label.alt}
-            width={16}
-            height={16}
-            src={
-              token.origin.type === 'Ethereum'
-                ? '/snowbridge.svg'
-                : 'https://cryptologos.cc/logos/polkadot-new-dot-logo.svg'
-            }
-            className="rounded-full border-1 border-white"
-          />
+          <Tooltip content={'Snowbridge'}>
+            <Image
+              alt={label.alt}
+              width={16}
+              height={16}
+              src={
+                token.origin.type === 'Ethereum'
+                  ? '/snowbridge.svg'
+                  : 'https://cryptologos.cc/logos/polkadot-new-dot-logo.svg'
+              }
+              className="rounded-full border-1 border-white"
+            />
           </Tooltip>
         </div>
       </div>
