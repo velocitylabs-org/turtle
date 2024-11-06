@@ -183,7 +183,7 @@ export namespace Mainnet {
   }
 
   export const MYTH: Token = {
-    id: 'mythos',
+    id: 'myth.e',
     name: 'Mythos',
     symbol: 'MYTH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
