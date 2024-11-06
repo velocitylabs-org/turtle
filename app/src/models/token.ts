@@ -18,11 +18,10 @@ export interface Token {
   origin: Origin
 }
 
-
 // The supported bridges. Each bridge will have it's own wrapped version of a token
 export type Bridge = 'Snowbridge'
 // The origin of a token
-export type Origin = { type: 'Ethereum', bridge: Bridge } | { type: 'Polkadot', paraId: number}
+export type Origin = { type: 'Ethereum'; bridge: Bridge } | { type: 'Polkadot'; paraId: number }
 
 export function getCoingekoId(token: Token): string {
   return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')

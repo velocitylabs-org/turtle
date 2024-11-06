@@ -75,7 +75,15 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <div className="flex items-center gap-1" data-cy="token-select-trigger">
                 {value?.token ? (
                   <>
-                    <TokenLogo token={value.token} label={{alt: 'todo', logoURI: 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp'}} />
+                    <TokenLogo
+                      token={value.token}
+                      label={{
+                        alt: 'todo',
+                        logoURI:
+                        '/snowbridge.svg'
+                          // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
+                      }}
+                    />
                     <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
                       {value.token.symbol}
                     </span>
@@ -122,7 +130,15 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 )}
                 onClick={() => option.allowed && handleSelectionChange(option.token)}
               >
-                <TokenLogo token={option.token} label={{alt: 'todo', logoURI: 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp'}}/>
+                <TokenLogo
+                  token={option.token}
+                  label={{
+                    alt: 'todo',
+                    logoURI:
+                    '/snowbridge.svg'
+                      // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
+                  }}
+                />
                 <span className="text-sm">{option.token.symbol}</span>
               </li>
             )
