@@ -736,6 +736,12 @@ export const mainnetRegistry: Registry = {
         Mainnet.INTR.id,
       ],
     },
+    {
+      from: Mainnet.Astar.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.ASTR.id, Mainnet.GLMR.id],
+    },
   ],
   assetUid: new Map([
     [Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, { id: '1000189' } as LocalAssetUid]])],

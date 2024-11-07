@@ -1,10 +1,10 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { Account } from '@/store/substrateWalletStore'
+import { isMobileDevice } from '@/utils/env'
 import { WalletSelect } from '@talismn/connect-components'
 import { FC, useEffect, useState } from 'react'
 import { WalletNotAccessible } from './WalletNotAccessible'
-import { isMobileDevice } from '@/utils/env'
 
 const SubstrateWalletModal: FC = () => {
   const [isMobile, setIsMobile] = useState(false)
@@ -33,8 +33,8 @@ const SubstrateWalletModal: FC = () => {
       open={isModalOpen}
       footer={isMobile && <WalletNotAccessible />}
       onWalletConnectClose={() => closeModal()}
-      onAccountSelected={account => setSubstrateAccount(account)}
-      onUpdatedAccounts={handleUpdatedAccounts}
+      onAccountSelected={account => setSubstrateAccount(account as Account)}
+      onUpdatedAccounts={acc => handleUpdatedAccounts(acc as Account[])}
       onError={error => {
         if (error) console.error(error)
       }}
