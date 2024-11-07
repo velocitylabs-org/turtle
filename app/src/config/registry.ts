@@ -620,6 +620,12 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.DOT.id],
     },
     {
+      from: Mainnet.AssetHub.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.WETH.id],
+    },
+    {
       from: Mainnet.Acala.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
@@ -641,7 +647,7 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.WETH.id, Mainnet.USDC.id, Mainnet.USDT.id],
+      tokens: [Mainnet.DOT.id, Mainnet.WETH.id], //Mainnet.USDC.id, Mainnet.USDT.id
     },
     {
       from: Mainnet.Bifrost.uid,
