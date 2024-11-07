@@ -228,7 +228,7 @@ export namespace Mainnet {
   }
 
   export const USDT: Token = {
-    id: 'usdt.sb',
+    id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
     logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
@@ -243,7 +243,7 @@ export namespace Mainnet {
   }
 
   export const USDC: Token = {
-    id: 'usdc.sb',
+    id: 'usdc',
     name: 'USDC',
     symbol: 'USDC',
     logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
@@ -258,7 +258,7 @@ export namespace Mainnet {
   }
 
   export const DAI: Token = {
-    id: 'dai.sb',
+    id: 'dai',
     name: 'DAI',
     symbol: 'DAI',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
@@ -327,7 +327,7 @@ export namespace Testnet {
 
   // Tokens
   export const WETH: Token = {
-    id: 'weth.sb',
+    id: 'weth',
     name: 'Wrapped Ether',
     symbol: 'wETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2396.png',
@@ -343,7 +343,7 @@ export namespace Testnet {
   }
 
   export const VETH: Token = {
-    id: 'veth.sb',
+    id: 'veth',
     name: 'Venus ETH',
     symbol: 'vETH',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
