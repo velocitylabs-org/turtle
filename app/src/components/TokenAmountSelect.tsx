@@ -121,7 +121,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <li
                 key={option.token.id}
                 className={cn(
-                  'flex cursor-pointer items-center gap-1 rounded-[5px] p-2 hover:bg-turtle-level1',
+                  'flex cursor-pointer items-center gap-1 rounded-[5px] px-3 py-3 hover:bg-turtle-level1',
                   !option.allowed && 'cursor-not-allowed opacity-50',
                 )}
                 onClick={() => option.allowed && handleSelectionChange(option.token)}

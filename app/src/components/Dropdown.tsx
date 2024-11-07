@@ -28,7 +28,7 @@ const Dropdown: FC<DropdownProps> = ({ isOpen, dropdownRef, children }) => {
           }}
           className="absolute left-0 right-0 top-0 z-20 max-h-[16.5rem] overflow-y-auto rounded-md border-1 border-turtle-level3 bg-white"
         >
-          <ul className="flex flex-col gap-2 px-1 py-2">{children}</ul>
+          <ul className="flex flex-col pt-2">{children}</ul>
         </motion.div>
       )}
     </AnimatePresence>
