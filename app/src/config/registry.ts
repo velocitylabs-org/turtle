@@ -238,7 +238,7 @@ export namespace Mainnet {
     origin: {
       type: 'Polkadot',
       paraId: 2034,
-    }
+    },
   }
 
   export const ACA: Token = {
@@ -248,12 +248,13 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
     decimals: 12,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
     coingeckoId: 'acala',
     origin: {
       type: 'Polkadot',
       paraId: 2000,
-    }
+    },
   }
 
   export const ASTR: Token = {
@@ -268,7 +269,7 @@ export namespace Mainnet {
     origin: {
       type: 'Polkadot',
       paraId: 2006,
-    }
+    },
   }
 
   export const GLMR: Token = {
@@ -278,12 +279,13 @@ export namespace Mainnet {
     logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
     decimals: 18,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
     coingeckoId: 'moonbeam',
     origin: {
       type: 'Polkadot',
       paraId: 2004,
-    }
+    },
   }
   export const INTR: Token = {
     id: 'intr',
@@ -292,12 +294,13 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
     decimals: 10,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
     coingeckoId: 'interlay',
     origin: {
       type: 'Polkadot',
       paraId: 2032,
-    }
+    },
   }
   export const SHIB: Token = {
     id: 'shib.e',
@@ -432,7 +435,7 @@ export namespace Mainnet {
     origin: {
       type: 'Polkadot',
       paraId: 0,
-    }
+    },
   }
 
   export const ETH: Token = {
@@ -447,8 +450,8 @@ export namespace Mainnet {
     coingeckoId: 'ethereum',
     origin: {
       type: 'Ethereum',
-      bridge: 'Snowbridge'
-    }
+      bridge: 'Snowbridge',
+    },
   }
 }
 
