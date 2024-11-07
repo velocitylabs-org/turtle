@@ -23,7 +23,7 @@ function Account({
 
   return (
     <div className="flex items-center gap-x-1">
-      {network === Network.Polkadot ? (
+      {network === 'Polkadot' ? (
         <Identicon
           value={address}
           size={14}

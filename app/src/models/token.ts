@@ -14,7 +14,15 @@ export interface Token {
   //   - https://www.coingecko.com/en/coins/weth
   //   - https://www.coingecko.com/en/coins/ethereum
   coingeckoId?: string
+  // The origin of this token
+  origin: Origin
 }
+
+// The supported bridges. Each bridge will have it's own wrapped version of a token
+export type Bridge = 'Snowbridge' | 'Other'
+
+// The origin of a token
+export type Origin = { type: 'Ethereum'; bridge: Bridge } | { type: 'Polkadot'; paraId: number }
 
 export function getCoingekoId(token: Token): string {
   return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
