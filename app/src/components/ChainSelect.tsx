@@ -98,7 +98,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     alt={value.name}
                     width={24}
                     height={24}
-                    className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
+                    className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
                   />
                   {shouldShowChainName && (
                     <span className="text-nowrap" data-cy="chain-select-value">
@@ -148,7 +148,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
             <li
               key={option.uid}
               className={cn(
-                'flex cursor-pointer items-center gap-1 p-2',
+                'flex cursor-pointer items-center gap-1 px-3 py-3 hover:bg-turtle-level1',
                 !option.allowed && 'cursor-not-allowed opacity-50',
               )}
               onClick={() => option.allowed && handleSelectionChange(option)}
@@ -159,7 +159,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                 width={24}
                 height={24}
                 priority
-                className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
+                className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
               />
               <span className="text-sm">{option.name}</span>
             </li>

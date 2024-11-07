@@ -3,19 +3,23 @@ import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { SelectProps, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { cn } from '@/utils/cn'
-import Image from 'next/image'
 import { forwardRef, useRef, useState } from 'react'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
+import { TokenLogo } from './TokenLogo'
+import { Chain } from '@/models/chain'
 
-export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
+export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
+  sourceChain: Chain | null
+}
 
 const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
   (
     {
+      sourceChain,
       value,
       onChange,
       options,
@@ -75,14 +79,8 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <div className="flex items-center gap-1" data-cy="token-select-trigger">
                 {value?.token ? (
                   <>
-                    <Image
-                      src={value.token.logoURI}
-                      alt={value.token.name}
-                      width={24}
-                      height={24}
-                      className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
-                    />
-                    <span className="text-nowrap" data-cy="token-select-symbol">
+                    <TokenLogo token={value.token} sourceChain={sourceChain} />
+                    <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
                       {value.token.symbol}
                     </span>
                   </>
@@ -123,19 +121,12 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <li
                 key={option.token.id}
                 className={cn(
-                  'flex cursor-pointer items-center gap-1 p-2',
+                  'flex cursor-pointer items-center gap-1 px-3 py-3 hover:bg-turtle-level1',
                   !option.allowed && 'cursor-not-allowed opacity-50',
                 )}
                 onClick={() => option.allowed && handleSelectionChange(option.token)}
               >
-                <Image
-                  src={option.token.logoURI}
-                  alt={option.token.name}
-                  width={24}
-                  height={24}
-                  priority
-                  className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
-                />
+                <TokenLogo token={option.token} sourceChain={sourceChain} />
                 <span className="text-sm">{option.token.symbol}</span>
               </li>
             )

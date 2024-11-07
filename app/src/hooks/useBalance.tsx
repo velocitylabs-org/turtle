@@ -1,5 +1,5 @@
 import { getNativeToken } from '@/config/registry'
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
@@ -50,7 +50,7 @@ const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
       let fetchedBalance: Erc20Balance | undefined
 
       switch (chain.network) {
-        case Network.Ethereum: {
+        case 'Ethereum': {
           fetchedBalance =
             getNativeToken(chain).id === token.id
               ? (await fetchEthBalance()).data
@@ -61,7 +61,7 @@ const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
           break
         }
 
-        case Network.Polkadot: {
+        case 'Polkadot': {
           if (getNativeToken(chain).id === token.id) {
             const result = await getNativeBalance(api, address)
 

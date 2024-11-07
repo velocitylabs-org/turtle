@@ -1,4 +1,4 @@
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
@@ -7,9 +7,9 @@ export namespace Mainnet {
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    logoURI: '/ethereum.svg',
     chainId: 1,
-    network: Network.Ethereum,
+    network: 'Ethereum',
     supportedAddressTypes: ['evm'],
   }
 
@@ -18,7 +18,7 @@ export namespace Mainnet {
     name: 'Polkadot Asset Hub',
     logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
     chainId: 1000,
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['ss58'],
     specName: 'statemint',
     rpcConnection:
@@ -32,7 +32,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
     chainId: 2030,
     destinationFeeDOT: '20000000',
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['ss58'],
     rpcConnection: 'wss://bifrost-polkadot.dotters.network',
     specName: 'bifrost_polkadot',
@@ -44,7 +44,7 @@ export namespace Mainnet {
   //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
   //   chainId: 2034,
   //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
+  //   network: 'Polkadot',
   //   supportedAddressTypes: ['ss58'],
   // }
 
@@ -54,7 +54,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
     chainId: 2004,
     destinationFeeDOT: '500000000', // To be confirmed
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://wss.api.moonbeam.network',
     specName: 'moonbeam',
@@ -66,7 +66,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
     chainId: 3369,
     destinationFeeDOT: '500000000',
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
     specName: 'mythos',
@@ -83,6 +83,10 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
     coingeckoId: 'weth',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const VETH: Token = {
@@ -94,6 +98,10 @@ export namespace Mainnet {
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const WBTC: Token = {
@@ -105,6 +113,10 @@ export namespace Mainnet {
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const MYTH: Token = {
@@ -117,6 +129,10 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
     coingeckoId: 'mythos',
+    origin: {
+      type: 'Polkadot',
+      paraId: 3369,
+    },
   }
 
   export const BNC: Token = {
@@ -129,6 +145,10 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
     coingeckoId: 'bifrost-native-coin',
+    origin: {
+      type: 'Polkadot',
+      paraId: 2030,
+    },
   }
 
   export const SHIB: Token = {
@@ -140,6 +160,10 @@ export namespace Mainnet {
     address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const PEPE: Token = {
@@ -151,6 +175,10 @@ export namespace Mainnet {
     address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6982508145454Ce325dDbE47a25d4ec3d2311933"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const TON: Token = {
@@ -162,6 +190,10 @@ export namespace Mainnet {
     address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x582d872a1b094fc48f5de31d3b73f2d9be47def1"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const WSTETH: Token = {
@@ -174,6 +206,10 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"}}]}}',
     coingeckoId: 'bridged-wrapped-lido-staked-ether-scroll',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const TBTC: Token = {
@@ -185,28 +221,40 @@ export namespace Mainnet {
     address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x18084fbA666a33d37592fA2633fD49a74DD93a88"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const USDT: Token = {
     id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xdac17f958d2ee523a2206206994597c13d831ec7"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const USDC: Token = {
     id: 'usdc',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
+    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
     decimals: 6,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const DAI: Token = {
@@ -218,6 +266,10 @@ export namespace Mainnet {
     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6b175474e89094c44da98b954eedeac495271d0f"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const DOT: Token = {
@@ -228,17 +280,25 @@ export namespace Mainnet {
     decimals: 10,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    origin: {
+      type: 'Polkadot',
+      paraId: 0,
+    },
   }
 
   export const ETH: Token = {
     id: 'eth',
     name: 'Ethereum',
     symbol: 'ETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    logoURI: '/ethereum.svg',
     decimals: 18,
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
     multilocation: '',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 }
 
@@ -250,7 +310,7 @@ export namespace Testnet {
     name: 'Sepolia',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     chainId: 11155111,
-    network: Network.Ethereum,
+    network: 'Ethereum',
     supportedAddressTypes: ['evm'],
   }
 
@@ -259,7 +319,7 @@ export namespace Testnet {
     name: 'Rococo Asset Hub',
     logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
     chainId: 1000,
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['ss58'],
     rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
     specName: 'asset-hub-rococo',
@@ -276,6 +336,10 @@ export namespace Testnet {
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xfff9976782d46cc05630d1f6ebab18b2324d6b14"}}]}}',
     coingeckoId: 'weth',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const VETH: Token = {
@@ -287,6 +351,10 @@ export namespace Testnet {
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const ETH: Token = {
@@ -298,6 +366,10 @@ export namespace Testnet {
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
     multilocation: '',
+    origin: {
+      type: 'Ethereum',
+      bridge: 'Snowbridge',
+    },
   }
 
   export const ROC: Token = {
@@ -308,6 +380,10 @@ export namespace Testnet {
     decimals: 12,
     address: '',
     multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    origin: {
+      type: 'Polkadot',
+      paraId: 0,
+    },
   }
 }
 

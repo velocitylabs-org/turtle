@@ -1,4 +1,3 @@
-import { Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
@@ -110,7 +109,7 @@ const useOngoingTransfersTracker = () => {
             : undefined
 
         if (
-          ongoing.sourceChain.network === Network.Polkadot &&
+          ongoing.sourceChain.network === 'Polkadot' &&
           trackingUniqueId &&
           !ongoing.uniqueTrackingId
         ) {
