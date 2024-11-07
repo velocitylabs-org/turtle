@@ -148,7 +148,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
             <li
               key={option.uid}
               className={cn(
-                'flex cursor-pointer items-center gap-1 p-2',
+                'flex cursor-pointer items-center gap-1 px-3 py-3 hover:bg-turtle-level1',
                 !option.allowed && 'cursor-not-allowed opacity-50',
               )}
               onClick={() => option.allowed && handleSelectionChange(option)}
