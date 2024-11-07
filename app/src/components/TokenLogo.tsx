@@ -59,7 +59,10 @@ interface OriginBadge {
 function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | undefined {
   if (!sourceChain) return
   if (sourceChain.network == 'Ethereum' && token.origin.type === 'Ethereum')
-    return { logoURI: 'https://cdn.worldvectorlogo.com/logos/ethereum-eth.svg', text: `Ethereum ${token.symbol}` } 
+    return {
+      logoURI: '/ethereum.svg',
+      text: `Ethereum ${token.symbol}`,
+    }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
     switch (token.origin.bridge) {
       case 'Snowbridge':

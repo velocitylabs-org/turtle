@@ -7,7 +7,7 @@ export namespace Mainnet {
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
-    logoURI: 'https://cdn.worldvectorlogo.com/logos/ethereum-eth.svg',
+    logoURI: '/ethereum.svg',
     chainId: 1,
     network: 'Ethereum',
     supportedAddressTypes: ['evm'],
@@ -290,7 +290,7 @@ export namespace Mainnet {
     id: 'eth',
     name: 'Ethereum',
     symbol: 'ETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    logoURI: '/ethereum.svg',
     decimals: 18,
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
