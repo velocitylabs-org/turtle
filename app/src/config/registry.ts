@@ -651,6 +651,12 @@ export const mainnetRegistry: Registry = {
     },
     {
       from: Mainnet.Bifrost.uid,
+      to: Mainnet.Centrifuge.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id, Mainnet.BNC.id], //Mainnet.WETH.id, Mainnet.USDC.id
