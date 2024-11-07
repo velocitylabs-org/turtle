@@ -70,7 +70,7 @@ export const formatAmount = (amount: number): string => {
 
 export async function lookupName(network: Network, address: string): Promise<string | null> {
   switch (network) {
-    case Network.Ethereum: {
+    case 'Ethereum': {
       try {
         const provider = new ethers.CloudflareProvider()
         return await provider.lookupAddress(address)
@@ -80,7 +80,7 @@ export async function lookupName(network: Network, address: string): Promise<str
         return null
       }
     }
-    case Network.Polkadot: {
+    case 'Polkadot': {
       //todo(nuno)
       return null
     }
@@ -123,14 +123,14 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   } = transfer
   const explorersUrls = EXPLORERS[environment]
   switch (network) {
-    case Network.Ethereum: {
+    case 'Ethereum': {
       if (result?.success?.ethereum && 'transactionHash' in result.success.ethereum)
         return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
 
       // Default Ethereum network explorer link:
       return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
     }
-    case Network.Polkadot: {
+    case 'Polkadot': {
       const txHash =
         result?.success?.assetHub && 'txHash' in result.success.assetHub
           ? result.success.assetHub.txHash

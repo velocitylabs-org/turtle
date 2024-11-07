@@ -15,7 +15,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
-import { Network } from '../models/chain'
 import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
@@ -88,7 +87,7 @@ const Transfer: FC = () => {
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
-    sourceChain?.network === Network.Ethereum &&
+    sourceChain?.network === 'Ethereum' &&
     tokenAmount?.token?.symbol === 'wETH' &&
     !!tokenAmount?.amount &&
     !!balanceData &&
@@ -156,6 +155,7 @@ const Transfer: FC = () => {
           render={({ field }) => (
             <TokenAmountSelect
               {...field}
+              sourceChain={sourceChain}
               options={getAllowedTokens(environment, sourceChain, destinationChain).map(token => ({
                 token,
                 amount: null,
