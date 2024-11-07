@@ -1,8 +1,13 @@
 import { z } from 'zod'
 
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
+
+const originSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('Ethereum'), bridge: z.enum(['Snowbridge']) }),
+  z.object({ type: z.literal('Polkadot'), paraId: z.number() }),
+])
 
 export const tokenSchema: z.ZodType<Token> = z.object({
   id: z.string(),
@@ -13,6 +18,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   address: z.string(),
   multilocation: z.string(),
   coingeckoId: z.string().optional(),
+  origin: originSchema,
 })
 
 export const chainSchema: z.ZodType<Chain> = z.object({
@@ -20,7 +26,7 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   name: z.string(),
   logoURI: z.string(),
   chainId: z.number(),
-  network: z.nativeEnum(Network),
+  network: z.enum(['Ethereum', 'Polkadot']),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
   destinationFeeDOT: z.string().optional(),
   rpcConnection: z.string().optional(),

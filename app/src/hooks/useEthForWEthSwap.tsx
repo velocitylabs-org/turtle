@@ -1,7 +1,7 @@
 import { Mainnet } from '@/config/registry'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
 import { Environment } from '@/store/environmentStore'
@@ -36,7 +36,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
     if (
       !environment ||
       !context ||
-      chain?.network !== Network.Ethereum ||
+      chain?.network !== 'Ethereum' ||
       !owner ||
       !tokenAmount ||
       tokenAmount.token?.symbol !== 'wETH'
@@ -68,7 +68,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
       if (
         !env ||
         !context ||
-        chain?.network !== Network.Ethereum ||
+        chain?.network !== 'Ethereum' ||
         !owner ||
         !ethBalance ||
         ethBalance <= amount ||
