@@ -126,6 +126,7 @@ const useFees = (
       setLoading(false)
     }
   }, [
+    env,
     sourceChain,
     destinationChain,
     token,

@@ -660,12 +660,12 @@ export const mainnetRegistry: Registry = {
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },
-    // {
-    //   from: Mainnet.Moonbeam.uid,
-    //   to: Mainnet.RelayChain.uid,
-    //   sdk: 'ParaSpellApi',
-    //   tokens: [Mainnet.DOT.id],
-    // },
+    {
+      from: Mainnet.Moonbeam.uid,
+      to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
 
     // Para to Para
     {
