@@ -1,3 +1,4 @@
+import { Signer } from '@polkadot/types/types'
 import { create } from 'zustand'
 
 export interface Account {
@@ -5,7 +6,7 @@ export interface Account {
   source: string
   name?: string
   wallet?: unknown
-  signer?: unknown
+  signer?: Signer
 }
 
 interface State {

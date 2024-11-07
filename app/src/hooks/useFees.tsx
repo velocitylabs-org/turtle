@@ -12,8 +12,8 @@ import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import useSnowbridgeContext from './useSnowbridgeContext'
 import useEnvironment from './useEnvironment'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 const DEBOUNCE_DELAY_MS = 500
 
@@ -120,6 +120,7 @@ const useFees = (
       setLoading(false)
     }
   }, [
+    env,
     sourceChain,
     destinationChain,
     token,

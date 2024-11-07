@@ -287,6 +287,7 @@ export namespace Mainnet {
       paraId: 2004,
     },
   }
+
   export const INTR: Token = {
     id: 'intr',
     name: 'INTR',
@@ -302,6 +303,23 @@ export namespace Mainnet {
       paraId: 2032,
     },
   }
+
+  export const CFG: Token = {
+    id: 'cfg',
+    name: 'Centrifuge',
+    symbol: 'CFG',
+    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+    decimals: 18,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2031"},{"GeneralKey":"0x0001"}]}}',
+    coingeckoId: 'centrifuge',
+    origin: {
+      type: 'Polkadot',
+      paraId: 2031,
+    },
+  }
+
   export const SHIB: Token = {
     id: 'shib.e',
     name: 'Shiba Inu',
@@ -377,7 +395,7 @@ export namespace Mainnet {
       bridge: 'Snowbridge',
     },
   }
-
+  // Snowbridge USDT
   export const USDT: Token = {
     id: 'usdt.e',
     name: 'Tether',
@@ -393,6 +411,7 @@ export namespace Mainnet {
     },
   }
 
+  // Snowbridge USDC
   export const USDC: Token = {
     id: 'usdc.e',
     name: 'USDC',
@@ -593,8 +612,10 @@ export const mainnetRegistry: Registry = {
     Mainnet.DOT,
     Mainnet.DAI,
     Mainnet.ACA,
+    Mainnet.CFG,
     Mainnet.BNC,
     Mainnet.GLMR,
+    Mainnet.ASTR,
     Mainnet.INTR,
     Mainnet.MYTH,
     Mainnet.HDX,
@@ -781,7 +802,51 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.INTR.id],
+      tokens: [Mainnet.DOT.id, Mainnet.INTR.id, Mainnet.HDX.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Acala.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.ACA.id, Mainnet.HDX.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Centrifuge.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.CFG.id],
+    },
+    {
+      from: Mainnet.Hydration.uid,
+      to: Mainnet.Astar.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [
+        Mainnet.DOT.id,
+        Mainnet.ASTR.id,
+        Mainnet.HDX.id,
+        Mainnet.GLMR.id,
+        Mainnet.ACA.id,
+        Mainnet.INTR.id,
+      ],
+    },
+    {
+      from: Mainnet.Astar.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [
+        Mainnet.DOT.id,
+        Mainnet.ASTR.id,
+        Mainnet.HDX.id,
+        Mainnet.GLMR.id,
+        Mainnet.ACA.id,
+        Mainnet.INTR.id,
+      ],
+    },
+    {
+      from: Mainnet.Astar.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.ASTR.id, Mainnet.GLMR.id],
     },
   ],
   assetUid: new Map([
