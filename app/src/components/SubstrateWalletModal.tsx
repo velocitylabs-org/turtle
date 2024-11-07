@@ -34,7 +34,7 @@ const SubstrateWalletModal: FC = () => {
       footer={isMobile && <WalletNotAccessible />}
       onWalletConnectClose={() => closeModal()}
       onAccountSelected={account => setSubstrateAccount(account as Account)}
-      onUpdatedAccounts={acc => handleUpdatedAccounts(acc as Account[])}
+      onUpdatedAccounts={accounts => handleUpdatedAccounts(accounts as Account[])}
       onError={error => {
         if (error) console.error(error)
       }}

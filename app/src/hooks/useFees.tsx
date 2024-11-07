@@ -84,12 +84,6 @@ const useFees = (
             destinationChain,
           )
 
-          console.log('sourceChainNode', sourceChainNode)
-          console.log('destinationChainNode', destinationChainNode)
-          console.log('currency', currency)
-          console.log('amount', amount.toString())
-          console.log('senderAddress', senderAddress)
-
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
