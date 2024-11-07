@@ -27,7 +27,7 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain }) => {
       {originBadge && (
         <div className="absolute bottom-[-2px] right-[-1px] h-fit w-fit">
           <div className="relative">
-            <Tooltip content={'Snowbridge'} showIcon={false}>
+            <Tooltip content={originBadge.text} showIcon={false}>
               <Image
                 alt={originBadge.text}
                 width={16}
@@ -48,12 +48,14 @@ interface OriginBadge {
   text: string
 }
 
-// Get the origin badge info for `token` given the context that it's being sent from `sourceChain`.
-// We don't display a badge if the token is native to the soureChain or it's network.
-// E.g:
-//   - When sourceChain is Ethereum and the token is wETH, we do *NOT* show an origin badge
-//   - When sourceChain is Hydration and the token is Polkadot-native USDC, we do *NOT* show an origin badge
-//   - When sourceChain is AsssetHub and the token is (snowbridge-wrapped) wETH, we *DO* show an origin badge
+/**
+ *  Get the origin badge info for `token` given the context that it's being sent from `sourceChain`.
+ *  We don't display a badge if the token is native to the soureChain or it's network.
+ *  E.g:
+ *    - When sourceChain is Ethereum and the token is wETH, we do *NOT* show an origin badge
+ *   - When sourceChain is Hydration and the token is Polkadot-native USDC, we do *NOT* show an origin badge
+ *    - When sourceChain is AsssetHub and the token is (snowbridge-wrapped) wETH, we *DO* show an origin badge
+ */
 function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | undefined {
   if (!sourceChain) return
   if (sourceChain.network == Network.Polkadot && token.origin.type === 'Ethereum') {
