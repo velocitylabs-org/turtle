@@ -1,19 +1,18 @@
+'use client'
+import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Tooltip } from '@nextui-org/react'
 import Image from 'next/image'
 import React, { FC } from 'react'
-
-export interface Label {
-  logoURI: string
-  alt: string
-}
+import { Tooltip } from './Tooltip'
 
 interface TokenLogoProps {
   token: Token
-  label: Label
+  sourceChain: Chain | null
 }
 
-export const TokenLogo: FC<TokenLogoProps> = ({ token, label }) => {
+export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain }) => {
+  const originBadge = getOriginBadge(token, sourceChain)
+
   return (
     <div className="relative flex items-center">
       {/* The token logo */}
@@ -25,23 +24,46 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, label }) => {
         className="token-logo h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
       />
       {/* The origin label - either the origin chain or the bridge that has wrapped this token */}
-      <div className="absolute bottom-[-2px] right-[-1px] h-fit w-fit">
-        <div className="relative">
-          <Tooltip content={'Snowbridge'}>
-            <Image
-              alt={label.alt}
-              width={16}
-              height={16}
-              src={
-                token.origin.type === 'Ethereum'
-                  ? '/snowbridge.svg'
-                  : 'https://cryptologos.cc/logos/polkadot-new-dot-logo.svg'
-              }
-              className="rounded-full border-1 border-white"
-            />
-          </Tooltip>
+      {originBadge && (
+        <div className="absolute bottom-[-2px] right-[-1px] h-fit w-fit">
+          <div className="relative">
+            <Tooltip content={'Snowbridge'} showIcon={false}>
+              <Image
+                alt={originBadge.text}
+                width={16}
+                height={16}
+                src={originBadge.logoURI}
+                className="rounded-full border-1 border-white"
+              />
+            </Tooltip>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
+}
+
+interface OriginBadge {
+  logoURI: string
+  text: string
+}
+
+// Get the origin badge info for `token` given the context that it's being sent from `sourceChain`.
+// We don't display a badge if the token is native to the soureChain or it's network.
+// E.g:
+//   - When sourceChain is Ethereum and the token is wETH, we do *NOT* show an origin badge
+//   - When sourceChain is Hydration and the token is Polkadot-native USDC, we do *NOT* show an origin badge
+//   - When sourceChain is AsssetHub and the token is (snowbridge-wrapped) wETH, we *DO* show an origin badge
+function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | undefined {
+  if (!sourceChain) return
+  if (sourceChain.network == Network.Polkadot && token.origin.type === 'Ethereum') {
+    switch (token.origin.bridge) {
+      case 'Snowbridge':
+        return { logoURI: '/snowbridge-badge.svg', text: `Snowbridge-wrapped ${token.name}` }
+      default:
+        return
+    }
+  }
+
+  return
 }

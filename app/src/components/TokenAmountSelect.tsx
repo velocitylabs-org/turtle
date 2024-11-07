@@ -10,12 +10,16 @@ import TokenIcon from './svg/TokenIcon'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 import { TokenLogo } from './TokenLogo'
+import { Chain } from '@/models/chain'
 
-export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {}
+export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
+  sourceChain: Chain | null
+}
 
 const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
   (
     {
+      sourceChain,
       value,
       onChange,
       options,
@@ -75,14 +79,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               <div className="flex items-center gap-1" data-cy="token-select-trigger">
                 {value?.token ? (
                   <>
-                    <TokenLogo
-                      token={value.token}
-                      label={{
-                        alt: 'todo',
-                        logoURI: '/snowbridge.svg',
-                        // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
-                      }}
-                    />
+                    <TokenLogo token={value.token} sourceChain={sourceChain} />
                     <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
                       {value.token.symbol}
                     </span>
@@ -129,14 +126,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 )}
                 onClick={() => option.allowed && handleSelectionChange(option.token)}
               >
-                <TokenLogo
-                  token={option.token}
-                  label={{
-                    alt: 'todo',
-                    logoURI: '/snowbridge.svg',
-                    // 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/chains/ethereum.webp',
-                  }}
-                />
+                <TokenLogo token={option.token} sourceChain={sourceChain} />
                 <span className="text-sm">{option.token.symbol}</span>
               </li>
             )
