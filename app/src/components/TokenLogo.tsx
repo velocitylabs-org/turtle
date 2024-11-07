@@ -58,10 +58,12 @@ interface OriginBadge {
  */
 function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | undefined {
   if (!sourceChain) return
-  if (sourceChain.network == 'Polkadot' && token.origin.type === 'Ethereum') {
+  if (sourceChain.network == 'Ethereum' && token.origin.type === 'Ethereum')
+    return { logoURI: 'https://cdn.worldvectorlogo.com/logos/ethereum-eth.svg', text: `Ethereum ${token.symbol}` } 
+  if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
     switch (token.origin.bridge) {
       case 'Snowbridge':
-        return { logoURI: '/snowbridge-badge.svg', text: `Snowbridge-wrapped ${token.name}` }
+        return { logoURI: '/snowbridge-badge.svg', text: `Snowbridge ${token.symbol}` }
       default:
         return
     }

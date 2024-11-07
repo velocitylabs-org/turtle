@@ -7,7 +7,7 @@ export namespace Mainnet {
   export const Ethereum: Chain = {
     uid: 'ethereum',
     name: 'Ethereum',
-    logoURI: 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/tokens/eth.webp',
+    logoURI: 'https://cdn.worldvectorlogo.com/logos/ethereum-eth.svg',
     chainId: 1,
     network: 'Ethereum',
     supportedAddressTypes: ['evm'],
