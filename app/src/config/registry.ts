@@ -314,6 +314,10 @@ export namespace Mainnet {
     multilocation:
       '{"parents":"1","interior":{"X2":[{"Parachain":"2031"},{"GeneralKey":"0x0001"}]}}',
     coingeckoId: 'centrifuge',
+    origin: {
+      type: 'Polkadot',
+      paraId: 2031,
+    },
   }
 
   export const SHIB: Token = {
