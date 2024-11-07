@@ -23,16 +23,12 @@ export interface Chain {
   rpcConnection?: string
 }
 
-export enum Network {
-  Ethereum = 'Ethereum',
-  Polkadot = 'Polkadot',
-}
-
+export type Network = 'Ethereum' | 'Polkadot'
 export type AddressType = 'evm' | 'ss58'
 
 export function getDestChainId(destChain: Chain): string {
   switch (destChain.network) {
-    case Network.Ethereum: {
+    case 'Ethereum': {
       return `{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"${destChain.chainId}"}}}}}`
     }
     default:

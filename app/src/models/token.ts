@@ -20,6 +20,7 @@ export interface Token {
 
 // The supported bridges. Each bridge will have it's own wrapped version of a token
 export type Bridge = 'Snowbridge' | 'Other'
+
 // The origin of a token
 export type Origin = { type: 'Ethereum'; bridge: Bridge } | { type: 'Polkadot'; paraId: number }
 

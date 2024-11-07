@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 
@@ -26,7 +26,7 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   name: z.string(),
   logoURI: z.string(),
   chainId: z.number(),
-  network: z.nativeEnum(Network),
+  network: z.enum(['Ethereum', 'Polkadot']),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
   destinationFeeDOT: z.string().optional(),
   rpcConnection: z.string().optional(),

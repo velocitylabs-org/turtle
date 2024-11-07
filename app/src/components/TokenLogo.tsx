@@ -1,5 +1,5 @@
 'use client'
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import Image from 'next/image'
 import React, { FC } from 'react'
@@ -58,7 +58,7 @@ interface OriginBadge {
  */
 function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | undefined {
   if (!sourceChain) return
-  if (sourceChain.network == Network.Polkadot && token.origin.type === 'Ethereum') {
+  if (sourceChain.network == 'Polkadot' && token.origin.type === 'Ethereum') {
     switch (token.origin.bridge) {
       case 'Snowbridge':
         return { logoURI: '/snowbridge-badge.svg', text: `Snowbridge-wrapped ${token.name}` }

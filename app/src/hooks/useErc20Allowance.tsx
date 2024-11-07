@@ -28,7 +28,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
   const fetchAllowance = useCallback(async () => {
     if (
       !context ||
-      network !== Network.Ethereum ||
+      network !== 'Ethereum' ||
       !tokenAmount ||
       !tokenAmount.amount ||
       tokenAmount.amount <= 0 ||
@@ -64,7 +64,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
       if (
         !context ||
         !network ||
-        network !== Network.Ethereum ||
+        network !== 'Ethereum' ||
         !tokenAmount ||
         !tokenAmount.amount ||
         tokenAmount.amount <= 0 ||

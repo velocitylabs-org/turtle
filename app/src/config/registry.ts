@@ -1,4 +1,4 @@
-import { Chain, Network } from '@/models/chain'
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 
 /* Mainnet :: Polkadot - Ethereum */
@@ -9,7 +9,7 @@ export namespace Mainnet {
     name: 'Ethereum',
     logoURI: 'https://raw.githubusercontent.com/0xsquid/assets/main/images/webp128/tokens/eth.webp',
     chainId: 1,
-    network: Network.Ethereum,
+    network: 'Ethereum',
     supportedAddressTypes: ['evm'],
   }
 
@@ -18,7 +18,7 @@ export namespace Mainnet {
     name: 'Polkadot Asset Hub',
     logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
     chainId: 1000,
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['ss58'],
     specName: 'statemint',
     rpcConnection:
@@ -32,7 +32,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
     chainId: 2030,
     destinationFeeDOT: '20000000',
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['ss58'],
     rpcConnection: 'wss://bifrost-polkadot.dotters.network',
     specName: 'bifrost_polkadot',
@@ -44,7 +44,7 @@ export namespace Mainnet {
   //   logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
   //   chainId: 2034,
   //   destinationFeeDOT: '', // To be confirmed
-  //   network: Network.Polkadot,
+  //   network: 'Polkadot',
   //   supportedAddressTypes: ['ss58'],
   // }
 
@@ -54,7 +54,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6836.png',
     chainId: 2004,
     destinationFeeDOT: '500000000', // To be confirmed
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://wss.api.moonbeam.network',
     specName: 'moonbeam',
@@ -66,7 +66,7 @@ export namespace Mainnet {
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
     chainId: 3369,
     destinationFeeDOT: '500000000',
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['evm'],
     rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
     specName: 'mythos',
@@ -310,7 +310,7 @@ export namespace Testnet {
     name: 'Sepolia',
     logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
     chainId: 11155111,
-    network: Network.Ethereum,
+    network: 'Ethereum',
     supportedAddressTypes: ['evm'],
   }
 
@@ -319,7 +319,7 @@ export namespace Testnet {
     name: 'Rococo Asset Hub',
     logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
     chainId: 1000,
-    network: Network.Polkadot,
+    network: 'Polkadot',
     supportedAddressTypes: ['ss58'],
     rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
     specName: 'asset-hub-rococo',
