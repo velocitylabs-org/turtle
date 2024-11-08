@@ -749,6 +749,12 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.WETH.id],
     },
     {
+      from: Mainnet.AssetHub.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.WETH.id],
+    },
+    {
       from: Mainnet.Acala.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
@@ -758,7 +764,7 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.Hydration.uid,
       to: Mainnet.AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.DOT.id, Mainnet.WETH.id],
     },
     {
       from: Mainnet.Bifrost.uid,
@@ -815,12 +821,6 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.ACA.id, Mainnet.DOT.id],
-    },
-    {
-      from: Mainnet.Hydration.uid,
-      to: Mainnet.Moonbeam.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.HDX.id],
     },
     {
       from: Mainnet.Hydration.uid,
