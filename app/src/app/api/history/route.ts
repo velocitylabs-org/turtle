@@ -73,6 +73,7 @@ export async function POST(request: Request) {
 
     // Returns 400 if body does not respect the expected schema
     if (!requestValue.success) {
+      console.log("API_HISTORY_ROUTE: Failed to parse request")
       return NextResponse.json({ error: requestValue.error }, { status: 400 })
     }
     const { ongoingTransfers } = requestValue.data

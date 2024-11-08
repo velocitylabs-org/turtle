@@ -743,6 +743,12 @@ export const mainnetRegistry: Registry = {
       tokens: [Mainnet.DOT.id],
     },
     {
+      from: Mainnet.AssetHub.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
       from: Mainnet.Acala.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
@@ -815,6 +821,12 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Centrifuge.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id, Mainnet.CFG.id],
+    },
+    {
+      from: Mainnet.Centrifuge.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.CFG.id],
     },
     {
       from: Mainnet.Hydration.uid,
