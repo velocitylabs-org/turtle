@@ -744,6 +744,12 @@ export const mainnetRegistry: Registry = {
     },
     {
       from: Mainnet.AssetHub.uid,
+      to: Mainnet.Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.WETH.id],
+    },
+    {
+      from: Mainnet.AssetHub.uid,
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
@@ -763,6 +769,42 @@ export const mainnetRegistry: Registry = {
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.RelayChain.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.AssetHub.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.WETH.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.Centrifuge.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.BNC.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.BNC.id, Mainnet.GLMR.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.Interlay.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Mainnet.DOT.id, Mainnet.BNC.id],
+    },
+    {
+      from: Mainnet.Bifrost.uid,
+      to: Mainnet.Acala.uid,
       sdk: 'ParaSpellApi',
       tokens: [Mainnet.DOT.id],
     },

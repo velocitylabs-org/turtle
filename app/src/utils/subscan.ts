@@ -41,6 +41,7 @@ export const trackXcm = async (
         console.log(
           `XCM transfer not found for ${crossChainMessageHash ? `message hash: ${crossChainMessageHash}` : `extrinsic id: ${sourceChainExtrinsicIndex}`}.`,
         )
+        query.json?.message && console.log(`Additional information: ${query.json.message}`)
         // Should not return an error as we want to continue looping to the others transfers
         continue
       }
@@ -59,6 +60,7 @@ export const trackXcm = async (
         const uniqueIdData: SubscanTransferResponse = uniqueIdQuery.json?.data
         if (!uniqueIdData) {
           console.log(`XCM transfer not found for unique_id: ${unique_id}`)
+          query.json?.message && console.log(`Additional information: ${query.json.message}`)
           continue
         }
 
