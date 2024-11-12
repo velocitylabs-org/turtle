@@ -59,15 +59,6 @@ export const createTx = async (
       destinationChain,
     )
 
-    console.log(
-      'PSpell params:',
-      sourceChainFromId,
-      destinationChainFromId,
-      currencyId,
-      amount,
-      recipient,
-    )
-
     return await Builder(api)
       .from(sourceChainFromId as ParaChain)
       .to(destinationChainFromId as ParaChain)

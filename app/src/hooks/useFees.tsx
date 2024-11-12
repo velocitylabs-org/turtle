@@ -84,8 +84,6 @@ const useFees = (
             destinationChain,
           )
 
-          console.log('UseFees currency is ', currency)
-
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
