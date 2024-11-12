@@ -395,8 +395,9 @@ export namespace Mainnet {
       bridge: 'Snowbridge',
     },
   }
+
   // Snowbridge USDT
-  export const USDT: Token = {
+  export const USDT_e: Token = {
     id: 'usdt.e',
     name: 'Tether',
     symbol: 'USDT',
@@ -411,8 +412,23 @@ export namespace Mainnet {
     },
   }
 
+  // Native USDT
+  export const USDT: Token = {
+    id: 'usdt',
+    name: 'Tether',
+    symbol: 'USDT',
+    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+    decimals: 6,
+    address: '',
+    multilocation: '',
+    origin: {
+      type: 'Polkadot',
+      paraId: 1000,
+    },
+  }
+
   // Snowbridge USDC
-  export const USDC: Token = {
+  export const USDC_e: Token = {
     id: 'usdc.e',
     name: 'USDC',
     symbol: 'USDC',
@@ -424,6 +440,21 @@ export namespace Mainnet {
     origin: {
       type: 'Ethereum',
       bridge: 'Snowbridge',
+    },
+  }
+
+  // Native USDC
+  export const USDC: Token = {
+    id: 'usdc',
+    name: 'USDC',
+    symbol: 'USDC',
+    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+    decimals: 6,
+    address: '',
+    multilocation: '',
+    origin: {
+      type: 'Polkadot',
+      paraId: 1000,
     },
   }
 
@@ -605,7 +636,9 @@ export const mainnetRegistry: Registry = {
   tokens: [
     Mainnet.WETH,
     Mainnet.WBTC,
+    Mainnet.USDC_e,
     Mainnet.USDC,
+    Mainnet.USDT_e,
     Mainnet.USDT,
     Mainnet.WSTETH,
     Mainnet.TBTC,
@@ -632,8 +665,8 @@ export const mainnetRegistry: Registry = {
       tokens: [
         Mainnet.WETH.id,
         Mainnet.WBTC.id,
-        Mainnet.USDC.id,
-        Mainnet.USDT.id,
+        Mainnet.USDC_e.id,
+        Mainnet.USDT_e.id,
         Mainnet.DAI.id,
         Mainnet.MYTH.id,
         Mainnet.WSTETH.id,
@@ -674,8 +707,8 @@ export const mainnetRegistry: Registry = {
       tokens: [
         Mainnet.WETH.id,
         Mainnet.WBTC.id,
-        Mainnet.USDC.id,
-        Mainnet.USDT.id,
+        Mainnet.USDC_e.id,
+        Mainnet.USDT_e.id,
         Mainnet.DAI.id,
         Mainnet.MYTH.id,
         Mainnet.WSTETH.id,
@@ -746,7 +779,7 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Bifrost.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.WETH.id],
+      tokens: [Mainnet.WETH.id, Mainnet.USDC.id, Mainnet.USDT.id],
     },
     {
       from: Mainnet.AssetHub.uid,
@@ -776,7 +809,7 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.WETH.id],
+      tokens: [Mainnet.DOT.id, Mainnet.WETH.id, Mainnet.USDC.id, Mainnet.USDT.id],
     },
     {
       from: Mainnet.Bifrost.uid,
@@ -896,10 +929,12 @@ export const mainnetRegistry: Registry = {
     [
       Mainnet.AssetHub.uid,
       new Map([
-        [Mainnet.USDC.id, { symbol: 'USDC.e' }],
+        [Mainnet.USDC_e.id, { symbol: 'USDC.e' }],
+        [Mainnet.USDC.id, { id: '1337' }],
+        [Mainnet.USDT_e.id, { symbol: 'USDT.e' }],
+        [Mainnet.USDT.id, { id: '1984' }],
         [Mainnet.WETH.id, { symbol: 'WETH.e' }],
         [Mainnet.WBTC.id, { symbol: 'WBTC.e' }],
-        [Mainnet.USDT.id, { symbol: 'USDT.e' }],
       ]),
     ],
   ]),

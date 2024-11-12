@@ -14,7 +14,7 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain }) => {
   const originBadge = getOriginBadge(token, sourceChain)
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex min-w-[32px] items-center">
       {/* The token logo */}
       <Image
         src={token.logoURI}
@@ -62,6 +62,11 @@ function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | 
     return {
       logoURI: '/ethereum.svg',
       text: `Ethereum ${token.symbol}`,
+    }
+  if (sourceChain.network === 'Polkadot' && token.origin.type === 'Polkadot')
+    return {
+      logoURI: '/polkadot.svg',
+      text: `Polkadot ${token.symbol}`,
     }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
     switch (token.origin.bridge) {
