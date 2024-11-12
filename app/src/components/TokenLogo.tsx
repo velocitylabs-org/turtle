@@ -14,7 +14,7 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain }) => {
   const originBadge = getOriginBadge(token, sourceChain)
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex min-w-[32px] items-center">
       {/* The token logo */}
       <Image
         src={token.logoURI}
