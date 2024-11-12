@@ -63,6 +63,11 @@ function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | 
       logoURI: '/ethereum.svg',
       text: `Ethereum ${token.symbol}`,
     }
+  if (sourceChain.network === 'Polkadot' && token.origin.type === 'Polkadot')
+    return {
+      logoURI: '/polkadot.svg',
+      text: `Polkadot ${token.symbol}`,
+    }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
     switch (token.origin.bridge) {
       case 'Snowbridge':
