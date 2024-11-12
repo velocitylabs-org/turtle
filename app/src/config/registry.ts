@@ -148,360 +148,364 @@ export namespace Mainnet {
   }
 
   // Tokens
-  export const WETH: Token = {
-    id: 'weth.e',
-    name: 'Wrapped Ether',
-    symbol: 'wETH',
-    logoURI: 'https://static.simpleswap.io/images/currencies-logo/weth.svg',
-    decimals: 18,
-    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
-    coingeckoId: 'weth',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
+  export namespace Eth {
+    export const ETH: Token = {
+      id: 'eth',
+      name: 'Ethereum',
+      symbol: 'ETH',
+      logoURI: '/ethereum.svg',
+      decimals: 18,
+      address: '',
+      // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
+      multilocation: '',
+      coingeckoId: 'ethereum',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    // Snowbridge-wrapped USDC
+    export const USDC: Token = {
+      id: 'usdc.e',
+      name: 'USDC',
+      symbol: 'USDC',
+      logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+      decimals: 6,
+      address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const DAI: Token = {
+      id: 'dai.e',
+      name: 'DAI',
+      symbol: 'DAI',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
+      decimals: 18,
+      address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6b175474e89094c44da98b954eedeac495271d0f"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const USDT: Token = {
+      id: 'usdt.e',
+      name: 'Tether',
+      symbol: 'USDT',
+      logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+      decimals: 6,
+      address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xdac17f958d2ee523a2206206994597c13d831ec7"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const WETH: Token = {
+      id: 'weth.e',
+      name: 'Wrapped Ether',
+      symbol: 'wETH',
+      logoURI: 'https://static.simpleswap.io/images/currencies-logo/weth.svg',
+      decimals: 18,
+      address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
+      coingeckoId: 'weth',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const VETH: Token = {
+      id: 'veth.e',
+      name: 'Venus ETH',
+      symbol: 'vETH',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
+      decimals: 18,
+      address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const WBTC: Token = {
+      id: 'wbtc.e',
+      name: 'Wrapped Bitcoin',
+      symbol: 'WBTC',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+      decimals: 8,
+      address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const MYTH: Token = {
+      id: 'myth.e',
+      name: 'Mythos',
+      symbol: 'MYTH',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+      decimals: 18,
+      address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
+      coingeckoId: 'mythos',
+      origin: {
+        type: 'Polkadot',
+        paraId: 3369,
+      },
+    }
+
+    export const SHIB: Token = {
+      id: 'shib.e',
+      name: 'Shiba Inu',
+      symbol: 'SHIB',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png',
+      decimals: 18,
+      address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const PEPE: Token = {
+      id: 'pepe.e',
+      name: 'Pepe',
+      symbol: 'PEPE',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24478.png',
+      decimals: 18,
+      address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6982508145454Ce325dDbE47a25d4ec3d2311933"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const TON: Token = {
+      id: 'ton.e',
+      name: 'Toncoin',
+      symbol: 'TON',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+      decimals: 9,
+      address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x582d872a1b094fc48f5de31d3b73f2d9be47def1"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const WSTETH: Token = {
+      id: 'wsteth.e',
+      name: 'Lido wstETH',
+      symbol: 'WSTETH',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12409.png',
+      decimals: 18,
+      address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"}}]}}',
+      coingeckoId: 'bridged-wrapped-lido-staked-ether-scroll',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
+
+    export const TBTC: Token = {
+      id: 'tbtc.e',
+      name: 'tBTC',
+      symbol: 'TBTC',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5776.png',
+      decimals: 18,
+      address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
+      multilocation:
+        '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x18084fbA666a33d37592fA2633fD49a74DD93a88"}}]}}',
+      origin: {
+        type: 'Ethereum',
+        bridge: 'Snowbridge',
+      },
+    }
   }
 
-  export const VETH: Token = {
-    id: 'veth.e',
-    name: 'Venus ETH',
-    symbol: 'vETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
-    decimals: 18,
-    address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
+  export namespace Polkadot {
+    export const ACA: Token = {
+      id: 'aca',
+      name: 'Acala Token',
+      symbol: 'ACA',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+      decimals: 12,
+      address: '',
+      multilocation:
+        '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
+      coingeckoId: 'acala',
+      origin: {
+        type: 'Polkadot',
+        paraId: 2000,
+      },
+    }
 
-  export const WBTC: Token = {
-    id: 'wbtc.e',
-    name: 'Wrapped Bitcoin',
-    symbol: 'WBTC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
-    decimals: 8,
-    address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
+    export const ASTR: Token = {
+      id: 'astr',
+      name: 'ASTR',
+      symbol: 'ASTR',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+      decimals: 18,
+      address: '',
+      multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
+      coingeckoId: 'astar',
+      origin: {
+        type: 'Polkadot',
+        paraId: 2006,
+      },
+    }
 
-  export const MYTH: Token = {
-    id: 'myth.e',
-    name: 'Mythos',
-    symbol: 'MYTH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
-    decimals: 18,
-    address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
-    coingeckoId: 'mythos',
-    origin: {
-      type: 'Polkadot',
-      paraId: 3369,
-    },
-  }
+    export const BNC: Token = {
+      id: 'bnc',
+      name: 'Bifrost Native Coin',
+      symbol: 'BNC',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+      decimals: 12,
+      address: '',
+      multilocation:
+        '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
+      coingeckoId: 'bifrost-native-coin',
+      origin: {
+        type: 'Polkadot',
+        paraId: 2030,
+      },
+    }
 
-  export const BNC: Token = {
-    id: 'bnc',
-    name: 'Bifrost Native Coin',
-    symbol: 'BNC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
-    decimals: 12,
-    address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
-    coingeckoId: 'bifrost-native-coin',
-    origin: {
-      type: 'Polkadot',
-      paraId: 2030,
-    },
-  }
+    export const CFG: Token = {
+      id: 'cfg',
+      name: 'Centrifuge',
+      symbol: 'CFG',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+      decimals: 18,
+      address: '',
+      multilocation:
+        '{"parents":"1","interior":{"X2":[{"Parachain":"2031"},{"GeneralKey":"0x0001"}]}}',
+      coingeckoId: 'centrifuge',
+      origin: {
+        type: 'Polkadot',
+        paraId: 2031,
+      },
+    }
 
-  export const HDX: Token = {
-    id: 'hdx',
-    name: 'Hydration',
-    symbol: 'HDX',
-    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
-    decimals: 12,
-    address: '',
-    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
-    coingeckoId: 'hydradx',
-    origin: {
-      type: 'Polkadot',
-      paraId: 2034,
-    },
-  }
+    export const HDX: Token = {
+      id: 'hdx',
+      name: 'Hydration',
+      symbol: 'HDX',
+      logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+      decimals: 12,
+      address: '',
+      multilocation:
+        '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
+      coingeckoId: 'hydradx',
+      origin: {
+        type: 'Polkadot',
+        paraId: 2034,
+      },
+    }
 
-  export const ACA: Token = {
-    id: 'aca',
-    name: 'Acala Token',
-    symbol: 'ACA',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
-    decimals: 12,
-    address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
-    coingeckoId: 'acala',
-    origin: {
-      type: 'Polkadot',
-      paraId: 2000,
-    },
-  }
+    // Polkadot-native USDC
+    export const USDC: Token = {
+      id: 'usdc',
+      name: 'USDC',
+      symbol: 'USDC',
+      logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+      decimals: 6,
+      address: '',
+      multilocation: '',
+      origin: {
+        type: 'Polkadot',
+        paraId: 1000,
+      },
+    }
 
-  export const ASTR: Token = {
-    id: 'astr',
-    name: 'ASTR',
-    symbol: 'ASTR',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
-    decimals: 18,
-    address: '',
-    multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
-    coingeckoId: 'astar',
-    origin: {
-      type: 'Polkadot',
-      paraId: 2006,
-    },
-  }
+    // Polkadot-native USDT
+    export const USDT: Token = {
+      id: 'usdt',
+      name: 'Tether',
+      symbol: 'USDT',
+      logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+      decimals: 6,
+      address: '',
+      multilocation: '',
+      origin: {
+        type: 'Polkadot',
+        paraId: 1000,
+      },
+    }
 
-  export const GLMR: Token = {
-    id: 'glmr',
-    name: 'GLMR',
-    symbol: 'GLMR',
-    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
-    decimals: 18,
-    address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
-    coingeckoId: 'moonbeam',
-    origin: {
-      type: 'Polkadot',
-      paraId: 2004,
-    },
-  }
+    export const GLMR: Token = {
+      id: 'glmr',
+      name: 'GLMR',
+      symbol: 'GLMR',
+      logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+      decimals: 18,
+      address: '',
+      multilocation:
+        '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
+      coingeckoId: 'moonbeam',
+      origin: {
+        type: 'Polkadot',
+        paraId: 2004,
+      },
+    }
 
-  export const INTR: Token = {
-    id: 'intr',
-    name: 'INTR',
-    symbol: 'INTR',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
-    decimals: 10,
-    address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
-    coingeckoId: 'interlay',
-    origin: {
-      type: 'Polkadot',
-      paraId: 2032,
-    },
-  }
+    export const INTR: Token = {
+      id: 'intr',
+      name: 'INTR',
+      symbol: 'INTR',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+      decimals: 10,
+      address: '',
+      multilocation:
+        '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+      coingeckoId: 'interlay',
+      origin: {
+        type: 'Polkadot',
+        paraId: 2032,
+      },
+    }
 
-  export const CFG: Token = {
-    id: 'cfg',
-    name: 'Centrifuge',
-    symbol: 'CFG',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
-    decimals: 18,
-    address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2031"},{"GeneralKey":"0x0001"}]}}',
-    coingeckoId: 'centrifuge',
-    origin: {
-      type: 'Polkadot',
-      paraId: 2031,
-    },
-  }
-
-  export const SHIB: Token = {
-    id: 'shib.e',
-    name: 'Shiba Inu',
-    symbol: 'SHIB',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png',
-    decimals: 18,
-    address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  export const PEPE: Token = {
-    id: 'pepe.e',
-    name: 'Pepe',
-    symbol: 'PEPE',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24478.png',
-    decimals: 18,
-    address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6982508145454Ce325dDbE47a25d4ec3d2311933"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  export const TON: Token = {
-    id: 'ton.e',
-    name: 'Toncoin',
-    symbol: 'TON',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
-    decimals: 9,
-    address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x582d872a1b094fc48f5de31d3b73f2d9be47def1"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  export const WSTETH: Token = {
-    id: 'wsteth.e',
-    name: 'Lido wstETH',
-    symbol: 'WSTETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12409.png',
-    decimals: 18,
-    address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"}}]}}',
-    coingeckoId: 'bridged-wrapped-lido-staked-ether-scroll',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  export const TBTC: Token = {
-    id: 'tbtc.e',
-    name: 'tBTC',
-    symbol: 'TBTC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5776.png',
-    decimals: 18,
-    address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x18084fbA666a33d37592fA2633fD49a74DD93a88"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  // Snowbridge USDT
-  export const USDT_e: Token = {
-    id: 'usdt.e',
-    name: 'Tether',
-    symbol: 'USDT',
-    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
-    decimals: 6,
-    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xdac17f958d2ee523a2206206994597c13d831ec7"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  // Native USDT
-  export const USDT: Token = {
-    id: 'usdt',
-    name: 'Tether',
-    symbol: 'USDT',
-    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
-    decimals: 6,
-    address: '',
-    multilocation: '',
-    origin: {
-      type: 'Polkadot',
-      paraId: 1000,
-    },
-  }
-
-  // Snowbridge USDC
-  export const USDC_e: Token = {
-    id: 'usdc.e',
-    name: 'USDC',
-    symbol: 'USDC',
-    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
-    decimals: 6,
-    address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  // Native USDC
-  export const USDC: Token = {
-    id: 'usdc',
-    name: 'USDC',
-    symbol: 'USDC',
-    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
-    decimals: 6,
-    address: '',
-    multilocation: '',
-    origin: {
-      type: 'Polkadot',
-      paraId: 1000,
-    },
-  }
-
-  export const DAI: Token = {
-    id: 'dai.e',
-    name: 'DAI',
-    symbol: 'DAI',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
-    decimals: 18,
-    address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6b175474e89094c44da98b954eedeac495271d0f"}}]}}',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
-  }
-
-  export const DOT: Token = {
-    id: 'dot',
-    name: 'Polkadot',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
-    symbol: 'DOT',
-    decimals: 10,
-    address: '',
-    multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
-    coingeckoId: 'polkadot',
-    origin: {
-      type: 'Polkadot',
-      paraId: 0,
-    },
-  }
-
-  export const ETH: Token = {
-    id: 'eth',
-    name: 'Ethereum',
-    symbol: 'ETH',
-    logoURI: '/ethereum.svg',
-    decimals: 18,
-    address: '',
-    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
-    multilocation: '',
-    coingeckoId: 'ethereum',
-    origin: {
-      type: 'Ethereum',
-      bridge: 'Snowbridge',
-    },
+    export const DOT: Token = {
+      id: 'dot',
+      name: 'Polkadot',
+      logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+      symbol: 'DOT',
+      decimals: 10,
+      address: '',
+      multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+      coingeckoId: 'polkadot',
+      origin: {
+        type: 'Polkadot',
+        paraId: 0,
+      },
+    }
   }
 }
 
@@ -634,27 +638,27 @@ export const mainnetRegistry: Registry = {
     Mainnet.Astar,
   ],
   tokens: [
-    Mainnet.WETH,
-    Mainnet.WBTC,
-    Mainnet.USDC_e,
-    Mainnet.USDC,
-    Mainnet.USDT_e,
-    Mainnet.USDT,
-    Mainnet.WSTETH,
-    Mainnet.TBTC,
-    Mainnet.DOT,
-    Mainnet.DAI,
-    Mainnet.ACA,
-    Mainnet.CFG,
-    Mainnet.BNC,
-    Mainnet.GLMR,
-    Mainnet.ASTR,
-    Mainnet.INTR,
-    Mainnet.MYTH,
-    Mainnet.HDX,
-    Mainnet.TON,
-    Mainnet.SHIB,
-    Mainnet.PEPE,
+    Mainnet.Eth.WETH,
+    Mainnet.Eth.WBTC,
+    Mainnet.Eth.USDC,
+    Mainnet.Polkadot.USDC,
+    Mainnet.Eth.USDT,
+    Mainnet.Polkadot.USDT,
+    Mainnet.Eth.WSTETH,
+    Mainnet.Eth.TBTC,
+    Mainnet.Polkadot.DOT,
+    Mainnet.Eth.DAI,
+    Mainnet.Polkadot.ACA,
+    Mainnet.Polkadot.CFG,
+    Mainnet.Polkadot.BNC,
+    Mainnet.Polkadot.GLMR,
+    Mainnet.Polkadot.ASTR,
+    Mainnet.Polkadot.INTR,
+    Mainnet.Eth.MYTH,
+    Mainnet.Polkadot.HDX,
+    Mainnet.Eth.TON,
+    Mainnet.Eth.SHIB,
+    Mainnet.Eth.PEPE,
   ],
   routes: [
     // Snowbridge routes
@@ -663,59 +667,59 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.AssetHub.uid,
       sdk: 'SnowbridgeApi',
       tokens: [
-        Mainnet.WETH.id,
-        Mainnet.WBTC.id,
-        Mainnet.USDC_e.id,
-        Mainnet.USDT_e.id,
-        Mainnet.DAI.id,
-        Mainnet.MYTH.id,
-        Mainnet.WSTETH.id,
-        Mainnet.TBTC.id,
-        Mainnet.TON.id,
-        Mainnet.SHIB.id,
-        Mainnet.PEPE.id,
+        Mainnet.Eth.WETH.id,
+        Mainnet.Eth.WBTC.id,
+        Mainnet.Eth.USDC.id,
+        Mainnet.Eth.USDT.id,
+        Mainnet.Eth.DAI.id,
+        Mainnet.Eth.MYTH.id,
+        Mainnet.Eth.WSTETH.id,
+        Mainnet.Eth.TBTC.id,
+        Mainnet.Eth.TON.id,
+        Mainnet.Eth.SHIB.id,
+        Mainnet.Eth.PEPE.id,
       ],
     },
     {
       from: Mainnet.Ethereum.uid,
       to: Mainnet.Mythos.uid,
       sdk: 'SnowbridgeApi',
-      tokens: [Mainnet.MYTH.id],
+      tokens: [Mainnet.Eth.MYTH.id],
     },
     {
       from: Mainnet.Ethereum.uid,
       to: Mainnet.Moonbeam.uid,
       sdk: 'SnowbridgeApi',
-      tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+      tokens: [Mainnet.Eth.WETH.id, Mainnet.Eth.WBTC.id],
     },
     {
       from: Mainnet.Ethereum.uid,
       to: Mainnet.Bifrost.uid,
       sdk: 'SnowbridgeApi',
-      tokens: [Mainnet.WETH.id],
+      tokens: [Mainnet.Eth.WETH.id],
     },
     {
       from: Mainnet.Ethereum.uid,
       to: Mainnet.Hydration.uid,
       sdk: 'SnowbridgeApi',
-      tokens: [Mainnet.WETH.id, Mainnet.WBTC.id],
+      tokens: [Mainnet.Eth.WETH.id, Mainnet.Eth.WBTC.id],
     },
     {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Ethereum.uid,
       sdk: 'SnowbridgeApi',
       tokens: [
-        Mainnet.WETH.id,
-        Mainnet.WBTC.id,
-        Mainnet.USDC_e.id,
-        Mainnet.USDT_e.id,
-        Mainnet.DAI.id,
-        Mainnet.MYTH.id,
-        Mainnet.WSTETH.id,
-        Mainnet.TBTC.id,
-        Mainnet.TON.id,
-        Mainnet.SHIB.id,
-        Mainnet.PEPE.id,
+        Mainnet.Eth.WETH.id,
+        Mainnet.Eth.WBTC.id,
+        Mainnet.Eth.USDC.id,
+        Mainnet.Eth.USDT.id,
+        Mainnet.Eth.DAI.id,
+        Mainnet.Eth.MYTH.id,
+        Mainnet.Eth.WSTETH.id,
+        Mainnet.Eth.TBTC.id,
+        Mainnet.Eth.TON.id,
+        Mainnet.Eth.SHIB.id,
+        Mainnet.Eth.PEPE.id,
       ],
     },
     // Relay to Para
@@ -723,49 +727,49 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Acala.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Centrifuge.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Astar.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.RelayChain.uid,
       to: Mainnet.Bifrost.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
 
     // Para to Relay
@@ -773,73 +777,78 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.AssetHub.uid,
       to: Mainnet.Bifrost.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.WETH.id, Mainnet.USDC.id, Mainnet.USDT.id],
+      tokens: [Mainnet.Eth.WETH.id, Mainnet.Polkadot.USDC.id, Mainnet.Polkadot.USDT.id],
     },
     {
       from: Mainnet.Acala.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.WETH.id, Mainnet.USDC.id, Mainnet.USDT.id],
+      tokens: [
+        Mainnet.Polkadot.DOT.id,
+        Mainnet.Eth.WETH.id,
+        Mainnet.Polkadot.USDC.id,
+        Mainnet.Polkadot.USDT.id,
+      ],
     },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.Centrifuge.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.BNC.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.BNC.id],
     },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.BNC.id, Mainnet.GLMR.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.BNC.id, Mainnet.Polkadot.GLMR.id],
     },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.BNC.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.BNC.id],
     },
     {
       from: Mainnet.Bifrost.uid,
       to: Mainnet.Acala.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.Interlay.uid,
       to: Mainnet.RelayChain.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
 
     // Para to Para
@@ -847,61 +856,61 @@ export const mainnetRegistry: Registry = {
       from: Mainnet.Acala.uid,
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.ACA.id, Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.ACA.id, Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.HDX.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.HDX.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.HDX.id, Mainnet.GLMR.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.HDX.id, Mainnet.Polkadot.GLMR.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Bifrost.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.BNC.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.BNC.id],
     },
     {
       from: Mainnet.Interlay.uid,
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id],
+      tokens: [Mainnet.Polkadot.DOT.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.INTR.id, Mainnet.HDX.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.INTR.id, Mainnet.Polkadot.HDX.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Acala.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.ACA.id, Mainnet.HDX.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.ACA.id, Mainnet.Polkadot.HDX.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Centrifuge.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.CFG.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.CFG.id],
     },
     {
       from: Mainnet.Hydration.uid,
       to: Mainnet.Astar.uid,
       sdk: 'ParaSpellApi',
       tokens: [
-        Mainnet.DOT.id,
-        Mainnet.ASTR.id,
-        Mainnet.HDX.id,
-        Mainnet.GLMR.id,
-        Mainnet.ACA.id,
-        Mainnet.INTR.id,
+        Mainnet.Polkadot.DOT.id,
+        Mainnet.Polkadot.ASTR.id,
+        Mainnet.Polkadot.HDX.id,
+        Mainnet.Polkadot.GLMR.id,
+        Mainnet.Polkadot.ACA.id,
+        Mainnet.Polkadot.INTR.id,
       ],
     },
     {
@@ -909,32 +918,32 @@ export const mainnetRegistry: Registry = {
       to: Mainnet.Hydration.uid,
       sdk: 'ParaSpellApi',
       tokens: [
-        Mainnet.DOT.id,
-        Mainnet.ASTR.id,
-        Mainnet.HDX.id,
-        Mainnet.GLMR.id,
-        Mainnet.ACA.id,
-        Mainnet.INTR.id,
+        Mainnet.Polkadot.DOT.id,
+        Mainnet.Polkadot.ASTR.id,
+        Mainnet.Polkadot.HDX.id,
+        Mainnet.Polkadot.GLMR.id,
+        Mainnet.Polkadot.ACA.id,
+        Mainnet.Polkadot.INTR.id,
       ],
     },
     {
       from: Mainnet.Astar.uid,
       to: Mainnet.Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Mainnet.DOT.id, Mainnet.ASTR.id, Mainnet.GLMR.id],
+      tokens: [Mainnet.Polkadot.DOT.id, Mainnet.Polkadot.ASTR.id, Mainnet.Polkadot.GLMR.id],
     },
   ],
   assetUid: new Map([
-    [Mainnet.Hydration.uid, new Map([[Mainnet.WETH.id, { id: '1000189' } as LocalAssetUid]])],
+    [Mainnet.Hydration.uid, new Map([[Mainnet.Eth.WETH.id, { id: '1000189' } as LocalAssetUid]])],
     [
       Mainnet.AssetHub.uid,
       new Map([
-        [Mainnet.USDC_e.id, { symbol: 'USDC.e' }],
-        [Mainnet.USDC.id, { id: '1337' }],
-        [Mainnet.USDT_e.id, { symbol: 'USDT.e' }],
-        [Mainnet.USDT.id, { id: '1984' }],
-        [Mainnet.WETH.id, { symbol: 'WETH.e' }],
-        [Mainnet.WBTC.id, { symbol: 'WBTC.e' }],
+        [Mainnet.Eth.USDC.id, { symbol: 'USDC.e' }],
+        [Mainnet.Polkadot.USDC.id, { id: '1337' }],
+        [Mainnet.Eth.USDT.id, { symbol: 'USDT.e' }],
+        [Mainnet.Polkadot.USDT.id, { id: '1984' }],
+        [Mainnet.Eth.WETH.id, { symbol: 'WETH.e' }],
+        [Mainnet.Eth.WBTC.id, { symbol: 'WBTC.e' }],
       ]),
     ],
   ]),
