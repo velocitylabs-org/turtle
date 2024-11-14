@@ -51,7 +51,7 @@ const TxSummary: FC<TxSummaryProps> = ({
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
-                <div className="font-bold">Fees</div>
+                <div className="font-bold">Fee</div>
               </div>
               <div className="items-right flex">
                 <div>
