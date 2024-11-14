@@ -16,7 +16,13 @@ interface TxSummaryProps {
   hidden?: boolean
 }
 
-const TxSummary: FC<TxSummaryProps> = ({ loading, transferAmount, fees, durationEstimate, hidden }) => {
+const TxSummary: FC<TxSummaryProps> = ({
+  loading,
+  transferAmount,
+  fees,
+  durationEstimate,
+  hidden,
+}) => {
   const renderContent = () => {
     if (loading) {
       return (
@@ -35,15 +41,15 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, transferAmount, fees, duration
     return (
       <div className="tx-summary p-4 pt-3">
         <div className="pt-3">
-          {/* Vertical divider */}
+          {/* Divider */}
           <div className="flex justify-center">
-            <div className="h-[30px] border-r border-turtle-level3"></div>
+            <div className="mt-1 h-[1px] w-[25px] border-t border-turtle-level3 py-1"></div>
           </div>
 
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
 
           <ul>
-          <li className="mt-4 flex items-start justify-between border-turtle-level2">
+            <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Fees</div>
               </div>
@@ -87,18 +93,17 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, transferAmount, fees, duration
             </li>
           </ul>
 
-          { transferAmount.inDollars < (fees.inDollars * AMOUNT_VS_FEE_RATIO) && 
-          <div className="flex flex-row items-center justify-around my-4 p-2 px-3 rounded-[8px] bg-turtle-secondary-transparent">
-            <ExclamationMark
-              width={20}
-              height={20}
-              fill={colors['turtle-foreground']}
-              className="mr-2 h-[1.3rem] w-[1.3rem]"
-            />
-            <div className="text-small">The amount is a bit too low to justify the fees</div>
-          </div>
-          }
-          
+          {transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO && (
+            <div className="my-4 flex flex-row items-center justify-around rounded-[8px] bg-turtle-secondary-transparent p-2 px-3">
+              <ExclamationMark
+                width={20}
+                height={20}
+                fill={colors['turtle-foreground']}
+                className="mr-2 h-[1.3rem] w-[1.3rem]"
+              />
+              <div className="text-small">The amount is a bit too low to justify the fees</div>
+            </div>
+          )}
         </div>
       </div>
     )

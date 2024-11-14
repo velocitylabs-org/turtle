@@ -199,7 +199,10 @@ export function getDurationEstimate(direction: Direction): string {
   }
 }
 
-export function toAmountInfo(tokenAmount?: TokenAmount | null, usdPrice?: number | null): AmountInfo | null {
+export function toAmountInfo(
+  tokenAmount?: TokenAmount | null,
+  usdPrice?: number | null,
+): AmountInfo | null {
   if (!tokenAmount || !tokenAmount.amount || !tokenAmount.token || !usdPrice) return null
 
   return {

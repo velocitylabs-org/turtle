@@ -280,7 +280,7 @@ const useTransferForm = () => {
     loadingBalance,
     balanceData,
     fetchBalance,
-    tokenPrice
+    tokenPrice,
   }
 }
 
