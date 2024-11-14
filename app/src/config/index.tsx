@@ -31,3 +31,9 @@ export const config = defaultWagmiConfig({
   }),
   // ...wagmiOptions, // Optional - Override createConfig parameters
 })
+
+
+// The minimum threeshold of what we consider a transfer worth doing
+// when comparing the transfer amount to the fees involved. It's up
+// to the user to decide anyways. 
+export const AMOUNT_VS_FEE_RATIO: number = 10

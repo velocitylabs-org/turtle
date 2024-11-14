@@ -6,15 +6,17 @@ import { spinnerSize } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
 import { ExclamationMark } from './svg/ExclamationMark'
 import { colors } from '../../tailwind.config'
+import { AMOUNT_VS_FEE_RATIO } from '@/config'
 
 interface TxSummaryProps {
   loading?: boolean
+  transferAmount?: AmountInfo | null
   fees?: AmountInfo | null
   durationEstimate?: string
   hidden?: boolean
 }
 
-const TxSummary: FC<TxSummaryProps> = ({ loading, fees, durationEstimate, hidden }) => {
+const TxSummary: FC<TxSummaryProps> = ({ loading, transferAmount, fees, durationEstimate, hidden }) => {
   const renderContent = () => {
     if (loading) {
       return (
@@ -28,37 +30,20 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, fees, durationEstimate, hidden
       )
     }
 
-    if (!fees) return null
+    if (!fees || !transferAmount) return null
 
     return (
-      <div className="fees p-4">
+      <div className="tx-summary p-4 pt-3">
         <div className="pt-3">
           {/* Vertical divider */}
-          <div className='flex justify-center'><div className='h-[30px] border-r border-turtle-level3'></div></div>
-          
-          <div className="text-center text-xl font-bold text-turtle-foreground mt-3">Summary</div>
+          <div className="flex justify-center">
+            <div className="h-[30px] border-r border-turtle-level3"></div>
+          </div>
 
-          {/* Row */}
+          <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
+
           <ul>
-            <li className="mt-4 flex items-start justify-between border-turtle-level2">
-              <div className="flex">
-                <div className="font-bold">Amount</div>
-              </div>
-              <div className="items-right flex">
-                <div>
-                  <div className="text-right text-lg text-turtle-foreground">
-                    {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
-                  </div>
-                  {fees.inDollars > 0 && (
-                    <div className="text-right text-turtle-level3">
-                      ${formatAmount(fees.inDollars)}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </li>
-
-            <li className="mt-4 flex items-start justify-between border-turtle-level2">
+          <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Fees</div>
               </div>
@@ -75,21 +60,45 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, fees, durationEstimate, hidden
                 </div>
               </div>
             </li>
-
+            <li className="mt-4 flex items-start justify-between border-turtle-level2">
+              <div className="flex">
+                <div className="font-bold">Amount</div>
+              </div>
+              <div className="items-right flex">
+                <div>
+                  <div className="text-right text-lg text-turtle-foreground">
+                    {formatAmount(Number(transferAmount.amount))} {transferAmount.token.symbol}
+                  </div>
+                  {transferAmount.inDollars > 0 && (
+                    <div className="text-right text-turtle-level3">
+                      ${formatAmount(transferAmount.inDollars)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </li>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Duration</div>
               </div>
               <div className="items-right flex">
-              <div className="text-turtle-foreground">{durationEstimate}</div>
+                <div className="text-turtle-foreground">{durationEstimate}</div>
               </div>
             </li>
           </ul>
 
-          <div className='flex flex-row items-center justify-around p-2 px-3 my-4 bg-turtle-secondary-transparent rounded-[8px]'>
-            <ExclamationMark width={20} height={20}  fill={colors['turtle-foreground']} className='mr-2 w-[1.3rem] h-[1.3rem]'/>
-            <div className='text-small'>The amount is a bit too low to justify the fees</div>
+          { transferAmount.inDollars < (fees.inDollars * AMOUNT_VS_FEE_RATIO) && 
+          <div className="flex flex-row items-center justify-around my-4 p-2 px-3 rounded-[8px] bg-turtle-secondary-transparent">
+            <ExclamationMark
+              width={20}
+              height={20}
+              fill={colors['turtle-foreground']}
+              className="mr-2 h-[1.3rem] w-[1.3rem]"
+            />
+            <div className="text-small">The amount is a bit too low to justify the fees</div>
           </div>
+          }
+          
         </div>
       </div>
     )

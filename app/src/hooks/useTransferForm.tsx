@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import useTokenPrice from './useTokenPrice'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -55,6 +56,7 @@ const useTransferForm = () => {
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
+  const tokenPrice = useTokenPrice(tokenAmount?.token)
   const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
   const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
   const { fees, loading: loadingFees } = useFees(
@@ -95,7 +97,8 @@ const useTransferForm = () => {
     !loadingBalance &&
     !!balanceData &&
     (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
-    (manualRecipient.enabled || destinationWallet?.isConnected)
+    (manualRecipient.enabled || destinationWallet?.isConnected) &&
+    !!tokenPrice
 
   const allowFromToSwap = useCallback(() => {
     return (
@@ -277,6 +280,7 @@ const useTransferForm = () => {
     loadingBalance,
     balanceData,
     fetchBalance,
+    tokenPrice
   }
 }
 

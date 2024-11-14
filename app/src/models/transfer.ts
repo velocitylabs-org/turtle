@@ -79,7 +79,7 @@ export type TransfersByDate = Record<string, CompletedTransfer[]>
 
 export interface AmountInfo {
   /* The amount in the `token` currency */
-  amount: string
+  amount: string | bigint | number
   /* the token  */
   token: Token
   /* the amount converted to USD dollars */
