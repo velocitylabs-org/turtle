@@ -9,7 +9,7 @@ import {
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { getDurationEstimate, toAmountInfo, toHuman } from '@/utils/transfer'
+import { getDurationEstimate, toAmountInfo } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
