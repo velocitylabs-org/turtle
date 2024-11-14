@@ -19,7 +19,7 @@ import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
-import FeesPreview from './FeesPreview'
+import TxSummary from './TxSummary'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
@@ -316,8 +316,7 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Fees */}
-      <FeesPreview
+      <TxSummary
         hidden={!isValid || requiresErc20SpendApproval}
         loading={loadingFees || !fees}
         fees={fees}

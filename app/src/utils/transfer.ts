@@ -2,7 +2,7 @@ import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
 import { Network } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Fees, StoredTransfer } from '@/models/transfer'
+import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
@@ -42,7 +42,7 @@ export const toHuman = (input: bigint | string, token: Token): number => {
   return Number(input) / 10 ** token.decimals
 }
 
-export function feeToHuman(fees: Fees): string {
+export function feeToHuman(fees: AmountInfo): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
 }
 

@@ -1,18 +1,18 @@
-import { Fees } from '@/models/transfer'
+import { AmountInfo } from '@/models/transfer'
 import { formatAmount, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { spinnerSize } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
 
-interface FeesPreviewProps {
+interface TxSummaryProps {
   loading?: boolean
-  fees?: Fees | null
+  fees?: AmountInfo | null
   durationEstimate?: string
   hidden?: boolean
 }
 
-const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, durationEstimate, hidden }) => {
+const TxSummary: FC<TxSummaryProps> = ({ loading, fees, durationEstimate, hidden }) => {
   const renderContent = () => {
     if (loading) {
       return (
@@ -31,7 +31,7 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, durationEstimate, hi
     return (
       <div className="fees mt-2 p-4">
         <div className="border-t border-turtle-level2 py-4">
-          <div className="text-center text-xl font-bold text-turtle-foreground">Fees</div>
+          <div className="text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <div className="mt-4 flex items-center justify-between border-y border-turtle-level2 py-3">
             <div>
               <div className="text-turtle-foreground">
@@ -69,4 +69,4 @@ const FeesPreview: FC<FeesPreviewProps> = ({ loading, fees, durationEstimate, hi
   )
 }
 
-export default FeesPreview
+export default TxSummary

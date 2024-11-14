@@ -25,7 +25,7 @@ export interface StoredTransfer extends RawTransfer {
   // Params
   tokenUSDValue?: number
   amount: string
-  fees: Fees
+  fees: AmountInfo
   // Contextual
   environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
@@ -66,7 +66,7 @@ export type CompletedTransfer = {
   sourceChain: Chain
   destChain: Chain
   amount: string
-  fees: Fees
+  fees: AmountInfo
   minTokenRecieved?: string
   minTokenRecievedValue?: number
   sender: string
@@ -76,12 +76,13 @@ export type CompletedTransfer = {
   errors?: string[]
 }
 export type TransfersByDate = Record<string, CompletedTransfer[]>
-export interface Fees {
+
+export interface AmountInfo {
   /* The amount in the `token` currency */
   amount: string
-  /* the token of the fees */
+  /* the token  */
   token: Token
-  /* the value in dollars */
+  /* the amount converted to USD dollars */
   inDollars: number
 }
 
