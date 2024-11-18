@@ -41,13 +41,7 @@ const TxSummary: FC<TxSummaryProps> = ({
     return (
       <div className="tx-summary p-4 pt-3">
         <div className="pt-3">
-          {/* Divider */}
-          <div className="flex justify-center">
-            <div className="mt-1 h-[1px] w-[25px] border-t border-turtle-level3 py-1"></div>
-          </div>
-
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
-
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
