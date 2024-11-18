@@ -1,9 +1,9 @@
-import { getNativeToken } from '@/registry'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { getCoingekoId, Token } from '@/models/token'
 import { Fees } from '@/models/transfer'
+import { getNativeToken } from '@/registry'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
@@ -91,6 +91,7 @@ const useFees = (
             amount: amount.toString(),
             account: senderAddress,
             accountDestination: recipient,
+            api: sourceChain.rpcConnection,
           })
           fees = info.xcmFee.toString()
 

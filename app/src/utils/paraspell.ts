@@ -1,7 +1,7 @@
-import { getAssetUid, isAssetHub } from '@/registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { getAssetUid, isAssetHub } from '@/registry'
 import { Environment } from '@/store/environmentStore'
 import {
   assets,
