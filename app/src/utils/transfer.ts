@@ -1,8 +1,9 @@
 import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
 import { Network } from '@/models/chain'
+import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { Fees, StoredTransfer } from '@/models/transfer'
+import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
@@ -38,11 +39,11 @@ export const convertAmount = (input: number, token: Token): bigint => {
  * @param token - The token object which includes its decimals property.
  * @returns The amount readable by humans
  */
-export const toHuman = (input: bigint | string, token: Token): number => {
+export const toHuman = (input: bigint | string | number, token: Token): number => {
   return Number(input) / 10 ** token.decimals
 }
 
-export function feeToHuman(fees: Fees): string {
+export function feeToHuman(fees: AmountInfo): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
 }
 
@@ -195,5 +196,18 @@ export function getDurationEstimate(direction: Direction): string {
     // Should never happen
     default:
       return 'N/A'
+  }
+}
+
+export function toAmountInfo(
+  tokenAmount?: TokenAmount | null,
+  usdPrice?: number | null,
+): AmountInfo | null {
+  if (!tokenAmount || !tokenAmount.amount || !tokenAmount.token || !usdPrice) return null
+
+  return {
+    amount: tokenAmount.amount,
+    token: tokenAmount.token,
+    inDollars: tokenAmount.amount * usdPrice,
   }
 }

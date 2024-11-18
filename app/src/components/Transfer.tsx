@@ -9,7 +9,7 @@ import {
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { getDurationEstimate } from '@/utils/transfer'
+import { getDurationEstimate, toAmountInfo } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -19,7 +19,7 @@ import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
-import FeesPreview from './FeesPreview'
+import TxSummary from './TxSummary'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
@@ -47,6 +47,7 @@ const Transfer: FC = () => {
     manualRecipient,
     sourceWallet,
     destinationWallet,
+    tokenPrice,
     fees,
     loadingFees,
     transferStatus,
@@ -316,10 +317,10 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Fees */}
-      <FeesPreview
+      <TxSummary
         hidden={!isValid || requiresErc20SpendApproval}
         loading={loadingFees || !fees}
+        transferAmount={toAmountInfo(tokenAmount, tokenPrice)}
         fees={fees}
         durationEstimate={durationEstimate}
       />
