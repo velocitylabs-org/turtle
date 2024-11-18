@@ -181,9 +181,9 @@ const useSnowbridgeApi = () => {
         fees,
       } satisfies StoredTransfer)
 
-      // metrics
-      if (environment === Environment.Mainnet)
+      if (environment === Environment.Mainnet) {
         trackTransferMetrics({
+          id: sendResult.success?.messageId,
           sender: senderAddress,
           sourceChain: sourceChain.name,
           token: token.name,
@@ -194,6 +194,7 @@ const useSnowbridgeApi = () => {
           recipient: recipient,
           date: date.toISOString(),
         })
+      }
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)

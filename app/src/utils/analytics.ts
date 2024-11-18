@@ -1,7 +1,8 @@
-import { metrics } from '@sentry/nextjs'
-import { track } from '@vercel/analytics/react'
+// eslint-disable-next-line import/no-namespace
+import * as Firebase from '@/config/firebase'
 
 export interface TransferMetric {
+  id?: string
   sender: string
   sourceChain: string
   token: string
@@ -13,56 +14,23 @@ export interface TransferMetric {
   date: string
 }
 
-export const trackTransferMetrics = (data: TransferMetric) => {
-  trackTransferVercel(data)
-  trackTransferSentry(data)
-}
-
-const trackTransferVercel = (data: TransferMetric) => {
-  track('Transfer', {
-    sender: data.sender,
-    sourceChain: data.sourceChain,
-    token: data.token,
-    amount: data.amount,
-    destinationChain: data.destinationChain,
-    usdValue: data.usdValue,
-    usdFees: data.usdFees,
-    recipient: data.recipient,
-    date: data.date,
-  })
-}
-
-const trackTransferSentry = (data: TransferMetric) => {
-  // Track the number of transfers (counter)
-  metrics.increment('transfer_count', 1, {
-    tags: {
-      sender: data.sender,
-      source_chain: data.sourceChain,
-      destination_chain: data.destinationChain,
-      token: data.token,
-    },
-  })
-
-  // Track the USD value of the transfer (gauge)
-  metrics.gauge('transfer_usd_value', data.usdValue, {
-    tags: {
-      source_chain: data.sourceChain,
-      destination_chain: data.destinationChain,
-      token: data.token,
-    },
-    unit: 'USD',
-  })
-
-  // Track the fees in USD (gauge)
-  metrics.gauge('transfer_usd_fees', data.usdFees, {
-    tags: {
-      source_chain: data.sourceChain,
-      destination_chain: data.destinationChain,
-      token: data.token,
-    },
-    unit: 'USD',
-  })
-
-  // Track unique senders (set)
-  metrics.set('unique_senders', data.sender)
+export async function trackTransferMetrics(data: TransferMetric) {
+  try {
+    await Firebase.setDoc(
+      Firebase.doc(Firebase.db, 'turtle-usage', data.id ?? crypto.randomUUID()),
+      {
+        amount: data.amount,
+        date: data.date,
+        destinationChain: data.destinationChain,
+        recipient: data.recipient,
+        sender: data.sender,
+        sourceChain: data.sourceChain,
+        token: data.token,
+        usdFees: data.usdFees,
+        usdValue: data.usdValue,
+      },
+    )
+  } catch (error) {
+    console.error('Error, was not able to log transaction to Firestore: ', error)
+  }
 }
