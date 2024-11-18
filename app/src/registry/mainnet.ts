@@ -441,7 +441,8 @@ export namespace Polkadot {
     logoURI: 'https://assets.coingecko.com/coins/images/28875/standard/vDOT.png?1696527852',
     decimals: 10,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0900000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0900000000000000000000000000000000000000000000000000000000000000"}}]}}',
     coingeckoId: 'voucher-dot',
     origin: parachain(2030),
   }
