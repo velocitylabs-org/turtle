@@ -1,6 +1,6 @@
-import { getNativeToken } from '@/registry'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { getNativeToken } from '@/registry'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
@@ -66,7 +66,8 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           if (!node) throw new Error('Node not found')
           const currency = getCurrencyId(env, node, chain.uid, token)
 
-          const balance = (await getAssetBalance({ address, node, currency })) ?? 0n
+          const balance =
+            (await getAssetBalance({ address, node, currency, api: chain.rpcConnection })) ?? 0n
 
           fetchedBalance = {
             value: balance,
