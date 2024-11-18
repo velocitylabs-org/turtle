@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Fees } from '@/models/transfer'
+import { AmountInfo } from '@/models/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getRoute } from '@/utils/routes'
@@ -19,7 +19,7 @@ export interface TransferParams {
   destinationChain: Chain
   recipient: string
   amount: bigint
-  fees: Fees
+  fees: AmountInfo
   onSuccess?: () => void
 }
 
