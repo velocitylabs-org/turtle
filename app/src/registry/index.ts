@@ -46,6 +46,8 @@ export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
 ]
 
 export function getNativeToken(chain: Chain): Token {
+  if (chain.network === 'Ethereum') return Mainnet.Eth.ETH
+
   const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
     ? Environment.Testnet
     : Environment.Mainnet
@@ -93,7 +95,6 @@ export function snowbridgeWrapped(): Origin {
 
 // Hack - importing this after types definition to avoid circular dependency and import timing issues
 import * as Mainnet from './mainnet'
-export * as Mainnet from './mainnet'
-
 import * as Testnet from './testnet'
+export * as Mainnet from './mainnet'
 export * as Testnet from './testnet'
