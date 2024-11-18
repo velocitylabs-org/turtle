@@ -1,4 +1,4 @@
-import { Mainnet } from '@/config/registry'
+import { Mainnet } from '@/registry'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
@@ -48,7 +48,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
     try {
       const balance = await context.ethereum.api
         .getBalance(owner)
-        .then(x => toHuman(x, Mainnet.ETH))
+        .then(x => toHuman(x, Mainnet.Eth.ETH))
       setEthBalance(balance)
     } catch (error) {
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
@@ -84,7 +84,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
             context,
             signer,
             tokenAmount!.token!.address,
-            convertAmount(amount, Mainnet.ETH),
+            convertAmount(amount, Mainnet.Eth.ETH),
           )
           .then(x => x.wait())
 
