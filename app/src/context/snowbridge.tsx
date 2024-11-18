@@ -1,4 +1,4 @@
-import { Mainnet, rpcConnectionAsHttps, SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/config/registry'
+import { Mainnet, rpcConnectionAsHttps, SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'

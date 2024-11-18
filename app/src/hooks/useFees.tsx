@@ -1,4 +1,4 @@
-import { getNativeToken } from '@/config/registry'
+import { getNativeToken } from '@/registry'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
