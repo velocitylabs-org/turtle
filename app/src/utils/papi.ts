@@ -1,4 +1,4 @@
-import { Mainnet } from '@/config/registry'
+import { Mainnet } from '@/registry'
 import { Chain } from '@/models/chain'
 import { ethMultilocationSchema } from '@/models/schemas'
 import {

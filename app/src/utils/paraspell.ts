@@ -1,4 +1,4 @@
-import { getAssetUid, isAssetHub } from '@/config/registry'
+import { getAssetUid, isAssetHub } from '@/registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
@@ -60,14 +60,16 @@ export const createTx = async (
     )
 
     return await Builder(api)
-      .from(sourceChainFromId as Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>)
-      .to(destinationChainFromId as Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>)
+      .from(sourceChainFromId as ParaChain)
+      .to(destinationChainFromId as ParaChain)
       .currency(currencyId)
       .amount(amount)
       .address(recipient)
       .build()
   }
 }
+
+type ParaChain = Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>
 
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
   // TODO(victor): write some tests
@@ -94,7 +96,8 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
 /**
  * Get the ParaSpell currency id in the form of `TCurrencyCore`.
  *
- * @remarks We prioritize an local asset id if specified in our registry and otherwise default to the paraspell token symbol. AH edge case is handled.
+ * @remarks We prioritize an local asset id if specified in our registry and otherwise default
+ * to the paraspell token symbol. AH edge case is handled.
  *
  * */
 export function getCurrencyId(
@@ -104,19 +107,14 @@ export function getCurrencyId(
   token: Token,
   destinationChain?: Chain,
 ): TCurrencyCore {
-  if (destinationChain && isAssetHub(destinationChain)) {
-    // When sending a token to AssetHub,
-    // this currency id must be specified in a way that's known to AssetHub rather than
-    // providing an identifier relative to the source chain. To quote Dudo's message:
-    // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
-    // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
-    // TODO(nuno): probably need to pass multilocation when it's AH dest
-    const relay = getRelayNode(env)
-    const destinationChainNode = assets.getTNode(destinationChain.chainId, relay)
-    if (!destinationChainNode) throw new Error('Transfer failed: chain id not found.')
-    return { symbol: getTokenSymbol(destinationChainNode, token) }
-  }
+  // When sending a token to AssetHub, this currency id must be specified in a way that's
+  // known to AssetHub rather than providing an identifier relative to the source chain.
+  // Quoting Dudo:
+  // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
+  // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
+  const lookupChainId =
+    destinationChain && isAssetHub(destinationChain) ? destinationChain.uid : chainId
+  const localAssetId = getAssetUid(env, lookupChainId, token.id)
 
-  const localAssetId = getAssetUid(env, chainId, token.id)
-  return localAssetId ?? { symbol: getTokenSymbol(node, token) } // Fallback to token symbol
+  return localAssetId ?? { symbol: getTokenSymbol(node, token) }
 }

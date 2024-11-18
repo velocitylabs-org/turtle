@@ -1,4 +1,4 @@
-import { getNativeToken } from '@/config/registry'
+import { getNativeToken } from '@/registry'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'

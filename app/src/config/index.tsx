@@ -8,6 +8,7 @@ import { mainnet, sepolia } from 'wagmi/chains'
 if (!projectId) throw new Error('Project ID is not defined')
 
 const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
+export const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
 
 const metadata = {
   name: 'turtle-app',
@@ -31,3 +32,8 @@ export const config = defaultWagmiConfig({
   }),
   // ...wagmiOptions, // Optional - Override createConfig parameters
 })
+
+// The minimum threeshold of what we consider a transfer worth doing
+// when comparing the transfer amount to the fees involved. It's up
+// to the user to decide anyways.
+export const AMOUNT_VS_FEE_RATIO: number = 10

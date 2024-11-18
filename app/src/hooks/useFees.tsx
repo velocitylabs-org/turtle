@@ -1,9 +1,9 @@
-import { getNativeToken } from '@/config/registry'
+import { getNativeToken } from '@/registry'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { getCoingekoId, Token } from '@/models/token'
-import { Fees } from '@/models/transfer'
+import { AmountInfo } from '@/models/transfer'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
@@ -25,7 +25,7 @@ const useFees = (
   amount?: bigint | null,
   recipient?: string | null,
 ) => {
-  const [fees, setFees] = useState<Fees | null>(null)
+  const [fees, setFees] = useState<AmountInfo | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
