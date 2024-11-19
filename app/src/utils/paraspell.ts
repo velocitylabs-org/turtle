@@ -50,12 +50,7 @@ export const createTx = async (
   }
   // para to para
   else {
-    const currencyId = getCurrencyId(
-      environment,
-      sourceChainFromId,
-      sourceChain.uid,
-      token,
-    )
+    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(api)
       .from(sourceChainFromId as ParaChain)
