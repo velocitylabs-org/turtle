@@ -1,5 +1,5 @@
 import { Chain } from '@/models/chain'
-import { LocalAssetUid, parachain, Registry, snowbridgeWrapped } from '.'
+import { parachain, Registry, snowbridgeWrapped } from '.'
 import { Token } from '@/models/token'
 import { DWELLIR_KEY } from '@/config'
 
