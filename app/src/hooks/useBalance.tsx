@@ -38,6 +38,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
   })
 
   const fetchBalance = useCallback(async () => {
+    console.log('fetchBalance')
     // Reset balance first to avoid showing the balance on another
     // chain or for another token while fetching the new one.
     setBalance(undefined)
@@ -90,11 +91,12 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-  }, [env, chain, address, token, fetchErc20Balance, fetchEthBalance])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [env, chain, address, token?.id, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {
     fetchBalance()
-  }, [chain, token, address, fetchBalance])
+  }, [fetchBalance])
 
   return { balance, fetchBalance, loading: loading || loadingErc20Balance || loadingEthBalance }
 }

@@ -33,6 +33,7 @@ const useFees = (
   const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
+    console.log('fetchFees')
     if (!sourceChain || !destinationChain || !token || !amount || !recipient || !senderAddress) {
       setFees(null)
       return
@@ -88,7 +89,7 @@ const useFees = (
             origin: sourceChainNode,
             destination: destinationChainNode,
             currency,
-            amount: amount.toString(),
+            amount: BigInt(10 ** token.decimals).toString(), // hardcoded amount because the fee is usually independent of the amount
             account: senderAddress,
             accountDestination: recipient,
             api: sourceChain.rpcConnection,
