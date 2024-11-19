@@ -12,15 +12,13 @@
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "prepare": "husky",
-    "cypress:open": "cypress open",
-    "postinstall": "npx papi"
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@hookform/resolvers": "3.9.0",
     "@nextui-org/react": "^2.4.8",
     "@paraspell/sdk": "^7.1.2",
-    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot/api": "^14.0.1",
     "@polkadot/api-base": "^14.0.1",
     "@polkadot/apps-config": "^0.145.1",
