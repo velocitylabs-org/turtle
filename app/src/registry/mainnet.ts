@@ -1,5 +1,5 @@
 import { Chain } from '@/models/chain'
-import { LocalAssetUid, parachain, Registry, snowbridgeWrapped } from '.'
+import { parachain, Registry, snowbridgeWrapped } from '.'
 import { Token } from '@/models/token'
 import { DWELLIR_KEY } from '@/config'
 
@@ -745,7 +745,6 @@ export const REGISTRY: Registry = {
     },
   ],
   assetUid: new Map([
-    [Hydration.uid, new Map([[Eth.WETH.id, { id: '1000189' } as LocalAssetUid]])],
     [
       AssetHub.uid,
       new Map([
