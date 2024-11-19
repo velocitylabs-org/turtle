@@ -1,5 +1,4 @@
-// eslint-disable-next-line import/no-namespace
-import * as Firebase from '@/config/firebase'
+import { db, doc, setDoc } from '@/config/firebase'
 import { captureException } from '@sentry/nextjs'
 
 export interface TransferMetric {
@@ -17,20 +16,17 @@ export interface TransferMetric {
 
 export async function trackTransferMetrics(data: TransferMetric) {
   try {
-    await Firebase.setDoc(
-      Firebase.doc(Firebase.db, 'turtle-usage', data.id ?? crypto.randomUUID()),
-      {
-        amount: data.amount,
-        date: data.date,
-        destinationChain: data.destinationChain,
-        recipient: data.recipient,
-        sender: data.sender,
-        sourceChain: data.sourceChain,
-        token: data.token,
-        usdFees: data.usdFees,
-        usdValue: data.usdValue,
-      },
-    )
+    await setDoc(doc(db, 'turtle-usage', data.id ?? crypto.randomUUID()), {
+      amount: data.amount,
+      date: data.date,
+      destinationChain: data.destinationChain,
+      recipient: data.recipient,
+      sender: data.sender,
+      sourceChain: data.sourceChain,
+      token: data.token,
+      usdFees: data.usdFees,
+      usdValue: data.usdValue,
+    })
   } catch (error) {
     console.error('Error, was not able to log transaction to Firestore: ', error)
     captureException(error)
