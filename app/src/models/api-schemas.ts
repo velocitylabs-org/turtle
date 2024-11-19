@@ -23,3 +23,7 @@ export const ongoingTransfersSchema = z.object({
 })
 
 export type ongoingTransfersSchema = z.infer<typeof ongoingTransfersSchema>
+
+export const tokenPriceSchema = z.object({
+  token: tokenSchema,
+})

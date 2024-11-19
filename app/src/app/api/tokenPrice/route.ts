@@ -1,0 +1,36 @@
+import { tokenPriceSchema } from '@/models/api-schemas'
+import { getCoingekoId } from '@/models/token'
+import { getTokenPrice } from '@/services/balance'
+import { getErrorMessage } from '@/utils/transferTracking'
+import { unstable_cache } from 'next/cache'
+import { NextResponse } from 'next/server'
+
+const CACHE_REVALIDATE_IN_SECONDS = 120
+
+export async function POST(request: Request) {
+  try {
+    const requestValue = await tokenPriceSchema.spa(await request.json())
+    if (!requestValue.success)
+      return NextResponse.json({ error: requestValue.error }, { status: 400 })
+
+    const { token } = requestValue.data
+    if (!token) return NextResponse.json({ error: requestValue.error }, { status: 400 })
+
+    const fetchTokenPrice = unstable_cache(
+      async () => {
+        const result = await getTokenPrice(getCoingekoId(token))
+        return result?.usd ?? 0
+      },
+      [`tokenPrice-${token.id}`],
+      {
+        revalidate: CACHE_REVALIDATE_IN_SECONDS,
+      },
+    )
+
+    const tokenPrice = await fetchTokenPrice()
+    return NextResponse.json(tokenPrice, { status: 200 })
+  } catch (err) {
+    console.error('Error in token price API:', err)
+    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 })
+  }
+}
