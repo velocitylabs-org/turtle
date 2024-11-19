@@ -89,8 +89,8 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
 /**
  * Get the ParaSpell currency id in the form of `TCurrencyCore`.
  *
- * @remarks We prioritize an local asset id if specified in our registry and otherwise default
- * to the paraspell token symbol. AH edge case is handled.
+ * @remarks We prioritize an local asset id if specified in our registry and otherwise
+ * default to the token symbol.
  *
  * */
 export function getCurrencyId(
@@ -99,12 +99,5 @@ export function getCurrencyId(
   chainId: string,
   token: Token,
 ): TCurrencyCore {
-  // When sending a token to AssetHub, this currency id must be specified in a way that's
-  // known to AssetHub rather than providing an identifier relative to the source chain.
-  // Quoting Dudo:
-  // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
-  // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
-  const localAssetId = getAssetUid(env, chainId, token.id)
-
-  return localAssetId ?? { symbol: getTokenSymbol(node, token) }
+  return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
 }
