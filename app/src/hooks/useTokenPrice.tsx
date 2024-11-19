@@ -1,31 +1,40 @@
-import { useCallback, useEffect, useState } from 'react'
-import { getCoingekoId, Token } from '@/models/token'
-import { getTokenPrice } from '@/services/balance'
+import { Token } from '@/models/token'
 import { captureException } from '@sentry/nextjs'
+import { useQuery } from '@tanstack/react-query'
+
+const fetchTokenPrice = async (token: Token) => {
+  const response = await fetch(`/api/tokenPrice`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token }),
+  })
+
+  if (!response.ok) {
+    const { error } = await response.json()
+    throw new Error(error || 'Failed to fetch token price')
+  }
+  const data: number = await response.json()
+  return data
+}
 
 const useTokenPrice = (token?: Token | null) => {
-  const [price, setPrice] = useState<number | null>(null)
+  const { data: price, error: isTokenPriceError } = useQuery({
+    queryKey: ['tokenPrice', token?.id],
+    queryFn: async () => {
+      if (!token) return null
+      return await fetchTokenPrice(token)
+    },
+  })
 
-  const fetchPrice = useCallback(async () => {
-    if (!token) {
-      setPrice(null)
-      return
-    }
+  if (isTokenPriceError) {
+    console.error('useTokenPrice: Failed to fetch with error:', isTokenPriceError.message)
+    captureException(isTokenPriceError.message)
+    return null
+  }
 
-    try {
-      const result = await getTokenPrice(getCoingekoId(token))
-      const price = result?.usd ?? 0
-      setPrice(price)
-    } catch (e) {
-      console.error('useTokenPrice: Failed to fetch with error:', e)
-      captureException(e)
-    }
-  }, [token])
-
-  useEffect(() => {
-    fetchPrice()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  if (!price) return null
 
   return price
 }
