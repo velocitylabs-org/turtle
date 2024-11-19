@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-namespace
 import * as Firebase from '@/config/firebase'
+import { captureException } from '@sentry/nextjs'
 
 export interface TransferMetric {
   id?: string
@@ -32,5 +33,6 @@ export async function trackTransferMetrics(data: TransferMetric) {
     )
   } catch (error) {
     console.error('Error, was not able to log transaction to Firestore: ', error)
+    captureException(error)
   }
 }
