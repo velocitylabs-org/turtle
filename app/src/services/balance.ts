@@ -56,3 +56,19 @@ export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null>
     return null
   }
 }
+
+export const getApiTokenPrice = async (token: Token) => {
+  const response = await fetch(`/api/tokenPrice`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token }),
+  })
+
+  if (!response.ok) {
+    const { error } = await response.json()
+    throw new Error(error || 'Failed to fetch token price')
+  }
+  return (await response.json()) as number
+}

@@ -5,7 +5,7 @@ import { getErrorMessage } from '@/utils/transferTracking'
 import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 
-const CACHE_REVALIDATE_IN_SECONDS = 120
+const CACHE_REVALIDATE_IN_SECONDS = 180
 
 export async function POST(request: Request) {
   try {
