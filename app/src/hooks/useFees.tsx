@@ -29,7 +29,6 @@ const useFees = (
   const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    console.log('fetchFees')
     if (!sourceChain || !destinationChain || !token || !recipient || !senderAddress) {
       setFees(null)
       return

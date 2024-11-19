@@ -13,7 +13,6 @@ const useTokenPrice = (token?: Token | null) => {
     }
 
     try {
-      console.log('fetchPrice')
       const result = await getTokenPrice(getCoingekoId(token))
       const price = result?.usd ?? 0
       setPrice(price)
