@@ -1,7 +1,6 @@
 import { TransferParams } from '@/hooks/useTransfer'
-import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { getAssetUid, isAssetHub } from '@/registry'
+import { getAssetUid } from '@/registry'
 import { Environment } from '@/store/environmentStore'
 import {
   assets,
@@ -56,7 +55,6 @@ export const createTx = async (
       sourceChainFromId,
       sourceChain.uid,
       token,
-      destinationChain,
     )
 
     return await Builder(api)
@@ -105,16 +103,13 @@ export function getCurrencyId(
   node: TNodeDotKsmWithRelayChains,
   chainId: string,
   token: Token,
-  destinationChain?: Chain,
 ): TCurrencyCore {
   // When sending a token to AssetHub, this currency id must be specified in a way that's
   // known to AssetHub rather than providing an identifier relative to the source chain.
   // Quoting Dudo:
   // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
   // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
-  const lookupChainId =
-    destinationChain && isAssetHub(destinationChain) ? destinationChain.uid : chainId
-  const localAssetId = getAssetUid(env, lookupChainId, token.id)
+  const localAssetId = getAssetUid(env, chainId, token.id)
 
   return localAssetId ?? { symbol: getTokenSymbol(node, token) }
 }

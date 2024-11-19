@@ -81,7 +81,6 @@ const useFees = (
             sourceChainNode,
             sourceChain.uid,
             token,
-            destinationChain,
           )
 
           const info = await getOriginFeeDetails({

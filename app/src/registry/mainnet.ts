@@ -743,7 +743,6 @@ export const REGISTRY: Registry = {
     },
   ],
   assetUid: new Map([
-    [Hydration.uid, new Map([[Eth.WETH.id, { id: '1000189' } as LocalAssetUid]])],
     [
       AssetHub.uid,
       new Map([
