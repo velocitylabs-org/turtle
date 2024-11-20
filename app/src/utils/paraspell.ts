@@ -1,7 +1,6 @@
 import { TransferParams } from '@/hooks/useTransfer'
-import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { getAssetUid, isAssetHub } from '@/registry'
+import { getAssetUid } from '@/registry'
 import { Environment } from '@/store/environmentStore'
 import {
   assets,
@@ -51,13 +50,7 @@ export const createTx = async (
   }
   // para to para
   else {
-    const currencyId = getCurrencyId(
-      environment,
-      sourceChainFromId,
-      sourceChain.uid,
-      token,
-      destinationChain,
-    )
+    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(api)
       .from(sourceChainFromId as ParaChain)
@@ -96,8 +89,8 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
 /**
  * Get the ParaSpell currency id in the form of `TCurrencyCore`.
  *
- * @remarks We prioritize an local asset id if specified in our registry and otherwise default
- * to the paraspell token symbol. AH edge case is handled.
+ * @remarks We prioritize an local asset id if specified in our registry and otherwise
+ * default to the token symbol.
  *
  * */
 export function getCurrencyId(
@@ -105,16 +98,6 @@ export function getCurrencyId(
   node: TNodeDotKsmWithRelayChains,
   chainId: string,
   token: Token,
-  destinationChain?: Chain,
 ): TCurrencyCore {
-  // When sending a token to AssetHub, this currency id must be specified in a way that's
-  // known to AssetHub rather than providing an identifier relative to the source chain.
-  // Quoting Dudo:
-  // "So every Parachain with xTokens transfering to AssetHub (If compatible) have to
-  // enter asset ID on asset hub(the asset id you wish to receive) rather than on source chain"
-  const lookupChainId =
-    destinationChain && isAssetHub(destinationChain) ? destinationChain.uid : chainId
-  const localAssetId = getAssetUid(env, lookupChainId, token.id)
-
-  return localAssetId ?? { symbol: getTokenSymbol(node, token) }
+  return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
 }
