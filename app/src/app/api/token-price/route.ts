@@ -1,11 +1,9 @@
 import { tokenPriceSchema } from '@/models/api-schemas'
 import { getCoingekoId } from '@/models/token'
-import { getTokenPrice } from '@/services/balance'
+import { CACHE_REVALIDATE_IN_SECONDS, getTokenPrice } from '@/services/balance'
 import { getErrorMessage } from '@/utils/transferTracking'
 import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
-
-const CACHE_REVALIDATE_IN_SECONDS = 180
 
 export async function POST(request: Request) {
   try {
