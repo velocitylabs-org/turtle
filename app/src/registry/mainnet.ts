@@ -705,7 +705,7 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Bifrost.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.BNC.id],
+      tokens: [Polkadot.DOT.id, Polkadot.BNC.id, Polkadot.VDOT.id],
     },
     {
       from: Interlay.uid,
