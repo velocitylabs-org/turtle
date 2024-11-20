@@ -440,7 +440,7 @@ export namespace Polkadot {
     id: 'vdot',
     name: 'Voucher DOT',
     symbol: 'VDOT',
-    logoURI: 'https://assets.coingecko.com/coins/images/28875/standard/vDOT.png?1696527852',
+    logoURI: 'https://coin-images.coingecko.com/coins/images/28875/large/vDOT.png?1696527852',
     decimals: 10,
     address: '',
     multilocation:
