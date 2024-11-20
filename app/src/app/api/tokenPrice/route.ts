@@ -10,11 +10,13 @@ const CACHE_REVALIDATE_IN_SECONDS = 180
 export async function POST(request: Request) {
   try {
     const requestValue = await tokenPriceSchema.spa(await request.json())
-    if (!requestValue.success)
+    if (!requestValue.success) {
+      console.log('API_TOKEN_PRICE_ROUTE: Failed to parse request')
       return NextResponse.json({ error: requestValue.error }, { status: 400 })
+    }
 
     const { token } = requestValue.data
-    if (!token) return NextResponse.json({ error: requestValue.error }, { status: 400 })
+    if (!token) return NextResponse.json({ error: 'Token is undefined in API' }, { status: 400 })
 
     const fetchTokenPrice = unstable_cache(
       async () => {
