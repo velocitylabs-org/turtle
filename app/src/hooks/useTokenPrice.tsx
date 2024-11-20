@@ -1,33 +1,26 @@
-import { getCoingekoId, Token } from '@/models/token'
-import { getTokenPrice } from '@/services/balance'
+import { Token } from '@/models/token'
+import { CACHE_REVALIDATE_IN_SECONDS, getCachedTokenPrice } from '@/services/balance'
 import { captureException } from '@sentry/nextjs'
-import { useCallback, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-const useTokenPrice = (token?: Token | null) => {
-  const [price, setPrice] = useState<number | null>(null)
+const useTokenPrice = (token?: Token | null): number | null => {
+  const { data: price, error: isTokenPriceError } = useQuery({
+    queryKey: ['tokenPrice', token?.id],
+    queryFn: async () => {
+      if (!token) return null
+      return await getCachedTokenPrice(token)
+    },
+    staleTime: CACHE_REVALIDATE_IN_SECONDS * 1000, // specified in miliseconds
+  })
 
-  const fetchPrice = useCallback(async () => {
-    if (!token) {
-      setPrice(null)
-      return
-    }
+  if (isTokenPriceError) {
+    console.error('useTokenPrice: Failed to fetch with error:', isTokenPriceError.message)
+    captureException(isTokenPriceError.message)
+    return null
+  }
 
-    try {
-      const result = await getTokenPrice(getCoingekoId(token))
-      const price = result?.usd ?? 0
-      setPrice(price)
-    } catch (e) {
-      console.error('useTokenPrice: Failed to fetch with error:', e)
-      captureException(e)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token?.id])
-
-  useEffect(() => {
-    fetchPrice()
-  }, [fetchPrice])
-
-  return price
+  if (!price) return null
+  return price.usd ?? 0
 }
 
 export default useTokenPrice
