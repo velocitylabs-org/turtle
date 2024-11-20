@@ -1,5 +1,7 @@
 import { Token } from '@/models/token'
 
+export const CACHE_REVALIDATE_IN_SECONDS = 180
+
 export interface TokenPrice {
   usd: number
 }
@@ -26,8 +28,15 @@ export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null>
   }
 }
 
-export const getApiTokenPrice = async (token: Token) => {
-  const response = await fetch(`/api/tokenPrice`, {
+/**
+ * Fetches and caches the price of a token from the server.
+ * It serves as a cached layer for retrieving token prices by relying on the `getTokenPrice` function.
+ *
+ * @param token - The token to fetch its price.
+ * @returns - A Promise resolving to the token price as a number.
+ */
+export const getCachedTokenPrice = async (token: Token) => {
+  const response = await fetch(`/api/token-price`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

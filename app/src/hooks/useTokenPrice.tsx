@@ -1,5 +1,5 @@
 import { Token } from '@/models/token'
-import { getApiTokenPrice } from '@/services/balance'
+import { CACHE_REVALIDATE_IN_SECONDS, getCachedTokenPrice } from '@/services/balance'
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
@@ -8,9 +8,9 @@ const useTokenPrice = (token?: Token | null) => {
     queryKey: ['tokenPrice', token?.id],
     queryFn: async () => {
       if (!token) return null
-      return await getApiTokenPrice(token)
+      return await getCachedTokenPrice(token)
     },
-    staleTime: 1000 * 60 * 3, // stale data for 3 mins
+    staleTime: CACHE_REVALIDATE_IN_SECONDS * 1000, // specified in miliseconds
   })
 
   if (isTokenPriceError) {
