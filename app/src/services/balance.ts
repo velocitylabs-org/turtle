@@ -35,7 +35,7 @@ export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null>
  * @param token - The token to fetch its price.
  * @returns - A Promise resolving to the token price as a number.
  */
-export const getCachedTokenPrice = async (token: Token) => {
+export const getCachedTokenPrice = async (token: Token): Promise<TokenPrice> => {
   const response = await fetch(`/api/token-price`, {
     method: 'POST',
     headers: {
@@ -48,5 +48,5 @@ export const getCachedTokenPrice = async (token: Token) => {
     const { error } = await response.json()
     throw new Error(error || 'Failed to fetch token price')
   }
-  return (await response.json()) as number
+  return await response.json()
 }

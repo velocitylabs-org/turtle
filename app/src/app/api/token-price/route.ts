@@ -18,8 +18,7 @@ export async function POST(request: Request) {
 
     const fetchTokenPrice = unstable_cache(
       async () => {
-        const result = await getTokenPrice(getCoingekoId(token))
-        return result?.usd ?? 0
+        return await getTokenPrice(getCoingekoId(token))
       },
       [`tokenPrice-${token.id}`],
       {
