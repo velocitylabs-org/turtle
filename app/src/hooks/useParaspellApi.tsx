@@ -81,7 +81,7 @@ const useParaspellApi = () => {
                 usdValue: tokenUSDValue,
                 usdFees: fees.inDollars,
                 recipient: recipient,
-                date: date.toISOString(),
+                date,
               })
             }
             setStatus('Idle')
