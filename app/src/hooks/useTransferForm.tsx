@@ -9,10 +9,9 @@ import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
-import useSnowbridgeContext from './useSnowbridgeContext'
 import useTokenPrice from './useTokenPrice'
 
 interface FormInputs {
@@ -30,8 +29,6 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  //todo: can we remove and/or decouple basic logic such as balance lookup from the snowbridge context?
-  const { snowbridgeContext } = useSnowbridgeContext()
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
 
@@ -64,18 +61,7 @@ const useTransferForm = () => {
     sourceChain,
     destinationChain,
     tokenAmount?.token,
-    safeConvertAmount(tokenAmount?.amount, tokenAmount?.token),
     getRecipientAddress(manualRecipient, destinationWallet),
-  )
-
-  const balanceParams = useMemo(
-    () => ({
-      chain: sourceChain,
-      token: tokenAmount?.token,
-      address: sourceWallet?.sender?.address,
-      context: snowbridgeContext,
-    }),
-    [sourceChain, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
   )
 
   const {
@@ -84,9 +70,9 @@ const useTransferForm = () => {
     fetchBalance,
   } = useBalance({
     env: environment,
-    chain: balanceParams.chain,
-    token: balanceParams.token ?? undefined,
-    address: balanceParams.address,
+    chain: sourceChain,
+    token: tokenAmount?.token ?? undefined,
+    address: sourceWallet?.sender?.address,
   })
 
   const isFormValid =

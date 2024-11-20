@@ -435,6 +435,19 @@ export namespace Polkadot {
     coingeckoId: 'polkadot',
     origin: parachain(0),
   }
+
+  export const VDOT: Token = {
+    id: 'vdot',
+    name: 'Voucher DOT',
+    symbol: 'VDOT',
+    logoURI: 'https://coin-images.coingecko.com/coins/images/28875/large/vDOT.png?1696527852',
+    decimals: 10,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0900000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    coingeckoId: 'voucher-dot',
+    origin: parachain(2030),
+  }
 }
 
 // Assembling the Mainnet registry
@@ -470,6 +483,7 @@ export const REGISTRY: Registry = {
     Polkadot.GLMR,
     Polkadot.ASTR,
     Polkadot.INTR,
+    Polkadot.VDOT,
     Eth.MYTH,
     Polkadot.HDX,
     Eth.TON,
@@ -602,6 +616,12 @@ export const REGISTRY: Registry = {
       tokens: [Eth.WETH.id, Polkadot.USDC.id, Polkadot.USDT.id],
     },
     {
+      from: AssetHub.uid,
+      to: Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.DOT.id],
+    },
+    {
       from: Acala.uid,
       to: RelayChain.uid,
       sdk: 'ParaSpellApi',
@@ -635,25 +655,31 @@ export const REGISTRY: Registry = {
       from: Bifrost.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.BNC.id],
+      tokens: [Polkadot.DOT.id, Polkadot.BNC.id, Polkadot.VDOT.id],
     },
     {
       from: Bifrost.uid,
       to: Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.BNC.id, Polkadot.GLMR.id],
+      tokens: [Polkadot.DOT.id, Polkadot.BNC.id, Polkadot.GLMR.id, Polkadot.VDOT.id],
     },
     {
       from: Bifrost.uid,
       to: Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.BNC.id],
+      tokens: [Polkadot.DOT.id, Polkadot.BNC.id, Polkadot.VDOT.id],
     },
     {
       from: Bifrost.uid,
       to: Acala.uid,
       sdk: 'ParaSpellApi',
       tokens: [Polkadot.DOT.id],
+    },
+    {
+      from: Centrifuge.uid,
+      to: Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.CFG.id],
     },
     {
       from: Interlay.uid,
@@ -668,12 +694,6 @@ export const REGISTRY: Registry = {
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
       tokens: [Polkadot.ACA.id, Polkadot.DOT.id],
-    },
-    {
-      from: Hydration.uid,
-      to: Moonbeam.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.HDX.id],
     },
     {
       from: Hydration.uid,
@@ -697,7 +717,7 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.INTR.id, Polkadot.HDX.id],
+      tokens: [Polkadot.DOT.id, Polkadot.INTR.id, Polkadot.HDX.id, Polkadot.VDOT.id],
     },
     {
       from: Hydration.uid,
