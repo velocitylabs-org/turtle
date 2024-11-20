@@ -1,7 +1,7 @@
-import { metrics } from '@sentry/nextjs'
-import { track } from '@vercel/analytics/react'
+import { captureException } from '@sentry/nextjs'
 
 export interface TransferMetric {
+  id?: string
   sender: string
   sourceChain: string
   token: string
@@ -10,59 +10,40 @@ export interface TransferMetric {
   usdValue: number
   usdFees: number
   recipient: string
-  date: string
+  date: Date
 }
 
-export const trackTransferMetrics = (data: TransferMetric) => {
-  trackTransferVercel(data)
-  trackTransferSentry(data)
-}
+export async function trackTransferMetrics(data: TransferMetric) {
+  const databaseUrl =
+    'https://firestore.googleapis.com/v1/projects/' +
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID +
+    '/databases/(default)/documents/' +
+    process.env.NEXT_PUBLIC_FIREBASE_TX_COLLECTION_ID +
+    '?' +
+    new URLSearchParams({ documentId: data.id ?? crypto.randomUUID() }).toString()
 
-const trackTransferVercel = (data: TransferMetric) => {
-  track('Transfer', {
-    sender: data.sender,
-    sourceChain: data.sourceChain,
-    token: data.token,
-    amount: data.amount,
-    destinationChain: data.destinationChain,
-    usdValue: data.usdValue,
-    usdFees: data.usdFees,
-    recipient: data.recipient,
-    date: data.date,
-  })
-}
-
-const trackTransferSentry = (data: TransferMetric) => {
-  // Track the number of transfers (counter)
-  metrics.increment('transfer_count', 1, {
-    tags: {
-      sender: data.sender,
-      source_chain: data.sourceChain,
-      destination_chain: data.destinationChain,
-      token: data.token,
+  const userData = {
+    fields: {
+      amount: { stringValue: data.amount },
+      date: { timestampValue: { seconds: Math.floor(data.date.getTime() / 1000) } },
+      destinationChain: { stringValue: data.destinationChain },
+      recipient: { stringValue: data.recipient },
+      sender: { stringValue: data.sender },
+      sourceChain: { stringValue: data.sourceChain },
+      token: { stringValue: data.token },
+      usdFees: { doubleValue: data.usdFees },
+      usdValue: { doubleValue: data.usdValue },
     },
-  })
+  }
 
-  // Track the USD value of the transfer (gauge)
-  metrics.gauge('transfer_usd_value', data.usdValue, {
-    tags: {
-      source_chain: data.sourceChain,
-      destination_chain: data.destinationChain,
-      token: data.token,
+  fetch(databaseUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-    unit: 'USD',
+    body: JSON.stringify(userData),
+  }).catch(error => {
+    console.error('Error, was not able to log transaction to Firestore: ', error)
+    captureException(error)
   })
-
-  // Track the fees in USD (gauge)
-  metrics.gauge('transfer_usd_fees', data.usdFees, {
-    tags: {
-      source_chain: data.sourceChain,
-      destination_chain: data.destinationChain,
-      token: data.token,
-    },
-    unit: 'USD',
-  })
-
-  // Track unique senders (set)
-  metrics.set('unique_senders', data.sender)
 }
