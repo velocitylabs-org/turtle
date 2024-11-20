@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
 import { getCoingekoId, Token } from '@/models/token'
 import { getTokenPrice } from '@/services/balance'
 import { captureException } from '@sentry/nextjs'
+import { useCallback, useEffect, useState } from 'react'
 
 const useTokenPrice = (token?: Token | null) => {
   const [price, setPrice] = useState<number | null>(null)
@@ -20,12 +20,12 @@ const useTokenPrice = (token?: Token | null) => {
       console.error('useTokenPrice: Failed to fetch with error:', e)
       captureException(e)
     }
-  }, [token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token?.id])
 
   useEffect(() => {
     fetchPrice()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [fetchPrice])
 
   return price
 }

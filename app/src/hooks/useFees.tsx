@@ -11,29 +11,25 @@ import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
-
-const DEBOUNCE_DELAY_MS = 500
 
 const useFees = (
   senderAddress?: string | null,
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
-  amount?: bigint | null,
   recipient?: string | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token || !amount || !recipient || !senderAddress) {
+    if (!sourceChain || !destinationChain || !token || !recipient || !senderAddress) {
       setFees(null)
       return
     }
@@ -82,7 +78,7 @@ const useFees = (
             origin: sourceChainNode,
             destination: destinationChainNode,
             currency,
-            amount: amount.toString(),
+            amount: BigInt(10 ** token.decimals).toString(), // hardcoded amount because the fee is usually independent of the amount
             account: senderAddress,
             accountDestination: recipient,
             api: sourceChain.rpcConnection,
@@ -114,35 +110,21 @@ const useFees = (
     } finally {
       setLoading(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     env,
     sourceChain,
     destinationChain,
-    token,
-    amount,
+    token?.id,
     recipient,
     snowbridgeContext,
     senderAddress,
     addNotification,
   ])
 
-  // Debounced fetch fees
   useEffect(() => {
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current)
-    }
-
-    debounceTimeoutRef.current = setTimeout(() => {
-      fetchFees()
-    }, DEBOUNCE_DELAY_MS)
-
-    // Cleanup timeout on unmount
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current)
-      }
-    }
-  }, [amount, fetchFees])
+    fetchFees()
+  }, [fetchFees])
 
   return { fees, loading, refetch: fetchFees }
 }
