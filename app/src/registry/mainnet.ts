@@ -1,5 +1,5 @@
 import { Chain } from '@/models/chain'
-import { LocalAssetUid, parachain, Registry, snowbridgeWrapped } from '.'
+import { parachain, Registry, snowbridgeWrapped } from '.'
 import { Token } from '@/models/token'
 import { DWELLIR_KEY } from '@/config'
 
@@ -170,6 +170,7 @@ export namespace Eth {
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"}}]}}',
     origin: snowbridgeWrapped(),
+    coingeckoId: 'usd-coin',
   }
 
   export const DAI: Token = {
@@ -382,6 +383,7 @@ export namespace Polkadot {
     address: '',
     multilocation: '',
     origin: parachain(1000),
+    coingeckoId: 'usd-coin',
   }
 
   // Polkadot-native USDT
@@ -743,7 +745,6 @@ export const REGISTRY: Registry = {
     },
   ],
   assetUid: new Map([
-    [Hydration.uid, new Map([[Eth.WETH.id, { id: '1000189' } as LocalAssetUid]])],
     [
       AssetHub.uid,
       new Map([
