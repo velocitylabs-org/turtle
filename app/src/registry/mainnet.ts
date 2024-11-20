@@ -699,12 +699,6 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.HDX.id],
-    },
-    {
-      from: Hydration.uid,
-      to: Moonbeam.uid,
-      sdk: 'ParaSpellApi',
       tokens: [Polkadot.DOT.id, Polkadot.HDX.id, Polkadot.GLMR.id],
     },
     {
@@ -723,7 +717,7 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.INTR.id, Polkadot.HDX.id],
+      tokens: [Polkadot.DOT.id, Polkadot.INTR.id, Polkadot.HDX.id, Polkadot.VDOT.id],
     },
     {
       from: Hydration.uid,
