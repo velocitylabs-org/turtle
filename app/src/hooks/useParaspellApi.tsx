@@ -12,6 +12,7 @@ import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
+import { ISubmittableResult } from '@polkadot/types/types'
 
 const useParaspellApi = () => {
   const { addTransfer: addTransferToStorage } = useOngoingTransfers()
@@ -36,7 +37,8 @@ const useParaspellApi = () => {
 
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
-      await tx.signAndSend(account.address, { signer: account.signer }, async result => {
+      setStatus('Signing')
+      await tx.signAndSend(account.address, { signer: account.signer }, async (result: ISubmittableResult) => {
         try {
           const eventsData = handleSubmittableEvents(result)
           if (eventsData) {
@@ -88,15 +90,21 @@ const useParaspellApi = () => {
             return
           }
         } catch (callbackError) {
+          if (txWasCancelled(sender, callbackError)) {
+            setStatus('Cancelled')
+          }
           if (!txWasCancelled(sender, callbackError)) captureException(callbackError)
           handleSendError(callbackError)
-          setStatus('Idle')
+          // setStatus('Idle')
         }
       })
     } catch (e) {
+      if (txWasCancelled(sender, e)) {
+        setStatus('Cancelled')
+      }
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
-      setStatus('Idle')
+      // setStatus('Idle')
     }
   }
 

@@ -3,6 +3,7 @@ import { Button as NextButton } from '@nextui-org/react'
 import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
+import { TransferStatus } from '@snowbridge/api/dist/history'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -55,6 +56,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset'
   /** Cypress ID for testing. */
   cypressID?: string
+  status: TransferStatus
 }
 
 const Button: FC<ButtonProps> = ({
@@ -68,6 +70,7 @@ const Button: FC<ButtonProps> = ({
   children,
   type = 'button', // Default type is 'button',
   cypressID,
+  status,
 }) => {
   return (
     <NextButton
@@ -85,11 +88,13 @@ const Button: FC<ButtonProps> = ({
     >
       {/** loading state */}
       {loading && (
-        <LoadingIcon
-          className="animate-spin"
+        <div className='flex items-center'><LoadingIcon
+          className="animate-spin mr-3"
           width={spinnerSize[size]}
           height={spinnerSize[size]}
         />
+        {status}
+        </div>
       )}
 
       {/** children or label */}

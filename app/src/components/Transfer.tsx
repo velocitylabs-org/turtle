@@ -327,7 +327,7 @@ const Transfer: FC = () => {
 
       {/* Transfer Button */}
       <Button
-        className="my-5"
+        className="my-5 motion-preset-shake"
         label="Send"
         size="lg"
         variant="primary"
@@ -335,6 +335,7 @@ const Transfer: FC = () => {
         loading={transferStatus !== 'Idle'}
         disabled={!isTransferAllowed}
         cypressID="form-submit"
+        status={transferStatus}
       />
 
       <Credits />

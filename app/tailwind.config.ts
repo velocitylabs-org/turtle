@@ -91,7 +91,7 @@ const config: Config = {
     },
   },
   darkMode: 'class',
-  plugins: [addVariablesForColors, nextui(), require('tailwindcss-animate')],
+  plugins: [addVariablesForColors, nextui(), require('tailwindcss-animate'), require('tailwindcss-motion')],
 }
 export default config
 

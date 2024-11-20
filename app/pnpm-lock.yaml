@@ -128,6 +128,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3)))
+      tailwindcss-motion:
+        specifier: 0.4.3-beta
+        version: 0.4.3-beta(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3)))
       viem:
         specifier: ^2.21.33
         version: 2.21.35(bufferutil@4.0.8)(typescript@5.6.3)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -10072,6 +10075,11 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
 
+  tailwindcss-motion@0.4.3-beta:
+    resolution: {integrity: sha512-9S4nmSw01m0/z0UxodUNT7U+yUdlZdXnH9RMkb2rXvrUEQQ+rMVPeP9j4pMwJy779LECiSr+IoSTVrGluSfU2w==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+
   tailwindcss@3.4.14:
     resolution: {integrity: sha512-IcSvOcTRcUtQQ7ILQL5quRDg7Xs93PdJEk1ZLbhhvJc7uj/OAhYOnruEiwnGgBvUtaUAJ8/mhSw1o8L2jCiENA==}
     engines: {node: '>=14.0.0'}
@@ -14414,7 +14422,7 @@ snapshots:
       '@polkadot/types-augment': 14.3.1
       '@polkadot/types-codec': 14.3.1
       '@polkadot/util': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -14489,7 +14497,7 @@ snapshots:
       '@polkadot/types': 14.3.1
       '@polkadot/util': 13.2.3
       rxjs: 7.8.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -14580,7 +14588,7 @@ snapshots:
       '@polkadot/util': 13.2.3
       '@polkadot/util-crypto': 13.2.3(@polkadot/util@13.2.3)
       rxjs: 7.8.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -14709,7 +14717,7 @@ snapshots:
       '@polkadot/util-crypto': 13.2.3(@polkadot/util@13.2.3)
       eventemitter3: 5.0.1
       rxjs: 7.8.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -14886,7 +14894,7 @@ snapshots:
     dependencies:
       '@polkadot/util': 13.2.3
       '@polkadot/util-crypto': 13.2.3(@polkadot/util@13.2.3)
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/keyring@6.11.1(@polkadot/util-crypto@13.2.1(@polkadot/util@13.2.1))(@polkadot/util@13.2.1)':
     dependencies:
@@ -14942,7 +14950,7 @@ snapshots:
     dependencies:
       '@polkadot/util': 13.2.3
       '@substrate/ss58-registry': 1.51.0
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/networks@6.11.1':
     dependencies:
@@ -15032,7 +15040,7 @@ snapshots:
       '@polkadot/types': 14.3.1
       '@polkadot/types-codec': 14.3.1
       '@polkadot/util': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -15107,7 +15115,7 @@ snapshots:
       '@polkadot/types': 14.3.1
       '@polkadot/util': 13.2.3
       rxjs: 7.8.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -15214,7 +15222,7 @@ snapshots:
       eventemitter3: 5.0.1
       mock-socket: 9.3.1
       nock: 13.5.6
-      tslib: 2.8.0
+      tslib: 2.8.1
     optionalDependencies:
       '@substrate/connect': 0.8.11(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -15288,7 +15296,7 @@ snapshots:
       '@polkadot/types': 14.3.1
       '@polkadot/types-codec': 14.3.1
       '@polkadot/util': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/types-augment@7.15.1':
     dependencies:
@@ -15332,7 +15340,7 @@ snapshots:
     dependencies:
       '@polkadot/util': 13.2.3
       '@polkadot/x-bigint': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/types-codec@7.15.1':
     dependencies:
@@ -15367,7 +15375,7 @@ snapshots:
     dependencies:
       '@polkadot/types-codec': 14.3.1
       '@polkadot/util': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/types-create@7.15.1':
     dependencies:
@@ -15415,7 +15423,7 @@ snapshots:
       '@polkadot/types-codec': 14.3.1
       '@polkadot/types-create': 14.3.1
       '@polkadot/util': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/types-known@4.17.1':
     dependencies:
@@ -15467,7 +15475,7 @@ snapshots:
   '@polkadot/types-support@14.3.1':
     dependencies:
       '@polkadot/util': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/types-support@7.15.1':
     dependencies:
@@ -15521,7 +15529,7 @@ snapshots:
       '@polkadot/util': 13.2.3
       '@polkadot/util-crypto': 13.2.3(@polkadot/util@13.2.3)
       rxjs: 7.8.1
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/types@4.17.1':
     dependencies:
@@ -15642,7 +15650,7 @@ snapshots:
       '@polkadot/x-bigint': 13.2.3
       '@polkadot/x-randomvalues': 13.2.3(@polkadot/util@13.2.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.2.3))
       '@scure/base': 1.1.9
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/util-crypto@6.11.1(@polkadot/util@6.11.1)':
     dependencies:
@@ -15729,7 +15737,7 @@ snapshots:
       '@polkadot/x-textencoder': 13.2.3
       '@types/bn.js': 5.1.6
       bn.js: 5.2.1
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/util@6.11.1':
     dependencies:
@@ -15998,7 +16006,7 @@ snapshots:
   '@polkadot/x-bigint@13.2.3':
     dependencies:
       '@polkadot/x-global': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/x-bigint@8.7.1':
     dependencies:
@@ -16028,7 +16036,7 @@ snapshots:
     dependencies:
       '@polkadot/x-global': 13.2.3
       node-fetch: 3.3.2
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/x-fetch@8.7.1':
     dependencies:
@@ -16053,7 +16061,7 @@ snapshots:
 
   '@polkadot/x-global@13.2.3':
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/x-global@6.11.1':
     dependencies:
@@ -16087,7 +16095,7 @@ snapshots:
       '@polkadot/util': 13.2.3
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.2.3)
       '@polkadot/x-global': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/x-randomvalues@6.11.1':
     dependencies:
@@ -16122,7 +16130,7 @@ snapshots:
   '@polkadot/x-textdecoder@13.2.3':
     dependencies:
       '@polkadot/x-global': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/x-textdecoder@6.11.1':
     dependencies:
@@ -16152,7 +16160,7 @@ snapshots:
   '@polkadot/x-textencoder@13.2.3':
     dependencies:
       '@polkadot/x-global': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@polkadot/x-textencoder@6.11.1':
     dependencies:
@@ -16194,7 +16202,7 @@ snapshots:
   '@polkadot/x-ws@13.2.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/x-global': 13.2.3
-      tslib: 2.8.0
+      tslib: 2.8.1
       ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
@@ -24906,6 +24914,10 @@ snapshots:
       tailwindcss: 3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3))
 
   tailwindcss-animate@1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3))):
+    dependencies:
+      tailwindcss: 3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3))
+
+  tailwindcss-motion@0.4.3-beta(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3))):
     dependencies:
       tailwindcss: 3.4.14(ts-node@10.9.2(@types/node@20.17.1)(typescript@5.6.3))
 
