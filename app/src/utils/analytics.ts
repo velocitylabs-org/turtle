@@ -1,4 +1,3 @@
-import { db, doc, setDoc } from '@/config/firebase'
 import { captureException } from '@sentry/nextjs'
 
 export interface TransferMetric {
@@ -11,24 +10,40 @@ export interface TransferMetric {
   usdValue: number
   usdFees: number
   recipient: string
-  date: string
+  date: Date
 }
 
 export async function trackTransferMetrics(data: TransferMetric) {
-  try {
-    await setDoc(doc(db, 'turtle-usage', data.id ?? crypto.randomUUID()), {
-      amount: data.amount,
-      date: data.date,
-      destinationChain: data.destinationChain,
-      recipient: data.recipient,
-      sender: data.sender,
-      sourceChain: data.sourceChain,
-      token: data.token,
-      usdFees: data.usdFees,
-      usdValue: data.usdValue,
-    })
-  } catch (error) {
+  const databaseUrl =
+    'https://firestore.googleapis.com/v1/projects/' +
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID +
+    '/databases/(default)/documents/' +
+    process.env.NEXT_PUBLIC_FIREBASE_TX_COLLECTION_ID +
+    '?' +
+    new URLSearchParams({ documentId: data.id ?? crypto.randomUUID() }).toString()
+
+  const userData = {
+    fields: {
+      amount: { stringValue: data.amount },
+      date: { timestampValue: { seconds: Math.floor(data.date.getTime() / 1000) } },
+      destinationChain: { stringValue: data.destinationChain },
+      recipient: { stringValue: data.recipient },
+      sender: { stringValue: data.sender },
+      sourceChain: { stringValue: data.sourceChain },
+      token: { stringValue: data.token },
+      usdFees: { doubleValue: data.usdFees },
+      usdValue: { doubleValue: data.usdValue },
+    },
+  }
+
+  fetch(databaseUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userData),
+  }).catch(error => {
     console.error('Error, was not able to log transaction to Firestore: ', error)
     captureException(error)
-  }
+  })
 }

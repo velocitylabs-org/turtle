@@ -192,7 +192,7 @@ const useSnowbridgeApi = () => {
           usdValue: tokenUSDValue ?? 0,
           usdFees: fees.inDollars,
           recipient: recipient,
-          date: date.toISOString(),
+          date: date
         })
       }
     } catch (e) {
