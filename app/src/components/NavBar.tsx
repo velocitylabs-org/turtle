@@ -8,7 +8,7 @@ export default function NavBar() {
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={40} />
         <div className="turtle-text-shadow xl-letter-spacing text-[2rem] text-white">Turtle</div>
-        <div className="box-shadow flex h-[19px] items-center justify-center rounded-[4px] border border-white bg-white px-[5px]">
+        <div className="box-shadow mt-[1px] flex h-[19px] items-center justify-center rounded-[4px] border border-white bg-white px-[5px]">
           <Tooltip showIcon={false} content={'Turtle now supports XCM transfers 🚀🫶🏻🥳'}>
             <p className="rainbow-text text-[12px] font-bold">v2.0.0</p>
           </Tooltip>
