@@ -434,7 +434,7 @@ export namespace Polkadot {
     address: '',
     multilocation:
       '{"parents":1,"interior":{"x3":[{"parachain":1000},{"palletInstance":50},{"generalIndex":31337}]}}',
-    coingeckoId: '', // doesnt exist on coingecko
+    coingeckoId: 'polkadot', // wud doesnt exist on coingecko. TODO: change that
     origin: parachain(1000),
   }
 
@@ -634,7 +634,7 @@ export const REGISTRY: Registry = {
       from: AssetHub.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.WUD.id],
     },
     {
       from: Acala.uid,
@@ -646,7 +646,7 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.WUD.id],
     },
     {
       from: Bifrost.uid,
