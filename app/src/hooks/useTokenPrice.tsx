@@ -3,8 +3,17 @@ import { CACHE_REVALIDATE_IN_SECONDS, getCachedTokenPrice } from '@/services/bal
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
-const useTokenPrice = (token?: Token | null): number | null => {
-  const { data: price, error: isTokenPriceError } = useQuery({
+type TokenPriceRes = {
+  price: number
+  isTokenPriceLoading: false
+} | null
+
+const useTokenPrice = (token?: Token | null): TokenPriceRes => {
+  const {
+    data: price,
+    isLoading: isTokenPriceLoading,
+    error: isTokenPriceError,
+  } = useQuery({
     queryKey: ['tokenPrice', token?.id],
     queryFn: async () => {
       if (!token) return null
@@ -20,7 +29,7 @@ const useTokenPrice = (token?: Token | null): number | null => {
   }
 
   if (!price) return null
-  return price.usd ?? 0
+  return { price: price.usd ?? 0, isTokenPriceLoading }
 }
 
 export default useTokenPrice

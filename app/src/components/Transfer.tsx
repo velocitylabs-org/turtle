@@ -9,7 +9,7 @@ import {
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { getDurationEstimate, toAmountInfo } from '@/utils/transfer'
+import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -47,7 +47,6 @@ const Transfer: FC = () => {
     manualRecipient,
     sourceWallet,
     destinationWallet,
-    tokenPrice,
     fees,
     loadingFees,
     transferStatus,
@@ -317,13 +316,15 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      <TxSummary
-        hidden={!isValid || requiresErc20SpendApproval}
-        loading={loadingFees || !fees}
-        transferAmount={toAmountInfo(tokenAmount, tokenPrice)}
-        fees={fees}
-        durationEstimate={durationEstimate}
-      />
+      {tokenAmount && tokenAmount.token && tokenAmount.amount && (
+        <TxSummary
+          hidden={!isValid || requiresErc20SpendApproval}
+          loading={loadingFees || !fees}
+          tokenAmount={tokenAmount}
+          fees={fees}
+          durationEstimate={durationEstimate}
+        />
+      )}
 
       {/* Transfer Button */}
       <Button
