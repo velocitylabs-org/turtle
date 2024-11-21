@@ -316,7 +316,7 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {tokenAmount && tokenAmount.token && !!tokenAmount.amount && (
+      {tokenAmount && tokenAmount.token && !!tokenAmount.amount && !requiresErc20SpendApproval && (
         <TxSummary
           hidden={!isValid || requiresErc20SpendApproval}
           loading={loadingFees || !fees}
