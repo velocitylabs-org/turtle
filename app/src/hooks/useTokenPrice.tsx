@@ -3,7 +3,7 @@ import { CACHE_REVALIDATE_IN_SECONDS, getCachedTokenPrice } from '@/services/bal
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
-type TokenPriceRes = {
+type TokenPriceResult = {
   price?: number
   isTokenPriceLoading: boolean
 }
