@@ -4,9 +4,9 @@ import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
 type TokenPriceRes = {
-  price: number
-  isTokenPriceLoading: false
-} | null
+  price?: number
+  isTokenPriceLoading: boolean
+}
 
 const useTokenPrice = (token?: Token | null): TokenPriceRes => {
   const {
@@ -25,11 +25,10 @@ const useTokenPrice = (token?: Token | null): TokenPriceRes => {
   if (isTokenPriceError) {
     console.error('useTokenPrice: Failed to fetch with error:', isTokenPriceError.message)
     captureException(isTokenPriceError.message)
-    return null
+    return { price: undefined, isTokenPriceLoading: false }
   }
 
-  if (!price) return null
-  return { price: price.usd ?? 0, isTokenPriceLoading }
+  return { price: price?.usd, isTokenPriceLoading }
 }
 
 export default useTokenPrice

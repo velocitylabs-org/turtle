@@ -26,8 +26,8 @@ const TxSummary: FC<TxSummaryProps> = ({
   durationEstimate,
   hidden,
 }) => {
-  const tokenPrice = useTokenPrice(tokenAmount.token)
-  const transferAmount = toAmountInfo(tokenAmount, tokenPrice?.price)
+  const { price, isTokenPriceLoading } = useTokenPrice(tokenAmount.token)
+  const transferAmount = toAmountInfo(tokenAmount, price)
   if (!fees) return null
 
   const renderContent = () => {
@@ -75,7 +75,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                     {formatAmount(Number(tokenAmount.amount))} {tokenAmount.token?.symbol}
                   </div>
                   <div className="min-h-6">
-                    {tokenPrice?.isTokenPriceLoading ? (
+                    {isTokenPriceLoading ? (
                       <Skeleton className="h-6 w-20 rounded-md bg-turtle-level1" />
                     ) : (
                       transferAmount &&
