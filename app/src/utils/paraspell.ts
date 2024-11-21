@@ -109,12 +109,14 @@ export function getCurrencyId(
 export const getMultiAsset = (tokens: Token[], amounts: string[]) => {
   if (tokens.length !== amounts.length) throw new Error('Token and amount length mismatch')
 
-  return tokens.map((token, index) => ({
-    id: {
-      Concrete: JSON.parse(token.multilocation),
-    },
-    fun: {
-      Fungible: amounts[index],
-    },
-  }))
+  return {
+    multiasset: tokens.map((token, index) => ({
+      id: {
+        Concrete: JSON.parse(token.multilocation),
+      },
+      fun: {
+        Fungible: amounts[index],
+      },
+    })),
+  }
 }
