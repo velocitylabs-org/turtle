@@ -5,10 +5,10 @@ import { useQuery } from '@tanstack/react-query'
 
 type TokenPriceResult = {
   price?: number
-  loading: boolean
+  isTokenPriceLoading: boolean
 }
 
-const useTokenPrice = (token?: Token | null): TokenPriceRes => {
+const useTokenPrice = (token?: Token | null): TokenPriceResult => {
   const {
     data: price,
     isLoading: isTokenPriceLoading,
