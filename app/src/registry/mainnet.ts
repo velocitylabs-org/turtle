@@ -381,7 +381,8 @@ export namespace Polkadot {
     logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation:
+      '{"parents":1,"interior":{"x3":[{"parachain":1000},{"palletInstance":50},{"generalIndex":1337}]}}',
     origin: parachain(1000),
     coingeckoId: 'usd-coin',
   }
@@ -394,7 +395,8 @@ export namespace Polkadot {
     logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation:
+      '{"parents":1,"interior":{"x3":[{"parachain":1000},{"palletInstance":50},{"generalIndex":1984}]}}',
     origin: parachain(1000),
   }
 

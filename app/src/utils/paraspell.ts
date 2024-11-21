@@ -1,6 +1,6 @@
 import { TransferParams } from '@/hooks/useTransfer'
 import { Token } from '@/models/token'
-import { getAssetUid } from '@/registry'
+import { getAssetUid, Mainnet } from '@/registry'
 import { Environment } from '@/store/environmentStore'
 import {
   assets,
@@ -48,9 +48,13 @@ export const createTx = async (
       .address(recipient)
       .build()
   }
-  // para to para
+  // para to pa
   else {
-    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+    let currencyId: any
+    // TODO: edge case. Update this once Paraspell supports a generic way of handling this
+    if (token.id === Mainnet.Polkadot.WUD.id)
+      currencyId = getMultiAsset([token, Mainnet.Polkadot.USDC], [amount.toString(), '150000']) // hardcoded to 0.15 USDC (should be more than enough)
+    else currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(api)
       .from(sourceChainFromId as ParaChain)
