@@ -101,3 +101,16 @@ export function getCurrencyId(
 ): TCurrencyCore {
   return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
 }
+
+export const getMultiAsset = (tokens: Token[], amounts: string[]) => {
+  if (tokens.length !== amounts.length) throw new Error('Token and amount length mismatch')
+
+  return tokens.map((token, index) => ({
+    id: {
+      Concrete: JSON.parse(token.multilocation),
+    },
+    fun: {
+      Fungible: amounts[index],
+    },
+  }))
+}
