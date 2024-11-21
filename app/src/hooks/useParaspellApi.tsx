@@ -8,10 +8,7 @@ import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx } from '@/utils/paraspell'
 import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
-import { ApiPromise, WsProvider } from '@polkadot/api'
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp'
 import { captureException } from '@sentry/nextjs'
-import { useEffect } from 'react'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Status, TransferParams } from './useTransfer'
@@ -39,12 +36,6 @@ const useParaspellApi = () => {
 
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
-
-      const wsProvider = new WsProvider([
-        'wss://rpc.darwinia.network',
-        'wss://darwinia-rpc.dwellir.com',
-      ])
-      const api = await ApiPromise.create({ provider: wsProvider })
 
       await tx.signAndSend(account.address, { signer: account.signer }, async result => {
         try {
@@ -117,23 +108,6 @@ const useParaspellApi = () => {
       severity: NotificationSeverity.Error,
     })
   }
-
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      const extensions = await web3Enable('Your Dapp')
-      if (extensions.length === 0) {
-        throw new Error(
-          'No extension found. You must have an extension like Talisman to handle ethereum type addesses',
-        )
-      }
-      console.log('extensions', extensions)
-
-      const accounts = await web3Accounts()
-      // Here, observe that your ethereum type accounts should appear in the array 'accounts'
-      console.log('accounts', accounts)
-    }
-    fetchAccounts()
-  }, [])
 
   return { transfer }
 }
