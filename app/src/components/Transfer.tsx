@@ -61,6 +61,7 @@ const Transfer: FC = () => {
 
   const {
     allowance: erc20SpendAllowance,
+    loading: allowanceLoading,
     approveAllowance,
     approving: isApprovingErc20Spend,
   } = useErc20Allowance({
@@ -316,15 +317,19 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {tokenAmount && tokenAmount.token && !!tokenAmount.amount && !requiresErc20SpendApproval && (
-        <TxSummary
-          hidden={!isValid || requiresErc20SpendApproval}
-          loading={loadingFees || !fees}
-          tokenAmount={tokenAmount}
-          fees={fees}
-          durationEstimate={durationEstimate}
-        />
-      )}
+      {tokenAmount &&
+        tokenAmount.token &&
+        !!tokenAmount.amount &&
+        !allowanceLoading &&
+        !requiresErc20SpendApproval && (
+          <TxSummary
+            hidden={!isValid || requiresErc20SpendApproval}
+            loading={loadingFees || !fees}
+            tokenAmount={tokenAmount}
+            fees={fees}
+            durationEstimate={durationEstimate}
+          />
+        )}
 
       {/* Transfer Button */}
       <Button
