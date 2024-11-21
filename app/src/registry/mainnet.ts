@@ -1,7 +1,7 @@
-import { Chain } from '@/models/chain'
-import { parachain, Registry, snowbridgeWrapped } from '.'
-import { Token } from '@/models/token'
 import { DWELLIR_KEY } from '@/config'
+import { Chain } from '@/models/chain'
+import { Token } from '@/models/token'
+import { parachain, Registry, snowbridgeWrapped } from '.'
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -424,6 +424,20 @@ export namespace Polkadot {
     origin: parachain(2032),
   }
 
+  export const WUD: Token = {
+    id: 'wud',
+    name: 'Gavun Wud',
+    symbol: 'WUD',
+    logoURI:
+      'https://cdn.jsdelivr.net/gh/galacticcouncil/intergalactic-asset-metadata@latest/v2/polkadot/2034/assets/1000085/icon.png',
+    decimals: 10,
+    address: '',
+    multilocation:
+      '{"parents":1,"interior":{"x3":[{"parachain":1000},{"palletInstance":50},{"generalIndex":31337}]}}',
+    coingeckoId: '', // doesnt exist on coingecko
+    origin: parachain(1000),
+  }
+
   export const DOT: Token = {
     id: 'dot',
     name: 'Polkadot',
@@ -484,6 +498,7 @@ export const REGISTRY: Registry = {
     Polkadot.ASTR,
     Polkadot.INTR,
     Polkadot.VDOT,
+    Polkadot.WUD,
     Eth.MYTH,
     Polkadot.HDX,
     Eth.TON,
