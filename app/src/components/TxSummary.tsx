@@ -26,7 +26,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   durationEstimate,
   hidden,
 }) => {
-  const { price, isTokenPriceLoading } = useTokenPrice(tokenAmount.token)
+  const { price, loading: isTokenPriceLoading } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
   if (!fees) return null
 
