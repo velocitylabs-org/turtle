@@ -48,13 +48,29 @@ export const createTx = async (
       .address(recipient)
       .build()
   }
-  // para to pa
+  // Multiasset edge case. When we need to send a fee asset with the actual token.
+  // TODO: Update this once Paraspell supports a generic way of handling this
+  else if (token.id === Mainnet.Polkadot.WUD.id) {
+    const multiasset = getMultiAsset([
+      { ...token, amount: amount.toString() },
+      { ...Mainnet.Polkadot.USDC, amount: '150000' },
+    ]) // hardcoded to 0.15 USDC (should be more than enough)
+
+    console.log(multiasset)
+
+    return await Builder(api)
+      .from(sourceChainFromId as ParaChain)
+      .to(destinationChainFromId as ParaChain)
+      .currency(multiasset)
+      .feeAsset(1)
+      .amount(0)
+      .address(recipient)
+      .build()
+  }
+
+  // para to para
   else {
-    let currencyId: any
-    // TODO: edge case. Update this once Paraspell supports a generic way of handling this
-    if (token.id === Mainnet.Polkadot.WUD.id)
-      currencyId = getMultiAsset([token, Mainnet.Polkadot.USDC], [amount.toString(), '150000']) // hardcoded to 0.15 USDC (should be more than enough)
-    else currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(api)
       .from(sourceChainFromId as ParaChain)
@@ -106,16 +122,16 @@ export function getCurrencyId(
   return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
 }
 
-export const getMultiAsset = (tokens: Token[], amounts: string[]) => {
-  if (tokens.length !== amounts.length) throw new Error('Token and amount length mismatch')
+type TokenAndAmount = Token & { amount: string }
 
+export const getMultiAsset = (tokenAndAmounts: TokenAndAmount[]) => {
   return {
-    multiasset: tokens.map((token, index) => ({
+    multiasset: tokenAndAmounts.map(tokenAndAmount => ({
       id: {
-        Concrete: JSON.parse(token.multilocation),
+        Concrete: JSON.parse(tokenAndAmount.multilocation),
       },
       fun: {
-        Fungible: amounts[index],
+        Fungible: tokenAndAmount.amount,
       },
     })),
   }
