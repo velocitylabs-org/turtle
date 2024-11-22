@@ -23,7 +23,7 @@ export interface TransferParams {
   onSuccess?: () => void
 }
 
-export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending' | 'Cancelled'
+export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'
 
 const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')

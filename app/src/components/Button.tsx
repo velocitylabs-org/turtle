@@ -4,7 +4,7 @@ import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 const styles = {
@@ -15,6 +15,8 @@ const styles = {
   outline:
     'border-1 border-turtle-level3 bg-transparent hover:border-turtle-level3 disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
+  update:
+    'border-1 border-turtle-level3 bg-transparent disabled:border-turtle-secondary text-turtle-secondary-dark',
 }
 
 const sizeHeights: Record<ButtonSize, string> = {
@@ -46,6 +48,8 @@ export interface ButtonProps {
   disabled?: boolean
   /** Whether the button is in a loading state. */
   loading?: boolean
+  /** A custom icon to be displayed instead of the spinner */
+  icon?: ReactNode
   /** The variant determines the preset color and style of the button. */
   variant?: ButtonVariant
   /** The size of the button. */
@@ -64,6 +68,7 @@ const Button: FC<ButtonProps> = ({
   className,
   disabled,
   loading,
+  icon,
   variant = 'primary',
   size = 'lg',
   children,
@@ -77,7 +82,7 @@ const Button: FC<ButtonProps> = ({
       onClick={onClick}
       size={size}
       radius="sm"
-      className={twMerge(styles[variant], sizeHeights[size], paddingX[size], className)}
+      className={twMerge('w-full', styles[variant], sizeHeights[size], paddingX[size], className)}
       type={type}
       style={{
         outline: 'none',
@@ -87,11 +92,15 @@ const Button: FC<ButtonProps> = ({
       {/** loading state */}
       {loading && (
         <div className="flex items-center">
-          <LoadingIcon
-            className="mr-3 animate-spin"
-            width={spinnerSize[size]}
-            height={spinnerSize[size]}
-          />
+          {!icon && (
+            <LoadingIcon
+              className="mr-3 animate-spin"
+              width={spinnerSize[size]}
+              height={spinnerSize[size]}
+            />
+          )}
+          {icon && <span className="mr-3">{icon}</span>}
+          <span className="mr-3">{label}</span>
         </div>
       )}
 

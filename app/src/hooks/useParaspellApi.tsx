@@ -92,22 +92,16 @@ const useParaspellApi = () => {
               return
             }
           } catch (callbackError) {
-            if (txWasCancelled(sender, callbackError)) {
-              setStatus('Cancelled')
-            }
             if (!txWasCancelled(sender, callbackError)) captureException(callbackError)
             handleSendError(callbackError)
-            // setStatus('Idle')
+            setStatus('Idle')
           }
         },
       )
     } catch (e) {
-      if (txWasCancelled(sender, e)) {
-        setStatus('Cancelled')
-      }
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
-      // setStatus('Idle')
+      setStatus('Idle')
     }
   }
 

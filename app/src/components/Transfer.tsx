@@ -337,7 +337,7 @@ const Transfer: FC = () => {
 
       {/* Transfer Button */}
       <SendButton
-        className="motion-preset-shake my-5"
+        className="my-5 w-full"
         label="Send"
         size="lg"
         variant="primary"
