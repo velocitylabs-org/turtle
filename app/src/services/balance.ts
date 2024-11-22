@@ -19,7 +19,7 @@ export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null>
     const options = { method: 'GET', headers: { accept: 'application/json' } }
     const result = await fetch(url, options)
 
-    if (!result.ok) throw new Error('Failed to fetch token price')
+    if (!result.ok) throw new Error(`Failed to fetch ${tokenId} price from coingecko`)
 
     return (await result.json())[tokenId.toLocaleLowerCase()] as TokenPrice
   } catch (error) {
@@ -46,7 +46,7 @@ export const getCachedTokenPrice = async (token: Token): Promise<TokenPrice> => 
 
   if (!response.ok) {
     const { error } = await response.json()
-    throw new Error(error || 'Failed to fetch token price')
+    throw new Error(error || `Failed to fetch ${token.id} price from server request`)
   }
   return await response.json()
 }

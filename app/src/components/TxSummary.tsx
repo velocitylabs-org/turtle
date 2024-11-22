@@ -1,5 +1,5 @@
 import { AmountInfo } from '@/models/transfer'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { spinnerSize } from './Button'
@@ -7,22 +7,22 @@ import LoadingIcon from './svg/LoadingIcon'
 import { ExclamationMark } from './svg/ExclamationMark'
 import { colors } from '../../tailwind.config'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
+import { TokenAmount } from '@/models/select'
+import useTokenPrice from '@/hooks/useTokenPrice'
+import { Skeleton } from './ui/skeleton'
 
 interface TxSummaryProps {
+  tokenAmount: TokenAmount
   loading?: boolean
-  transferAmount?: AmountInfo | null
   fees?: AmountInfo | null
   durationEstimate?: string
-  hidden?: boolean
 }
 
-const TxSummary: FC<TxSummaryProps> = ({
-  loading,
-  transferAmount,
-  fees,
-  durationEstimate,
-  hidden,
-}) => {
+const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEstimate }) => {
+  const { price, loading: isLoadingTokenPrice } = useTokenPrice(tokenAmount.token)
+  const transferAmount = toAmountInfo(tokenAmount, price)
+  if (!fees) return null
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -35,8 +35,6 @@ const TxSummary: FC<TxSummaryProps> = ({
         </div>
       )
     }
-
-    if (!fees || !transferAmount) return null
 
     return (
       <div className="tx-summary p-4 pt-3">
@@ -67,13 +65,20 @@ const TxSummary: FC<TxSummaryProps> = ({
               <div className="items-right flex">
                 <div>
                   <div className="text-right text-lg text-turtle-foreground">
-                    {formatAmount(Number(transferAmount.amount))} {transferAmount.token.symbol}
+                    {formatAmount(Number(tokenAmount.amount))} {tokenAmount.token?.symbol}
                   </div>
-                  {transferAmount.inDollars > 0 && (
-                    <div className="text-right text-turtle-level3">
-                      ${formatAmount(transferAmount.inDollars)}
-                    </div>
-                  )}
+                  <div className="min-h-6">
+                    {isLoadingTokenPrice ? (
+                      <Skeleton className="h-6 w-20 rounded-md bg-turtle-level1" />
+                    ) : (
+                      transferAmount &&
+                      transferAmount.inDollars > 0 && (
+                        <div className="text-right text-turtle-level3">
+                          ${formatAmount(transferAmount.inDollars)}
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
             </li>
@@ -87,7 +92,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             </li>
           </ul>
 
-          {transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO && (
+          {transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO && (
             <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2 px-3">
               <ExclamationMark
                 width={20}
@@ -105,19 +110,17 @@ const TxSummary: FC<TxSummaryProps> = ({
 
   return (
     <AnimatePresence>
-      {!hidden && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{
-            opacity: 1,
-            height: 'auto',
-            transition: { type: 'spring', bounce: 0.6, duration: 0.5 },
-          }}
-          exit={{ opacity: 0, height: 0, transition: { duration: 0.2 } }}
-        >
-          {renderContent()}
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{
+          opacity: 1,
+          height: 'auto',
+          transition: { type: 'spring', bounce: 0.6, duration: 0.5 },
+        }}
+        exit={{ opacity: 0, height: 0, transition: { duration: 0.2 } }}
+      >
+        {renderContent()}
+      </motion.div>
     </AnimatePresence>
   )
 }

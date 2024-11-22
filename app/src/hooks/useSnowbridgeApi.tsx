@@ -1,8 +1,8 @@
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { getCoingekoId, Token } from '@/models/token'
+import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
-import { getTokenPrice } from '@/services/balance'
+import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { getSenderAddress } from '@/utils/address'
@@ -157,14 +157,10 @@ const useSnowbridgeApi = () => {
         message: 'Transfer initiated. See below!',
         severity: NotificationSeverity.Success,
       })
-      const coingekoId = getCoingekoId(token)
-      const tokenUSDValue = (await getTokenPrice(coingekoId))?.usd
 
-      if (tokenUSDValue === null || tokenUSDValue === 0)
-        throw new Error('Failed to fetch token price')
-
-      const date = new Date()
       const senderAddress = await getSenderAddress(sender)
+      const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
+      const date = new Date()
 
       addTransferToStorage({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?

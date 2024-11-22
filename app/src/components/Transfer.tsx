@@ -9,7 +9,7 @@ import {
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { getDurationEstimate, toAmountInfo } from '@/utils/transfer'
+import { getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -48,7 +48,6 @@ const Transfer: FC = () => {
     manualRecipient,
     sourceWallet,
     destinationWallet,
-    tokenPrice,
     fees,
     loadingFees,
     transferStatus,
@@ -63,6 +62,7 @@ const Transfer: FC = () => {
 
   const {
     allowance: erc20SpendAllowance,
+    loading: allowanceLoading,
     approveAllowance,
     approving: isApprovingErc20Spend,
   } = useErc20Allowance({
@@ -124,6 +124,14 @@ const Transfer: FC = () => {
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees
+
+  const shouldDisplayTxSummary =
+    isValid &&
+    tokenAmount &&
+    tokenAmount.token &&
+    !!tokenAmount.amount &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval
 
   return (
     <form
@@ -318,13 +326,14 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      <TxSummary
-        hidden={!isValid || requiresErc20SpendApproval}
-        loading={loadingFees || !fees}
-        transferAmount={toAmountInfo(tokenAmount, tokenPrice)}
-        fees={fees}
-        durationEstimate={durationEstimate}
-      />
+      {shouldDisplayTxSummary && (
+        <TxSummary
+          loading={loadingFees || !fees}
+          tokenAmount={tokenAmount}
+          fees={fees}
+          durationEstimate={durationEstimate}
+        />
+      )}
 
       {/* Transfer Button */}
       <SendButton

@@ -1,6 +1,6 @@
 import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
-import { getTokenPrice } from '@/services/balance'
+import { getCachedTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
@@ -47,10 +47,8 @@ const useParaspellApi = () => {
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
 
-              // Get the current token price
               const senderAddress = await getSenderAddress(sender)
-              const tokenUSDValue =
-                (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
+              const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
               const date = new Date()
 
               addTransferToStorage({
