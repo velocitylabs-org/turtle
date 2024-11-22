@@ -1,7 +1,7 @@
-import { Chain } from '@/models/chain'
-import { parachain, Registry, snowbridgeWrapped } from '.'
-import { Token } from '@/models/token'
 import { DWELLIR_KEY } from '@/config'
+import { Chain } from '@/models/chain'
+import { Token } from '@/models/token'
+import { parachain, Registry, snowbridgeWrapped } from '.'
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -689,6 +689,12 @@ export const REGISTRY: Registry = {
     },
 
     // Para to Para
+    {
+      from: Moonbeam.uid,
+      to: Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.DOT.id],
+    },
     {
       from: Acala.uid,
       to: Hydration.uid,

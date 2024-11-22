@@ -36,6 +36,7 @@ const useParaspellApi = () => {
 
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
+
       await tx.signAndSend(account.address, { signer: account.signer }, async result => {
         try {
           const eventsData = handleSubmittableEvents(result)

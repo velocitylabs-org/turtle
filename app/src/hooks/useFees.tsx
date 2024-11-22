@@ -8,7 +8,7 @@ import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
+import { getOriginFeeDetails, getTNode, TCurrencySymbol } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
@@ -73,6 +73,15 @@ const useFees = (
           const destinationChainNode = getTNode(destinationChain.chainId, relay)
           if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
           const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
+
+          console.log(`
+Source Chain Node: ${sourceChainNode}
+Destination Chain Node: ${destinationChainNode}
+Currency: ${(currency as TCurrencySymbol).symbol}
+Amount (10^decimals): ${BigInt(10 ** token.decimals).toString()}
+Sender Address: ${senderAddress}
+Recipient: ${recipient}
+`)
 
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
