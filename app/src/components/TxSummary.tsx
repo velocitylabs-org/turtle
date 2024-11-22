@@ -35,6 +35,7 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEst
         </div>
       )
     }
+    console.log("test commit")
 
     return (
       <div className="tx-summary p-4 pt-3">
