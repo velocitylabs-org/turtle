@@ -676,12 +676,6 @@ export const REGISTRY: Registry = {
       tokens: [Polkadot.DOT.id],
     },
     {
-      from: Centrifuge.uid,
-      to: Hydration.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.CFG.id],
-    },
-    {
       from: Interlay.uid,
       to: RelayChain.uid,
       sdk: 'ParaSpellApi',
