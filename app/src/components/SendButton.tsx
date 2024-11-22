@@ -22,7 +22,7 @@ const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
               className="animate-spin"
               width={40}
               height={40}
-              color={colors['turtle-secondary']}
+              color={colors['turtle-secondary-dark']}
             />
           }
         />
@@ -33,7 +33,7 @@ const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
           {...props}
           variant="update"
           label="Validating"
-          icon={<div className="motion-preset-pulse mr-3 text-2xl">🕵️</div>}
+          icon={<div className="motion-preset-pulse mr-3 text-3xl">🕵️</div>}
         />
       )}
 
@@ -43,7 +43,7 @@ const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
           {...props}
           variant="update"
           label="Signing"
-          icon={<div className="motion-preset-wobble mr-3 text-2xl">✍️</div>}
+          icon={<div className="motion-preset-wobble mr-3 text-3xl">✍️</div>}
         />
       )}
     </div>

@@ -16,7 +16,7 @@ const styles = {
     'border-1 border-turtle-level3 bg-transparent hover:border-turtle-level3 disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
   update:
-    'border-1 border-turtle-level3 bg-transparent disabled:border-turtle-secondary text-turtle-secondary-dark',
+    'border-1 border-turtle-secondary-dark bg-turtle-secondary text-white disabled:opacity-100 disabled:bg-opacity-50 disabled:border-opacity-40',
 }
 
 const sizeHeights: Record<ButtonSize, string> = {
@@ -82,6 +82,7 @@ const Button: FC<ButtonProps> = ({
       onClick={onClick}
       size={size}
       radius="sm"
+      disableAnimation={true}
       className={twMerge('w-full', styles[variant], sizeHeights[size], paddingX[size], className)}
       type={type}
       style={{
