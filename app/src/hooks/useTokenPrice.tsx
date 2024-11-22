@@ -5,13 +5,13 @@ import { useQuery } from '@tanstack/react-query'
 
 type TokenPriceResult = {
   price?: number
-  isTokenPriceLoading: boolean
+  loading: boolean
 }
 
 const useTokenPrice = (token?: Token | null): TokenPriceResult => {
   const {
     data: price,
-    isLoading: isTokenPriceLoading,
+    isLoading,
     error: isTokenPriceError,
   } = useQuery({
     queryKey: ['tokenPrice', token?.id],
@@ -25,10 +25,10 @@ const useTokenPrice = (token?: Token | null): TokenPriceResult => {
   if (isTokenPriceError) {
     console.error('useTokenPrice: Failed to fetch with error:', isTokenPriceError.message)
     captureException(isTokenPriceError.message)
-    return { price: undefined, isTokenPriceLoading: false }
+    return { price: undefined, loading: false }
   }
 
-  return { price: price?.usd, isTokenPriceLoading }
+  return { price: price?.usd, loading: isLoading }
 }
 
 export default useTokenPrice

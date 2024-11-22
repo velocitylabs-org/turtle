@@ -1,10 +1,11 @@
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { getCoingekoId, Token } from '@/models/token'
+import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { getNativeToken } from '@/registry'
-import { getTokenPrice } from '@/services/balance'
+import { Eth, Polkadot } from '@/registry/mainnet'
+import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
@@ -46,16 +47,14 @@ const useFees = (
       switch (direction) {
         case Direction.ToEthereum: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
-
-          tokenUSDValue = (await getTokenPrice('polkadot'))?.usd ?? 0
+          tokenUSDValue = (await getCachedTokenPrice(Polkadot.DOT))?.usd ?? 0
           fees = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
 
         case Direction.ToPolkadot: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
-
-          tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
+          tokenUSDValue = (await getCachedTokenPrice(Eth.ETH))?.usd ?? 0
           fees = (
             await toPolkadot.getSendFee(
               snowbridgeContext,
@@ -73,7 +72,6 @@ const useFees = (
           const destinationChainNode = getTNode(destinationChain.chainId, relay)
           if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
           const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
-
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
@@ -83,9 +81,8 @@ const useFees = (
             accountDestination: recipient,
             api: sourceChain.rpcConnection,
           })
+          tokenUSDValue = (await getCachedTokenPrice(nativeToken))?.usd ?? 0
           fees = info.xcmFee.toString()
-
-          tokenUSDValue = (await getTokenPrice(getCoingekoId(nativeToken)))?.usd ?? 0
           break
         }
 
