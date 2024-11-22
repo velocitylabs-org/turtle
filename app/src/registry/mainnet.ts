@@ -468,7 +468,6 @@ export const REGISTRY: Registry = {
   ],
   tokens: [
     Eth.WETH,
-    Eth.ETH,
     Eth.WBTC,
     Eth.USDC,
     Polkadot.USDC,
