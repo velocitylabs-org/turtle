@@ -3,7 +3,6 @@ import { Button as NextButton } from '@nextui-org/react'
 import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
-import { TransferStatus } from '@snowbridge/api/dist/history'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -11,7 +10,8 @@ type ButtonSize = 'sm' | 'md' | 'lg'
 const styles = {
   primary:
     'bg-turtle-primary border border-black hover:border-black focus:border-black active:border-black disabled:border-black disabled:opacity-30',
-  secondary: 'bg-turtle-level3 disabled:opacity-30',
+  secondary:
+    'bg-turtle-secondary border border-black hover:border-black focus:border-black active:border-black disabled:border-black disabled:opacity-30',
   outline:
     'border-1 border-turtle-level3 bg-transparent hover:border-turtle-level3 disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
@@ -35,7 +35,7 @@ export const spinnerSize: Record<ButtonSize, number> = {
   lg: 40,
 }
 
-interface ButtonProps {
+export interface ButtonProps {
   /** Text shown inside the button. */
   label?: string
   /** Function to call when the button is clicked. */
@@ -56,7 +56,6 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset'
   /** Cypress ID for testing. */
   cypressID?: string
-  status: TransferStatus
 }
 
 const Button: FC<ButtonProps> = ({
@@ -68,9 +67,8 @@ const Button: FC<ButtonProps> = ({
   variant = 'primary',
   size = 'lg',
   children,
-  type = 'button', // Default type is 'button',
+  type = 'button',
   cypressID,
-  status,
 }) => {
   return (
     <NextButton
@@ -88,12 +86,12 @@ const Button: FC<ButtonProps> = ({
     >
       {/** loading state */}
       {loading && (
-        <div className='flex items-center'><LoadingIcon
-          className="animate-spin mr-3"
-          width={spinnerSize[size]}
-          height={spinnerSize[size]}
-        />
-        {status}
+        <div className="flex items-center">
+          <LoadingIcon
+            className="mr-3 animate-spin"
+            width={spinnerSize[size]}
+            height={spinnerSize[size]}
+          />
         </div>
       )}
 

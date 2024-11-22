@@ -55,8 +55,8 @@ const OngoingTransfers = ({
     <div>
       {transferContext && ongoingTransfers && ongoingTransfers.length > 0 && (
         <div className="my-20">
-          <div className="xl-letter-spacing self-center text-center text-3xl text-black">
-            In Progress
+          <div className="xl-letter-spacing self-center text-center text-3xl text-white">
+            Ongoing
           </div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border-1 border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => (
@@ -74,9 +74,7 @@ const OngoingTransfers = ({
 
             {hasCompletedTransfers && (
               <button
-                onClick={() =>
-                  newTransferInit === TransferTab.New && setNewTransferInit(TransferTab.Completed)
-                }
+                onClick={() => newTransferInit === 'New' && setNewTransferInit('Done')}
                 disabled={!hasCompletedTransfers}
                 className="text-turtle-foreground)] flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
               >

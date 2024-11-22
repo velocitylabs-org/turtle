@@ -38,66 +38,71 @@ const useParaspellApi = () => {
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
       setStatus('Signing')
-      await tx.signAndSend(account.address, { signer: account.signer }, async (result: ISubmittableResult) => {
-        try {
-          const eventsData = handleSubmittableEvents(result)
-          if (eventsData) {
-            const { messageHash, messageId, extrinsicIndex } = eventsData
+      await tx.signAndSend(
+        account.address,
+        { signer: account.signer },
+        async (result: ISubmittableResult) => {
+          try {
+            const eventsData = handleSubmittableEvents(result)
+            if (eventsData) {
+              const { messageHash, messageId, extrinsicIndex } = eventsData
 
-            // Get the current token price
-            const senderAddress = await getSenderAddress(sender)
-            const tokenUSDValue = (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
-            const date = new Date()
+              // Get the current token price
+              const senderAddress = await getSenderAddress(sender)
+              const tokenUSDValue =
+                (await getTokenPrice(token.coingeckoId ?? token.symbol))?.usd ?? 0
+              const date = new Date()
 
-            addTransferToStorage({
-              id: result.txHash.toString(),
-              sourceChain,
-              token,
-              tokenUSDValue,
-              sender: senderAddress,
-              destChain: destinationChain,
-              amount: amount.toString(),
-              recipient,
-              date,
-              environment,
-              fees,
-              ...(messageHash && { crossChainMessageHash: messageHash }),
-              ...(messageId && { parachainMessageId: messageId }),
-              ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
-            } satisfies StoredTransfer)
-
-            onSuccess?.()
-            addNotification({
-              message: 'Transfer initiated. See below!',
-              severity: NotificationSeverity.Success,
-            })
-
-            // metrics
-            if (environment === Environment.Mainnet) {
-              trackTransferMetrics({
+              addTransferToStorage({
+                id: result.txHash.toString(),
+                sourceChain,
+                token,
+                tokenUSDValue,
                 sender: senderAddress,
-                sourceChain: sourceChain.name,
-                token: token.name,
+                destChain: destinationChain,
                 amount: amount.toString(),
-                destinationChain: destinationChain.name,
-                usdValue: tokenUSDValue,
-                usdFees: fees.inDollars,
-                recipient: recipient,
+                recipient,
                 date,
+                environment,
+                fees,
+                ...(messageHash && { crossChainMessageHash: messageHash }),
+                ...(messageId && { parachainMessageId: messageId }),
+                ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
+              } satisfies StoredTransfer)
+
+              onSuccess?.()
+              addNotification({
+                message: 'Transfer initiated. See below!',
+                severity: NotificationSeverity.Success,
               })
+
+              // metrics
+              if (environment === Environment.Mainnet) {
+                trackTransferMetrics({
+                  sender: senderAddress,
+                  sourceChain: sourceChain.name,
+                  token: token.name,
+                  amount: amount.toString(),
+                  destinationChain: destinationChain.name,
+                  usdValue: tokenUSDValue,
+                  usdFees: fees.inDollars,
+                  recipient: recipient,
+                  date,
+                })
+              }
+              setStatus('Idle')
+              return
             }
-            setStatus('Idle')
-            return
+          } catch (callbackError) {
+            if (txWasCancelled(sender, callbackError)) {
+              setStatus('Cancelled')
+            }
+            if (!txWasCancelled(sender, callbackError)) captureException(callbackError)
+            handleSendError(callbackError)
+            // setStatus('Idle')
           }
-        } catch (callbackError) {
-          if (txWasCancelled(sender, callbackError)) {
-            setStatus('Cancelled')
-          }
-          if (!txWasCancelled(sender, callbackError)) captureException(callbackError)
-          handleSendError(callbackError)
-          // setStatus('Idle')
-        }
-      })
+        },
+      )
     } catch (e) {
       if (txWasCancelled(sender, e)) {
         setStatus('Cancelled')

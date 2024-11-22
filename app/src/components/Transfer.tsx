@@ -26,6 +26,7 @@ import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import SendButton from './SendButton'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -326,8 +327,8 @@ const Transfer: FC = () => {
       />
 
       {/* Transfer Button */}
-      <Button
-        className="my-5 motion-preset-shake"
+      <SendButton
+        className="motion-preset-shake my-5"
         label="Send"
         size="lg"
         variant="primary"

@@ -17,9 +17,9 @@ const TransferHistory = dynamic(() => import('@/components/completed/Transaction
 
 export const HomeComponentSelect = () => {
   const { completedTransfers } = useCompletedTransfers()
-  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>(TransferTab.New)
+  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
   const hasCompletedTransfers = !!completedTransfers && completedTransfers.length > 0
-  const isCompletedTabSelected = newTransferInit === TransferTab.Completed
+  const isCompletedTabSelected = newTransferInit === 'Done'
 
   return (
     <>
