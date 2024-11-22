@@ -332,6 +332,7 @@ const Transfer: FC = () => {
           tokenAmount={tokenAmount}
           fees={fees}
           durationEstimate={durationEstimate}
+          className={transferStatus === 'Idle' ? '' : 'opacity-30'}
         />
       )}
 
