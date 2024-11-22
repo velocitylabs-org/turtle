@@ -124,6 +124,14 @@ const Transfer: FC = () => {
     !requiresErc20SpendApproval &&
     !loadingFees
 
+  const shouldDisplayTxSummary =
+    isValid &&
+    tokenAmount &&
+    tokenAmount.token &&
+    !!tokenAmount.amount &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -317,19 +325,14 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {tokenAmount &&
-        tokenAmount.token &&
-        !!tokenAmount.amount &&
-        !allowanceLoading &&
-        !requiresErc20SpendApproval && (
-          <TxSummary
-            hidden={!isValid || requiresErc20SpendApproval}
-            loading={loadingFees || !fees}
-            tokenAmount={tokenAmount}
-            fees={fees}
-            durationEstimate={durationEstimate}
-          />
-        )}
+      {shouldDisplayTxSummary && (
+        <TxSummary
+          loading={loadingFees || !fees}
+          tokenAmount={tokenAmount}
+          fees={fees}
+          durationEstimate={durationEstimate}
+        />
+      )}
 
       {/* Transfer Button */}
       <Button

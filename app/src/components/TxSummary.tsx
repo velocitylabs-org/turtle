@@ -16,17 +16,10 @@ interface TxSummaryProps {
   loading?: boolean
   fees?: AmountInfo | null
   durationEstimate?: string
-  hidden?: boolean
 }
 
-const TxSummary: FC<TxSummaryProps> = ({
-  loading,
-  tokenAmount,
-  fees,
-  durationEstimate,
-  hidden,
-}) => {
-  const { price, loading: isTokenPriceLoading } = useTokenPrice(tokenAmount.token)
+const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEstimate }) => {
+  const { price, loading: isLoadingTokenPrice } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
   if (!fees) return null
 
@@ -75,7 +68,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                     {formatAmount(Number(tokenAmount.amount))} {tokenAmount.token?.symbol}
                   </div>
                   <div className="min-h-6">
-                    {isTokenPriceLoading ? (
+                    {isLoadingTokenPrice ? (
                       <Skeleton className="h-6 w-20 rounded-md bg-turtle-level1" />
                     ) : (
                       transferAmount &&
@@ -117,19 +110,17 @@ const TxSummary: FC<TxSummaryProps> = ({
 
   return (
     <AnimatePresence>
-      {!hidden && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{
-            opacity: 1,
-            height: 'auto',
-            transition: { type: 'spring', bounce: 0.6, duration: 0.5 },
-          }}
-          exit={{ opacity: 0, height: 0, transition: { duration: 0.2 } }}
-        >
-          {renderContent()}
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{
+          opacity: 1,
+          height: 'auto',
+          transition: { type: 'spring', bounce: 0.6, duration: 0.5 },
+        }}
+        exit={{ opacity: 0, height: 0, transition: { duration: 0.2 } }}
+      >
+        {renderContent()}
+      </motion.div>
     </AnimatePresence>
   )
 }
