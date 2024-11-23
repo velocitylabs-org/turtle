@@ -4,7 +4,7 @@ import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 const styles = {
@@ -16,7 +16,7 @@ const styles = {
     'border-1 border-turtle-level3 bg-transparent hover:border-turtle-level3 disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
   update:
-    'border-1 bg-turtle-primary border border-black text-black disabled:opacity-100 disabled:bg-opacity-50 disabled:border-opacity-40',
+    'border-1 bg-turtle-secondary border border-turtle-secondary-dark text-white disabled:opacity-100 disabled:bg-opacity-50 disabled:border-opacity-40',
 }
 
 const sizeHeights: Record<ButtonSize, string> = {
@@ -48,12 +48,12 @@ export interface ButtonProps {
   disabled?: boolean
   /** Whether the button is in a loading state. */
   loading?: boolean
-  /** A custom icon to be displayed instead of the spinner */
-  icon?: ReactNode
   /** The variant determines the preset color and style of the button. */
   variant?: ButtonVariant
   /** The size of the button. */
   size?: ButtonSize
+  /** A custom icon to be displayed instead of the spinner */
+  icon?: ReactNode
   /** Content to be rendered inside the button. It will replace the label. */
   children?: ReactNode
   /** The type of the button. */
@@ -68,10 +68,16 @@ const Button: FC<ButtonProps> = ({
   className,
   disabled,
   loading,
-  icon,
   variant = 'primary',
   size = 'lg',
   children,
+  icon = (
+    <LoadingIcon
+      className="mr-3 animate-spin"
+      width={spinnerSize[size]}
+      height={spinnerSize[size]}
+    />
+  ),
   type = 'button',
   cypressID,
 }) => {
@@ -90,22 +96,17 @@ const Button: FC<ButtonProps> = ({
       }}
       data-cy={cypressID}
     >
-      {/** loading state */}
+      {/** Loading state */}
       {loading && (
         <div className="flex items-center">
-          {!icon && (
-            <LoadingIcon
-              className="mr-3 animate-spin"
-              width={spinnerSize[size]}
-              height={spinnerSize[size]}
-            />
-          )}
+          {/* Icon */}
           {icon && <span className="mr-3">{icon}</span>}
+          {/* Label */}
           <span className="mr-3">{label}</span>
         </div>
       )}
 
-      {/** children or label */}
+      {/** Default state - children or label */}
       {!loading && (children || label)}
     </NextButton>
   )
