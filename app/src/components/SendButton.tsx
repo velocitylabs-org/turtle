@@ -54,7 +54,7 @@ function getProps(status: Status, defaultLabel?: string): Props {
       }
     case 'Signing':
       return {
-        label: 'Sign',
+        label: 'Waiting for approval',
         icon: <div className="motion-preset-wobble mr-3 text-3xl">✍️</div>,
         variant: 'update',
       }

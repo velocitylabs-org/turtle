@@ -42,8 +42,29 @@ const useParaspellApi = () => {
         account.address,
         { signer: account.signer },
         async (result: ISubmittableResult) => {
+          setStatus('Sending')
+
+          const senderAddress = await getSenderAddress(sender)
+          const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
+          const date = new Date()
+
+          addTransferToStorage({
+            id: result.txHash.toString(),
+            sourceChain,
+            token,
+            tokenUSDValue,
+            sender: senderAddress,
+            destChain: destinationChain,
+            amount: amount.toString(),
+            recipient,
+            date,
+            environment,
+            fees,
+          } satisfies StoredTransfer)
+
           try {
             const eventsData = handleSubmittableEvents(result)
+            console.log('Sending - got eventsData', JSON.stringify(eventsData))
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
 
