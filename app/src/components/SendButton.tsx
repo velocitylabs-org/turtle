@@ -61,6 +61,14 @@ function getProps(status: Status, defaultLabel?: string): Props {
     case 'Sending':
       return {
         label: status,
+        icon: (
+          <LoadingIcon
+            className="animate-spin"
+            width={40}
+            height={40}
+            color={colors['turtle-secondary-dark']}
+          />
+        ),
         variant: 'update',
       }
     default:
