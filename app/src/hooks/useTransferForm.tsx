@@ -201,7 +201,9 @@ const useTransferForm = () => {
             severity: NotificationSeverity.Success,
           })
 
-          document.getElementById('ongoing-txs')?.scrollIntoView({behavior: "smooth", block: 'start'})
+          document
+            .getElementById('ongoing-txs')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         },
       })
     },

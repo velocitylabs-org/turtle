@@ -115,7 +115,7 @@ const useParaspellApi = () => {
               return
             }
           } catch (callbackError) {
-            handleSendError(sender, callbackError, setStatus) 
+            handleSendError(sender, callbackError, setStatus)
           }
         },
       )
@@ -128,15 +128,15 @@ const useParaspellApi = () => {
     setStatus('Idle')
     console.log('Transfer error:', e)
 
-    const message = txWasCancelled(sender, e) 
+    const message = txWasCancelled(sender, e)
       ? `Transfer ${'a̶p̶p̶r̶o̶v̶e̶d'} rejected`
       : 'Failed to submit the transfer'
 
-      captureException(e)
-      addNotification({
-        message,
-        severity: NotificationSeverity.Error,
-      })
+    captureException(e)
+    addNotification({
+      message,
+      severity: NotificationSeverity.Error,
+    })
   }
 
   return { transfer }
