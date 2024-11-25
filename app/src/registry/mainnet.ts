@@ -448,6 +448,20 @@ export namespace Polkadot {
     coingeckoId: 'voucher-dot',
     origin: parachain(2030),
   }
+
+  export const IBTC: Token = {
+    id: 'ibtc',
+    name: 'IBTC',
+    symbol: 'IBTC',
+    logoURI:
+      'https://assets.coingecko.com/coins/images/26217/standard/interBTC_for_Exchanges.png?1696525302',
+    decimals: 8,
+    address: '',
+    multilocation:
+      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    coingeckoId: 'interbtc',
+    origin: parachain(2032),
+  }
 }
 
 // Assembling the Mainnet registry
@@ -484,6 +498,7 @@ export const REGISTRY: Registry = {
     Polkadot.ASTR,
     Polkadot.INTR,
     Polkadot.VDOT,
+    Polkadot.IBTC,
     Eth.MYTH,
     Polkadot.HDX,
     Eth.TON,
@@ -705,7 +720,7 @@ export const REGISTRY: Registry = {
       from: Interlay.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.VDOT.id, Polkadot.IBTC.id], //Polkadot.INTR.id
     },
     {
       from: Hydration.uid,
