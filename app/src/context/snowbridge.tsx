@@ -77,9 +77,9 @@ export async function getSnowBridgeContext(environment: Environment): Promise<Co
 }
 
 export async function getSnowBridgeEtimatedTransferDuration(
-  snowbridgCtx: Context,
+  snowbridgeCtx: Context,
 ): Promise<SnowbridgeStatus> {
-  const bridgeStatus = await status.bridgeStatusInfo(snowbridgCtx)
+  const bridgeStatus = await status.bridgeStatusInfo(snowbridgeCtx)
   return {
     ethBridgeStatus: bridgeStatus.toEthereum.latencySeconds,
     polkadotBridgeStatus: bridgeStatus.toPolkadot.latencySeconds,

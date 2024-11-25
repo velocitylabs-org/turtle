@@ -29,12 +29,13 @@ const OngoingTransfers = ({
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
+  const { statusMessages } = useOngoingTransfersTracker()
+  
   const {
     snowbridgeContext: transferContext,
     isSnowbridgeContextLoading: transferContextLoading,
     snowbridgeContextError: transferContextError,
   } = useSnowbridgeContext()
-  const { statusMessages } = useOngoingTransfersTracker()
 
   const { data: estimatedTransferDuration, error: estimatedTransferDurationError } = useQuery({
     queryKey: ['transferStatus', transferContextLoading, ongoingTransfers.length],

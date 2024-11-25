@@ -22,7 +22,7 @@ import { Separator } from './ui/separator'
 
 export const OngoingTransferDialog = ({
   transfer,
-  transferStatus = 'Loading...',
+  transferStatus = 'Transfer pending...',
   estimatedTransferDuration,
 }: {
   transfer: StoredTransfer
