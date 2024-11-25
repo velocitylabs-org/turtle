@@ -12,6 +12,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
+import useNotification from './useNotification'
+import { NotificationSeverity } from '@/models/notification'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -30,6 +32,7 @@ const initValues: FormInputs = {
 const useTransferForm = () => {
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
+  const { addNotification } = useNotification()
 
   const {
     control,
@@ -190,8 +193,16 @@ const useTransferForm = () => {
         recipient: recipient,
         fees,
         onSuccess: () => {
-          reset() // reset form on success
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }) // scroll to bottom
+          // reset form on success
+          reset()
+
+          addNotification({
+            message: 'Transfer submitted! See below',
+            severity: NotificationSeverity.Success,
+          })
+
+          // todo(nuno): make this scroll to the newly addded ongoing tx
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
         },
       })
     },

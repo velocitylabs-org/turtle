@@ -153,10 +153,6 @@ const useSnowbridgeApi = () => {
       if (sendResult.failure) throw new Error('Transfer failed')
 
       onSuccess?.()
-      addNotification({
-        message: 'Transfer initiated. See below!',
-        severity: NotificationSeverity.Success,
-      })
 
       const senderAddress = await getSenderAddress(sender)
       const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0

@@ -34,6 +34,10 @@ const useParaspellApi = () => {
     } = params
 
     const account = sender as SubstrateAccount
+    const senderAddress = await getSenderAddress(sender)
+    const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
+    const date = new Date()
+    let locked = false
 
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
@@ -42,35 +46,43 @@ const useParaspellApi = () => {
         account.address,
         { signer: account.signer },
         async (result: ISubmittableResult) => {
-          setStatus('Sending')
+          // Only update the status if it's still in 'Signing', given that this callback
+          // is executed multiple times and we might have already unlocked the UI and
+          // make it available for new txs.
+          if (!locked) {
+            locked = true
+            setStatus('Sending')
 
-          const senderAddress = await getSenderAddress(sender)
-          const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
-          const date = new Date()
+            // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
+            // and unlocking the UI by setting the status back to 'Idle'.
+            await new Promise(_ =>
+              setTimeout(function () {
+                addTransferToStorage({
+                  id: result.txHash.toString(),
+                  sourceChain,
+                  token,
+                  tokenUSDValue,
+                  sender: senderAddress,
+                  destChain: destinationChain,
+                  amount: amount.toString(),
+                  recipient,
+                  date,
+                  environment,
+                  fees,
+                } satisfies StoredTransfer)
+                console.log('will set to Idle')
+                setStatus('Idle')
 
-          addTransferToStorage({
-            id: result.txHash.toString(),
-            sourceChain,
-            token,
-            tokenUSDValue,
-            sender: senderAddress,
-            destChain: destinationChain,
-            amount: amount.toString(),
-            recipient,
-            date,
-            environment,
-            fees,
-          } satisfies StoredTransfer)
+                onSuccess?.()
+              }, 2000),
+            )
+          }
 
           try {
             const eventsData = handleSubmittableEvents(result)
             console.log('Sending - got eventsData', JSON.stringify(eventsData))
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
-
-              const senderAddress = await getSenderAddress(sender)
-              const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
-              const date = new Date()
 
               addTransferToStorage({
                 id: result.txHash.toString(),
@@ -88,12 +100,6 @@ const useParaspellApi = () => {
                 ...(messageId && { parachainMessageId: messageId }),
                 ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
               } satisfies StoredTransfer)
-
-              onSuccess?.()
-              addNotification({
-                message: 'Transfer initiated. See below!',
-                severity: NotificationSeverity.Success,
-              })
 
               // metrics
               if (environment === Environment.Mainnet) {
