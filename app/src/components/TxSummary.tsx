@@ -29,10 +29,10 @@ const TxSummary: FC<TxSummaryProps> = ({
 }) => {
   const { price, loading: isLoadingTokenPrice } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
-  if (!fees) return null
+  if (!fees && !loading) return null
 
   const renderContent = () => {
-    if (loading) {
+    if (loading || !fees) {
       return (
         <div className="mt-4 flex h-[10rem] w-full items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
