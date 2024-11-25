@@ -41,7 +41,6 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEst
         <div className="pt-3">
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>
-            {/* {fees && !loading && ( */}
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Fee</div>
@@ -59,7 +58,6 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEst
                 </div>
               </div>
             </li>
-            {/* )} */}
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Amount</div>
