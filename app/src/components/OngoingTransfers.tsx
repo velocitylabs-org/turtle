@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getSnowBridgeEtimatedTransferDuration } from '@/context/snowbridge'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
-import { DisplaysTransfers, TransferTab } from '@/models/transfer'
+import { DisplaysTransfers } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'

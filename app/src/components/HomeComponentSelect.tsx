@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import Menu from '@/components/Menu'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import { TransferTabOptions, TransferTab } from '@/models/transfer'
+import { TransferTabOptions } from '@/models/transfer'
 
 import OngoingTransfers from './OngoingTransfers'
 import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
