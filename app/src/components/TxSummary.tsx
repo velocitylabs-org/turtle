@@ -21,10 +21,10 @@ interface TxSummaryProps {
 const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEstimate }) => {
   const { price, loading: isLoadingTokenPrice } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
-  if (!fees) return null
+  if (!fees && !loading) return null
 
   const renderContent = () => {
-    if (loading) {
+    if (loading || !fees) {
       return (
         <div className="mt-4 flex h-[10rem] w-full items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
@@ -41,6 +41,7 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEst
         <div className="pt-3">
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>
+            {/* {fees && !loading && ( */}
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Fee</div>
@@ -58,6 +59,7 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEst
                 </div>
               </div>
             </li>
+            {/* )} */}
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Amount</div>
