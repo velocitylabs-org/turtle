@@ -720,7 +720,7 @@ export const REGISTRY: Registry = {
       from: Interlay.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.VDOT.id, Polkadot.IBTC.id], //Polkadot.INTR.id
+      tokens: [Polkadot.DOT.id, Polkadot.VDOT.id, Polkadot.INTR.id, Polkadot.IBTC.id],
     },
     {
       from: Hydration.uid,
