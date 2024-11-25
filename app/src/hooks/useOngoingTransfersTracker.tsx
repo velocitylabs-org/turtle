@@ -122,6 +122,7 @@ const useOngoingTransfersTracker = () => {
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
 
+          // Move from ongoing to done
           removeOngoingTransfer(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,

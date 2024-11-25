@@ -11,11 +11,11 @@ import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { Status, TransferParams } from './useTransfer'
+import { Sender, Status, TransferParams } from './useTransfer'
 import { ISubmittableResult } from '@polkadot/types/types'
 
 const useParaspellApi = () => {
-  const { addTransfer: addTransferToStorage } = useOngoingTransfers()
+  const { addTransfer: addOngoingTx } = useOngoingTransfers()
   const { addNotification } = useNotification()
 
   // main transfer function which is exposed to the components.
@@ -46,18 +46,19 @@ const useParaspellApi = () => {
         account.address,
         { signer: account.signer },
         async (result: ISubmittableResult) => {
-          // Only update the status if it's still in 'Signing', given that this callback
-          // is executed multiple times and we might have already unlocked the UI and
-          // make it available for new txs.
+          // This callback might be executed multiple times but we only want to update
+          // the status of this tx and move it to 'ongoing' once.
           if (!locked) {
             locked = true
             setStatus('Sending')
 
             // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
-            // and unlocking the UI by setting the status back to 'Idle'.
+            // and unlocking the UI by resetting the form back to 'Idle'.
             await new Promise(_ =>
               setTimeout(function () {
-                addTransferToStorage({
+                setStatus('Idle')
+                onSuccess?.()
+                addOngoingTx({
                   id: result.txHash.toString(),
                   sourceChain,
                   token,
@@ -70,21 +71,16 @@ const useParaspellApi = () => {
                   environment,
                   fees,
                 } satisfies StoredTransfer)
-                console.log('will set to Idle')
-                setStatus('Idle')
-
-                onSuccess?.()
               }, 2000),
             )
           }
 
           try {
             const eventsData = handleSubmittableEvents(result)
-            console.log('Sending - got eventsData', JSON.stringify(eventsData))
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
 
-              addTransferToStorage({
+              addOngoingTx({
                 id: result.txHash.toString(),
                 sourceChain,
                 token,
@@ -119,25 +115,28 @@ const useParaspellApi = () => {
               return
             }
           } catch (callbackError) {
-            if (!txWasCancelled(sender, callbackError)) captureException(callbackError)
-            handleSendError(callbackError)
-            setStatus('Idle')
+            handleSendError(sender, callbackError, setStatus) 
           }
         },
       )
     } catch (e) {
-      if (!txWasCancelled(sender, e)) captureException(e)
-      handleSendError(e)
-      setStatus('Idle')
+      handleSendError(sender, e, setStatus)
     }
   }
 
-  const handleSendError = (e: unknown) => {
+  const handleSendError = (sender: Sender, e: unknown, setStatus: (status: Status) => void) => {
+    setStatus('Idle')
     console.log('Transfer error:', e)
-    addNotification({
-      message: 'Failed to submit the transfer',
-      severity: NotificationSeverity.Error,
-    })
+
+    const message = txWasCancelled(sender, e) 
+      ? `Transfer ${'a̶p̶p̶r̶o̶v̶e̶d'} rejected`
+      : 'Failed to submit the transfer'
+
+      captureException(e)
+      addNotification({
+        message,
+        severity: NotificationSeverity.Error,
+      })
   }
 
   return { transfer }

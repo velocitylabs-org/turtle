@@ -197,12 +197,11 @@ const useTransferForm = () => {
           reset()
 
           addNotification({
-            message: 'Transfer submitted! See below',
+            message: 'Transfer submitted!',
             severity: NotificationSeverity.Success,
           })
 
-          // todo(nuno): make this scroll to the newly addded ongoing tx
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+          document.getElementById('ongoing-txs')?.scrollIntoView({behavior: "smooth", block: 'start'})
         },
       })
     },

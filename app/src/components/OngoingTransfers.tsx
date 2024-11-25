@@ -54,7 +54,7 @@ const OngoingTransfers = ({
   return (
     <div>
       {transferContext && ongoingTransfers && ongoingTransfers.length > 0 && (
-        <div className="my-20">
+        <div className="my-20" id="ongoing-txs">
           <div className="xl-letter-spacing self-center text-center text-3xl text-turtle-foreground">
             Ongoing
           </div>
