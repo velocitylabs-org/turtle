@@ -454,7 +454,7 @@ export namespace Polkadot {
     name: 'IBTC',
     symbol: 'IBTC',
     logoURI:
-      'https://assets.coingecko.com/coins/images/26217/standard/interBTC_for_Exchanges.png?1696525302',
+      'https://assets.coingecko.com/coins/images/26217/large/interBTC_for_Exchanges.png?1696525302',
     decimals: 8,
     address: '',
     multilocation:
