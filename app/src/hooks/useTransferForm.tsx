@@ -197,7 +197,7 @@ const useTransferForm = () => {
           reset()
 
           addNotification({
-            message: 'Transfer submitted!',
+            message: `Transfer added to the queue`,
             severity: NotificationSeverity.Success,
           })
 
