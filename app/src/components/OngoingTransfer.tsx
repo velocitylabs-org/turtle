@@ -9,29 +9,22 @@ import { ArrowRight } from './svg/ArrowRight'
 import TransferEstimate from './TransferEstimate'
 import LoadingIcon from './svg/LoadingIcon'
 import { colors } from '../../tailwind.config'
-import { EstimatedTransferDuration } from '@/hooks/useTransfersEstimate'
 
 const OngoingTransfer: FC<{
   direction: Direction
   transfer: StoredTransfer
-  transferStatus: string | null
-  estimatedTransferDuration: EstimatedTransferDuration
-}> = ({ direction, transfer, transferStatus, estimatedTransferDuration }) => {
+  status: string | null
+}> = ({ direction, transfer, status }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-left font-bold text-turtle-secondary-dark">{transferStatus ?? ''}</p>
+        <p className="text-left font-bold text-turtle-secondary-dark">{status ?? ''}</p>
         <p className="text-normal text-right text-turtle-secondary">
           {formatOngoingTransferDate(transfer.date)}
         </p>
       </div>
 
-      <TransferEstimate
-        transfer={transfer}
-        direction={direction}
-        outlinedProgressBar={false}
-        estimatedTransferDuration={estimatedTransferDuration}
-      />
+      <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={false} />
 
       <div className="mb-2 flex items-center">
         <LoadingIcon

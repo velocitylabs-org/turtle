@@ -26,11 +26,7 @@ const OngoingTransfers = ({
           </div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border-1 border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => (
-              <OngoingTransferDialog
-                key={tx.id}
-                transfer={tx}
-                transferStatus={statusMessages[tx.id]}
-              />
+              <OngoingTransferDialog key={tx.id} transfer={tx} status={statusMessages[tx.id]} />
             ))}
 
             {hasCompletedTransfers && (
