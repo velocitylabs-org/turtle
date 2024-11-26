@@ -12,10 +12,12 @@ export interface Account {
 interface State {
   // State
   account: Account | null
+  evmAccount: Account | null
   modalOpen: boolean
 
   // Actions
   setAccount: (x: Account | null) => void
+  setEvmAccount: (x: Account | null) => void
   setModalOpen: (isOpen: boolean) => void
 }
 
@@ -23,9 +25,11 @@ interface State {
 export const useSubstrateWalletStore = create<State>(set => ({
   // State
   account: null,
+  evmAccount: null,
   modalOpen: false,
 
   // Actions
   setAccount: account => set({ account }),
+  setEvmAccount: account => set({ evmAccount: account }),
   setModalOpen: isOpen => set({ modalOpen: isOpen }),
 }))

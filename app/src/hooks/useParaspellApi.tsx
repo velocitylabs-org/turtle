@@ -35,6 +35,7 @@ const useParaspellApi = () => {
     const account = sender as SubstrateAccount
 
     try {
+      console.log('params:', params)
       const tx = await createTx(params, sourceChain.rpcConnection)
 
       await tx.signAndSend(account.address, { signer: account.signer }, async result => {

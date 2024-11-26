@@ -52,8 +52,8 @@ const useTransferForm = () => {
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
-  const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
-  const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
+  const sourceWallet = useWallet(sourceChain?.walletType)
+  const destinationWallet = useWallet(destinationChain?.walletType)
   const { fees, loading: loadingFees } = useFees(
     sourceWallet?.sender?.address,
     sourceChain,

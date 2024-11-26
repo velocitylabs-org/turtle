@@ -22,6 +22,7 @@
     "@polkadot/api": "^14.0.1",
     "@polkadot/api-base": "^14.0.1",
     "@polkadot/apps-config": "^0.145.1",
+    "@polkadot/extension-dapp": "^0.56.2",
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/react-identicon": "^3.10.1",
     "@polkadot/types": "^14.0.1",
