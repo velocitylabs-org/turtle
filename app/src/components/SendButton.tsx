@@ -7,7 +7,9 @@ import { colors } from '../../tailwind.config'
 type SendButtonProps = ButtonProps & { status: Status }
 
 const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
-  const [{ label, icon, variant }, setProps] = useState<Props>(getProps(status, props.label))
+  const [{ label, icon, variant }, setProps] = useState<OverwritenProps>(
+    getProps(status, props.label),
+  )
 
   useEffect(() => {
     setProps(getProps(status, props.label))
@@ -16,13 +18,17 @@ const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
   return <Button {...props} variant={variant} disabled={disabled} label={label} icon={icon} />
 }
 
-interface Props {
+/**
+ * Overwriten Props to customise the `SendButton` over the
+ * default `Button` component at its different statuses
+ */
+interface OverwritenProps {
   label?: string
   icon?: ReactNode
   variant?: ButtonVariant
 }
 
-function getProps(status: Status, defaultLabel?: string): Props {
+function getProps(status: Status, defaultLabel?: string): OverwritenProps {
   switch (status) {
     case 'Idle':
       return {
