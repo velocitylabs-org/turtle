@@ -27,6 +27,7 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
 import SendButton from './SendButton'
+import clsx from 'clsx'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -332,7 +333,7 @@ const Transfer: FC = () => {
           tokenAmount={tokenAmount}
           fees={fees}
           durationEstimate={durationEstimate}
-          className={transferStatus === 'Idle' ? '' : 'opacity-30'}
+          className={clsx({ 'opacity-30': transferStatus !== 'Idle' })}
         />
       )}
 
