@@ -92,7 +92,7 @@ const renderSeverityIcon = (severity?: NotificationSeverity) => {
 const getSeverityHeader = (severity: NotificationSeverity) => {
   switch (severity) {
     case NotificationSeverity.Info:
-      return 'By the way'
+      return 'Btw'
 
     case NotificationSeverity.Error:
       return 'Oops!'
@@ -101,7 +101,7 @@ const getSeverityHeader = (severity: NotificationSeverity) => {
       return 'Watch it!'
 
     case NotificationSeverity.Success:
-      return 'Done!'
+      return 'Yay!'
 
     default:
       return ''

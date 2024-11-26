@@ -26,11 +26,7 @@ const useOngoingTransfersTracker = () => {
   const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
-  const {
-    removeTransfer: removeOngoingTransfer,
-    ongoingTransfers,
-    updateTransferUniqueId,
-  } = useOngoingTransfers()
+  const { remove, ongoingTransfers, updateUniqueId } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const env = useEnvironment()
@@ -116,13 +112,14 @@ const useOngoingTransfersTracker = () => {
           trackingUniqueId &&
           !ongoing.uniqueTrackingId
         ) {
-          updateTransferUniqueId(ongoing.id, trackingUniqueId)
+          updateUniqueId(ongoing.id, trackingUniqueId)
         }
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
 
-          removeOngoingTransfer(ongoing.id)
+          // Move from ongoing to done
+          remove(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,
             result:
@@ -150,14 +147,7 @@ const useOngoingTransfersTracker = () => {
         // TODO: handle this case
       }
     })
-  }, [
-    transfers,
-    addCompletedTransfer,
-    removeOngoingTransfer,
-    ongoingTransfers,
-    addNotification,
-    updateTransferUniqueId,
-  ])
+  }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateUniqueId])
 
   return { transfers, loading, statusMessages, fetchTransfers }
 }

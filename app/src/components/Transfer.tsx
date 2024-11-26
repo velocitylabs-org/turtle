@@ -26,6 +26,8 @@ import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import WalletButton from './WalletButton'
+import SendButton from './SendButton'
+import clsx from 'clsx'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -331,12 +333,13 @@ const Transfer: FC = () => {
           tokenAmount={tokenAmount}
           fees={fees}
           durationEstimate={durationEstimate}
+          className={clsx({ 'opacity-30': transferStatus !== 'Idle' })}
         />
       )}
 
       {/* Transfer Button */}
-      <Button
-        className="my-5"
+      <SendButton
+        className="my-5 w-full"
         label="Send"
         size="lg"
         variant="primary"
@@ -344,6 +347,7 @@ const Transfer: FC = () => {
         loading={transferStatus !== 'Idle'}
         disabled={!isTransferAllowed}
         cypressID="form-submit"
+        status={transferStatus}
       />
 
       <Credits />
