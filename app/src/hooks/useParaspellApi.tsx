@@ -15,7 +15,7 @@ import { Sender, Status, TransferParams } from './useTransfer'
 import { ISubmittableResult } from '@polkadot/types/types'
 
 const useParaspellApi = () => {
-  const { addOrUpdate } = useOngoingTransfers()
+  const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
   const { addNotification } = useNotification()
 
   // main transfer function which is exposed to the components.
@@ -59,7 +59,7 @@ const useParaspellApi = () => {
                 setStatus('Idle')
                 onComplete?.()
                 addOrUpdate({
-                  id: result.txHash.toString(),
+                  id: getTxId(result),
                   sourceChain,
                   token,
                   tokenUSDValue,
@@ -117,7 +117,7 @@ const useParaspellApi = () => {
               return
             }
           } catch (callbackError) {
-            handleSendError(sender, callbackError, setStatus)
+            handleSendError(sender, callbackError, setStatus, getTxId(result))
           }
         },
       )
@@ -126,13 +126,25 @@ const useParaspellApi = () => {
     }
   }
 
-  const handleSendError = (sender: Sender, e: unknown, setStatus: (status: Status) => void) => {
+  function getTxId(result: ISubmittableResult): string {
+    return result.txHash.toString()
+  }
+
+  const handleSendError = (
+    sender: Sender,
+    e: unknown,
+    setStatus: (status: Status) => void,
+    txId?: string,
+  ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
-
     const message = txWasCancelled(sender, e)
       ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected'
       : 'Failed to submit the transfer'
+
+    if (txId) {
+      removeOngoing(txId)
+    }
 
     captureException(e)
     addNotification({
