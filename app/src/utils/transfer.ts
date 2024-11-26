@@ -56,8 +56,8 @@ export function feeToHuman(fees: AmountInfo): string {
 export const formatAmount = (amount: number): string => {
   if (amount < 1) {
     return new Intl.NumberFormat('en-US', {
-      // minimumFractionDigits: 1, // See once Snowbridge issue is fixed
-      maximumFractionDigits: 8,
+      maximumSignificantDigits: 3,
+      maximumFractionDigits: 6,
     }).format(amount)
   } else {
     return new Intl.NumberFormat('en-US', {
@@ -65,6 +65,7 @@ export const formatAmount = (amount: number): string => {
       compactDisplay: 'short',
       // minimumFractionDigits: 2, // See once Snowbridge issue is fixed
       maximumFractionDigits: 3,
+      maximumSignificantDigits: 3,
     }).format(amount)
   }
 }
