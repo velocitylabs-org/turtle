@@ -1,15 +1,15 @@
 import { FC } from 'react'
-import useSnowbridgeTransferEstimate from '@/hooks/useSnowbridgeTransferEstimate'
+import useTransferProgress from '@/hooks/useTransferProgress'
 import { StoredTransfer } from '@/models/transfer'
-import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
 import ProgressBar from './ProgressBar'
+import { EstimatedTransferDuration } from '@/hooks/useTransfersEstimate'
 
 interface TransferEstimateProps {
   transfer: StoredTransfer
   direction: Direction
   outlinedProgressBar: boolean
-  estimatedTransferDuration?: SnowbridgeStatus
+  estimatedTransferDuration: EstimatedTransferDuration
 }
 
 const TransferEstimate: FC<TransferEstimateProps> = ({
@@ -18,7 +18,7 @@ const TransferEstimate: FC<TransferEstimateProps> = ({
   estimatedTransferDuration,
   outlinedProgressBar,
 }) => {
-  const progress = useSnowbridgeTransferEstimate(transfer, direction, estimatedTransferDuration)
+  const progress = useTransferProgress(transfer, direction, estimatedTransferDuration)
 
   return <ProgressBar progress={progress} outlinedProgressBar={outlinedProgressBar} />
 }

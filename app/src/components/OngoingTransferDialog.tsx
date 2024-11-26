@@ -1,4 +1,3 @@
-import { SnowbridgeStatus } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
@@ -19,18 +18,18 @@ import {
   DialogTrigger,
 } from './ui/dialog'
 import { Separator } from './ui/separator'
+import useTransferEstimate from '@/hooks/useTransfersEstimate'
 
 export const OngoingTransferDialog = ({
   transfer,
   transferStatus = 'Transfer pending...',
-  estimatedTransferDuration,
 }: {
   transfer: StoredTransfer
   transferStatus?: string
-  estimatedTransferDuration?: SnowbridgeStatus
 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
+  const estimatedTransferDuration = useTransferEstimate(direction)
 
   return (
     <Dialog>

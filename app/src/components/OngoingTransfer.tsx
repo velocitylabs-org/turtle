@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import Image from 'next/image'
 import { StoredTransfer } from '@/models/transfer'
-import { SnowbridgeStatus } from '@/models/snowbridge'
 import { Direction } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
@@ -10,12 +9,13 @@ import { ArrowRight } from './svg/ArrowRight'
 import TransferEstimate from './TransferEstimate'
 import LoadingIcon from './svg/LoadingIcon'
 import { colors } from '../../tailwind.config'
+import { EstimatedTransferDuration } from '@/hooks/useTransfersEstimate'
 
 const OngoingTransfer: FC<{
   direction: Direction
   transfer: StoredTransfer
   transferStatus: string | null
-  estimatedTransferDuration?: SnowbridgeStatus
+  estimatedTransferDuration: EstimatedTransferDuration
 }> = ({ direction, transfer, transferStatus, estimatedTransferDuration }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
