@@ -8,11 +8,11 @@ type SendButtonProps = ButtonProps & { status: Status }
 
 const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
   const [{ label, icon, variant }, setProps] = useState<OverwritenProps>(
-    getProps(status, props.label),
+    getOverwrittenProps(status, props.label),
   )
 
   useEffect(() => {
-    setProps(getProps(status, props.label))
+    setProps(getOverwrittenProps(status, props.label))
   }, [status, disabled])
 
   return <Button {...props} variant={variant} disabled={disabled} label={label} icon={icon} />
@@ -28,7 +28,11 @@ interface OverwritenProps {
   variant?: ButtonVariant
 }
 
-function getProps(status: Status, defaultLabel?: string): OverwritenProps {
+/**
+ * Get the `OverwrittenProps` for a given tx `Status`. Each status may have a different
+ * loading icon, a different label and/or a different style variant.
+ */
+function getOverwrittenProps(status: Status, defaultLabel?: string): OverwritenProps {
   switch (status) {
     case 'Idle':
       return {
