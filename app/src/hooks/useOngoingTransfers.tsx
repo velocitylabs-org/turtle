@@ -2,11 +2,11 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 const useOngoingTransfers = () => {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
-  const addTransfer = useOngoingTransfersStore.getState().addTransfer
-  const removeTransfer = useOngoingTransfersStore.getState().removeTransfer
-  const updateTransferUniqueId = useOngoingTransfersStore.getState().updateTransferUniqueId
+  const addOrUpdate = useOngoingTransfersStore.getState().addOrUpdate
+  const remove = useOngoingTransfersStore.getState().remove
+  const updateUniqueId = useOngoingTransfersStore.getState().updateUniqueId
 
-  return { ongoingTransfers, addTransfer, removeTransfer, updateTransferUniqueId }
+  return { ongoingTransfers, addOrUpdate, remove, updateUniqueId }
 }
 
 export default useOngoingTransfers
