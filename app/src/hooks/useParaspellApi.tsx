@@ -15,7 +15,7 @@ import { Sender, Status, TransferParams } from './useTransfer'
 import { ISubmittableResult } from '@polkadot/types/types'
 
 const useParaspellApi = () => {
-  const { addTransfer: addOngoingTx } = useOngoingTransfers()
+  const { addOrUpdate } = useOngoingTransfers()
   const { addNotification } = useNotification()
 
   // main transfer function which is exposed to the components.
@@ -30,7 +30,7 @@ const useParaspellApi = () => {
       amount,
       environment,
       fees,
-      onSuccess,
+      onComplete,
     } = params
 
     const account = sender as SubstrateAccount
@@ -57,8 +57,8 @@ const useParaspellApi = () => {
             await new Promise(_ =>
               setTimeout(function () {
                 setStatus('Idle')
-                onSuccess?.()
-                addOngoingTx({
+                onComplete?.()
+                addOrUpdate({
                   id: result.txHash.toString(),
                   sourceChain,
                   token,
@@ -80,7 +80,9 @@ const useParaspellApi = () => {
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
 
-              addOngoingTx({
+              // Update the ongoing tx entry now containing the necessary
+              // fields to be able to track its progress.
+              addOrUpdate({
                 id: result.txHash.toString(),
                 sourceChain,
                 token,
@@ -129,7 +131,7 @@ const useParaspellApi = () => {
     console.log('Transfer error:', e)
 
     const message = txWasCancelled(sender, e)
-      ? `Transfer ${'a̶p̶p̶r̶o̶v̶e̶d'} rejected`
+      ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected'
       : 'Failed to submit the transfer'
 
     captureException(e)

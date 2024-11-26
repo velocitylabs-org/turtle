@@ -192,7 +192,7 @@ const useTransferForm = () => {
         amount,
         recipient: recipient,
         fees,
-        onSuccess: () => {
+        onComplete: () => {
           // reset form on success
           reset()
 

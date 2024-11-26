@@ -20,7 +20,11 @@ export interface TransferParams {
   recipient: string
   amount: bigint
   fees: AmountInfo
-  onSuccess?: () => void
+  /**
+   * Callback when Turtle has completed submitting the transfer.
+   * It does NOT mean that the transfer itself is completed.
+   */
+  onComplete?: () => void
 }
 
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'
@@ -40,7 +44,7 @@ const useTransfer = () => {
     recipient,
     amount,
     fees,
-    onSuccess,
+    onComplete,
   }: TransferParams) => {
     setStatus('Loading')
     const route = getRoute(environment, sourceChain, destinationChain)
@@ -58,7 +62,7 @@ const useTransfer = () => {
             recipient,
             amount,
             fees,
-            onSuccess,
+            onComplete,
           },
           setStatus,
         )
@@ -76,7 +80,7 @@ const useTransfer = () => {
             recipient,
             amount,
             fees,
-            onSuccess,
+            onComplete,
           },
           setStatus,
         )

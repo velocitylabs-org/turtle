@@ -13,11 +13,7 @@ const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
     setProps(getProps(status, props.label))
   }, [status, disabled])
 
-  return (
-    <div className="w-full">
-      <Button {...props} variant={variant} disabled={disabled} label={label} icon={icon} />
-    </div>
-  )
+  return <Button {...props} variant={variant} disabled={disabled} label={label} icon={icon} />
 }
 
 interface Props {

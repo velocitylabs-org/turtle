@@ -86,7 +86,7 @@ export interface AmountInfo {
   inDollars: number
 }
 
-export type TransferTab = 'New' | 'Ongoing' | 'Done'
+export type TransferTab = 'New' | 'Done'
 export type TransferTabOptions = TransferTab
 
 export type TxTrackingResult =
