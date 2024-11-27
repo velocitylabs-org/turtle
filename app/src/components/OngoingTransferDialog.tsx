@@ -18,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog'
-import { Separator } from './ui/separator'
+import { TokenLogo } from './TokenLogo'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -83,11 +83,11 @@ export const OngoingTransferDialog = ({
           </div>
           <h3
             className={
-              'xxl-letter-spacing flex items-center space-x-1 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
+              'xxl-letter-spacing flex items-center space-x-3 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
             <span>{formatAmount(toHuman(transfer.amount, transfer.token))}</span>
-            <span>{transfer.token.symbol}</span>
+            <TokenLogo token={transfer.token} sourceChain={transfer.sourceChain} size={40} />
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
             <div>{formatOngoingTransferDate(transfer.date)}</div>
@@ -141,15 +141,15 @@ export const OngoingTransferDialog = ({
           <div className="summary my-3 w-full space-y-3 px-1">
             {/* Amount */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="text-sm font-bold">Amount</div>
-              <div className="items-right flex flex-col space-x-1 text-sm">
+              <div className="font-bold">Amount</div>
+              <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
-                  <div>
+                  <div className="text-lg">
                     {formatAmount(toHuman(transfer.amount, transfer.token), 'Longer')}{' '}
                     {transfer.token.symbol}
                   </div>
                   {typeof transfer.tokenUSDValue == 'number' && (
-                    <div className="text-turtle-level5">
+                    <div className="text-turtle-level4">
                       $
                       {formatAmount(
                         toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
@@ -163,14 +163,14 @@ export const OngoingTransferDialog = ({
 
             {/* Fees */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="text-sm font-bold">Fees</div>
-              <div className="items-right flex flex-col space-x-1 text-right text-sm">
-                <div>
+              <div className="font-bold">Fees</div>
+              <div className="items-right flex flex-col space-x-1 text-right">
+                <div className="text-lg">
                   {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Longer')}{' '}
                   {transfer.fees.token.symbol}
                 </div>
                 {typeof transfer.tokenUSDValue == 'number' && (
-                  <div className="text-turtle-level5">
+                  <div className="text-turtle-level4">
                     ${formatAmount(transfer.fees.inDollars, 'Longer')}
                   </div>
                 )}

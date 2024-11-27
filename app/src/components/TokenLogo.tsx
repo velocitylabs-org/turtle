@@ -4,42 +4,45 @@ import { Token } from '@/models/token'
 import Image from 'next/image'
 import React, { FC } from 'react'
 import { Tooltip } from './Tooltip'
+import { cn } from '@/utils/cn'
 
 interface TokenLogoProps {
   token: Token
   sourceChain: Chain | null
+  size?: number
+  className?: string
 }
 
-export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain }) => {
+export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, className }) => {
   const originBadge = getOriginBadge(token, sourceChain)
 
   return (
-    <div className="relative flex min-w-[32px] items-center">
-      {/* The token logo */}
-      <Image
-        src={token.logoURI}
-        alt={token.name}
-        width={32}
-        height={32}
-        className="token-logo h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-      />
-      {/* The origin label - either the origin chain or the bridge that has wrapped this token */}
-      {originBadge && (
-        <div className="absolute bottom-[-2px] right-[-1px] h-fit w-fit">
-          <div className="relative">
-            <Tooltip content={originBadge.text} showIcon={false}>
+    <Tooltip content={originBadge?.text ?? token.symbol} showIcon={false}>
+      <div className={cn('relative flex min-w-[32px] items-center', className)}>
+        {/* The token logo */}
+        <Image
+          src={token.logoURI}
+          alt={token.name}
+          width={size}
+          height={size}
+          className="token-logo rounded-full border-1 border-turtle-foreground bg-background"
+        />
+        {/* The origin label - either the origin chain or the bridge that has wrapped this token */}
+        {originBadge && (
+          <div className="absolute bottom-[-2px] right-[-1px] h-fit w-fit">
+            <div className="relative">
               <Image
                 alt={originBadge.text}
-                width={16}
-                height={16}
+                width={size / 2}
+                height={size / 2}
                 src={originBadge.logoURI}
                 className="rounded-full border-1 border-white"
               />
-            </Tooltip>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </Tooltip>
   )
 }
 
@@ -57,7 +60,9 @@ interface OriginBadge {
  *    - When sourceChain is AsssetHub and the token is (snowbridge-wrapped) wETH, we *DO* show an origin badge
  */
 function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | undefined {
-  if (!sourceChain) return
+  // Older versions of Turtle did not include a `token.origin` so we need to play safe
+  if (!sourceChain || !token.origin) return
+
   if (sourceChain.network == 'Ethereum' && token.origin.type === 'Ethereum')
     return {
       logoURI: '/ethereum.svg',

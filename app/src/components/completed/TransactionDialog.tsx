@@ -18,12 +18,12 @@ import {
 } from '../ui/dialog'
 
 import Account from '../Account'
-import { Separator } from '../ui/separator'
 import { ArrowRight } from '../svg/ArrowRight'
 import { ArrowUpRight } from '../svg/ArrowUpRight'
 import { ExclamationMark } from '../svg/ExclamationMark'
 
 import { colors } from '../../../tailwind.config'
+import { TokenLogo } from '../TokenLogo'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   const transferSucceeded = tx.result === TxStatus.Succeeded
@@ -92,12 +92,12 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           </div>
           <h3
             className={cn(
-              'xxl-letter-spacing flex items-center space-x-1 text-3xl leading-none sm:text-5xl',
+              'xxl-letter-spacing flex items-center space-x-3 text-3xl leading-none sm:text-5xl',
               transferSucceeded ? 'text-turtle-success-dark' : 'text-turtle-error-dark',
             )}
           >
             <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-            <span>{tx.token.symbol}</span>
+            <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40} />
           </h3>
           <div
             className={cn(
@@ -172,20 +172,20 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <div className="summary my-3 w-full space-y-3 px-1">
             {/* Amount */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="text-sm font-bold">Amount</div>
-              <div className="items-right flex flex-col space-x-1 text-sm">
+              <div className="font-bold">Amount</div>
+              <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
-                  <p>
+                  <div className="text-lg">
                     {formatAmount(toHuman(tx.amount, tx.token), 'Longer')} {tx.token.symbol}
-                  </p>
+                  </div>
                   {typeof tx.tokenUSDValue == 'number' && (
-                    <p className="text-turtle-level5">
+                    <div className="text-turtle-level4">
                       $
                       {formatAmount(
                         toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0),
                         'Longer',
                       )}
-                    </p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -193,14 +193,14 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
 
             {/* Fees */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="text-sm font-bold">Fees</div>
-              <div className="items-right flex flex-col space-x-1 text-right text-sm">
+              <div className="font-bold">Fees</div>
+              <div className="items-right flex flex-col space-x-1 text-right">
                 <div>
                   {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Longer')}{' '}
                   {tx.fees.token.symbol}
                 </div>
                 {typeof tx.tokenUSDValue == 'number' && (
-                  <div className="text-turtle-level5">
+                  <div className="text-turtle-level4">
                     ${formatAmount(tx.fees.inDollars, 'Longer')}
                   </div>
                 )}
