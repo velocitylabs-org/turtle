@@ -1,14 +1,25 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import { FC, useState } from 'react'
+import { web3FromSource } from '@polkadot/extension-dapp'
+import type { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
+import { FC, useEffect, useState } from 'react'
 import Button from './Button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 const SubstrateWalletModal: FC = () => {
   const [isMobile, setIsMobile] = useState(false)
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
-  const [selectedExtension, setSelectedExtension] = useState<string | null>(null)
-  const { isModalOpen, closeModal, openModal, extensions, accounts } = useSubstrateWallet()
+  const [selectedExtension, setSelectedExtension] = useState<InjectedExtension | null>(null)
+  const {
+    isModalOpen,
+    closeModal,
+    openModal,
+    extensions,
+    accounts,
+    type,
+    setSubstrateAccount,
+    setEvmAccount,
+  } = useSubstrateWallet()
 
   /* useEffect(() => {
     const userAgent = typeof window !== 'undefined' && navigator.userAgent
@@ -17,13 +28,22 @@ const SubstrateWalletModal: FC = () => {
     }
   }, []) */
 
-  const handleExtensionSelect = (extensionName: string) => {
-    setSelectedExtension(extensionName)
+  useEffect(() => {
+    console.log(accounts)
+  }, [accounts])
+
+  const handleExtensionSelect = (extension: InjectedExtension) => {
+    setSelectedExtension(extension)
     setCurrentView('accounts')
   }
 
-  const handleAccountSelect = (accountAddress: string) => {
-    console.log(`Selected account: ${accountAddress}`)
+  const handleAccountSelect = async (account: InjectedAccountWithMeta) => {
+    console.log(account.meta.source)
+    const injector = await web3FromSource(account.meta.source)
+
+    if (type === 'Substrate') {
+      //setSubstrateAccount(account)
+    }
     closeModal()
   }
 
@@ -65,7 +85,7 @@ const SubstrateWalletModal: FC = () => {
                   className="w-full p-4"
                   variant="outline"
                   label={extension.name}
-                  onClick={() => handleExtensionSelect(extension.name)}
+                  onClick={() => handleExtensionSelect(extension)}
                 />
               ))
             ) : (
@@ -76,15 +96,21 @@ const SubstrateWalletModal: FC = () => {
 
           {currentView === 'accounts' &&
             (accounts.length > 0 ? (
-              accounts.map(account => (
-                <Button
-                  key={account.address}
-                  className="w-full p-4"
-                  variant="outline"
-                  label={account.meta.name || account.address}
-                  onClick={() => handleAccountSelect(account.address)}
-                />
-              ))
+              accounts
+                .filter(account =>
+                  type === 'SubstrateEVM'
+                    ? account.type === 'ethereum'
+                    : account.type === 'sr25519',
+                )
+                .map(account => (
+                  <Button
+                    key={account.address}
+                    className="w-full p-4"
+                    variant="outline"
+                    label={account.meta.name || account.address}
+                    onClick={() => handleAccountSelect(account)}
+                  />
+                ))
             ) : (
               <p className="text-center text-sm text-gray-500">
                 No accounts available. Please add an account to your selected wallet extension.

@@ -11,6 +11,8 @@ const useSubstrateWallet = () => {
   const setEvmAccount = useSubstrateWalletStore(state => state.setEvmAccount)
   const isModalOpen = useSubstrateWalletStore(state => state.modalOpen)
   const setModalOpen = useSubstrateWalletStore(state => state.setModalOpen)
+  const type = useSubstrateWalletStore(state => state.type)
+  const setType = useSubstrateWalletStore(state => state.setType)
 
   const [extensions, setExtensions] = useState<InjectedExtension[]>([])
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
@@ -66,6 +68,8 @@ const useSubstrateWallet = () => {
     isModalOpen,
     extensions,
     accounts,
+    type,
+    setType,
   }
 }
 
