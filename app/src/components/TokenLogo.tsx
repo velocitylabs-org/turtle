@@ -16,9 +16,11 @@ interface TokenLogoProps {
 export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, className }) => {
   const originBadge = getOriginBadge(token, sourceChain)
 
+  const heightClass = `h-[${size}px]`
+
   return (
     <Tooltip content={originBadge?.text ?? token.symbol} showIcon={false}>
-      <div className={cn('relative flex items-center', `h-[${size}px]`, className)}>
+      <div className={cn('relative flex items-center', heightClass, className)}>
         {/* The token logo */}
         <Image
           src={token.logoURI}
@@ -26,7 +28,8 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, c
           width={size}
           height={size}
           className={cn(
-            'token-logo rounded-full border-1 border-turtle-foreground bg-background object-cover',
+            'token-logo box-content overflow-hidden rounded-full border-1 border-turtle-foreground bg-background object-cover',
+            heightClass,
           )}
         />
         {/* The origin label - either the origin chain or the bridge that has wrapped this token */}
@@ -38,10 +41,7 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, c
                 width={size / 2}
                 height={size / 2}
                 src={originBadge.logoURI}
-                className={cn(
-                  'rounded-full border-1 border-white',
-                  `w-[${size / 2}px] h-[${size / 2}px]`,
-                )}
+                className={cn('rounded-full border-1 border-white')}
               />
             </div>
           </div>
