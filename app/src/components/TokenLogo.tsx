@@ -1,10 +1,10 @@
 'use client'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import Image from 'next/image'
 import React, { FC } from 'react'
 import { Tooltip } from './Tooltip'
 import { cn } from '@/utils/cn'
+import { BetterImage } from './BetterImage'
 
 interface TokenLogoProps {
   token: Token
@@ -16,35 +16,25 @@ interface TokenLogoProps {
 export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, className }) => {
   const originBadge = getOriginBadge(token, sourceChain)
 
-  const heightClass = `h-[${size}px]`
-
   return (
     <Tooltip content={originBadge?.text ?? token.symbol} showIcon={false}>
       <div className={cn('relative flex items-center', className)}>
         {/* The token logo */}
-        <Image
-          src={token.logoURI}
-          alt={token.name}
+        <BetterImage
           width={size}
           height={size}
-          className={cn(
-            'token-logo box-content overflow-hidden rounded-full border-1 border-turtle-foreground bg-background object-cover',
-            heightClass,
-          )}
+          src={token.logoURI}
+          className="rounded-full border-1 border-turtle-foreground"
         />
-        {/* The origin label - either the origin chain or the bridge that has wrapped this token */}
+
+        {/* The origin badge */}
         {originBadge && (
-          <div className="absolute bottom-[-2px] right-[-1px] h-fit w-fit">
-            <div className="relative">
-              <Image
-                alt={originBadge.text}
-                width={size / 2}
-                height={size / 2}
-                src={originBadge.logoURI}
-                className={cn('rounded-full border-1 border-white')}
-              />
-            </div>
-          </div>
+          <BetterImage
+            width={size / 2}
+            height={size / 2}
+            src={originBadge.logoURI}
+            className="absolute bottom-[-5%] right-[-10%] rounded-full border-1 border-white"
+          />
         )}
       </div>
     </Tooltip>
