@@ -10,6 +10,7 @@ import {
   getAllowedTokens,
 } from '@/utils/routes'
 import { getDurationEstimate } from '@/utils/transfer'
+import clsx from 'clsx'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -19,14 +20,14 @@ import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
+import SendButton from './SendButton'
+import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
-import SendButton from './SendButton'
-import clsx from 'clsx'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -350,7 +351,7 @@ const Transfer: FC = () => {
       />
 
       <Credits />
-      {/* <SubstrateWalletModal /> */}
+      <SubstrateWalletModal />
     </form>
   )
 }
