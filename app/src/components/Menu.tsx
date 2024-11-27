@@ -1,4 +1,4 @@
-import { DisplaysTransfers, TransferTab } from '@/models/transfer'
+import { DisplaysTransfers } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 
 import Button from './Button'
@@ -8,14 +8,14 @@ const Menu = ({
   setNewTransferInit,
   hasCompletedTransfers,
 }: DisplaysTransfers) => {
-  const initNewTransaction = newTransferInit === TransferTab.New
+  const initNewTransaction = newTransferInit === 'New'
   return (
     <div className="relative flex items-center gap-2">
       <Button
         variant={initNewTransaction ? 'primary' : 'ghost'}
         size="lg"
         className="xl-letter-spacing relative z-10 rounded-2xl text-xl sm:text-large"
-        onClick={() => !initNewTransaction && setNewTransferInit(TransferTab.New)}
+        onClick={() => !initNewTransaction && setNewTransferInit('New')}
       >
         <span className={cn(initNewTransaction ? 'text-black' : 'text-white')}>New</span>
       </Button>
@@ -24,10 +24,10 @@ const Menu = ({
         className="xl-letter-spacing relative z-10 rounded-2xl text-xl sm:text-large"
         size="lg"
         disabled={!hasCompletedTransfers}
-        onClick={() => initNewTransaction && setNewTransferInit(TransferTab.Completed)}
+        onClick={() => initNewTransaction && setNewTransferInit('Done')}
       >
         <span className={cn('text-large', !initNewTransaction ? 'text-black' : 'text-white')}>
-          Completed
+          Done
         </span>
       </Button>
     </div>

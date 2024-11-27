@@ -6,10 +6,11 @@ import { persist, PersistStorage, StorageValue } from 'zustand/middleware'
 interface State {
   // State
   transfers: StoredTransfer[]
+
   // Actions
-  addTransfer: (transfer: StoredTransfer) => void
-  removeTransfer: (id: string) => void
-  updateTransferUniqueId: (id: string, uniqueTrackingId: string) => void
+  addOrUpdate: (transfer: StoredTransfer) => void
+  updateUniqueId: (id: string, uniqueTrackingId: string) => void
+  remove: (id: string) => void
 }
 
 // Serialization - Stringify function for BigInt
@@ -48,19 +49,26 @@ export const useOngoingTransfersStore = create<State>()(
       transfers: [],
 
       // Actions
-      addTransfer: newOngoingTransfer => {
+      addOrUpdate: newOngoingTransfer => {
         if (!newOngoingTransfer) return
         set(state => {
-          // Check if the newOngoingTransfer already exists in the local storage
-          if (state.transfers.some(transfer => transfer.id === newOngoingTransfer.id)) return state
+          // Update it if it's already present
+          if (state.transfers.some(transfer => transfer.id === newOngoingTransfer.id)) {
+            return {
+              transfers: state.transfers.map(tx =>
+                tx.id === newOngoingTransfer.id ? newOngoingTransfer : tx,
+              ),
+            }
+          }
 
+          // Add it
           return {
             transfers: [...state.transfers, newOngoingTransfer],
           }
         })
       },
 
-      updateTransferUniqueId: (id: string, uniqueTrackingId: string) => {
+      updateUniqueId: (id: string, uniqueTrackingId: string) => {
         if (!id || !uniqueTrackingId) return
         set(state => {
           return {
@@ -74,7 +82,7 @@ export const useOngoingTransfersStore = create<State>()(
         })
       },
 
-      removeTransfer: id => {
+      remove: id => {
         if (!id) return
         return set(state => ({
           transfers: state.transfers.filter(transfer => transfer.id !== id),

@@ -86,10 +86,7 @@ export interface AmountInfo {
   inDollars: number
 }
 
-export enum TransferTab {
-  New = 'New',
-  Completed = 'Completed',
-}
+export type TransferTab = 'New' | 'Done'
 export type TransferTabOptions = TransferTab
 
 export type TxTrackingResult =
