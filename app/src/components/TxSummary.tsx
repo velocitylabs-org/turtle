@@ -10,15 +10,23 @@ import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import { TokenAmount } from '@/models/select'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Skeleton } from './ui/skeleton'
+import { cn } from '@/utils/cn'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
   durationEstimate?: string
+  className?: string
 }
 
-const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEstimate }) => {
+const TxSummary: FC<TxSummaryProps> = ({
+  loading,
+  tokenAmount,
+  fees,
+  durationEstimate,
+  className,
+}) => {
   const { price, loading: isLoadingTokenPrice } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
   if (!fees && !loading) return null
@@ -37,7 +45,7 @@ const TxSummary: FC<TxSummaryProps> = ({ loading, tokenAmount, fees, durationEst
     }
 
     return (
-      <div className="tx-summary p-4 pt-3">
+      <div className={cn('tx-summary p-4 pt-3', className)}>
         <div className="pt-3">
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>

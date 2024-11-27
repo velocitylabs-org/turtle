@@ -1,4 +1,3 @@
-import { SnowbridgeStatus } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
@@ -22,12 +21,10 @@ import { Separator } from './ui/separator'
 
 export const OngoingTransferDialog = ({
   transfer,
-  transferStatus = 'Loading...',
-  estimatedTransferDuration,
+  status = 'Transfer pending...',
 }: {
   transfer: StoredTransfer
-  transferStatus?: string
-  estimatedTransferDuration?: SnowbridgeStatus
+  status?: string
 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
@@ -35,12 +32,7 @@ export const OngoingTransferDialog = ({
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer
-          transfer={transfer}
-          transferStatus={transferStatus}
-          estimatedTransferDuration={estimatedTransferDuration}
-          direction={direction}
-        />
+        <OngoingTransfer transfer={transfer} status={status} direction={direction} />
       </DialogTrigger>
       <DialogContent
         className="ongoing-transfer-dialog m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
@@ -103,7 +95,7 @@ export const OngoingTransferDialog = ({
             }
           >
             <div className="my-2 flex items-center justify-between">
-              <p className="text-left font-bold text-turtle-secondary-dark">{transferStatus}</p>
+              <p className="text-left font-bold text-turtle-secondary-dark">{status}</p>
               <p className="text-normal text-turtle-secondary">
                 {formatOngoingTransferDate(transfer.date)}
               </p>
@@ -111,7 +103,6 @@ export const OngoingTransferDialog = ({
 
             <TransferEstimate
               transfer={transfer}
-              estimatedTransferDuration={estimatedTransferDuration}
               direction={direction}
               outlinedProgressBar={true}
             />

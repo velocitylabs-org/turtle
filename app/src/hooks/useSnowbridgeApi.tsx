@@ -22,7 +22,7 @@ import { Sender, Status, TransferParams } from './useTransfer'
 type ValidationResult = toEthereum.SendValidationResult | toPolkadot.SendValidationResult
 
 const useSnowbridgeApi = () => {
-  const { addTransfer: addTransferToStorage } = useOngoingTransfers()
+  const { addOrUpdate } = useOngoingTransfers()
   const { addNotification } = useNotification()
   const { snowbridgeContext } = useSnowbridgeContext()
 
@@ -47,7 +47,7 @@ const useSnowbridgeApi = () => {
       amount,
       environment,
       fees,
-      onSuccess,
+      onComplete,
     } = params
 
     setStatus('Loading')
@@ -92,7 +92,7 @@ const useSnowbridgeApi = () => {
           recipient,
           amount,
           fees,
-          onSuccess,
+          onComplete,
         },
         direction,
         setStatus,
@@ -125,7 +125,7 @@ const useSnowbridgeApi = () => {
       amount,
       environment,
       fees,
-      onSuccess,
+      onComplete,
     } = params
     try {
       setStatus('Sending')
@@ -157,17 +157,13 @@ const useSnowbridgeApi = () => {
 
       if (sendResult.failure) throw new Error('Transfer failed')
 
-      onSuccess?.()
-      addNotification({
-        message: 'Transfer initiated. See below!',
-        severity: NotificationSeverity.Success,
-      })
+      onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
       const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
       const date = new Date()
 
-      addTransferToStorage({
+      addOrUpdate({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?
         sourceChain,
         token,
