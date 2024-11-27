@@ -1,4 +1,4 @@
-import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { useAppKit } from '@reown/appkit/react'
 import { BrowserProvider, JsonRpcSigner } from 'ethers'
 import { useMemo } from 'react'
 import type { Account, Chain, Client, Transport } from 'viem'
@@ -19,7 +19,7 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
 /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
 const useEvmWallet = ({ chainId }: { chainId?: number } = {}) => {
   const { data: client } = useConnectorClient<Config>({ chainId })
-  const { open, close } = useWeb3Modal()
+  const { open, close } = useAppKit()
   const { disconnect } = useDisconnect()
   const { isConnected } = useAccount()
 
