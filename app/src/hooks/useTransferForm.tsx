@@ -1,8 +1,10 @@
+'use client'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
+import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
@@ -13,7 +15,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
 import useNotification from './useNotification'
-import { NotificationSeverity } from '@/models/notification'
 
 interface FormInputs {
   sourceChain: Chain | null

@@ -4,8 +4,6 @@
 
 @layer base {
   :root {
-    --talisman-connect-modal-max-height: 60vh;
-
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
