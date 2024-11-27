@@ -652,7 +652,7 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
     },
     {
       from: Bifrost.uid,
@@ -789,6 +789,13 @@ export const REGISTRY: Registry = {
         [Polkadot.USDT.id, { id: '1984' }],
         [Eth.WETH.id, { symbol: 'WETH.e' }],
         [Eth.WBTC.id, { symbol: 'WBTC.e' }],
+      ]),
+    ],
+    [
+      Hydration.uid,
+      new Map([
+        [Polkadot.USDC.id, { id: '22' }],
+        [Polkadot.USDT.id, { id: '10' }],
       ]),
     ],
   ]),
