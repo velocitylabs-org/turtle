@@ -111,10 +111,15 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         </DialogHeader>
 
         {/* Modal content */}
-        <div className="flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary bg-white p-4 sm:p-10">
+        <div
+          className={cn(
+            'mt-[-1px] flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary bg-white p-4 sm:p-10',
+            transferSucceeded ? 'border-t-turtle-success-dark' : 'border-t-turtle-error-dark',
+          )}
+        >
           <div
             className={cn(
-              'flex w-full items-center gap-2 rounded-lg border px-2 py-4 text-sm',
+              'flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-sm',
               transferSucceeded
                 ? 'border-turtle-success-dark bg-turtle-success-light text-turtle-success-dark'
                 : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark',
@@ -123,7 +128,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <ExclamationMark {...(!transferSucceeded && { fill: colors['turtle-error-dark'] })} />
             {transferSucceeded ? (
               <p>
-                <span className="pe-0.5 font-semibold">Done!</span>
+                <span className="mr-1 pe-0.5 font-semibold">Done!</span>
                 This transfer is completed.
               </p>
             ) : (
@@ -145,6 +150,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <Account
                 network={tx.sourceChain.network}
                 address={tx.sender}
+                size={24}
                 className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
               />
             </div>
@@ -156,37 +162,52 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <Account
                 network={tx.destChain.network}
                 address={tx.recipient}
+                size={24}
                 className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
               />
             </div>
           </div>
 
-          {/* fees */}
-          <div className="w-full gap-10">
-            <div className="flex flex-row items-center justify-between space-x-4 px-1">
-              <p className="text-sm">Transfer amount</p>
-              <div className="flex space-x-1 text-sm">
-                <p>{toHuman(tx.amount, tx.token)}</p>
-                <p>{tx.token.symbol}</p>
-                {typeof tx.tokenUSDValue == 'number' && (
-                  <p className="text-turtle-level5">
-                    ${formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0))}
+          {/* Summary */}
+          <div className="summary my-3 w-full space-y-3 px-1">
+            {/* Amount */}
+            <div className="flex items-start justify-between space-x-4">
+              <div className="text-sm font-bold">Amount</div>
+              <div className="items-right flex flex-col space-x-1 text-sm">
+                <div className="text-right">
+                  <p>
+                    {formatAmount(toHuman(tx.amount, tx.token), 'Longer')} {tx.token.symbol}
                   </p>
-                )}
+                  {typeof tx.tokenUSDValue == 'number' && (
+                    <p className="text-turtle-level5">
+                      $
+                      {formatAmount(
+                        toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0),
+                        'Longer',
+                      )}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-            <Separator className="my-4 bg-turtle-level3" />
-            <div className="flex flex-row items-center justify-between px-1">
-              <p className="text-sm">Fees</p>
-              <div className="flex space-x-1 text-sm">
-                <p>{formatAmount(toHuman(tx.fees.amount, tx.fees.token))}</p>
-                <p>{tx.fees.token.symbol}</p>
-                {tx.fees.inDollars > 0 && (
-                  <div className="text-turtle-level5">${formatAmount(tx.fees.inDollars)}</div>
+
+            {/* Fees */}
+            <div className="flex items-start justify-between space-x-4">
+              <div className="text-sm font-bold">Fees</div>
+              <div className="items-right flex flex-col space-x-1 text-right text-sm">
+                <div>
+                  {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Longer')}{' '}
+                  {tx.fees.token.symbol}
+                </div>
+                {typeof tx.tokenUSDValue == 'number' && (
+                  <div className="text-turtle-level5">
+                    ${formatAmount(tx.fees.inDollars, 'Longer')}
+                  </div>
                 )}
               </div>
             </div>
           </div>
+
           {tx.explorerLink && (
             <a
               href={tx.explorerLink}
