@@ -9,7 +9,7 @@ import { DWELLIR_KEY } from '@/config'
 export const Ethereum: Chain = {
   uid: 'ethereum',
   name: 'Ethereum',
-  logoURI: '/ethereum.svg',
+  logoURI: '/logos/ethereum.svg',
   chainId: 1,
   network: 'Ethereum',
   supportedAddressTypes: ['evm'],
@@ -150,7 +150,7 @@ export namespace Eth {
     id: 'eth',
     name: 'Ethereum',
     symbol: 'ETH',
-    logoURI: '/ethereum.svg',
+    logoURI: '/logos/ethereum.svg',
     decimals: 18,
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
@@ -177,7 +177,7 @@ export namespace Eth {
     id: 'dai.e',
     name: 'DAI',
     symbol: 'DAI',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
+    logoURI: '/logos/dai.svg',
     decimals: 18,
     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
     multilocation:
@@ -189,7 +189,7 @@ export namespace Eth {
     id: 'usdt.e',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+    logoURI: '/logos/tether-usdt.svg',
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     multilocation:
@@ -226,7 +226,7 @@ export namespace Eth {
     id: 'wbtc.e',
     name: 'Wrapped Bitcoin',
     symbol: 'WBTC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+    logoURI: '/logos/wbtc.svg',
     decimals: 8,
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
     multilocation:
@@ -391,7 +391,7 @@ export namespace Polkadot {
     id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+    logoURI: '/logos/tether-usdt.svg',
     decimals: 6,
     address: '',
     multilocation: '',

@@ -60,18 +60,18 @@ function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | 
   if (!sourceChain) return
   if (sourceChain.network == 'Ethereum' && token.origin.type === 'Ethereum')
     return {
-      logoURI: '/ethereum.svg',
+      logoURI: '/logos/ethereum.svg',
       text: `Ethereum ${token.symbol}`,
     }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Polkadot')
     return {
-      logoURI: '/polkadot.svg',
+      logoURI: '/logos/polkadot.svg',
       text: `Polkadot ${token.symbol}`,
     }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
     switch (token.origin.bridge) {
       case 'Snowbridge':
-        return { logoURI: '/snowbridge-badge.svg', text: `Snowbridge ${token.symbol}` }
+        return { logoURI: '/logos/snowbridge-badge.svg', text: `Snowbridge ${token.symbol}` }
       default:
         return
     }
