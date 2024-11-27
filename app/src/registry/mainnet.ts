@@ -634,7 +634,13 @@ export const REGISTRY: Registry = {
       from: AssetHub.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id], //Polkadot.WUD.id
+      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
+    },
+    {
+      from: AssetHub.uid,
+      to: Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
     },
     {
       from: Acala.uid,
