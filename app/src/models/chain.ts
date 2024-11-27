@@ -15,6 +15,8 @@ export interface Chain {
   network: Network
   /** Address types for the chain. Multiple are supported.  */
   supportedAddressTypes: AddressType[]
+  /** Used to determine the correct wallet. */
+  walletType: WalletType
   /** Optional parameter for parachains only. Used for xcm transfers. */
   destinationFeeDOT?: string
   /** Optional parameter for parachains only. Used for AT API transfers. */
@@ -23,6 +25,7 @@ export interface Chain {
 
 export type Network = 'Ethereum' | 'Polkadot'
 export type AddressType = 'evm' | 'ss58'
+export type WalletType = 'EVM' | 'Substrate' | 'SubstrateEVM'
 
 export function getDestChainId(destChain: Chain): string {
   switch (destChain.network) {
