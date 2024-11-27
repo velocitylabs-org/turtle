@@ -36,7 +36,7 @@ const getTransferProgress = (date: Date, direction: Direction) => {
 
   // To avoid displaying full progress bar, keep a 10% buffer.
   // It returns 90% max and min 1% (to improve UI)
-  return Math.min(progress < 1 ? 1 : progress, 90)
+  return Math.min(progress + 1, 90)
 }
 
 const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => {
