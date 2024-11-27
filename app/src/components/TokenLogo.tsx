@@ -20,7 +20,7 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, c
 
   return (
     <Tooltip content={originBadge?.text ?? token.symbol} showIcon={false}>
-      <div className={cn('relative flex items-center', heightClass, className)}>
+      <div className={cn('relative flex items-center', className)}>
         {/* The token logo */}
         <Image
           src={token.logoURI}
