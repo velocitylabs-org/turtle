@@ -1,6 +1,5 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import { web3FromSource } from '@polkadot/extension-dapp'
 import type { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
 import { FC, useEffect, useState } from 'react'
 import Button from './Button'
@@ -8,7 +7,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 const SubstrateWalletModal: FC = () => {
   const [isMobile, setIsMobile] = useState(false)
-  const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const [selectedExtension, setSelectedExtension] = useState<InjectedExtension | null>(null)
   const {
     isModalOpen,
@@ -21,37 +19,22 @@ const SubstrateWalletModal: FC = () => {
     setEvmAccount,
   } = useSubstrateWallet()
 
-  /* useEffect(() => {
-    const userAgent = typeof window !== 'undefined' && navigator.userAgent
-    if (userAgent) {
-      setIsMobile(isMobileDevice(userAgent))
-    }
-  }, []) */
-
   useEffect(() => {
     console.log(accounts)
   }, [accounts])
 
   const handleExtensionSelect = (extension: InjectedExtension) => {
     setSelectedExtension(extension)
-    setCurrentView('accounts')
   }
 
   const handleAccountSelect = async (account: InjectedAccountWithMeta) => {
-    console.log(account.meta.source)
-    const injector = await web3FromSource(account.meta.source)
-
-    if (type === 'Substrate') {
-      //setSubstrateAccount(account)
-    }
+    if (type === 'Substrate') setSubstrateAccount(account)
+    else if (type === 'SubstrateEVM') setEvmAccount(account)
     closeModal()
   }
 
   const handleBack = () => {
-    if (currentView === 'accounts') {
-      setCurrentView('extensions')
-      setSelectedExtension(null)
-    }
+    setSelectedExtension(null)
   }
 
   return (
@@ -63,9 +46,9 @@ const SubstrateWalletModal: FC = () => {
         {/* Header */}
         <DialogHeader className="flex flex-col items-center justify-center space-y-4 rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-6">
           <DialogTitle className="text-xl font-semibold text-turtle-secondary-dark">
-            {currentView === 'extensions' ? 'Select Wallet' : 'Select Account'}
+            {!selectedExtension ? 'Select Wallet' : 'Select Account'}
           </DialogTitle>
-          {currentView === 'accounts' && selectedExtension && (
+          {selectedExtension && (
             <Button
               className="absolute left-0 top-0"
               variant="ghost"
@@ -77,7 +60,7 @@ const SubstrateWalletModal: FC = () => {
 
         {/* Content */}
         <div className="space-y-4 p-6">
-          {currentView === 'extensions' &&
+          {!selectedExtension &&
             (extensions.length > 0 ? (
               extensions.map(extension => (
                 <Button
@@ -94,7 +77,7 @@ const SubstrateWalletModal: FC = () => {
               </p>
             ))}
 
-          {currentView === 'accounts' &&
+          {selectedExtension &&
             (accounts.length > 0 ? (
               accounts
                 .filter(account =>
@@ -123,3 +106,10 @@ const SubstrateWalletModal: FC = () => {
 }
 
 export default SubstrateWalletModal
+
+/* useEffect(() => {
+    const userAgent = typeof window !== 'undefined' && navigator.userAgent
+    if (userAgent) {
+      setIsMobile(isMobileDevice(userAgent))
+    }
+  }, []) */

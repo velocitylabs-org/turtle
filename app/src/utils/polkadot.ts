@@ -1,4 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
+import { web3FromSource } from '@polkadot/extension-dapp'
+import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 
 /**
@@ -77,4 +79,8 @@ export const getApiPromise = async (wssEndpoint?: string): Promise<ApiPromise | 
   return await ApiPromise.create({
     provider: wsProvider,
   })
+}
+
+export const getInjector = async (account: InjectedAccountWithMeta) => {
+  return await web3FromSource(account.meta.source)
 }

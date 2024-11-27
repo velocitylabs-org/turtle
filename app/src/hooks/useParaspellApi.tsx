@@ -2,12 +2,12 @@ import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx } from '@/utils/paraspell'
-import { handleSubmittableEvents } from '@/utils/polkadot'
+import { getInjector, handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
+import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -32,13 +32,14 @@ const useParaspellApi = () => {
       onSuccess,
     } = params
 
-    const account = sender as SubstrateAccount
+    const account = sender as InjectedAccountWithMeta
 
     try {
       console.log('params:', params)
       const tx = await createTx(params, sourceChain.rpcConnection)
+      const injector = await getInjector(account)
 
-      await tx.signAndSend(account.address, { signer: account.signer }, async result => {
+      await tx.signAndSend(account.address, { signer: injector.signer }, async result => {
         try {
           const eventsData = handleSubmittableEvents(result)
           if (eventsData) {

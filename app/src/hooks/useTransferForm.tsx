@@ -191,7 +191,7 @@ const useTransferForm = () => {
         fees,
         onSuccess: () => {
           reset() // reset form on success
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }) // scroll to bottom
+          //window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }) // scroll to bottom
         },
       })
     },

@@ -19,7 +19,6 @@ import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
-import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
@@ -347,7 +346,7 @@ const Transfer: FC = () => {
       />
 
       <Credits />
-      <SubstrateWalletModal />
+      {/* <SubstrateWalletModal /> */}
     </form>
   )
 }
