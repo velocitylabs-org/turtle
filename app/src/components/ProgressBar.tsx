@@ -17,7 +17,7 @@ const ProgressBar: FC<ProgressBarProps> = ({ progress, outlinedProgressBar }) =>
           )}
         >
           <div
-            className="h-full rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-700 ease-in-out"
+            className="h-full rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-1000 ease-in-out"
             style={{ transform: `translateX(-${100 - (progress || 0)}%)` }}
           />
         </div>
