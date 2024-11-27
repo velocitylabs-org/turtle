@@ -202,9 +202,9 @@ const useTransferForm = () => {
             severity: NotificationSeverity.Success,
           })
 
-          document
+          /* document
             .getElementById('ongoing-txs')
-            ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' }) */
         },
       })
     },

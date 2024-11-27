@@ -1,3 +1,4 @@
+'use client'
 import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
 import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
 import type { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
