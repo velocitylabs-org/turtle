@@ -111,7 +111,7 @@ const useTransferForm = () => {
         destinationChain &&
         tokenAmount &&
         !isSameDestination &&
-        isRouteAllowed(environment, destinationChain, newValue, tokenAmount)
+        isRouteAllowed(environment, newValue, destinationChain, tokenAmount)
       )
         return
 
