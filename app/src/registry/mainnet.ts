@@ -28,7 +28,7 @@ export const AssetHub: Chain = {
 export const RelayChain: Chain = {
   uid: 'polkadot',
   name: 'Polkadot Relay Chain',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+  logoURI: '/logos/polkadot.svg',
   chainId: 0,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -59,7 +59,7 @@ export const Bifrost: Chain = {
 export const Hydration: Chain = {
   uid: 'hydration',
   name: 'Hydration',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6753.png',
+  logoURI: '/logos/hydra.svg',
   chainId: 2034,
   destinationFeeDOT: '20000000',
   network: 'Polkadot',
@@ -114,7 +114,7 @@ export const Polimec: Chain = {
 export const Centrifuge: Chain = {
   uid: 'centrifuge',
   name: 'Centrifuge',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+  logoURI: '/logos/cfg.svg',
   chainId: 2031,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -189,7 +189,7 @@ export namespace Eth {
     id: 'usdt.e',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: '/logos/tether-usdt.svg',
+    logoURI: '/logos/usdt.svg',
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     multilocation:
@@ -238,7 +238,7 @@ export namespace Eth {
     id: 'myth.e',
     name: 'Mythos',
     symbol: 'MYTH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    logoURI: '/logos/myth.svg',
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
     multilocation:
@@ -251,7 +251,7 @@ export namespace Eth {
     id: 'shib.e',
     name: 'Shiba Inu',
     symbol: 'SHIB',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png',
+    logoURI: '/logos/shib.svg',
     decimals: 18,
     address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
     multilocation:
@@ -263,7 +263,7 @@ export namespace Eth {
     id: 'pepe.e',
     name: 'Pepe',
     symbol: 'PEPE',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24478.png',
+    logoURI: '/logos/pepe.svg',
     decimals: 18,
     address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
     multilocation:
@@ -275,7 +275,7 @@ export namespace Eth {
     id: 'ton.e',
     name: 'Toncoin',
     symbol: 'TON',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+    logoURI: '/logos/ton.svg',
     decimals: 9,
     address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
     multilocation:
@@ -287,7 +287,7 @@ export namespace Eth {
     id: 'wsteth.e',
     name: 'Lido wstETH',
     symbol: 'WSTETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12409.png',
+    logoURI: 'logos/wsteth.svg',
     decimals: 18,
     address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
     multilocation:
@@ -300,7 +300,7 @@ export namespace Eth {
     id: 'tbtc.e',
     name: 'tBTC',
     symbol: 'TBTC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5776.png',
+    logoURI: '/logos/tbtc.svg',
     decimals: 18,
     address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
     multilocation:
@@ -352,7 +352,7 @@ export namespace Polkadot {
     id: 'cfg',
     name: 'Centrifuge',
     symbol: 'CFG',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+    logoURI: '/logos/cfg.svg',
     decimals: 18,
     address: '',
     multilocation:
@@ -365,7 +365,7 @@ export namespace Polkadot {
     id: 'hdx',
     name: 'Hydration',
     symbol: 'HDX',
-    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    logoURI: '/logos/hydra.svg',
     decimals: 12,
     address: '',
     multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
@@ -391,7 +391,7 @@ export namespace Polkadot {
     id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: '/logos/tether-usdt.svg',
+    logoURI: '/logos/usdt.svg',
     decimals: 6,
     address: '',
     multilocation: '',
@@ -427,7 +427,7 @@ export namespace Polkadot {
   export const DOT: Token = {
     id: 'dot',
     name: 'Polkadot',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+    logoURI: '/logos/polkadot.svg',
     symbol: 'DOT',
     decimals: 10,
     address: '',
