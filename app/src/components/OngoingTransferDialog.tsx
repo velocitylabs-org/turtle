@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog'
-import { Separator } from './ui/separator'
+import { TokenLogo } from './TokenLogo'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -75,11 +75,11 @@ export const OngoingTransferDialog = ({
           </div>
           <h3
             className={
-              'xxl-letter-spacing flex items-center space-x-1 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
+              'xxl-letter-spacing flex items-center space-x-3 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
             <span>{formatAmount(toHuman(transfer.amount, transfer.token))}</span>
-            <span>{transfer.token.symbol}</span>
+            <TokenLogo token={transfer.token} sourceChain={transfer.sourceChain} size={40} />
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
             <div>{formatOngoingTransferDate(transfer.date)}</div>
@@ -87,7 +87,7 @@ export const OngoingTransferDialog = ({
         </DialogHeader>
 
         {/* Modal content */}
-        <div className="flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary bg-white p-4 sm:p-10">
+        <div className="mt-[-1px] flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary border-t-turtle-secondary-dark bg-white p-4 sm:p-10">
           {/* Update and progress bar */}
           <div
             className={
@@ -114,61 +114,61 @@ export const OngoingTransferDialog = ({
               Sender
             </div>
             <div className="p-4 text-sm">
-              <Account network={transfer.sourceChain.network} address={transfer.sender} />
+              <Account network={transfer.sourceChain.network} address={transfer.sender} size={24} />
             </div>
             <div className="relative border-t p-4 text-sm">
               <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
                 Receiver
               </div>
-              <Account network={transfer.destChain.network} address={transfer.recipient} />
+              <Account
+                network={transfer.destChain.network}
+                address={transfer.recipient}
+                size={24}
+              />
             </div>
           </div>
 
-          {/* fees */}
-          <div className="w-full gap-10">
-            <div className="mt-2 flex justify-between space-x-4 px-1 sm:flex-row">
-              <p className="text-sm">Transfer amount</p>
-              <div className="flex space-x-1 text-sm">
-                <p>{toHuman(transfer.amount, transfer.token)}</p>
-                <p>{transfer.token.symbol}</p>
+          {/* Summary */}
+          <div className="summary my-3 w-full space-y-3 px-1">
+            {/* Amount */}
+            <div className="flex items-start justify-between space-x-4">
+              <div className="font-bold">Amount</div>
+              <div className="items-right flex flex-col space-x-1">
+                <div className="text-right">
+                  <div className="text-lg">
+                    {formatAmount(toHuman(transfer.amount, transfer.token), 'Longer')}{' '}
+                    {transfer.token.symbol}
+                  </div>
+                  {typeof transfer.tokenUSDValue == 'number' && (
+                    <div className="text-turtle-level4">
+                      $
+                      {formatAmount(
+                        toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
+                        'Longer',
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Fees */}
+            <div className="flex items-start justify-between space-x-4">
+              <div className="font-bold">Fees</div>
+              <div className="items-right flex flex-col space-x-1 text-right">
+                <div className="text-lg">
+                  {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Longer')}{' '}
+                  {transfer.fees.token.symbol}
+                </div>
                 {typeof transfer.tokenUSDValue == 'number' && (
-                  <p className="text-turtle-level5">
-                    $
-                    {formatAmount(
-                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
-                    )}{' '}
-                  </p>
+                  <div className="text-turtle-level4">
+                    ${formatAmount(transfer.fees.inDollars, 'Longer')}
+                  </div>
                 )}
               </div>
             </div>
-            <Separator className="my-4 bg-turtle-level3" />
-            <div className="flex justify-between space-x-4 px-1 sm:flex-row">
-              <p className="text-sm">Fees</p>
-              <div className="flex space-x-1 text-sm">
-                <p>{formatAmount(toHuman(transfer.fees.amount, transfer.fees.token))}</p>
-                <p>{transfer.fees.token.symbol}</p>
-                {transfer.fees.inDollars >= 0 && (
-                  <div className="text-turtle-level5">${formatAmount(transfer.fees.inDollars)}</div>
-                )}
-              </div>
-            </div>
-            {/* <Separator className="my-4 bg-turtle-level3" />
-            <div className="flex justify-between space-x-4 px-1 sm:flex-row">
-              <p className="text-sm">Min receive</p>
-              <div className="flex space-x-1 text-sm">
-                <p>{formatAmount(toHuman(transfer.amount, transfer.token))}</p>
-                <p>{transfer.token.symbol}</p>
-                {typeof transfer.tokenUSDValue == 'number' && (
-                  <p className="text-turtle-level5">
-                    $
-                    {formatAmount(
-                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
-                    )}{' '}
-                  </p>
-                )}
-              </div>
-            </div> */}
           </div>
+
           {explorerLink && (
             <a
               href={explorerLink}
