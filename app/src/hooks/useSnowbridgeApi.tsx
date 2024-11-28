@@ -7,12 +7,9 @@ import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
-import { getInjector } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
-import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { Signer } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -142,11 +139,10 @@ const useSnowbridgeApi = () => {
         }
 
         case Direction.ToEthereum: {
-          const injector = await getInjector(sender as InjectedAccountWithMeta)
-          const signer = { signer: injector.signer, address: sender.address }
+          const signer = { signer: undefined, address: sender.address }
           sendResult = await toEthereum.send(
             context,
-            signer as WalletOrKeypair,
+            signer as any,
             plan as toEthereum.SendValidationResult,
           )
           break
@@ -225,11 +221,10 @@ const useSnowbridgeApi = () => {
         )
 
       case Direction.ToEthereum: {
-        const injector = await getInjector(sender as InjectedAccountWithMeta)
-        const signer = { signer: injector.signer, address: sender.address }
+        const signer = { signer: undefined, address: sender.address }
         return await toEthereum.validateSend(
           context,
-          signer as WalletOrKeypair,
+          signer as any,
           sourceChain.chainId,
           recipient,
           token.address,

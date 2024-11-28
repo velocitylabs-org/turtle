@@ -5,7 +5,7 @@ import { Environment } from '@/store/environmentStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx } from '@/utils/paraspell'
-import { getInjector, handleSubmittableEvents } from '@/utils/polkadot'
+import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { ISubmittableResult } from '@polkadot/types/types'
@@ -43,11 +43,10 @@ const useParaspellApi = () => {
       console.log('params:', params)
       const tx = await createTx(params, sourceChain.rpcConnection)
       setStatus('Signing')
-      const injector = await getInjector(account)
 
       await tx.signAndSend(
         account.address,
-        { signer: injector.signer },
+        { signer: undefined },
         async (result: ISubmittableResult) => {
           // This callback might be executed multiple times but we only want to update
           // the status of this tx and move it to 'ongoing' once.
