@@ -83,7 +83,6 @@ const TxSummary: FC<TxSummaryProps> = ({
                     ) : (
                       transferAmount &&
                       transferAmount.inDollars > 0 && (
-
                         <div className="text-right text-turtle-level4">
                           {/* ${formatAmount(transferAmount.inDollars)} */}
                           <NumberFlow value={transferAmount.inDollars} prefix="$" />
