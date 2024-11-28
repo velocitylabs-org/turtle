@@ -51,6 +51,7 @@ const Transfer: FC = () => {
     destinationWallet,
     fees,
     loadingFees,
+    feesTokenSufficient,
     transferStatus,
     environment,
     tokenAmountError,
@@ -333,6 +334,7 @@ const Transfer: FC = () => {
           tokenAmount={tokenAmount}
           fees={fees}
           durationEstimate={durationEstimate}
+          feesTokenSufficient={feesTokenSufficient}
           className={clsx({ 'opacity-30': transferStatus !== 'Idle' })}
         />
       )}

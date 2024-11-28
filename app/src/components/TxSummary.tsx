@@ -17,6 +17,7 @@ interface TxSummaryProps {
   loading?: boolean
   fees?: AmountInfo | null
   durationEstimate?: string
+  feesTokenSufficient: boolean
   className?: string
 }
 
@@ -25,6 +26,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   tokenAmount,
   fees,
   durationEstimate,
+  feesTokenSufficient,
   className,
 }) => {
   const { price, loading: isLoadingTokenPrice } = useTokenPrice(tokenAmount.token)
@@ -43,6 +45,9 @@ const TxSummary: FC<TxSummaryProps> = ({
         </div>
       )
     }
+
+    const isAmountTooLow =
+      transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO
 
     return (
       <div className={cn('tx-summary p-4 pt-3', className)}>
@@ -100,7 +105,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             </li>
           </ul>
 
-          {transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO && (
+          {(isAmountTooLow || !feesTokenSufficient) && (
             <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2 px-3">
               <ExclamationMark
                 width={20}
@@ -108,7 +113,13 @@ const TxSummary: FC<TxSummaryProps> = ({
                 fill={colors['turtle-foreground']}
                 className="mr-3 h-[1.3rem] w-[1.3rem]"
               />
-              <div className="text-small">The amount is a bit too low to justify the fees</div>
+              {!feesTokenSufficient ? (
+                <div className="text-small">
+                  Your {tokenAmount.token?.symbol} balance might be too low to cover the fees.
+                </div>
+              ) : (
+                <div className="text-small">The amount is a bit too low to justify the fees.</div>
+              )}
             </div>
           )}
         </div>
