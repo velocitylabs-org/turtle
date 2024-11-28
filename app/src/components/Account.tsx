@@ -12,11 +12,13 @@ function Account({
   address,
   className,
   allowCopy = true,
+  size = 14,
 }: {
   network: Network
   address: string
   className?: string
   allowCopy?: boolean
+  size?: number
 }) {
   const accountName = useLookupName(network, address)
   const accountDisplay = accountName ? accountName : truncateAddress(address, 4, 4)
@@ -26,14 +28,17 @@ function Account({
       {network === 'Polkadot' ? (
         <Identicon
           value={address}
-          size={14}
+          size={size}
           theme="polkadot"
-          className={cn('rounded-full border border-turtle-secondary-dark', className)}
+          className={cn(
+            'mr-1 rounded-full border border-turtle-secondary-dark hover:cursor-default',
+            className,
+          )}
         />
       ) : (
         <div
           className={cn(
-            'h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300',
+            'mr-1 h-4 w-4 rounded-full border border-turtle-secondary-dark bg-gradient-to-r from-violet-400 to-purple-300 hover:cursor-default',
             className,
           )}
         />
