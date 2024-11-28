@@ -10,6 +10,7 @@ import {
   getAllowedTokens,
 } from '@/utils/routes'
 import { getDurationEstimate } from '@/utils/transfer'
+import clsx from 'clsx'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -19,15 +20,14 @@ import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
-import TxSummary from './TxSummary'
+import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
+import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
-import SendButton from './SendButton'
-import clsx from 'clsx'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -151,7 +151,7 @@ const Transfer: FC = () => {
               options={getAllowedSourceChains(environment)}
               floatingLabel="From"
               placeholder="Source"
-              trailing={<WalletButton addressType={sourceChain?.supportedAddressTypes.at(0)} />} // TODO: support all address types
+              trailing={<WalletButton walletType={sourceChain?.walletType} />}
               walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
@@ -219,7 +219,7 @@ const Transfer: FC = () => {
                 !manualRecipient.enabled &&
                 sourceChain?.supportedAddressTypes.at(0) !==
                   destinationChain?.supportedAddressTypes.at(0) && (
-                  <WalletButton addressType={destinationChain?.supportedAddressTypes.at(0)} />
+                  <WalletButton walletType={destinationChain?.walletType} />
                 )
               }
               walletAddress={destinationWallet?.sender?.address}

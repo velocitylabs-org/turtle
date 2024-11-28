@@ -24,7 +24,7 @@ const useSubstrateWallet = () => {
   const disconnectEvm = () => setEvmAccount(null)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined') return // fixes window reference issue
 
     let unsubscribe = () => {}
 

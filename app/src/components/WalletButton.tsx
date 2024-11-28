@@ -1,20 +1,20 @@
 'use client'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import { AddressType } from '@/models/chain'
+import { WalletType } from '@/models/chain'
 import { cn } from '@/utils/cn'
 import { motion } from 'framer-motion'
 import Button from './Button'
 
 interface WalletButtonProps {
-  /** The address type of the chain. */
-  addressType?: AddressType
+  /** The wallet type of the chain. */
+  walletType?: WalletType
   /** Additional classes to apply to the button. */
   className?: string
 }
 
 /** Wallet button component that is intended to support connecting to various different networks based on its address type. */
-const WalletButton = ({ addressType, className }: WalletButtonProps) => {
+const WalletButton = ({ walletType, className }: WalletButtonProps) => {
   const {
     disconnect: disconnectEvm,
     isConnected: evmIsConnected,
@@ -22,24 +22,44 @@ const WalletButton = ({ addressType, className }: WalletButtonProps) => {
   } = useEvmWallet()
 
   const {
-    disconnect: disconnectSubstrate,
-    isConnected: substrateIsConnected,
+    disconnectSubstrate: disconnectSubstrate,
+    isSubstrateConnected: substrateIsConnected,
+    disconnectEvm: disconnectSubstrateEvm,
+    isEvmConnected: substrateEvmIsConnected,
     openModal: openSubstrate,
+    setType,
   } = useSubstrateWallet()
 
   const { buttonFunction, isConnected, disabled } = (() => {
-    switch (addressType) {
-      case 'evm':
+    switch (walletType) {
+      case 'EVM':
         return {
           buttonFunction: evmIsConnected ? disconnectEvm : () => openEvm(),
           isConnected: evmIsConnected,
           disabled: false,
         }
 
-      case 'ss58':
+      case 'Substrate':
         return {
-          buttonFunction: substrateIsConnected ? disconnectSubstrate : () => openSubstrate(),
+          buttonFunction: substrateIsConnected
+            ? disconnectSubstrate
+            : () => {
+                setType('Substrate')
+                openSubstrate()
+              },
           isConnected: substrateIsConnected,
+          disabled: false,
+        }
+
+      case 'SubstrateEVM':
+        return {
+          buttonFunction: substrateEvmIsConnected
+            ? disconnectSubstrateEvm
+            : () => {
+                setType('SubstrateEVM')
+                openSubstrate()
+              },
+          isConnected: substrateEvmIsConnected,
           disabled: false,
         }
 
@@ -54,7 +74,7 @@ const WalletButton = ({ addressType, className }: WalletButtonProps) => {
 
   return (
     <motion.div
-      key={addressType}
+      key={walletType}
       className={className}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
