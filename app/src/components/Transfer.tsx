@@ -102,6 +102,9 @@ const Transfer: FC = () => {
     // We don't want two ActionBanners showing up at once
     !requiresErc20SpendApproval
 
+  const shouldDisplayRecipientWalletButton =
+    !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
+
   // How much balance is missing considering the desired transfer amount
   const missingBalance =
     tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
@@ -215,10 +218,7 @@ const Transfer: FC = () => {
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                // TODO: support all address types
-                !manualRecipient.enabled &&
-                sourceChain?.supportedAddressTypes.at(0) !==
-                  destinationChain?.supportedAddressTypes.at(0) && (
+                shouldDisplayRecipientWalletButton && (
                   <WalletButton walletType={destinationChain?.walletType} />
                 )
               }
