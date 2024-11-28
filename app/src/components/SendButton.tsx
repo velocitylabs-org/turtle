@@ -1,8 +1,8 @@
-import { FC, ReactNode, useEffect, useState } from 'react'
 import { Status } from '@/hooks/useTransfer'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import { colors } from '../../tailwind.config'
 import Button, { ButtonProps, ButtonVariant } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
-import { colors } from '../../tailwind.config'
 
 type SendButtonProps = ButtonProps & { status: Status }
 
@@ -13,7 +13,7 @@ const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
 
   useEffect(() => {
     setProps(getOverwrittenProps(status, props.label))
-  }, [status, disabled])
+  }, [status, disabled, props.label])
 
   return <Button {...props} variant={variant} disabled={disabled} label={label} icon={icon} />
 }

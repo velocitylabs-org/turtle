@@ -208,7 +208,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment],
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment, addNotification],
   )
 
   // validate recipient address
