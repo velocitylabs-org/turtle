@@ -15,8 +15,8 @@ export const Tooltip: FC<TooltipProps> = ({ children, content, showIcon = true }
   return (
     <NextTooltip
       showArrow
-      delay={250}
-      closeDelay={0}
+      delay={350}
+      closeDelay={100}
       content={
         <div className={cn('flex gap-1', showIcon ? 'pl-[4px] pr-[6px]' : 'px-[5px]')}>
           {showIcon && <Image src={TooltipIcon} alt="icon" className="mr-[2px]" />}
