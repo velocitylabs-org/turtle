@@ -115,7 +115,7 @@ const TxSummary: FC<TxSummaryProps> = ({
               />
               {!feesTokenSufficient ? (
                 <div className="text-small">
-                  Your {tokenAmount.token?.symbol} balance might be too low to cover the fees.
+                  Your {fees.token.symbol} balance might be too low to cover the fees.
                 </div>
               ) : (
                 <div className="text-small">The amount is a bit too low to justify the fees.</div>
