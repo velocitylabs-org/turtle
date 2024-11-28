@@ -98,12 +98,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               </div>
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
-              <div
-                className={cn(
-                  'align-center animate-slideIn ml-1 flex flex-col duration-200',
-                  inDollars ? 'mt-1' : '',
-                )}
-              >
+              <div className="align-center animate-slideIn ml-1 flex flex-col duration-200">
                 <input
                   ref={inputRef}
                   data-cy="amount-input"
@@ -118,7 +113,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   autoFocus
                 />
                 {inDollars && (
-                  <div className="mt-[px] text-sm text-turtle-level4">
+                  <div className="mt-[-3px] text-sm text-turtle-level4">
                     <NumberFlow value={inDollars} prefix="$" />
                   </div>
                 )}

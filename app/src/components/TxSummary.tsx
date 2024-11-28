@@ -60,7 +60,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                   </div>
                   {fees.inDollars > 0 && (
                     <div className="text-right text-turtle-level4">
-                      <NumberFlow value={fees.inDollars} prefix="$" />x
+                      <NumberFlow value={fees.inDollars} prefix="$" />
                     </div>
                   )}
                 </div>
