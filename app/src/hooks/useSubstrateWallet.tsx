@@ -65,7 +65,8 @@ const useSubstrateWallet = () => {
     openModal,
     closeModal,
     isModalOpen,
-
+    extensions,
+    accounts,
     type,
     setType,
   }

@@ -1,16 +1,21 @@
 import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
+import { Signer } from '@polkadot/types/types'
 import { create } from 'zustand'
+
+export interface SubstrateAccount extends InjectedAccountWithMeta {
+  signer: Signer | undefined
+}
 
 interface State {
   // State
-  account: InjectedAccountWithMeta | null
-  evmAccount: InjectedAccountWithMeta | null
+  account: SubstrateAccount | null
+  evmAccount: SubstrateAccount | null
   modalOpen: boolean
   type: 'Substrate' | 'SubstrateEVM'
 
   // Actions
-  setAccount: (x: InjectedAccountWithMeta | null) => void
-  setEvmAccount: (x: InjectedAccountWithMeta | null) => void
+  setAccount: (x: SubstrateAccount | null) => void
+  setEvmAccount: (x: SubstrateAccount | null) => void
   setModalOpen: (isOpen: boolean) => void
   setType: (type: 'Substrate' | 'SubstrateEVM') => void
 }
