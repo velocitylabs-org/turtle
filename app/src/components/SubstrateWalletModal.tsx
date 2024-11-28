@@ -1,5 +1,6 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
+import { truncateAddress } from '@/utils/address'
 import { isMobileDevice } from '@/utils/env'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { FC, useEffect, useState } from 'react'
@@ -11,7 +12,7 @@ const SubstrateWalletModal: FC = () => {
   const [isMobile, setIsMobile] = useState(false)
   const [selectedExtension, setSelectedExtension] = useState<InjectedExtension | null>(null)
   const [extensionAccounts, setExtensionAccounts] = useState<InjectedAccount[]>([])
-  const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions') // Current view state
+  const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const {
     isModalOpen,
     closeModal,
@@ -100,11 +101,15 @@ const SubstrateWalletModal: FC = () => {
                 .map(account => (
                   <Button
                     key={account.address}
-                    className="w-full p-4"
+                    className="flex w-full flex-col"
                     variant="outline"
-                    label={account.name || account.address}
                     onClick={() => handleAccountSelect(account)}
-                  />
+                  >
+                    <span className="pt-3">{account.name}</span>
+                    <span className="pb-4 text-xs text-turtle-level6">
+                      {truncateAddress(account.address)}
+                    </span>
+                  </Button>
                 ))
             ) : (
               <p className="text-center text-sm text-gray-500">
