@@ -12,7 +12,8 @@ const SubstrateWalletModal: FC = () => {
     isModalOpen,
     closeModal,
     openModal,
-
+    extensions,
+    accounts,
     type,
     setSubstrateAccount,
     setEvmAccount,
@@ -55,7 +56,7 @@ const SubstrateWalletModal: FC = () => {
 
         {/* Content */}
         <div className="space-y-4 p-6">
-          {/* {!selectedExtension &&
+          {!selectedExtension &&
             (extensions.length > 0 ? (
               extensions.map(extension => (
                 <Button
@@ -70,9 +71,9 @@ const SubstrateWalletModal: FC = () => {
               <p className="text-center text-sm text-gray-500">
                 No extensions detected. Please install a compatible wallet extension.
               </p>
-            ))} */}
+            ))}
 
-          {/* {selectedExtension &&
+          {selectedExtension &&
             (accounts.length > 0 ? (
               accounts
                 .filter(account =>
@@ -93,7 +94,7 @@ const SubstrateWalletModal: FC = () => {
               <p className="text-center text-sm text-gray-500">
                 No accounts available. Please add an account to your selected wallet extension.
               </p>
-            ))} */}
+            ))}
         </div>
       </DialogContent>
     </Dialog>
