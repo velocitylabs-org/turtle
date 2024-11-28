@@ -11,6 +11,8 @@ import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 import { TokenLogo } from './TokenLogo'
 import { Chain } from '@/models/chain'
+import NumberFlow from '@number-flow/react'
+import useTokenPrice from '@/hooks/useTokenPrice'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
   sourceChain: Chain | null
@@ -38,6 +40,9 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
     const triggerRef = useRef<HTMLDivElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
+
+    const { price } = useTokenPrice(value?.token)
+    const inDollars = !!value?.amount && price ? price * value.amount : undefined
 
     useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
@@ -93,19 +98,31 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               </div>
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
-              <input
-                ref={inputRef}
-                data-cy="amount-input"
-                disabled={disabled}
-                type="number"
-                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-                placeholder={secondPlaceholder ?? 'Amount'}
-                value={value?.amount ?? ''}
-                onChange={handleAmountChange}
-                onClick={e => e.stopPropagation()}
-                onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
-                autoFocus
-              />
+              <div
+                className={cn(
+                  'align-center animate-slideIn ml-1 flex flex-col duration-200',
+                  inDollars ? 'mt-1' : '',
+                )}
+              >
+                <input
+                  ref={inputRef}
+                  data-cy="amount-input"
+                  disabled={disabled}
+                  type="number"
+                  className={cn('bg-transparent focus:border-0 focus:outline-none')}
+                  placeholder={secondPlaceholder ?? 'Amount'}
+                  value={value?.amount ?? ''}
+                  onChange={handleAmountChange}
+                  onClick={e => e.stopPropagation()}
+                  onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
+                  autoFocus
+                />
+                {inDollars && (
+                  <div className="mt-[px] text-sm text-turtle-level4">
+                    <NumberFlow value={inDollars} prefix="$" />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Trailing component. E.g. Max Button */}
