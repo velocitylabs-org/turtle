@@ -2,7 +2,7 @@ import { Sender } from '@/hooks/useTransfer'
 import { WalletInfo } from '@/hooks/useWallet'
 import { AddressType } from '@/models/chain'
 import { ManualRecipient } from '@/models/select'
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
+import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { JsonRpcSigner } from 'ethers'
@@ -88,6 +88,4 @@ export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: W
 
 /** Get the transfer sender address from the sender origin base (Substrate or Ethereum)*/
 export const getSenderAddress = async (sender: Sender): Promise<string> =>
-  sender instanceof JsonRpcSigner
-    ? await sender.getAddress()
-    : (sender as InjectedAccountWithMeta).address
+  sender instanceof JsonRpcSigner ? await sender.getAddress() : (sender as InjectedAccount).address
