@@ -59,7 +59,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                     {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
                   </div>
                   {fees.inDollars > 0 && (
-                    <div className="text-right text-turtle-level3">
+                    <div className="text-right text-turtle-level4">
                       ${formatAmount(fees.inDollars)}
                     </div>
                   )}
@@ -81,7 +81,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                     ) : (
                       transferAmount &&
                       transferAmount.inDollars > 0 && (
-                        <div className="text-right text-turtle-level3">
+                        <div className="text-right text-turtle-level4">
                           ${formatAmount(transferAmount.inDollars)}
                         </div>
                       )
@@ -101,12 +101,12 @@ const TxSummary: FC<TxSummaryProps> = ({
           </ul>
 
           {transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO && (
-            <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2 px-3">
+            <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}
                 height={20}
                 fill={colors['turtle-foreground']}
-                className="mr-3 h-[1.3rem] w-[1.3rem]"
+                className="mr-3"
               />
               <div className="text-small">The amount is a bit too low to justify the fees</div>
             </div>
