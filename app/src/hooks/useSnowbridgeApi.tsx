@@ -5,11 +5,13 @@ import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
+import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { Signer } from 'ethers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -139,10 +141,11 @@ const useSnowbridgeApi = () => {
         }
 
         case Direction.ToEthereum: {
-          const signer = { signer: undefined, address: sender.address }
+          const account = sender as SubstrateAccount
+          const signer = { signer: account.signer, address: sender.address }
           sendResult = await toEthereum.send(
             context,
-            signer as any,
+            signer as WalletOrKeypair,
             plan as toEthereum.SendValidationResult,
           )
           break
@@ -221,10 +224,11 @@ const useSnowbridgeApi = () => {
         )
 
       case Direction.ToEthereum: {
-        const signer = { signer: undefined, address: sender.address }
+        const account = sender as SubstrateAccount
+        const signer = { signer: account.signer, address: sender.address }
         return await toEthereum.validateSend(
           context,
-          signer as any,
+          signer as WalletOrKeypair,
           sourceChain.chainId,
           recipient,
           token.address,

@@ -2,14 +2,14 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { Environment } from '@/store/environmentStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getRoute } from '@/utils/routes'
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
 import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
 import useParaspellApi from './useParaspellApi'
 import useSnowbridgeApi from './useSnowbridgeApi'
 
-export type Sender = JsonRpcSigner | InjectedAccountWithMeta
+export type Sender = JsonRpcSigner | SubstrateAccount
 
 export interface TransferParams {
   environment: Environment
