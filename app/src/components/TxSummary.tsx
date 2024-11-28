@@ -62,7 +62,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                   {fees.inDollars > 0 && (
                     <div className="text-right text-turtle-level3">
                       {/* ${formatAmount(fees.inDollars)} */}
-                      <NumberFlow value={fees.inDollars} prefix='$'/>
+                      <NumberFlow value={fees.inDollars} prefix="$" />
                     </div>
                   )}
                 </div>
@@ -85,7 +85,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                       transferAmount.inDollars > 0 && (
                         <div className="text-right text-turtle-level3">
                           {/* ${formatAmount(transferAmount.inDollars)} */}
-                          <NumberFlow value={transferAmount.inDollars} prefix='$'  />
+                          <NumberFlow value={transferAmount.inDollars} prefix="$" />
                         </div>
                       )
                     )}
