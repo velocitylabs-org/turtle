@@ -634,7 +634,13 @@ export const REGISTRY: Registry = {
       from: AssetHub.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
+    },
+    {
+      from: AssetHub.uid,
+      to: Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
     },
     {
       from: Acala.uid,
@@ -646,7 +652,7 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
     },
     {
       from: Bifrost.uid,
@@ -708,7 +714,13 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.HDX.id, Polkadot.GLMR.id],
+      tokens: [
+        Polkadot.DOT.id,
+        Polkadot.HDX.id,
+        Polkadot.GLMR.id,
+        Polkadot.BNC.id,
+        Polkadot.VDOT.id,
+      ],
     },
     {
       from: Hydration.uid,
@@ -726,7 +738,13 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.INTR.id, Polkadot.HDX.id, Polkadot.VDOT.id],
+      tokens: [
+        Polkadot.DOT.id,
+        Polkadot.INTR.id,
+        Polkadot.HDX.id,
+        Polkadot.VDOT.id,
+        Polkadot.IBTC.id,
+      ],
     },
     {
       from: Hydration.uid,
@@ -783,6 +801,13 @@ export const REGISTRY: Registry = {
         [Polkadot.USDT.id, { id: '1984' }],
         [Eth.WETH.id, { symbol: 'WETH.e' }],
         [Eth.WBTC.id, { symbol: 'WBTC.e' }],
+      ]),
+    ],
+    [
+      Hydration.uid,
+      new Map([
+        [Polkadot.USDC.id, { id: '22' }],
+        [Polkadot.USDT.id, { id: '10' }],
       ]),
     ],
   ]),
