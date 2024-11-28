@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn'
 import React, { FC } from 'react'
 
-export interface BetterImageProps {
+export interface IconProps {
   width: number
   height: number
   src: string
@@ -13,10 +13,10 @@ export interface BetterImageProps {
  * making it a lot easier to handle images with different ratios while forcing a fixed width and height.
  *
  */
-export const BetterImage: FC<BetterImageProps> = ({ width, height, src, className }) => {
+export const Icon: FC<IconProps> = ({ width, height, src, className }) => {
   return (
     <div
-      className={cn('bg-cover bg-center', className)}
+      className={cn('rounded-full border-1 bg-cover bg-center', className)}
       style={{ backgroundImage: `url(${src})`, width: `${width}px`, height: `${height}px` }}
     />
   )

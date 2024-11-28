@@ -4,7 +4,7 @@ import { Token } from '@/models/token'
 import React, { FC } from 'react'
 import { Tooltip } from './Tooltip'
 import { cn } from '@/utils/cn'
-import { BetterImage } from './BetterImage'
+import { Icon } from './Icon'
 
 interface TokenLogoProps {
   token: Token
@@ -20,20 +20,15 @@ export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, c
     <Tooltip content={originBadge?.text ?? token.symbol} showIcon={false}>
       <div className={cn('relative flex items-center', className)}>
         {/* The token logo */}
-        <BetterImage
-          width={size}
-          height={size}
-          src={token.logoURI}
-          className="rounded-full border-1 border-turtle-foreground"
-        />
+        <Icon width={size} height={size} src={token.logoURI} className="border-turtle-foreground" />
 
         {/* The origin badge */}
         {originBadge && (
-          <BetterImage
+          <Icon
             width={size / 2}
             height={size / 2}
             src={originBadge.logoURI}
-            className="absolute bottom-[-5%] right-[-10%] rounded-full border-1 border-white"
+            className="absolute bottom-[-5%] right-[-10%] border-white"
           />
         )}
       </div>
