@@ -1,6 +1,7 @@
 import { AmountInfo } from '@/models/transfer'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
+import NumberFlow from '@number-flow/react'
 import { FC } from 'react'
 import { spinnerSize } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
@@ -60,7 +61,8 @@ const TxSummary: FC<TxSummaryProps> = ({
                   </div>
                   {fees.inDollars > 0 && (
                     <div className="text-right text-turtle-level3">
-                      ${formatAmount(fees.inDollars)}
+                      {/* ${formatAmount(fees.inDollars)} */}
+                      <NumberFlow value={fees.inDollars} prefix='$'/>
                     </div>
                   )}
                 </div>
@@ -82,7 +84,8 @@ const TxSummary: FC<TxSummaryProps> = ({
                       transferAmount &&
                       transferAmount.inDollars > 0 && (
                         <div className="text-right text-turtle-level3">
-                          ${formatAmount(transferAmount.inDollars)}
+                          {/* ${formatAmount(transferAmount.inDollars)} */}
+                          <NumberFlow value={transferAmount.inDollars} prefix='$'  />
                         </div>
                       )
                     )}
