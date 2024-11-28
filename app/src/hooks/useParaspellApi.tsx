@@ -2,17 +2,17 @@ import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx } from '@/utils/paraspell'
 import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
+import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
+import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-import { ISubmittableResult } from '@polkadot/types/types'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -33,18 +33,20 @@ const useParaspellApi = () => {
       onComplete,
     } = params
 
-    const account = sender as SubstrateAccount
+    const account = sender as InjectedAccountWithMeta
     const senderAddress = await getSenderAddress(sender)
     const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
     const date = new Date()
     let locked = false
 
     try {
+      console.log('params:', params)
       const tx = await createTx(params, sourceChain.rpcConnection)
       setStatus('Signing')
+
       await tx.signAndSend(
         account.address,
-        { signer: account.signer },
+        { signer: undefined },
         async (result: ISubmittableResult) => {
           // This callback might be executed multiple times but we only want to update
           // the status of this tx and move it to 'ongoing' once.
