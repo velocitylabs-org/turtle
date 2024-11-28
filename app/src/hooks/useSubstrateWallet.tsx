@@ -1,9 +1,6 @@
-'use client'
 import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
-import { web3AccountsSubscribe, web3Enable } from '@polkadot/extension-dapp'
-import type { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
 import { captureException } from '@sentry/nextjs'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 const useSubstrateWallet = () => {
   const substrateAccount = useSubstrateWalletStore(state => state.account)
@@ -14,9 +11,6 @@ const useSubstrateWallet = () => {
   const setModalOpen = useSubstrateWalletStore(state => state.setModalOpen)
   const type = useSubstrateWalletStore(state => state.type)
   const setType = useSubstrateWalletStore(state => state.setType)
-
-  const [extensions, setExtensions] = useState<InjectedExtension[]>([])
-  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
 
   const openModal = () => setModalOpen(true)
   const closeModal = () => setModalOpen(false)
@@ -30,16 +24,16 @@ const useSubstrateWallet = () => {
 
     const initializeExtensionsAndSubscribe = async () => {
       try {
+        const { web3Enable, web3AccountsSubscribe } = await import('@polkadot/extension-dapp')
         const enabledExtensions = await web3Enable('turtle')
-        setExtensions(enabledExtensions)
-
+        //setExtensions(enabledExtensions)
         if (enabledExtensions.length === 0) {
           console.warn('No extensions enabled or user rejected authorization.')
           return
         }
 
         unsubscribe = await web3AccountsSubscribe(injectedAccounts => {
-          setAccounts(injectedAccounts)
+          //setAccounts(injectedAccounts)
         })
       } catch (error) {
         console.error('Error initializing extensions and subscribing to accounts:', error)
@@ -67,8 +61,7 @@ const useSubstrateWallet = () => {
     openModal,
     closeModal,
     isModalOpen,
-    extensions,
-    accounts,
+
     type,
     setType,
   }

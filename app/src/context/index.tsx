@@ -1,12 +1,12 @@
 'use client'
 import { Environment } from '@/store/environmentStore'
 import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
-import { createAppKit } from '@reown/appkit'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { mainnet, sepolia } from '@reown/appkit/networks'
+import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
-import { WagmiConfig } from 'wagmi'
+import { Config, cookieToInitialState, WagmiProvider } from 'wagmi'
 
 // Setup queryClient
 export const queryClient = new QueryClient()
@@ -31,30 +31,25 @@ export const wagmiAdapter = new WagmiAdapter({
 })
 
 // Create modal
-createAppKit({
+export const modal = createAppKit({
   adapters: [wagmiAdapter],
   networks: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet],
   metadata: metadata,
   projectId,
+  themeMode: 'light',
   features: {
     analytics: true,
   },
 })
-/* export const wallet = createWeb3Modal({
-  wagmiConfig: config,
-  projectId,
-  enableAnalytics: true,
-  enableOnramp: true,
-  themeMode: 'light',
-  themeVariables: {
-    '--w3m-accent': colors['turtle-primary'],
-  },
-}) */
 
-export default function ReownProvider({ children }: { children: ReactNode }) {
+function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
+  const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
+
   return (
-    <WagmiConfig config={wagmiAdapter.wagmiConfig}>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </WagmiConfig>
+    </WagmiProvider>
   )
 }
+
+export default ContextProvider

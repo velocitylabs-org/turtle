@@ -1,3 +1,20 @@
+import { Environment } from '@/store/environmentStore'
+import { projectId } from '@/utils/env'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+import { mainnet, sepolia } from '@reown/appkit/networks'
+import { cookieStorage, createStorage } from '@wagmi/core'
+
+export const wagmiAdapter = new WagmiAdapter({
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
+  ssr: true,
+  projectId: projectId || '',
+  networks: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet],
+})
+
+export const config = wagmiAdapter.wagmiConfig
+
 export const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
 
 // The minimum threeshold of what we consider a transfer worth doing
