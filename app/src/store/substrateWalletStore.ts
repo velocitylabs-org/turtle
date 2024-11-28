@@ -1,8 +1,8 @@
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types'
+import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { Signer } from '@polkadot/types/types'
 import { create } from 'zustand'
 
-export interface SubstrateAccount extends InjectedAccountWithMeta {
+export interface SubstrateAccount extends InjectedAccount {
   signer: Signer | undefined
 }
 

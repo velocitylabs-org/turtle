@@ -1,38 +1,60 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import type { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types'
-import { FC, useState } from 'react'
+import { isMobileDevice } from '@/utils/env'
+import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
+import { FC, useEffect, useState } from 'react'
 import Button from './Button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
+import { WalletNotAccessible } from './WalletNotAccessible'
 
 const SubstrateWalletModal: FC = () => {
   const [isMobile, setIsMobile] = useState(false)
   const [selectedExtension, setSelectedExtension] = useState<InjectedExtension | null>(null)
+  const [extensionAccounts, setExtensionAccounts] = useState<InjectedAccount[]>([])
+  const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions') // Current view state
   const {
     isModalOpen,
     closeModal,
     openModal,
     extensions,
-    accounts,
     type,
     setSubstrateAccount,
     setEvmAccount,
   } = useSubstrateWallet()
 
-  const handleExtensionSelect = (extension: InjectedExtension) => {
+  const handleExtensionSelect = async (extension: InjectedExtension) => {
     setSelectedExtension(extension)
+    setCurrentView('accounts')
+    setExtensionAccounts(await extension.accounts.get())
   }
 
-  const handleAccountSelect = async (account: InjectedAccountWithMeta) => {
+  const handleAccountSelect = async (account: InjectedAccount) => {
     if (type === 'Substrate') setSubstrateAccount({ ...account, signer: selectedExtension?.signer })
     else if (type === 'SubstrateEVM')
       setEvmAccount({ ...account, signer: selectedExtension?.signer })
     closeModal()
   }
 
-  const handleBack = () => {
-    setSelectedExtension(null)
-  }
+  useEffect(() => {
+    const userAgent = typeof window !== 'undefined' && navigator.userAgent
+    if (userAgent) {
+      setIsMobile(isMobileDevice(userAgent))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setCurrentView('extensions')
+      setSelectedExtension(null)
+    }
+  }, [isModalOpen])
+
+  if (isMobile)
+    return (
+      <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
+        <WalletNotAccessible />
+      </Dialog>
+    )
 
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
@@ -41,23 +63,15 @@ const SubstrateWalletModal: FC = () => {
         hideCloseButton={true}
       >
         {/* Header */}
-        <DialogHeader className="flex flex-col items-center justify-center space-y-4 rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-6">
+        <DialogHeader className="flex items-center justify-center rounded-t-[32px] border border-turtle-secondary-dark bg-turtle-secondary-light py-6">
           <DialogTitle className="text-xl font-semibold text-turtle-secondary-dark">
-            {!selectedExtension ? 'Select Wallet' : 'Select Account'}
+            {currentView === 'extensions' ? 'Select Wallet' : 'Select Account'}
           </DialogTitle>
-          {selectedExtension && (
-            <Button
-              className="absolute left-0 top-0"
-              variant="ghost"
-              label="Back"
-              onClick={handleBack}
-            />
-          )}
         </DialogHeader>
 
         {/* Content */}
         <div className="space-y-4 p-6">
-          {!selectedExtension &&
+          {currentView === 'extensions' &&
             (extensions.length > 0 ? (
               extensions.map(extension => (
                 <Button
@@ -70,13 +84,14 @@ const SubstrateWalletModal: FC = () => {
               ))
             ) : (
               <p className="text-center text-sm text-gray-500">
-                No extensions detected. Please install a compatible wallet extension.
+                No extensions detected. Please install a compatible wallet extension. For example,
+                Talisman, Subwallet, or Polkadot.js.
               </p>
             ))}
 
-          {selectedExtension &&
-            (accounts.length > 0 ? (
-              accounts
+          {currentView === 'accounts' &&
+            (extensionAccounts.length > 0 ? (
+              extensionAccounts
                 .filter(account =>
                   type === 'SubstrateEVM'
                     ? account.type === 'ethereum'
@@ -87,13 +102,14 @@ const SubstrateWalletModal: FC = () => {
                     key={account.address}
                     className="w-full p-4"
                     variant="outline"
-                    label={account.meta.name || account.address}
+                    label={account.name || account.address}
                     onClick={() => handleAccountSelect(account)}
                   />
                 ))
             ) : (
               <p className="text-center text-sm text-gray-500">
-                No accounts available. Please add an account to your selected wallet extension.
+                No accounts available. Please connect an account to Turtle inside your wallet
+                extension.
               </p>
             ))}
         </div>
@@ -103,10 +119,3 @@ const SubstrateWalletModal: FC = () => {
 }
 
 export default SubstrateWalletModal
-
-/* useEffect(() => {
-    const userAgent = typeof window !== 'undefined' && navigator.userAgent
-    if (userAgent) {
-      setIsMobile(isMobileDevice(userAgent))
-    }
-  }, []) */
