@@ -18,7 +18,7 @@ export const Ethereum: Chain = {
 export const AssetHub: Chain = {
   uid: 'polkadot-assethub',
   name: 'Polkadot Asset Hub',
-  logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
+  logoURI: '/logos/assethub.svg',
   chainId: 1000,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -38,7 +38,7 @@ export const RelayChain: Chain = {
 export const BridgeHub: Chain = {
   uid: 'polkadot-bridgehub',
   name: 'Polkadot Bridge Hub',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+  logoURI: '/logos/bridgehub.svg',
   chainId: 1002,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -48,7 +48,7 @@ export const BridgeHub: Chain = {
 export const Bifrost: Chain = {
   uid: 'bifrost',
   name: 'Bifrost',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+  logoURI: '/logos/bifrost.svg',
   chainId: 2030,
   destinationFeeDOT: '20000000',
   network: 'Polkadot',
@@ -70,7 +70,7 @@ export const Hydration: Chain = {
 export const Moonbeam: Chain = {
   uid: 'moonbeam',
   name: 'Moonbeam',
-  logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+  logoURI: '/logos/moonbeam.svg',
   chainId: 2004,
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
@@ -81,7 +81,7 @@ export const Moonbeam: Chain = {
 export const Interlay: Chain = {
   uid: 'interlay',
   name: 'Interlay',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+  logoURI: '/logos/interlay.svg',
   chainId: 2032,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -92,7 +92,7 @@ export const Interlay: Chain = {
 export const Acala: Chain = {
   uid: 'acala',
   name: 'Acala',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+  logoURI: '/logos/acala.svg',
   chainId: 2000,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -103,7 +103,7 @@ export const Acala: Chain = {
 export const Polimec: Chain = {
   uid: 'polimec',
   name: 'Polimec',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/28501.png',
+  logoURI: '/logos/polimec.svg',
   chainId: 3344,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -125,7 +125,7 @@ export const Centrifuge: Chain = {
 export const Astar: Chain = {
   uid: 'astar',
   name: 'Astar',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+  logoURI: '/logos/astar.svg',
   chainId: 2006,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -136,7 +136,7 @@ export const Astar: Chain = {
 export const Mythos: Chain = {
   uid: 'mythos',
   name: 'Mythos',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+  logoURI: '/logos/myth.svg',
   chainId: 3369,
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
@@ -214,7 +214,7 @@ export namespace Eth {
     id: 'veth.e',
     name: 'Venus ETH',
     symbol: 'vETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
+    logoURI: '/logos/veth.svg',
     decimals: 18,
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
     multilocation:
@@ -314,7 +314,7 @@ export namespace Polkadot {
     id: 'aca',
     name: 'Acala Token',
     symbol: 'ACA',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+    logoURI: '/logos/acala.svg',
     decimals: 12,
     address: '',
     multilocation:
@@ -327,7 +327,7 @@ export namespace Polkadot {
     id: 'astr',
     name: 'ASTR',
     symbol: 'ASTR',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+    logoURI: '/logos/astar.svg',
     decimals: 18,
     address: '',
     multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
@@ -339,7 +339,7 @@ export namespace Polkadot {
     id: 'bnc',
     name: 'Bifrost Native Coin',
     symbol: 'BNC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    logoURI: '/logos/bifrost.svg',
     decimals: 12,
     address: '',
     multilocation:
@@ -402,7 +402,7 @@ export namespace Polkadot {
     id: 'glmr',
     name: 'GLMR',
     symbol: 'GLMR',
-    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+    logoURI: '/logos/moonbeam.svg',
     decimals: 18,
     address: '',
     multilocation:
@@ -413,9 +413,9 @@ export namespace Polkadot {
 
   export const INTR: Token = {
     id: 'intr',
-    name: 'INTR',
+    name: 'Interlay',
     symbol: 'INTR',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+    logoURI: '/logos/interlay.svg',
     decimals: 10,
     address: '',
     multilocation:
@@ -440,7 +440,7 @@ export namespace Polkadot {
     id: 'vdot',
     name: 'Voucher DOT',
     symbol: 'VDOT',
-    logoURI: 'https://coin-images.coingecko.com/coins/images/28875/large/vDOT.png?1696527852',
+    logoURI: '/logos/vdot.svg',
     decimals: 10,
     address: '',
     multilocation:
@@ -453,8 +453,7 @@ export namespace Polkadot {
     id: 'ibtc',
     name: 'IBTC',
     symbol: 'IBTC',
-    logoURI:
-      'https://assets.coingecko.com/coins/images/26217/large/interBTC_for_Exchanges.png?1696525302',
+    logoURI: '/logos/ibtc.svg',
     decimals: 8,
     address: '',
     multilocation:
