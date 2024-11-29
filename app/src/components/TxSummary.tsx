@@ -55,8 +55,19 @@ const TxSummary: FC<TxSummaryProps> = ({
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
-              <div className="flex">
+              <div className="items-left flex flex-col">
                 <div className="font-bold">Fee</div>
+                {true && (
+                  <div className="ml-[-6px] flex w-auto flex-row items-center rounded-[8px] bg-turtle-warning bg-opacity-15 px-2 py-1 text-xs">
+                    <ExclamationMark
+                      width={20}
+                      height={20}
+                      fill={colors['turtle-foreground']}
+                      className="mr-2"
+                    />
+                    <span>You don&apos;t have enough {fees.token.symbol} to pay fees</span>
+                  </div>
+                )}
               </div>
               <div className="items-right flex">
                 <div>
@@ -105,7 +116,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             </li>
           </ul>
 
-          {(isAmountTooLow || !feesTokenSufficient) && (
+          {!isAmountTooLow && (
             <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}
@@ -113,13 +124,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 fill={colors['turtle-foreground']}
                 className="mr-3"
               />
-              {!feesTokenSufficient ? (
-                <div className="text-small">
-                  Your {fees.token.symbol} balance might be too low to cover the fees.
-                </div>
-              ) : (
-                <div className="text-small">The amount is a bit too low to justify the fees.</div>
-              )}
+              <div className="text-small">The amount is a bit too low to justify the fees</div>
             </div>
           )}
         </div>
