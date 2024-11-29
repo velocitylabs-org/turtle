@@ -63,7 +63,12 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
     return (
       <div ref={ref} className={cn('relative w-full', className)} data-cy="token-select">
         {floatingLabel && (
-          <label className="top absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+          <label
+            className={cn(
+              'top absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5',
+              error && 'text-turtle-error',
+            )}
+          >
             {floatingLabel}
           </label>
         )}
@@ -106,7 +111,8 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   type="number"
                   className={cn(
                     'bg-transparent text-xl focus:border-0 focus:outline-none',
-                    inDollars ? 'animate-slide-up-slight' : '',
+                    inDollars && 'animate-slide-up-slight',
+                    error && 'text-turtle-error',
                   )}
                   placeholder={secondPlaceholder ?? 'Amount'}
                   value={value?.amount ?? ''}
@@ -116,7 +122,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   autoFocus
                 />
                 {inDollars && (
-                  <div className="animate-slide-up mt-[-3px] text-sm text-turtle-level4">
+                  <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
                     <NumberFlow value={inDollars} prefix="$" />
                   </div>
                 )}
