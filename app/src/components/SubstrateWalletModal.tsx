@@ -86,7 +86,7 @@ const SubstrateWalletModal: FC = () => {
               extensions.map(extension => (
                 <Button
                   key={extension.name}
-                  className="flex w-full items-center justify-between rounded-md border bg-turtle-level1 p-4 hover:bg-turtle-level2"
+                  className="flex w-full items-center justify-between rounded-md border-0 bg-turtle-level1 p-4 hover:bg-turtle-level2"
                   variant="outline"
                   onClick={() => handleExtensionSelect(extension)}
                 >
@@ -96,11 +96,13 @@ const SubstrateWalletModal: FC = () => {
                       alt={`${extension.name} Logo`}
                       width={64}
                       height={64}
-                      className="h-8 w-8"
+                      className="h-12 w-12"
                     />
                     <span>{getWalletName(extension.name)}</span>
                   </div>
-                  <span className="text-sm text-turtle-primary-dark">Installed</span>
+                  <span className="rounded-md bg-turtle-primary-light p-1 text-xs text-turtle-primary-dark">
+                    Installed
+                  </span>
                 </Button>
               ))
             ) : (
@@ -123,7 +125,7 @@ const SubstrateWalletModal: FC = () => {
                 .map(account => (
                   <Button
                     key={account.address}
-                    className="g-turtle-level1 flex w-full items-center justify-between rounded-md border p-4 hover:bg-turtle-level2"
+                    className="g-turtle-level1 flex w-full items-center justify-between rounded-md border-0 bg-turtle-level1 p-4 hover:bg-turtle-level2"
                     variant="outline"
                     onClick={() => handleAccountSelect(account)}
                   >
@@ -133,7 +135,9 @@ const SubstrateWalletModal: FC = () => {
                         {truncateAddress(account.address)}
                       </span>
                     </div>
-                    <span className="text-xs text-turtle-primary-dark">Connected</span>
+                    <span className="rounded-md bg-turtle-primary-light p-1 text-xs text-turtle-primary-dark">
+                      Connected
+                    </span>
                   </Button>
                 ))
             ) : (
