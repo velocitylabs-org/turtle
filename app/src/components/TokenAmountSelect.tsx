@@ -98,7 +98,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               </div>
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
-              <div className="align-center animate-slideIn ml-1 flex flex-col duration-200">
+              <div className="align-center ml-1 flex flex-col">
                 <input
                   ref={inputRef}
                   data-cy="amount-input"
