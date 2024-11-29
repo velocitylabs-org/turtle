@@ -164,7 +164,7 @@ export namespace Eth {
     id: 'usdc.e',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+    logoURI: '/logos/usdc.svg',
     decimals: 6,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     multilocation:
@@ -201,7 +201,7 @@ export namespace Eth {
     id: 'weth.e',
     name: 'Wrapped Ether',
     symbol: 'wETH',
-    logoURI: 'https://static.simpleswap.io/images/currencies-logo/weth.svg',
+    logoURI: '/logos/weth.svg',
     decimals: 18,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     multilocation:
@@ -378,7 +378,7 @@ export namespace Polkadot {
     id: 'usdc',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+    logoURI: '/logos/usdc.svg',
     decimals: 6,
     address: '',
     multilocation: '',
