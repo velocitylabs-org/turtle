@@ -9,7 +9,7 @@ import { parachain, Registry, snowbridgeWrapped } from '.'
 export const Ethereum: Chain = {
   uid: 'ethereum',
   name: 'Ethereum',
-  logoURI: '/ethereum.svg',
+  logoURI: '/logos/ethereum.svg',
   chainId: 1,
   network: 'Ethereum',
   walletType: 'EVM',
@@ -19,7 +19,7 @@ export const Ethereum: Chain = {
 export const AssetHub: Chain = {
   uid: 'polkadot-assethub',
   name: 'Polkadot Asset Hub',
-  logoURI: 'https://parachains.info/images/parachains/1688559044_assethub.svg',
+  logoURI: '/logos/assethub.svg',
   chainId: 1000,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -30,7 +30,7 @@ export const AssetHub: Chain = {
 export const RelayChain: Chain = {
   uid: 'polkadot',
   name: 'Polkadot Relay Chain',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+  logoURI: '/logos/polkadot.svg',
   chainId: 0,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -41,7 +41,7 @@ export const RelayChain: Chain = {
 export const BridgeHub: Chain = {
   uid: 'polkadot-bridgehub',
   name: 'Polkadot Bridge Hub',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+  logoURI: '/logos/bridgehub.svg',
   chainId: 1002,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -52,7 +52,7 @@ export const BridgeHub: Chain = {
 export const Bifrost: Chain = {
   uid: 'bifrost',
   name: 'Bifrost',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+  logoURI: '/logos/bifrost.svg',
   chainId: 2030,
   destinationFeeDOT: '20000000',
   network: 'Polkadot',
@@ -64,7 +64,7 @@ export const Bifrost: Chain = {
 export const Hydration: Chain = {
   uid: 'hydration',
   name: 'Hydration',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6753.png',
+  logoURI: '/logos/hydra.svg',
   chainId: 2034,
   destinationFeeDOT: '20000000',
   network: 'Polkadot',
@@ -76,7 +76,7 @@ export const Hydration: Chain = {
 export const Moonbeam: Chain = {
   uid: 'moonbeam',
   name: 'Moonbeam',
-  logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+  logoURI: '/logos/moonbeam.svg',
   chainId: 2004,
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
@@ -88,7 +88,7 @@ export const Moonbeam: Chain = {
 export const Interlay: Chain = {
   uid: 'interlay',
   name: 'Interlay',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+  logoURI: '/logos/interlay.svg',
   chainId: 2032,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -100,7 +100,7 @@ export const Interlay: Chain = {
 export const Acala: Chain = {
   uid: 'acala',
   name: 'Acala',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+  logoURI: '/logos/acala.svg',
   chainId: 2000,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -112,7 +112,7 @@ export const Acala: Chain = {
 export const Polimec: Chain = {
   uid: 'polimec',
   name: 'Polimec',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/28501.png',
+  logoURI: '/logos/polimec.svg',
   chainId: 3344,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -124,7 +124,7 @@ export const Polimec: Chain = {
 export const Centrifuge: Chain = {
   uid: 'centrifuge',
   name: 'Centrifuge',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+  logoURI: '/logos/cfg.svg',
   chainId: 2031,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -136,7 +136,7 @@ export const Centrifuge: Chain = {
 export const Astar: Chain = {
   uid: 'astar',
   name: 'Astar',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+  logoURI: '/logos/astar.svg',
   chainId: 2006,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -148,7 +148,7 @@ export const Astar: Chain = {
 export const Mythos: Chain = {
   uid: 'mythos',
   name: 'Mythos',
-  logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+  logoURI: '/logos/myth.svg',
   chainId: 3369,
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
@@ -163,7 +163,7 @@ export namespace Eth {
     id: 'eth',
     name: 'Ethereum',
     symbol: 'ETH',
-    logoURI: '/ethereum.svg',
+    logoURI: '/logos/ethereum.svg',
     decimals: 18,
     address: '',
     // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
@@ -177,7 +177,7 @@ export namespace Eth {
     id: 'usdc.e',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+    logoURI: '/logos/usdc.svg',
     decimals: 6,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
     multilocation:
@@ -190,7 +190,7 @@ export namespace Eth {
     id: 'dai.e',
     name: 'DAI',
     symbol: 'DAI',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
+    logoURI: '/logos/dai.svg',
     decimals: 18,
     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
     multilocation:
@@ -202,7 +202,7 @@ export namespace Eth {
     id: 'usdt.e',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+    logoURI: '/logos/usdt.svg',
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     multilocation:
@@ -214,7 +214,7 @@ export namespace Eth {
     id: 'weth.e',
     name: 'Wrapped Ether',
     symbol: 'wETH',
-    logoURI: 'https://static.simpleswap.io/images/currencies-logo/weth.svg',
+    logoURI: '/logos/weth.svg',
     decimals: 18,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     multilocation:
@@ -227,7 +227,7 @@ export namespace Eth {
     id: 'veth.e',
     name: 'Venus ETH',
     symbol: 'vETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7963.png',
+    logoURI: '/logos/veth.svg',
     decimals: 18,
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
     multilocation:
@@ -239,7 +239,7 @@ export namespace Eth {
     id: 'wbtc.e',
     name: 'Wrapped Bitcoin',
     symbol: 'WBTC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
+    logoURI: '/logos/wbtc.svg',
     decimals: 8,
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
     multilocation:
@@ -251,7 +251,7 @@ export namespace Eth {
     id: 'myth.e',
     name: 'Mythos',
     symbol: 'MYTH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/22125.png',
+    logoURI: '/logos/myth.svg',
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
     multilocation:
@@ -264,7 +264,7 @@ export namespace Eth {
     id: 'shib.e',
     name: 'Shiba Inu',
     symbol: 'SHIB',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5994.png',
+    logoURI: '/logos/shib.svg',
     decimals: 18,
     address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
     multilocation:
@@ -276,7 +276,7 @@ export namespace Eth {
     id: 'pepe.e',
     name: 'Pepe',
     symbol: 'PEPE',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24478.png',
+    logoURI: '/logos/pepe.svg',
     decimals: 18,
     address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
     multilocation:
@@ -288,7 +288,7 @@ export namespace Eth {
     id: 'ton.e',
     name: 'Toncoin',
     symbol: 'TON',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png',
+    logoURI: '/logos/ton.svg',
     decimals: 9,
     address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
     multilocation:
@@ -300,7 +300,7 @@ export namespace Eth {
     id: 'wsteth.e',
     name: 'Lido wstETH',
     symbol: 'WSTETH',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12409.png',
+    logoURI: 'logos/wsteth.svg',
     decimals: 18,
     address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
     multilocation:
@@ -313,7 +313,7 @@ export namespace Eth {
     id: 'tbtc.e',
     name: 'tBTC',
     symbol: 'TBTC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5776.png',
+    logoURI: '/logos/tbtc.svg',
     decimals: 18,
     address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
     multilocation:
@@ -327,7 +327,7 @@ export namespace Polkadot {
     id: 'aca',
     name: 'Acala Token',
     symbol: 'ACA',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6756.png',
+    logoURI: '/logos/acala.svg',
     decimals: 12,
     address: '',
     multilocation:
@@ -340,7 +340,7 @@ export namespace Polkadot {
     id: 'astr',
     name: 'ASTR',
     symbol: 'ASTR',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12885.png',
+    logoURI: '/logos/astar.svg',
     decimals: 18,
     address: '',
     multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
@@ -352,7 +352,7 @@ export namespace Polkadot {
     id: 'bnc',
     name: 'Bifrost Native Coin',
     symbol: 'BNC',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8705.png',
+    logoURI: '/logos/bifrost.svg',
     decimals: 12,
     address: '',
     multilocation:
@@ -365,7 +365,7 @@ export namespace Polkadot {
     id: 'cfg',
     name: 'Centrifuge',
     symbol: 'CFG',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6748.png',
+    logoURI: '/logos/cfg.svg',
     decimals: 18,
     address: '',
     multilocation:
@@ -378,7 +378,7 @@ export namespace Polkadot {
     id: 'hdx',
     name: 'Hydration',
     symbol: 'HDX',
-    logoURI: 'https://parachains.info/images/parachains/1717606865_hydration_logo.jpg',
+    logoURI: '/logos/hydra.svg',
     decimals: 12,
     address: '',
     multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
@@ -391,7 +391,7 @@ export namespace Polkadot {
     id: 'usdc',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg',
+    logoURI: '/logos/usdc.svg',
     decimals: 6,
     address: '',
     multilocation: '',
@@ -404,7 +404,7 @@ export namespace Polkadot {
     id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg',
+    logoURI: '/logos/usdt.svg',
     decimals: 6,
     address: '',
     multilocation: '',
@@ -415,7 +415,7 @@ export namespace Polkadot {
     id: 'glmr',
     name: 'GLMR',
     symbol: 'GLMR',
-    logoURI: 'https://parachains.info/images/parachains/1716448660_moonbeam_logo.jpg',
+    logoURI: '/logos/moonbeam.svg',
     decimals: 18,
     address: '',
     multilocation:
@@ -426,9 +426,9 @@ export namespace Polkadot {
 
   export const INTR: Token = {
     id: 'intr',
-    name: 'INTR',
+    name: 'Interlay',
     symbol: 'INTR',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/20366.png',
+    logoURI: '/logos/interlay.svg',
     decimals: 10,
     address: '',
     multilocation:
@@ -440,7 +440,7 @@ export namespace Polkadot {
   export const DOT: Token = {
     id: 'dot',
     name: 'Polkadot',
-    logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6636.png',
+    logoURI: '/logos/polkadot.svg',
     symbol: 'DOT',
     decimals: 10,
     address: '',
@@ -453,7 +453,7 @@ export namespace Polkadot {
     id: 'vdot',
     name: 'Voucher DOT',
     symbol: 'VDOT',
-    logoURI: 'https://coin-images.coingecko.com/coins/images/28875/large/vDOT.png?1696527852',
+    logoURI: '/logos/vdot.svg',
     decimals: 10,
     address: '',
     multilocation:
@@ -466,8 +466,7 @@ export namespace Polkadot {
     id: 'ibtc',
     name: 'IBTC',
     symbol: 'IBTC',
-    logoURI:
-      'https://assets.coingecko.com/coins/images/26217/large/interBTC_for_Exchanges.png?1696525302',
+    logoURI: '/logos/ibtc.svg',
     decimals: 8,
     address: '',
     multilocation:
@@ -647,7 +646,13 @@ export const REGISTRY: Registry = {
       from: AssetHub.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
+    },
+    {
+      from: AssetHub.uid,
+      to: Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
     },
     {
       from: Acala.uid,
@@ -659,7 +664,7 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: AssetHub.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
     },
     {
       from: Bifrost.uid,
@@ -727,7 +732,13 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Moonbeam.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.HDX.id, Polkadot.GLMR.id],
+      tokens: [
+        Polkadot.DOT.id,
+        Polkadot.HDX.id,
+        Polkadot.GLMR.id,
+        Polkadot.BNC.id,
+        Polkadot.VDOT.id,
+      ],
     },
     {
       from: Hydration.uid,
@@ -745,7 +756,13 @@ export const REGISTRY: Registry = {
       from: Hydration.uid,
       to: Interlay.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.INTR.id, Polkadot.HDX.id, Polkadot.VDOT.id],
+      tokens: [
+        Polkadot.DOT.id,
+        Polkadot.INTR.id,
+        Polkadot.HDX.id,
+        Polkadot.VDOT.id,
+        Polkadot.IBTC.id,
+      ],
     },
     {
       from: Hydration.uid,
@@ -802,6 +819,13 @@ export const REGISTRY: Registry = {
         [Polkadot.USDT.id, { id: '1984' }],
         [Eth.WETH.id, { symbol: 'WETH.e' }],
         [Eth.WBTC.id, { symbol: 'WBTC.e' }],
+      ]),
+    ],
+    [
+      Hydration.uid,
+      new Map([
+        [Polkadot.USDC.id, { id: '22' }],
+        [Polkadot.USDT.id, { id: '10' }],
       ]),
     ],
   ]),
