@@ -1,5 +1,6 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
+import { truncateAddress } from '@/utils/address'
 import { isMobileDevice } from '@/utils/env'
 import { getWalletLogo, getWalletName } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
@@ -78,7 +79,7 @@ const SubstrateWalletModal: FC = () => {
               extensions.map(extension => (
                 <Button
                   key={extension.name}
-                  className="flex w-full items-center justify-between rounded-md border bg-gray-50 p-4 hover:bg-gray-100"
+                  className="flex w-full items-center justify-between rounded-md border bg-turtle-level1 p-4 hover:bg-turtle-level2"
                   variant="outline"
                   onClick={() => handleExtensionSelect(extension)}
                 >
@@ -103,20 +104,57 @@ const SubstrateWalletModal: FC = () => {
             ))}
         </div>
 
+        <div className="space-y-4 px-6 pb-6">
+          {currentView === 'accounts' &&
+            (extensionAccounts.length > 0 ? (
+              extensionAccounts
+                .filter(account =>
+                  type === 'SubstrateEVM'
+                    ? account.type === 'ethereum'
+                    : account.type === 'sr25519',
+                )
+                .map(account => (
+                  <Button
+                    key={account.address}
+                    className="g-turtle-level1 flex w-full items-center justify-between rounded-md border p-4 hover:bg-turtle-level2"
+                    variant="outline"
+                    onClick={() => handleAccountSelect(account)}
+                  >
+                    <div className="flex flex-col items-start space-y-1">
+                      <span className="font-medium">{account.name || 'Unnamed Account'}</span>
+                      <span className="text-xs text-turtle-level6">
+                        {truncateAddress(account.address)}
+                      </span>
+                    </div>
+                    <span className="text-xs text-turtle-primary-dark">Connected</span>
+                  </Button>
+                ))
+            ) : (
+              <p className="text-center text-sm text-gray-500">
+                No accounts available. Please connect an account to Turtle inside your wallet
+                extension.
+              </p>
+            ))}
+        </div>
+
         {/* Footer */}
-        {currentView === 'extensions' && (
-          <div className="mt-4 text-center text-sm text-gray-500">
-            Haven&apos;t got a wallet?{' '}
-            <a
-              href="https://support.polkadot.network/support/solutions/articles/65000098878-how-to-create-a-polkadot-account"
-              className="text-blue-500"
-            >
-              Get started
-            </a>
-          </div>
-        )}
+        {currentView === 'extensions' && <Footer />}
       </DialogContent>
     </Dialog>
+  )
+}
+
+const Footer: FC = () => {
+  return (
+    <div className="mt-4 text-center text-sm text-gray-500">
+      Haven&apos;t got a wallet?{' '}
+      <a
+        href="https://support.polkadot.network/support/solutions/articles/65000098878-how-to-create-a-polkadot-account"
+        className="text-blue-500"
+      >
+        Get started
+      </a>
+    </div>
   )
 }
 
