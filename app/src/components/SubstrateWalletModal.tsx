@@ -66,7 +66,7 @@ const SubstrateWalletModal: FC = () => {
         hideCloseButton={true}
       >
         {/* Header */}
-        <DialogHeader className="flex items-center justify-center rounded-t-4xl bg-turtle-level2 p-4">
+        <DialogHeader className="flex items-center justify-center rounded-t-4xl p-4">
           {currentView === 'accounts' && (
             <div className="absolute left-4">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
