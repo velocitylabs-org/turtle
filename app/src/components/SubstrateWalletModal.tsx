@@ -66,7 +66,14 @@ const SubstrateWalletModal: FC = () => {
         hideCloseButton={true}
       >
         {/* Header */}
-        <DialogHeader className="flex items-center justify-between rounded-t-4xl bg-turtle-level2 p-4">
+        <DialogHeader className="flex items-center justify-center rounded-t-4xl bg-turtle-level2 p-4">
+          {currentView === 'accounts' && (
+            <div className="absolute left-4">
+              <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
+                ←
+              </Button>
+            </div>
+          )}
           <DialogTitle className="text-lg font-bold">
             {currentView === 'extensions' ? 'Connect Wallet' : 'Connect Account'}
           </DialogTitle>
@@ -159,30 +166,3 @@ const Footer: FC = () => {
 }
 
 export default SubstrateWalletModal
-
-/* {
-  currentView === 'accounts' &&
-    (extensionAccounts.length > 0 ? (
-      extensionAccounts
-        .filter(account =>
-          type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
-        )
-        .map(account => (
-          <Button
-            key={account.address}
-            className="flex w-full flex-col"
-            variant="outline"
-            onClick={() => handleAccountSelect(account)}
-          >
-            <span className="pt-3">{account.name}</span>
-            <span className="pb-4 text-xs text-turtle-level6">
-              {truncateAddress(account.address)}
-            </span>
-          </Button>
-        ))
-    ) : (
-      <p className="text-center text-sm text-gray-500">
-        No accounts available. Please connect an account to Turtle inside your wallet extension.
-      </p>
-    ))
-} */
