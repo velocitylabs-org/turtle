@@ -23,16 +23,16 @@ export const getWalletName = (name: string): string => {
 export const getWalletLogo = (name: string): string => {
   switch (name) {
     case 'talisman':
-      return '/talisman.svg'
+      return '/logos/talisman.svg'
 
     case 'subwallet-js':
-      return '/subwallet.svg'
+      return '/logos/subwallet.svg'
 
     case 'polkadot-js':
-      return '/polkadotjs.svg'
+      return '/logos/polkadotjs.svg'
 
     case 'fearless-wallet':
-      return '/fearless.svg'
+      return '/logos/fearless.svg'
 
     default:
       return '/wallet.svg'
