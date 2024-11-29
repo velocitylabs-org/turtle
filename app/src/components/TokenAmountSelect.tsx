@@ -104,7 +104,10 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   data-cy="amount-input"
                   disabled={disabled}
                   type="number"
-                  className={cn('bg-transparent text-xl focus:border-0 focus:outline-none')}
+                  className={cn(
+                    'bg-transparent text-xl focus:border-0 focus:outline-none',
+                    inDollars ? 'animate-slide-up-slight' : '',
+                  )}
                   placeholder={secondPlaceholder ?? 'Amount'}
                   value={value?.amount ?? ''}
                   onChange={handleAmountChange}
@@ -113,7 +116,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   autoFocus
                 />
                 {inDollars && (
-                  <div className="mt-[-3px] text-sm text-turtle-level4">
+                  <div className="animate-slide-up mt-[-3px] text-sm text-turtle-level4">
                     <NumberFlow value={inDollars} prefix="$" />
                   </div>
                 )}
