@@ -9,7 +9,7 @@ import {
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { getDurationEstimate } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -111,8 +111,7 @@ const Transfer: FC = () => {
   else if (!sourceWallet || !tokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable)
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
-  else
-    amountPlaceholder = `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
