@@ -2,7 +2,7 @@ import { AmountInfo } from '@/models/transfer'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import NumberFlow from '@number-flow/react'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { spinnerSize } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
 import { ExclamationMark } from './svg/ExclamationMark'
@@ -29,17 +29,38 @@ const TxSummary: FC<TxSummaryProps> = ({
 }) => {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
+  const [isTakingTooLong, setIsTakingTooLong] = useState<boolean>(false)
+
+  // Determine is it's loading fees for too long
+  useEffect(() => {
+    if (!loading) {
+      setIsTakingTooLong(false)
+      return
+    }
+
+    setTimeout(() => {
+      setIsTakingTooLong(true)
+    }, 6000) // 6s
+  }, [loading])
+
   if (!fees && !loading) return null
 
   const renderContent = () => {
     if (loading || !fees) {
       return (
-        <div className="mt-4 flex h-[10rem] w-full items-center justify-center rounded-[8px] bg-turtle-level1">
+        <div className="mt-4 flex h-[10rem] w-full flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
             className="animate-spin"
             width={spinnerSize['lg']}
             height={spinnerSize['lg']}
+            color={colors['turtle-secondary']}
           />
+          <div className="mt-2 text-turtle-secondary">Loading fees...</div>
+          {isTakingTooLong && (
+            <div className="animate-slide-up mt-1 text-xs text-turtle-level6">
+              Sorry that it&apos;s taking so long. Hang on or try again
+            </div>
+          )}
         </div>
       )
     }
