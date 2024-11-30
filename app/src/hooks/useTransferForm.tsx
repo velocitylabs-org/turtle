@@ -14,6 +14,7 @@ import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import useFees from './useFees'
 import useNotification from './useNotification'
 import { NotificationSeverity } from '@/models/notification'
+import { formatAmount } from '../utils/transfer'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -160,7 +161,8 @@ const useTransferForm = () => {
       'tokenAmount',
       {
         token: tokenAmount.token,
-        amount: Number(balanceData.formatted),
+        // Parse as number, then format to our display standard, then parse again as number
+        amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
       },
       { shouldValidate: true },
     )
