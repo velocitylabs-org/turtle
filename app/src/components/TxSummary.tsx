@@ -2,7 +2,7 @@ import { AmountInfo } from '@/models/transfer'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import NumberFlow from '@number-flow/react'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { spinnerSize } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
 import { ExclamationMark } from './svg/ExclamationMark'
@@ -11,6 +11,7 @@ import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import { TokenAmount } from '@/models/select'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { cn } from '@/utils/cn'
+import Delayed from './Delayed'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
@@ -29,19 +30,6 @@ const TxSummary: FC<TxSummaryProps> = ({
 }) => {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
-  const [isTakingTooLong, setIsTakingTooLong] = useState<boolean>(false)
-
-  // Determine is it's loading fees for too long
-  useEffect(() => {
-    if (!loading) {
-      setIsTakingTooLong(false)
-      return
-    }
-
-    setTimeout(() => {
-      setIsTakingTooLong(true)
-    }, 6000) // 6s
-  }, [loading])
 
   if (!fees && !loading) return null
 
@@ -56,11 +44,11 @@ const TxSummary: FC<TxSummaryProps> = ({
             color={colors['turtle-secondary']}
           />
           <div className="mt-2 text-turtle-secondary">Loading fees...</div>
-          {isTakingTooLong && (
-            <div className="animate-slide-up mt-1 text-xs text-turtle-level6">
+          <Delayed millis={6000}>
+            <div className="animate-slide-up-soft mt-1 text-xs text-turtle-level6">
               Sorry that it&apos;s taking so long. Hang on or try again
             </div>
-          )}
+          </Delayed>
         </div>
       )
     }
