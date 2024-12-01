@@ -328,7 +328,7 @@ const Transfer: FC = () => {
 
       {shouldDisplayTxSummary && (
         <TxSummary
-          loading={loadingFees}
+          loading={loadingFees || tokenAmount.amount == 5}
           tokenAmount={tokenAmount}
           fees={fees}
           durationEstimate={durationEstimate}

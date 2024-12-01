@@ -36,16 +36,18 @@ const TxSummary: FC<TxSummaryProps> = ({
   const renderContent = () => {
     if (loading || !fees) {
       return (
-        <div className="mt-4 flex h-[10rem] w-full flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
+        <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
             className="animate-spin"
             width={spinnerSize['lg']}
             height={spinnerSize['lg']}
             color={colors['turtle-secondary']}
           />
-          <div className="mt-2 text-turtle-secondary">Loading fees...</div>
-          <Delayed millis={6000}>
-            <div className="animate-slide-up-soft mt-1 text-xs text-turtle-level6">
+          <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">
+            Loading fees
+          </div>
+          <Delayed millis={7000}>
+            <div className="animate-slide-up-soft mt-1 text-xs text-turtle-secondary">
               Sorry that it&apos;s taking so long. Hang on or try again
             </div>
           </Delayed>
