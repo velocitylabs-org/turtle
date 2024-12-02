@@ -9,7 +9,7 @@ import { ReactNode } from 'react'
 import { Config, cookieToInitialState, WagmiProvider } from 'wagmi'
 
 // Setup queryClient
-export const queryClient = new QueryClient()
+const queryClient = new QueryClient()
 if (!projectId) throw new Error('Project ID is not defined')
 
 // Get projectId at https://cloud.walletconnect.com
