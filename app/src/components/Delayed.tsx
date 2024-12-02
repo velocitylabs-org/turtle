@@ -10,15 +10,14 @@ interface DelayProps {
 const Delayed: React.FC<DelayProps> = ({ millis, children }) => {
   const [shouldShow, setShouldShow] = useState<boolean>(false)
 
-  // Show when it reaches the delay timeout
+  // Should show when the delay timeout is reached
   useEffect(() => {
-    setTimeout(() => {
-      setShouldShow(true)
-    }, millis)
-  }, [millis, children])
+    const timer = setTimeout(() => setShouldShow(true), millis)
+    return () => clearTimeout(timer)
+  }, [millis])
 
   // Render
-  return shouldShow ? children : <></>
+  return shouldShow ? children : null
 }
 
 export default Delayed
