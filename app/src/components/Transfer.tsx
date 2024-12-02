@@ -124,7 +124,8 @@ const Transfer: FC = () => {
     fees &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
-    !loadingFees
+    !loadingFees &&
+    feesTokenSufficient
 
   const shouldDisplayTxSummary =
     isValid &&
