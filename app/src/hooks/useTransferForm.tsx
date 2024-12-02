@@ -58,7 +58,11 @@ const useTransferForm = () => {
   const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
   const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
-  const { fees, loading: loadingFees } = useFees(
+  const {
+    fees,
+    loading: loadingFees,
+    canPayFees,
+  } = useFees(
     sourceWallet?.sender?.address,
     sourceChain,
     destinationChain,
@@ -269,6 +273,7 @@ const useTransferForm = () => {
     destinationWallet,
     fees,
     loadingFees,
+    canPayFees,
     transferStatus,
     environment,
     tokenAmountError,

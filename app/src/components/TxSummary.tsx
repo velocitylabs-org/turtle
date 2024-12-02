@@ -17,6 +17,7 @@ interface TxSummaryProps {
   loading?: boolean
   fees?: AmountInfo | null
   durationEstimate?: string
+  canPayFees: boolean
   className?: string
 }
 
@@ -25,6 +26,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   tokenAmount,
   fees,
   durationEstimate,
+  canPayFees,
   className,
 }) => {
   const { price } = useTokenPrice(tokenAmount.token)
@@ -54,14 +56,28 @@ const TxSummary: FC<TxSummaryProps> = ({
       )
     }
 
+    const isAmountTooLow =
+      transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO
+
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
         <div className="pt-3">
           <div className="mt-3 text-center text-lg font-bold text-turtle-foreground">Summary</div>
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
-              <div className="flex">
+              <div className="items-left flex flex-col">
                 <div className="font-bold">Fee</div>
+                {!canPayFees && (
+                  <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                    <ExclamationMark
+                      width={16}
+                      height={16}
+                      fill={colors['turtle-foreground']}
+                      className="mr-2"
+                    />
+                    <span>You don&apos;t have enough {fees.token.symbol} to pay fees</span>
+                  </div>
+                )}
               </div>
               <div className="items-right flex">
                 <div>
@@ -86,7 +102,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             </li>
           </ul>
 
-          {transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO && (
+          {canPayFees && isAmountTooLow && (
             <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}
