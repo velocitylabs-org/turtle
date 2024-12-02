@@ -130,8 +130,8 @@ const SubstrateWalletModal: FC = () => {
                         {truncateAddress(account.address)}
                       </span>
                     </div>
-                    <span className="rounded-md bg-turtle-primary-light p-1 text-xs text-turtle-primary-dark">
-                      Connected
+                    <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
+                      CONNECTED
                     </span>
                   </Button>
                 ))
