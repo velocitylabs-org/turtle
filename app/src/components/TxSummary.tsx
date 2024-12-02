@@ -70,7 +70,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                   </div>
                   {fees.inDollars > 0 && (
                     <div className="text-right text-turtle-level4">
-                      ${formatAmount(fees.inDollars, 'Short')}
+                      ${formatAmount(fees.inDollars)}
                     </div>
                   )}
                 </div>
