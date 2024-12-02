@@ -176,15 +176,12 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(tx.amount, tx.token), 'Longer')} {tx.token.symbol}
+                    {formatAmount(toHuman(tx.amount, tx.token), 'Long')} {tx.token.symbol}
                   </div>
                   {typeof tx.tokenUSDValue == 'number' && (
                     <div className="text-turtle-level4">
                       $
-                      {formatAmount(
-                        toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0),
-                        'Longer',
-                      )}
+                      {formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')}
                     </div>
                   )}
                 </div>
@@ -196,12 +193,12 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="font-bold">Fees</div>
               <div className="items-right flex flex-col space-x-1 text-right">
                 <div>
-                  {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Longer')}{' '}
+                  {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}{' '}
                   {tx.fees.token.symbol}
                 </div>
                 {typeof tx.tokenUSDValue == 'number' && (
                   <div className="text-turtle-level4">
-                    ${formatAmount(tx.fees.inDollars, 'Longer')}
+                    ${formatAmount(tx.fees.inDollars, 'Long')}
                   </div>
                 )}
               </div>

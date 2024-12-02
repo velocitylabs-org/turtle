@@ -47,26 +47,37 @@ export function feeToHuman(fees: AmountInfo): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
 }
 
-export type FormatLength = 'Shorter' | 'Longer'
+export type FormatLength = 'Short' | 'Long' | 'Longer'
+
+function getMaxSignificantDigits(length: FormatLength): number {
+  switch (length) {
+    case 'Short':
+      return 2
+    case 'Long':
+      return 6
+    case 'Longer':
+      return 10
+  }
+}
 
 /**
  * Formats a numerical amount into a human-readable, compact string representation.
  * @param amount - The amount to be formatted. For example, `1234567`.
- * @param length - Determines how many fraction digits will be shown, making it 'Shorter' or 'Longer'.
+ * @param length - Determines how many significant fraction digits will be shown for amount < 1.
  * @returns The amount formatted as a human-readable string. For example, `"1.23M"`.
  */
-export const formatAmount = (amount: number, length: FormatLength = 'Shorter'): string => {
+export const formatAmount = (amount: number, length: FormatLength = 'Short'): string => {
   if (amount < 1) {
     return new Intl.NumberFormat('en-US', {
-      maximumSignificantDigits: length === 'Shorter' ? 3 : 6,
-      maximumFractionDigits: 6,
+      maximumSignificantDigits: getMaxSignificantDigits(length),
+      roundingMode: 'floor',
     }).format(amount)
   } else {
     return new Intl.NumberFormat('en-US', {
       notation: 'compact',
       compactDisplay: 'short',
+      roundingMode: 'floor',
       maximumFractionDigits: 3,
-      maximumSignificantDigits: length === 'Shorter' ? 4 : 6,
     }).format(amount)
   }
 }
