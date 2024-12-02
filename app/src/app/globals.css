@@ -222,6 +222,10 @@
   animation: slide-up-slight 150ms ease-in-out forwards;
 }
 
+.animate-slide-up-soft {
+  animation: slide-up-slight 350ms ease-in-out forwards;
+}
+
 .animate-height {
   transition: height 1s ease-in-out;
 }

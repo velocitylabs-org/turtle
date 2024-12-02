@@ -11,6 +11,7 @@ import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import { TokenAmount } from '@/models/select'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { cn } from '@/utils/cn'
+import Delayed from './Delayed'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
@@ -29,17 +30,27 @@ const TxSummary: FC<TxSummaryProps> = ({
 }) => {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
+
   if (!fees && !loading) return null
 
   const renderContent = () => {
     if (loading || !fees) {
       return (
-        <div className="mt-4 flex h-[10rem] w-full items-center justify-center rounded-[8px] bg-turtle-level1">
+        <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
             className="animate-spin"
             width={spinnerSize['lg']}
             height={spinnerSize['lg']}
+            color={colors['turtle-secondary']}
           />
+          <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">
+            Loading fees
+          </div>
+          <Delayed millis={7000}>
+            <div className="animate-slide-up-soft mt-1 text-xs text-turtle-secondary">
+              Sorry that it&apos;s taking so long. Hang on or try again
+            </div>
+          </Delayed>
         </div>
       )
     }
