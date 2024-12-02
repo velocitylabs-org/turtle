@@ -59,6 +59,10 @@ const SubstrateWalletModal: FC = () => {
       </Dialog>
     )
 
+  const filteredAccounts = extensionAccounts.filter(account =>
+    type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
+  )
+
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
@@ -102,42 +106,36 @@ const SubstrateWalletModal: FC = () => {
               ))
             ) : (
               <p className="text-center text-sm text-turtle-level6">
-                <span className="font-bold">Oops!</span>No extensions detected. Please install a
+                <span className="font-bold">Oops! </span>No extensions detected. Please install a
                 compatible wallet extension, such as Talisman, Subwallet, or Polkadot.js.
               </p>
             ))}
 
           {/* Show accounts */}
           {currentView === 'accounts' &&
-            (extensionAccounts.length > 0 ? (
-              extensionAccounts
-                .filter(account =>
-                  type === 'SubstrateEVM'
-                    ? account.type === 'ethereum'
-                    : account.type === 'sr25519',
-                )
-                .map(account => (
-                  <Button
-                    key={account.address}
-                    className="flex w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
-                    variant="outline"
-                    onClick={() => handleAccountSelect(account)}
-                  >
-                    <div className="flex flex-col items-start space-y-1 text-sm">
-                      <span className="font-medium">{account.name || 'Unnamed Account'}</span>
-                      <span className="text-xs text-turtle-level6">
-                        {truncateAddress(account.address)}
-                      </span>
-                    </div>
-                    <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
-                      CONNECTED
+            (filteredAccounts.length > 0 ? (
+              filteredAccounts.map(account => (
+                <Button
+                  key={account.address}
+                  className="flex w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
+                  variant="outline"
+                  onClick={() => handleAccountSelect(account)}
+                >
+                  <div className="flex flex-col items-start space-y-1 text-sm">
+                    <span className="font-medium">{account.name || 'Unnamed Account'}</span>
+                    <span className="text-xs text-turtle-level6">
+                      {truncateAddress(account.address)}
                     </span>
-                  </Button>
-                ))
+                  </div>
+                  <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
+                    CONNECTED
+                  </span>
+                </Button>
+              ))
             ) : (
-              <p className="text-center text-sm text-gray-500">
-                No accounts available. Please connect an account to Turtle inside your wallet
-                extension.
+              <p className="text-center text-sm text-turtle-level6">
+                <span className="font-bold">Oops! </span>No accounts available. Please connect an
+                account to Turtle inside your wallet extension.
               </p>
             ))}
         </div>
