@@ -13,7 +13,6 @@ import { TokenLogo } from './TokenLogo'
 import { Chain } from '@/models/chain'
 import NumberFlow from '@number-flow/react'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { formatAmount } from '@/utils/transfer'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
   sourceChain: Chain | null
