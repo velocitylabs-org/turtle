@@ -6,9 +6,9 @@ import { getWalletLogo, getWalletName } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { FC, useEffect, useState } from 'react'
 import Button from './Button'
+import { Icon } from './Icon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { WalletNotAccessible } from './WalletNotAccessible'
-import { Icon } from './Icon'
 
 const SubstrateWalletModal: FC = () => {
   const [isMobile, setIsMobile] = useState(false)
@@ -62,7 +62,7 @@ const SubstrateWalletModal: FC = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[25rem] overflow-scroll rounded-4xl border-1 border-black pb-4"
+        className="m-auto max-h-[85vh] max-w-[25rem] overflow-scroll rounded-4xl border-1 border-black pb-4 focus:outline-none"
         hideCloseButton={true}
       >
         {/* Header */}
