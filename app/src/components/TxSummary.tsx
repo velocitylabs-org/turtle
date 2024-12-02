@@ -17,7 +17,7 @@ interface TxSummaryProps {
   loading?: boolean
   fees?: AmountInfo | null
   durationEstimate?: string
-  sufficientFeesToken: boolean
+  canPayFees: boolean
   className?: string
 }
 
@@ -26,7 +26,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   tokenAmount,
   fees,
   durationEstimate,
-  sufficientFeesToken,
+  canPayFees,
   className,
 }) => {
   const { price } = useTokenPrice(tokenAmount.token)
@@ -67,7 +67,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
                 <div className="font-bold">Fee</div>
-                {!sufficientFeesToken && (
+                {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
                       width={16}
@@ -102,7 +102,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             </li>
           </ul>
 
-          {sufficientFeesToken && isAmountTooLow && (
+          {canPayFees && isAmountTooLow && (
             <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}

@@ -61,7 +61,7 @@ const useTransferForm = () => {
   const {
     fees,
     loading: loadingFees,
-    sufficientFeesToken,
+    canPayFees,
   } = useFees(
     sourceWallet?.sender?.address,
     sourceChain,
@@ -273,7 +273,7 @@ const useTransferForm = () => {
     destinationWallet,
     fees,
     loadingFees,
-    sufficientFeesToken,
+    canPayFees,
     transferStatus,
     environment,
     tokenAmountError,

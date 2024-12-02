@@ -24,7 +24,7 @@ const useFees = (
   recipient?: string | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [sufficientFeesToken, setSufficientFeesToken] = useState<boolean>(true)
+  const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
@@ -84,7 +84,7 @@ const useFees = (
           })
           tokenUSDValue = (await getCachedTokenPrice(nativeToken))?.usd ?? 0
           fees = info.xcmFee.toString()
-          setSufficientFeesToken(info.sufficientForXCM)
+          setCanPayFees(info.sufficientForXCM)
           break
         }
 
@@ -125,7 +125,7 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, loading, refetch: fetchFees, sufficientFeesToken }
+  return { fees, loading, refetch: fetchFees, canPayFees }
 }
 
 export default useFees
