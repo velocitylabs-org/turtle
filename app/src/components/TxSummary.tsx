@@ -69,7 +69,7 @@ const TxSummary: FC<TxSummaryProps> = ({
               <div className="items-left flex flex-col">
                 <div className="font-bold">Fee</div>
                 {!feesTokenSufficient && (
-                  <div className="ml-[-6px] mt-1 flex w-auto flex-row border-1 border-black items-center rounded-[6px] bg-turtle-warning px-2 py-1 text-xs">
+                  <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
                       width={16}
                       height={16}
