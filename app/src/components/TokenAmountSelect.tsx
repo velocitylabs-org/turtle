@@ -13,7 +13,6 @@ import { TokenLogo } from './TokenLogo'
 import { Chain } from '@/models/chain'
 import NumberFlow from '@number-flow/react'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { formatAmount } from '@/utils/transfer'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
   sourceChain: Chain | null
@@ -116,7 +115,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                     error && 'text-turtle-error',
                   )}
                   placeholder={secondPlaceholder ?? 'Amount'}
-                  value={value?.amount ? formatAmount(value.amount, 'Longer') : ''}
+                  value={value?.amount ?? ''}
                   onChange={handleAmountChange}
                   onClick={e => e.stopPropagation()}
                   onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
