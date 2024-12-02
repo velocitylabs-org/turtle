@@ -12,17 +12,17 @@ export default function Header() {
         </div>
       </Link>
 
-      <nav>
-        <ul className="items-center space-x-6">
-          <li>
-            <button className="btn btn-primary flex h-[20px] w-[122px] flex-row justify-center rounded-lg border-black text-lg font-medium hover:border-black sm:h-[56px] sm:text-xl">
-              <a href="https://app.turtle.cool" target="_blank">
+      <a href="https://app.turtle.cool" target="_blank">
+        <nav>
+          <ul className="items-center space-x-6">
+            <li>
+              <div className="btn btn-primary flex h-[20px] w-[122px] flex-row justify-center rounded-lg border-black text-lg font-medium hover:border-black sm:h-[56px] sm:text-xl">
                 Transfer
-              </a>
-            </button>
-          </li>
-        </ul>
-      </nav>
+              </div>
+            </li>
+          </ul>
+        </nav>
+      </a>
     </header>
   )
 }
