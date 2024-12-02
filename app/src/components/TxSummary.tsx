@@ -57,7 +57,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
                 <div className="font-bold">Fee</div>
-                {true && (
+                {!feesTokenSufficient && (
                   <div className="ml-[-6px] flex w-auto flex-row items-center rounded-[8px] bg-turtle-warning bg-opacity-15 px-2 py-1 text-xs">
                     <ExclamationMark
                       width={20}
@@ -92,7 +92,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             </li>
           </ul>
 
-          {!isAmountTooLow && (
+          {feesTokenSufficient && isAmountTooLow && (
             <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}
