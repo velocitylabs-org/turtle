@@ -9,6 +9,7 @@ import { FC, useEffect, useState } from 'react'
 import Button from './Button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { WalletNotAccessible } from './WalletNotAccessible'
+import { Icon } from './Icon'
 
 const SubstrateWalletModal: FC = () => {
   const [isMobile, setIsMobile] = useState(false)
@@ -62,58 +63,52 @@ const SubstrateWalletModal: FC = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[25rem] overflow-scroll rounded-4xl pb-4"
+        className="m-auto max-h-[85vh] max-w-[25rem] overflow-scroll rounded-4xl border-1 border-black pb-4"
         hideCloseButton={true}
       >
         {/* Header */}
         <DialogHeader className="flex items-center justify-center rounded-t-4xl p-4">
           {currentView === 'accounts' && (
-            <div className="absolute left-4">
+            <div className="absolute left-0">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
                 ←
               </Button>
             </div>
           )}
-          <DialogTitle className="text-lg font-bold">
+          <DialogTitle className="mt-1 text-base font-bold">
             {currentView === 'extensions' ? 'Connect Wallet' : 'Connect Account'}
           </DialogTitle>
         </DialogHeader>
 
         {/* Content */}
-        <div className="space-y-4 p-6">
+        <div className="flex min-h-[130px] flex-col items-center justify-center space-y-2 p-6 text-base">
+          {/* Show extensions */}
           {currentView === 'extensions' &&
             (extensions.length > 0 ? (
               extensions.map(extension => (
                 <Button
                   key={extension.name}
-                  className="flex w-full items-center justify-between rounded-md border-0 bg-turtle-level1 p-4 hover:bg-turtle-level2"
+                  className="flex w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
                   variant="outline"
                   onClick={() => handleExtensionSelect(extension)}
                 >
-                  <div className="flex items-center space-x-2">
-                    <Image
-                      src={getWalletLogo(extension.name)}
-                      alt={`${extension.name} Logo`}
-                      width={64}
-                      height={64}
-                      className="h-12 w-12"
-                    />
+                  <div className="flex items-center space-x-2 text-sm">
+                    <Icon src={getWalletLogo(extension.name)} width={40} height={40} />
                     <span>{getWalletName(extension.name)}</span>
                   </div>
-                  <span className="rounded-md bg-turtle-primary-light p-1 text-xs text-turtle-primary-dark">
-                    Installed
+                  <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
+                    INSTALLED
                   </span>
                 </Button>
               ))
             ) : (
-              <p className="text-center text-sm text-gray-500">
-                No extensions detected. Please install a compatible wallet extension, such as
-                Talisman, Subwallet, or Polkadot.js.
+              <p className="text-center text-sm text-turtle-level6">
+                <span className="font-bold">Oops!</span>No extensions detected. Please install a
+                compatible wallet extension, such as Talisman, Subwallet, or Polkadot.js.
               </p>
             ))}
-        </div>
 
-        <div className="space-y-4 px-6 pb-6">
+          {/* Show accounts */}
           {currentView === 'accounts' &&
             (extensionAccounts.length > 0 ? (
               extensionAccounts
@@ -125,11 +120,11 @@ const SubstrateWalletModal: FC = () => {
                 .map(account => (
                   <Button
                     key={account.address}
-                    className="g-turtle-level1 flex w-full items-center justify-between rounded-md border-0 bg-turtle-level1 p-4 hover:bg-turtle-level2"
+                    className="flex w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
                     variant="outline"
                     onClick={() => handleAccountSelect(account)}
                   >
-                    <div className="flex flex-col items-start space-y-1">
+                    <div className="flex flex-col items-start space-y-1 text-sm">
                       <span className="font-medium">{account.name || 'Unnamed Account'}</span>
                       <span className="text-xs text-turtle-level6">
                         {truncateAddress(account.address)}
@@ -157,7 +152,7 @@ const SubstrateWalletModal: FC = () => {
 
 const Footer: FC = () => {
   return (
-    <div className="mt-4 text-center text-sm text-gray-500">
+    <div className="mb-1 mt-4 text-center text-xs text-gray-500">
       Haven&apos;t got a wallet?{' '}
       <a
         href="https://support.polkadot.network/support/solutions/articles/65000098878-how-to-create-a-polkadot-account"
