@@ -116,7 +116,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                     error && 'text-turtle-error',
                   )}
                   placeholder={secondPlaceholder ?? 'Amount'}
-                  value={value?.amount ? formatAmount(value.amount, 'Longer') : ''}
+                  value={value?.amount ?? ''}
                   onChange={handleAmountChange}
                   onClick={e => e.stopPropagation()}
                   onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
