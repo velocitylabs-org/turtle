@@ -128,7 +128,7 @@ const SubstrateWalletModal: FC = () => {
                     </span>
                   </div>
                   <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
-                    CONNECTED
+                    CONNECT
                   </span>
                 </Button>
               ))
