@@ -11,6 +11,8 @@ import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 import { TokenLogo } from './TokenLogo'
 import { Chain } from '@/models/chain'
+import NumberFlow from '@number-flow/react'
+import useTokenPrice from '@/hooks/useTokenPrice'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
   sourceChain: Chain | null
@@ -39,6 +41,9 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
     const dropdownRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
+    const { price } = useTokenPrice(value?.token)
+    const inDollars = !!value?.amount && price ? price * value.amount : undefined
+
     useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
     const handleSelectionChange = (selectedToken: Token | null) => {
@@ -58,7 +63,12 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
     return (
       <div ref={ref} className={cn('relative w-full', className)} data-cy="token-select">
         {floatingLabel && (
-          <label className="top absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+          <label
+            className={cn(
+              'top absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5',
+              error && 'text-turtle-error',
+            )}
+          >
             {floatingLabel}
           </label>
         )}
@@ -93,19 +103,30 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               </div>
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
-              <input
-                ref={inputRef}
-                data-cy="amount-input"
-                disabled={disabled}
-                type="number"
-                className="h-[70%] bg-transparent focus:border-0 focus:outline-none"
-                placeholder={secondPlaceholder ?? 'Amount'}
-                value={value?.amount ?? ''}
-                onChange={handleAmountChange}
-                onClick={e => e.stopPropagation()}
-                onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
-                autoFocus
-              />
+              <div className="align-center ml-1 flex flex-col">
+                <input
+                  ref={inputRef}
+                  data-cy="amount-input"
+                  disabled={disabled}
+                  type="number"
+                  className={cn(
+                    'bg-transparent text-xl focus:border-0 focus:outline-none',
+                    inDollars && 'animate-slide-up-slight',
+                    error && 'text-turtle-error',
+                  )}
+                  placeholder={secondPlaceholder ?? 'Amount'}
+                  value={value?.amount ?? ''}
+                  onChange={handleAmountChange}
+                  onClick={e => e.stopPropagation()}
+                  onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
+                  autoFocus
+                />
+                {inDollars && (
+                  <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
+                    <NumberFlow value={inDollars} prefix="$" />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Trailing component. E.g. Max Button */}

@@ -1,6 +1,7 @@
 import { AmountInfo } from '@/models/transfer'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
+import NumberFlow from '@number-flow/react'
 import { FC } from 'react'
 import { spinnerSize } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
@@ -9,8 +10,8 @@ import { colors } from '../../tailwind.config'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import { TokenAmount } from '@/models/select'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { Skeleton } from './ui/skeleton'
 import { cn } from '@/utils/cn'
+import Delayed from './Delayed'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
@@ -27,27 +28,37 @@ const TxSummary: FC<TxSummaryProps> = ({
   durationEstimate,
   className,
 }) => {
-  const { price, loading: isLoadingTokenPrice } = useTokenPrice(tokenAmount.token)
+  const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
+
   if (!fees && !loading) return null
 
   const renderContent = () => {
     if (loading || !fees) {
       return (
-        <div className="mt-4 flex h-[10rem] w-full items-center justify-center rounded-[8px] bg-turtle-level1">
+        <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
             className="animate-spin"
             width={spinnerSize['lg']}
             height={spinnerSize['lg']}
+            color={colors['turtle-secondary']}
           />
+          <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">
+            Loading fees
+          </div>
+          <Delayed millis={7000}>
+            <div className="animate-slide-up-soft mt-1 text-xs text-turtle-secondary">
+              Sorry that it&apos;s taking so long. Hang on or try again
+            </div>
+          </Delayed>
         </div>
       )
     }
 
     return (
-      <div className={cn('tx-summary p-4 pt-3', className)}>
+      <div className={cn('tx-summary p-4 pt-0', className)}>
         <div className="pt-3">
-          <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
+          <div className="mt-3 text-center text-lg font-bold text-turtle-foreground">Summary</div>
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
@@ -55,38 +66,14 @@ const TxSummary: FC<TxSummaryProps> = ({
               </div>
               <div className="items-right flex">
                 <div>
-                  <div className="text-right text-lg text-turtle-foreground">
+                  <div className="text-right text-turtle-foreground">
                     {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
                   </div>
                   {fees.inDollars > 0 && (
                     <div className="text-right text-turtle-level4">
-                      ${formatAmount(fees.inDollars)}
+                      <NumberFlow value={fees.inDollars} prefix="$" />
                     </div>
                   )}
-                </div>
-              </div>
-            </li>
-            <li className="mt-4 flex items-start justify-between border-turtle-level2">
-              <div className="flex">
-                <div className="font-bold">Amount</div>
-              </div>
-              <div className="items-right flex">
-                <div>
-                  <div className="text-right text-lg text-turtle-foreground">
-                    {formatAmount(Number(tokenAmount.amount))} {tokenAmount.token?.symbol}
-                  </div>
-                  <div className="min-h-6">
-                    {isLoadingTokenPrice ? (
-                      <Skeleton className="h-6 w-20 rounded-md bg-turtle-level1" />
-                    ) : (
-                      transferAmount &&
-                      transferAmount.inDollars > 0 && (
-                        <div className="text-right text-turtle-level4">
-                          ${formatAmount(transferAmount.inDollars)}
-                        </div>
-                      )
-                    )}
-                  </div>
                 </div>
               </div>
             </li>

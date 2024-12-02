@@ -136,7 +136,7 @@ export const OngoingTransferDialog = ({
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(transfer.amount, transfer.token), 'Longer')}{' '}
+                    {formatAmount(toHuman(transfer.amount, transfer.token), 'Long')}{' '}
                     {transfer.token.symbol}
                   </div>
                   {typeof transfer.tokenUSDValue == 'number' && (
@@ -144,7 +144,7 @@ export const OngoingTransferDialog = ({
                       $
                       {formatAmount(
                         toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
-                        'Longer',
+                        'Long',
                       )}
                     </div>
                   )}
@@ -157,12 +157,12 @@ export const OngoingTransferDialog = ({
               <div className="font-bold">Fees</div>
               <div className="items-right flex flex-col space-x-1 text-right">
                 <div className="text-lg">
-                  {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Longer')}{' '}
+                  {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Long')}{' '}
                   {transfer.fees.token.symbol}
                 </div>
                 {typeof transfer.tokenUSDValue == 'number' && (
                   <div className="text-turtle-level4">
-                    ${formatAmount(transfer.fees.inDollars, 'Longer')}
+                    ${formatAmount(transfer.fees.inDollars, 'Long')}
                   </div>
                 )}
               </div>

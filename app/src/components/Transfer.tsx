@@ -4,13 +4,13 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
+import { cn } from '@/utils/cn'
 import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { getDurationEstimate } from '@/utils/transfer'
-import clsx from 'clsx'
+import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -114,8 +114,7 @@ const Transfer: FC = () => {
   else if (!sourceWallet || !tokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable)
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
-  else
-    amountPlaceholder = `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
@@ -333,7 +332,7 @@ const Transfer: FC = () => {
           tokenAmount={tokenAmount}
           fees={fees}
           durationEstimate={durationEstimate}
-          className={clsx({ 'opacity-30': transferStatus !== 'Idle' })}
+          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
         />
       )}
 

@@ -13,6 +13,7 @@ import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { formatAmount } from '../utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
 
@@ -161,7 +162,8 @@ const useTransferForm = () => {
       'tokenAmount',
       {
         token: tokenAmount.token,
-        amount: Number(balanceData.formatted),
+        // Parse as number, then format to our display standard, then parse again as number
+        amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
       },
       { shouldValidate: true },
     )
