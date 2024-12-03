@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import { TxStatus, CompletedTransfer, TransferResult } from '@/models/transfer'
+import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
@@ -96,6 +96,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
         >
           <Account
             network={tx.sourceChain.network}
+            addressType={tx.sourceChain.supportedAddressTypes.at(0)}
             address={tx.sender}
             className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
             allowCopy={false}
@@ -108,6 +109,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
           />
           <Account
             network={tx.destChain.network}
+            addressType={tx.destChain.supportedAddressTypes.at(0)}
             address={tx.recipient}
             className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
             allowCopy={false}

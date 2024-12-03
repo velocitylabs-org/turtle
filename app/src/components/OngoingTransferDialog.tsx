@@ -8,6 +8,7 @@ import Account from './Account'
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
+import { TokenLogo } from './TokenLogo'
 import TransferEstimate from './TransferEstimate'
 import {
   Dialog,
@@ -17,7 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog'
-import { TokenLogo } from './TokenLogo'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -114,7 +114,12 @@ export const OngoingTransferDialog = ({
               Sender
             </div>
             <div className="p-4 text-sm">
-              <Account network={transfer.sourceChain.network} address={transfer.sender} size={24} />
+              <Account
+                network={transfer.sourceChain.network}
+                addressType={transfer.sourceChain.supportedAddressTypes.at(0)}
+                address={transfer.sender}
+                size={24}
+              />
             </div>
             <div className="relative border-t p-4 text-sm">
               <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
@@ -122,6 +127,7 @@ export const OngoingTransferDialog = ({
               </div>
               <Account
                 network={transfer.destChain.network}
+                addressType={transfer.destChain.supportedAddressTypes.at(0)}
                 address={transfer.recipient}
                 size={24}
               />
