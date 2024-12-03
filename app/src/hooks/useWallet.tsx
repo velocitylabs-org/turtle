@@ -1,5 +1,5 @@
 import useEvmWallet from '@/hooks/useEvmWallet'
-import { AddressType } from '@/models/chain'
+import { WalletType } from '@/models/chain'
 import useSubstrateWallet from './useSubstrateWallet'
 import { Sender } from './useTransfer'
 
@@ -11,7 +11,7 @@ export interface WalletInfo {
   closeModal: () => void
 }
 
-const useWallet = (addressType?: AddressType): WalletInfo | undefined => {
+const useWallet = (walletType?: WalletType): WalletInfo | undefined => {
   const {
     signer,
     disconnect: evmDisconnect,
@@ -19,17 +19,22 @@ const useWallet = (addressType?: AddressType): WalletInfo | undefined => {
     openModal: openEvmModal,
     closeModal: closeEvmModal,
   } = useEvmWallet()
+
   const {
     substrateAccount,
-    disconnect: substrateDisconnect,
+    evmAccount,
+    isSubstrateConnected,
+    isEvmConnected: isSubstrateEvmConnected,
+    disconnectSubstrate,
+    disconnectEvm: DisconnectSubstrateEvm,
     openModal: openSubstrateModal,
     closeModal: closeSubstrateModal,
   } = useSubstrateWallet()
 
-  if (!addressType) return
+  if (!walletType) return
 
-  switch (addressType) {
-    case 'evm':
+  switch (walletType) {
+    case 'EVM':
       return {
         sender: signer,
         disconnect: evmDisconnect,
@@ -37,11 +42,21 @@ const useWallet = (addressType?: AddressType): WalletInfo | undefined => {
         openModal: openEvmModal,
         closeModal: closeEvmModal,
       }
-    case 'ss58':
+
+    case 'Substrate':
       return {
         sender: substrateAccount ?? undefined,
-        disconnect: substrateDisconnect,
-        isConnected: !!substrateAccount,
+        disconnect: disconnectSubstrate,
+        isConnected: isSubstrateConnected,
+        openModal: openSubstrateModal,
+        closeModal: closeSubstrateModal,
+      }
+
+    case 'SubstrateEVM':
+      return {
+        sender: evmAccount ?? undefined,
+        disconnect: DisconnectSubstrateEvm,
+        isConnected: isSubstrateEvmConnected,
         openModal: openSubstrateModal,
         closeModal: closeSubstrateModal,
       }
