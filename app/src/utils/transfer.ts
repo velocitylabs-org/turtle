@@ -261,4 +261,3 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
-
