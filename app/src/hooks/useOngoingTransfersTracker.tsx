@@ -2,6 +2,7 @@ import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
   OngoingTransferWithDirection,
+  StoredTransfer,
   TxStatus,
   TxTrackingResult,
 } from '@/models/transfer'
@@ -31,8 +32,8 @@ const useOngoingTransfersTracker = () => {
   const { addNotification } = useNotification()
   const env = useEnvironment()
 
-  const fetchTransfers = useCallback(async () => {
-    const formattedTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
+  const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
+    return ongoingTransfers.map(t => {
       const direction = resolveDirection(t.sourceChain, t.destChain)
       return {
         id: t.id,
@@ -50,6 +51,11 @@ const useOngoingTransfersTracker = () => {
         }),
       }
     })
+  }
+
+  const fetchTransfers = useCallback(async () => {
+    const formattedTransfers: OngoingTransferWithDirection[] =
+      formatTransfersWithDirection(ongoingTransfers)
     if (!formattedTransfers.length) return
 
     try {
