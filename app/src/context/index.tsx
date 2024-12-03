@@ -1,38 +1,55 @@
 'use client'
-import { config } from '@/config'
-import { projectId } from '@/utils/env'
+import { Environment } from '@/store/environmentStore'
+import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+import { mainnet, sepolia } from '@reown/appkit/networks'
+import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createWeb3Modal } from '@web3modal/wagmi/react'
 import { ReactNode } from 'react'
-import { State, WagmiProvider } from 'wagmi'
-import { colors } from '../../tailwind.config'
+import { Config, cookieToInitialState, WagmiProvider } from 'wagmi'
 
 // Setup queryClient
 const queryClient = new QueryClient()
 if (!projectId) throw new Error('Project ID is not defined')
 
-// Create modal
-export const wallet = createWeb3Modal({
-  wagmiConfig: config,
+// Get projectId at https://cloud.walletconnect.com
+if (!projectId) throw new Error('Project ID is not defined')
+
+const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
+export const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
+
+const metadata = {
+  name: 'turtle-app',
+  description: 'Token transfers done right',
+  url: isDevelopment ? 'http://localhost:3000' : vercelUrl, // domain must be allowed in WalletConnect Cloud
+  icons: ['https://avatars.githubusercontent.com/u/179229932'],
+}
+
+export const wagmiAdapter = new WagmiAdapter({
+  networks: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet],
   projectId,
-  enableAnalytics: true,
-  enableOnramp: true,
+})
+
+// Create modal
+export const modal = createAppKit({
+  adapters: [wagmiAdapter],
+  networks: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet],
+  metadata: metadata,
+  projectId,
   themeMode: 'light',
-  themeVariables: {
-    '--w3m-accent': colors['turtle-primary'],
+  features: {
+    analytics: true,
   },
 })
 
-export default function Web3ModalProvider({
-  children,
-  initialState,
-}: {
-  children: ReactNode
-  initialState?: State
-}) {
+function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {
+  const initialState = cookieToInitialState(wagmiAdapter.wagmiConfig as Config, cookies)
+
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   )
 }
+
+export default ContextProvider

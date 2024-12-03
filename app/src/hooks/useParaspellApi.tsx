@@ -2,17 +2,17 @@ import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { Account as SubstrateAccount } from '@/store/substrateWalletStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx } from '@/utils/paraspell'
 import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
+import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-import { ISubmittableResult } from '@polkadot/types/types'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -42,6 +42,7 @@ const useParaspellApi = () => {
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
       setStatus('Signing')
+
       await tx.signAndSend(
         account.address,
         { signer: account.signer },

@@ -1,8 +1,10 @@
+'use client'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
+import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
@@ -11,10 +13,9 @@ import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { formatAmount } from '../utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
-import { NotificationSeverity } from '@/models/notification'
-import { formatAmount } from '../utils/transfer'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -56,8 +57,8 @@ const useTransferForm = () => {
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
-  const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
-  const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
+  const sourceWallet = useWallet(sourceChain?.walletType)
+  const destinationWallet = useWallet(destinationChain?.walletType)
   const {
     fees,
     loading: loadingFees,
@@ -213,7 +214,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment],
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment, addNotification],
   )
 
   // validate recipient address

@@ -1,7 +1,7 @@
-import { Chain } from '@/models/chain'
-import { parachain, Registry, snowbridgeWrapped } from '.'
-import { Token } from '@/models/token'
 import { DWELLIR_KEY } from '@/config'
+import { Chain } from '@/models/chain'
+import { Token } from '@/models/token'
+import { parachain, Registry, snowbridgeWrapped } from '.'
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -12,6 +12,7 @@ export const Ethereum: Chain = {
   logoURI: '/logos/ethereum.svg',
   chainId: 1,
   network: 'Ethereum',
+  walletType: 'EVM',
   supportedAddressTypes: ['evm'],
 }
 
@@ -22,6 +23,7 @@ export const AssetHub: Chain = {
   chainId: 1000,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-asset-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -32,6 +34,7 @@ export const RelayChain: Chain = {
   chainId: 0,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-polkadot.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -42,6 +45,7 @@ export const BridgeHub: Chain = {
   chainId: 1002,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-bridge-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -53,6 +57,7 @@ export const Bifrost: Chain = {
   destinationFeeDOT: '20000000',
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-bifrost-polkadot.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -64,6 +69,7 @@ export const Hydration: Chain = {
   destinationFeeDOT: '20000000',
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-hydradx.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -74,7 +80,8 @@ export const Moonbeam: Chain = {
   chainId: 2004,
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
-  supportedAddressTypes: ['evm'],
+  supportedAddressTypes: ['ss58'],
+  walletType: 'SubstrateEVM',
   rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -86,6 +93,7 @@ export const Interlay: Chain = {
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-interlay.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -97,6 +105,7 @@ export const Acala: Chain = {
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-acala.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -108,6 +117,7 @@ export const Polimec: Chain = {
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: ``, // TODO
 }
 
@@ -119,6 +129,7 @@ export const Centrifuge: Chain = {
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-centrifuge.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -130,6 +141,7 @@ export const Astar: Chain = {
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: `wss://api-astar.dwellir.com/${DWELLIR_KEY}`,
 }
 
@@ -141,6 +153,7 @@ export const Mythos: Chain = {
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
   supportedAddressTypes: ['evm'],
+  walletType: 'SubstrateEVM',
   rpcConnection: 'wss://polkadot-mythos-rpc.polkadot.io',
 }
 
@@ -703,6 +716,12 @@ export const REGISTRY: Registry = {
     },
 
     // Para to Para
+    {
+      from: Moonbeam.uid,
+      to: Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.DOT.id],
+    },
     {
       from: Acala.uid,
       to: Hydration.uid,

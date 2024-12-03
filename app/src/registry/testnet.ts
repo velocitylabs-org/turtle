@@ -1,6 +1,6 @@
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Registry, snowbridgeWrapped } from '.'
-import { Chain } from '@/models/chain'
 
 /* Testnet :: Rococo - Sepolia */
 
@@ -12,6 +12,7 @@ const Sepolia: Chain = {
   chainId: 11155111,
   network: 'Ethereum',
   supportedAddressTypes: ['evm'],
+  walletType: 'EVM',
 }
 
 const RococoAssetHub: Chain = {
@@ -21,6 +22,7 @@ const RococoAssetHub: Chain = {
   chainId: 1000,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
   rpcConnection: 'wss://rococo-asset-hub-rpc.polkadot.io',
 }
 

@@ -5,6 +5,7 @@ import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
@@ -138,10 +139,13 @@ const useSnowbridgeApi = () => {
           )
           break
         }
+
         case Direction.ToEthereum: {
+          const account = sender as SubstrateAccount
+          const signer = { signer: account.signer, address: sender.address }
           sendResult = await toEthereum.send(
             context,
-            sender as WalletOrKeypair,
+            signer as WalletOrKeypair,
             plan as toEthereum.SendValidationResult,
           )
           break
@@ -219,15 +223,18 @@ const useSnowbridgeApi = () => {
           BigInt(destinationChain.destinationFeeDOT || 0),
         )
 
-      case Direction.ToEthereum:
+      case Direction.ToEthereum: {
+        const account = sender as SubstrateAccount
+        const signer = { signer: account.signer, address: sender.address }
         return await toEthereum.validateSend(
           context,
-          sender as WalletOrKeypair,
+          signer as WalletOrKeypair,
           sourceChain.chainId,
           recipient,
           token.address,
           amount,
         )
+      }
 
       default:
         throw new Error('Unsupported flow')

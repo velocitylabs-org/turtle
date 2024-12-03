@@ -4,6 +4,7 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
+import { cn } from '@/utils/cn'
 import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
@@ -19,15 +20,14 @@ import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
-import TxSummary from './TxSummary'
+import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
+import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
-import SendButton from './SendButton'
-import clsx from 'clsx'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -103,6 +103,9 @@ const Transfer: FC = () => {
     // We don't want two ActionBanners showing up at once
     !requiresErc20SpendApproval
 
+  const shouldDisplayRecipientWalletButton =
+    !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
+
   // How much balance is missing considering the desired transfer amount
   const missingBalance =
     tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
@@ -152,7 +155,7 @@ const Transfer: FC = () => {
               options={getAllowedSourceChains(environment)}
               floatingLabel="From"
               placeholder="Source"
-              trailing={<WalletButton addressType={sourceChain?.supportedAddressTypes.at(0)} />} // TODO: support all address types
+              trailing={<WalletButton walletType={sourceChain?.walletType} />}
               walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
@@ -216,11 +219,8 @@ const Transfer: FC = () => {
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                // TODO: support all address types
-                !manualRecipient.enabled &&
-                sourceChain?.supportedAddressTypes.at(0) !==
-                  destinationChain?.supportedAddressTypes.at(0) && (
-                  <WalletButton addressType={destinationChain?.supportedAddressTypes.at(0)} />
+                shouldDisplayRecipientWalletButton && (
+                  <WalletButton walletType={destinationChain?.walletType} />
                 )
               }
               walletAddress={destinationWallet?.sender?.address}
@@ -335,7 +335,7 @@ const Transfer: FC = () => {
           fees={fees}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
-          className={clsx({ 'opacity-30': transferStatus !== 'Idle' })}
+          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
         />
       )}
 

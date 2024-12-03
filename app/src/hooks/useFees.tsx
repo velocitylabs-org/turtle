@@ -73,6 +73,7 @@ const useFees = (
           const destinationChainNode = getTNode(destinationChain.chainId, relay)
           if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
           const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
+
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
