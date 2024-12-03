@@ -174,6 +174,7 @@ const useOngoingTransfersTracker = () => {
           date: ongoing.date,
           ...(explorerLink && { explorerLink }),
         } satisfies CompletedTransfer)
+        
         addNotification({
           message: 'Transfer verification failed.',
           severity: NotificationSeverity.Warning,

@@ -157,8 +157,8 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             {getStatusIcon(tx.result, colors['turtle-error-dark'])}
             {transferUndefined ? (
               <p>
-                <span className="mr-1 pe-0.5 font-semibold">Sorry!</span>
-                The transfer verification couldn&apos;t be completed.
+                {/* <span className="mr-1 pe-0.5 font-semibold">Sorry!</span> */}
+                We are not sure what happened to this transfer
               </p>
             ) : transferSucceeded ? (
               <p>
@@ -258,7 +258,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               aria-label="View your completed transaction on block explorer"
               className="mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5 sm:m-0"
             >
-              <p>View transfer on Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
+              <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
             </a>
           )}
         </div>
