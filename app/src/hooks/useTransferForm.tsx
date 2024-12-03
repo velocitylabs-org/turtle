@@ -68,9 +68,9 @@ const useTransferForm = () => {
     sourceChain,
     destinationChain,
     tokenAmount?.token,
-    manualRecipient.enabled && manualRecipientError != null
-      ? undefined
-      : getRecipientAddress(manualRecipient, destinationWallet),
+    isValidRecipient(manualRecipient, destinationChain)
+      ? getRecipientAddress(manualRecipient, destinationWallet)
+      : null,
   )
 
   const {
@@ -221,14 +221,9 @@ const useTransferForm = () => {
 
   // validate recipient address
   useEffect(() => {
-    const isValidAddress =
-      !manualRecipient.enabled ||
-      !destinationChain ||
-      isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
-      manualRecipient.address === ''
-
-    if (isValidAddress) setManualRecipientError('')
-    else setManualRecipientError('Invalid Address')
+    setManualRecipientError(
+      isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address',
+    )
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
   // validate token amount
@@ -286,6 +281,15 @@ const useTransferForm = () => {
     balanceData,
     fetchBalance,
   }
+}
+
+function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
+  return (
+    !manualRecipient.enabled ||
+    !destinationChain ||
+    isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
+    manualRecipient.address === ''
+  )
 }
 
 export default useTransferForm

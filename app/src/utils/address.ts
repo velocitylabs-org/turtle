@@ -80,10 +80,12 @@ export const isValidSubstrateAddress = (address: string): boolean => {
   }
 }
 
-/** Get the recipient address based on the enabled manual input and the connected destination wallet. */
+/**
+ * Get the recipient address based on the enabled manual input and the connected destination wallet.
+ * @remarks It doesn't check whether the address is valid or not
+ * */
 export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: WalletInfo) => {
-  if (manualRecipient.enabled) return manualRecipient.address
-  return wallet?.sender?.address
+  return manualRecipient.enabled ? manualRecipient.address : wallet?.sender?.address
 }
 
 /** Get the transfer sender address from the sender origin base (Substrate or Ethereum)*/
