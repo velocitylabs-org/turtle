@@ -27,6 +27,7 @@ import { TokenLogo } from '../TokenLogo'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   const transferSucceeded = tx.result === TxStatus.Succeeded
+  const transferUndefined = tx.result === TxStatus.Undefined
 
   return (
     <Dialog>
@@ -40,9 +41,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         <DialogHeader
           className={cn(
             'flex flex-col items-center justify-center space-y-4 rounded-t-4xl border py-6',
-            transferSucceeded
-              ? 'border-turtle-success-dark bg-turtle-success-light'
-              : 'border-turtle-error-dark bg-turtle-error-light',
+            transferUndefined
+              ? 'border-turtle-tertiary-dark bg-turtle-tertiary'
+              : transferSucceeded
+                ? 'border-turtle-success-dark bg-turtle-success-light'
+                : 'border-turtle-error-dark bg-turtle-error-light',
           )}
         >
           <DialogTitle className="sr-only">Completed transfer</DialogTitle>
@@ -52,7 +55,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn(
               'flex items-center justify-center space-x-4',
-              transferSucceeded ? 'text-turtle-success-dark' : 'text-turtle-error-dark',
+              transferUndefined
+                ? 'text-turtle-tertiary-dark'
+                : transferSucceeded
+                  ? 'text-turtle-success-dark'
+                  : 'text-turtle-error-dark',
             )}
           >
             <div className="turtle-success-dark flex items-center space-x-1">
@@ -63,7 +70,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border bg-background',
-                    transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark',
+                    transferUndefined
+                      ? 'border-turtle-tertiary-dark'
+                      : transferSucceeded
+                        ? 'border-turtle-success-dark'
+                        : 'border-turtle-error-dark',
                   )}
                 />
               </div>
@@ -71,9 +82,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             </div>
             <ArrowRight
               className="h-3 w-3"
-              {...(!transferSucceeded
-                ? { fill: colors['turtle-error-dark'] }
-                : { fill: colors['turtle-primary-dark'] })}
+              {...(transferUndefined
+                ? { fill: colors['turtle-foreground'] }
+                : !transferSucceeded
+                  ? { fill: colors['turtle-error-dark'] }
+                  : { fill: colors['turtle-primary-dark'] })}
             />
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
@@ -83,7 +96,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border bg-background',
-                    transferSucceeded ? 'border-turtle-success-dark' : 'border-turtle-error-dark',
+                    transferUndefined
+                      ? 'border-turtle-tertiary-dark'
+                      : transferSucceeded
+                        ? 'border-turtle-success-dark'
+                        : 'border-turtle-error-dark',
                   )}
                 />
               </div>
@@ -93,16 +110,24 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <h3
             className={cn(
               'xxl-letter-spacing flex items-center space-x-3 text-3xl leading-none sm:text-5xl',
-              transferSucceeded ? 'text-turtle-success-dark' : 'text-turtle-error-dark',
+              transferUndefined
+                ? 'text-turtle-tertiary-dark'
+                : transferSucceeded
+                  ? 'text-turtle-success-dark'
+                  : 'text-turtle-error-dark',
             )}
           >
             <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-            <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40} />
+            <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40}/>
           </h3>
           <div
             className={cn(
               'flex items-center space-x-4 text-sm',
-              transferSucceeded ? 'text-turtle-success-dark' : 'text-turtle-error-dark',
+              transferUndefined
+                ? 'text-turtle-tertiary-dark'
+                : transferSucceeded
+                  ? 'text-turtle-success-dark'
+                  : 'text-turtle-error-dark',
             )}
           >
             <div>{formatCompletedTransferDate(tx.date)}</div>
@@ -114,19 +139,33 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         <div
           className={cn(
             'mt-[-1px] flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary bg-white p-4 sm:p-10',
-            transferSucceeded ? 'border-t-turtle-success-dark' : 'border-t-turtle-error-dark',
+            transferUndefined
+              ? 'border-t-turtle-tertiary-dark'
+              : transferSucceeded
+                ? 'border-t-turtle-success-dark'
+                : 'border-t-turtle-error-dark',
           )}
         >
           <div
             className={cn(
               'flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-sm',
-              transferSucceeded
-                ? 'border-turtle-success-dark bg-turtle-success-light text-turtle-success-dark'
-                : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark',
+              transferUndefined
+                ? 'border-turtle-tertiary-dark bg-turtle-tertiary text-turtle-tertiary-dark'
+                : transferSucceeded
+                  ? 'border-turtle-success-dark bg-turtle-success-light text-turtle-success-dark'
+                  : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark',
             )}
           >
-            <ExclamationMark {...(!transferSucceeded && { fill: colors['turtle-error-dark'] })} />
-            {transferSucceeded ? (
+            <ExclamationMark
+              {...(transferUndefined
+                ? { fill: colors['turtle-tertiary-dark'] }
+                : !transferSucceeded
+                  ? { fill: colors['turtle-error-dark'] }
+                  : { fill: colors['turtle-primary-dark'] })}
+            />
+            {transferUndefined ? (
+              'Transfer status verification failed.'
+            ) : transferSucceeded ? (
               <p>
                 <span className="mr-1 pe-0.5 font-semibold">Done!</span>
                 This transfer is completed.
@@ -135,9 +174,6 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <p className="w-5/6 space-x-0.5">
                 <span className="font-semibold">This transfer failed!</span>
                 {tx.errors?.length && tx.errors[tx.errors?.length - 1]}
-                <Link href={'/'} className="underline hover:text-turtle-error">
-                  Try it again
-                </Link>
               </p>
             )}
           </div>
