@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import Link from 'next/link'
 
 import { TxStatus, CompletedTransfer } from '@/models/transfer'
 import { cn } from '@/utils/cn'
