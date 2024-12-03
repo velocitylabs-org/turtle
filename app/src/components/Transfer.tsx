@@ -51,6 +51,7 @@ const Transfer: FC = () => {
     destinationWallet,
     fees,
     loadingFees,
+    canPayFees,
     transferStatus,
     environment,
     tokenAmountError,
@@ -126,7 +127,8 @@ const Transfer: FC = () => {
     fees &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
-    !loadingFees
+    !loadingFees &&
+    canPayFees
 
   const shouldDisplayTxSummary =
     isValid &&
@@ -332,6 +334,7 @@ const Transfer: FC = () => {
           tokenAmount={tokenAmount}
           fees={fees}
           durationEstimate={durationEstimate}
+          canPayFees={canPayFees}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
         />
       )}
