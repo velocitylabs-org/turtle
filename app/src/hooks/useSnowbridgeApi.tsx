@@ -8,6 +8,7 @@ import { Environment } from '@/store/environmentStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
+import { isProduction } from '@/utils/env'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
@@ -181,7 +182,7 @@ const useSnowbridgeApi = () => {
         fees,
       } satisfies StoredTransfer)
 
-      if (environment === Environment.Mainnet) {
+      if (environment === Environment.Mainnet && isProduction) {
         trackTransferMetrics({
           id: sendResult.success?.messageId,
           sender: senderAddress,
