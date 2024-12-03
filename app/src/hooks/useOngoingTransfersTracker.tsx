@@ -7,7 +7,7 @@ import {
   TxTrackingResult,
 } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
-import { getExplorerLink, isTransferStatusUndefined } from '@/utils/transfer'
+import { getExplorerLink, startedTooLongAgo } from '@/utils/transfer'
 import {
   findMatchingTransfer,
   getTransferStatus,
@@ -157,7 +157,7 @@ const useOngoingTransfersTracker = () => {
 
   useEffect(() => {
     ongoingTransfers.forEach(ongoing => {
-      if (isTransferStatusUndefined(ongoing)) {
+      if (startedTooLongAgo(ongoing)) {
         const explorerLink = getExplorerLink(ongoing)
         remove(ongoing.id)
         addCompletedTransfer({
@@ -174,7 +174,7 @@ const useOngoingTransfersTracker = () => {
           date: ongoing.date,
           ...(explorerLink && { explorerLink }),
         } satisfies CompletedTransfer)
-        
+
         addNotification({
           message: 'Transfer verification failed.',
           severity: NotificationSeverity.Warning,
