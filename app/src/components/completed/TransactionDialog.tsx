@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import { CompletedTransfer, TxStatus } from '@/models/transfer'
+import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
@@ -24,9 +24,6 @@ import { colors } from '../../../tailwind.config'
 import { TokenLogo } from '../TokenLogo'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
-  const transferSucceeded = tx.result === TxStatus.Succeeded
-  const transferUndefined = tx.result === TxStatus.Undefined
-
   return (
     <Dialog>
       <DialogTrigger className="w-full">
@@ -39,11 +36,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         <DialogHeader
           className={cn(
             'flex flex-col items-center justify-center space-y-4 rounded-t-4xl border py-6',
-            transferUndefined
-              ? 'border-turtle-tertiary-dark bg-turtle-tertiary'
-              : transferSucceeded
-                ? 'border-turtle-success-dark bg-turtle-success-light'
-                : 'border-turtle-error-dark bg-turtle-error-light',
+            applyBorderColorWithBg(tx.result),
           )}
         >
           <DialogTitle className="sr-only">Completed transfer</DialogTitle>
@@ -51,14 +44,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             Completed transfer status and details
           </DialogDescription>
           <div
-            className={cn(
-              'flex items-center justify-center space-x-4',
-              transferUndefined
-                ? 'text-turtle-tertiary-dark'
-                : transferSucceeded
-                  ? 'text-turtle-success-dark'
-                  : 'text-turtle-error-dark',
-            )}
+            className={cn('flex items-center justify-center space-x-4', applyTextColor(tx.result))}
           >
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
@@ -66,40 +52,19 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   src={tx.sourceChain.logoURI}
                   alt={`${tx.sourceChain.name}`}
                   fill={true}
-                  className={cn(
-                    'rounded-full border bg-background',
-                    transferUndefined
-                      ? 'border-turtle-tertiary-dark'
-                      : transferSucceeded
-                        ? 'border-turtle-success-dark'
-                        : 'border-turtle-error-dark',
-                  )}
+                  className={cn('rounded-full border bg-background', applyBorderColor(tx.result))}
                 />
               </div>
               <div className="text-sm">{tx.sourceChain.name}</div>
             </div>
-            <ArrowRight
-              className="h-3 w-3"
-              {...(transferUndefined
-                ? { fill: colors['turtle-tertiary-dark'] }
-                : !transferSucceeded
-                  ? { fill: colors['turtle-error-dark'] }
-                  : { fill: colors['turtle-primary-dark'] })}
-            />
+            <ArrowRight className="h-3 w-3" {...fillArrowColor(tx.result)} />
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
                 <Image
                   src={tx.destChain.logoURI}
                   alt={`${tx.destChain.name}`}
                   fill={true}
-                  className={cn(
-                    'rounded-full border bg-background',
-                    transferUndefined
-                      ? 'border-turtle-tertiary-dark'
-                      : transferSucceeded
-                        ? 'border-turtle-success-dark'
-                        : 'border-turtle-error-dark',
-                  )}
+                  className={cn('rounded-full border bg-background', applyBorderColor(tx.result))}
                 />
               </div>
               <div className="text-sm">{tx.destChain.name}</div>
@@ -108,26 +73,13 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <h3
             className={cn(
               'xxl-letter-spacing flex items-center space-x-3 text-3xl leading-none sm:text-5xl',
-              transferUndefined
-                ? 'text-turtle-tertiary-dark'
-                : transferSucceeded
-                  ? 'text-turtle-success-dark'
-                  : 'text-turtle-error-dark',
+              applyTextColor(tx.result),
             )}
           >
             <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
             <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40} />
           </h3>
-          <div
-            className={cn(
-              'flex items-center space-x-4 text-sm',
-              transferUndefined
-                ? 'text-turtle-tertiary-dark'
-                : transferSucceeded
-                  ? 'text-turtle-success-dark'
-                  : 'text-turtle-error-dark',
-            )}
-          >
+          <div className={cn('flex items-center space-x-4 text-sm', applyTextColor(tx.result))}>
             <div>{formatCompletedTransferDate(tx.date)}</div>
             <div>{formatHours(tx.date)}</div>
           </div>
@@ -137,30 +89,19 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
         <div
           className={cn(
             'mt-[-1px] flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary bg-white p-4 sm:p-10',
-            transferUndefined
-              ? 'border-t-turtle-tertiary-dark'
-              : transferSucceeded
-                ? 'border-t-turtle-success-dark'
-                : 'border-t-turtle-error-dark',
+            applyBorderTopColor(tx.result),
           )}
         >
           <div
             className={cn(
               'flex w-full items-center gap-2 rounded-lg border px-2 py-2 text-sm',
-              transferUndefined
-                ? 'border-turtle-tertiary-dark bg-turtle-tertiary text-turtle-tertiary-dark'
-                : transferSucceeded
-                  ? 'border-turtle-success-dark bg-turtle-success-light text-turtle-success-dark'
-                  : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark',
+              applyMessageDescriptionColor(tx.result),
             )}
           >
             {getStatusIcon(tx.result, colors['turtle-error-dark'])}
-            {transferUndefined ? (
-              <p>
-                {/* <span className="mr-1 pe-0.5 font-semibold">Sorry!</span> */}
-                We are not sure what happened to this transfer
-              </p>
-            ) : transferSucceeded ? (
+            {tx.result === TxStatus.Undefined ? (
+              <p>We are not sure what happened to this transfer</p>
+            ) : tx.result === TxStatus.Succeeded ? (
               <p>
                 <span className="mr-1 pe-0.5 font-semibold">Done!</span>
                 This transfer is completed.
@@ -183,13 +124,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 addressType={tx.sourceChain.supportedAddressTypes.at(0)}
                 address={tx.sender}
                 size={24}
-                className={
-                  transferUndefined
-                    ? 'border-turtle-tertiary-dark'
-                    : transferSucceeded
-                      ? 'border-black'
-                      : 'border-turtle-error-dark'
-                }
+                className={applyBorderColor(tx.result)}
               />
             </div>
 
@@ -202,13 +137,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 addressType={tx.destChain.supportedAddressTypes.at(0)}
                 address={tx.recipient}
                 size={24}
-                className={
-                  transferUndefined
-                    ? 'border-turtle-tertiary-dark'
-                    : transferSucceeded
-                      ? 'border-black'
-                      : 'border-turtle-error-dark'
-                }
+                className={applyBorderColor(tx.result)}
               />
             </div>
           </div>
@@ -265,4 +194,52 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
       </DialogContent>
     </Dialog>
   )
+}
+
+const applyTextColor = (result: TransferResult) => {
+  return result === TxStatus.Undefined
+    ? 'text-turtle-tertiary-dark'
+    : result === TxStatus.Succeeded
+      ? 'text-turtle-success-dark'
+      : 'text-turtle-error-dark'
+}
+
+const applyBorderColorWithBg = (result: TransferResult) => {
+  return result === TxStatus.Undefined
+    ? 'border-turtle-tertiary-dark bg-turtle-tertiary'
+    : result === TxStatus.Succeeded
+      ? 'border-turtle-success-dark bg-turtle-success-light'
+      : 'border-turtle-error-dark bg-turtle-error-light'
+}
+
+const applyBorderColor = (result: TransferResult) => {
+  return result === TxStatus.Undefined
+    ? 'border-turtle-tertiary-dark'
+    : result === TxStatus.Succeeded
+      ? 'border-turtle-success-dark'
+      : 'border-turtle-error-dark'
+}
+
+const applyBorderTopColor = (result: TransferResult) => {
+  return result === TxStatus.Undefined
+    ? 'border-t-turtle-tertiary-dark'
+    : result === TxStatus.Succeeded
+      ? 'border-t-turtle-success-dark'
+      : 'border-t-turtle-error-dark'
+}
+
+const applyMessageDescriptionColor = (result: TransferResult) => {
+  return result === TxStatus.Undefined
+    ? 'border-turtle-tertiary-dark bg-turtle-tertiary text-turtle-tertiary-dark'
+    : result === TxStatus.Succeeded
+      ? 'border-turtle-success-dark bg-turtle-success-light text-turtle-success-dark'
+      : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark'
+}
+
+const fillArrowColor = (result: TransferResult) => {
+  return result === TxStatus.Undefined
+    ? { fill: colors['turtle-tertiary-dark'] }
+    : result === TxStatus.Succeeded
+      ? { fill: colors['turtle-primary-dark'] }
+      : { fill: colors['turtle-error-dark'] }
 }
