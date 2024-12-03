@@ -4,6 +4,7 @@ import { truncateAddress } from '@/utils/address'
 import { isMobileDevice } from '@/utils/env'
 import { getWalletLogo, getWalletName } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
+import { motion } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
 import Button from './Button'
 import { Icon } from './Icon'
@@ -66,7 +67,7 @@ const SubstrateWalletModal: FC = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[25rem] overflow-scroll rounded-4xl border-1 border-black pb-4 focus:outline-none"
+        className="m-auto max-h-[85vh] max-w-[25rem] rounded-4xl border-1 border-black pb-4 focus:outline-none"
         hideCloseButton={true}
       >
         {/* Header */}
@@ -83,15 +84,21 @@ const SubstrateWalletModal: FC = () => {
           </DialogTitle>
         </DialogHeader>
 
-        {/* Content */}
-        <div className="flex min-h-[130px] flex-col items-center justify-center space-y-2 p-6 text-base">
+        {/* Animate Height Transition */}
+        <motion.div
+          className="flex max-h-[15rem] min-h-[130px] flex-col items-center justify-start space-y-2 overflow-y-auto p-6 pt-3 text-base"
+          layout
+          initial={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
+          animate={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
+          transition={{ duration: 0.5, type: 'spring' }}
+        >
           {/* Show extensions */}
           {currentView === 'extensions' &&
             (extensions.length > 0 ? (
               extensions.map(extension => (
                 <Button
                   key={extension.name}
-                  className="flex w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
+                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
                   variant="outline"
                   onClick={() => handleExtensionSelect(extension)}
                 >
@@ -117,7 +124,7 @@ const SubstrateWalletModal: FC = () => {
               filteredAccounts.map(account => (
                 <Button
                   key={account.address}
-                  className="flex w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
+                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
                   variant="outline"
                   onClick={() => handleAccountSelect(account)}
                 >
@@ -138,10 +145,18 @@ const SubstrateWalletModal: FC = () => {
                 account to Turtle inside your wallet extension.
               </p>
             ))}
-        </div>
+        </motion.div>
 
         {/* Footer */}
-        {currentView === 'extensions' && <Footer />}
+        <motion.div
+          layout
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {currentView === 'extensions' && <Footer />}
+        </motion.div>
       </DialogContent>
     </Dialog>
   )
