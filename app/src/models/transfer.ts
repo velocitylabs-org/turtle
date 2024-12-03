@@ -54,7 +54,7 @@ export interface DisplaysTransfers {
 export enum TxStatus {
   Succeeded = 'Succeeded',
   Failed = 'failed',
-  Undefined = 'Undefined'
+  Undefined = 'Undefined',
 }
 
 export type TransferResult = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Undefined

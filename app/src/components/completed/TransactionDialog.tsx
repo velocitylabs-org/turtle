@@ -118,7 +118,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             )}
           >
             <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-            <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40}/>
+            <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40} />
           </h3>
           <div
             className={cn(
