@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import { TxStatus, CompletedTransfer } from '@/models/transfer'
+import { CompletedTransfer, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
@@ -187,6 +187,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div className="p-4 text-sm">
               <Account
                 network={tx.sourceChain.network}
+                addressType={tx.sourceChain.supportedAddressTypes.at(0)}
                 address={tx.sender}
                 size={24}
                 className={
@@ -205,6 +206,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               </div>
               <Account
                 network={tx.destChain.network}
+                addressType={tx.destChain.supportedAddressTypes.at(0)}
                 address={tx.recipient}
                 size={24}
                 className={
