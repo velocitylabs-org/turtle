@@ -23,8 +23,6 @@ function Account({
   const accountName = useLookupName(network, address)
   const accountDisplay = accountName ? accountName : truncateAddress(address, 4, 4)
 
-  console.log(addressType)
-
   return (
     <div className="flex items-center gap-x-1">
       {/* Account Icon Substrate */}
