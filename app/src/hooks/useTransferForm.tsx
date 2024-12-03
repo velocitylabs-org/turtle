@@ -68,7 +68,9 @@ const useTransferForm = () => {
     sourceChain,
     destinationChain,
     tokenAmount?.token,
-    getRecipientAddress(manualRecipient, destinationWallet),
+    manualRecipient.enabled && manualRecipientError != null
+      ? undefined
+      : getRecipientAddress(manualRecipient, destinationWallet),
   )
 
   const {
