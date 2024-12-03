@@ -9,7 +9,7 @@ import { ReactNode } from 'react'
 import { Config, cookieToInitialState, WagmiProvider } from 'wagmi'
 
 // Setup queryClient
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 if (!projectId) throw new Error('Project ID is not defined')
 
 // Get projectId at https://cloud.walletconnect.com
@@ -34,6 +34,7 @@ export const wagmiAdapter = new WagmiAdapter({
 export const modal = createAppKit({
   adapters: [wagmiAdapter],
   networks: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet],
+  defaultNetwork: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? sepolia : mainnet,
   metadata: metadata,
   projectId,
   themeMode: 'light',
