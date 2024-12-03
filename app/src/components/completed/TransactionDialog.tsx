@@ -82,7 +82,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <ArrowRight
               className="h-3 w-3"
               {...(transferUndefined
-                ? { fill: colors['turtle-foreground'] }
+                ? { fill: colors['turtle-tertiary-dark'] }
                 : !transferSucceeded
                   ? { fill: colors['turtle-error-dark'] }
                   : { fill: colors['turtle-primary-dark'] })}
@@ -163,7 +163,10 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   : { fill: colors['turtle-primary-dark'] })}
             />
             {transferUndefined ? (
-              'Transfer status verification failed.'
+              <p>
+                <span className="mr-1 pe-0.5 font-semibold">Sorry!</span>
+                The transfer verification couldn&apos;t be completed.
+              </p>
             ) : transferSucceeded ? (
               <p>
                 <span className="mr-1 pe-0.5 font-semibold">Done!</span>
@@ -186,7 +189,13 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 network={tx.sourceChain.network}
                 address={tx.sender}
                 size={24}
-                className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
+                className={
+                  transferUndefined
+                    ? 'border-turtle-tertiary-dark'
+                    : transferSucceeded
+                      ? 'border-black'
+                      : 'border-turtle-error-dark'
+                }
               />
             </div>
 
@@ -198,7 +207,13 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 network={tx.destChain.network}
                 address={tx.recipient}
                 size={24}
-                className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
+                className={
+                  transferUndefined
+                    ? 'border-turtle-tertiary-dark'
+                    : transferSucceeded
+                      ? 'border-black'
+                      : 'border-turtle-error-dark'
+                }
               />
             </div>
           </div>
@@ -248,7 +263,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               aria-label="View your completed transaction on block explorer"
               className="mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5 sm:m-0"
             >
-              <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
+              <p>View transfer on Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
             </a>
           )}
         </div>

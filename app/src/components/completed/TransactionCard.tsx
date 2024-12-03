@@ -18,7 +18,14 @@ const statusIcon = (status: TransferResult) => {
     case TxStatus.Failed:
       return <Fail width={24} height={24} />
     case TxStatus.Undefined:
-      return <ExclamationMark width={24} height={24} fill={colors['turtle-tertiary-dark']} />
+      return (
+        <ExclamationMark
+          width={24}
+          height={24}
+          fill={colors['turtle-tertiary-dark']}
+          className="p-0.5"
+        />
+      )
     default:
       return <Success width={24} height={24} />
   }
