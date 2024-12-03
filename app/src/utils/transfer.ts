@@ -270,7 +270,11 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfer is outdated.
  */
-export const isTransferStatusUndefined = (transfer: StoredTransfer, xcmBuffer = 1, bridgeBuffer = 6) => {
+export const isTransferStatusUndefined = (
+  transfer: StoredTransfer,
+  xcmBuffer = 1,
+  bridgeBuffer = 6,
+) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const timeBuffer =
     direction === Direction.WithinPolkadot
