@@ -1,14 +1,14 @@
-import { FC } from 'react'
-import Image from 'next/image'
 import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
+import Image from 'next/image'
+import { FC } from 'react'
+import { colors } from '../../tailwind.config'
 import Account from './Account'
 import { ArrowRight } from './svg/ArrowRight'
-import TransferEstimate from './TransferEstimate'
 import LoadingIcon from './svg/LoadingIcon'
-import { colors } from '../../tailwind.config'
+import TransferEstimate from './TransferEstimate'
 
 const OngoingTransfer: FC<{
   direction: Direction
@@ -60,12 +60,14 @@ const OngoingTransfer: FC<{
       <div className="flex items-center">
         <Account
           network={transfer.sourceChain.network}
+          addressType={transfer.sourceChain.supportedAddressTypes.at(0)}
           address={transfer.sender}
           allowCopy={false}
         />
         <ArrowRight className="mx-3 h-[0.8rem] w-[0.8rem]" fill={colors['turtle-secondary-dark']} />
         <Account
           network={transfer.destChain.network}
+          addressType={transfer.destChain.supportedAddressTypes.at(0)}
           address={transfer.recipient}
           allowCopy={false}
         />

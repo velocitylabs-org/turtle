@@ -80,7 +80,7 @@ export const Moonbeam: Chain = {
   chainId: 2004,
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
-  supportedAddressTypes: ['ss58'],
+  supportedAddressTypes: ['evm'],
   walletType: 'SubstrateEVM',
   rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
 }
