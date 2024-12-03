@@ -16,9 +16,9 @@ import { colors } from '../../../tailwind.config'
 export const getStatusIcon = (status: TransferResult, fill?: string) => {
   switch (status) {
     case TxStatus.Failed:
-      return <Fail width={24} height={24} fill={fill}/>
+      return <Fail width={24} height={24} fill={fill} />
     case TxStatus.Undefined:
-      return <Info width={24} height={24}  />
+      return <Info width={24} height={24} />
     default:
       return <Success width={24} height={24} />
   }
