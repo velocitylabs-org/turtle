@@ -7,25 +7,18 @@ import { formatAmount, toHuman } from '@/utils/transfer'
 
 import Account from '../Account'
 import { ArrowRight } from '../svg/ArrowRight'
-import { ExclamationMark } from '../svg/ExclamationMark'
 import { Fail } from '../svg/Fail'
+import { Info } from '../svg/Info'
 import { Success } from '../svg/Success'
 
 import { colors } from '../../../tailwind.config'
 
-const statusIcon = (status: TransferResult) => {
+export const getStatusIcon = (status: TransferResult, fill?: string) => {
   switch (status) {
     case TxStatus.Failed:
-      return <Fail width={24} height={24} />
+      return <Fail width={24} height={24} fill={fill}/>
     case TxStatus.Undefined:
-      return (
-        <ExclamationMark
-          width={24}
-          height={24}
-          fill={colors['turtle-tertiary-dark']}
-          className="p-0.5"
-        />
-      )
+      return <Info width={24} height={24}  />
     default:
       return <Success width={24} height={24} />
   }
@@ -45,7 +38,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex max-w-xs space-x-2 overflow-x-auto">
-            <div>{statusIcon(tx.result)}</div>
+            <div>{getStatusIcon(tx.result)}</div>
             <div
               className={cn(
                 'no-letter-spacing flex items-center space-x-1 text-xl leading-none',

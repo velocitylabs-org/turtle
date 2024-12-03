@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn'
 import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
-import { TransactionCard } from './TransactionCard'
+import { getStatusIcon, TransactionCard } from './TransactionCard'
 
 import {
   Dialog,
@@ -19,7 +19,6 @@ import {
 import Account from '../Account'
 import { ArrowRight } from '../svg/ArrowRight'
 import { ArrowUpRight } from '../svg/ArrowUpRight'
-import { ExclamationMark } from '../svg/ExclamationMark'
 
 import { colors } from '../../../tailwind.config'
 import { TokenLogo } from '../TokenLogo'
@@ -155,13 +154,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   : 'border-turtle-error-dark bg-turtle-error-light text-turtle-error-dark',
             )}
           >
-            <ExclamationMark
-              {...(transferUndefined
-                ? { fill: colors['turtle-tertiary-dark'] }
-                : !transferSucceeded
-                  ? { fill: colors['turtle-error-dark'] }
-                  : { fill: colors['turtle-primary-dark'] })}
-            />
+            {getStatusIcon(tx.result, colors['turtle-error-dark'])}
             {transferUndefined ? (
               <p>
                 <span className="mr-1 pe-0.5 font-semibold">Sorry!</span>
