@@ -7,6 +7,7 @@ import { formatAmount, toHuman } from '@/utils/transfer'
 
 import Account from '../Account'
 import { ArrowRight } from '../svg/ArrowRight'
+import { ExclamationMark } from '../svg/ExclamationMark'
 import { Fail } from '../svg/Fail'
 import { Success } from '../svg/Success'
 
@@ -16,6 +17,8 @@ const statusIcon = (status: TransferResult) => {
   switch (status) {
     case TxStatus.Failed:
       return <Fail width={24} height={24} />
+    case TxStatus.Undefined:
+      return <ExclamationMark width={24} height={24} fill={colors['turtle-tertiary-dark']} />
     default:
       return <Success width={24} height={24} />
   }
