@@ -4,7 +4,7 @@ import { Network } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
-import { Direction } from '@/services/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
 
@@ -260,4 +260,21 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
       return { date, transfers: orderedTransfersByDate[date] }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+}
+
+/**
+ * Checks if an ongoing transfer is outdated and should be marked as undefined:
+ * - XCM transfers are considered outdated after 1 hour.
+ * - Bridge transfers are considered outdated after 6 hours.
+ *
+ * @param transfer - The ongoing transfer to check.
+ * @returns A boolean indicating whether the transfer is outdated.
+ */
+export const isTransferStatusUndefined = (transfer: StoredTransfer, xcmBuffer = 1, bridgeBuffer = 6) => {
+  const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const timeBuffer =
+    direction === Direction.WithinPolkadot
+      ? xcmBuffer * 60 * 60 * 1000
+      : bridgeBuffer * 60 * 60 * 1000
+  return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
 }

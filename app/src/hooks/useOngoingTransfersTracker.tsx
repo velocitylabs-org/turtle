@@ -7,7 +7,7 @@ import {
   TxTrackingResult,
 } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
-import { getExplorerLink } from '@/utils/transfer'
+import { getExplorerLink, isTransferStatusUndefined } from '@/utils/transfer'
 import {
   findMatchingTransfer,
   getTransferStatus,
@@ -154,6 +154,35 @@ const useOngoingTransfersTracker = () => {
       }
     })
   }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateUniqueId])
+
+  useEffect(() => {
+    ongoingTransfers.forEach(ongoing => {
+      if (isTransferStatusUndefined(ongoing)) {
+        const explorerLink = getExplorerLink(ongoing)
+        remove(ongoing.id)
+        addCompletedTransfer({
+          id: ongoing.id,
+          result: TxStatus.Undefined,
+          token: ongoing.token,
+          sourceChain: ongoing.sourceChain,
+          destChain: ongoing.destChain,
+          amount: ongoing.amount,
+          tokenUSDValue: ongoing.tokenUSDValue ?? 0,
+          fees: ongoing.fees,
+          sender: ongoing.sender,
+          recipient: ongoing.recipient,
+          date: ongoing.date,
+          ...(explorerLink && { explorerLink }),
+        } satisfies CompletedTransfer)
+        addNotification({
+          message: 'Transfer verification failed.',
+          severity: NotificationSeverity.Warning,
+          dismissible: true,
+        })
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ongoingTransfers])
 
   return { transfers, loading, statusMessages, fetchTransfers }
 }
