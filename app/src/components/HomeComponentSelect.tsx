@@ -39,7 +39,7 @@ export const HomeComponentSelect = () => {
       </div>
 
       {isCompletedTabSelected && hasCompletedTransfers && completedTransfers && (
-        <TransferHistory transactions={completedTransfers!} />
+        <TransferHistory transfers={completedTransfers!} />
       )}
     </>
   )
