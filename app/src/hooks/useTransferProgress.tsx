@@ -5,7 +5,7 @@ import { Direction } from '@/services/transfer'
 const ESTIMATED_DURATION = {
   toEthereum: 4 * 60 * 60, // 30 mins in seconds
   toPolkadot: 30 * 60, // 4h in seconds
-  xcmTransfer: 3 * 60, // 3 mins in seconds
+  xcmTransfer: 2.5 * 60, // 2.5 minutes in seconds
 }
 
 const getDurationEstimateMs = (direction: Direction) => {

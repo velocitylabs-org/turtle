@@ -71,6 +71,7 @@ const useParaspellApi = () => {
                   date,
                   environment,
                   fees,
+                  status: `Submitting to ${sourceChain.name}`,
                 } satisfies StoredTransfer)
               }, 2000),
             )
@@ -84,7 +85,7 @@ const useParaspellApi = () => {
               // Update the ongoing tx entry now containing the necessary
               // fields to be able to track its progress.
               addOrUpdate({
-                id: result.txHash.toString(),
+                id: getTxId(result),
                 sourceChain,
                 token,
                 tokenUSDValue,
@@ -98,6 +99,7 @@ const useParaspellApi = () => {
                 ...(messageHash && { crossChainMessageHash: messageHash }),
                 ...(messageId && { parachainMessageId: messageId }),
                 ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
+                status: `Arriving at ${destinationChain.name}`,
               } satisfies StoredTransfer)
 
               // metrics
