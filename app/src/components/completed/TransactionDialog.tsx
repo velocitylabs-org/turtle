@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
@@ -22,6 +20,7 @@ import { ArrowUpRight } from '../svg/ArrowUpRight'
 
 import { colors } from '../../../tailwind.config'
 import { TokenLogo } from '../TokenLogo'
+import { Icon } from '../Icon'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   return (
@@ -47,27 +46,23 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn('flex items-center justify-center space-x-4', getTextColor(tx.result))}
           >
-            <div className="turtle-success-dark flex items-center space-x-1">
-              <div className="relative h-6 w-6 rounded-full">
-                <Image
-                  src={tx.sourceChain.logoURI}
-                  alt={`${tx.sourceChain.name}`}
-                  fill={true}
-                  className={cn('rounded-full border bg-background', getBorder(tx.result))}
-                />
-              </div>
+            <div className="turtle-success-dark flex items-center justify-center space-x-1">
+              <Icon
+                src={tx.sourceChain.logoURI}
+                width={32}
+                height={32}
+                className={cn('rounded-full border bg-background', getBorder(tx.result))}
+              />
               <div className="text-sm">{tx.sourceChain.name}</div>
             </div>
             <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
-            <div className="turtle-success-dark flex items-center space-x-1">
-              <div className="relative h-6 w-6 rounded-full">
-                <Image
-                  src={tx.destChain.logoURI}
-                  alt={`${tx.destChain.name}`}
-                  fill={true}
-                  className={cn('rounded-full border bg-background', getBorder(tx.result))}
-                />
-              </div>
+            <div className="turtle-success-dark flex items-center justify-center space-x-1">
+              <Icon
+                src={tx.destChain.logoURI}
+                width={32}
+                height={32}
+                className={cn('rounded-full border bg-background', getBorder(tx.result))}
+              />
               <div className="text-sm">{tx.destChain.name}</div>
             </div>
           </div>

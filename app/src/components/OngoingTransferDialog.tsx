@@ -2,7 +2,6 @@ import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
-import Image from 'next/image'
 import { colors } from '../../tailwind.config'
 import Account from './Account'
 import OngoingTransfer from './OngoingTransfer'
@@ -18,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog'
+import { Icon } from './Icon'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -55,27 +55,23 @@ export const OngoingTransferDialog = ({
             Ongoing transfer status and details
           </DialogDescription>
           <div className={'flex items-center justify-center space-x-4 text-turtle-secondary-dark'}>
-            <div className="turtle-success-dark flex items-center space-x-1">
-              <div className="relative h-6 w-6 rounded-full">
-                <Image
-                  src={transfer.sourceChain.logoURI}
-                  alt={`${transfer.sourceChain.name}`}
-                  fill={true}
-                  className={'rounded-full border border-turtle-secondary-dark bg-background'}
-                />
-              </div>
+            <div className="turtle-success-dark flex items-center justify-center space-x-1">
+              <Icon
+                src={transfer.sourceChain.logoURI}
+                width={32}
+                height={32}
+                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+              />
               <div className="text-sm">{transfer.sourceChain.name}</div>
             </div>
             <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
-            <div className="turtle-success-dark flex items-center space-x-1">
-              <div className="relative h-6 w-6 rounded-full">
-                <Image
-                  src={transfer.destChain.logoURI}
-                  alt={`${transfer.destChain.name}`}
-                  fill={true}
-                  className={'rounded-full border border-turtle-secondary-dark bg-background'}
-                />
-              </div>
+            <div className="turtle-success-dark flex items-center justify-center space-x-1">
+              <Icon
+                src={transfer.destChain.logoURI}
+                width={32}
+                height={32}
+                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+              />
               <div className="text-sm">{transfer.destChain.name}</div>
             </div>
           </div>
