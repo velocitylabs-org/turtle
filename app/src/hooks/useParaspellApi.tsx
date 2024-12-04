@@ -84,7 +84,7 @@ const useParaspellApi = () => {
               // Update the ongoing tx entry now containing the necessary
               // fields to be able to track its progress.
               addOrUpdate({
-                id: result.txHash.toString(),
+                id: getTxId(result),
                 sourceChain,
                 token,
                 tokenUSDValue,

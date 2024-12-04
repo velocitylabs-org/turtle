@@ -104,13 +104,13 @@ export function getTransferStatusFromParachain(
       if (isBHChannelMsgDelivered || isDestChainEthereum) return 'Arriving at Ethereum'
       if (isBridgeTransferSubmitted) return 'Arriving at Bridge Hub'
       // Default when the above conditions are not met
-      return 'Transfer pending...'
+      return 'Pending...'
 
     case TransferStatus.Complete:
-      return 'Transfer completed'
+      return 'Completed'
 
     case TransferStatus.Failed:
-      return 'Transfer Failed'
+      return 'Failed'
 
     default: // Should never happen
       return 'Unknown status'
@@ -130,13 +130,13 @@ export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingRes
   switch (status) {
     case TransferStatus.Pending:
       if (submitted) return 'Arriving at Bridge Hub'
-      return 'Transfer pending...'
+      return 'Pending...'
 
     case TransferStatus.Complete:
-      return 'Transfer completed'
+      return 'Completed'
 
     case TransferStatus.Failed:
-      return 'Transfer Failed'
+      return 'Failed'
 
     default: // Should never happen
       return 'Unknown'

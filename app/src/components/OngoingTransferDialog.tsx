@@ -21,7 +21,7 @@ import {
 
 export const OngoingTransferDialog = ({
   transfer,
-  status = 'Transfer pending...',
+  status = 'Pending...',
 }: {
   transfer: StoredTransfer
   status?: string
