@@ -13,12 +13,12 @@ import TransferEstimate from './TransferEstimate'
 const OngoingTransfer: FC<{
   direction: Direction
   transfer: StoredTransfer
-  status: string | null
+  status: string
 }> = ({ direction, transfer, status }) => {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-left font-bold text-turtle-secondary-dark">{status ?? ''}</p>
+        <p className="text-left font-bold text-turtle-secondary-dark">{status}</p>
         <p className="text-normal text-right text-turtle-secondary">
           {formatOngoingTransferDate(transfer.date)}
         </p>

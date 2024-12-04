@@ -21,7 +21,7 @@ import {
 
 export const OngoingTransferDialog = ({
   transfer,
-  status = 'Pending...',
+  status,
 }: {
   transfer: StoredTransfer
   status?: string
@@ -29,10 +29,16 @@ export const OngoingTransferDialog = ({
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
+  const getStatus = (status?: string) => {
+    if (typeof status === 'string') return status
+    if (transfer.state) return transfer.state
+    return 'Pending'
+  }
+
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer transfer={transfer} status={status} direction={direction} />
+        <OngoingTransfer transfer={transfer} status={getStatus(status)} direction={direction} />
       </DialogTrigger>
       <DialogContent
         className="ongoing-transfer-dialog m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
@@ -95,7 +101,7 @@ export const OngoingTransferDialog = ({
             }
           >
             <div className="my-2 flex items-center justify-between">
-              <p className="text-left font-bold text-turtle-secondary-dark">{status}</p>
+              <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
               <p className="text-normal text-turtle-secondary">
                 {formatOngoingTransferDate(transfer.date)}
               </p>
