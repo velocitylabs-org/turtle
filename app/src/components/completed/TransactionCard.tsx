@@ -120,24 +120,24 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
           />
         </div>
         {status === TxStatus.Failed && (
-          <p className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
+          <div className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
             <div>
               <span className="mr-1 font-semibold">Oops!</span>This transaction failed
             </div>
             <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
               See more
             </span>
-          </p>
+          </div>
         )}
         {status === TxStatus.Undefined && (
-          <p className="flex items-center justify-between rounded-lg bg-turtle-tertiary p-2 text-xs font-normal leading-3 text-turtle-tertiary-dark">
+          <div className="flex items-center justify-between rounded-lg bg-turtle-tertiary p-2 text-xs font-normal leading-3 text-turtle-tertiary-dark">
             <div>
               <span className="mr-1 font-semibold">Sorry!</span>We are not sure what happened{' '}
             </div>
             <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
               See more
             </span>
-          </p>
+          </div>
         )}
       </div>
     </div>
