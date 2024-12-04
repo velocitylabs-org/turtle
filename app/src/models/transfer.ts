@@ -33,6 +33,8 @@ export interface StoredTransfer extends RawTransfer {
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
   // A subscan unique Id shared accross chains to track ongoing transfers
   uniqueTrackingId?: string
+  // Transfer state
+  state?: string
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
