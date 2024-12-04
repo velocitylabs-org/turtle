@@ -123,12 +123,17 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                 />
               )}
               {!manualRecipient?.enabled && !!value && accountName}
+
+              {/* Manual Recipient Address */}
               {manualRecipient && manualRecipient.enabled && (
                 <>
-                  <VerticalDivider className={!manualRecipient.address ? 'visible' : 'invisible'} />
+                  <VerticalDivider className={manualRecipient.address ? 'invisible' : 'visible'} />
                   <input
                     type="text"
-                    className="h-[70%] w-full bg-transparent focus:border-0 focus:outline-none"
+                    className={cn(
+                      'ml-1 h-[70%] w-full bg-transparent focus:border-0 focus:outline-none',
+                      error && 'text-turtle-error',
+                    )}
                     placeholder="Address"
                     autoFocus
                     value={manualRecipient.address}

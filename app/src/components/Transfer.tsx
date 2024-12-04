@@ -262,7 +262,7 @@ const Transfer: FC = () => {
                 className="flex items-center gap-1 self-center pt-1"
               >
                 <AlertIcon />
-                <span className="text-xs">Double check address to avoid losing funds.</span>
+                <span className="text-xs">Double check the address to avoid losing funds</span>
               </motion.div>
             )}
           </AnimatePresence>
