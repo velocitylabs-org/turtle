@@ -8,38 +8,42 @@ import { formatAmount, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import { ArrowRight } from '../svg/ArrowRight'
 import { Fail } from '../svg/Fail'
+import { Info } from '../svg/Info'
 import { Success } from '../svg/Success'
 
 import { colors } from '../../../tailwind.config'
+import { getSVGColor } from './TransactionDialog'
 
-const statusIcon = (status: TransferResult) => {
+export const getStatusIcon = (status: TransferResult) => {
   switch (status) {
     case TxStatus.Failed:
-      return <Fail width={24} height={24} />
+      return <Fail width={24} height={24} fill={getSVGColor(status)} />
+    case TxStatus.Undefined:
+      return <Info width={24} height={24} fill={getSVGColor(status)} />
     default:
-      return <Success width={24} height={24} />
+      return <Success width={24} height={24} fill={getSVGColor(status)} />
   }
 }
 
 export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
-  const transferSucceeded = tx.result === TxStatus.Succeeded
+  const status = tx.result
+  const transferFailed = status === TxStatus.Failed
+
   return (
     <div
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
-        transferSucceeded
-          ? 'border-turtle-level3 hover:bg-turtle-level1'
-          : 'border-turtle-error hover:border-turtle-error-dark',
+        getBorder(status),
       )}
     >
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex max-w-xs space-x-2 overflow-x-auto">
-            <div>{statusIcon(tx.result)}</div>
+            <div>{getStatusIcon(status)}</div>
             <div
               className={cn(
                 'no-letter-spacing flex items-center space-x-1 text-xl leading-none',
-                tx.result === TxStatus.Failed && 'text-turtle-error',
+                transferFailed && 'text-turtle-error',
               )}
             >
               <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
@@ -48,7 +52,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
             <div
               className={cn(
                 'flex items-center justify-between space-x-1 rounded-2xl border px-1 py-0.5',
-                tx.result === TxStatus.Failed && 'border-turtle-error bg-turtle-error-light',
+                transferFailed && 'border-turtle-error bg-turtle-error-light',
               )}
             >
               <div className="relative h-4 w-4 rounded-full">
@@ -58,13 +62,13 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border bg-background',
-                    transferSucceeded ? 'border-black' : 'border-turtle-error',
+                    transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />
               </div>
               <ArrowRight
                 className="h-[0.45rem] w-[0.45rem]"
-                {...(tx.result === TxStatus.Failed && { fill: colors['turtle-error'] })}
+                {...(transferFailed && { fill: colors['turtle-error'] })}
               />
               <div className="relative h-4 w-4 rounded-full">
                 <Image
@@ -73,7 +77,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                   fill={true}
                   className={cn(
                     'rounded-full border bg-background',
-                    transferSucceeded ? 'border-black' : 'border-turtle-error',
+                    transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />
               </div>
@@ -82,7 +86,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
           <div
             className={cn(
               'text-[10px] sm:block sm:text-sm',
-              transferSucceeded ? 'text-turtle-level5' : 'text-turtle-error',
+              transferFailed ? 'text-turtle-error' : 'text-turtle-level5',
             )}
           >
             {formatHours(tx.date)}
@@ -91,33 +95,45 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
         <div
           className={cn(
             'flex items-center justify-start space-x-4',
-            tx.result === TxStatus.Failed && 'text-turtle-error-dark',
+            transferFailed && 'text-turtle-error-dark',
           )}
         >
           <Account
             network={tx.sourceChain.network}
             addressType={tx.sourceChain.supportedAddressTypes.at(0)}
             address={tx.sender}
-            className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
+            className={transferFailed ? 'border-turtle-error-dark' : 'border-black'}
             allowCopy={false}
           />
           <ArrowRight
             className="h-3 w-3"
-            {...(transferSucceeded
-              ? { fill: colors['turtle-foreground'] }
-              : { fill: colors['turtle-secondary-dark'] })}
+            {...(transferFailed
+              ? { fill: colors['turtle-secondary-dark'] }
+              : { fill: colors['turtle-foreground'] })}
           />
           <Account
             network={tx.destChain.network}
             addressType={tx.destChain.supportedAddressTypes.at(0)}
             address={tx.recipient}
-            className={transferSucceeded ? 'border-black' : 'border-turtle-error-dark'}
+            className={transferFailed ? 'border-turtle-error-dark' : 'border-black'}
             allowCopy={false}
           />
         </div>
-        {!transferSucceeded && (
+        {status === TxStatus.Failed && (
           <p className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
-            This transaction failed.{' '}
+            <div>
+              <span className="mr-1 font-semibold">Oops!</span>This transaction failed
+            </div>
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
+              See more
+            </span>
+          </p>
+        )}
+        {status === TxStatus.Undefined && (
+          <p className="flex items-center justify-between rounded-lg bg-turtle-tertiary p-2 text-xs font-normal leading-3 text-turtle-tertiary-dark">
+            <div>
+              <span className="mr-1 font-semibold">Sorry!</span>We are not sure what happened{' '}
+            </div>
             <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
               See more
             </span>
@@ -126,4 +142,15 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
       </div>
     </div>
   )
+}
+
+const getBorder = (result: TransferResult) => {
+  switch (result) {
+    case TxStatus.Undefined:
+      return 'border-turtle-tertiary-dark/60 hover:border-turtle-tertiary-dark'
+    case TxStatus.Failed:
+      return 'border-turtle-error hover:border-turtle-error-dark'
+    case TxStatus.Succeeded:
+      return 'border-turtle-level3 hover:bg-turtle-level1'
+  }
 }
