@@ -129,7 +129,7 @@ const EXPLORERS: { [environment in Environment]: { [explorerName: string]: strin
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const {
     environment,
-    sourceChain: { network, chainId },
+    sourceChain: { network, chainId, walletType, name },
     sendResult: result,
     sender,
     id,
@@ -154,6 +154,10 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
       if (uniqueTrackingId) {
         const path = getSubdomainPath(explorersUrls.subscan_relaychain)
         return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
+      }
+
+      if (walletType === 'SubstrateEVM') {
+        return getCustomExplorerLink(name, sender)
       }
 
       const env = getEnvironment(environment)
@@ -181,6 +185,16 @@ export const getSubdomainPath = (url: string) => {
   const hostname = parsedUrl.hostname
   // Split hostname & extract subdomain path: 'polkadot'
   return hostname.split('.')[0]
+}
+
+/**
+ * Generates the explorer link for SubstrateEVM walletType based chains. ex: Moonbmean, Mythos
+ * @param name - The chain name.
+ * @param sender - The sender address.
+ * @returns The Subscan explorer link
+ */
+export const getCustomExplorerLink = (name: string, sender: string) => {
+  return `https://${name.toLowerCase()}.subscan.io/account/${sender}?tab=xcm_transfer`
 }
 
 export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
