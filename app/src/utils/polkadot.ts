@@ -16,7 +16,6 @@ export const handleSubmittableEvents = (result: ISubmittableResult) => {
 
   // verify transaction hash
   if (!txHash) throw new Error('Failed to generate the transaction hash')
-  console.log('status', status.toJSON())
 
   // Wait until block is finalized before handling transfer data
   if (isCompleted && status.isFinalized) {
