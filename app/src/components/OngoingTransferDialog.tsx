@@ -31,7 +31,7 @@ export const OngoingTransferDialog = ({
 
   const getStatus = (status?: string) => {
     if (typeof status === 'string') return status
-    if (transfer.state) return transfer.state
+    if (transfer.status) return transfer.status
     return 'Pending'
   }
 

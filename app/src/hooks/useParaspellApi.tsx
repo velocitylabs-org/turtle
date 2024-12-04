@@ -71,7 +71,7 @@ const useParaspellApi = () => {
                   date,
                   environment,
                   fees,
-                  state: `Submitting to ${sourceChain.name}`,
+                  status: `Submitting to ${sourceChain.name}`,
                 } satisfies StoredTransfer)
               }, 2000),
             )
@@ -99,7 +99,7 @@ const useParaspellApi = () => {
                 ...(messageHash && { crossChainMessageHash: messageHash }),
                 ...(messageId && { parachainMessageId: messageId }),
                 ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
-                state: `Arriving at ${destinationChain.name}`,
+                status: `Arriving at ${destinationChain.name}`,
               } satisfies StoredTransfer)
 
               // metrics
