@@ -169,7 +169,7 @@ const useTransferForm = () => {
       {
         token: tokenAmount.token,
         // Parse as number, then format to our display standard, then parse again as number
-        amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
+        amount: Number(formatAmount(Number(balanceData.formatted) * 0.95, 'Longer')), // TODO: remove *0.95 once paraspell supports ED.
       },
       { shouldValidate: true },
     )
