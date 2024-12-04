@@ -139,7 +139,7 @@ export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingRes
       return 'Failed'
 
     default: // Should never happen
-      return 'Unknown'
+      return 'Unknown status'
   }
 }
 
