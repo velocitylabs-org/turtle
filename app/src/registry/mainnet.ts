@@ -18,7 +18,7 @@ export const Ethereum: Chain = {
 
 export const AssetHub: Chain = {
   uid: 'polkadot-assethub',
-  name: 'Polkadot Asset Hub',
+  name: 'Asset Hub',
   logoURI: '/logos/assethub.svg',
   chainId: 1000,
   network: 'Polkadot',
@@ -29,7 +29,7 @@ export const AssetHub: Chain = {
 
 export const RelayChain: Chain = {
   uid: 'polkadot',
-  name: 'Polkadot Relay Chain',
+  name: 'Polkadot',
   logoURI: '/logos/polkadot.svg',
   chainId: 0,
   network: 'Polkadot',
@@ -40,7 +40,7 @@ export const RelayChain: Chain = {
 
 export const BridgeHub: Chain = {
   uid: 'polkadot-bridgehub',
-  name: 'Polkadot Bridge Hub',
+  name: 'Bridge Hub',
   logoURI: '/logos/bridgehub.svg',
   chainId: 1002,
   network: 'Polkadot',
