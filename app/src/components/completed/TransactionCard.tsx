@@ -12,33 +12,34 @@ import { Info } from '../svg/Info'
 import { Success } from '../svg/Success'
 
 import { colors } from '../../../tailwind.config'
+import { getSVGColor } from './TransactionDialog'
 
-export const getStatusIcon = (status: TransferResult, fill?: string) => {
+export const getStatusIcon = (status: TransferResult) => {
   switch (status) {
     case TxStatus.Failed:
-      return <Fail width={24} height={24} fill={fill} />
+      return <Fail width={24} height={24} fill={getSVGColor(status)} />
     case TxStatus.Undefined:
-      return <Info width={24} height={24} />
+      return <Info width={24} height={24} fill={getSVGColor(status)} />
     default:
-      return <Success width={24} height={24} />
+      return <Success width={24} height={24} fill={getSVGColor(status)} />
   }
 }
 
 export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
-  const transferFailed = tx.result === TxStatus.Failed
+  const status = tx.result
+  const transferFailed = status === TxStatus.Failed
+
   return (
     <div
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
-        transferFailed
-          ? 'border-turtle-error hover:border-turtle-error-dark'
-          : 'border-turtle-level3 hover:bg-turtle-level1',
+        getBorder(status),
       )}
     >
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex max-w-xs space-x-2 overflow-x-auto">
-            <div>{getStatusIcon(tx.result)}</div>
+            <div>{getStatusIcon(status)}</div>
             <div
               className={cn(
                 'no-letter-spacing flex items-center space-x-1 text-xl leading-none',
@@ -118,9 +119,21 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
             allowCopy={false}
           />
         </div>
-        {transferFailed && (
+        {status === TxStatus.Failed && (
           <p className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
-            This transaction failed.{' '}
+            <div>
+              <span className="mr-1 font-semibold">Oops!</span>This transaction failed
+            </div>
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
+              See more
+            </span>
+          </p>
+        )}
+        {status === TxStatus.Undefined && (
+          <p className="flex items-center justify-between rounded-lg bg-turtle-tertiary p-2 text-xs font-normal leading-3 text-turtle-tertiary-dark">
+            <div>
+              <span className="mr-1 font-semibold">Sorry!</span>We are not sure what happened{' '}
+            </div>
             <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
               See more
             </span>
@@ -129,4 +142,15 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
       </div>
     </div>
   )
+}
+
+const getBorder = (result: TransferResult) => {
+  switch (result) {
+    case TxStatus.Undefined:
+      return 'border-turtle-tertiary-dark/60 hover:border-turtle-tertiary-dark'
+    case TxStatus.Failed:
+      return 'border-turtle-error hover:border-turtle-error-dark'
+    case TxStatus.Succeeded:
+      return 'border-turtle-level3 hover:bg-turtle-level1'
+  }
 }

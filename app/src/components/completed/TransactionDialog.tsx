@@ -58,7 +58,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               </div>
               <div className="text-sm">{tx.sourceChain.name}</div>
             </div>
-            <ArrowRight className="h-3 w-3" {...getSVGColor(tx.result)} />
+            <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
             <div className="turtle-success-dark flex items-center space-x-1">
               <div className="relative h-6 w-6 rounded-full">
                 <Image
@@ -101,7 +101,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               getBorder(tx.result),
             )}
           >
-            {getStatusIcon(tx.result, colors['turtle-error-dark'])}
+            {getStatusIcon(tx.result)}
             {tx.result === TxStatus.Undefined ? (
               <p>We are not sure what happened to this transfer</p>
             ) : tx.result === TxStatus.Succeeded ? (
@@ -213,7 +213,7 @@ const getTextColor = (result: TransferResult) => {
 const getBg = (result: TransferResult) => {
   switch (result) {
     case TxStatus.Undefined:
-      return 'bg-turtle-tertiary'
+      return 'bg-turtle-tertiary/70'
     case TxStatus.Failed:
       return 'bg-turtle-error-light'
     default:
@@ -243,13 +243,13 @@ const getBorderTop = (result: TransferResult) => {
   }
 }
 
-const getSVGColor = (result: TransferResult) => {
+export const getSVGColor = (result: TransferResult) => {
   switch (result) {
     case TxStatus.Undefined:
-      return { fill: colors['turtle-tertiary-dark'] }
+      return colors['turtle-tertiary-dark']
     case TxStatus.Failed:
-      return { fill: colors['turtle-error-dark'] }
+      return colors['turtle-error-dark']
     default:
-      return { fill: colors['turtle-primary-dark'] }
+      return colors['turtle-primary-dark']
   }
 }
