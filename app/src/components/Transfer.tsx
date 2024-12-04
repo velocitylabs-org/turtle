@@ -115,7 +115,7 @@ const Transfer: FC = () => {
   else if (!sourceWallet || !tokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable)
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
-  else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
+  else amountPlaceholder = formatAmount(Number(balanceData?.formatted) * 0.95, 'Longer') // TODO: remove *0.95 once paraspell supports ED.
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
