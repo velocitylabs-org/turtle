@@ -134,7 +134,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
             <div>
               <span className="mr-1 font-semibold">Sorry!</span>We are not sure what happened{' '}
             </div>
-            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-background">
               See more
             </span>
           </div>
