@@ -214,7 +214,7 @@ const useTransferForm = () => {
             document
               .getElementById('ongoing-txs')
               ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }, 1000)
+          }, 500)
         },
       })
     },
