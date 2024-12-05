@@ -11,7 +11,7 @@ export const SwapChains = ({ onClick, disabled }: { onClick: () => void; disable
       )}
     >
       <Swap />
-      <p className="text-sm">Swap From and To</p>
+      <p className="text-sm">Switch From and To</p>
     </div>
   )
 }
