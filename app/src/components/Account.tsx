@@ -56,6 +56,20 @@ function Account({
         </div>
       )}
 
+      {/* Fallback Account Icon */}
+      {!addressType && (
+        <div
+          className={cn(
+            'mr-1 flex items-start overflow-hidden rounded-full border border-turtle-secondary-dark hover:cursor-default',
+            className,
+            network === 'Ethereum'
+              ? 'bg-gradient-to-tr from-green-400 to-blue-500'
+              : 'bg-gradient-to-tr from-indigo-500 to-pink-500',
+          )}
+          style={{ width: size, height: size }}
+        />
+      )}
+
       {/* Copy Address  */}
       {allowCopy ? (
         <CopyAddress content={accountDisplay} address={address} />
