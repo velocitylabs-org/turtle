@@ -100,7 +100,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
         >
           <Account
             network={tx.sourceChain.network}
-            addressType={tx.sourceChain.supportedAddressTypes.at(0)}
+            addressType={tx.sourceChain.supportedAddressTypes?.at(0)}
             address={tx.sender}
             className={transferFailed ? 'border-turtle-error-dark' : 'border-black'}
             allowCopy={false}
@@ -113,7 +113,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
           />
           <Account
             network={tx.destChain.network}
-            addressType={tx.destChain.supportedAddressTypes.at(0)}
+            addressType={tx.destChain.supportedAddressTypes?.at(0)}
             address={tx.recipient}
             className={transferFailed ? 'border-turtle-error-dark' : 'border-black'}
             allowCopy={false}

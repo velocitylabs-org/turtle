@@ -19,8 +19,8 @@ import { ArrowRight } from '../svg/ArrowRight'
 import { ArrowUpRight } from '../svg/ArrowUpRight'
 
 import { colors } from '../../../tailwind.config'
-import { TokenLogo } from '../TokenLogo'
 import { Icon } from '../Icon'
+import { TokenLogo } from '../TokenLogo'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   return (
@@ -119,7 +119,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div className="p-4 text-sm">
               <Account
                 network={tx.sourceChain.network}
-                addressType={tx.sourceChain.supportedAddressTypes.at(0)}
+                addressType={tx.sourceChain.supportedAddressTypes?.at(0)}
                 address={tx.sender}
                 size={24}
                 className={getBorder(tx.result)}
@@ -132,7 +132,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               </div>
               <Account
                 network={tx.destChain.network}
-                addressType={tx.destChain.supportedAddressTypes.at(0)}
+                addressType={tx.destChain.supportedAddressTypes?.at(0)}
                 address={tx.recipient}
                 size={24}
                 className={getBorder(tx.result)}

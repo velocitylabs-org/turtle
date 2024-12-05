@@ -118,7 +118,7 @@ export const OngoingTransferDialog = ({
             <div className="p-4 text-sm">
               <Account
                 network={transfer.sourceChain.network}
-                addressType={transfer.sourceChain.supportedAddressTypes.at(0)}
+                addressType={transfer.sourceChain.supportedAddressTypes?.at(0)}
                 address={transfer.sender}
                 size={24}
               />
@@ -129,7 +129,7 @@ export const OngoingTransferDialog = ({
               </div>
               <Account
                 network={transfer.destChain.network}
-                addressType={transfer.destChain.supportedAddressTypes.at(0)}
+                addressType={transfer.destChain.supportedAddressTypes?.at(0)}
                 address={transfer.recipient}
                 size={24}
               />
