@@ -60,14 +60,14 @@ const OngoingTransfer: FC<{
       <div className="flex items-center">
         <Account
           network={transfer.sourceChain.network}
-          addressType={transfer.sourceChain.supportedAddressTypes.at(0)}
+          addressType={transfer.sourceChain.supportedAddressTypes?.at(0)}
           address={transfer.sender}
           allowCopy={false}
         />
         <ArrowRight className="mx-3 h-[0.8rem] w-[0.8rem]" fill={colors['turtle-secondary-dark']} />
         <Account
           network={transfer.destChain.network}
-          addressType={transfer.destChain.supportedAddressTypes.at(0)}
+          addressType={transfer.destChain.supportedAddressTypes?.at(0)}
           address={transfer.recipient}
           allowCopy={false}
         />

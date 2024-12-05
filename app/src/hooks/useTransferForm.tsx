@@ -210,9 +210,11 @@ const useTransferForm = () => {
             severity: NotificationSeverity.Success,
           })
 
-          document
-            .getElementById('ongoing-txs')
-            ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          setTimeout(() => {
+            document
+              .getElementById('ongoing-txs')
+              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }, 500)
         },
       })
     },
