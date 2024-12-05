@@ -1,9 +1,9 @@
 import { environment } from '@snowbridge/api'
 import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
-import { trackFromParachainTx } from './subscan'
+import { trackXcm } from './subscan'
 import { FromParachainTrackingResult } from '@/models/subscan'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { trackFromEthTx, trackFromAhToEthTx } from './snowbridge'
+import { trackFromAhToEthTx, trackFromEthTx } from './snowbridge'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (
@@ -20,15 +20,15 @@ export const trackTransfers = async (
 
   if (ongoingTransfers.toEthereum.length) {
     const ahToEthereumTx = await trackFromAhToEthTx(env)
-    console.log('From AH To Ethereum transfer:', ahToEthereumTx.length)
+    console.log('From AH To Ethereum transfers:', ahToEthereumTx.length)
     transfers.push(...ahToEthereumTx)
   }
 
   // Keep this until we can test & check tracking process for from Para to AH transfers
   if (ongoingTransfers.withinPolkadot.length) {
-    const parachainToAhTx = await trackFromParachainTx(env, ongoingTransfers.withinPolkadot)
-    console.log('From Parachain To AH transfer:', parachainToAhTx.length)
-    transfers.push(...parachainToAhTx)
+    const xcmTx = await trackXcm(env, ongoingTransfers.withinPolkadot)
+    console.log('Whithin Polkadot transfers:', xcmTx.length)
+    transfers.push(...xcmTx)
   }
 
   return transfers.sort((a, b) => getTransferTimestamp(b) - getTransferTimestamp(a))
@@ -90,33 +90,27 @@ export function getTransferStatusFromParachain(
   transferResult: FromAhToEthTrackingResult | FromParachainTrackingResult,
 ) {
   /** Bridge Hub Channel Message Delivered */
-  const isBHChannelMsgDeliveredInSnowbridgeRes =
+  const isBHChannelMsgDelivered =
     'bridgeHubChannelDelivered' in transferResult &&
     transferResult.bridgeHubChannelDelivered?.success
-  /** Destination Event Index available */
-  const isDestEventIdxInSubscanXCMRes =
-    'destEventIndex' in transferResult && transferResult.destEventIndex.length > 0
+  /** Destination chain is Ethereum in XCM transfer*/
+  const isDestChainEthereum =
+    'destChain' in transferResult && transferResult.destChain === 'ethereum'
   /** Transfer just submitted from AH */
-  const isTransferSubmittedInSnowbridgeRes = 'submitted' in transferResult
+  const isBridgeTransferSubmitted = 'submitted' in transferResult
 
   switch (transferResult.status) {
     case TransferStatus.Pending:
-      if (isBHChannelMsgDeliveredInSnowbridgeRes || isDestEventIdxInSubscanXCMRes)
-        return 'Arriving at Ethereum'
-      if (
-        isTransferSubmittedInSnowbridgeRes ||
-        !transferResult.destEventIndex ||
-        !isDestEventIdxInSubscanXCMRes
-      )
-        return 'Arriving at Bridge Hub'
+      if (isBHChannelMsgDelivered || isDestChainEthereum) return 'Arriving at Ethereum'
+      if (isBridgeTransferSubmitted) return 'Arriving at Bridge Hub'
       // Default when the above conditions are not met
       return 'Pending'
 
     case TransferStatus.Complete:
-      return 'Transfer completed'
+      return 'Completed'
 
     case TransferStatus.Failed:
-      return 'Transfer Failed'
+      return 'Failed'
 
     default: // Should never happen
       return 'Unknown status'
@@ -139,13 +133,13 @@ export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingRes
       return 'Pending'
 
     case TransferStatus.Complete:
-      return 'Transfer completed'
+      return 'Completed'
 
     case TransferStatus.Failed:
-      return 'Transfer Failed'
+      return 'Failed'
 
     default: // Should never happen
-      return 'Unknown'
+      return 'Unknown status'
   }
 }
 
@@ -179,11 +173,15 @@ export const findMatchingTransfer = (
   transfers: TxTrackingResult[],
   ongoingTransfer: StoredTransfer,
 ) =>
-  transfers.find(transfer =>
-    'submitted' in transfer
-      ? transfer.id === ongoingTransfer.id
-      : transfer.messageHash === ongoingTransfer.crossChainMessageHash,
-  )
+  transfers.find(transfer => {
+    if ('submitted' in transfer) return transfer.id === ongoingTransfer.id
+    if (ongoingTransfer.crossChainMessageHash)
+      return transfer.messageHash === ongoingTransfer.crossChainMessageHash
+    if (ongoingTransfer.sourceChainExtrinsicIndex)
+      return transfer.extrinsicIndex === ongoingTransfer.sourceChainExtrinsicIndex
+
+    return undefined
+  })
 
 export function getErrorMessage(err: unknown) {
   let message = 'Unknown error'

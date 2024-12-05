@@ -4,12 +4,13 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { resolveDirection } from '@/services/transfer'
+import { cn } from '@/utils/cn'
 import {
   getAllowedDestinationChains,
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { getDurationEstimate } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -19,12 +20,13 @@ import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainSelect from './ChainSelect'
 import Credits from './Credits'
-import FeesPreview from './FeesPreview'
+import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
+import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
 
 const Transfer: FC = () => {
@@ -49,6 +51,7 @@ const Transfer: FC = () => {
     destinationWallet,
     fees,
     loadingFees,
+    canPayFees,
     transferStatus,
     environment,
     tokenAmountError,
@@ -61,6 +64,7 @@ const Transfer: FC = () => {
 
   const {
     allowance: erc20SpendAllowance,
+    loading: allowanceLoading,
     approveAllowance,
     approving: isApprovingErc20Spend,
   } = useErc20Allowance({
@@ -99,6 +103,9 @@ const Transfer: FC = () => {
     // We don't want two ActionBanners showing up at once
     !requiresErc20SpendApproval
 
+  const shouldDisplayRecipientWalletButton =
+    !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
+
   // How much balance is missing considering the desired transfer amount
   const missingBalance =
     tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
@@ -108,15 +115,28 @@ const Transfer: FC = () => {
   else if (!sourceWallet || !tokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable)
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
-  else
-    amountPlaceholder = `${Number(balanceData?.formatted).toFixed(3).toString() + ' ' + tokenAmount?.token?.symbol}`
+  else amountPlaceholder = formatAmount(Number(balanceData?.formatted) * 0.95, 'Longer') // TODO: remove *0.95 once paraspell supports ED.
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
   const isTransferAllowed =
-    isValid && !isValidating && fees && transferStatus === 'Idle' && !requiresErc20SpendApproval
+    isValid &&
+    !isValidating &&
+    fees &&
+    transferStatus === 'Idle' &&
+    !requiresErc20SpendApproval &&
+    !loadingFees &&
+    canPayFees
+
+  const shouldDisplayTxSummary =
+    isValid &&
+    tokenAmount &&
+    tokenAmount.token &&
+    !!tokenAmount.amount &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval
 
   return (
     <form
@@ -135,7 +155,7 @@ const Transfer: FC = () => {
               options={getAllowedSourceChains(environment)}
               floatingLabel="From"
               placeholder="Source"
-              trailing={<WalletButton addressType={sourceChain?.supportedAddressTypes.at(0)} />} // TODO: support all address types
+              trailing={<WalletButton walletType={sourceChain?.walletType} />}
               walletAddress={sourceWallet?.sender?.address}
               className="z-50"
               disabled={transferStatus !== 'Idle'}
@@ -199,11 +219,8 @@ const Transfer: FC = () => {
               onChangeManualRecipient={handleManualRecipientChange}
               error={manualRecipient.enabled ? manualRecipientError : ''}
               trailing={
-                // TODO: support all address types
-                !manualRecipient.enabled &&
-                sourceChain?.supportedAddressTypes.at(0) !==
-                  destinationChain?.supportedAddressTypes.at(0) && (
-                  <WalletButton addressType={destinationChain?.supportedAddressTypes.at(0)} />
+                shouldDisplayRecipientWalletButton && (
+                  <WalletButton walletType={destinationChain?.walletType} />
                 )
               }
               walletAddress={destinationWallet?.sender?.address}
@@ -245,7 +262,7 @@ const Transfer: FC = () => {
                 className="flex items-center gap-1 self-center pt-1"
               >
                 <AlertIcon />
-                <span className="text-xs">Double check address to avoid losing funds.</span>
+                <span className="text-xs">Double check the address to avoid losing funds</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -311,17 +328,20 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Fees */}
-      <FeesPreview
-        hidden={!isValid || requiresErc20SpendApproval}
-        loading={loadingFees || !fees}
-        fees={fees}
-        durationEstimate={durationEstimate}
-      />
+      {shouldDisplayTxSummary && (
+        <TxSummary
+          loading={loadingFees}
+          tokenAmount={tokenAmount}
+          fees={fees}
+          durationEstimate={durationEstimate}
+          canPayFees={canPayFees}
+          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+        />
+      )}
 
       {/* Transfer Button */}
-      <Button
-        className="my-5"
+      <SendButton
+        className="my-5 w-full"
         label="Send"
         size="lg"
         variant="primary"
@@ -329,6 +349,7 @@ const Transfer: FC = () => {
         loading={transferStatus !== 'Idle'}
         disabled={!isTransferAllowed}
         cypressID="form-submit"
+        status={transferStatus}
       />
 
       <Credits />

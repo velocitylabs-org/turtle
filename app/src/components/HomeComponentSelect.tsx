@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import Menu from '@/components/Menu'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import { TransferTabOptions, TransferTab } from '@/models/transfer'
+import { TransferTabOptions } from '@/models/transfer'
 
 import OngoingTransfers from './OngoingTransfers'
 import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
@@ -17,9 +17,9 @@ const TransferHistory = dynamic(() => import('@/components/completed/Transaction
 
 export const HomeComponentSelect = () => {
   const { completedTransfers } = useCompletedTransfers()
-  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>(TransferTab.New)
+  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
   const hasCompletedTransfers = !!completedTransfers && completedTransfers.length > 0
-  const isCompletedTabSelected = newTransferInit === TransferTab.Completed
+  const isCompletedTabSelected = newTransferInit === 'Done'
 
   return (
     <>
@@ -39,7 +39,7 @@ export const HomeComponentSelect = () => {
       </div>
 
       {isCompletedTabSelected && hasCompletedTransfers && completedTransfers && (
-        <TransferHistory transactions={completedTransfers!} />
+        <TransferHistory transfers={completedTransfers!} />
       )}
     </>
   )

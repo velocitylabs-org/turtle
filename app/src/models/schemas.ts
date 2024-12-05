@@ -28,9 +28,9 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   chainId: z.number(),
   network: z.enum(['Ethereum', 'Polkadot']),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
+  walletType: z.enum(['EVM', 'Substrate', 'SubstrateEVM']),
   destinationFeeDOT: z.string().optional(),
   rpcConnection: z.string().optional(),
-  specName: z.string().optional(),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({

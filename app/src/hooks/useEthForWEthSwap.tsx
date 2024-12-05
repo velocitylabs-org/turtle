@@ -1,21 +1,18 @@
-import { Mainnet } from '@/config/registry'
+import { Mainnet } from '@/registry'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
 import { Environment } from '@/store/environmentStore'
-import { SupportedChains } from '@/utils/papi'
 import { captureException } from '@sentry/nextjs'
 import { Context, environment, toPolkadot } from '@snowbridge/api'
 import { Signer } from 'ethers'
-import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
 
 interface Params {
   env: Environment
-  api?: TypedApi<SupportedChains>
   context?: Context
   chain?: Chain | null
   tokenAmount: TokenAmount | null
@@ -24,11 +21,10 @@ interface Params {
 
 /** Hook to swap ETH for wETH */
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
-const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Params) => {
+const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const { balance: tokenBalance } = useBalance({
     env,
-    api,
     chain,
     token: tokenAmount?.token ?? undefined,
     address: owner,
@@ -52,7 +48,7 @@ const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Par
     try {
       const balance = await context.ethereum.api
         .getBalance(owner)
-        .then(x => toHuman(x, Mainnet.ETH))
+        .then(x => toHuman(x, Mainnet.Eth.ETH))
       setEthBalance(balance)
     } catch (error) {
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
@@ -88,7 +84,7 @@ const useEthForWEthSwap = ({ env, api, chain, tokenAmount, owner, context }: Par
             context,
             signer,
             tokenAmount!.token!.address,
-            convertAmount(amount, Mainnet.ETH),
+            convertAmount(amount, Mainnet.Eth.ETH),
           )
           .then(x => x.wait())
 

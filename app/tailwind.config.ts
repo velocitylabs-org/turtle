@@ -10,6 +10,7 @@ export const colors = {
   [`${prefix}-primary-light`]: '#D9FFDF',
 
   [`${prefix}-secondary`]: '#A184DC',
+  [`${prefix}-secondary-transparent`]: '#A184DC26',
   [`${prefix}-secondary-dark`]: '#513589',
   [`${prefix}-secondary-light`]: '#F1EDFA',
 
@@ -90,7 +91,12 @@ const config: Config = {
     },
   },
   darkMode: 'class',
-  plugins: [addVariablesForColors, nextui(), require('tailwindcss-animate')],
+  plugins: [
+    addVariablesForColors,
+    nextui(),
+    require('tailwindcss-animate'),
+    require('tailwindcss-motion'),
+  ],
 }
 export default config
 

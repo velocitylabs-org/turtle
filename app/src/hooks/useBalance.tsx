@@ -1,25 +1,24 @@
-import { getNativeToken } from '@/config/registry'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { getNativeToken } from '@/registry'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { getNativeBalance, getNonNativeBalance, SupportedChains } from '@/utils/papi'
+import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
+import { assets, getAssetBalance } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { TypedApi } from 'polkadot-api'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 
 interface UseBalanceParams {
   env: Environment
-  api?: TypedApi<SupportedChains>
   chain?: Chain | null
   token?: Token
   address?: string
 }
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
-const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
+const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
   const [balance, setBalance] = useState<Erc20Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
@@ -62,24 +61,19 @@ const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
         }
 
         case 'Polkadot': {
-          if (getNativeToken(chain).id === token.id) {
-            const result = await getNativeBalance(api, address)
+          const relay = getRelayNode(env)
+          const node = assets.getTNode(chain.chainId, relay)
+          if (!node) throw new Error('Node not found')
+          const currency = getCurrencyId(env, node, chain.uid, token)
 
-            fetchedBalance = {
-              value: result?.data.free || 0n,
-              formatted: toHuman(result?.data.free || 0n, token).toString(),
-              decimals: token.decimals,
-              symbol: token.symbol,
-            }
-          } else {
-            const result = await getNonNativeBalance(api, chain, token, address)
+          const balance =
+            (await getAssetBalance({ address, node, currency, api: chain.rpcConnection })) ?? 0n
 
-            fetchedBalance = {
-              value: result?.free || 0n,
-              formatted: toHuman(result?.free || 0n, token).toString(),
-              decimals: token.decimals,
-              symbol: token.symbol,
-            }
+          fetchedBalance = {
+            value: balance,
+            decimals: token.decimals,
+            symbol: token.symbol,
+            formatted: toHuman(balance, token).toString(),
           }
 
           break
@@ -96,11 +90,12 @@ const useBalance = ({ env, api, chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-  }, [env, api, chain, address, token, fetchErc20Balance, fetchEthBalance])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [env, chain, address, token?.id, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {
     fetchBalance()
-  }, [chain, token, address, fetchBalance])
+  }, [fetchBalance])
 
   return { balance, fetchBalance, loading: loading || loadingErc20Balance || loadingEthBalance }
 }

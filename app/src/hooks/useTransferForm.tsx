@@ -1,19 +1,21 @@
-import useEnvironment from '@/hooks/useEnvironment'
+'use client'
 import useBalance from '@/hooks/useBalance'
+import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
+import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { formatAmount } from '../utils/transfer'
 import useFees from './useFees'
-import usePapi from './usePapi'
-import useSnowbridgeContext from './useSnowbridgeContext'
+import useNotification from './useNotification'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -30,10 +32,9 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  //todo: can we remove and/or decouple basic logic such as balance lookup from the snowbridge context?
-  const { snowbridgeContext } = useSnowbridgeContext()
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
+  const { addNotification } = useNotification()
 
   const {
     control,
@@ -56,25 +57,20 @@ const useTransferForm = () => {
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = tokenAmount?.token?.id
-  const sourceWallet = useWallet(sourceChain?.supportedAddressTypes.at(0)) // TODO: handle multiple address types
-  const destinationWallet = useWallet(destinationChain?.supportedAddressTypes.at(0))
-  const { api } = usePapi(sourceChain)
-  const { fees, loading: loadingFees } = useFees(
+  const sourceWallet = useWallet(sourceChain?.walletType)
+  const destinationWallet = useWallet(destinationChain?.walletType)
+  const {
+    fees,
+    loading: loadingFees,
+    canPayFees,
+  } = useFees(
+    sourceWallet?.sender?.address,
     sourceChain,
     destinationChain,
-    tokenAmount,
-    getRecipientAddress(manualRecipient, destinationWallet),
-  )
-
-  const balanceParams = useMemo(
-    () => ({
-      api,
-      chain: sourceChain,
-      token: tokenAmount?.token,
-      address: sourceWallet?.sender?.address,
-      context: snowbridgeContext,
-    }),
-    [api, sourceChain, tokenAmount?.token, sourceWallet?.sender?.address, snowbridgeContext],
+    tokenAmount?.token,
+    isValidRecipient(manualRecipient, destinationChain)
+      ? getRecipientAddress(manualRecipient, destinationWallet)
+      : null,
   )
 
   const {
@@ -83,10 +79,9 @@ const useTransferForm = () => {
     fetchBalance,
   } = useBalance({
     env: environment,
-    api: balanceParams.api,
-    chain: balanceParams.chain,
-    token: balanceParams.token ?? undefined,
-    address: balanceParams.address,
+    chain: sourceChain,
+    token: tokenAmount?.token ?? undefined,
+    address: sourceWallet?.sender?.address,
   })
 
   const isFormValid =
@@ -123,7 +118,7 @@ const useTransferForm = () => {
         destinationChain &&
         tokenAmount &&
         !isSameDestination &&
-        isRouteAllowed(environment, destinationChain, newValue, tokenAmount)
+        isRouteAllowed(environment, newValue, destinationChain, tokenAmount)
       )
         return
 
@@ -173,7 +168,8 @@ const useTransferForm = () => {
       'tokenAmount',
       {
         token: tokenAmount.token,
-        amount: Number(balanceData.formatted),
+        // Parse as number, then format to our display standard, then parse again as number
+        amount: Number(formatAmount(Number(balanceData.formatted) * 0.95, 'Longer')), // TODO: remove *0.95 once paraspell supports ED.
       },
       { shouldValidate: true },
     )
@@ -205,25 +201,29 @@ const useTransferForm = () => {
         amount,
         recipient: recipient,
         fees,
-        onSuccess: () => {
-          reset() // reset form on success
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }) // scroll to bottom
+        onComplete: () => {
+          // reset form on success
+          reset()
+
+          addNotification({
+            message: `Transfer added to the queue`,
+            severity: NotificationSeverity.Success,
+          })
+
+          document
+            .getElementById('ongoing-txs')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         },
       })
     },
-    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment],
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment, addNotification],
   )
 
   // validate recipient address
   useEffect(() => {
-    const isValidAddress =
-      !manualRecipient.enabled ||
-      !destinationChain ||
-      isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
-      manualRecipient.address === ''
-
-    if (isValidAddress) setManualRecipientError('')
-    else setManualRecipientError('Invalid Address')
+    setManualRecipientError(
+      isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address',
+    )
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
   // validate token amount
@@ -271,6 +271,7 @@ const useTransferForm = () => {
     destinationWallet,
     fees,
     loadingFees,
+    canPayFees,
     transferStatus,
     environment,
     tokenAmountError,
@@ -280,6 +281,15 @@ const useTransferForm = () => {
     balanceData,
     fetchBalance,
   }
+}
+
+function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
+  return (
+    !manualRecipient.enabled ||
+    !destinationChain ||
+    isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
+    manualRecipient.address === ''
+  )
 }
 
 export default useTransferForm

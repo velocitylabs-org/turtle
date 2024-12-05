@@ -1,5 +1,5 @@
+import { Mainnet, rpcConnectionAsHttps, SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
 import { SnowbridgeStatus } from '@/models/snowbridge'
-import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { Context, contextFactory, environment, status } from '@snowbridge/api'
 
@@ -18,11 +18,12 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
 
   // apply custom api endpoints
   if (env === Environment.Mainnet) {
-    x.config.ASSET_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_ASSET_HUB_API_URL || ''
-    x.config.BRIDGE_HUB_URL = process.env.NEXT_PUBLIC_POLKADOT_BRIDGE_HUB_API_URL || ''
-    x.config.RELAY_CHAIN_URL = process.env.NEXT_PUBLIC_POLKADOT_RELAY_CHAIN_API_URL || ''
-    x.config.PARACHAINS = JSON.parse(process.env.NEXT_PUBLIC_PARACHAIN_API_URLS || '')
+    x.config.ASSET_HUB_URL = Mainnet.AssetHub.rpcConnection || ''
+    x.config.BRIDGE_HUB_URL = rpcConnectionAsHttps(Mainnet.BridgeHub.rpcConnection)
+    x.config.RELAY_CHAIN_URL = rpcConnectionAsHttps(Mainnet.RelayChain.rpcConnection)
+    x.config.PARACHAINS = SNOWBRIDGE_MAINNET_PARACHAIN_URLS
   }
+  // TODO support Paseo testnet
 
   if (x === undefined) {
     throw Error(`Unknown environment`)
@@ -75,48 +76,11 @@ export async function getSnowBridgeContext(environment: Environment): Promise<Co
 }
 
 export async function getSnowBridgeEtimatedTransferDuration(
-  snowbridgCtx: Context,
+  snowbridgeCtx: Context,
 ): Promise<SnowbridgeStatus> {
-  const bridgeStatus = await status.bridgeStatusInfo(snowbridgCtx)
+  const bridgeStatus = await status.bridgeStatusInfo(snowbridgeCtx)
   return {
-    ethBridgeStatus: bridgeStatus.toEthereum.latencySeconds,
-    polkadotBridgeStatus: bridgeStatus.toPolkadot.latencySeconds,
+    toEthereum: bridgeStatus.toEthereum.latencySeconds,
+    toPolkadot: bridgeStatus.toPolkadot.latencySeconds,
   }
-}
-
-/**
- * Calculates the progress value of snowbridge transfer based on its status,
- * the transfer date, and the transfer direction.
- *
- * @param bridgeStatus - Snowbridge's last status. This object contains the bridge status
- * in minutes for both Polkadot and Ethereum directions. If null, the function returns 0.
- * @param transferDate - The date and time when the transfer was initiated.
- * @param transferDirection - The direction of the transfer, either ToPolkadot or ToEthereum direction.
- * @returns The progress value of the bridge transfer process, ranging between 5% and 90%.
- */
-export const estimateBridgeProgress = (
-  transferDate: Date,
-  transferDirection: Direction,
-  bridgeStatus?: SnowbridgeStatus,
-) => {
-  if (!bridgeStatus) return 0
-
-  const bridgeTimestamp = // seconds converted in miliseconds
-    transferDirection === Direction.ToPolkadot
-      ? bridgeStatus?.polkadotBridgeStatus * 1000
-      : bridgeStatus.ethBridgeStatus * 1000
-
-  const transferTimestamp = new Date(transferDate).getTime()
-  const targetTimestamp = bridgeTimestamp + transferTimestamp
-  const currentTimestamp = new Date().getTime()
-
-  if (currentTimestamp > targetTimestamp) return 90
-
-  // time already spent between transfer start & current time
-  const diffTimeSinceTransfer = currentTimestamp - transferTimestamp
-  const progress = (diffTimeSinceTransfer / bridgeTimestamp) * 100
-
-  // To avoid displaying full progress bar, keep a 10% buffer.
-  // It returns 90% max and min 5% (to improve UI)
-  return Math.min(progress < 5 ? 5 : progress, 90)
 }

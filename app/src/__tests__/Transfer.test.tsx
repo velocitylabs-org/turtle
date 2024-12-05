@@ -1,9 +1,10 @@
+import '@testing-library/jest-dom'
+import { getDestChainId } from '@/models/chain'
+import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import '@testing-library/jest-dom'
 import { Mainnet, Testnet } from '../config/registry'
-import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
-import { getTokenPrice } from '@/services/balance'
-import { getDestChainId } from '@/models/chain'
 
 describe('Transfer', () => {
   it('direction ToEthereum', () => {

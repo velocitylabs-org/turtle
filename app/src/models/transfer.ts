@@ -19,12 +19,13 @@ export interface RawTransfer {
   date: Date
   crossChainMessageHash?: string
   parachainMessageId?: string
+  sourceChainExtrinsicIndex?: string
 }
 export interface StoredTransfer extends RawTransfer {
   // Params
   tokenUSDValue?: number
   amount: string
-  fees: Fees
+  fees: AmountInfo
   // Contextual
   environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
@@ -32,6 +33,7 @@ export interface StoredTransfer extends RawTransfer {
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
   // A subscan unique Id shared accross chains to track ongoing transfers
   uniqueTrackingId?: string
+  status?: string
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
@@ -53,9 +55,10 @@ export interface DisplaysTransfers {
 export enum TxStatus {
   Succeeded = 'Succeeded',
   Failed = 'failed',
+  Undefined = 'Undefined',
 }
 
-export type TransferResult = TxStatus.Succeeded | TxStatus.Failed
+export type TransferResult = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Undefined
 
 export type CompletedTransfer = {
   id: string
@@ -65,7 +68,7 @@ export type CompletedTransfer = {
   sourceChain: Chain
   destChain: Chain
   amount: string
-  fees: Fees
+  fees: AmountInfo
   minTokenRecieved?: string
   minTokenRecievedValue?: number
   sender: string
@@ -75,19 +78,17 @@ export type CompletedTransfer = {
   errors?: string[]
 }
 export type TransfersByDate = Record<string, CompletedTransfer[]>
-export interface Fees {
+
+export interface AmountInfo {
   /* The amount in the `token` currency */
-  amount: string
-  /* the token of the fees */
+  amount: string | bigint | number
+  /* the token  */
   token: Token
-  /* the value in dollars */
+  /* the amount converted to USD dollars */
   inDollars: number
 }
 
-export enum TransferTab {
-  New = 'New',
-  Completed = 'Completed',
-}
+export type TransferTab = 'New' | 'Done'
 export type TransferTabOptions = TransferTab
 
 export type TxTrackingResult =

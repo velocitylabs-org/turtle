@@ -1,19 +1,20 @@
 import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
 import { Network } from '@/models/chain'
+import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { Fees, StoredTransfer } from '@/models/transfer'
-import { Direction } from '@/services/transfer'
+import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
 
 /**
- * Safe version of `convertAmount` that handles `null` params
+ * Safe version of `convertAmount` that handles `null` and `undefined` params
  */
-export const safeConvertAmount = (input: number | null, token: Token | null): bigint | null => {
+export const safeConvertAmount = (input?: number | null, token?: Token | null): bigint | null => {
   if (input == null || !token) return null
 
-  return BigInt(input * 10 ** token.decimals)
+  return BigInt(Math.floor(input * 10 ** token.decimals))
 }
 
 /**
@@ -38,31 +39,44 @@ export const convertAmount = (input: number, token: Token): bigint => {
  * @param token - The token object which includes its decimals property.
  * @returns The amount readable by humans
  */
-export const toHuman = (input: bigint | string, token: Token): number => {
+export const toHuman = (input: bigint | string | number, token: Token): number => {
   return Number(input) / 10 ** token.decimals
 }
 
-export function feeToHuman(fees: Fees): string {
+export function feeToHuman(fees: AmountInfo): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
+}
+
+export type FormatLength = 'Short' | 'Long' | 'Longer'
+
+function getMaxSignificantDigits(length: FormatLength): number {
+  switch (length) {
+    case 'Short':
+      return 2
+    case 'Long':
+      return 6
+    case 'Longer':
+      return 10
+  }
 }
 
 /**
  * Formats a numerical amount into a human-readable, compact string representation.
- * For numbers lower than 1, display fully with a maximum of 10 decimal places
  * @param amount - The amount to be formatted. For example, `1234567`.
+ * @param length - Determines how many significant fraction digits will be shown for amount < 1.
  * @returns The amount formatted as a human-readable string. For example, `"1.23M"`.
  */
-export const formatAmount = (amount: number): string => {
+export const formatAmount = (amount: number, length: FormatLength = 'Short'): string => {
   if (amount < 1) {
     return new Intl.NumberFormat('en-US', {
-      // minimumFractionDigits: 1, // See once Snowbridge issue is fixed
-      maximumFractionDigits: 8,
+      maximumSignificantDigits: getMaxSignificantDigits(length),
+      roundingMode: 'floor',
     }).format(amount)
   } else {
     return new Intl.NumberFormat('en-US', {
       notation: 'compact',
       compactDisplay: 'short',
-      // minimumFractionDigits: 2, // See once Snowbridge issue is fixed
+      roundingMode: 'floor',
       maximumFractionDigits: 3,
     }).format(amount)
   }
@@ -115,7 +129,7 @@ const EXPLORERS: { [environment in Environment]: { [explorerName: string]: strin
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const {
     environment,
-    sourceChain: { network, chainId },
+    sourceChain: { network, chainId, walletType, name },
     sendResult: result,
     sender,
     id,
@@ -140,6 +154,10 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
       if (uniqueTrackingId) {
         const path = getSubdomainPath(explorersUrls.subscan_relaychain)
         return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
+      }
+
+      if (walletType === 'SubstrateEVM') {
+        return getCustomExplorerLink(name, sender)
       }
 
       const env = getEnvironment(environment)
@@ -169,6 +187,16 @@ export const getSubdomainPath = (url: string) => {
   return hostname.split('.')[0]
 }
 
+/**
+ * Generates the explorer link for SubstrateEVM walletType based chains. ex: Moonbmean, Mythos
+ * @param name - The chain name.
+ * @param sender - The sender address.
+ * @returns The Subscan explorer link
+ */
+export const getCustomExplorerLink = (name: string, sender: string) => {
+  return `https://${name.toLowerCase()}.subscan.io/account/${sender}?tab=xcm_transfer`
+}
+
 export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
   if (!(error instanceof Error)) return false
 
@@ -196,4 +224,74 @@ export function getDurationEstimate(direction: Direction): string {
     default:
       return 'N/A'
   }
+}
+
+export function toAmountInfo(
+  tokenAmount?: TokenAmount | null,
+  usdPrice?: number | null,
+): AmountInfo | null {
+  if (!tokenAmount || !tokenAmount.amount || !tokenAmount.token || !usdPrice) return null
+
+  return {
+    amount: tokenAmount.amount,
+    token: tokenAmount.token,
+    inDollars: tokenAmount.amount * usdPrice,
+  }
+}
+
+/**
+ * Orders completed transfers by date.
+ * @param transfers - The list of completed transfers to order.
+ * @returns The list of completed transfers ordered by date.
+ */
+export const orderTransfersByDate = (transfers: CompletedTransfer[]) =>
+  transfers.reduce<TransfersByDate>((acc, transfer) => {
+    let date: string
+    if (typeof transfer.date === 'string') {
+      date = new Date(transfer.date).toISOString().split('T')[0]
+    } else if (transfer.date instanceof Date) {
+      date = transfer.date.toISOString().split('T')[0]
+    } else {
+      date = 'Unknown date'
+    }
+
+    if (!acc[date]) {
+      acc[date] = []
+    }
+    acc[date].push(transfer)
+    return acc
+  }, {})
+
+/**
+ * Formats the ordered completed transfers list to match the transfer history design.
+ * @param transfers - The list of completed transfers to format.
+ * @returns The formatted list of completed transfers.
+ */
+export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
+  const orderedTransfersByDate = orderTransfersByDate(transfers)
+  return Object.keys(orderedTransfersByDate)
+    .map(date => {
+      return { date, transfers: orderedTransfersByDate[date] }
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+}
+
+/**
+ * Checks if an ongoing transfer is outdated and should be marked as undefined:
+ * - XCM transfers are considered outdated after 1 hour.
+ * - Bridge transfers are considered outdated after 6 hours.
+ *
+ * @param transfer - The ongoing transfer to check.
+ * @returns A boolean indicating whether the transfer is outdated.
+ */
+export const startedTooLongAgo = (
+  transfer: StoredTransfer,
+  thresholdInHours = { xcm: 1, bridge: 6 },
+) => {
+  const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const timeBuffer =
+    direction === Direction.WithinPolkadot
+      ? thresholdInHours.xcm * 60 * 60 * 1000
+      : thresholdInHours.bridge * 60 * 60 * 1000
+  return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
 }

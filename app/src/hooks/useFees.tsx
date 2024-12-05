@@ -1,36 +1,37 @@
-import { getNativeToken } from '@/config/registry'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { TokenAmount } from '@/models/select'
-import { Fees } from '@/models/transfer'
-import { getTokenPrice } from '@/services/balance'
+import { Token } from '@/models/token'
+import { AmountInfo } from '@/models/transfer'
+import { getNativeToken } from '@/registry'
+import { Eth, Polkadot } from '@/registry/mainnet'
+import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
+import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
+import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
+  senderAddress?: string | null,
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
-  tokenAmount?: TokenAmount | null,
+  token?: Token | null,
   recipient?: string | null,
 ) => {
-  const [fees, setFees] = useState<Fees | null>(null)
+  const [fees, setFees] = useState<AmountInfo | null>(null)
+  const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext } = useSnowbridgeContext()
   const { addNotification } = useNotification()
+  const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    if (
-      !sourceChain ||
-      !destinationChain ||
-      !tokenAmount?.token ||
-      !tokenAmount?.amount ||
-      !recipient
-    ) {
+    if (!sourceChain || !destinationChain || !token || !recipient || !senderAddress) {
       setFees(null)
       return
     }
@@ -41,41 +42,50 @@ const useFees = (
 
     try {
       setLoading(true)
-      let amount: string
+      let fees: string
       let tokenUSDValue: number = 0
+
       switch (direction) {
         case Direction.ToEthereum: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
-
-          tokenUSDValue = (await getTokenPrice('polkadot'))?.usd ?? 0
-          amount = (await toEthereum.getSendFee(snowbridgeContext)).toString()
+          tokenUSDValue = (await getCachedTokenPrice(Polkadot.DOT))?.usd ?? 0
+          fees = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
+
         case Direction.ToPolkadot: {
           if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
-
-          // fee value
-          tokenUSDValue = (await getTokenPrice('ethereum'))?.usd ?? 0
-          amount = (
+          tokenUSDValue = (await getCachedTokenPrice(Eth.ETH))?.usd ?? 0
+          fees = (
             await toPolkadot.getSendFee(
               snowbridgeContext,
-              tokenAmount.token.address,
+              token.address,
               destinationChain.chainId,
               BigInt(0),
             )
           ).toString()
           break
         }
+
         case Direction.WithinPolkadot: {
-          if (!sourceChain.rpcConnection || !sourceChain.specName)
-            throw new Error('Source chain is missing rpcConnection or specName')
+          const relay = getRelayNode(env)
+          const sourceChainNode = getTNode(sourceChain.chainId, relay)
+          const destinationChainNode = getTNode(destinationChain.chainId, relay)
+          if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
+          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
 
-          //todo(team): calculate fees for this transfer using ParaSpell
-          amount = '0'
-
-          // set USD fees
-          const tokenCoingeckoId = nativeToken.coingeckoId ?? nativeToken.symbol
-          tokenUSDValue = (await getTokenPrice(tokenCoingeckoId))?.usd ?? 0
+          const info = await getOriginFeeDetails({
+            origin: sourceChainNode,
+            destination: destinationChainNode,
+            currency,
+            amount: BigInt(10 ** token.decimals).toString(), // hardcoded amount because the fee is usually independent of the amount
+            account: senderAddress,
+            accountDestination: recipient,
+            api: sourceChain.rpcConnection,
+          })
+          tokenUSDValue = (await getCachedTokenPrice(nativeToken))?.usd ?? 0
+          fees = info.xcmFee.toString()
+          setCanPayFees(info.sufficientForXCM)
           break
         }
 
@@ -84,14 +94,14 @@ const useFees = (
       }
 
       setFees({
-        amount,
+        amount: fees,
         token: nativeToken,
-        inDollars: tokenUSDValue ? toHuman(amount, nativeToken) * tokenUSDValue : 0,
+        inDollars: tokenUSDValue ? toHuman(fees, nativeToken) * tokenUSDValue : 0,
       })
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.log('Error is ', error)
+      console.log('Error: ', error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
@@ -102,21 +112,21 @@ const useFees = (
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    env,
     sourceChain,
     destinationChain,
-    tokenAmount?.token,
-    tokenAmount?.amount,
+    token?.id,
     recipient,
     snowbridgeContext,
+    senderAddress,
     addNotification,
   ])
 
-  // call fetch fees
   useEffect(() => {
     fetchFees()
-  }, [sourceChain, destinationChain, tokenAmount?.token, tokenAmount?.amount, recipient, fetchFees])
+  }, [fetchFees])
 
-  return { fees, loading, refetch: fetchFees }
+  return { fees, loading, refetch: fetchFees, canPayFees }
 }
 
 export default useFees

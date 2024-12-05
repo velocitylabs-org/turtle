@@ -4,16 +4,19 @@ import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost'
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 const styles = {
   primary:
     'bg-turtle-primary border border-black hover:border-black focus:border-black active:border-black disabled:border-black disabled:opacity-30',
-  secondary: 'bg-turtle-level3 disabled:opacity-30',
+  secondary:
+    'bg-turtle-secondary border border-black hover:border-black focus:border-black active:border-black disabled:border-black disabled:opacity-30',
   outline:
     'border-1 border-turtle-level3 bg-transparent hover:border-turtle-level3 disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
+  update:
+    'border-1 bg-turtle-secondary border border-turtle-secondary-dark text-turtle-secondary-dark disabled:opacity-100 disabled:bg-opacity-50 disabled:border-opacity-40',
 }
 
 const sizeHeights: Record<ButtonSize, string> = {
@@ -34,7 +37,7 @@ export const spinnerSize: Record<ButtonSize, number> = {
   lg: 40,
 }
 
-interface ButtonProps {
+export interface ButtonProps {
   /** Text shown inside the button. */
   label?: string
   /** Function to call when the button is clicked. */
@@ -49,6 +52,8 @@ interface ButtonProps {
   variant?: ButtonVariant
   /** The size of the button. */
   size?: ButtonSize
+  /** A custom icon to be displayed instead of the spinner */
+  icon?: ReactNode
   /** Content to be rendered inside the button. It will replace the label. */
   children?: ReactNode
   /** The type of the button. */
@@ -66,7 +71,14 @@ const Button: FC<ButtonProps> = ({
   variant = 'primary',
   size = 'lg',
   children,
-  type = 'button', // Default type is 'button',
+  icon = (
+    <LoadingIcon
+      className="mr-3 animate-spin"
+      width={spinnerSize[size]}
+      height={spinnerSize[size]}
+    />
+  ),
+  type = 'button',
   cypressID,
 }) => {
   return (
@@ -76,23 +88,25 @@ const Button: FC<ButtonProps> = ({
       onClick={onClick}
       size={size}
       radius="sm"
-      className={twMerge(styles[variant], sizeHeights[size], paddingX[size], className)}
+      disableAnimation={true}
+      className={twMerge('w-full', styles[variant], sizeHeights[size], paddingX[size], className)}
       type={type}
       style={{
         outline: 'none',
       }}
       data-cy={cypressID}
     >
-      {/** loading state */}
+      {/** Loading state */}
       {loading && (
-        <LoadingIcon
-          className="animate-spin"
-          width={spinnerSize[size]}
-          height={spinnerSize[size]}
-        />
+        <div className="flex items-center">
+          {/* Icon */}
+          {icon && <span className="mr-3">{icon}</span>}
+          {/* Label */}
+          <span className="mr-3">{label}</span>
+        </div>
       )}
 
-      {/** children or label */}
+      {/** Default state - children or label */}
       {!loading && (children || label)}
     </NextButton>
   )

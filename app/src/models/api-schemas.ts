@@ -15,6 +15,7 @@ export const transferSchema: z.ZodType<OngoingTransferWithDirection> = z.object(
   direction: z.nativeEnum(Direction),
   crossChainMessageHash: z.string().optional(),
   parachainMessageId: z.string().optional(),
+  sourceChainExtrinsicIndex: z.string().optional(),
 })
 
 export const ongoingTransfersSchema = z.object({
@@ -22,3 +23,7 @@ export const ongoingTransfersSchema = z.object({
 })
 
 export type ongoingTransfersSchema = z.infer<typeof ongoingTransfersSchema>
+
+export const tokenPriceSchema = z.object({
+  token: tokenSchema,
+})

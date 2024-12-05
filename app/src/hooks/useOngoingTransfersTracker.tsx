@@ -2,11 +2,12 @@ import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
   OngoingTransferWithDirection,
+  StoredTransfer,
   TxStatus,
   TxTrackingResult,
 } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
-import { getExplorerLink } from '@/utils/transfer'
+import { getExplorerLink, startedTooLongAgo } from '@/utils/transfer'
 import {
   findMatchingTransfer,
   getTransferStatus,
@@ -26,17 +27,13 @@ const useOngoingTransfersTracker = () => {
   const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
-  const {
-    removeTransfer: removeOngoingTransfer,
-    ongoingTransfers,
-    updateTransferUniqueId,
-  } = useOngoingTransfers()
+  const { remove, ongoingTransfers, updateUniqueId } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const env = useEnvironment()
 
-  const fetchTransfers = useCallback(async () => {
-    const formattedTransfers: OngoingTransferWithDirection[] = ongoingTransfers.map(t => {
+  const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
+    return ongoingTransfers.map(t => {
       const direction = resolveDirection(t.sourceChain, t.destChain)
       return {
         id: t.id,
@@ -49,8 +46,16 @@ const useOngoingTransfersTracker = () => {
         direction,
         ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
         ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+        ...(t.sourceChainExtrinsicIndex && {
+          sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
+        }),
       }
     })
+  }
+
+  const fetchTransfers = useCallback(async () => {
+    const formattedTransfers: OngoingTransferWithDirection[] =
+      formatTransfersWithDirection(ongoingTransfers)
     if (!formattedTransfers.length) return
 
     try {
@@ -113,13 +118,14 @@ const useOngoingTransfersTracker = () => {
           trackingUniqueId &&
           !ongoing.uniqueTrackingId
         ) {
-          updateTransferUniqueId(ongoing.id, trackingUniqueId)
+          updateUniqueId(ongoing.id, trackingUniqueId)
         }
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
 
-          removeOngoingTransfer(ongoing.id)
+          // Move from ongoing to done
+          remove(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,
             result:
@@ -147,14 +153,37 @@ const useOngoingTransfersTracker = () => {
         // TODO: handle this case
       }
     })
-  }, [
-    transfers,
-    addCompletedTransfer,
-    removeOngoingTransfer,
-    ongoingTransfers,
-    addNotification,
-    updateTransferUniqueId,
-  ])
+  }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateUniqueId])
+
+  useEffect(() => {
+    ongoingTransfers.forEach(ongoing => {
+      if (startedTooLongAgo(ongoing)) {
+        const explorerLink = getExplorerLink(ongoing)
+        remove(ongoing.id)
+        addCompletedTransfer({
+          id: ongoing.id,
+          result: TxStatus.Undefined,
+          token: ongoing.token,
+          sourceChain: ongoing.sourceChain,
+          destChain: ongoing.destChain,
+          amount: ongoing.amount,
+          tokenUSDValue: ongoing.tokenUSDValue ?? 0,
+          fees: ongoing.fees,
+          sender: ongoing.sender,
+          recipient: ongoing.recipient,
+          date: ongoing.date,
+          ...(explorerLink && { explorerLink }),
+        } satisfies CompletedTransfer)
+
+        addNotification({
+          message: 'Transfer verification failed.',
+          severity: NotificationSeverity.Warning,
+          dismissible: true,
+        })
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ongoingTransfers])
 
   return { transfers, loading, statusMessages, fetchTransfers }
 }

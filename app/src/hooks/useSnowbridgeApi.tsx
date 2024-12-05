@@ -1,10 +1,11 @@
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { getCoingekoId, Token } from '@/models/token'
+import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
-import { getTokenPrice } from '@/services/balance'
+import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
@@ -21,7 +22,7 @@ import { Sender, Status, TransferParams } from './useTransfer'
 type ValidationResult = toEthereum.SendValidationResult | toPolkadot.SendValidationResult
 
 const useSnowbridgeApi = () => {
-  const { addTransfer: addTransferToStorage } = useOngoingTransfers()
+  const { addOrUpdate } = useOngoingTransfers()
   const { addNotification } = useNotification()
   const { snowbridgeContext } = useSnowbridgeContext()
 
@@ -46,7 +47,7 @@ const useSnowbridgeApi = () => {
       amount,
       environment,
       fees,
-      onSuccess,
+      onComplete,
     } = params
 
     setStatus('Loading')
@@ -91,7 +92,7 @@ const useSnowbridgeApi = () => {
           recipient,
           amount,
           fees,
-          onSuccess,
+          onComplete,
         },
         direction,
         setStatus,
@@ -124,7 +125,7 @@ const useSnowbridgeApi = () => {
       amount,
       environment,
       fees,
-      onSuccess,
+      onComplete,
     } = params
     try {
       setStatus('Sending')
@@ -139,10 +140,13 @@ const useSnowbridgeApi = () => {
           )
           break
         }
+
         case Direction.ToEthereum: {
+          const account = sender as SubstrateAccount
+          const signer = { signer: account.signer, address: sender.address }
           sendResult = await toEthereum.send(
             context,
-            sender as WalletOrKeypair,
+            signer as WalletOrKeypair,
             plan as toEthereum.SendValidationResult,
           )
           break
@@ -153,21 +157,13 @@ const useSnowbridgeApi = () => {
 
       if (sendResult.failure) throw new Error('Transfer failed')
 
-      onSuccess?.()
-      addNotification({
-        message: 'Transfer initiated. See below!',
-        severity: NotificationSeverity.Success,
-      })
-      const coingekoId = getCoingekoId(token)
-      const tokenUSDValue = (await getTokenPrice(coingekoId))?.usd
+      onComplete?.()
 
-      if (tokenUSDValue === null || tokenUSDValue === 0)
-        throw new Error('Failed to fetch token price')
-
-      const date = new Date()
       const senderAddress = await getSenderAddress(sender)
+      const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
+      const date = new Date()
 
-      addTransferToStorage({
+      addOrUpdate({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?
         sourceChain,
         token,
@@ -228,15 +224,18 @@ const useSnowbridgeApi = () => {
           BigInt(destinationChain.destinationFeeDOT || 0),
         )
 
-      case Direction.ToEthereum:
+      case Direction.ToEthereum: {
+        const account = sender as SubstrateAccount
+        const signer = { signer: account.signer, address: sender.address }
         return await toEthereum.validateSend(
           context,
-          sender as WalletOrKeypair,
+          signer as WalletOrKeypair,
           sourceChain.chainId,
           recipient,
           token.address,
           amount,
         )
+      }
 
       default:
         throw new Error('Unsupported flow')
@@ -244,7 +243,7 @@ const useSnowbridgeApi = () => {
   }
 
   const handleSendError = (e: unknown) => {
-    console.error('Transfer error:', e)
+    console.log('Transfer error:', e)
     addNotification({
       message: 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,

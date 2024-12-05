@@ -1,6 +1,14 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 
-export type SubscanTransferResponse = {
+export type Status = 'pending' | 'relayed' | 'success' | 'failed'
+
+type Metadata = {
+  send_at?: number
+  tx_hash?: string
+  message_id?: string
+}
+
+type Message = {
   message_hash: string
   origin_event_index: string
   from_account_id: string
@@ -8,7 +16,7 @@ export type SubscanTransferResponse = {
   origin_block_timestamp: number
   relayed_block_timestamp: number
   block_num: number
-  status: string
+  status: Status
   relayed_event_index: string
   dest_event_index: string
   dest_para_id: number
@@ -27,15 +35,15 @@ export type SubscanTransferResponse = {
   xcm_version: number
   from_chain: string
   dest_chain: string
-  metadata: {
-    send_at?: number
-    tx_hash?: string
-    message_id?: string
-  }
-  cross_chain_status: 1 | 2 | 3
+  metadata: Metadata
   bridge_type: string
+  cross_chain_status: 1 | 2 | 3
+}
+
+export type SubscanTransferResponse = Message & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   assets: any
+  child_message?: Message
 }
 
 type SubscanXCMMetadata = {
@@ -54,7 +62,8 @@ export type FromParachainTrackingResult = {
   blockNum: number // Relaychain transfer block number
   extrinsicStatus: string
   relayedEventIndex: string
-  destEventIndex: string // BH transfer block index
+  destChain: string
+  destEventIndex: string
   destParaId: number
   toAccountId: string
   confirmBlockTimestamp: number

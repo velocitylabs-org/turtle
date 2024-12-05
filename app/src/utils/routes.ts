@@ -1,4 +1,4 @@
-import { REGISTRY, Route } from '@/config/registry'
+import { REGISTRY, Route } from '@/registry'
 import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
