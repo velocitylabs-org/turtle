@@ -23,7 +23,7 @@ const useSubstrateWallet = () => {
   const isEvmConnected = !!evmAccount
   const disconnectEvm = () => setEvmAccount(null)
 
-  const refetchExtensions = async () => {
+  const fetchExtensions = async () => {
     const { web3Enable } = await import('@polkadot/extension-dapp')
     const enabledExtensions = await web3Enable('turtle')
     setExtensions(enabledExtensions)
@@ -32,16 +32,11 @@ const useSubstrateWallet = () => {
   useEffect(() => {
     let unsubscribe = () => {}
 
-    const initializeExtensionsAndSubscribe = async () => {
-      try {
-        const { web3Enable, web3AccountsSubscribe } = await import('@polkadot/extension-dapp')
-        const enabledExtensions = await web3Enable('turtle')
-        setExtensions(enabledExtensions)
-        if (enabledExtensions.length === 0) {
-          console.warn('No extensions enabled or user rejected authorization.')
-          return
-        }
+    const subscribeAccounts = async () => {
+      if (!extensions.length) return
 
+      try {
+        const { web3AccountsSubscribe } = await import('@polkadot/extension-dapp')
         unsubscribe = await web3AccountsSubscribe(injectedAccounts => {
           setAccounts(injectedAccounts)
         })
@@ -51,18 +46,18 @@ const useSubstrateWallet = () => {
       }
     }
 
-    initializeExtensionsAndSubscribe()
+    subscribeAccounts()
 
     // Cleanup
     return () => {
       unsubscribe()
     }
-  }, [])
+  }, [extensions])
 
   return {
     substrateAccount,
     setSubstrateAccount,
-    refetchExtensions,
+    fetchExtensions,
     evmAccount,
     setEvmAccount,
     disconnectSubstrate,
