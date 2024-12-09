@@ -23,6 +23,12 @@ const useSubstrateWallet = () => {
   const isEvmConnected = !!evmAccount
   const disconnectEvm = () => setEvmAccount(null)
 
+  const refetchExtensions = async () => {
+    const { web3Enable } = await import('@polkadot/extension-dapp')
+    const enabledExtensions = await web3Enable('turtle')
+    setExtensions(enabledExtensions)
+  }
+
   useEffect(() => {
     let unsubscribe = () => {}
 
@@ -56,6 +62,7 @@ const useSubstrateWallet = () => {
   return {
     substrateAccount,
     setSubstrateAccount,
+    refetchExtensions,
     evmAccount,
     setEvmAccount,
     disconnectSubstrate,

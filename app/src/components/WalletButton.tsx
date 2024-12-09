@@ -28,6 +28,7 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
     isEvmConnected: substrateEvmIsConnected,
     openModal: openSubstrate,
     setType,
+    refetchExtensions,
   } = useSubstrateWallet()
 
   const { buttonFunction, isConnected, disabled } = (() => {
@@ -44,6 +45,7 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
           buttonFunction: substrateIsConnected
             ? disconnectSubstrate
             : () => {
+                refetchExtensions()
                 setType('Substrate')
                 openSubstrate()
               },
