@@ -1,7 +1,7 @@
 'use client'
+import { wagmiAdapter } from '@/config'
 import { Environment } from '@/store/environmentStore'
 import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { mainnet, sepolia } from '@reown/appkit/networks'
 import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -24,11 +24,6 @@ const metadata = {
   url: isDevelopment ? 'http://localhost:3000' : vercelUrl, // domain must be allowed in WalletConnect Cloud
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
 }
-
-export const wagmiAdapter = new WagmiAdapter({
-  networks: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet],
-  projectId,
-})
 
 // Create modal
 export const modal = createAppKit({
