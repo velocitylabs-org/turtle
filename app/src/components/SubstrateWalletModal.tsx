@@ -1,7 +1,6 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
-import { isMobileDevice } from '@/utils/env'
 import { getWalletLogo, getWalletName } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
@@ -9,10 +8,8 @@ import { FC, useEffect, useState } from 'react'
 import Button from './Button'
 import { Icon } from './Icon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
-import { WalletNotAccessible } from './WalletNotAccessible'
 
 const SubstrateWalletModal: FC = () => {
-  const [isMobile, setIsMobile] = useState(false)
   const [selectedExtension, setSelectedExtension] = useState<InjectedExtension | null>(null)
   const [extensionAccounts, setExtensionAccounts] = useState<InjectedAccount[]>([])
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
@@ -40,25 +37,11 @@ const SubstrateWalletModal: FC = () => {
   }
 
   useEffect(() => {
-    const userAgent = typeof window !== 'undefined' && navigator.userAgent
-    if (userAgent) {
-      setIsMobile(isMobileDevice(userAgent))
-    }
-  }, [])
-
-  useEffect(() => {
     if (isModalOpen) {
       setCurrentView('extensions')
       setSelectedExtension(null)
     }
   }, [isModalOpen])
-
-  if (isMobile)
-    return (
-      <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
-        <WalletNotAccessible />
-      </Dialog>
-    )
 
   const filteredAccounts = extensionAccounts.filter(account =>
     type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
