@@ -5,8 +5,10 @@ import { getWalletLogo, getWalletName } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
-import Button from './Button'
+import { colors } from '../../tailwind.config'
+import Button, { spinnerSize } from './Button'
 import { Icon } from './Icon'
+import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 const SubstrateWalletModal: FC = () => {
@@ -22,6 +24,7 @@ const SubstrateWalletModal: FC = () => {
     setSubstrateAccount,
     setEvmAccount,
     fetchExtensions,
+    loading,
   } = useSubstrateWallet()
 
   const handleExtensionSelect = async (extension: InjectedExtension) => {
@@ -85,8 +88,19 @@ const SubstrateWalletModal: FC = () => {
           animate={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
           transition={{ duration: 0.5, type: 'spring' }}
         >
+          {/* Loading */}
+          {loading && (
+            <LoadingIcon
+              className="animate-spin"
+              width={spinnerSize['lg']}
+              height={spinnerSize['lg']}
+              color={colors['turtle-secondary']}
+            />
+          )}
+
           {/* Show extensions */}
           {currentView === 'extensions' &&
+            !loading &&
             (extensions.length > 0 ? (
               extensions.map(extension => (
                 <Button
@@ -113,6 +127,7 @@ const SubstrateWalletModal: FC = () => {
 
           {/* Show accounts */}
           {currentView === 'accounts' &&
+            !loading &&
             (filteredAccounts.length > 0 ? (
               filteredAccounts.map(account => (
                 <Button
