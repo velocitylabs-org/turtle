@@ -110,8 +110,8 @@ const SubstrateWalletModal: FC = () => {
                   onClick={() => handleExtensionSelect(extension)}
                 >
                   <div className="flex items-center space-x-2 text-sm">
-                    <Icon src={getWalletLogo(extension.name)} width={40} height={40} />
-                    <span>{getWalletName(extension.name)}</span>
+                    <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
+                    <span>{getWalletName(extension.name, window)}</span>
                   </div>
                   <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
                     INSTALLED
