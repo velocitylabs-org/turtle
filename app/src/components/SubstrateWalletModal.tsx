@@ -21,6 +21,7 @@ const SubstrateWalletModal: FC = () => {
     type,
     setSubstrateAccount,
     setEvmAccount,
+    fetchExtensions,
   } = useSubstrateWallet()
 
   const handleExtensionSelect = async (extension: InjectedExtension) => {
@@ -37,10 +38,19 @@ const SubstrateWalletModal: FC = () => {
   }
 
   useEffect(() => {
-    if (isModalOpen) {
-      setCurrentView('extensions')
-      setSelectedExtension(null)
+    const fetchData = async () => {
+      try {
+        if (isModalOpen) {
+          setCurrentView('extensions')
+          setSelectedExtension(null)
+          await fetchExtensions()
+        }
+      } catch (error) {
+        console.error('Error fetching extensions:', error)
+      }
     }
+
+    fetchData()
   }, [isModalOpen])
 
   const filteredAccounts = extensionAccounts.filter(account =>

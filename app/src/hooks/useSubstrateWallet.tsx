@@ -31,6 +31,7 @@ const useSubstrateWallet = () => {
 
   useEffect(() => {
     let unsubscribe = () => {}
+    console.log('extensions', extensions)
 
     const subscribeAccounts = async () => {
       if (!extensions.length) return
