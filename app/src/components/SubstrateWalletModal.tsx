@@ -12,8 +12,6 @@ import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 const SubstrateWalletModal: FC = () => {
-  const [selectedExtension, setSelectedExtension] = useState<InjectedExtension | null>(null)
-  const [extensionAccounts, setExtensionAccounts] = useState<InjectedAccount[]>([])
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const {
     isModalOpen,
@@ -24,13 +22,15 @@ const SubstrateWalletModal: FC = () => {
     setSubstrateAccount,
     setEvmAccount,
     fetchExtensions,
+    selectedExtension,
+    setSelectedExtension,
+    accounts,
     loading,
   } = useSubstrateWallet()
 
   const handleExtensionSelect = async (extension: InjectedExtension) => {
     setSelectedExtension(extension)
     setCurrentView('accounts')
-    setExtensionAccounts(await extension.accounts.get())
   }
 
   const handleAccountSelect = async (account: InjectedAccount) => {
@@ -41,7 +41,7 @@ const SubstrateWalletModal: FC = () => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetch = async () => {
       try {
         if (isModalOpen) {
           setCurrentView('extensions')
@@ -53,10 +53,10 @@ const SubstrateWalletModal: FC = () => {
       }
     }
 
-    fetchData()
+    fetch()
   }, [isModalOpen])
 
-  const filteredAccounts = extensionAccounts.filter(account =>
+  const filteredAccounts = accounts.filter(account =>
     type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
   )
 
