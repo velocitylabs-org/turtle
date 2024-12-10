@@ -109,6 +109,8 @@ const TxSummary: FC<TxSummaryProps> = ({
                     content={
                       'Transfer should be done in ~30s but our service takes up to 2 minutes to catch up'
                     }
+                    className="max-w-xs text-center sm:max-w-sm"
+                    showArrow={false}
                   >
                     <Info className="h-3 w-3 text-turtle-level6" />
                   </Tooltip>
