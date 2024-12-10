@@ -110,7 +110,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   disabled={disabled}
                   type="number"
                   className={cn(
-                    'bg-transparent text-xl focus:border-0 focus:outline-none',
+                    'bg-transparent text-sm focus:border-0 focus:outline-none min-[350px]:text-base sm:text-xl',
                     inDollars && 'animate-slide-up-slight',
                     error && 'text-turtle-error',
                   )}
