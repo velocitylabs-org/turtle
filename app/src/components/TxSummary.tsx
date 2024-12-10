@@ -107,7 +107,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                   <Tooltip
                     showIcon={false}
                     content={
-                      'Transfer should be done in ~30s but our service takes up to 2 minutes to catch up'
+                      'Your tokens should land in ~30s but our services usually take ~2 minutes to catch up'
                     }
                   >
                     <Info className="h-3 w-3 text-turtle-level6" />
