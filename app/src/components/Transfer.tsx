@@ -335,6 +335,7 @@ const Transfer: FC = () => {
           fees={fees}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
+          direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
         />
       )}
