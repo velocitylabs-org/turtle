@@ -7,18 +7,26 @@ import React, { FC } from 'react'
 export interface TooltipProps {
   content: React.ReactNode
   children: React.ReactNode
+  className?: string
   showIcon?: boolean
+  showArrow?: boolean
 }
 
-export const Tooltip: FC<TooltipProps> = ({ children, content, showIcon = true }) => {
+export const Tooltip: FC<TooltipProps> = ({
+  children,
+  content,
+  className,
+  showIcon = true,
+  showArrow = true,
+}) => {
   if (!content) return <>{children}</>
   return (
     <NextTooltip
-      showArrow
+      showArrow={showArrow}
       delay={350}
       closeDelay={100}
       content={
-        <div className={cn('flex gap-1', showIcon ? 'pl-[4px] pr-[6px]' : 'px-[5px]')}>
+        <div className={cn('flex gap-1', showIcon ? 'pl-[4px] pr-[6px]' : 'px-[5px]', className)}>
           {showIcon && <Image src={TooltipIcon} alt="icon" className="mr-[2px]" />}
           {content}
         </div>
