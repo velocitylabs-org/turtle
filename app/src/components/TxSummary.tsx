@@ -110,7 +110,6 @@ const TxSummary: FC<TxSummaryProps> = ({
                       'Your tokens should land in ~30s but our services usually take ~2 minutes to catch up'
                     }
                     className="max-w-xs text-center sm:max-w-sm"
-                    showArrow={false}
                   >
                     <Info className="h-3 w-3 text-turtle-foreground" />
                   </Tooltip>
