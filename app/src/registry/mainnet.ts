@@ -637,24 +637,6 @@ export const REGISTRY: Registry = {
       tokens: [Polkadot.DOT.id],
     },
     {
-      from: AssetHub.uid,
-      to: Bifrost.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Eth.WETH.id, Polkadot.USDC.id, Polkadot.USDT.id],
-    },
-    {
-      from: AssetHub.uid,
-      to: Hydration.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
-    },
-    {
-      from: AssetHub.uid,
-      to: Moonbeam.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
-    },
-    {
       from: Acala.uid,
       to: RelayChain.uid,
       sdk: 'ParaSpellApi',
@@ -717,10 +699,28 @@ export const REGISTRY: Registry = {
 
     // Para to Para
     {
+      from: AssetHub.uid,
+      to: Bifrost.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Eth.WETH.id, Polkadot.USDC.id, Polkadot.USDT.id],
+    },
+    {
+      from: AssetHub.uid,
+      to: Hydration.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
+    },
+    {
+      from: AssetHub.uid,
+      to: Moonbeam.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
+    },
+    {
       from: Moonbeam.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
+      tokens: [Polkadot.DOT.id, Polkadot.GLMR.id],
     },
     {
       from: Acala.uid,
