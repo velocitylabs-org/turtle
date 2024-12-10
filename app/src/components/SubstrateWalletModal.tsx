@@ -63,7 +63,7 @@ const SubstrateWalletModal: FC = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[25rem] rounded-4xl border-1 border-black pb-4 focus:outline-none"
+        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl border-1 border-black pb-4 focus:outline-none min-[460px]:max-w-[25rem]"
         hideCloseButton={true}
       >
         {/* Header */}
@@ -90,12 +90,14 @@ const SubstrateWalletModal: FC = () => {
         >
           {/* Loading */}
           {loading && (
-            <LoadingIcon
-              className="animate-spin"
-              width={spinnerSize['lg']}
-              height={spinnerSize['lg']}
-              color={colors['turtle-secondary']}
-            />
+            <div className="flex h-full w-full items-center justify-center">
+              <LoadingIcon
+                className="animate-spin"
+                width={spinnerSize['lg']}
+                height={spinnerSize['lg']}
+                color={colors['turtle-secondary']}
+              />
+            </div>
           )}
 
           {/* Show extensions */}
@@ -119,10 +121,12 @@ const SubstrateWalletModal: FC = () => {
                 </Button>
               ))
             ) : (
-              <p className="text-center text-sm text-turtle-level6">
-                <span className="font-bold">Oops! </span>No extensions detected. Please install a
-                compatible wallet extension, such as Talisman, Subwallet, or Polkadot.js.
-              </p>
+              <div className="flex h-full w-full items-center justify-center">
+                <p className="text-center text-sm text-turtle-level6">
+                  <span className="font-bold">Oops! </span>No extensions detected. Please install a
+                  compatible wallet extension, such as Talisman, Subwallet, or Polkadot.js.
+                </p>
+              </div>
             ))}
 
           {/* Show accounts */}
@@ -148,10 +152,12 @@ const SubstrateWalletModal: FC = () => {
                 </Button>
               ))
             ) : (
-              <p className="text-center text-sm text-turtle-level6">
-                <span className="font-bold">Oops! </span>No accounts available. Please connect an
-                account to Turtle inside your wallet extension.
-              </p>
+              <div className="flex h-full w-full items-center justify-center">
+                <p className="text-center text-sm text-turtle-level6">
+                  <span className="font-bold">Oops! </span>No accounts available. Please connect an
+                  account to Turtle inside your wallet extension.
+                </p>
+              </div>
             ))}
         </motion.div>
 
