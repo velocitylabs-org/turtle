@@ -2,6 +2,7 @@ import { DWELLIR_KEY } from '@/config'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { parachain, Registry, snowbridgeWrapped } from '.'
+import { relayToParaRoutes } from './relayToParaRoutes'
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -579,55 +580,7 @@ export const REGISTRY: Registry = {
         Eth.PEPE.id,
       ],
     },
-    // Relay to Para
-    {
-      from: RelayChain.uid,
-      to: AssetHub.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
-    {
-      from: RelayChain.uid,
-      to: Acala.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
-    {
-      from: RelayChain.uid,
-      to: Moonbeam.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
-    {
-      from: RelayChain.uid,
-      to: Hydration.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
-    {
-      from: RelayChain.uid,
-      to: Interlay.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
-    {
-      from: RelayChain.uid,
-      to: Centrifuge.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
-    {
-      from: RelayChain.uid,
-      to: Astar.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
-    {
-      from: RelayChain.uid,
-      to: Bifrost.uid,
-      sdk: 'ParaSpellApi',
-      tokens: [Polkadot.DOT.id],
-    },
+    ...relayToParaRoutes,
 
     // Para to Relay
     {
