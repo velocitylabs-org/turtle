@@ -1,20 +1,17 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
-import { isMobileDevice } from '@/utils/env'
 import { getWalletLogo, getWalletName } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
-import Button from './Button'
+import { colors } from '../../tailwind.config'
+import Button, { spinnerSize } from './Button'
 import { Icon } from './Icon'
+import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
-import { WalletNotAccessible } from './WalletNotAccessible'
 
 const SubstrateWalletModal: FC = () => {
-  const [isMobile, setIsMobile] = useState(false)
-  const [selectedExtension, setSelectedExtension] = useState<InjectedExtension | null>(null)
-  const [extensionAccounts, setExtensionAccounts] = useState<InjectedAccount[]>([])
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const {
     isModalOpen,
@@ -24,12 +21,16 @@ const SubstrateWalletModal: FC = () => {
     type,
     setSubstrateAccount,
     setEvmAccount,
+    fetchExtensions,
+    selectedExtension,
+    setSelectedExtension,
+    accounts,
+    loading,
   } = useSubstrateWallet()
 
   const handleExtensionSelect = async (extension: InjectedExtension) => {
     setSelectedExtension(extension)
     setCurrentView('accounts')
-    setExtensionAccounts(await extension.accounts.get())
   }
 
   const handleAccountSelect = async (account: InjectedAccount) => {
@@ -40,34 +41,29 @@ const SubstrateWalletModal: FC = () => {
   }
 
   useEffect(() => {
-    const userAgent = typeof window !== 'undefined' && navigator.userAgent
-    if (userAgent) {
-      setIsMobile(isMobileDevice(userAgent))
+    const fetch = async () => {
+      try {
+        if (isModalOpen) {
+          setCurrentView('extensions')
+          setSelectedExtension(null)
+          await fetchExtensions()
+        }
+      } catch (error) {
+        console.error('Error fetching extensions:', error)
+      }
     }
-  }, [])
 
-  useEffect(() => {
-    if (isModalOpen) {
-      setCurrentView('extensions')
-      setSelectedExtension(null)
-    }
+    fetch()
   }, [isModalOpen])
 
-  if (isMobile)
-    return (
-      <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
-        <WalletNotAccessible />
-      </Dialog>
-    )
-
-  const filteredAccounts = extensionAccounts.filter(account =>
+  const filteredAccounts = accounts.filter(account =>
     type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
   )
 
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[25rem] rounded-4xl border-1 border-black pb-4 focus:outline-none"
+        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl border-1 border-black pb-4 focus:outline-none min-[460px]:max-w-[25rem]"
         hideCloseButton={true}
       >
         {/* Header */}
@@ -92,8 +88,21 @@ const SubstrateWalletModal: FC = () => {
           animate={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
           transition={{ duration: 0.5, type: 'spring' }}
         >
+          {/* Loading */}
+          {loading && (
+            <div className="flex h-full w-full items-center justify-center">
+              <LoadingIcon
+                className="animate-spin"
+                width={spinnerSize['lg']}
+                height={spinnerSize['lg']}
+                color={colors['turtle-secondary']}
+              />
+            </div>
+          )}
+
           {/* Show extensions */}
           {currentView === 'extensions' &&
+            !loading &&
             (extensions.length > 0 ? (
               extensions.map(extension => (
                 <Button
@@ -103,8 +112,8 @@ const SubstrateWalletModal: FC = () => {
                   onClick={() => handleExtensionSelect(extension)}
                 >
                   <div className="flex items-center space-x-2 text-sm">
-                    <Icon src={getWalletLogo(extension.name)} width={40} height={40} />
-                    <span>{getWalletName(extension.name)}</span>
+                    <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
+                    <span>{getWalletName(extension.name, window)}</span>
                   </div>
                   <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
                     INSTALLED
@@ -112,14 +121,17 @@ const SubstrateWalletModal: FC = () => {
                 </Button>
               ))
             ) : (
-              <p className="text-center text-sm text-turtle-level6">
-                <span className="font-bold">Oops! </span>No extensions detected. Please install a
-                compatible wallet extension, such as Talisman, Subwallet, or Polkadot.js.
-              </p>
+              <div className="flex h-full w-full items-center justify-center">
+                <p className="text-center text-sm text-turtle-level6">
+                  <span className="font-bold">Oops! </span>No extensions detected. Please install a
+                  compatible wallet extension, such as Talisman, Subwallet, or Polkadot.js.
+                </p>
+              </div>
             ))}
 
           {/* Show accounts */}
           {currentView === 'accounts' &&
+            !loading &&
             (filteredAccounts.length > 0 ? (
               filteredAccounts.map(account => (
                 <Button
@@ -140,10 +152,12 @@ const SubstrateWalletModal: FC = () => {
                 </Button>
               ))
             ) : (
-              <p className="text-center text-sm text-turtle-level6">
-                <span className="font-bold">Oops! </span>No accounts available. Please connect an
-                account to Turtle inside your wallet extension.
-              </p>
+              <div className="flex h-full w-full items-center justify-center">
+                <p className="text-center text-sm text-turtle-level6">
+                  <span className="font-bold">Oops! </span>No accounts available. Please connect an
+                  account to Turtle inside your wallet extension.
+                </p>
+              </div>
             ))}
         </motion.div>
 
