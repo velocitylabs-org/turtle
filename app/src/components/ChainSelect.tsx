@@ -149,26 +149,26 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
         </Tooltip>
 
         <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
-          {options.map(option => (
-            <li
-              key={option.uid}
-              className={cn(
-                'flex cursor-pointer items-center gap-1 px-3 py-3 hover:bg-turtle-level1',
-                !option.allowed && 'cursor-not-allowed opacity-50',
-              )}
-              onClick={() => option.allowed && handleSelectionChange(option)}
-            >
-              <Image
-                src={option.logoURI}
-                alt={option.name}
-                width={24}
-                height={24}
-                priority
-                className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-              />
-              <span className="text-sm">{option.name}</span>
-            </li>
-          ))}
+          {options.map(option => {
+            if (!option.allowed) return
+            return (
+              <li
+                key={option.uid}
+                className="flex cursor-pointer items-center gap-1 px-3 py-3 hover:bg-turtle-level1"
+                onClick={() => handleSelectionChange(option)}
+              >
+                <Image
+                  src={option.logoURI}
+                  alt={option.name}
+                  width={24}
+                  height={24}
+                  priority
+                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                />
+                <span className="text-sm">{option.name}</span>
+              </li>
+            )
+          })}
         </Dropdown>
       </div>
     )
