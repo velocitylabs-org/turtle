@@ -11,12 +11,16 @@ import { TokenAmount } from '@/models/select'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { cn } from '@/utils/cn'
 import Delayed from './Delayed'
+import { Direction } from '@/services/transfer'
+import { Tooltip } from './Tooltip'
+import { Info } from 'lucide-react'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
   durationEstimate?: string
+  direction?: Direction
   canPayFees: boolean
   className?: string
 }
@@ -26,6 +30,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   tokenAmount,
   fees,
   durationEstimate,
+  direction,
   canPayFees,
   className,
 }) => {
@@ -96,8 +101,19 @@ const TxSummary: FC<TxSummaryProps> = ({
               <div className="flex">
                 <div className="font-bold">Duration</div>
               </div>
-              <div className="items-right flex">
+              <div className="items-right flex items-center space-x-0.5">
                 <div className="text-turtle-foreground">{durationEstimate}</div>
+                {direction === Direction.WithinPolkadot && (
+                  <Tooltip
+                    showIcon={false}
+                    content={
+                      'Your tokens should land in ~30s but our services usually take ~2 minutes to catch up'
+                    }
+                    className="max-w-xs text-center sm:max-w-sm"
+                  >
+                    <Info className="h-3 w-3 text-turtle-foreground" />
+                  </Tooltip>
+                )}
               </div>
             </li>
           </ul>
