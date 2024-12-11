@@ -1,5 +1,6 @@
-import { Mainnet, rpcConnectionAsHttps, SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
 import { SnowbridgeStatus } from '@/models/snowbridge'
+import { rpcConnectionAsHttps, SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
+import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
 import { Context, contextFactory, environment, status } from '@snowbridge/api'
 
@@ -18,9 +19,9 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
 
   // apply custom api endpoints
   if (env === Environment.Mainnet) {
-    x.config.ASSET_HUB_URL = Mainnet.AssetHub.rpcConnection || ''
-    x.config.BRIDGE_HUB_URL = rpcConnectionAsHttps(Mainnet.BridgeHub.rpcConnection)
-    x.config.RELAY_CHAIN_URL = rpcConnectionAsHttps(Mainnet.RelayChain.rpcConnection)
+    x.config.ASSET_HUB_URL = AssetHub.rpcConnection || ''
+    x.config.BRIDGE_HUB_URL = rpcConnectionAsHttps(BridgeHub.rpcConnection)
+    x.config.RELAY_CHAIN_URL = rpcConnectionAsHttps(RelayChain.rpcConnection)
     x.config.PARACHAINS = SNOWBRIDGE_MAINNET_PARACHAIN_URLS
   }
   // TODO support Paseo testnet

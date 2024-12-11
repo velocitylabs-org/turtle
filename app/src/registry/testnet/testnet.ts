@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Registry, snowbridgeWrapped } from '.'
+import { Registry, snowbridgeWrapped } from '..'
 
 /* Testnet :: Rococo - Sepolia */
 

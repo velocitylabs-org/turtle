@@ -4,7 +4,6 @@ import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { getNativeToken } from '@/registry'
-import { Eth, Polkadot } from '@/registry/mainnet'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
@@ -15,6 +14,7 @@ import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import { Eth, Polkadot } from '@/registry/mainnet/tokens'
 
 const useFees = (
   senderAddress?: string | null,
