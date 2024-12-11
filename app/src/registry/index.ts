@@ -3,6 +3,8 @@ import { Origin, Token } from '@/models/token'
 import { getRelayNode } from '@/utils/paraspell'
 import { assets, getNativeAssetSymbol, TCurrencyCore } from '@paraspell/sdk'
 import { Environment } from '../store/environmentStore'
+import { Bifrost, Hydration, Moonbeam, Mythos } from './mainnet/chains'
+import { Eth } from './mainnet/tokens'
 
 export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi'
 
@@ -39,14 +41,14 @@ export const REGISTRY = {
 }
 
 export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
-  rpcConnectionAsHttps(Mainnet.Mythos.rpcConnection),
-  rpcConnectionAsHttps(Mainnet.Bifrost.rpcConnection),
-  rpcConnectionAsHttps(Mainnet.Hydration.rpcConnection),
-  rpcConnectionAsHttps(Mainnet.Moonbeam.rpcConnection),
+  rpcConnectionAsHttps(Mythos.rpcConnection),
+  rpcConnectionAsHttps(Bifrost.rpcConnection),
+  rpcConnectionAsHttps(Hydration.rpcConnection),
+  rpcConnectionAsHttps(Moonbeam.rpcConnection),
 ]
 
 export function getNativeToken(chain: Chain): Token {
-  if (chain.network === 'Ethereum') return Mainnet.Eth.ETH
+  if (chain.network === 'Ethereum') return Eth.ETH
 
   const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
     ? Environment.Testnet
@@ -94,7 +96,7 @@ export function snowbridgeWrapped(): Origin {
 }
 
 // Hack - importing this after types definition to avoid circular dependency and import timing issues
-import * as Mainnet from './mainnet'
-import * as Testnet from './testnet'
-export * as Mainnet from './mainnet'
-export * as Testnet from './testnet'
+import * as Mainnet from './mainnet/mainnet'
+import * as Testnet from './testnet/testnet'
+export * as Mainnet from './mainnet/mainnet'
+export * as Testnet from './testnet/testnet'

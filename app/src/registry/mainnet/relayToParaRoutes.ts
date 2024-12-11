@@ -1,4 +1,4 @@
-import { Route } from '.'
+import { Route } from '..'
 import {
   Acala,
   AssetHub,
@@ -8,9 +8,9 @@ import {
   Hydration,
   Interlay,
   Moonbeam,
-  Polkadot,
   RelayChain,
-} from './mainnet'
+} from './chains'
+import { Polkadot } from './tokens'
 
 export const relayToParaRoutes: Route[] = [
   {
