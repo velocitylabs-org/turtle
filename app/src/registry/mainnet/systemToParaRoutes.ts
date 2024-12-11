@@ -1,5 +1,5 @@
 import { Route } from '..'
-import { AssetHub, Bifrost, Hydration, Moonbeam } from './chains'
+import { AssetHub, Bifrost, Centrifuge, Hydration, Moonbeam } from './chains'
 import { Eth, Polkadot } from './tokens'
 
 export const systemToParaRoutes: Route[] = [
@@ -20,5 +20,11 @@ export const systemToParaRoutes: Route[] = [
     to: Moonbeam.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
+  },
+  {
+    from: AssetHub.uid,
+    to: Centrifuge.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.USDC.id],
   },
 ]

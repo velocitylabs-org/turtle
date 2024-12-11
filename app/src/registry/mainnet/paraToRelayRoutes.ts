@@ -1,5 +1,5 @@
 import { Route } from '..'
-import { Acala, AssetHub, Bifrost, Interlay, RelayChain } from './chains'
+import { Acala, AssetHub, Bifrost, Interlay, Moonbeam, RelayChain } from './chains'
 import { Polkadot } from './tokens'
 
 export const paraToRelayRoutes: Route[] = [
@@ -23,6 +23,12 @@ export const paraToRelayRoutes: Route[] = [
   },
   {
     from: Interlay.uid,
+    to: RelayChain.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Moonbeam.uid,
     to: RelayChain.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
