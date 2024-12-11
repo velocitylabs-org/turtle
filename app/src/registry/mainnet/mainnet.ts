@@ -13,12 +13,7 @@ import {
   Polimec,
   RelayChain,
 } from './chains'
-import { paraToParaRoutes } from './paraToParaRoutes'
-import { paraToRelayRoutes } from './paraToRelayRoutes'
-import { paraToSystemRoutes } from './paraToSystemRoutes'
-import { relayToParaRoutes } from './relayToParaRoutes'
-import { snowbridgeRoutes } from './snowbridgeRoutes'
-import { systemToParaRoutes } from './systemToParaRoutes'
+import { routes } from './routes'
 import { Eth, Polkadot } from './tokens'
 
 /* Mainnet :: Polkadot - Ethereum */
@@ -64,14 +59,7 @@ export const REGISTRY: Registry = {
     Eth.SHIB,
     Eth.PEPE,
   ],
-  routes: [
-    ...snowbridgeRoutes,
-    ...relayToParaRoutes,
-    ...paraToRelayRoutes,
-    ...systemToParaRoutes,
-    ...paraToSystemRoutes,
-    ...paraToParaRoutes,
-  ],
+  routes,
   assetUid: new Map([
     [
       AssetHub.uid,
