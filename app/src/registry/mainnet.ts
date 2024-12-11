@@ -644,6 +644,18 @@ export const REGISTRY: Registry = {
     },
     {
       from: AssetHub.uid,
+      to: Centrifuge.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.USDC.id],
+    },
+    {
+      from: Centrifuge.uid,
+      to: AssetHub.uid,
+      sdk: 'ParaSpellApi',
+      tokens: [Polkadot.USDC.id],
+    },
+    {
+      from: AssetHub.uid,
       to: Hydration.uid,
       sdk: 'ParaSpellApi',
       tokens: [Polkadot.DOT.id, Polkadot.USDC.id, Polkadot.USDT.id],
