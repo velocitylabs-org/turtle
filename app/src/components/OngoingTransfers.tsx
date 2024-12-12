@@ -6,6 +6,8 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { ArrowRight } from './svg/ArrowRight'
+import { useEffect } from 'react'
+import { xcmOcceloidsSubscribe } from '@/utils/ocelloids'
 
 const OngoingTransfers = ({
   newTransferInit,
@@ -16,6 +18,13 @@ const OngoingTransfers = ({
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
   const { statusMessages } = useOngoingTransfersTracker()
+
+  useEffect(() => {
+    if (ongoingTransfers && ongoingTransfers.length > 0) {
+      console.log('SUBSCRIBE')
+      xcmOcceloidsSubscribe(ongoingTransfers[0].id)
+    }
+  }, [ongoingTransfers])
 
   return (
     <div id="ongoing-txs">
