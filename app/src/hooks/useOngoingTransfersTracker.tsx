@@ -13,6 +13,7 @@ import {
   getTransferStatus,
   isCompletedTransfer,
 } from '@/utils/transferTracking'
+import { captureException } from '@sentry/nextjs'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
@@ -180,6 +181,7 @@ const useOngoingTransfersTracker = () => {
           severity: NotificationSeverity.Warning,
           dismissible: true,
         })
+        captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
