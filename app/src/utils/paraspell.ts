@@ -69,10 +69,9 @@ export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: T
   const supportedAssets = assets.getAllAssetsSymbols(sourceChain)
 
   const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
-  // TODO: remove this fallback once ParaSpell supports all assets from our registry (temporary fix)
   // if (!tokenSymbol) throw new Error('Token symbol not supported.' + token.symbol)
 
-  return tokenSymbol ?? token.symbol
+  return tokenSymbol ?? token.symbol // TODO: remove this fallback once ParaSpell supports all assets from our registry (temporary fix)
 }
 
 export const getRelayNode = (env: Environment): 'polkadot' => {
