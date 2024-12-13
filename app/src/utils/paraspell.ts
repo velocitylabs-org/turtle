@@ -67,10 +67,12 @@ type ParaChain = Exclude<TNodeDotKsmWithRelayChains, 'Polkadot' | 'Kusama'>
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
   // TODO(victor): write some tests
   const supportedAssets = assets.getAllAssetsSymbols(sourceChain)
-  const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
-  if (!tokenSymbol) throw new Error('Token symbol not supported.')
 
-  return tokenSymbol
+  const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
+  // TODO: remove this fallback once ParaSpell supports all assets from our registry (temporary fix)
+  // if (!tokenSymbol) throw new Error('Token symbol not supported.' + token.symbol)
+
+  return tokenSymbol ?? token.symbol
 }
 
 export const getRelayNode = (env: Environment): 'polkadot' => {
