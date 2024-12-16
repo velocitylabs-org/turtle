@@ -137,6 +137,7 @@ export namespace Eth {
     address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
     multilocation:
       '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x582d872a1b094fc48f5de31d3b73f2d9be47def1"}}]}}',
+    coingeckoId: 'the-open-network',
     origin: snowbridgeWrapped(),
   }
 
