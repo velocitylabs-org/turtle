@@ -185,6 +185,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.USDC.id],
   },
+  {
+    from: AssetHub.uid,
+    to: Mythos.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Eth.MYTH.id],
+  },
 
   // Para To System Routes
   {
@@ -204,6 +210,12 @@ export const routes: Route[] = [
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.USDC.id],
+  },
+  {
+    from: Mythos.uid,
+    to: AssetHub.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Eth.MYTH.id],
   },
   // TODO: enable again once fixed
   /* {
