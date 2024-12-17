@@ -137,7 +137,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
         {/* Dropdown */}
         <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
           {options.map(option => {
-            if (option.token === null) return null
+            if (option.token === null || !option.allowed) return null
             return (
               <li
                 key={option.token.id}

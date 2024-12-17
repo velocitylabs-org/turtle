@@ -4,7 +4,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { getNativeToken } from '@/registry'
-import { Eth, Polkadot } from '@/registry/mainnet'
+import { Eth, Polkadot } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
@@ -26,7 +26,8 @@ const useFees = (
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
-  const { snowbridgeContext } = useSnowbridgeContext()
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
+    useSnowbridgeContext()
   const { addNotification } = useNotification()
   const env = useEnvironment()
 
@@ -37,7 +38,7 @@ const useFees = (
     }
 
     const direction = resolveDirection(sourceChain, destinationChain)
-    // TODO: this should be the fee token, not necessirly the native token. Also adjust the USD value accordingly below.
+    // TODO: this should be the fee token, not necessarily the native token. Also adjust the USD value accordingly below.
     const nativeToken = getNativeToken(sourceChain)
 
     try {
@@ -45,16 +46,26 @@ const useFees = (
       let fees: string
       let tokenUSDValue: number = 0
 
+      if (
+        (direction === Direction.ToEthereum || direction === Direction.ToPolkadot) &&
+        isSnowbridgeContextLoading
+      ) {
+        setFees(null)
+        return
+      }
+
       switch (direction) {
         case Direction.ToEthereum: {
-          if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
+          if (!snowbridgeContext || snowbridgeContextError)
+            throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
           tokenUSDValue = (await getCachedTokenPrice(Polkadot.DOT))?.usd ?? 0
           fees = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
 
         case Direction.ToPolkadot: {
-          if (!snowbridgeContext) throw new Error('Snowbridge context undefined')
+          if (!snowbridgeContext || snowbridgeContextError)
+            throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
           tokenUSDValue = (await getCachedTokenPrice(Eth.ETH))?.usd ?? 0
           fees = (
             await toPolkadot.getSendFee(
@@ -101,7 +112,7 @@ const useFees = (
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.log('Error: ', error)
+      console.error(error)
       addNotification({
         severity: NotificationSeverity.Error,
         message: 'Failed to fetch the fees. Please try again later.',
