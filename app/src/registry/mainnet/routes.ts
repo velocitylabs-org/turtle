@@ -152,13 +152,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
   },
-  // TODO enable again once fixed
-  /* {
+  {
     from: Moonbeam.uid,
     to: RelayChain.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
-  }, */
+  },
 
   // System To Para Routes
   {
@@ -217,13 +216,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Eth.MYTH.id],
   },
-  // TODO: enable again once fixed
-  /* {
+  {
     from: Moonbeam.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
-  }, */
+  },
 
   // Para To Para Routes
   {
@@ -261,8 +259,7 @@ export const routes: Route[] = [
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
     tokens: [
-      // TODO enable again once fixed
-      // Polkadot.DOT.id,
+      Polkadot.DOT.id,
       Polkadot.GLMR.id,
       // TODO: Works, but tracking doesn't!
       // Polkadot.VDOT.id
