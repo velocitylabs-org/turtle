@@ -7,7 +7,8 @@ import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { ArrowRight } from './svg/ArrowRight'
 import { useEffect } from 'react'
-import { xcmOcceloidsSubscribe } from '@/utils/ocelloids'
+import { getOcelloidsAgentApi, xcmOcceloidsSubscribe } from '@/utils/ocelloids'
+import { Direction, resolveDirection } from '@/services/transfer'
 
 const OngoingTransfers = ({
   newTransferInit,
@@ -19,12 +20,27 @@ const OngoingTransfers = ({
   )
   const { statusMessages } = useOngoingTransfersTracker()
 
+  const xcmTransfers = ongoingTransfers.filter(
+    t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot,
+  )
+
   useEffect(() => {
-    if (ongoingTransfers && ongoingTransfers.length > 0) {
-      console.log('SUBSCRIBE')
-      xcmOcceloidsSubscribe(ongoingTransfers[0].id)
+    const fetchAgentAndSubscribe = async () => {
+      if (xcmTransfers && xcmTransfers.length > 0) {
+        const xcmAgent = await getOcelloidsAgentApi()
+
+        if (xcmAgent) {
+          xcmTransfers.map(async t => {
+            await xcmOcceloidsSubscribe(xcmAgent, t)
+          })
+        } else {
+          console.error('Failed to initialize Ocelloids Agent')
+        }
+      }
     }
-  }, [ongoingTransfers])
+
+    fetchAgentAndSubscribe()
+  }, [xcmTransfers.length])
 
   return (
     <div id="ongoing-txs">
