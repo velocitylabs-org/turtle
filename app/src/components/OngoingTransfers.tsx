@@ -7,6 +7,7 @@ import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { ArrowRight } from './svg/ArrowRight'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
+import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 
 const OngoingTransfers = ({
   newTransferInit,
@@ -17,7 +18,7 @@ const OngoingTransfers = ({
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
   const { statusMessages } = useOngoingTransfersTracker()
-
+  useOngoingTransfersCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
 
   return (

@@ -278,7 +278,7 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
 
 /**
  * Checks if an ongoing transfer is outdated and should be marked as undefined:
- * - XCM transfers are considered outdated after 1 hour.
+ * - XCM transfers are considered outdated after 30 mins.
  * - Bridge transfers are considered outdated after 6 hours.
  *
  * @param transfer - The ongoing transfer to check.
@@ -286,7 +286,7 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
  */
 export const startedTooLongAgo = (
   transfer: StoredTransfer,
-  thresholdInHours = { xcm: 1, bridge: 6 },
+  thresholdInHours = { xcm: 0.5, bridge: 6 },
 ) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const timeBuffer =
