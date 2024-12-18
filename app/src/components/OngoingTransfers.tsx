@@ -6,9 +6,7 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { ArrowRight } from './svg/ArrowRight'
-import { useEffect } from 'react'
-import { getOcelloidsAgentApi, xcmOcceloidsSubscribe } from '@/utils/ocelloids'
-import { Direction, resolveDirection } from '@/services/transfer'
+import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 
 const OngoingTransfers = ({
   newTransferInit,
@@ -20,27 +18,7 @@ const OngoingTransfers = ({
   )
   const { statusMessages } = useOngoingTransfersTracker()
 
-  const xcmTransfers = ongoingTransfers.filter(
-    t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot,
-  )
-
-  useEffect(() => {
-    const fetchAgentAndSubscribe = async () => {
-      if (xcmTransfers && xcmTransfers.length > 0) {
-        const xcmAgent = await getOcelloidsAgentApi()
-
-        if (xcmAgent) {
-          xcmTransfers.map(async t => {
-            await xcmOcceloidsSubscribe(xcmAgent, t)
-          })
-        } else {
-          console.error('Failed to initialize Ocelloids Agent')
-        }
-      }
-    }
-
-    fetchAgentAndSubscribe()
-  }, [xcmTransfers.length])
+  useOcelloidsSubscribe(ongoingTransfers)
 
   return (
     <div id="ongoing-txs">
@@ -58,7 +36,7 @@ const OngoingTransfers = ({
               <button
                 onClick={() => newTransferInit === 'New' && setNewTransferInit('Done')}
                 disabled={!hasCompletedTransfers}
-                className="text-turtle-foreground)] flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
+                className="flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-turtle-foreground"
               >
                 <span>View completed transactions</span>{' '}
                 <ArrowRight

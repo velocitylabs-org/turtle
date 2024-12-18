@@ -17,7 +17,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => { })
+      .then(() => {})
       .catch(error => {
         console.error('Occeloids health error', error)
         throw new Error('Occeloids health failed')
@@ -121,7 +121,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => { },
+        onSubscriptionCreated: () => {},
         onSubscriptionError: console.error,
         onError: console.error,
       },
