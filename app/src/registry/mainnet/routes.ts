@@ -26,7 +26,6 @@ export const routes: Route[] = [
       Eth.USDC.id,
       Eth.USDT.id,
       Eth.DAI.id,
-      Eth.MYTH.id,
       Eth.WSTETH.id,
       Eth.TBTC.id,
       Eth.TON.id,
