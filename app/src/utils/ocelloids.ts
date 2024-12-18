@@ -1,4 +1,5 @@
-import { OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
+import { StoredTransfer } from '@/models/transfer'
+import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 
 const apiKey = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
 
@@ -7,37 +8,38 @@ export const initOcelloidsClient = () =>
     apiKey,
   })
 
-export const xcmOcceloidsSubscribe = async (txHash?: string) => {
+export const getOcelloidsAgentApi = async (): Promise<
+  OcelloidsAgentApi<xcm.XcmInputs> | undefined
+> => {
   try {
-    console.log({ apiKey })
     const OCLD_ClIENT = initOcelloidsClient()
-    OCLD_ClIENT.health().then(console.log).catch(console.error)
 
-    const xcmAgent = OCLD_ClIENT.agent<xcm.XcmInputs>('xcm')
-    console.log('xcmAgent', xcmAgent)
+    await OCLD_ClIENT.health()
+      .then(() => {})
+      .catch(error => {
+        console.error('Occeloids health error', error)
+        throw new Error('Occeloids health failed')
+      })
 
-    // // Retrieve all active subscriptions (including public read-only ones)
-    // const subs = await xcmAgent.allSubscriptions();
+    return OCLD_ClIENT.agent<xcm.XcmInputs>('xcm')
+  } catch (error) {
+    console.log(error)
+  }
+}
 
-    const ws = await xcmAgent.subscribe<xcm.XcmMessagePayload>(
-      // {
-      //     origin: 'urn:ocn:polkadot:0', // Polkdaot relaychain => Ephemeral subscription
-      //     senders: '*',
-      //     events: '*',
-      //     destinations: [
-      //         'urn:ocn:polkadot:1000', // AH
-      //         'urn:ocn:polkadot:2030', // Bifrost
-      //     ],
-      // },
-      'test-polkadot-xcm', // Permanent Subscribtion POSTed on Ocelloids API from Polkadot
+export const xcmOcceloidsSubscribe = async (
+  ocelloidsAgentApi: OcelloidsAgentApi<xcm.XcmInputs>,
+  transfer: StoredTransfer,
+) => {
+  try {
+    if (!ocelloidsAgentApi) throw new Error('Occeloids Agent is undefined')
+    const { id: txHash, sourceChain, destChain } = transfer
+    const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
+      getSubscription(sourceChain.chainId, destChain.chainId),
       {
         onMessage: msg => {
-          console.log('inside subscribtion')
           const payload = msg.payload
-          if (
-            // match origin message by extrinsic hash
-            payload.origin.extrinsicHash === txHash
-          ) {
+          if (payload.origin.extrinsicHash === txHash) {
             // Handle different XCM event types
             switch (payload.type) {
               case 'xcm.sent':
@@ -47,31 +49,49 @@ export const xcmOcceloidsSubscribe = async (txHash?: string) => {
                 console.log('RELAYED', payload)
                 break
               case 'xcm.hop':
-                console.log('HOP', payload)
+                console.log('HOP - TRANSFER FAILED', payload)
                 break
               case 'xcm.received':
-                console.log('RECEIVED', payload)
+                console.log('RECEIVED - TRANSFER RECEIVED', payload)
                 ws.close()
                 break
               case 'xcm.timeout':
-                console.log('TIMEOUT', payload)
+                console.log('TIMEOUT - TRANSFER FAILED', payload)
                 ws.close()
-                break
-              case 'xcm.bridge':
-                console.log('BRIDGED', payload)
                 break
               default:
                 throw new Error('Unsupported XCM payload type')
             }
           }
         },
-        // Handle WebSocket errors
-        onError: error => console.log('WebSocket Error:', error),
-        // Handle WebSocket closure
-        onClose: event => console.log('WebSocket Closed:', event.reason),
+        onAuthError: error => console.log('Auth Error', error),
+        onError: error => console.log('WebSocket Error', error),
+        onClose: event => console.log('WebSocket Closed', event.reason),
+      },
+      {
+        onSubscriptionCreated: () => {},
+        onSubscriptionError: console.error,
+        onError: console.error,
       },
     )
   } catch (error) {
-    console.log('Catch', error)
+    console.log(error)
+  }
+}
+
+type Consensus = 'polkadot'
+
+const getSubscription = (
+  sourceChainId: number,
+  destChainId: number,
+  sender?: string,
+  events?: xcm.XcmNotificationType[],
+  consensus: Consensus = 'polkadot',
+): xcm.XcmInputs => {
+  return {
+    origin: `urn:ocn:${consensus}:${sourceChainId}`,
+    senders: sender ? [sender] : '*',
+    events: events ? events : '*',
+    destinations: [`urn:ocn:${consensus}:${destChainId}`],
   }
 }
