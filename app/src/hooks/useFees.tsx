@@ -7,6 +7,7 @@ import { getNativeToken } from '@/registry'
 import { Eth, Polkadot } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { getExampleAddress } from '@/utils/address'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
@@ -32,7 +33,7 @@ const useFees = (
   const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token || !recipient || !senderAddress) {
+    if (!sourceChain || !destinationChain || !token) {
       setFees(null)
       return
     }
@@ -90,8 +91,9 @@ const useFees = (
             destination: destinationChainNode,
             currency,
             amount: BigInt(10 ** token.decimals).toString(), // hardcoded amount because the fee is usually independent of the amount
-            account: senderAddress,
-            accountDestination: recipient,
+            account: senderAddress ?? getExampleAddress(sourceChain.supportedAddressTypes[0]),
+            accountDestination:
+              recipient ?? getExampleAddress(destinationChain.supportedAddressTypes[0]),
             api: sourceChain.rpcConnection,
           })
           tokenUSDValue = (await getCachedTokenPrice(nativeToken))?.usd ?? 0
