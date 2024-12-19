@@ -17,16 +17,20 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
 
   useEffect(() => {
     const fetchAgentAndSubscribe = async () => {
-      if (xcmTransfers && xcmTransfers.length > 0) {
+      if (xcmTransfers.length === 0) return
+      try {
         const xcmAgent = await getOcelloidsAgentApi()
+        if (!xcmAgent) throw new Error('Failed to initialize Ocelloids Agent')
 
-        if (xcmAgent) {
-          xcmTransfers.map(async t => {
+        for (const t of xcmTransfers) {
+          try {
             await xcmOcceloidsSubscribe(xcmAgent, t, remove, addCompletedTransfer, addNotification)
-          })
-        } else {
-          console.error('Failed to initialize Ocelloids Agent')
+          } catch (error) {
+            console.error('Error subscribing to transfer:', t, error)
+          }
         }
+      } catch (error) {
+        console.error('Error during Ocelloids subscription:', error)
       }
     }
 
