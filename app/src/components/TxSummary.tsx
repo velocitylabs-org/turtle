@@ -117,17 +117,6 @@ const TxSummary: FC<TxSummaryProps> = ({
               </div>
               <div className="items-right flex items-center space-x-0.5">
                 <div className="text-turtle-foreground">{durationEstimate}</div>
-                {direction === Direction.WithinPolkadot && (
-                  <Tooltip
-                    showIcon={false}
-                    content={
-                      'Your tokens should land in ~30s but our services usually take ~2 minutes to catch up'
-                    }
-                    className="max-w-xs text-center sm:max-w-sm"
-                  >
-                    <Info className="h-3 w-3 text-turtle-foreground" />
-                  </Tooltip>
-                )}
               </div>
             </li>
           </ul>
