@@ -81,10 +81,12 @@ const useParaspellApi = () => {
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
 
+              const id = getTxId(result)
+
               // Update the ongoing tx entry now containing the necessary
               // fields to be able to track its progress.
               addOrUpdate({
-                id: getTxId(result),
+                id,
                 sourceChain,
                 token,
                 tokenUSDValue,
@@ -102,6 +104,7 @@ const useParaspellApi = () => {
               } satisfies StoredTransfer)
 
               trackTransferMetrics({
+                id,
                 sender: senderAddress,
                 sourceChain: sourceChain.name,
                 token: token.name,
