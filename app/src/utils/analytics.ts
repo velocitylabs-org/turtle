@@ -1,4 +1,6 @@
 import { captureException } from '@sentry/nextjs'
+import { Environment } from '@/store/environmentStore'
+import { isProduction } from '@/utils/env'
 
 export interface TransferMetric {
   id?: string
@@ -11,9 +13,14 @@ export interface TransferMetric {
   usdFees: number
   recipient: string
   date: Date
+  environment: Environment
 }
 
 export async function trackTransferMetrics(data: TransferMetric) {
+  if (data.environment !== Environment.Mainnet || !isProduction) {
+    return
+  }
+
   const databaseUrl =
     'https://firestore.googleapis.com/v1/projects/' +
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID +
