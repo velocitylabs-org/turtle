@@ -216,7 +216,7 @@ export function getDurationEstimate(direction: Direction): string {
     // which is both safe and keeps us from needing to cascade a type-safe setup for these
     // use cases in the meantime.
     case Direction.WithinPolkadot:
-      return '~2 min'
+      return '~30-45s'
     case Direction.WithinEthereum:
       return '~5 min'
 
