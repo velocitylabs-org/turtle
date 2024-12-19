@@ -29,6 +29,8 @@ export async function trackTransferMetrics(data: TransferMetric) {
     '?' +
     new URLSearchParams({ documentId: data.id ?? crypto.randomUUID() }).toString()
 
+  const hostedOn = window.location.origin
+
   const userData = {
     fields: {
       amount: { stringValue: data.amount },
@@ -40,6 +42,7 @@ export async function trackTransferMetrics(data: TransferMetric) {
       token: { stringValue: data.token },
       usdFees: { doubleValue: data.usdFees },
       usdValue: { doubleValue: data.usdValue },
+      hostedOn: { stringValue: hostedOn },
     },
   }
 
