@@ -1,19 +1,26 @@
 import { captureException } from '@sentry/nextjs'
+
+import { AmountInfo } from '@/models/transfer'
+import { Chain } from '@/models/chain'
 import { Environment } from '@/store/environmentStore'
+import { Token } from '@/models/token'
 import { isProduction } from '@/utils/env'
+import { toHuman } from '@/utils/transfer'
 
 export interface TransferMetric {
-  id?: string
-  sender: string
-  sourceChain: string
-  token: string
-  amount: string
-  destinationChain: string
-  usdValue: number
-  usdFees: number
-  recipient: string
-  date: Date
   environment: Environment
+
+  token: Token
+  fees: AmountInfo
+  sender: string
+  sourceChain: Chain
+  recipient: string
+  destinationChain: Chain
+  date: Date
+
+  id?: string
+  amount: bigint
+  tokenUSDValue: number
 }
 
 export async function trackTransferMetrics(data: TransferMetric) {
@@ -29,20 +36,35 @@ export async function trackTransferMetrics(data: TransferMetric) {
     '?' +
     new URLSearchParams({ documentId: data.id ?? crypto.randomUUID() }).toString()
 
-  const hostedOn = window.location.origin
-
   const userData = {
     fields: {
-      amount: { stringValue: data.amount },
+      tokenName: { stringValue: data.token.name },
+      tokenSymbol: { stringValue: data.token.symbol },
+      tokenAmount: { doubleValue: toHuman(data.amount, data.token) },
+      tokenAmountUsd: {
+        doubleValue: toHuman(data.amount, data.token) * data.tokenUSDValue,
+      },
+
+      feesTokenName: { stringValue: data.fees.token.name },
+      feesTokenSymbol: { stringValue: data.fees.token.symbol },
+      feesAmount: { doubleValue: toHuman(data.fees.amount, data.fees.token) },
+      feesAmountUsd: { doubleValue: data.fees.inDollars },
+
+      senderAddress: { stringValue: data.sender },
+      sourceChainName: { stringValue: data.sourceChain.name },
+      sourceChainNetwork: { stringValue: data.sourceChain.network },
+
+      recipientAddress: { stringValue: data.recipient },
+      destinationChainName: { stringValue: data.destinationChain.name },
+      destinationChainNetwork: { stringValue: data.destinationChain.network },
+
       date: { timestampValue: { seconds: Math.floor(data.date.getTime() / 1000) } },
-      destinationChain: { stringValue: data.destinationChain },
-      recipient: { stringValue: data.recipient },
-      sender: { stringValue: data.sender },
-      sourceChain: { stringValue: data.sourceChain },
-      token: { stringValue: data.token },
-      usdFees: { doubleValue: data.usdFees },
-      usdValue: { doubleValue: data.usdValue },
-      hostedOn: { stringValue: hostedOn },
+
+      // Additional info for debugging.
+      txId: { stringValue: data.id ?? '' },
+      appHostedOn: { stringValue: window.location.origin },
+      amount: { stringValue: data.amount.toString() },
+      currentTokenPriceUSD: { doubleValue: data.tokenUSDValue },
     },
   }
 

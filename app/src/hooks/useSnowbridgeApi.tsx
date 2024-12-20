@@ -179,14 +179,14 @@ const useSnowbridgeApi = () => {
       trackTransferMetrics({
         id: sendResult.success?.messageId,
         sender: senderAddress,
-        sourceChain: sourceChain.name,
-        token: token.name,
-        amount: amount.toString(),
-        destinationChain: destinationChain.name,
-        usdValue: tokenUSDValue ?? 0,
-        usdFees: fees.inDollars,
-        recipient: recipient,
-        date: date,
+        sourceChain,
+        token,
+        amount,
+        destinationChain,
+        tokenUSDValue,
+        fees,
+        recipient,
+        date,
         environment,
       })
     } catch (e) {
