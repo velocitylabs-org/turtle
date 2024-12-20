@@ -88,8 +88,7 @@ const useFees = (
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
-            currency,
-            amount: BigInt(10 ** token.decimals).toString(), // hardcoded amount because the fee is usually independent of the amount
+            currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
             account: senderAddress,
             accountDestination: recipient,
             api: sourceChain.rpcConnection,

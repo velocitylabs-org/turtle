@@ -15,7 +15,7 @@ import { captureException } from '@sentry/nextjs'
  * Creates a submittable extrinsic transaction hash using Paraspell Builder.
  *
  * @param params - The transfer parameters
- * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain. // Should not be needed.
+ * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
  * @returns - A Promise that resolves a submittable extrinsic transaction.
  */
 export const createTx = async (

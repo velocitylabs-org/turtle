@@ -1,15 +1,12 @@
 import { NotificationSeverity } from '@/models/notification'
-import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
-import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
-import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx } from '@/utils/paraspell'
-import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
+import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
@@ -34,18 +31,42 @@ const useParaspellApi = () => {
     } = params
 
     const account = sender as SubstrateAccount
+
     const senderAddress = await getSenderAddress(sender)
     const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
     const date = new Date()
-    let locked = false
+    // let locked = false
+
+    if (!account.signer?.signPayload || !account.signer?.signRaw)
+      throw new Error('Signer not found')
 
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
+
       setStatus('Signing')
 
-      tx.signSubmitAndWatch()
+      const polkadotSigner = getPolkadotSignerFromPjs(
+        account.address,
+        account.signer.signPayload as SignPayload,
+        account.signer.signRaw as SignRaw,
+      )
 
-      await tx.signAndSend(
+      tx.signSubmitAndWatch(polkadotSigner).subscribe({
+        next: event => {
+          console.log('Tx event: ', event.type)
+          if (event.type === 'txBestBlocksState') {
+            console.log('The tx is now in a best block, check it out:')
+            console.log(`https://polkadot.subscan.io/extrinsic/${event.txHash}`)
+          }
+        },
+        error: console.error,
+        complete() {
+          console.log('The transaction is complete')
+        },
+      })
+
+      setStatus('Idle')
+      /* await tx.signAndSend(
         account.address,
         { signer: account.signer },
         async (result: ISubmittableResult) => {
@@ -125,7 +146,7 @@ const useParaspellApi = () => {
             handleSendError(sender, callbackError, setStatus, getTxId(result))
           }
         },
-      )
+      ) */
     } catch (e) {
       handleSendError(sender, e, setStatus)
     }
