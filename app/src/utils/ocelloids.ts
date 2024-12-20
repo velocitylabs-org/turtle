@@ -17,7 +17,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => {})
+      .then(() => { })
       .catch(error => {
         console.error('Occeloids health error', error)
         throw new Error('Occeloids health failed')
@@ -58,7 +58,6 @@ export const xcmOcceloidsSubscribe = async (
   addNotification: (notification: Omit<Notification, 'id'>) => void,
 ) => {
   try {
-    if (!ocelloidsAgentApi) throw new Error('Occeloids Agent is undefined')
     const { id: txHash, sourceChain, destChain } = transfer
     const explorerLink = getExplorerLink(transfer)
 
@@ -76,6 +75,18 @@ export const xcmOcceloidsSubscribe = async (
               case xcm.XcmNotificationType.Relayed:
                 console.log('RELAYED', payload)
                 break
+              case xcm.XcmNotificationType.Received:
+                console.log('TRANSFER RECEIVED', payload)
+                handleTransferRecord(
+                  transfer,
+                  remove,
+                  addCompletedTransfer,
+                  addNotification,
+                  xcm.XcmNotificationType.Received,
+                  explorerLink,
+                )
+                ws.close()
+                break
               case xcm.XcmNotificationType.Hop:
                 console.log('HOP - TRANSFER FAILED', payload)
                 handleTransferRecord(
@@ -87,20 +98,8 @@ export const xcmOcceloidsSubscribe = async (
                   explorerLink,
                 )
                 break
-              case xcm.XcmNotificationType.Received:
-                console.log('RECEIVED - TRANSFER RECEIVED', payload)
-                handleTransferRecord(
-                  transfer,
-                  remove,
-                  addCompletedTransfer,
-                  addNotification,
-                  xcm.XcmNotificationType.Received,
-                  explorerLink,
-                )
-                ws.close()
-                break
               case xcm.XcmNotificationType.Timeout:
-                console.log('TIMEOUT - TRANSFER FAILED', payload)
+                console.log('TRACKING TIMED OUT', payload)
                 handleTransferRecord(
                   transfer,
                   remove,
@@ -111,8 +110,10 @@ export const xcmOcceloidsSubscribe = async (
                 )
                 ws.close()
                 break
-              default:
-                throw new Error('Unsupported XCM payload type')
+              default: {
+                console.error('Unsupported XCM payload type')
+                break
+              }
             }
           }
         },
@@ -121,7 +122,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => {},
+        onSubscriptionCreated: () => { },
         onSubscriptionError: console.error,
         onError: console.error,
       },
@@ -139,7 +140,10 @@ const handleTransferRecord = (
   xcmMsgType: xcm.XcmNotificationType,
   explorerLink?: string,
 ) => {
-  const { status, message, severity } = getResultData(xcmMsgType)
+  const resultData = getResultData(xcmMsgType)
+  if (!resultData) return
+
+  const { status, message, severity } = resultData
 
   remove(transfer.id)
 
@@ -165,7 +169,7 @@ const handleTransferRecord = (
   })
 }
 
-const getResultData = (xcmMsgType: xcm.XcmNotificationType): ResultData => {
+const getResultData = (xcmMsgType: xcm.XcmNotificationType): ResultData | undefined => {
   switch (xcmMsgType) {
     case xcm.XcmNotificationType.Hop:
       return {
@@ -181,11 +185,15 @@ const getResultData = (xcmMsgType: xcm.XcmNotificationType): ResultData => {
         status: TxStatus.Undefined,
       }
 
-    default:
+    case xcm.XcmNotificationType.Received:
       return {
         message: 'Transfer completed!',
         severity: NotificationSeverity.Success,
         status: TxStatus.Succeeded,
       }
+
+    default:
+      console.error("Unsupported Ocelloids XCM notification type")
+      return
   }
 }
