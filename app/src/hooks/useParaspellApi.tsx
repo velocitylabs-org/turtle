@@ -43,6 +43,8 @@ const useParaspellApi = () => {
       const tx = await createTx(params, sourceChain.rpcConnection)
       setStatus('Signing')
 
+      tx.signSubmitAndWatch()
+
       await tx.signAndSend(
         account.address,
         { signer: account.signer },
