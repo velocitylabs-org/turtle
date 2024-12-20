@@ -24,17 +24,18 @@ export interface TransferMetric {
 }
 
 export async function trackTransferMetrics(data: TransferMetric) {
-  if (data.environment !== Environment.Mainnet || !isProduction) {
+  if (
+    !process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
+    data.environment !== Environment.Mainnet ||
+    !isProduction
+  ) {
     return
   }
 
   const databaseUrl =
     'https://firestore.googleapis.com/v1/projects/' +
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID +
-    '/databases/(default)/documents/' +
-    process.env.NEXT_PUBLIC_FIREBASE_TX_COLLECTION_ID +
-    '?' +
-    new URLSearchParams({ documentId: data.id ?? crypto.randomUUID() }).toString()
+    '/databases/(default)/documents/turtle-txs'
 
   const userData = {
     fields: {
