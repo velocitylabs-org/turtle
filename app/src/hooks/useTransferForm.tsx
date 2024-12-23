@@ -124,7 +124,7 @@ const useTransferForm = () => {
 
       if (
         !isSameDestination &&
-        isTokenAvailableForSourceChain(environment, newValue, tokenAmount?.token)
+        isTokenAvailableForSourceChain(environment, newValue, destinationChain, tokenAmount?.token)
       )
         return
 
