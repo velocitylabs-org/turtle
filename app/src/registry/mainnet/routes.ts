@@ -26,7 +26,6 @@ export const routes: Route[] = [
       Eth.USDC.id,
       Eth.USDT.id,
       Eth.DAI.id,
-      Eth.MYTH.id,
       Eth.WSTETH.id,
       Eth.TBTC.id,
       Eth.TON.id,
@@ -344,5 +343,17 @@ export const routes: Route[] = [
     to: Moonbeam.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id, Polkadot.ASTR.id, Polkadot.GLMR.id],
+  },
+  {
+    from: Mythos.uid,
+    to: Hydration.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Eth.MYTH.id],
+  },
+  {
+    from: Hydration.uid,
+    to: Mythos.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Eth.MYTH.id],
   },
 ]
