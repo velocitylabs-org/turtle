@@ -1,4 +1,5 @@
 import { NotificationSeverity } from '@/models/notification'
+import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
@@ -37,7 +38,7 @@ const useParaspellApi = () => {
     const date = new Date()
     // let locked = false
 
-    if (!account.signer?.signPayload || !account.signer?.signRaw)
+    if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
       throw new Error('Signer not found')
 
     try {
@@ -47,25 +48,54 @@ const useParaspellApi = () => {
 
       const polkadotSigner = getPolkadotSignerFromPjs(
         account.address,
-        account.signer.signPayload as SignPayload,
-        account.signer.signRaw as SignRaw,
+        account.pjsSigner.signPayload as SignPayload,
+        account.pjsSigner.signRaw as SignRaw,
       )
 
+      const res = await tx.signAndSubmit(polkadotSigner)
+      res.events.forEach(event => {
+        console.log(event)
+      })
+
       tx.signSubmitAndWatch(polkadotSigner).subscribe({
-        next: event => {
+        next: async event => {
           console.log('Tx event: ', event.type)
-          if (event.type === 'txBestBlocksState') {
-            console.log('The tx is now in a best block, check it out:')
-            console.log(`https://polkadot.subscan.io/extrinsic/${event.txHash}`)
+          if (event.type === 'signed') {
+            // add to ongoing transfers
+            // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
+            // and unlocking the UI by resetting the form back to 'Idle'.
+            await new Promise(_ =>
+              setTimeout(function () {
+                setStatus('Idle')
+                onComplete?.()
+                addOrUpdate({
+                  id: event.txHash.toString(),
+                  sourceChain,
+                  token,
+                  tokenUSDValue,
+                  sender: senderAddress,
+                  destChain: destinationChain,
+                  amount: amount.toString(),
+                  recipient,
+                  date,
+                  environment,
+                  fees,
+                  status: `Submitting to ${sourceChain.name}`,
+                } satisfies StoredTransfer)
+              }, 2000),
+            )
           }
         },
-        error: console.error,
+        error: error => {
+          throw new Error(error)
+        },
         complete() {
           console.log('The transaction is complete')
         },
       })
 
-      setStatus('Idle')
+      setStatus('Sending')
+
       /* await tx.signAndSend(
         account.address,
         { signer: account.signer },
@@ -168,9 +198,7 @@ const useParaspellApi = () => {
       ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected'
       : 'Failed to submit the transfer'
 
-    if (txId) {
-      removeOngoing(txId)
-    }
+    if (txId) removeOngoing(txId)
 
     captureException(e)
     addNotification({

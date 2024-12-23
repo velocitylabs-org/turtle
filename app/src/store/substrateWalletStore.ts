@@ -3,7 +3,7 @@ import { Signer } from '@polkadot/types/types'
 import { create } from 'zustand'
 
 export interface SubstrateAccount extends InjectedAccount {
-  signer: Signer | undefined
+  pjsSigner: Signer | undefined
 }
 
 interface State {

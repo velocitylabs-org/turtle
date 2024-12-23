@@ -8,8 +8,8 @@ import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
-import { txWasCancelled } from '@/utils/transfer'
 import { isProduction } from '@/utils/env'
+import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
@@ -143,7 +143,7 @@ const useSnowbridgeApi = () => {
 
         case Direction.ToEthereum: {
           const account = sender as SubstrateAccount
-          const signer = { signer: account.signer, address: sender.address }
+          const signer = { signer: account.pjsSigner, address: sender.address }
           sendResult = await toEthereum.send(
             context,
             signer as WalletOrKeypair,
@@ -226,7 +226,7 @@ const useSnowbridgeApi = () => {
 
       case Direction.ToEthereum: {
         const account = sender as SubstrateAccount
-        const signer = { signer: account.signer, address: sender.address }
+        const signer = { signer: account.pjsSigner, address: sender.address }
         return await toEthereum.validateSend(
           context,
           signer as WalletOrKeypair,
