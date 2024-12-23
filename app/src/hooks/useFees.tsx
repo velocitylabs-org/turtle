@@ -7,7 +7,7 @@ import { getNativeToken } from '@/registry'
 import { Eth, Polkadot } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getExampleAddress } from '@/utils/address'
+import { getPlaceholderAddress } from '@/utils/address'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
@@ -18,11 +18,9 @@ import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
-  senderAddress?: string | null,
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
-  recipient?: string | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
@@ -90,10 +88,9 @@ const useFees = (
             origin: sourceChainNode,
             destination: destinationChainNode,
             currency,
-            amount: BigInt(10 ** token.decimals).toString(), // hardcoded amount because the fee is usually independent of the amount
-            account: senderAddress ?? getExampleAddress(sourceChain.supportedAddressTypes[0]),
-            accountDestination:
-              recipient ?? getExampleAddress(destinationChain.supportedAddressTypes[0]),
+            amount: BigInt(10 ** token.decimals).toString(), // hardcode amount because the fee is usually independent of the amount
+            account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
+            accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,
           })
           tokenUSDValue = (await getCachedTokenPrice(nativeToken))?.usd ?? 0
@@ -124,16 +121,7 @@ const useFees = (
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    env,
-    sourceChain,
-    destinationChain,
-    token?.id,
-    recipient,
-    snowbridgeContext,
-    senderAddress,
-    addNotification,
-  ])
+  }, [env, sourceChain, destinationChain, token?.id, snowbridgeContext, addNotification])
 
   useEffect(() => {
     fetchFees()
