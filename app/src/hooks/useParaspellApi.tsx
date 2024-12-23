@@ -80,7 +80,6 @@ const useParaspellApi = () => {
             const eventsData = handleSubmittableEvents(result)
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
-
               const id = getTxId(result)
 
               // Update the ongoing tx entry now containing the necessary
