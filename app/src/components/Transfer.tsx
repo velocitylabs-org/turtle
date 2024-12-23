@@ -131,12 +131,7 @@ const Transfer: FC = () => {
     canPayFees
 
   const shouldDisplayTxSummary =
-    isValid &&
-    tokenAmount &&
-    tokenAmount.token &&
-    !!tokenAmount.amount &&
-    !allowanceLoading &&
-    !requiresErc20SpendApproval
+    tokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 
   return (
     <form
