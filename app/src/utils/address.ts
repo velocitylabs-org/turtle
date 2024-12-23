@@ -92,8 +92,8 @@ export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: W
 export const getSenderAddress = async (sender: Sender): Promise<string> =>
   sender instanceof JsonRpcSigner ? await sender.getAddress() : (sender as InjectedAccount).address
 
-/** Get an example address for a specific type. Can be used to prefetch the fees before address input, as fees shouldn't differ. */
-export const getExampleAddress = (type: AddressType): string => {
+/** Get a placeholder address for a specific type. Can be used to prefetch the fees before address input, as fees shouldn't differ. */
+export const getPlaceholderAddress = (type: AddressType): string => {
   switch (type) {
     case 'evm':
       return '0xC1af060ab8213AD5EE2Dab1a5891245eBe756400' // Velocity Address
