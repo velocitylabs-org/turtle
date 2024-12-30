@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/nextjs'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink } from './transfer'
@@ -17,15 +18,18 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => {})
+      .then(() => { })
       .catch(error => {
-        console.error('Occeloids health error', error)
-        throw new Error('Occeloids health failed')
+        const errorMsg = 'Occeloids health error'
+        console.error(errorMsg, error)
+        captureException(errorMsg, error)
+        throw new Error(errorMsg)
       })
 
     return OCLD_ClIENT.agent<xcm.XcmInputs>('xcm')
   } catch (error) {
     console.log(error)
+    captureException(error)
   }
 }
 
@@ -59,7 +63,6 @@ export const xcmOcceloidsSubscribe = async (
 ) => {
   try {
     const { id: txHash, sourceChain, destChain } = transfer
-    const explorerLink = getExplorerLink(transfer)
 
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
       getSubscription(sourceChain.chainId, destChain.chainId),
@@ -79,11 +82,10 @@ export const xcmOcceloidsSubscribe = async (
                 console.log('TRANSFER RECEIVED', payload)
                 handleTransferRecord(
                   transfer,
+                  xcm.XcmNotificationType.Received,
                   remove,
                   addCompletedTransfer,
                   addNotification,
-                  xcm.XcmNotificationType.Received,
-                  explorerLink,
                 )
                 ws.close()
                 break
@@ -91,22 +93,20 @@ export const xcmOcceloidsSubscribe = async (
                 console.log('HOP - TRANSFER FAILED', payload)
                 handleTransferRecord(
                   transfer,
+                  xcm.XcmNotificationType.Hop,
                   remove,
                   addCompletedTransfer,
                   addNotification,
-                  xcm.XcmNotificationType.Hop,
-                  explorerLink,
                 )
                 break
               case xcm.XcmNotificationType.Timeout:
                 console.log('TRACKING TIMED OUT', payload)
                 handleTransferRecord(
                   transfer,
+                  xcm.XcmNotificationType.Timeout,
                   remove,
                   addCompletedTransfer,
                   addNotification,
-                  xcm.XcmNotificationType.Timeout,
-                  explorerLink,
                 )
                 ws.close()
                 break
@@ -122,28 +122,29 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => {},
+        onSubscriptionCreated: () => { },
         onSubscriptionError: console.error,
         onError: console.error,
       },
     )
   } catch (error) {
     console.log(error)
+    captureException(error, { extra: { transfer } })
   }
 }
 
 const handleTransferRecord = (
   transfer: StoredTransfer,
+  xcmMsgType: xcm.XcmNotificationType,
   remove: (id: string) => void,
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
-  xcmMsgType: xcm.XcmNotificationType,
-  explorerLink?: string,
 ) => {
   const resultData = getResultData(xcmMsgType)
   if (!resultData) return
 
   const { status, message, severity } = resultData
+  const explorerLink = getExplorerLink(transfer)
 
   remove(transfer.id)
 
@@ -167,6 +168,9 @@ const handleTransferRecord = (
     severity,
     dismissible: true,
   })
+
+  if (xcmMsgType === (xcm.XcmNotificationType.Hop || xcm.XcmNotificationType.Timeout))
+    captureException(new Error(`Ocelloids tracking error:${message}`), { extra: { transfer } })
 }
 
 const getResultData = (xcmMsgType: xcm.XcmNotificationType): ResultData | undefined => {
