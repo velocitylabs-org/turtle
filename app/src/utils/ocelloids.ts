@@ -1,10 +1,53 @@
 import { captureException } from '@sentry/nextjs'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import {
+  CompletedTransfer,
+  OngoingTransferWithDirection,
+  StoredTransfer,
+  TxStatus,
+} from '@/models/transfer'
 import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { getExplorerLink } from './transfer'
+import { getExplorerLink, parachainsOnly } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
+import { Direction, resolveDirection } from '@/services/transfer'
+import { Interlay } from '@/registry/mainnet/chains'
+import { Polkadot } from '@/registry/mainnet/tokens'
+
+type ResultData = {
+  message: string
+  severity: NotificationSeverity
+  status: TxStatus
+}
 
 const apiKey = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
+
+// TMP Helper until Ocelloids supports Interlay transfers
+export const isFromOrToInterlay = (
+  transfer: StoredTransfer | OngoingTransferWithDirection,
+): boolean => {
+  const { sourceChain, destChain } = transfer
+  return sourceChain.chainId === Interlay.chainId || destChain.chainId === Interlay.chainId
+}
+
+// TMP Helper until Ocelloids supports DOT transfers between non system chains.
+export const isTokenDotBtwParachains = (
+  transfer: StoredTransfer | OngoingTransferWithDirection,
+): boolean => {
+  return transfer.token.id === Polkadot.DOT.id && parachainsOnly(transfer)
+}
+
+// Helper to filter the subscribable transfers only
+export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
+  if (transfers.length === 0) return []
+  return transfers.filter(t => {
+    // Filters XCM transfers only
+    if (resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot) {
+      // Exclude transfer if it contains Interlay as source or destination chain, or if DOT is transfered between parachains
+      if (isFromOrToInterlay(t) || isTokenDotBtwParachains(t)) return false
+      return true
+    }
+    return false
+  })
+}
 
 export const initOcelloidsClient = () =>
   new OcelloidsClient({
@@ -30,27 +73,6 @@ export const getOcelloidsAgentApi = async (): Promise<
   } catch (error) {
     console.log(error)
     captureException(error)
-  }
-}
-
-type ResultData = {
-  message: string
-  severity: NotificationSeverity
-  status: TxStatus
-}
-
-const getSubscription = (
-  sourceChainId: number,
-  destChainId: number,
-  sender?: string,
-  events?: xcm.XcmNotificationType[],
-): xcm.XcmInputs => {
-  const consensus = 'polkadot'
-  return {
-    origin: `urn:ocn:${consensus}:${sourceChainId}`,
-    senders: sender ? [sender] : '*',
-    events: events ? events : '*',
-    destinations: [`urn:ocn:${consensus}:${destChainId}`],
   }
 }
 
@@ -130,6 +152,21 @@ export const xcmOcceloidsSubscribe = async (
   } catch (error) {
     console.log(error)
     captureException(error, { extra: { transfer } })
+  }
+}
+
+const getSubscription = (
+  sourceChainId: number,
+  destChainId: number,
+  sender?: string,
+  events?: xcm.XcmNotificationType[],
+): xcm.XcmInputs => {
+  const consensus = 'polkadot'
+  return {
+    origin: `urn:ocn:${consensus}:${sourceChainId}`,
+    senders: sender ? [sender] : '*',
+    events: events ? events : '*',
+    destinations: [`urn:ocn:${consensus}:${destChainId}`],
   }
 }
 

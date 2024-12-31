@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { getOcelloidsAgentApi, xcmOcceloidsSubscribe } from '@/utils/ocelloids'
-import { Direction, resolveDirection } from '@/services/transfer'
+import {
+  getOcelloidsAgentApi,
+  getSubscribableTransfers,
+  xcmOcceloidsSubscribe,
+} from '@/utils/ocelloids'
 import { StoredTransfer } from '@/models/transfer'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
@@ -10,12 +13,9 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
   const { remove } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
-
   const { current: subscribedTransfers } = useRef(new Set<string>())
 
-  const xcmTransfers = ongoingTransfers.filter(
-    t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot,
-  )
+  const xcmTransfers = getSubscribableTransfers(ongoingTransfers)
 
   const fetchAgentAndSubscribe = async () => {
     if (xcmTransfers.length === 0) return
