@@ -1,12 +1,19 @@
 import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
-import { Network } from '@/models/chain'
+import { Network, Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
+import {
+  AmountInfo,
+  CompletedTransfer,
+  OngoingTransferWithDirection,
+  StoredTransfer,
+  TransfersByDate,
+} from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
+import { AssetHub, RelayChain } from '@/registry/mainnet/chains'
 
 /**
  * Safe version of `convertAmount` that handles `null` and `undefined` params
@@ -294,4 +301,26 @@ export const startedTooLongAgo = (
       ? thresholdInHours.xcm * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
+}
+
+/**
+ * Checks if a chain is not a system chain (Asset Hub or Relaychain) but a parachain.
+ *
+ * @param chain - The chain to check.
+ * @returns A boolean indicating whether the chain is a system chain (Asset Hub or Relaychain) or a parachain.
+ */
+export const isParachain = (chain: Chain): boolean =>
+  chain.chainId !== AssetHub.chainId && chain.chainId !== RelayChain.chainId
+
+/**
+ * Checks if a both the source chain and the destination chain of a transfer are parachains
+ *
+ * @param transfer - The ongoing transfer to check.
+ * @returns A boolean indicating whether the transfers source and destination are parachains.
+ */
+export const parachainsOnly = (
+  transfer: StoredTransfer | OngoingTransferWithDirection,
+): boolean => {
+  const { sourceChain, destChain } = transfer
+  return isParachain(sourceChain) && isParachain(destChain)
 }
