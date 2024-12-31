@@ -17,7 +17,7 @@ const OngoingTransfers = ({
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
-  const { statusMessages } = useOngoingTransfersTracker()
+  const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
   useOngoingTransfersCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
 

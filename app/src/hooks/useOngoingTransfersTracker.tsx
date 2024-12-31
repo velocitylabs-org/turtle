@@ -19,15 +19,16 @@ import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
+import { isFromOrToInterlay, isTokenDotBtwParachains } from '@/utils/ocelloids'
 
 type ID = string
 type Message = string
 
-const useOngoingTransfersTracker = () => {
+const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
-  const { remove, ongoingTransfers, updateUniqueId } = useOngoingTransfers()
+  const { remove, updateUniqueId } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const env = useEnvironment()
@@ -52,7 +53,14 @@ const useOngoingTransfersTracker = () => {
           }),
         }
       })
-      .filter(t => t.direction !== Direction.WithinPolkadot)
+      .filter(t => {
+        if (t.direction === Direction.WithinPolkadot) {
+          // Include transfers that contain Interlay as source or destination chain, or if DOT is transfered between parachains
+          if (isFromOrToInterlay(t) || isTokenDotBtwParachains(t)) return true
+          return false
+        }
+        return true
+      })
   }
 
   const fetchTransfers = useCallback(async () => {
