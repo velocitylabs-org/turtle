@@ -9,7 +9,7 @@ import {
   TCurrencyCore,
   TNodeDotKsmWithRelayChains,
   type TPapiTransaction,
-} from '@paraspell/sdk'  // assets,
+} from '@paraspell/sdk' // assets,
 import { captureException } from '@sentry/nextjs'
 
 /**
