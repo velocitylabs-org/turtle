@@ -1,7 +1,7 @@
 import { Chain } from '@/models/chain'
 import { Origin, Token } from '@/models/token'
 import { getRelayNode } from '@/utils/paraspell'
-import { assets, getNativeAssetSymbol, TCurrencyCore } from '@paraspell/sdk'
+import { getNativeAssetSymbol, getTNode, TCurrencyCore } from '@paraspell/sdk' // assets
 import { Environment } from '../store/environmentStore'
 import { Bifrost, Hydration, Moonbeam, Mythos } from './mainnet/chains'
 import { Eth } from './mainnet/tokens'
@@ -55,7 +55,7 @@ export function getNativeToken(chain: Chain): Token {
     : Environment.Mainnet
 
   const relay = getRelayNode(env)
-  const chainNode = assets.getTNode(chain.chainId, relay)
+  const chainNode = getTNode(chain.chainId, relay)
   if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
 
   const symbol = getNativeAssetSymbol(chainNode)
