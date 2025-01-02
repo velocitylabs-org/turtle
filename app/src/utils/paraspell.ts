@@ -3,12 +3,13 @@ import { Token } from '@/models/token'
 import { getAssetUid } from '@/registry'
 import { Environment } from '@/store/environmentStore'
 import {
-  assets,
   Builder,
+  getAllAssetsSymbols,
+  getTNode,
   TCurrencyCore,
   TNodeDotKsmWithRelayChains,
-  TPapiTransaction,
-} from '@paraspell/sdk/papi'
+  type TPapiTransaction,
+} from '@paraspell/sdk'  // assets,
 import { captureException } from '@sentry/nextjs'
 
 /**
@@ -25,8 +26,8 @@ export const createTx = async (
   const { environment, sourceChain, destinationChain, token, amount, recipient } = params
 
   const relay = getRelayNode(environment)
-  const sourceChainFromId = assets.getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = assets.getTNode(destinationChain.chainId, relay)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
   else {
@@ -42,7 +43,7 @@ export const createTx = async (
 }
 
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
-  const supportedAssets = assets.getAllAssetsSymbols(sourceChain)
+  const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
   if (!tokenSymbol) captureException(new Error(`Token symbol not found: ${token.symbol}`))

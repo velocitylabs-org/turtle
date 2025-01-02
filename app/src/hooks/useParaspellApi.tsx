@@ -12,6 +12,7 @@ import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
+import { TxEvent } from 'polkadot-api'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -53,13 +54,13 @@ const useParaspellApi = () => {
         account.pjsSigner.signRaw as SignRaw,
       )
 
-      const res = await tx.signAndSubmit(polkadotSigner)
-      res.events.forEach(event => {
-        console.log(event)
-      })
+      // const res = await tx.signAndSubmit(polkadotSigner)
+      // res.events.forEach((event: TxEvent) => {
+      //   console.log(event)
+      // })
 
       tx.signSubmitAndWatch(polkadotSigner).subscribe({
-        next: async event => {
+        next: async (event: TxEvent) => {
           console.log('Tx event: ', event.type)
           if (event.type === 'broadcasted') {
             // add to ongoing transfers
@@ -128,7 +129,7 @@ const useParaspellApi = () => {
             return
           }
         },
-        error: error => {
+        error: (error: any) => {
           throw new Error(error)
         },
         complete() {
