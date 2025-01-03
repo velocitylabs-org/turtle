@@ -1,5 +1,5 @@
-import { Chain } from '@/models/chain'
 import { DWELLIR_KEY } from '@/config'
+import { Chain } from '@/models/chain'
 
 export const Ethereum: Chain = {
   uid: 'ethereum',
@@ -76,7 +76,7 @@ export const Moonbeam: Chain = {
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
   supportedAddressTypes: ['evm'],
-  walletType: 'SubstrateEVM',
+  walletType: 'EVM',
   rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
 }
 
