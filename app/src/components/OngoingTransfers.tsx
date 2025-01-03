@@ -6,6 +6,8 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { ArrowRight } from './svg/ArrowRight'
+import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
+import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 
 const OngoingTransfers = ({
   newTransferInit,
@@ -15,7 +17,9 @@ const OngoingTransfers = ({
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
-  const { statusMessages } = useOngoingTransfersTracker()
+  const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
+  useOngoingTransfersCleaner(ongoingTransfers)
+  useOcelloidsSubscribe(ongoingTransfers)
 
   return (
     <div id="ongoing-txs">
@@ -33,7 +37,7 @@ const OngoingTransfers = ({
               <button
                 onClick={() => newTransferInit === 'New' && setNewTransferInit('Done')}
                 disabled={!hasCompletedTransfers}
-                className="text-turtle-foreground)] flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg"
+                className="flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-turtle-foreground"
               >
                 <span>View completed transactions</span>{' '}
                 <ArrowRight
