@@ -33,7 +33,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
         } satisfies CompletedTransfer)
 
         addNotification({
-          message: 'Transfer verification failed.',
+          message: 'Transfer tracking failed',
           severity: NotificationSeverity.Warning,
           dismissible: true,
         })
