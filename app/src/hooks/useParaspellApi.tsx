@@ -1,7 +1,6 @@
 import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
-import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
@@ -104,20 +103,19 @@ const useParaspellApi = () => {
                 status: `Arriving at ${destinationChain.name}`,
               } satisfies StoredTransfer)
 
-              // metrics
-              if (environment === Environment.Mainnet) {
-                trackTransferMetrics({
-                  sender: senderAddress,
-                  sourceChain: sourceChain.name,
-                  token: token.name,
-                  amount: amount.toString(),
-                  destinationChain: destinationChain.name,
-                  usdValue: tokenUSDValue,
-                  usdFees: fees.inDollars,
-                  recipient: recipient,
-                  date,
-                })
-              }
+              trackTransferMetrics({
+                id,
+                sender: senderAddress,
+                sourceChain,
+                token,
+                amount,
+                destinationChain,
+                tokenUSDValue,
+                fees,
+                recipient,
+                date,
+                environment,
+              })
               setStatus('Idle')
               return
             }

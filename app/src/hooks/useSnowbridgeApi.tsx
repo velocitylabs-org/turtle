@@ -4,11 +4,9 @@ import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
-import { isProduction } from '@/utils/env'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
@@ -178,20 +176,19 @@ const useSnowbridgeApi = () => {
         fees,
       } satisfies StoredTransfer)
 
-      if (environment === Environment.Mainnet && isProduction) {
-        trackTransferMetrics({
-          id: sendResult.success?.messageId,
-          sender: senderAddress,
-          sourceChain: sourceChain.name,
-          token: token.name,
-          amount: amount.toString(),
-          destinationChain: destinationChain.name,
-          usdValue: tokenUSDValue ?? 0,
-          usdFees: fees.inDollars,
-          recipient: recipient,
-          date: date,
-        })
-      }
+      trackTransferMetrics({
+        id: sendResult.success?.messageId,
+        sender: senderAddress,
+        sourceChain,
+        token,
+        amount,
+        destinationChain,
+        tokenUSDValue,
+        fees,
+        recipient,
+        date,
+        environment,
+      })
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(e)
