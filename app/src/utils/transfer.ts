@@ -318,7 +318,7 @@ export const isParachain = (chain: Chain): boolean =>
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfers source and destination are parachains.
  */
-export const parachainsOnly = (
+export const isParachainToParachain = (
   transfer: StoredTransfer | OngoingTransferWithDirection,
 ): boolean => {
   const { sourceChain, destChain } = transfer

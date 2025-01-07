@@ -6,7 +6,7 @@ import {
   TxStatus,
 } from '@/models/transfer'
 import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { getExplorerLink, parachainsOnly } from './transfer'
+import { getExplorerLink, isParachainToParachain } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Interlay } from '@/registry/mainnet/chains'
@@ -32,7 +32,7 @@ export const isFromOrToInterlay = (
 export const isTransferringDotBetweenParachains = (
   transfer: StoredTransfer | OngoingTransferWithDirection,
 ): boolean => {
-  return transfer.token.id === Polkadot.DOT.id && parachainsOnly(transfer)
+  return transfer.token.id === Polkadot.DOT.id && isParachainToParachain(transfer)
 }
 
 // Helper to filter the subscribable transfers only
