@@ -31,6 +31,7 @@ export const modal = createAppKit({
   networks:
     process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet, moonbeam],
   defaultNetwork: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? sepolia : mainnet,
+  allowUnsupportedChain: false,
   metadata: metadata,
   projectId,
   themeMode: 'light',

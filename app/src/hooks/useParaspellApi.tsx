@@ -1,3 +1,4 @@
+import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
 import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
@@ -8,9 +9,9 @@ import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
+import { switchChain } from '@wagmi/core'
 import { TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
-import { createWalletClient, custom } from 'viem'
 import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import useNotification from './useNotification'
@@ -44,16 +45,10 @@ const useParaspellApi = () => {
 
     try {
       if (sourceChain.uid === 'moonbeam') {
-        const signer = createWalletClient({
-          account: sender.address as `0x${string}`,
-          chain: moonbeam,
-          transport: custom(window.ethereum as any),
-        })
-
-        console.log(signer)
-
-        const hash = await moonbeamTransfer(params, signer)
+        await switchChain(config, { chainId: moonbeam.id })
+        const hash = await moonbeamTransfer(params, client)
         console.log('Moonbeam transfer hash:', hash)
+        setStatus('Idle')
       } else {
         const account = sender as SubstrateAccount
 

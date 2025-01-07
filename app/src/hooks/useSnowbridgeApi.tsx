@@ -1,3 +1,4 @@
+import { config } from '@/config'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
@@ -13,7 +14,9 @@ import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
+import { switchChain } from '@wagmi/core'
 import { Signer } from 'ethers'
+import { mainnet } from 'wagmi/chains'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -37,7 +40,6 @@ const useSnowbridgeApi = () => {
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    setStatus('Loading')
     const {
       sender,
       sourceChain,
@@ -59,7 +61,7 @@ const useSnowbridgeApi = () => {
         })
         return
       }
-
+      await switchChain(config, { chainId: mainnet.id })
       const direction = resolveDirection(sourceChain, destinationChain)
 
       const plan = await validate(

@@ -1,4 +1,5 @@
 'use client'
+import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
 import useTransfer from '@/hooks/useTransfer'
@@ -7,12 +8,15 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
+import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { safeConvertAmount } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { mainnet } from 'viem/chains'
 import { formatAmount } from '../utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
@@ -107,11 +111,12 @@ const useTransferForm = () => {
   }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
-    (newValue: Chain | null) => {
+    async (newValue: Chain | null) => {
       setValue('sourceChain', newValue)
 
-      if (!newValue || newValue.uid === sourceChain?.uid) return
+      if (newValue?.uid === Ethereum.uid) await switchChain(config, { chainId: mainnet.id }) // needed to fetch balance correctly
 
+      if (!newValue || newValue.uid === sourceChain?.uid) return
       const isSameDestination = destinationChain?.uid === newValue.uid
 
       if (
@@ -119,14 +124,16 @@ const useTransferForm = () => {
         tokenAmount &&
         !isSameDestination &&
         isRouteAllowed(environment, newValue, destinationChain, tokenAmount)
-      )
+      ) {
         return
+      }
 
       if (
         !isSameDestination &&
         isTokenAvailableForSourceChain(environment, newValue, tokenAmount?.token)
-      )
+      ) {
         return
+      }
 
       // Reset destination and token only if the conditions above are not met
       setValue('destinationChain', null)
