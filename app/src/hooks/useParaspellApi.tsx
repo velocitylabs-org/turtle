@@ -6,6 +6,7 @@ import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
+import { handleObservableEvents } from '@/utils/papi'
 import { createTx, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
@@ -105,19 +106,21 @@ const useParaspellApi = () => {
     }
 
     if (event.type === 'txBestBlocksState') {
-      updateOngoingTransfers(event.txHash.toString(), params, senderAddress, tokenUSDValue, date)
+      updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date)
 
       if (params.environment === Environment.Mainnet && isProduction) {
         trackTransferMetrics({
+          id: event.txHash.toString(),
           sender: senderAddress,
-          sourceChain: params.sourceChain.name,
-          token: params.token.name,
-          amount: params.amount.toString(),
-          destinationChain: params.destinationChain.name,
-          usdValue: tokenUSDValue,
-          usdFees: params.fees.inDollars,
+          sourceChain: params.sourceChain,
+          token: params.token,
+          amount: params.amount,
+          destinationChain: params.destinationChain,
+          tokenUSDValue,
+          fees: params.fees,
           recipient: params.recipient,
           date,
+          environment: params.environment,
         })
       }
 
@@ -159,26 +162,36 @@ const useParaspellApi = () => {
   }
 
   const updateOngoingTransfers = (
-    txHash: string,
+    event: TxEvent,
     params: TransferParams,
     senderAddress: string,
     tokenUSDValue: number,
     date: Date,
   ) => {
-    addOrUpdate({
-      id: txHash,
-      sourceChain: params.sourceChain,
-      token: params.token,
-      tokenUSDValue,
-      sender: senderAddress,
-      destChain: params.destinationChain,
-      amount: params.amount.toString(),
-      recipient: params.recipient,
-      date,
-      environment: params.environment,
-      fees: params.fees,
-      status: `Arriving at ${params.destinationChain.name}`,
-    })
+    const eventsData = handleObservableEvents(event)
+    if (eventsData) {
+      const { messageHash, messageId, extrinsicIndex } = eventsData
+
+      // Update the ongoing tx entry now containing the necessary
+      // fields to be able to track its progress.
+      addOrUpdate({
+        id: event.txHash.toString(),
+        sourceChain: params.sourceChain,
+        token: params.token,
+        tokenUSDValue,
+        sender: senderAddress,
+        destChain: params.destinationChain,
+        amount: params.amount.toString(),
+        recipient: params.recipient,
+        date,
+        environment: params.environment,
+        fees: params.fees,
+        ...(messageHash && { crossChainMessageHash: messageHash }),
+        ...(messageId && { parachainMessageId: messageId }),
+        ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
+        status: `Arriving at ${params.destinationChain.name}`,
+      })
+    }
   }
 
   const handleSendError = (
@@ -189,14 +202,12 @@ const useParaspellApi = () => {
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
-
-    const message = txWasCancelled(sender, e)
-      ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected'
-      : 'Failed to submit the transfer'
+    const cancelledByUser = txWasCancelled(sender, e)
+    const message = cancelledByUser ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected' : 'Failed to submit the transfer'
 
     if (txId) removeOngoing(txId)
+    if (!cancelledByUser) captureException(e)
 
-    captureException(e)
     addNotification({
       message,
       severity: NotificationSeverity.Error,

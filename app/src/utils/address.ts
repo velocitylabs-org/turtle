@@ -91,3 +91,13 @@ export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: W
 /** Get the transfer sender address from the sender origin base (Substrate or Ethereum)*/
 export const getSenderAddress = async (sender: Sender): Promise<string> =>
   sender instanceof JsonRpcSigner ? await sender.getAddress() : (sender as InjectedAccount).address
+
+/** Get a placeholder address for a specific type. Can be used to prefetch the fees before address input, as fees shouldn't differ. */
+export const getPlaceholderAddress = (type: AddressType): string => {
+  switch (type) {
+    case 'evm':
+      return '0xC1af060ab8213AD5EE2Dab1a5891245eBe756400' // Velocity Address
+    case 'ss58':
+      return '5EkE3p9hnUi5p14d7pJnDBjiNYqPNPSutKbyAuvV3mFGGxPi' // Velocity Address
+  }
+}
