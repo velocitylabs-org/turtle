@@ -50,7 +50,8 @@ export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
 }
 
 export const initOcelloidsClient = () => {
-  if (!OCELLOIDS_API_KEY || !OCELLOIDS_API_KEY.length) throw new Error("OCELLOIDS_API_KEY is undefined")
+  if (!OCELLOIDS_API_KEY || !OCELLOIDS_API_KEY.length)
+    throw new Error('OCELLOIDS_API_KEY is undefined')
   return new OcelloidsClient({
     apiKey: OCELLOIDS_API_KEY,
   })
@@ -63,7 +64,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => { })
+      .then(() => {})
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -87,12 +88,12 @@ export const getOcelloidsAgentApi = async (): Promise<
  * @param addCompletedTransfer - A callback function to add an ongoing transfer to the completed storage.
  * @param addNotification - A callback function to add a notification.
  *
- * It creates a WebSocket connection to listen for XCM events for the provided transfer 
+ * It creates a WebSocket connection to listen for XCM events for the provided transfer
  * and processes event:`Received`, `Hop`, and `Timeout`.
  * - Handles the transfer record with the callbacks.
  * - Closes the WebSocket connection once the transfer is processed.
  * - Handles execution and connection errors.
- * 
+ *
  */
 export const xcmOcceloidsSubscribe = async (
   ocelloidsAgentApi: OcelloidsAgentApi<xcm.XcmInputs>,
@@ -114,7 +115,7 @@ export const xcmOcceloidsSubscribe = async (
             switch (payload.type) {
               case xcm.XcmNotificationType.Sent:
               case xcm.XcmNotificationType.Relayed:
-                break;
+                break
               case xcm.XcmNotificationType.Received:
                 updateTransferStatus(
                   transfer,
@@ -156,12 +157,12 @@ export const xcmOcceloidsSubscribe = async (
         onAuthError: error => console.log('Auth Error', error),
         onError: error => {
           console.log('Ocelloids WebSocket Error', error)
-          captureException(error, { extra: { ocelloids: "WebSocket Error" } })
+          captureException(error, { extra: { ocelloids: 'WebSocket Error' } })
         },
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => { },
+        onSubscriptionCreated: () => {},
         onSubscriptionError: console.error,
         onError: console.error,
       },
