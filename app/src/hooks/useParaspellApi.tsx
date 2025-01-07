@@ -80,11 +80,11 @@ const useParaspellApi = () => {
           try {
             const eventsData = handleObservableEvents(event)
             if (eventsData) {
-              // Update the ongoing tx entry now containing the necessary
-              // fields to be able to track its progress.
               const { messageHash, messageId, extrinsicIndex } = eventsData
               const id = getTxId(event)
 
+              // Update the ongoing tx entry now containing the necessary
+              // fields to be able to track its progress.
               addOrUpdate({
                 id,
                 sourceChain,
@@ -119,8 +119,8 @@ const useParaspellApi = () => {
               setStatus('Idle')
               return
             }
-          } catch (callbackError) {
-            handleSendError(sender, callbackError, setStatus, getTxId(event))
+          } catch (error) {
+            handleSendError(sender, error, setStatus, getTxId(event))
           }
         },
         error: e => {
@@ -153,11 +153,11 @@ const useParaspellApi = () => {
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
-    const txCancelled = txWasCancelled(sender, e)
-    const message = txCancelled ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected' : 'Failed to submit the transfer'
+    const cancelledByUser = txWasCancelled(sender, e)
+    const message = cancelledByUser ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected' : 'Failed to submit the transfer'
 
     if (txId) removeOngoing(txId)
-    if (!txCancelled) captureException(e)
+    if (!cancelledByUser) captureException(e)
 
     addNotification({
       message,
