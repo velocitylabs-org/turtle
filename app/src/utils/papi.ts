@@ -1,8 +1,11 @@
 import { TxEvent } from 'polkadot-api'
 
 export const handleObservableEvents = (event: TxEvent) => {
+  // Wait until block is finalized or in a best block state
   if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
+    // Verify transaction hash
     if (!event.txHash) throw new Error('Failed to generate the transaction hash')
+    // Handle execution and extrinsic errors
     if (!event.ok) {
       const dispatchError = event.dispatchError
       if (dispatchError.type === 'Module') {

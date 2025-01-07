@@ -123,12 +123,12 @@ const useParaspellApi = () => {
             handleSendError(sender, error, setStatus, getTxId(event))
           }
         },
-        error: e => {
-          if (e instanceof InvalidTxError) {
-            console.log(`InvalidTxError - TransactionValidityError: ${e.error}`)
-            handleSendError(sender, e, setStatus)
+        error: callbackError => {
+          if (callbackError instanceof InvalidTxError) {
+            console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
+            handleSendError(sender, callbackError, setStatus)
           }
-          handleSendError(sender, e, setStatus)
+          handleSendError(sender, callbackError, setStatus)
         },
         complete() {
           console.log('The transaction is complete')
