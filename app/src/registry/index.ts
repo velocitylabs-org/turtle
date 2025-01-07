@@ -1,7 +1,7 @@
 import { Chain } from '@/models/chain'
 import { Origin, Token } from '@/models/token'
 import { getRelayNode } from '@/utils/paraspell'
-import { getNativeAssetSymbol, getTNode, TCurrencyCore } from '@paraspell/sdk' // assets
+import { getNativeAssetSymbol, getTNode, TCurrencyCore } from '@paraspell/sdk'
 import { Environment } from '../store/environmentStore'
 import { Bifrost, Hydration, Moonbeam, Mythos } from './mainnet/chains'
 import { Eth } from './mainnet/tokens'
