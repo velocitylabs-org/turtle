@@ -19,7 +19,7 @@ import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { isFromOrToInterlay, isTokenDotBtwParachains } from '@/utils/ocelloids'
+import { isFromOrToInterlay, isTransferringDotBetweenParachains } from '@/utils/ocelloids'
 
 type ID = string
 type Message = string
@@ -56,7 +56,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
       .filter(t => {
         if (t.direction === Direction.WithinPolkadot) {
           // Include transfers that contain Interlay as source or destination chain, or if DOT is transfered between parachains
-          if (isFromOrToInterlay(t) || isTokenDotBtwParachains(t)) return true
+          if (isFromOrToInterlay(t) || isTransferringDotBetweenParachains(t)) return true
           return false
         }
         return true
