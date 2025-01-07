@@ -49,6 +49,7 @@ const useParaspellApi = () => {
     const date = new Date()
     await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
 
+    // TODO: figure out how to add crosschain event stuff
     // TODO: decide when to track metrics. We don't have PAPI events to determine if tx was included in block. We only have the hash.
   }
 
