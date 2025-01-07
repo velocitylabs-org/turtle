@@ -134,6 +134,7 @@ export const xcmOcceloidsSubscribe = async (
                   addCompletedTransfer,
                   addNotification,
                 )
+                ws.close()
                 break
               case xcm.XcmNotificationType.Timeout:
                 updateTransferStatus(
