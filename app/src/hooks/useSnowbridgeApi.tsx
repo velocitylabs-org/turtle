@@ -1,3 +1,4 @@
+import { config } from '@/config'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
@@ -11,7 +12,9 @@ import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
+import { switchChain } from '@wagmi/core'
 import { Signer } from 'ethers'
+import { mainnet } from 'wagmi/chains'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -35,7 +38,6 @@ const useSnowbridgeApi = () => {
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    setStatus('Loading')
     const {
       sender,
       sourceChain,
@@ -57,7 +59,7 @@ const useSnowbridgeApi = () => {
         })
         return
       }
-
+      await switchChain(config, { chainId: mainnet.id })
       const direction = resolveDirection(sourceChain, destinationChain)
 
       const plan = await validate(
@@ -141,7 +143,7 @@ const useSnowbridgeApi = () => {
 
         case Direction.ToEthereum: {
           const account = sender as SubstrateAccount
-          const signer = { signer: account.signer, address: sender.address }
+          const signer = { signer: account.pjsSigner, address: sender.address }
           sendResult = await toEthereum.send(
             context,
             signer as WalletOrKeypair,
@@ -223,7 +225,7 @@ const useSnowbridgeApi = () => {
 
       case Direction.ToEthereum: {
         const account = sender as SubstrateAccount
-        const signer = { signer: account.signer, address: sender.address }
+        const signer = { signer: account.pjsSigner, address: sender.address }
         return await toEthereum.validateSend(
           context,
           signer as WalletOrKeypair,

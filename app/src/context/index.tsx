@@ -2,7 +2,7 @@
 import { wagmiAdapter } from '@/config'
 import { Environment } from '@/store/environmentStore'
 import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
-import { mainnet, sepolia } from '@reown/appkit/networks'
+import { mainnet, moonbeam, sepolia } from '@reown/appkit/networks'
 import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
@@ -28,8 +28,10 @@ const metadata = {
 // Create modal
 export const modal = createAppKit({
   adapters: [wagmiAdapter],
-  networks: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet],
+  networks:
+    process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet, moonbeam],
   defaultNetwork: process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? sepolia : mainnet,
+  allowUnsupportedChain: false,
   metadata: metadata,
   projectId,
   themeMode: 'light',
