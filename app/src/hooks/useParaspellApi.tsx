@@ -11,7 +11,7 @@ import { createTx, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
-import { TxEvent } from 'polkadot-api'
+import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
@@ -78,8 +78,12 @@ const useParaspellApi = () => {
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) =>
         await handleTxEvent(event, params, senderAddress, tokenUSDValue, date, setStatus),
-      error: (error: any) => {
-        throw new Error(error)
+      error: callbackError => {
+        if (callbackError instanceof InvalidTxError) {
+          console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
+          handleSendError(params.sender, callbackError, setStatus)
+        }
+        handleSendError(params.sender, callbackError, setStatus)
       },
       complete: () => console.log('The transaction is complete'),
     })
@@ -95,7 +99,7 @@ const useParaspellApi = () => {
     date: Date,
     setStatus: (status: Status) => void,
   ) => {
-    if (event.type === 'broadcasted') {
+    if (event.type === 'signed') {
       await addToOngoingTransfers(
         event.txHash.toString(),
         params,
