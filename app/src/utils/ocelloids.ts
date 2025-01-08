@@ -64,7 +64,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => { })
+      .then(() => {})
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -103,15 +103,16 @@ export const xcmOcceloidsSubscribe = async (
   addNotification: (notification: Omit<Notification, 'id'>) => void,
 ) => {
   try {
-    const { id: txHash, sourceChain, destChain } = transfer
-    console.log({ txHash, sourceChain, destChain })
+    const { id: txHash, sourceChain, destChain, sender } = transfer
+    console.log({ txHash, sourceChain, destChain, sender })
+    // Sender must only be used with EVM parachain
 
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
-      getSubscription(sourceChain.chainId, destChain.chainId),
+      getSubscription(sourceChain.chainId, destChain.chainId, sender),
       {
         onMessage: msg => {
           const payload = msg.payload
-          console.log("payload", payload)
+          console.log('payload', payload)
 
           if (payload.origin.extrinsicHash === txHash) {
             // Handle different XCM event types
@@ -166,7 +167,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => { },
+        onSubscriptionCreated: () => {},
         onSubscriptionError: console.error,
         onError: console.error,
       },
