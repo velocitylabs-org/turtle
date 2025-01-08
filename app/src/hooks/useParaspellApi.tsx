@@ -106,24 +106,27 @@ const useParaspellApi = () => {
       )
     }
 
-    if (event.type === 'txBestBlocksState') {
+    try {
       updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date)
+    } catch (error) {
+      handleSendError(params.sender, error, setStatus, event.txHash.toString())
+    }
 
-      if (params.environment === Environment.Mainnet && isProduction) {
-        trackTransferMetrics({
-          id: event.txHash.toString(),
-          sender: senderAddress,
-          sourceChain: params.sourceChain,
-          token: params.token,
-          amount: params.amount,
-          destinationChain: params.destinationChain,
-          tokenUSDValue,
-          fees: params.fees,
-          recipient: params.recipient,
-          date,
-          environment: params.environment,
-        })
-      }
+    if (params.environment === Environment.Mainnet && isProduction) {
+      console.log('Tracking called')
+      trackTransferMetrics({
+        id: event.txHash.toString(),
+        sender: senderAddress,
+        sourceChain: params.sourceChain,
+        token: params.token,
+        amount: params.amount,
+        destinationChain: params.destinationChain,
+        tokenUSDValue,
+        fees: params.fees,
+        recipient: params.recipient,
+        date,
+        environment: params.environment,
+      })
 
       setStatus('Idle')
     }
@@ -136,7 +139,7 @@ const useParaspellApi = () => {
     tokenUSDValue: number,
     date: Date,
     setStatus: (status: Status) => void,
-  ) => {
+  ): Promise<void> => {
     // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
     // and unlocking the UI by resetting the form back to 'Idle'.
     await new Promise(resolve =>
@@ -170,29 +173,29 @@ const useParaspellApi = () => {
     date: Date,
   ) => {
     const eventsData = handleObservableEvents(event)
-    if (eventsData) {
-      const { messageHash, messageId, extrinsicIndex } = eventsData
+    if (!eventsData) return
 
-      // Update the ongoing tx entry now containing the necessary
-      // fields to be able to track its progress.
-      addOrUpdate({
-        id: event.txHash.toString(),
-        sourceChain: params.sourceChain,
-        token: params.token,
-        tokenUSDValue,
-        sender: senderAddress,
-        destChain: params.destinationChain,
-        amount: params.amount.toString(),
-        recipient: params.recipient,
-        date,
-        environment: params.environment,
-        fees: params.fees,
-        ...(messageHash && { crossChainMessageHash: messageHash }),
-        ...(messageId && { parachainMessageId: messageId }),
-        ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
-        status: `Arriving at ${params.destinationChain.name}`,
-      })
-    }
+    const { messageHash, messageId, extrinsicIndex } = eventsData
+
+    // Update the ongoing tx entry now containing the necessary
+    // fields to be able to track its progress.
+    addOrUpdate({
+      id: event.txHash.toString(),
+      sourceChain: params.sourceChain,
+      token: params.token,
+      tokenUSDValue,
+      sender: senderAddress,
+      destChain: params.destinationChain,
+      amount: params.amount.toString(),
+      recipient: params.recipient,
+      date,
+      environment: params.environment,
+      fees: params.fees,
+      ...(messageHash && { crossChainMessageHash: messageHash }),
+      ...(messageId && { parachainMessageId: messageId }),
+      ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
+      status: `Arriving at ${params.destinationChain.name}`,
+    })
   }
 
   const handleSendError = (
