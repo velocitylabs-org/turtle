@@ -20,6 +20,7 @@ import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
+// import { customCaptureException } from '@/utils/sentry'
 
 type ID = string
 type Message = string
@@ -182,6 +183,12 @@ const useOngoingTransfersTracker = () => {
           dismissible: true,
         })
         captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
+        // customCaptureException(
+        //   new Error('Transfer tracking failed'),
+        //   'error',
+        //   [{ hook: 'useOngoingTransferCleaner' }],
+        //   { transfer: ongoingTransfers[0] },
+        // )
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
