@@ -1,18 +1,18 @@
 'use client'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
+import useTokenPrice from '@/hooks/useTokenPrice'
+import { Chain } from '@/models/chain'
 import { SelectProps, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { cn } from '@/utils/cn'
+import NumberFlow from '@number-flow/react'
 import { forwardRef, useRef, useState } from 'react'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
+import { TokenLogo } from './TokenLogo'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
-import { TokenLogo } from './TokenLogo'
-import { Chain } from '@/models/chain'
-import NumberFlow from '@number-flow/react'
-import useTokenPrice from '@/hooks/useTokenPrice'
 
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
   sourceChain: Chain | null
@@ -123,7 +123,14 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 />
                 {inDollars && (
                   <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
-                    <NumberFlow value={inDollars} prefix="$" />
+                    <NumberFlow
+                      value={inDollars}
+                      prefix="$"
+                      format={{
+                        notation: 'compact',
+                        maximumFractionDigits: 3,
+                      }}
+                    />
                   </div>
                 )}
               </div>
