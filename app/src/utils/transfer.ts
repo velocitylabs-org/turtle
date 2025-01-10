@@ -305,7 +305,9 @@ export const startedTooLongAgo = (
 
 /**
  * Checks if a chain is not a system chain (Asset Hub or Relaychain) but a parachain.
- *
+ * This is a tmp helper used with in Ocelloids tracking to filter non supported paths.
+ * ⚠️ the helper does not verify every system chain.
+ * 
  * @param chain - The chain to check.
  * @returns A boolean indicating whether the chain is a system chain (Asset Hub or Relaychain) or a parachain.
  */
