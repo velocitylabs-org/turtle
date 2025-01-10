@@ -100,7 +100,7 @@ const useParaspellApi = () => {
                 ...(messageId && { parachainMessageId: messageId }),
                 ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
                 status: `Arriving at ${destinationChain.name}`,
-                onchainTimestamp: new Date(),
+                finalizedAt: new Date(),
               } satisfies StoredTransfer)
 
               trackTransferMetrics({
