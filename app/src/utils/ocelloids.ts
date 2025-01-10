@@ -55,7 +55,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => {})
+      .then(() => { })
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -101,7 +101,6 @@ export const xcmOcceloidsSubscribe = async (
       {
         onMessage: msg => {
           const payload = msg.payload
-          console.log(payload.type)
           if (payload.origin.extrinsicHash === txHash) {
             // Handle different XCM event types
             switch (payload.type) {
@@ -155,7 +154,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => {},
+        onSubscriptionCreated: () => { },
         onSubscriptionError: console.error,
         onError: console.error,
       },
