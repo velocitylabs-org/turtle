@@ -14,6 +14,8 @@ import { TokenLogo } from './TokenLogo'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
+const maxDollars = 100000000000 // 100B
+
 export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
   sourceChain: Chain | null
 }
@@ -124,7 +126,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                 {inDollars && (
                   <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
                     <NumberFlow
-                      value={inDollars}
+                      value={Math.min(inDollars, maxDollars)} // Ensure the value doesn't exceed the max
                       prefix="$"
                       format={{
                         notation: 'compact',
