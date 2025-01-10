@@ -144,11 +144,9 @@ const useParaspellApi = () => {
       ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected'
       : 'Failed to submit the transfer'
 
-    if (txId) {
-      removeOngoing(txId)
-    }
+    if (!txWasCancelled(sender, e)) captureException(e)
+    if (txId) removeOngoing(txId)
 
-    captureException(e)
     addNotification({
       message,
       severity: NotificationSeverity.Error,
