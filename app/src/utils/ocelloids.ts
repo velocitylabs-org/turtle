@@ -9,7 +9,6 @@ import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-cli
 import { getExplorerLink, isParachainToParachain } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { Interlay } from '@/registry/mainnet/chains'
 import { Polkadot } from '@/registry/mainnet/tokens'
 
 type ResultNotification = {
@@ -19,14 +18,6 @@ type ResultNotification = {
 }
 
 const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
-
-// TMP Helper until Ocelloids supports Interlay transfers
-export const isFromOrToInterlay = (
-  transfer: StoredTransfer | OngoingTransferWithDirection,
-): boolean => {
-  const { sourceChain, destChain } = transfer
-  return sourceChain.chainId === Interlay.chainId || destChain.chainId === Interlay.chainId
-}
 
 // TMP Helper until Ocelloids supports DOT transfers between non system chains.
 export const isTransferringDotBetweenParachains = (
@@ -41,8 +32,8 @@ export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
   return transfers.filter(t => {
     // Filters XCM transfers only
     if (resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot) {
-      // Exclude transfer if it contains Interlay as source or destination chain, or if DOT is transfered between parachains
-      if (isFromOrToInterlay(t) || isTransferringDotBetweenParachains(t)) return false
+      // Exclude transfer if DOT is transfered between parachains
+      if (isTransferringDotBetweenParachains(t)) return false
       return true
     }
     return false
@@ -110,6 +101,7 @@ export const xcmOcceloidsSubscribe = async (
       {
         onMessage: msg => {
           const payload = msg.payload
+          console.log(payload.type)
           if (payload.origin.extrinsicHash === txHash) {
             // Handle different XCM event types
             switch (payload.type) {
