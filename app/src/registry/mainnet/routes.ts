@@ -362,4 +362,10 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Eth.MYTH.id],
   },
+  {
+    from: Centrifuge.uid,
+    to: Hydration.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id, Polkadot.CFG.id],
+  },
 ]
