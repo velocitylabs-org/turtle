@@ -270,8 +270,8 @@ export const routes: Route[] = [
       // Polkadot.VDOT.id
     ],
   },
-  
-    {
+
+  {
     from: Moonbeam.uid,
     to: Acala.uid,
     sdk: 'ParaSpellApi',
@@ -282,6 +282,12 @@ export const routes: Route[] = [
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.ACA.id, Polkadot.DOT.id],
+  },
+  {
+    from: Acala.uid,
+    to: Moonbeam.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
   },
   {
     from: Hydration.uid,
@@ -373,6 +379,6 @@ export const routes: Route[] = [
     from: Centrifuge.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
-    tokens: [Polkadot.DOT.id, Polkadot.CFG.id, Polkadot.GLMR.id], 
+    tokens: [Polkadot.DOT.id, Polkadot.CFG.id, Polkadot.GLMR.id],
   },
 ]
