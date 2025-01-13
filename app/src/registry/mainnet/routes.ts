@@ -366,6 +366,6 @@ export const routes: Route[] = [
     from: Centrifuge.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
-    tokens: [Polkadot.DOT.id, Polkadot.CFG.id],
+    tokens: [Polkadot.DOT.id, Polkadot.CFG.id, Polkadot.GLMR.id], 
   },
 ]
