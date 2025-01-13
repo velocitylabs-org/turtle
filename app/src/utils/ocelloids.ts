@@ -115,16 +115,15 @@ export const xcmOcceloidsSubscribe = async (
             type,
             origin: { event, extrinsicHash },
           } = msg.payload
-          const evmTxHash = !!(
+          const evmTxHash =
             event &&
             typeof event === 'object' &&
             'extrinsic' in event &&
             event.extrinsic &&
             typeof event.extrinsic === 'object' &&
             'evmTxHash' in event.extrinsic
-          )
-            ? (event.extrinsic.evmTxHash as string)
-            : null
+              ? (event.extrinsic.evmTxHash as string)
+              : null
           const eventTxHash =
             sourceChain.chainId === Moonbeam.chainId && evmTxHash ? evmTxHash : extrinsicHash
 
