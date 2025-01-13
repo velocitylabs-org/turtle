@@ -64,7 +64,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => { })
+      .then(() => {})
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -111,21 +111,25 @@ export const xcmOcceloidsSubscribe = async (
       getSubscription(sourceChain.chainId, destChain.chainId),
       {
         onMessage: msg => {
-          const payload = msg.payload
-          const { event } = payload.origin
-          const evmTxHash = !!(
-            event &&
-            typeof event === "object" &&
-            "extrinsic" in event &&
-            event.extrinsic &&
-            typeof event.extrinsic === "object" &&
-            "evmTxHash" in event.extrinsic
-          ) && event.extrinsic.evmTxHash as string
-          const payloadHash = sourceChain.chainId === Moonbeam.chainId && evmTxHash ? evmTxHash : payload.origin.extrinsicHash
+          const {
+            type,
+            origin: { event, extrinsicHash },
+          } = msg.payload
+          const evmTxHash =
+            !!(
+              event &&
+              typeof event === 'object' &&
+              'extrinsic' in event &&
+              event.extrinsic &&
+              typeof event.extrinsic === 'object' &&
+              'evmTxHash' in event.extrinsic
+            ) && (event.extrinsic.evmTxHash as string)
+          const eventTxHash =
+            sourceChain.chainId === Moonbeam.chainId && evmTxHash ? evmTxHash : extrinsicHash
 
-          if (payloadHash === txHash) {
+          if (eventTxHash === txHash) {
             // Handle different XCM event types
-            switch (payload.type) {
+            switch (type) {
               case xcm.XcmNotificationType.Sent:
               case xcm.XcmNotificationType.Relayed:
                 break
@@ -176,7 +180,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => { },
+        onSubscriptionCreated: () => {},
         onSubscriptionError: console.error,
         onError: console.error,
       },
