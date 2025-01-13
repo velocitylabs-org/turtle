@@ -55,7 +55,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => { })
+      .then(() => {})
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -159,7 +159,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => { },
+        onSubscriptionCreated: () => {},
         onSubscriptionError: console.error,
         onError: console.error,
       },
@@ -222,7 +222,7 @@ const updateTransferStatus = (
     dismissible: true,
   })
 
-  if (xcmMsgType === (xcm.XcmNotificationType.Timeout))
+  if (xcmMsgType === xcm.XcmNotificationType.Timeout)
     captureException(new Error(`Ocelloids tracking error:${message}`), { extra: { transfer } })
 }
 
@@ -255,15 +255,15 @@ const getNotification = (
 
       return transferOutcome === 'Success'
         ? {
-          message: 'Transfer completed!',
-          severity: NotificationSeverity.Success,
-          status: TxStatus.Succeeded,
-        }
+            message: 'Transfer completed!',
+            severity: NotificationSeverity.Success,
+            status: TxStatus.Succeeded,
+          }
         : {
-          message: 'Transfer failed!',
-          severity: NotificationSeverity.Error,
-          status: TxStatus.Failed,
-        }
+            message: 'Transfer failed!',
+            severity: NotificationSeverity.Error,
+            status: TxStatus.Failed,
+          }
     }
     default:
       console.error('Unsupported Ocelloids XCM notification type')
