@@ -9,7 +9,7 @@ import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-cli
 import { getExplorerLink, isParachainToParachain } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { Interlay } from '@/registry/mainnet/chains'
+import { Interlay, Moonbeam } from '@/registry/mainnet/chains'
 import { Polkadot } from '@/registry/mainnet/tokens'
 
 type ResultNotification = {
@@ -64,7 +64,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => {})
+      .then(() => { })
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -108,16 +108,22 @@ export const xcmOcceloidsSubscribe = async (
     // Sender must only be used with EVM parachain
 
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
-      getSubscription(sourceChain.chainId, destChain.chainId, sender),
+      getSubscription(sourceChain.chainId, destChain.chainId),
       {
         onMessage: msg => {
           const payload = msg.payload
-          console.log('payload', payload)
-          // const payloadEvent = payload.origin.event
-          // const isEvmTxHash = !!(payloadEvent && "extrinsic" in payloadEvent && "evmTxHash" in payloadEvent.extrinsic) ? payloadEvent.extrinsic.evmTxHash as string : ""
+          const { event } = payload.origin
+          const evmTxHash = !!(
+            event &&
+            typeof event === "object" &&
+            "extrinsic" in event &&
+            event.extrinsic &&
+            typeof event.extrinsic === "object" &&
+            "evmTxHash" in event.extrinsic
+          ) && event.extrinsic.evmTxHash as string
+          const payloadHash = sourceChain.chainId === Moonbeam.chainId && evmTxHash ? evmTxHash : payload.origin.extrinsicHash
 
-          if (payload.origin.extrinsicHash === txHash) {
-            // if (isEvmTxHash === txHash) {
+          if (payloadHash === txHash) {
             // Handle different XCM event types
             switch (payload.type) {
               case xcm.XcmNotificationType.Sent:
@@ -170,7 +176,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => {},
+        onSubscriptionCreated: () => { },
         onSubscriptionError: console.error,
         onError: console.error,
       },
