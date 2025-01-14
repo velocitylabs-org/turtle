@@ -55,7 +55,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => { })
+      .then(() => {})
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -108,14 +108,14 @@ export const xcmOcceloidsSubscribe = async (
             waypoint,
             destination,
           } = msg.payload
-          
+
           const evmTxHash =
             event &&
-              typeof event === 'object' &&
-              'extrinsic' in event &&
-              event.extrinsic &&
-              typeof event.extrinsic === 'object' &&
-              'evmTxHash' in event.extrinsic
+            typeof event === 'object' &&
+            'extrinsic' in event &&
+            event.extrinsic &&
+            typeof event.extrinsic === 'object' &&
+            'evmTxHash' in event.extrinsic
               ? (event.extrinsic.evmTxHash as string)
               : undefined
 
@@ -145,8 +145,7 @@ export const xcmOcceloidsSubscribe = async (
                 break
               }
               case xcm.XcmNotificationType.Received: {
-                const finalOutcome =
-                  'outcome' in destination ? destination.outcome : undefined
+                const finalOutcome = 'outcome' in destination ? destination.outcome : undefined
                 updateTransferStatus(
                   transfer,
                   xcm.XcmNotificationType.Received,
@@ -185,7 +184,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => { },
+        onSubscriptionCreated: () => {},
         onSubscriptionError: console.error,
         onError: console.error,
       },
@@ -285,15 +284,15 @@ const getNotification = (
 
       return transferOutcome === 'Success'
         ? {
-          message: 'Transfer completed!',
-          severity: NotificationSeverity.Success,
-          status: TxStatus.Succeeded,
-        }
+            message: 'Transfer completed!',
+            severity: NotificationSeverity.Success,
+            status: TxStatus.Succeeded,
+          }
         : {
-          message: 'Transfer failed!',
-          severity: NotificationSeverity.Error,
-          status: TxStatus.Failed,
-        }
+            message: 'Transfer failed!',
+            severity: NotificationSeverity.Error,
+            status: TxStatus.Failed,
+          }
     }
     default:
       console.error('Unsupported Ocelloids XCM notification type')
