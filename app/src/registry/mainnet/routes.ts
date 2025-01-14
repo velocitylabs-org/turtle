@@ -283,6 +283,18 @@ export const routes: Route[] = [
     tokens: [Polkadot.DOT.id],
   },
   {
+    from: Moonbeam.uid,
+    to: Astar.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Moonbeam.uid,
+    to: Bifrost.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
     from: Acala.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
