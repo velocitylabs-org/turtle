@@ -163,6 +163,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
   },
+  {
+    from: Astar.uid,
+    to: RelayChain.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
 
   // System To Para Routes
   {
@@ -256,6 +262,12 @@ export const routes: Route[] = [
   {
     from: Bifrost.uid,
     to: Acala.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Bifrost.uid,
+    to: Astar.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
   },
