@@ -387,6 +387,30 @@ export const routes: Route[] = [
     tokens: [Polkadot.DOT.id, Polkadot.ASTR.id, Polkadot.GLMR.id],
   },
   {
+    from: Astar.uid,
+    to: Acala.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Astar.uid,
+    to: Bifrost.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Astar.uid,
+    to: Interlay.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Astar.uid,
+    to: Centrifuge.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
     from: Mythos.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
