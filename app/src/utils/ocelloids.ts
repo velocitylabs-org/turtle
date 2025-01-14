@@ -102,36 +102,46 @@ export const xcmOcceloidsSubscribe = async (
         onMessage: msg => {
           const payload = msg.payload
           if (payload.origin.extrinsicHash === txHash) {
-            const transferOutcome =
-              'outcome' in payload.destination ? payload.destination.outcome : undefined
             // Handle different XCM event types
             switch (payload.type) {
               case xcm.XcmNotificationType.Sent:
               case xcm.XcmNotificationType.Relayed:
                 break
-              case xcm.XcmNotificationType.Hop:
-                //   updateTransferStatus(
-                //     transfer,
-                //     xcm.XcmNotificationType.Hop,
-                //     remove,
-                //     addCompletedTransfer,
-                //     addNotification,
-                //   )
-                //   ws.close()
-
-                // Do nothing?
+              case xcm.XcmNotificationType.Hop: {
+                const hopOutcome =
+                  payload.type === xcm.XcmNotificationType.Hop
+                    ? payload.waypoint.outcome
+                    : undefined
+                if (hopOutcome && hopOutcome === 'Fail') {
+                  updateTransferStatus(
+                    transfer,
+                    xcm.XcmNotificationType.Hop,
+                    remove,
+                    addCompletedTransfer,
+                    addNotification,
+                    hopOutcome,
+                  )
+                  ws.close()
+                }
                 break
-              case xcm.XcmNotificationType.Received:
+              }
+              case xcm.XcmNotificationType.Received: {
+                const finalOutcome =
+                  payload.type === xcm.XcmNotificationType.Received &&
+                  'outcome' in payload.destination
+                    ? payload.destination.outcome
+                    : undefined
                 updateTransferStatus(
                   transfer,
                   xcm.XcmNotificationType.Received,
                   remove,
                   addCompletedTransfer,
                   addNotification,
-                  transferOutcome,
+                  finalOutcome,
                 )
                 ws.close()
                 break
+              }
               case xcm.XcmNotificationType.Timeout:
                 updateTransferStatus(
                   transfer,
@@ -222,8 +232,11 @@ const updateTransferStatus = (
     dismissible: true,
   })
 
-  if (xcmMsgType === xcm.XcmNotificationType.Timeout)
-    captureException(new Error(`Ocelloids tracking error:${message}`), { extra: { transfer } })
+  if (xcmMsgType === xcm.XcmNotificationType.Hop || xcmMsgType === xcm.XcmNotificationType.Timeout)
+    captureException(new Error(`Ocelloids tracking error:${message}`), {
+      tags: { XcmNotificationType: xcmMsgType, ...(transferOutcome && { transferOutcome }) },
+      extra: { transfer },
+    })
 }
 
 const getNotification = (
@@ -231,12 +244,13 @@ const getNotification = (
   transferOutcome?: 'Success' | 'Fail',
 ): ResultNotification | undefined => {
   switch (xcmMsgType) {
-    // case xcm.XcmNotificationType.Hop:
-    //   return {
-    //     message: 'Transfer failed!',
-    //     severity: NotificationSeverity.Error,
-    //     status: TxStatus.Failed,
-    //   }
+    case xcm.XcmNotificationType.Hop:
+      if (transferOutcome === 'Success') return
+      return {
+        message: 'Transfer failed!',
+        severity: NotificationSeverity.Error,
+        status: TxStatus.Failed,
+      }
 
     case xcm.XcmNotificationType.Timeout:
       return {
