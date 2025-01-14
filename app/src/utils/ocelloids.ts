@@ -41,8 +41,7 @@ export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
 }
 
 export const initOcelloidsClient = () => {
-  if (!OCELLOIDS_API_KEY)
-    throw new Error('OCELLOIDS_API_KEY is undefined')
+  if (!OCELLOIDS_API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
   return new OcelloidsClient({
     apiKey: OCELLOIDS_API_KEY,
   })
