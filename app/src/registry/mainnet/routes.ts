@@ -231,7 +231,7 @@ export const routes: Route[] = [
     from: Moonbeam.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
-    tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
+    tokens: [Polkadot.USDC.id, Polkadot.USDT.id, Polkadot.DOT.id],
   },
 
   // Para To Para Routes
