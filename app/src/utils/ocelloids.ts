@@ -108,11 +108,8 @@ export const xcmOcceloidsSubscribe = async (
               case xcm.XcmNotificationType.Relayed:
                 break
               case xcm.XcmNotificationType.Hop: {
-                const hopOutcome =
-                  payload.type === xcm.XcmNotificationType.Hop
-                    ? payload.waypoint.outcome
-                    : undefined
-                if (hopOutcome && hopOutcome === 'Fail') {
+                const hopOutcome = payload.waypoint.outcome
+                if (hopOutcome === 'Fail') {
                   updateTransferStatus(
                     transfer,
                     xcm.XcmNotificationType.Hop,
@@ -127,10 +124,7 @@ export const xcmOcceloidsSubscribe = async (
               }
               case xcm.XcmNotificationType.Received: {
                 const finalOutcome =
-                  payload.type === xcm.XcmNotificationType.Received &&
-                  'outcome' in payload.destination
-                    ? payload.destination.outcome
-                    : undefined
+                  'outcome' in payload.destination ? payload.destination.outcome : undefined
                 updateTransferStatus(
                   transfer,
                   xcm.XcmNotificationType.Received,
