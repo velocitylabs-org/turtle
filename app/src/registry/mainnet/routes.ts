@@ -201,6 +201,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Eth.MYTH.id],
   },
+  {
+    from: AssetHub.uid,
+    to: Astar.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
+  },
 
   // Para To System Routes
   {
