@@ -10,6 +10,7 @@ import {
   Interlay,
   Moonbeam,
   Mythos,
+  Phala,
   RelayChain,
 } from './chains'
 import { Eth, Polkadot } from './tokens'
@@ -336,6 +337,12 @@ export const routes: Route[] = [
     to: Bifrost.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id, Polkadot.BNC.id, Polkadot.VDOT.id],
+  },
+  {
+    from: Hydration.uid,
+    to: Phala.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.PHA.id],
   },
   {
     from: Interlay.uid,
