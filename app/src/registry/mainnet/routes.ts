@@ -275,12 +275,7 @@ export const routes: Route[] = [
     from: Moonbeam.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
-    tokens: [
-      Polkadot.DOT.id,
-      Polkadot.GLMR.id,
-      // TODO: Works, but tracking doesn't!
-      // Polkadot.VDOT.id
-    ],
+    tokens: [Polkadot.DOT.id, Polkadot.GLMR.id, Polkadot.VDOT.id],
   },
   {
     from: Moonbeam.uid,
