@@ -41,10 +41,10 @@ const getTransferProgress = (date: Date, direction: Direction, shouldStartProgre
 }
 
 const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => {
-  const transferDate = transfer.onchainTimestamp ? transfer.onchainTimestamp : transfer.date
+  const transferDate = transfer.finalizedAt ? transfer.finalizedAt : transfer.date
   const shouldStartProgress = !!(
     direction !== Direction.WithinPolkadot ||
-    (direction === Direction.WithinPolkadot && transfer.onchainTimestamp)
+    (direction === Direction.WithinPolkadot && transfer.finalizedAt)
   )
   const [progress, setProgress] = useState<number>(
     // Calculate progress from cache if transferStatus is available
