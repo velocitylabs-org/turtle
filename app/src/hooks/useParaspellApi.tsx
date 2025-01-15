@@ -50,7 +50,25 @@ const useParaspellApi = () => {
     await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
 
     // TODO: figure out how to add crosschain event stuff
-    // TODO: decide when to track metrics. We don't have PAPI events to determine if tx was included in block. We only have the hash.
+    
+    // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
+    if (params.environment === Environment.Mainnet && isProduction) {
+      trackTransferMetrics({
+        id: hash,
+        sender: senderAddress,
+        sourceChain: params.sourceChain,
+        token: params.token,
+        amount: params.amount,
+        destinationChain: params.destinationChain,
+        tokenUSDValue,
+        fees: params.fees,
+        recipient: params.recipient,
+        date,
+        environment: params.environment,
+      })
+
+      setStatus('Idle')
+    }
   }
 
   const handlePolkadotTransfer = async (
@@ -117,7 +135,6 @@ const useParaspellApi = () => {
     }
 
     if (params.environment === Environment.Mainnet && isProduction) {
-      console.log('Tracking called')
       trackTransferMetrics({
         id: event.txHash.toString(),
         sender: senderAddress,
