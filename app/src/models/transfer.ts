@@ -34,6 +34,8 @@ export interface StoredTransfer extends RawTransfer {
   // A subscan unique Id shared accross chains to track ongoing transfers
   uniqueTrackingId?: string
   status?: string
+  // WithinPolkadot transfer is considered as finalized
+  finalizedAt?: Date
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
