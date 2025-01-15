@@ -157,6 +157,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
   },
+  {
+    from: Hydration.uid,
+    to: RelayChain.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
 
   // System To Para Routes
   {
