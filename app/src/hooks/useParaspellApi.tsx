@@ -199,6 +199,7 @@ const useParaspellApi = () => {
       ...(messageId && { parachainMessageId: messageId }),
       ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
       status: `Arriving at ${params.destinationChain.name}`,
+      finalizedAt: new Date(),
     })
   }
 
