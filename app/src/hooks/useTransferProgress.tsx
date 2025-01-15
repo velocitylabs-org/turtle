@@ -5,7 +5,7 @@ import { Direction } from '@/services/transfer'
 const ESTIMATED_DURATION = {
   toEthereum: 4 * 60 * 60, // 30 mins in seconds
   toPolkadot: 30 * 60, // 4h in seconds
-  xcmTransfer: 2.5 * 60, // 2.5 minutes in seconds
+  xcmTransfer: 30, // 30 seconds
 }
 
 const getDurationEstimateMs = (direction: Direction) => {
@@ -22,7 +22,8 @@ const getDurationEstimateMs = (direction: Direction) => {
   }
 }
 
-const getTransferProgress = (date: Date, direction: Direction) => {
+const getTransferProgress = (date: Date, direction: Direction, shouldStartProgress: boolean) => {
+  if (!shouldStartProgress) return 0
   const estimatedDurationMs = getDurationEstimateMs(direction)
   const transferTimestamp = new Date(date).getTime()
   const targetTimestamp = estimatedDurationMs + transferTimestamp
@@ -40,14 +41,19 @@ const getTransferProgress = (date: Date, direction: Direction) => {
 }
 
 const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => {
+  const transferDate = transfer.finalizedAt ? transfer.finalizedAt : transfer.date
+  const shouldStartProgress = !!(
+    direction !== Direction.WithinPolkadot ||
+    (direction === Direction.WithinPolkadot && transfer.finalizedAt)
+  )
   const [progress, setProgress] = useState<number>(
     // Calculate progress from cache if transferStatus is available
-    getTransferProgress(transfer.date, direction),
+    getTransferProgress(transferDate, direction, shouldStartProgress),
   )
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const updateProgress = () => {
-    const transferProgress = getTransferProgress(transfer.date, direction)
+    const transferProgress = getTransferProgress(transferDate, direction, shouldStartProgress)
     setProgress(transferProgress)
     if (transferProgress >= 90 && progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current)
@@ -58,7 +64,8 @@ const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => 
   useEffect(() => {
     const intervalDuration = direction === Direction.WithinPolkadot ? 1500 : 5000
     // Initiate the progress bar without waiting the 5 secs timeout.
-    if (progress === 0) setProgress(getTransferProgress(transfer.date, direction))
+    if (progress === 0)
+      setProgress(getTransferProgress(transferDate, direction, shouldStartProgress))
     // Set a time-interval to update the progress bar every 5 seconds
     progressIntervalRef.current = setInterval(updateProgress, intervalDuration)
 
@@ -69,7 +76,7 @@ const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => 
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [transferDate])
 
   return progress
 }
