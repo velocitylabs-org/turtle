@@ -30,15 +30,15 @@ export const createTx = async (
   const destinationChainFromId = getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
-  
-    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
-    return await Builder(wssEndpoint)
-      .from(sourceChainFromId)
-      .to(destinationChainFromId)
-      .currency({ ...currencyId, amount })
-      .address(recipient)
-      .build()
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
+    .currency({ ...currencyId, amount })
+    .address(recipient)
+    .build()
 }
 
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
