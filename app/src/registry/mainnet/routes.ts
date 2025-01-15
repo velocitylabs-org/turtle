@@ -454,4 +454,10 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
   },
+  {
+    from: Phala.uid,
+    to: Hydration.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.PHA.id],
+  },
 ]
