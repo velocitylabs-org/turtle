@@ -87,8 +87,7 @@ const useFees = (
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
-            currency,
-            amount: BigInt(10 ** token.decimals).toString(), // hardcode amount because the fee is usually independent of the amount
+            currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
             accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,

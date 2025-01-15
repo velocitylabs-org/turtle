@@ -5,13 +5,14 @@ import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { createTx } from '@/utils/paraspell'
-import { handleSubmittableEvents } from '@/utils/polkadot'
 import { txWasCancelled } from '@/utils/transfer'
-import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
+import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
+import { InvalidTxError, TxEvent } from 'polkadot-api'
+import { handleObservableEvents } from '@/utils/papi'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -36,22 +37,23 @@ const useParaspellApi = () => {
     const senderAddress = await getSenderAddress(sender)
     const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
     const date = new Date()
-    let locked = false
+
+    if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
+      throw new Error('Signer not found')
 
     try {
       const tx = await createTx(params, sourceChain.rpcConnection)
       setStatus('Signing')
 
-      await tx.signAndSend(
+      const polkadotSigner = getPolkadotSignerFromPjs(
         account.address,
-        { signer: account.signer },
-        async (result: ISubmittableResult) => {
-          // This callback might be executed multiple times but we only want to update
-          // the status of this tx and move it to 'ongoing' once.
-          if (!locked) {
-            locked = true
-            setStatus('Sending')
+        account.pjsSigner.signPayload as SignPayload,
+        account.pjsSigner.signRaw as SignRaw,
+      )
 
+      tx.signSubmitAndWatch(polkadotSigner).subscribe({
+        next: async (event: TxEvent) => {
+          if (event.type === 'signed') {
             // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
             // and unlocking the UI by resetting the form back to 'Idle'.
             await new Promise(_ =>
@@ -59,7 +61,7 @@ const useParaspellApi = () => {
                 setStatus('Idle')
                 onComplete?.()
                 addOrUpdate({
-                  id: getTxId(result),
+                  id: getTxId(event),
                   sourceChain,
                   token,
                   tokenUSDValue,
@@ -75,12 +77,11 @@ const useParaspellApi = () => {
               }, 2000),
             )
           }
-
           try {
-            const eventsData = handleSubmittableEvents(result)
+            const eventsData = handleObservableEvents(event)
             if (eventsData) {
               const { messageHash, messageId, extrinsicIndex } = eventsData
-              const id = getTxId(result)
+              const id = getTxId(event)
 
               // Update the ongoing tx entry now containing the necessary
               // fields to be able to track its progress.
@@ -119,18 +120,30 @@ const useParaspellApi = () => {
               setStatus('Idle')
               return
             }
-          } catch (callbackError) {
-            handleSendError(sender, callbackError, setStatus, getTxId(result))
+          } catch (error) {
+            handleSendError(sender, error, setStatus, getTxId(event))
           }
         },
-      )
+        error: callbackError => {
+          if (callbackError instanceof InvalidTxError) {
+            console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
+            handleSendError(sender, callbackError, setStatus)
+          }
+          handleSendError(sender, callbackError, setStatus)
+        },
+        complete() {
+          console.log('The transaction is complete')
+        },
+      })
+
+      setStatus('Sending')
     } catch (e) {
       handleSendError(sender, e, setStatus)
     }
   }
 
-  function getTxId(result: ISubmittableResult): string {
-    return result.txHash.toString()
+  function getTxId(event: TxEvent): string {
+    return event.txHash.toString()
   }
 
   const handleSendError = (
@@ -141,15 +154,12 @@ const useParaspellApi = () => {
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
-    const message = txWasCancelled(sender, e)
-      ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected'
-      : 'Failed to submit the transfer'
+    const cancelledByUser = txWasCancelled(sender, e)
+    const message = cancelledByUser ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected' : 'Failed to submit the transfer'
 
-    if (txId) {
-      removeOngoing(txId)
-    }
+    if (txId) removeOngoing(txId)
+    if (!cancelledByUser) captureException(e)
 
-    captureException(e)
     addNotification({
       message,
       severity: NotificationSeverity.Error,

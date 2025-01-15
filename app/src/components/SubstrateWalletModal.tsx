@@ -34,9 +34,10 @@ const SubstrateWalletModal: FC = () => {
   }
 
   const handleAccountSelect = async (account: InjectedAccount) => {
-    if (type === 'Substrate') setSubstrateAccount({ ...account, signer: selectedExtension?.signer })
+    if (type === 'Substrate')
+      setSubstrateAccount({ ...account, pjsSigner: selectedExtension?.signer })
     else if (type === 'SubstrateEVM')
-      setEvmAccount({ ...account, signer: selectedExtension?.signer })
+      setEvmAccount({ ...account, pjsSigner: selectedExtension?.signer })
     closeModal()
   }
 
