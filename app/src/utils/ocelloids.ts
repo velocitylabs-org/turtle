@@ -5,7 +5,7 @@ import {
   StoredTransfer,
   TxStatus,
 } from '@/models/transfer'
-import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
+import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink, isParachainToParachain } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -30,6 +30,9 @@ export const isTransferringDotBetweenParachains = (
 // Helper to filter the subscribable transfers only
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
   if (transfers.length === 0) return []
+  // const xcmTransfers = transfers.filter(
+  //   t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot,
+  // )
   return transfers.filter(t => {
     // Filters XCM transfers only
     if (resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot) {
@@ -94,9 +97,7 @@ export const xcmOcceloidsSubscribe = async (
   addNotification: (notification: Omit<Notification, 'id'>) => void,
 ) => {
   try {
-    const { id: txHash, sourceChain, destChain, sender } = transfer
-    console.log({ txHash, sourceChain, destChain, sender })
-    // Sender must only be used with EVM parachain
+    const { id: txHash, sourceChain, destChain } = transfer
 
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
       getSubscription(sourceChain.chainId, destChain.chainId),
@@ -109,21 +110,14 @@ export const xcmOcceloidsSubscribe = async (
             destination,
           } = msg.payload
 
-          const evmTxHash =
-            event &&
-            typeof event === 'object' &&
-            'extrinsic' in event &&
-            event.extrinsic &&
-            typeof event.extrinsic === 'object' &&
-            'evmTxHash' in event.extrinsic
-              ? (event.extrinsic.evmTxHash as string)
-              : undefined
-
-          const eventTxHash =
-            sourceChain.chainId === Moonbeam.chainId && evmTxHash ? evmTxHash : extrinsicHash
+          const evmTxHashFromEvent = getEvmTxHashFromEvent(event)
+          const txHashFromEvent =
+            sourceChain.chainId === Moonbeam.chainId && evmTxHashFromEvent
+              ? evmTxHashFromEvent
+              : extrinsicHash
 
           // if (payload.origin.extrinsicHash === txHash) {
-          if (eventTxHash === txHash) {
+          if (txHashFromEvent === txHash) {
             // Handle different XCM event types
             switch (type) {
               case xcm.XcmNotificationType.Sent:
@@ -298,4 +292,15 @@ const getNotification = (
       console.error('Unsupported Ocelloids XCM notification type')
       return
   }
+}
+
+const getEvmTxHashFromEvent = (event: AnyJson): string | undefined => {
+  return event &&
+    typeof event === 'object' &&
+    'extrinsic' in event &&
+    event.extrinsic &&
+    typeof event.extrinsic === 'object' &&
+    'evmTxHash' in event.extrinsic
+    ? (event.extrinsic.evmTxHash as string)
+    : undefined
 }
