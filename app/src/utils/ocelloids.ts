@@ -29,10 +29,10 @@ export const isTransferringDotBetweenParachains = (
 
 // Helper to filter the subscribable transfers only
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
-  if (transfers.length === 0) return []
-  // const xcmTransfers = transfers.filter(
+  // return transfers.filter(
   //   t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot,
   // )
+  if (transfers.length === 0) return []
   return transfers.filter(t => {
     // Filters XCM transfers only
     if (resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot) {
@@ -110,14 +110,9 @@ export const xcmOcceloidsSubscribe = async (
             destination,
           } = msg.payload
 
-          const evmTxHashFromEvent = getEvmTxHashFromEvent(event)
-          const txHashFromEvent =
-            sourceChain.chainId === Moonbeam.chainId && evmTxHashFromEvent
-              ? evmTxHashFromEvent
-              : extrinsicHash
+          const eventTxHash = getTxHashFromEvent(event, sourceChain.chainId, extrinsicHash)
 
-          // if (payload.origin.extrinsicHash === txHash) {
-          if (txHashFromEvent === txHash) {
+          if (eventTxHash === txHash) {
             // Handle different XCM event types
             switch (type) {
               case xcm.XcmNotificationType.Sent:
@@ -294,6 +289,14 @@ const getNotification = (
   }
 }
 
+/**
+ * Finds the EVM transaction hash within an Ocelloids event.
+ * This is only available for EVM-compatible parachains such as Moonbeam.
+ *
+ * @param event - The Ocelloids event of type `AnyJson`.
+ * @returns The EVM transaction hash as a string or undefined.
+ */
+
 const getEvmTxHashFromEvent = (event: AnyJson): string | undefined => {
   return event &&
     typeof event === 'object' &&
@@ -303,4 +306,23 @@ const getEvmTxHashFromEvent = (event: AnyJson): string | undefined => {
     'evmTxHash' in event.extrinsic
     ? (event.extrinsic.evmTxHash as string)
     : undefined
+}
+
+/**
+ * Finds the corresponding tx hash from an Ocelloids event:
+ * Handles Moonbeam-specific exceptions and falls back to the basic transaction hash for the remaining chains.
+ *
+ * @param event - The Ocelloids event of type `AnyJson`.
+ * @param sourceChainId - The chain ID of the source chain.
+ * @param extrinsicHash - The extrinsicHash to be returned if the EVM transaction exception is not met.
+ * @returns The EVM transaction hash or the extrinsic hash.
+ */
+const getTxHashFromEvent = (
+  event: AnyJson,
+  sourceChainId: number,
+  extrinsicHash?: `0x${string}`,
+) => {
+  const evmTxHashFromEvent = getEvmTxHashFromEvent(event)
+  if (sourceChainId === Moonbeam.chainId && evmTxHashFromEvent) return evmTxHashFromEvent
+  return extrinsicHash
 }
