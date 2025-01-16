@@ -1,16 +1,14 @@
 import { captureException } from '@sentry/nextjs'
 import {
   CompletedTransfer,
-  OngoingTransferWithDirection,
   StoredTransfer,
   TxStatus,
 } from '@/models/transfer'
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { getExplorerLink, isParachainToParachain } from './transfer'
+import { getExplorerLink } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Moonbeam } from '@/registry/mainnet/chains'
-import { Polkadot } from '@/registry/mainnet/tokens'
 
 type ResultNotification = {
   message: string
@@ -31,26 +29,9 @@ enum xcmNotificationType {
 const OCELLOIDS_API_KEY =
   'eyJhbGciOiJFZERTQSIsImtpZCI6IklSU1FYWXNUc0pQTm9kTTJsNURrbkJsWkJNTms2SUNvc0xBRi16dlVYX289In0.ewogICJpc3MiOiAiZGV2LWFwaS5vY2VsbG9pZHMubmV0IiwKICAianRpIjogIjAxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwKICAic3ViIjogInB1YmxpY0BvY2VsbG9pZHMiCn0K.bjjQYsdIN9Fx34S9Of5QSKxb8_aOtwURInOGSSc_DxrdZcnYWi-5nnZsh1v5rYWuRWNzLstX0h1ICSH_oAugAQ'
 
-// TMP Helper until Ocelloids supports DOT transfers between non system chains.
-export const isTransferringDotBetweenParachains = (
-  transfer: StoredTransfer | OngoingTransferWithDirection,
-): boolean => {
-  return transfer.token.id === Polkadot.DOT.id && isParachainToParachain(transfer)
-}
-
 // Helper to filter the subscribable transfers only
-export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
-  if (transfers.length === 0) return []
-  return transfers.filter(t => {
-    // Filters XCM transfers only
-    if (resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot) {
-      // Exclude transfer if DOT is transfered between parachains
-      if (isTransferringDotBetweenParachains(t)) return false
-      return true
-    }
-    return false
-  })
-}
+export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
+  transfers.filter(t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot)
 
 export const initOcelloidsClient = () => {
   if (!OCELLOIDS_API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')

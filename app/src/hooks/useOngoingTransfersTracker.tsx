@@ -6,7 +6,7 @@ import {
   TxStatus,
   TxTrackingResult,
 } from '@/models/transfer'
-import { Direction, resolveDirection } from '@/services/transfer'
+import { resolveDirection } from '@/services/transfer'
 import { getExplorerLink } from '@/utils/transfer'
 import {
   findMatchingTransfer,
@@ -19,7 +19,6 @@ import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { isTransferringDotBetweenParachains } from '@/utils/ocelloids'
 
 type ID = string
 type Message = string
@@ -34,33 +33,24 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const env = useEnvironment()
 
   const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
-    return ongoingTransfers
-      .map(t => {
-        const direction = resolveDirection(t.sourceChain, t.destChain)
-        return {
-          id: t.id,
-          sourceChain: t.sourceChain,
-          destChain: t.destChain,
-          sender: t.sender,
-          recipient: t.recipient,
-          token: t.token,
-          date: t.date,
-          direction,
-          ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
-          ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
-          ...(t.sourceChainExtrinsicIndex && {
-            sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
-          }),
-        }
-      })
-      .filter(t => {
-        if (t.direction === Direction.WithinPolkadot) {
-          // Includes DOT is transfered between parachains
-          if (isTransferringDotBetweenParachains(t)) return true
-          return false
-        }
-        return true
-      })
+    return ongoingTransfers.map(t => {
+      const direction = resolveDirection(t.sourceChain, t.destChain)
+      return {
+        id: t.id,
+        sourceChain: t.sourceChain,
+        destChain: t.destChain,
+        sender: t.sender,
+        recipient: t.recipient,
+        token: t.token,
+        date: t.date,
+        direction,
+        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
+        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+        ...(t.sourceChainExtrinsicIndex && {
+          sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
+        }),
+      }
+    })
   }
 
   const fetchTransfers = useCallback(async () => {
