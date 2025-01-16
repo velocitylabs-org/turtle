@@ -29,9 +29,6 @@ export const isTransferringDotBetweenParachains = (
 
 // Helper to filter the subscribable transfers only
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
-  // return transfers.filter(
-  //   t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot,
-  // )
   if (transfers.length === 0) return []
   return transfers.filter(t => {
     // Filters XCM transfers only
