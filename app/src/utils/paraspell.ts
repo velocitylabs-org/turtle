@@ -44,7 +44,15 @@ export const createTx = async (
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
-  const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
+  let tokenSymbol: string | undefined
+  if (sourceChain === 'Moonbeam') {
+    tokenSymbol = supportedAssets.find(a => {
+      const lowered = a.toLowerCase()
+      const stripped = lowered.startsWith('xc') ? lowered.slice(2) : lowered
+      return stripped === token.symbol.toLowerCase()
+    })
+  } else tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
+
   if (!tokenSymbol)
     captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`))
 
