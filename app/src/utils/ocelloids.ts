@@ -114,8 +114,9 @@ export const xcmOcceloidsSubscribe = async (
             // Handle different XCM event types
             switch (type) {
               case xcm.XcmNotificationType.Sent:
-              case xcm.XcmNotificationType.Relayed:
                 if (sourceChain.chainId === Moonbeam.chainId) updateStatus(txHash)
+                break
+              case xcm.XcmNotificationType.Relayed:
                 break
               case xcm.XcmNotificationType.Hop: {
                 const hopOutcome = waypoint.outcome
