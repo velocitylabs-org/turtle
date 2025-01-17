@@ -10,6 +10,7 @@ interface State {
   // Actions
   addOrUpdate: (transfer: StoredTransfer) => void
   updateUniqueId: (id: string, uniqueTrackingId: string) => void
+  updateStatus: (id: string) => void
   remove: (id: string) => void
 }
 
@@ -75,6 +76,20 @@ export const useOngoingTransfersStore = create<State>()(
             transfers: state.transfers.map(transfer => {
               if (transfer.id == id) {
                 transfer.uniqueTrackingId = uniqueTrackingId
+              }
+              return transfer
+            }),
+          }
+        })
+      },
+      updateStatus: (id: string) => {
+        if (!id) return
+        set(state => {
+          return {
+            transfers: state.transfers.map(transfer => {
+              if (transfer.id == id) {
+                transfer.status = `Arriving at ${transfer.destChain.name}`
+                transfer.finalizedAt = new Date()
               }
               return transfer
             }),
