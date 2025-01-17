@@ -47,10 +47,9 @@ export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: T
   let tokenSymbol: string | undefined
   if (sourceChain === 'Moonbeam') {
     tokenSymbol = supportedAssets.find(a => {
-      const strippedAsset = a.toLowerCase().startsWith('xc')
-        ? a.toLowerCase().slice(2)
-        : a.toLowerCase()
-      return strippedAsset === token.symbol.toLowerCase()
+      const lowered = a.toLowerCase()
+      const stripped = lowered.startsWith('xc') ? lowered.slice(2) : lowered
+      return stripped === token.symbol.toLowerCase()
     })
   } else tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
 
