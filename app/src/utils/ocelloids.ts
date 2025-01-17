@@ -91,6 +91,7 @@ export const xcmOcceloidsSubscribe = async (
   transfer: StoredTransfer,
   remove: (id: string) => void,
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void,
+  updateStatus: (id: string) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
 ) => {
   try {
@@ -114,6 +115,7 @@ export const xcmOcceloidsSubscribe = async (
             switch (type) {
               case xcm.XcmNotificationType.Sent:
               case xcm.XcmNotificationType.Relayed:
+                if (sourceChain.chainId === Moonbeam.chainId) updateStatus(txHash)
                 break
               case xcm.XcmNotificationType.Hop: {
                 const hopOutcome = waypoint.outcome
