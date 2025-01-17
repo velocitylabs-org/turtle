@@ -50,7 +50,7 @@ const useParaspellApi = () => {
     await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
 
     // TODO: figure out how to add crosschain event stuff
-    
+
     // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
     if (params.environment === Environment.Mainnet && isProduction) {
       trackTransferMetrics({
