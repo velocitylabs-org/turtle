@@ -83,7 +83,8 @@ export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: T
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   const tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
-  if (!tokenSymbol) captureException(new Error(`Token symbol not found: ${token.symbol}`))
+  if (!tokenSymbol)
+    captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`))
 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
 }
