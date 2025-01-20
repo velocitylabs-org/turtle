@@ -7,6 +7,7 @@ import {
   getAllAssetsSymbols,
   getTNode,
   TCurrencyCore,
+  TDryRunResult,
   TNodeDotKsmWithRelayChains,
   type TPapiTransaction,
 } from '@paraspell/sdk'
@@ -39,6 +40,28 @@ export const createTx = async (
     .currency({ ...currencyId, amount })
     .address(recipient)
     .build()
+}
+
+export const dryRun = async (
+  params: TransferParams,
+  wssEndpoint?: string,
+): Promise<TDryRunResult> => {
+  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Dry Run failed: chain id not found.')
+
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
+    .currency({ ...currencyId, amount })
+    .address(recipient)
+    .dryRun()
 }
 
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
