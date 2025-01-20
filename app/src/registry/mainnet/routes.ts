@@ -146,12 +146,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
   },
-  {
+  /* {
     from: Interlay.uid,
     to: RelayChain.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
-  },
+  }, */
   {
     from: Moonbeam.uid,
     to: RelayChain.uid,
@@ -344,12 +344,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.PHA.id],
   },
-  {
+  /* {
     from: Interlay.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id, Polkadot.VDOT.id, Polkadot.INTR.id, Polkadot.IBTC.id],
-  },
+  }, */
   {
     from: Hydration.uid,
     to: Interlay.uid,

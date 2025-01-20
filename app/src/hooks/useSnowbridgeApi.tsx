@@ -141,7 +141,7 @@ const useSnowbridgeApi = () => {
 
         case Direction.ToEthereum: {
           const account = sender as SubstrateAccount
-          const signer = { signer: account.signer, address: sender.address }
+          const signer = { signer: account.pjsSigner, address: sender.address }
           sendResult = await toEthereum.send(
             context,
             signer as WalletOrKeypair,
@@ -223,7 +223,7 @@ const useSnowbridgeApi = () => {
 
       case Direction.ToEthereum: {
         const account = sender as SubstrateAccount
-        const signer = { signer: account.signer, address: sender.address }
+        const signer = { signer: account.pjsSigner, address: sender.address }
         return await toEthereum.validateSend(
           context,
           signer as WalletOrKeypair,
