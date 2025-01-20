@@ -4,15 +4,15 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
-import { createTx } from '@/utils/paraspell'
+import { handleObservableEvents } from '@/utils/papi'
+import { createTx, dryRun } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
+import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-import { InvalidTxError, TxEvent } from 'polkadot-api'
-import { handleObservableEvents } from '@/utils/papi'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -42,6 +42,9 @@ const useParaspellApi = () => {
       throw new Error('Signer not found')
 
     try {
+      setStatus('Validating')
+      if (!validate(params)) throw new Error('Transfer validation failed')
+
       const tx = await createTx(params, sourceChain.rpcConnection)
       setStatus('Signing')
 
@@ -139,6 +142,23 @@ const useParaspellApi = () => {
       setStatus('Sending')
     } catch (e) {
       handleSendError(sender, e, setStatus)
+    }
+  }
+
+  const validate = async (params: TransferParams) => {
+    try {
+      const dryRunResult = await dryRun(params, params.sourceChain.rpcConnection)
+      if (!dryRunResult.success) {
+        console.error('Dry run failed:', dryRunResult.failureReason)
+        captureException(new Error(`Dry run failed: ${dryRunResult.failureReason}`))
+      }
+
+      console.log('Dry run result:', dryRunResult)
+
+      return dryRunResult.success
+    } catch (e) {
+      // No dry run available, so we unfortunately must assume it's valid.
+      return true
     }
   }
 

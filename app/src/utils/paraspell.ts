@@ -42,6 +42,14 @@ export const createTx = async (
     .build()
 }
 
+/**
+ * Dry run a transfer using Paraspell.
+ *
+ * @param params - The transfer parameters
+ * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
+ * @returns - A Promise that resolves a dry run result.
+ * @throws - An error if the dry run api is not available.
+ */
 export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
