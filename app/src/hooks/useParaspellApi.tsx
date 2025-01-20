@@ -153,8 +153,6 @@ const useParaspellApi = () => {
         captureException(new Error(`Dry run failed: ${dryRunResult.failureReason}`))
       }
 
-      console.log('Dry run result:', dryRunResult)
-
       return dryRunResult.success
     } catch (e) {
       // No dry run available, so we unfortunately must assume it's valid.
