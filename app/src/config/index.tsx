@@ -1,8 +1,11 @@
 import { Environment } from '@/store/environmentStore'
-import { projectId } from '@/utils/env'
+import { environment, projectId } from '@/utils/env'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { mainnet, moonbeam, sepolia } from '@reown/appkit/networks'
+import { AppKitNetwork, mainnet as ethereum, moonbeam, sepolia } from '@reown/appkit/networks'
 import { cookieStorage, createStorage } from '@wagmi/core'
+
+export const mainnet_networks = [ethereum, moonbeam] as [AppKitNetwork, ...AppKitNetwork[]]
+export const testnet_networks = [sepolia] as [AppKitNetwork, ...AppKitNetwork[]]
 
 export const wagmiAdapter = new WagmiAdapter({
   storage: createStorage({
@@ -10,8 +13,7 @@ export const wagmiAdapter = new WagmiAdapter({
   }),
   ssr: true,
   projectId: projectId || '',
-  networks:
-    process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet ? [sepolia] : [mainnet, moonbeam],
+  networks: environment === Environment.Testnet ? testnet_networks : mainnet_networks,
 })
 
 export const config = wagmiAdapter.wagmiConfig

@@ -42,7 +42,6 @@ const useParaspellApi = () => {
   ) => {
     await switchChain(config, { chainId: moonbeam.id })
     const hash = await moonbeamTransfer(params, viemClient)
-    console.log('Moonbeam transfer hash:', hash)
 
     const senderAddress = await getSenderAddress(params.sender)
     const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
