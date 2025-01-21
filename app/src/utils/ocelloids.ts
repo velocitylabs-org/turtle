@@ -5,10 +5,11 @@ import {
   StoredTransfer,
   TxStatus,
 } from '@/models/transfer'
-import { OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
+import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink, isParachainToParachain } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { Moonbeam } from '@/registry/mainnet/chains'
 import { Polkadot } from '@/registry/mainnet/tokens'
 
 type ResultNotification = {
@@ -90,6 +91,7 @@ export const xcmOcceloidsSubscribe = async (
   transfer: StoredTransfer,
   remove: (id: string) => void,
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void,
+  updateStatus: (id: string) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
 ) => {
   try {
@@ -99,15 +101,25 @@ export const xcmOcceloidsSubscribe = async (
       getSubscription(sourceChain.chainId, destChain.chainId),
       {
         onMessage: msg => {
-          const payload = msg.payload
-          if (payload.origin.extrinsicHash === txHash) {
+          const {
+            type,
+            origin: { event, extrinsicHash },
+            waypoint,
+            destination,
+          } = msg.payload
+
+          const eventTxHash = getTxHashFromEvent(event, sourceChain.chainId, extrinsicHash)
+
+          if (eventTxHash === txHash) {
             // Handle different XCM event types
-            switch (payload.type) {
+            switch (type) {
               case xcm.XcmNotificationType.Sent:
+                if (sourceChain.chainId === Moonbeam.chainId) updateStatus(txHash)
+                break
               case xcm.XcmNotificationType.Relayed:
                 break
               case xcm.XcmNotificationType.Hop: {
-                const hopOutcome = payload.waypoint.outcome
+                const hopOutcome = waypoint.outcome
                 if (hopOutcome === 'Fail') {
                   updateTransferStatus(
                     transfer,
@@ -122,8 +134,7 @@ export const xcmOcceloidsSubscribe = async (
                 break
               }
               case xcm.XcmNotificationType.Received: {
-                const finalOutcome =
-                  'outcome' in payload.destination ? payload.destination.outcome : undefined
+                const finalOutcome = 'outcome' in destination ? destination.outcome : undefined
                 updateTransferStatus(
                   transfer,
                   xcm.XcmNotificationType.Received,
@@ -276,4 +287,42 @@ const getNotification = (
       console.error('Unsupported Ocelloids XCM notification type')
       return
   }
+}
+
+/**
+ * Finds the EVM transaction hash within an Ocelloids event.
+ * This is only available for EVM-compatible parachains such as Moonbeam.
+ *
+ * @param event - The Ocelloids event of type `AnyJson`.
+ * @returns The EVM transaction hash as a string or undefined.
+ */
+
+const getEvmTxHashFromEvent = (event: AnyJson): string | undefined => {
+  return event &&
+    typeof event === 'object' &&
+    'extrinsic' in event &&
+    event.extrinsic &&
+    typeof event.extrinsic === 'object' &&
+    'evmTxHash' in event.extrinsic
+    ? (event.extrinsic.evmTxHash as string)
+    : undefined
+}
+
+/**
+ * Finds the corresponding tx hash from an Ocelloids event:
+ * Handles Moonbeam-specific exceptions and falls back to the basic transaction hash for the remaining chains.
+ *
+ * @param event - The Ocelloids event of type `AnyJson`.
+ * @param sourceChainId - The chain ID of the source chain.
+ * @param extrinsicHash - The extrinsicHash to be returned if the EVM transaction exception is not met.
+ * @returns The EVM transaction hash or the extrinsic hash.
+ */
+const getTxHashFromEvent = (
+  event: AnyJson,
+  sourceChainId: number,
+  extrinsicHash?: `0x${string}`,
+) => {
+  const evmTxHashFromEvent = getEvmTxHashFromEvent(event)
+  if (sourceChainId === Moonbeam.chainId && evmTxHashFromEvent) return evmTxHashFromEvent
+  return extrinsicHash
 }

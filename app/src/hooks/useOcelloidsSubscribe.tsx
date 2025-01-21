@@ -10,7 +10,7 @@ import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useNotification from '@/hooks/useNotification'
 
 const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
-  const { remove } = useOngoingTransfers()
+  const { remove, updateStatus } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const { current: subscribedTransfers } = useRef(new Set<string>())
@@ -27,7 +27,14 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
       for (const t of xcmTransfers) {
         if (!subscribedTransfers.has(t.id)) {
           try {
-            await xcmOcceloidsSubscribe(xcmAgent, t, remove, addCompletedTransfer, addNotification)
+            await xcmOcceloidsSubscribe(
+              xcmAgent,
+              t,
+              remove,
+              addCompletedTransfer,
+              updateStatus,
+              addNotification,
+            )
             subscribedTransfers.add(t.id)
           } catch (error) {
             console.error('Error subscribing to transfer:', t, error)
