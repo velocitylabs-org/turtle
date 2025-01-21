@@ -10,6 +10,7 @@ import {
   Interlay,
   Moonbeam,
   Mythos,
+  Phala,
   RelayChain,
 } from './chains'
 import { Eth, Polkadot } from './tokens'
@@ -163,6 +164,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id],
   },
+  {
+    from: Astar.uid,
+    to: RelayChain.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
 
   // System To Para Routes
   {
@@ -195,6 +202,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [Eth.MYTH.id],
   },
+  {
+    from: AssetHub.uid,
+    to: Astar.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
+  },
 
   // Para To System Routes
   {
@@ -225,7 +238,7 @@ export const routes: Route[] = [
     from: Moonbeam.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
-    tokens: [Polkadot.USDC.id, Polkadot.USDT.id],
+    tokens: [Polkadot.USDC.id, Polkadot.USDT.id, Polkadot.DOT.id],
   },
 
   // Para To Para Routes
@@ -260,21 +273,58 @@ export const routes: Route[] = [
     tokens: [Polkadot.DOT.id],
   },
   {
+    from: Bifrost.uid,
+    to: Astar.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
     from: Moonbeam.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
-    tokens: [
-      Polkadot.DOT.id,
-      Polkadot.GLMR.id,
-      // TODO: Works, but tracking doesn't!
-      // Polkadot.VDOT.id
-    ],
+    tokens: [Polkadot.DOT.id, Polkadot.GLMR.id, Polkadot.VDOT.id],
+  },
+  {
+    from: Moonbeam.uid,
+    to: Acala.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Moonbeam.uid,
+    to: Centrifuge.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Moonbeam.uid,
+    to: Astar.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Moonbeam.uid,
+    to: Bifrost.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Moonbeam.uid,
+    to: Interlay.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
   },
   {
     from: Acala.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.ACA.id, Polkadot.DOT.id],
+  },
+  {
+    from: Acala.uid,
+    to: Moonbeam.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
   },
   {
     from: Hydration.uid,
@@ -287,6 +337,12 @@ export const routes: Route[] = [
     to: Bifrost.uid,
     sdk: 'ParaSpellApi',
     tokens: [Polkadot.DOT.id, Polkadot.BNC.id, Polkadot.VDOT.id],
+  },
+  {
+    from: Hydration.uid,
+    to: Phala.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.PHA.id],
   },
   /* {
     from: Interlay.uid,
@@ -316,7 +372,7 @@ export const routes: Route[] = [
     from: Hydration.uid,
     to: Centrifuge.uid,
     sdk: 'ParaSpellApi',
-    tokens: [Polkadot.DOT.id, Polkadot.CFG.id],
+    tokens: [Polkadot.DOT.id, Polkadot.CFG.id, Polkadot.GLMR.id],
   },
   {
     from: Hydration.uid,
@@ -351,6 +407,30 @@ export const routes: Route[] = [
     tokens: [Polkadot.DOT.id, Polkadot.ASTR.id, Polkadot.GLMR.id],
   },
   {
+    from: Astar.uid,
+    to: Acala.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Astar.uid,
+    to: Bifrost.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Astar.uid,
+    to: Interlay.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Astar.uid,
+    to: Centrifuge.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
     from: Mythos.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
@@ -361,5 +441,23 @@ export const routes: Route[] = [
     to: Mythos.uid,
     sdk: 'ParaSpellApi',
     tokens: [Eth.MYTH.id],
+  },
+  {
+    from: Centrifuge.uid,
+    to: Hydration.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id, Polkadot.CFG.id, Polkadot.GLMR.id],
+  },
+  {
+    from: Centrifuge.uid,
+    to: Moonbeam.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.DOT.id],
+  },
+  {
+    from: Phala.uid,
+    to: Hydration.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [Polkadot.PHA.id],
   },
 ]

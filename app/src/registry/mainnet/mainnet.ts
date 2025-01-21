@@ -10,6 +10,7 @@ import {
   Interlay,
   Moonbeam,
   Mythos,
+  Phala,
   Polimec,
   RelayChain,
 } from './chains'
@@ -29,6 +30,7 @@ export const REGISTRY: Registry = {
     Hydration,
     Acala,
     Moonbeam,
+    Phala,
     Interlay,
     Polimec,
     Centrifuge,
@@ -49,6 +51,7 @@ export const REGISTRY: Registry = {
     Polkadot.CFG,
     Polkadot.BNC,
     Polkadot.GLMR,
+    Polkadot.PHA,
     Polkadot.ASTR,
     Polkadot.INTR,
     Polkadot.VDOT,
