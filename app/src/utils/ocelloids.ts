@@ -5,7 +5,7 @@ import {
   StoredTransfer,
   TxStatus,
 } from '@/models/transfer'
-import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm, } from '@sodazone/ocelloids-client'
+import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink, isParachainToParachain } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -19,17 +19,17 @@ type ResultNotification = {
 }
 
 enum xcmNotificationType {
-  Sent = "xcm.sent",
-  Received = "xcm.received",
-  Relayed = "xcm.relayed",
-  Timeout = "xcm.timeout",
-  Hop = "xcm.hop",
-  Bridge = "xcm.bridge"
+  Sent = 'xcm.sent',
+  Received = 'xcm.received',
+  Relayed = 'xcm.relayed',
+  Timeout = 'xcm.timeout',
+  Hop = 'xcm.hop',
+  Bridge = 'xcm.bridge',
 }
 
-
 // const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
-const OCELLOIDS_API_KEY = "eyJhbGciOiJFZERTQSIsImtpZCI6IklSU1FYWXNUc0pQTm9kTTJsNURrbkJsWkJNTms2SUNvc0xBRi16dlVYX289In0.ewogICJpc3MiOiAiZGV2LWFwaS5vY2VsbG9pZHMubmV0IiwKICAianRpIjogIjAxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwKICAic3ViIjogInB1YmxpY0BvY2VsbG9pZHMiCn0K.bjjQYsdIN9Fx34S9Of5QSKxb8_aOtwURInOGSSc_DxrdZcnYWi-5nnZsh1v5rYWuRWNzLstX0h1ICSH_oAugAQ"
+const OCELLOIDS_API_KEY =
+  'eyJhbGciOiJFZERTQSIsImtpZCI6IklSU1FYWXNUc0pQTm9kTTJsNURrbkJsWkJNTms2SUNvc0xBRi16dlVYX289In0.ewogICJpc3MiOiAiZGV2LWFwaS5vY2VsbG9pZHMubmV0IiwKICAianRpIjogIjAxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwKICAic3ViIjogInB1YmxpY0BvY2VsbG9pZHMiCn0K.bjjQYsdIN9Fx34S9Of5QSKxb8_aOtwURInOGSSc_DxrdZcnYWi-5nnZsh1v5rYWuRWNzLstX0h1ICSH_oAugAQ'
 
 // TMP Helper until Ocelloids supports DOT transfers between non system chains.
 export const isTransferringDotBetweenParachains = (
@@ -58,8 +58,8 @@ export const initOcelloidsClient = () => {
   //   apiKey: OCELLOIDS_API_KEY,
   // })
   return new OcelloidsClient({
-    httpUrl: "https://dev-api.ocelloids.net",
-    wsUrl: "wss://dev-api.ocelloids.net",
+    httpUrl: 'https://dev-api.ocelloids.net',
+    wsUrl: 'wss://dev-api.ocelloids.net',
     apiKey: OCELLOIDS_API_KEY,
   })
 }
@@ -71,7 +71,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => { })
+      .then(() => {})
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -123,7 +123,7 @@ export const xcmOcceloidsSubscribe = async (
             waypoint,
             destination,
           } = msg.payload
-          console.log("event", type, msg.payload)
+          console.log('event', type, msg.payload)
           const eventTxHash = getTxHashFromEvent(event, sourceChain.chainId, extrinsicHash)
 
           if (eventTxHash === txHash) {
@@ -189,7 +189,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => { },
+        onSubscriptionCreated: () => {},
         onSubscriptionError: console.error,
         onError: console.error,
       },
@@ -289,15 +289,15 @@ const getNotification = (
 
       return transferOutcome === 'Success'
         ? {
-          message: 'Transfer completed!',
-          severity: NotificationSeverity.Success,
-          status: TxStatus.Succeeded,
-        }
+            message: 'Transfer completed!',
+            severity: NotificationSeverity.Success,
+            status: TxStatus.Succeeded,
+          }
         : {
-          message: 'Transfer failed!',
-          severity: NotificationSeverity.Error,
-          status: TxStatus.Failed,
-        }
+            message: 'Transfer failed!',
+            severity: NotificationSeverity.Error,
+            status: TxStatus.Failed,
+          }
     }
     default:
       console.error('Unsupported Ocelloids XCM notification type')
