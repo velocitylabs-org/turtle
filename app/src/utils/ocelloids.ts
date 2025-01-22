@@ -5,7 +5,7 @@ import {
   StoredTransfer,
   TxStatus,
 } from '@/models/transfer'
-import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
+import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm, } from '@sodazone/ocelloids-client'
 import { getExplorerLink, isParachainToParachain } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -18,7 +18,18 @@ type ResultNotification = {
   status: TxStatus
 }
 
-const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
+enum xcmNotificationType {
+  Sent = "xcm.sent",
+  Received = "xcm.received",
+  Relayed = "xcm.relayed",
+  Timeout = "xcm.timeout",
+  Hop = "xcm.hop",
+  Bridge = "xcm.bridge"
+}
+
+
+// const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
+const OCELLOIDS_API_KEY = "eyJhbGciOiJFZERTQSIsImtpZCI6IklSU1FYWXNUc0pQTm9kTTJsNURrbkJsWkJNTms2SUNvc0xBRi16dlVYX289In0.ewogICJpc3MiOiAiZGV2LWFwaS5vY2VsbG9pZHMubmV0IiwKICAianRpIjogIjAxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwKICAic3ViIjogInB1YmxpY0BvY2VsbG9pZHMiCn0K.bjjQYsdIN9Fx34S9Of5QSKxb8_aOtwURInOGSSc_DxrdZcnYWi-5nnZsh1v5rYWuRWNzLstX0h1ICSH_oAugAQ"
 
 // TMP Helper until Ocelloids supports DOT transfers between non system chains.
 export const isTransferringDotBetweenParachains = (
@@ -43,7 +54,12 @@ export const getSubscribableTransfers = (transfers: StoredTransfer[]) => {
 
 export const initOcelloidsClient = () => {
   if (!OCELLOIDS_API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
+  // return new OcelloidsClient({
+  //   apiKey: OCELLOIDS_API_KEY,
+  // })
   return new OcelloidsClient({
+    httpUrl: "https://dev-api.ocelloids.net",
+    wsUrl: "wss://dev-api.ocelloids.net",
     apiKey: OCELLOIDS_API_KEY,
   })
 }
@@ -55,7 +71,7 @@ export const getOcelloidsAgentApi = async (): Promise<
     const OCLD_ClIENT = initOcelloidsClient()
 
     await OCLD_ClIENT.health()
-      .then(() => {})
+      .then(() => { })
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
@@ -107,23 +123,23 @@ export const xcmOcceloidsSubscribe = async (
             waypoint,
             destination,
           } = msg.payload
-
+          console.log("event", type, msg.payload)
           const eventTxHash = getTxHashFromEvent(event, sourceChain.chainId, extrinsicHash)
 
           if (eventTxHash === txHash) {
             // Handle different XCM event types
             switch (type) {
-              case xcm.XcmNotificationType.Sent:
+              case xcmNotificationType.Sent:
                 if (sourceChain.chainId === Moonbeam.chainId) updateStatus(txHash)
                 break
-              case xcm.XcmNotificationType.Relayed:
+              case xcmNotificationType.Relayed:
                 break
-              case xcm.XcmNotificationType.Hop: {
+              case xcmNotificationType.Hop: {
                 const hopOutcome = waypoint.outcome
                 if (hopOutcome === 'Fail') {
                   updateTransferStatus(
                     transfer,
-                    xcm.XcmNotificationType.Hop,
+                    xcmNotificationType.Hop,
                     remove,
                     addCompletedTransfer,
                     addNotification,
@@ -133,11 +149,11 @@ export const xcmOcceloidsSubscribe = async (
                 }
                 break
               }
-              case xcm.XcmNotificationType.Received: {
+              case xcmNotificationType.Received: {
                 const finalOutcome = 'outcome' in destination ? destination.outcome : undefined
                 updateTransferStatus(
                   transfer,
-                  xcm.XcmNotificationType.Received,
+                  xcmNotificationType.Received,
                   remove,
                   addCompletedTransfer,
                   addNotification,
@@ -146,10 +162,10 @@ export const xcmOcceloidsSubscribe = async (
                 ws.close()
                 break
               }
-              case xcm.XcmNotificationType.Timeout:
+              case xcmNotificationType.Timeout:
                 updateTransferStatus(
                   transfer,
-                  xcm.XcmNotificationType.Timeout,
+                  xcmNotificationType.Timeout,
                   remove,
                   addCompletedTransfer,
                   addNotification,
@@ -173,7 +189,7 @@ export const xcmOcceloidsSubscribe = async (
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
-        onSubscriptionCreated: () => {},
+        onSubscriptionCreated: () => { },
         onSubscriptionError: console.error,
         onError: console.error,
       },
@@ -192,9 +208,9 @@ const getSubscription = (
 ): xcm.XcmInputs => {
   const consensus = 'polkadot'
   return {
-    origin: `urn:ocn:${consensus}:${sourceChainId}`,
     senders: sender ? [sender] : '*',
     events: events ? events : '*',
+    origins: [`urn:ocn:${consensus}:${sourceChainId}`],
     destinations: [`urn:ocn:${consensus}:${destChainId}`],
   }
 }
@@ -236,7 +252,7 @@ const updateTransferStatus = (
     dismissible: true,
   })
 
-  if (xcmMsgType === xcm.XcmNotificationType.Hop || xcmMsgType === xcm.XcmNotificationType.Timeout)
+  if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
     captureException(new Error(`Ocelloids tracking error:${message}`), {
       tags: { XcmNotificationType: xcmMsgType, ...(transferOutcome && { transferOutcome }) },
       extra: { transfer },
@@ -248,7 +264,7 @@ const getNotification = (
   transferOutcome?: 'Success' | 'Fail',
 ): ResultNotification | undefined => {
   switch (xcmMsgType) {
-    case xcm.XcmNotificationType.Hop:
+    case xcmNotificationType.Hop:
       if (transferOutcome === 'Success') return
       return {
         message: 'Transfer failed!',
@@ -256,14 +272,14 @@ const getNotification = (
         status: TxStatus.Failed,
       }
 
-    case xcm.XcmNotificationType.Timeout:
+    case xcmNotificationType.Timeout:
       return {
         message: 'Transfer timed out!',
         severity: NotificationSeverity.Warning,
         status: TxStatus.Undefined,
       }
 
-    case xcm.XcmNotificationType.Received: {
+    case xcmNotificationType.Received: {
       if (!transferOutcome)
         return {
           message: 'Something went wrong',
@@ -273,15 +289,15 @@ const getNotification = (
 
       return transferOutcome === 'Success'
         ? {
-            message: 'Transfer completed!',
-            severity: NotificationSeverity.Success,
-            status: TxStatus.Succeeded,
-          }
+          message: 'Transfer completed!',
+          severity: NotificationSeverity.Success,
+          status: TxStatus.Succeeded,
+        }
         : {
-            message: 'Transfer failed!',
-            severity: NotificationSeverity.Error,
-            status: TxStatus.Failed,
-          }
+          message: 'Transfer failed!',
+          severity: NotificationSeverity.Error,
+          status: TxStatus.Failed,
+        }
     }
     default:
       console.error('Unsupported Ocelloids XCM notification type')
