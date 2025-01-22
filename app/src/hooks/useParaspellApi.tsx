@@ -164,14 +164,14 @@ const useParaspellApi = () => {
       }
 
       return dryRunResult.success
-    } catch (e) {
+    } catch (e: unknown) {
       // No dry run available, so we unfortunately must assume it's valid.
+      if (e instanceof Error && e.message.includes('DryRunApi is not available')) return true
+
+      // capture other type of errors but still unblock the transfer
+      captureException(e)
       return true
     }
-  }
-
-  function getTxId(event: TxEvent): string {
-    return event.txHash.toString()
   }
 
   const addToOngoingTransfers = async (
