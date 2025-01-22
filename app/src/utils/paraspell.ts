@@ -4,6 +4,7 @@ import { getAssetUid } from '@/registry'
 import { Environment } from '@/store/environmentStore'
 import {
   Builder,
+  EvmBuilder,
   getAllAssetsSymbols,
   getTNode,
   TCurrencyCore,
@@ -14,7 +15,7 @@ import {
 import { captureException } from '@sentry/nextjs'
 
 /**
- * Creates a submittable extrinsic transaction hash using Paraspell Builder.
+ * Creates a submittable PAPI transaction using Paraspell Builder.
  *
  * @param params - The transfer parameters
  * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
@@ -31,14 +32,51 @@ export const createTx = async (
   const destinationChainFromId = getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
+  else {
+    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
+    return await Builder(wssEndpoint)
+      .from(sourceChainFromId)
+      .to(destinationChainFromId)
+      .currency({ ...currencyId, amount })
+      .address(recipient)
+      .build()
+  }
+}
+
+/**
+ * Submits a moonbeam xcm transaction using Paraspell EvmBuilder.
+ *
+ * @param params - The transfer parameters
+ * @returns - A Promise that resolves to the tx hash.
+ */
+export const moonbeamTransfer = async (
+  params: TransferParams,
+  viemClient: any,
+): Promise<string> => {
+  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
-  return await Builder(wssEndpoint)
-    .from(sourceChainFromId)
+  console.log('Moonbeam transfer:', {
+    sourceChainFromId,
+    destinationChainFromId,
+    currencyId,
+    amount,
+    recipient,
+    viemClient,
+  })
+
+  return EvmBuilder()
+    .from('Moonbeam')
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
     .address(recipient)
+    .signer(viemClient)
     .build()
 }
 

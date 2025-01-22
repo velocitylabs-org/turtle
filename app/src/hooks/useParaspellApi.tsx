@@ -1,15 +1,20 @@
+import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
+import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { isProduction } from '@/utils/env'
 import { handleObservableEvents } from '@/utils/papi'
-import { createTx, dryRun } from '@/utils/paraspell'
+import { createTx, dryRun, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
+import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
+import { Config, useConnectorClient } from 'wagmi'
+import { moonbeam } from 'wagmi/chains'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
@@ -17,131 +22,136 @@ import { Sender, Status, TransferParams } from './useTransfer'
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
   const { addNotification } = useNotification()
+  const { data: viemClient } = useConnectorClient<Config>({ chainId: moonbeam.id })
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
     setStatus('Loading')
-    const {
-      sender,
-      sourceChain,
-      token,
-      destinationChain,
-      recipient,
-      amount,
-      environment,
-      fees,
-      onComplete,
-    } = params
 
-    const account = sender as SubstrateAccount
-    const senderAddress = await getSenderAddress(sender)
-    const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
+    try {
+      if (params.sourceChain.uid === 'moonbeam') await handleMoonbeamTransfer(params, setStatus)
+      else await handlePolkadotTransfer(params, setStatus)
+    } catch (e) {
+      handleSendError(params.sender, e, setStatus)
+    }
+  }
+
+  const handleMoonbeamTransfer = async (
+    params: TransferParams,
+    setStatus: (status: Status) => void,
+  ) => {
+    await switchChain(config, { chainId: moonbeam.id })
+    const hash = await moonbeamTransfer(params, viemClient)
+
+    const senderAddress = await getSenderAddress(params.sender)
+    const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
     const date = new Date()
+    await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
+
+    // TODO: figure out how to add crosschain event stuff
+
+    // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
+    if (params.environment === Environment.Mainnet && isProduction) {
+      trackTransferMetrics({
+        id: hash,
+        sender: senderAddress,
+        sourceChain: params.sourceChain,
+        token: params.token,
+        amount: params.amount,
+        destinationChain: params.destinationChain,
+        tokenUSDValue,
+        fees: params.fees,
+        recipient: params.recipient,
+        date,
+        environment: params.environment,
+      })
+
+      setStatus('Idle')
+    }
+  }
+
+  const handlePolkadotTransfer = async (
+    params: TransferParams,
+    setStatus: (status: Status) => void,
+  ) => {
+    const account = params.sender as SubstrateAccount
 
     if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
       throw new Error('Signer not found')
 
-    try {
-      setStatus('Validating')
-      if (!validate(params)) throw new Error('Transfer validation failed')
+    setStatus('Validating')
+    if (!validate(params)) throw new Error('Transfer validation failed')
 
-      const tx = await createTx(params, sourceChain.rpcConnection)
-      setStatus('Signing')
+    const tx = await createTx(params, params.sourceChain.rpcConnection)
+    setStatus('Signing')
 
-      const polkadotSigner = getPolkadotSignerFromPjs(
-        account.address,
-        account.pjsSigner.signPayload as SignPayload,
-        account.pjsSigner.signRaw as SignRaw,
+    const polkadotSigner = getPolkadotSignerFromPjs(
+      account.address,
+      account.pjsSigner.signPayload as SignPayload,
+      account.pjsSigner.signRaw as SignRaw,
+    )
+
+    const senderAddress = await getSenderAddress(params.sender)
+    const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
+    const date = new Date()
+
+    tx.signSubmitAndWatch(polkadotSigner).subscribe({
+      next: async (event: TxEvent) =>
+        await handleTxEvent(event, params, senderAddress, tokenUSDValue, date, setStatus),
+      error: callbackError => {
+        if (callbackError instanceof InvalidTxError) {
+          console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
+          handleSendError(params.sender, callbackError, setStatus)
+        }
+        handleSendError(params.sender, callbackError, setStatus)
+      },
+      complete: () => console.log('The transaction is complete'),
+    })
+
+    setStatus('Sending')
+  }
+
+  const handleTxEvent = async (
+    event: TxEvent,
+    params: TransferParams,
+    senderAddress: string,
+    tokenUSDValue: number,
+    date: Date,
+    setStatus: (status: Status) => void,
+  ) => {
+    if (event.type === 'signed') {
+      await addToOngoingTransfers(
+        event.txHash.toString(),
+        params,
+        senderAddress,
+        tokenUSDValue,
+        date,
+        setStatus,
       )
+    }
 
-      tx.signSubmitAndWatch(polkadotSigner).subscribe({
-        next: async (event: TxEvent) => {
-          if (event.type === 'signed') {
-            // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
-            // and unlocking the UI by resetting the form back to 'Idle'.
-            await new Promise(_ =>
-              setTimeout(function () {
-                setStatus('Idle')
-                onComplete?.()
-                addOrUpdate({
-                  id: getTxId(event),
-                  sourceChain,
-                  token,
-                  tokenUSDValue,
-                  sender: senderAddress,
-                  destChain: destinationChain,
-                  amount: amount.toString(),
-                  recipient,
-                  date,
-                  environment,
-                  fees,
-                  status: `Submitting to ${sourceChain.name}`,
-                } satisfies StoredTransfer)
-              }, 2000),
-            )
-          }
-          try {
-            const eventsData = handleObservableEvents(event)
-            if (eventsData) {
-              const { messageHash, messageId, extrinsicIndex } = eventsData
-              const id = getTxId(event)
+    try {
+      updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date)
+    } catch (error) {
+      handleSendError(params.sender, error, setStatus, event.txHash.toString())
+    }
 
-              // Update the ongoing tx entry now containing the necessary
-              // fields to be able to track its progress.
-              addOrUpdate({
-                id,
-                sourceChain,
-                token,
-                tokenUSDValue,
-                sender: senderAddress,
-                destChain: destinationChain,
-                amount: amount.toString(),
-                recipient,
-                date,
-                environment,
-                fees,
-                ...(messageHash && { crossChainMessageHash: messageHash }),
-                ...(messageId && { parachainMessageId: messageId }),
-                ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
-                status: `Arriving at ${destinationChain.name}`,
-                finalizedAt: new Date(),
-              } satisfies StoredTransfer)
-
-              trackTransferMetrics({
-                id,
-                sender: senderAddress,
-                sourceChain,
-                token,
-                amount,
-                destinationChain,
-                tokenUSDValue,
-                fees,
-                recipient,
-                date,
-                environment,
-              })
-              setStatus('Idle')
-              return
-            }
-          } catch (error) {
-            handleSendError(sender, error, setStatus, getTxId(event))
-          }
-        },
-        error: callbackError => {
-          if (callbackError instanceof InvalidTxError) {
-            console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
-            handleSendError(sender, callbackError, setStatus)
-          }
-          handleSendError(sender, callbackError, setStatus)
-        },
-        complete() {
-          console.log('The transaction is complete')
-        },
+    if (params.environment === Environment.Mainnet && isProduction) {
+      trackTransferMetrics({
+        id: event.txHash.toString(),
+        sender: senderAddress,
+        sourceChain: params.sourceChain,
+        token: params.token,
+        amount: params.amount,
+        destinationChain: params.destinationChain,
+        tokenUSDValue,
+        fees: params.fees,
+        recipient: params.recipient,
+        date,
+        environment: params.environment,
       })
 
-      setStatus('Sending')
-    } catch (e) {
-      handleSendError(sender, e, setStatus)
+      setStatus('Idle')
     }
   }
 
@@ -162,6 +172,73 @@ const useParaspellApi = () => {
 
   function getTxId(event: TxEvent): string {
     return event.txHash.toString()
+  }
+
+  const addToOngoingTransfers = async (
+    txHash: string,
+    params: TransferParams,
+    senderAddress: string,
+    tokenUSDValue: number,
+    date: Date,
+    setStatus: (status: Status) => void,
+  ): Promise<void> => {
+    // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
+    // and unlocking the UI by resetting the form back to 'Idle'.
+    await new Promise(resolve =>
+      setTimeout(() => {
+        setStatus('Idle')
+        params.onComplete?.()
+        addOrUpdate({
+          id: txHash,
+          sourceChain: params.sourceChain,
+          token: params.token,
+          tokenUSDValue,
+          sender: senderAddress,
+          destChain: params.destinationChain,
+          amount: params.amount.toString(),
+          recipient: params.recipient,
+          date,
+          environment: params.environment,
+          fees: params.fees,
+          status: `Submitting to ${params.sourceChain.name}`,
+        })
+        resolve(true)
+      }, 2000),
+    )
+  }
+
+  const updateOngoingTransfers = (
+    event: TxEvent,
+    params: TransferParams,
+    senderAddress: string,
+    tokenUSDValue: number,
+    date: Date,
+  ) => {
+    const eventsData = handleObservableEvents(event)
+    if (!eventsData) return
+
+    const { messageHash, messageId, extrinsicIndex } = eventsData
+
+    // Update the ongoing tx entry now containing the necessary
+    // fields to be able to track its progress.
+    addOrUpdate({
+      id: event.txHash.toString(),
+      sourceChain: params.sourceChain,
+      token: params.token,
+      tokenUSDValue,
+      sender: senderAddress,
+      destChain: params.destinationChain,
+      amount: params.amount.toString(),
+      recipient: params.recipient,
+      date,
+      environment: params.environment,
+      fees: params.fees,
+      ...(messageHash && { crossChainMessageHash: messageHash }),
+      ...(messageId && { parachainMessageId: messageId }),
+      ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
+      status: `Arriving at ${params.destinationChain.name}`,
+      finalizedAt: new Date(),
+    })
   }
 
   const handleSendError = (
