@@ -1,9 +1,5 @@
 import { captureException } from '@sentry/nextjs'
-import {
-  CompletedTransfer,
-  StoredTransfer,
-  TxStatus,
-} from '@/models/transfer'
+import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink } from './transfer'
 import { NotificationSeverity, Notification } from '@/models/notification'
