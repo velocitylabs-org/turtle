@@ -21,9 +21,7 @@ enum xcmNotificationType {
   Bridge = 'xcm.bridge',
 }
 
-// const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
-const OCELLOIDS_API_KEY =
-  'eyJhbGciOiJFZERTQSIsImtpZCI6IklSU1FYWXNUc0pQTm9kTTJsNURrbkJsWkJNTms2SUNvc0xBRi16dlVYX289In0.ewogICJpc3MiOiAiZGV2LWFwaS5vY2VsbG9pZHMubmV0IiwKICAianRpIjogIjAxMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwKICAic3ViIjogInB1YmxpY0BvY2VsbG9pZHMiCn0K.bjjQYsdIN9Fx34S9Of5QSKxb8_aOtwURInOGSSc_DxrdZcnYWi-5nnZsh1v5rYWuRWNzLstX0h1ICSH_oAugAQ'
+const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
 
 // Helper to filter the subscribable transfers only
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
@@ -31,12 +29,7 @@ export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
 
 export const initOcelloidsClient = () => {
   if (!OCELLOIDS_API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
-  // return new OcelloidsClient({
-  //   apiKey: OCELLOIDS_API_KEY,
-  // })
   return new OcelloidsClient({
-    httpUrl: 'https://dev-api.ocelloids.net',
-    wsUrl: 'wss://dev-api.ocelloids.net',
     apiKey: OCELLOIDS_API_KEY,
   })
 }
@@ -100,7 +93,6 @@ export const xcmOcceloidsSubscribe = async (
             waypoint,
             destination,
           } = msg.payload
-          console.log('event', type, msg.payload)
           const eventTxHash = getTxHashFromEvent(event, sourceChain.chainId, extrinsicHash)
 
           if (eventTxHash === txHash) {
