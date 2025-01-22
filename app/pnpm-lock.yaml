@@ -78,7 +78,7 @@ importers:
         specifier: ^0.1.23
         version: 0.1.25(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@sodazone/ocelloids-client':
-        specifier: 2.4.1
+        specifier: ^2.4.1
         version: 2.4.1(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@talismn/connect-components':
         specifier: ^1.1.8
