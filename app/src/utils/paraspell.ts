@@ -62,15 +62,6 @@ export const moonbeamTransfer = async (
     throw new Error('Transfer failed: chain id not found.')
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
-  console.log('Moonbeam transfer:', {
-    sourceChainFromId,
-    destinationChainFromId,
-    currencyId,
-    amount,
-    recipient,
-    viemClient,
-  })
-
   return EvmBuilder()
     .from('Moonbeam')
     .to(destinationChainFromId)

@@ -9,6 +9,7 @@ import { isProduction } from '@/utils/env'
 import { handleObservableEvents } from '@/utils/papi'
 import { createTx, dryRun, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
+import { TDryRunResult } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
@@ -81,8 +82,8 @@ const useParaspellApi = () => {
     setStatus('Validating')
 
     const validationResult = await validate(params)
-    if (validationResult.dryRunSupported && !validationResult.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.error}`)
+    if (validationResult.type === 'Supported' && !validationResult.success)
+      throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
 
     const tx = await createTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
@@ -157,35 +158,27 @@ const useParaspellApi = () => {
     }
   }
 
-  interface DryRunResult {
-    dryRunSupported: boolean
-    success: boolean
-    error?: string
-    fee?: bigint
-  }
+  type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
   const validate = async (params: TransferParams): Promise<DryRunResult> => {
     try {
-      const dryRunResult = await dryRun(params, params.sourceChain.rpcConnection)
+      const result = await dryRun(params, params.sourceChain.rpcConnection)
 
-      const res: DryRunResult = {
-        dryRunSupported: true,
-        success: dryRunResult.success,
+      const dryRunResult: DryRunResult = {
+        type: 'Supported',
+        ...result,
       }
 
-      if (dryRunResult.success) res.fee = dryRunResult.fee
-      else {
-        res.error = dryRunResult.failureReason
-        console.error('Dry run failed:', dryRunResult.failureReason)
-        captureException(new Error(`Dry run failed: ${dryRunResult.failureReason}`))
-      }
-
-      return res
+      return dryRunResult
     } catch (e: unknown) {
       if (e instanceof Error && e.message.includes('DryRunApi is not available'))
-        return { dryRunSupported: false, success: false, error: e.message }
+        return { type: 'Unsupported', success: false, failureReason: e.message } as DryRunResult
 
-      return { dryRunSupported: true, success: false, error: (e as Error).message }
+      return {
+        type: 'Supported',
+        success: false,
+        failureReason: (e as Error).message,
+      } as DryRunResult
     }
   }
 
