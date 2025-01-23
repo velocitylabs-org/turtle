@@ -50,7 +50,6 @@ const useSnowbridgeApi = () => {
       onComplete,
     } = params
 
-    setStatus('Loading')
     try {
       if (snowbridgeContext === undefined) {
         addNotification({
