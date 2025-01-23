@@ -78,8 +78,8 @@ importers:
         specifier: ^0.1.23
         version: 0.1.25(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@sodazone/ocelloids-client':
-        specifier: ^2.4.1
-        version: 2.4.1(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        specifier: ^2.4.4
+        version: 2.4.4(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@talismn/connect-components':
         specifier: ^1.1.8
         version: 1.1.9(@polkadot/api@14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.56.2(@polkadot/api@14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util@13.3.1)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3904,8 +3904,8 @@ packages:
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
 
-  '@sodazone/ocelloids-client@2.4.1':
-    resolution: {integrity: sha512-XtgIjppFx9KFFmlKwC5i9LgdVRUq/sfx3m+myf/5wfELOLovumjvsGkWXGKMLkLGmO1NXSZhXRXc0DRjAcoWgA==}
+  '@sodazone/ocelloids-client@2.4.4':
+    resolution: {integrity: sha512-saQZhbODukXrML3I+iYKYzCnCMwHmzaxe66TpXs7QtvpVeZFDJ6nyABAsFChpx6mchSckMM7SNDVOmbs2GdMcw==}
     engines: {node: '>=18'}
     peerDependencies:
       ws: '*'
@@ -15136,7 +15136,7 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@sodazone/ocelloids-client@2.4.1(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+  '@sodazone/ocelloids-client@2.4.4(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       isows: 1.0.6(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ky: 1.7.4

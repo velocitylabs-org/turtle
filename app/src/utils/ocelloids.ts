@@ -21,16 +21,16 @@ enum xcmNotificationType {
   Bridge = 'xcm.bridge',
 }
 
-const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
+export const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
 
 // Helper to filter the subscribable transfers only
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
   transfers.filter(t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot)
 
-export const initOcelloidsClient = () => {
-  if (!OCELLOIDS_API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
+export const initOcelloidsClient = (API_KEY: string) => {
+  if (!API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
   return new OcelloidsClient({
-    apiKey: OCELLOIDS_API_KEY,
+    apiKey: API_KEY,
   })
 }
 
@@ -38,7 +38,7 @@ export const getOcelloidsAgentApi = async (): Promise<
   OcelloidsAgentApi<xcm.XcmInputs> | undefined
 > => {
   try {
-    const OCLD_ClIENT = initOcelloidsClient()
+    const OCLD_ClIENT = initOcelloidsClient(OCELLOIDS_API_KEY)
 
     await OCLD_ClIENT.health()
       .then(() => {})
