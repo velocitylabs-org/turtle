@@ -48,8 +48,6 @@ const useParaspellApi = () => {
     const date = new Date()
     await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
 
-    // TODO: figure out how to add crosschain event stuff
-
     // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
     if (params.environment === Environment.Mainnet && isProduction) {
       trackTransferMetrics({
@@ -79,8 +77,12 @@ const useParaspellApi = () => {
     if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
       throw new Error('Signer not found')
 
+    // Validate the transfer
     setStatus('Validating')
-    if (!validate(params)) throw new Error('Transfer validation failed')
+
+    const validationResult = await validate(params)
+    if (validationResult.dryRunSupported && !validationResult.success)
+      throw new Error(`Transfer dry run failed: ${validationResult.error}`)
 
     const tx = await createTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
@@ -155,22 +157,35 @@ const useParaspellApi = () => {
     }
   }
 
-  const validate = async (params: TransferParams) => {
+  interface DryRunResult {
+    dryRunSupported: boolean
+    success: boolean
+    error?: string
+    fee?: bigint
+  }
+
+  const validate = async (params: TransferParams): Promise<DryRunResult> => {
     try {
       const dryRunResult = await dryRun(params, params.sourceChain.rpcConnection)
-      if (!dryRunResult.success) {
+
+      const res: DryRunResult = {
+        dryRunSupported: true,
+        success: dryRunResult.success,
+      }
+
+      if (dryRunResult.success) res.fee = dryRunResult.fee
+      else {
+        res.error = dryRunResult.failureReason
         console.error('Dry run failed:', dryRunResult.failureReason)
         captureException(new Error(`Dry run failed: ${dryRunResult.failureReason}`))
       }
 
-      return dryRunResult.success
+      return res
     } catch (e: unknown) {
-      // No dry run available, so we unfortunately must assume it's valid.
-      if (e instanceof Error && e.message.includes('DryRunApi is not available')) return true
+      if (e instanceof Error && e.message.includes('DryRunApi is not available'))
+        return { dryRunSupported: false, success: false, error: e.message }
 
-      // capture other type of errors but still unblock the transfer
-      captureException(e)
-      return true
+      return { dryRunSupported: true, success: false, error: (e as Error).message }
     }
   }
 
