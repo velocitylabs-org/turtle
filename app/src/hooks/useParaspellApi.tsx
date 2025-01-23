@@ -161,21 +161,19 @@ const useParaspellApi = () => {
     try {
       const result = await dryRun(params, params.sourceChain.rpcConnection)
 
-      const dryRunResult: DryRunResult = {
+      return {
         type: 'Supported',
         ...result,
       }
-
-      return dryRunResult
     } catch (e: unknown) {
       if (e instanceof Error && e.message.includes('DryRunApi is not available'))
-        return { type: 'Unsupported', success: false, failureReason: e.message } as DryRunResult
+        return { type: 'Unsupported', success: false, failureReason: e.message }
 
       return {
         type: 'Supported',
         success: false,
         failureReason: (e as Error).message,
-      } as DryRunResult
+      }
     }
   }
 
