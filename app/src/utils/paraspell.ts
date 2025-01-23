@@ -14,6 +14,8 @@ import {
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 
+export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
+
 /**
  * Creates a submittable PAPI transaction using Paraspell Builder.
  *

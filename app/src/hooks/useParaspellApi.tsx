@@ -7,9 +7,8 @@ import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
 import { handleObservableEvents } from '@/utils/papi'
-import { createTx, dryRun, moonbeamTransfer } from '@/utils/paraspell'
+import { createTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
-import { TDryRunResult } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
@@ -157,8 +156,6 @@ const useParaspellApi = () => {
       setStatus('Idle')
     }
   }
-
-  type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
   const validate = async (params: TransferParams): Promise<DryRunResult> => {
     try {
