@@ -1,12 +1,12 @@
 'use client'
-import { captureException } from '@sentry/nextjs'
 import { useEffect } from 'react'
 import Image from 'next/image'
 import Navbar from '@/components/NavBar'
+import { customCaptureException } from '@/utils/sentry'
 
 const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
   useEffect(() => {
-    captureException(error)
+    customCaptureException(error, 'error', [{ errorBoundaries: 'Unexpected error' }])
   }, [error])
 
   return (

@@ -8,6 +8,7 @@ import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
 import useNotification from './useNotification'
+import { customCaptureException } from '@/utils/sentry'
 
 interface Params {
   context?: Context
@@ -46,7 +47,14 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
       setAllowance(toHuman(fetchedAllowance, tokenAmount.token))
     } catch (error) {
       console.error('Failed to fetch ERC-20 Token Allowance', error)
-      captureException(error)
+      customCaptureException<Pick<Params, 'owner' | 'tokenAmount'>>(
+        error,
+        'error',
+        [{ hook: 'useErc20Allowance' }, { function: 'fetchAllowance' }],
+        {
+          params: { tokenAmount, owner },
+        },
+      )
     } finally {
       setLoading(false)
     }
@@ -96,7 +104,14 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
           severity: NotificationSeverity.Error,
         })
         if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-          captureException(error)
+          customCaptureException<Pick<Params, 'owner' | 'tokenAmount'>>(
+            error,
+            'error',
+            [{ hook: 'useErc20Allowance' }, { function: 'approveAllowance' }],
+            {
+              params: { tokenAmount, owner },
+            },
+          )
         setApproving(false)
       }
     },
