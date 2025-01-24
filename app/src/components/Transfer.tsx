@@ -218,6 +218,7 @@ const Transfer: FC = () => {
                   <WalletButton walletType={destinationChain?.walletType} />
                 )
               }
+              clearable
               walletAddress={destinationWallet?.sender?.address}
               className="z-30"
               disabled={transferStatus !== 'Idle' || !sourceChain || !tokenAmount?.token}

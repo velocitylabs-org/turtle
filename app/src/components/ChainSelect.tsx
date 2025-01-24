@@ -1,7 +1,5 @@
 'use client'
 import useLookupName from '@/hooks/useLookupName'
-import { useEnsAvatar } from 'wagmi'
-import { normalize } from 'viem/ens'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
 import { ManualRecipient, SelectProps } from '@/models/select'
@@ -10,6 +8,9 @@ import { cn } from '@/utils/cn'
 import Image from 'next/image'
 import { forwardRef, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { normalize } from 'viem/ens'
+import { useEnsAvatar } from 'wagmi'
+import Button from './Button'
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
@@ -37,6 +38,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
       trailing,
       error,
       disabled,
+      clearable,
       className,
     },
     ref,
@@ -150,22 +152,38 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
 
         <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
           {options.map(option => {
-            if (!option.allowed) return
+            if (!option.allowed) return null
+            const isSelected = value?.uid === option.uid
             return (
               <li
                 key={option.uid}
-                className="flex cursor-pointer items-center gap-1 px-3 py-3 hover:bg-turtle-level1"
+                className="flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1"
                 onClick={() => handleSelectionChange(option)}
               >
-                <Image
-                  src={option.logoURI}
-                  alt={option.name}
-                  width={24}
-                  height={24}
-                  priority
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                />
-                <span className="text-sm">{option.name}</span>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={option.logoURI}
+                    alt={option.name}
+                    width={24}
+                    height={24}
+                    priority
+                    className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                  />
+                  <span className="text-sm">{option.name}</span>
+                </div>
+
+                {isSelected && clearable && (
+                  <Button
+                    label="clear"
+                    size="sm"
+                    variant="outline"
+                    className="ml-4 max-w-8"
+                    onClick={() => {
+                      onChange(null)
+                      setIsOpen(false)
+                    }}
+                  />
+                )}
               </li>
             )
           })}
