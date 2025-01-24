@@ -269,6 +269,18 @@ export namespace Polkadot {
     origin: parachain(2004),
   }
 
+  export const PHA: Token = {
+    id: 'pha',
+    name: 'PHA',
+    symbol: 'PHA',
+    logoURI: '/logos/phala.svg',
+    decimals: 12,
+    address: '',
+    multilocation: '"{"parents":1,"interior":{"x1":{"parachain":2035}}}"',
+    coingeckoId: 'pha',
+    origin: parachain(2035),
+  }
+
   export const INTR: Token = {
     id: 'intr',
     name: 'Interlay',

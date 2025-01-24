@@ -5,7 +5,7 @@ import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { assets, getTransferableAmount } from '@paraspell/sdk'
+import { getTNode, getTransferableAmount } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -62,7 +62,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
 
         case 'Polkadot': {
           const relay = getRelayNode(env)
-          const node = assets.getTNode(chain.chainId, relay)
+          const node = getTNode(chain.chainId, relay)
           if (!node) throw new Error('Node not found')
           const currency = getCurrencyId(env, node, chain.uid, token)
 

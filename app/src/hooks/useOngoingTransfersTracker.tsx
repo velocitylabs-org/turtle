@@ -6,53 +6,61 @@ import {
   TxStatus,
   TxTrackingResult,
 } from '@/models/transfer'
-import { resolveDirection } from '@/services/transfer'
-import { getExplorerLink, startedTooLongAgo } from '@/utils/transfer'
+import { Direction, resolveDirection } from '@/services/transfer'
+import { getExplorerLink } from '@/utils/transfer'
 import {
   findMatchingTransfer,
   getTransferStatus,
   isCompletedTransfer,
 } from '@/utils/transferTracking'
-import { captureException } from '@sentry/nextjs'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-// import { customCaptureException } from '@/utils/sentry'
+import { isTransferringDotBetweenParachains } from '@/utils/ocelloids'
 
 type ID = string
 type Message = string
 
-const useOngoingTransfersTracker = () => {
+const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
   const [loading, setLoading] = useState<boolean>(true)
-  const { remove, ongoingTransfers, updateUniqueId } = useOngoingTransfers()
+  const { remove, updateUniqueId } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const env = useEnvironment()
 
   const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
-    return ongoingTransfers.map(t => {
-      const direction = resolveDirection(t.sourceChain, t.destChain)
-      return {
-        id: t.id,
-        sourceChain: t.sourceChain,
-        destChain: t.destChain,
-        sender: t.sender,
-        recipient: t.recipient,
-        token: t.token,
-        date: t.date,
-        direction,
-        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
-        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
-        ...(t.sourceChainExtrinsicIndex && {
-          sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
-        }),
-      }
-    })
+    return ongoingTransfers
+      .map(t => {
+        const direction = resolveDirection(t.sourceChain, t.destChain)
+        return {
+          id: t.id,
+          sourceChain: t.sourceChain,
+          destChain: t.destChain,
+          sender: t.sender,
+          recipient: t.recipient,
+          token: t.token,
+          date: t.date,
+          direction,
+          ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
+          ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+          ...(t.sourceChainExtrinsicIndex && {
+            sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
+          }),
+        }
+      })
+      .filter(t => {
+        if (t.direction === Direction.WithinPolkadot) {
+          // Includes DOT is transfered between parachains
+          if (isTransferringDotBetweenParachains(t)) return true
+          return false
+        }
+        return true
+      })
   }
 
   const fetchTransfers = useCallback(async () => {
@@ -156,43 +164,6 @@ const useOngoingTransfersTracker = () => {
       }
     })
   }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateUniqueId])
-
-  useEffect(() => {
-    ongoingTransfers.forEach(ongoing => {
-      if (startedTooLongAgo(ongoing)) {
-        const explorerLink = getExplorerLink(ongoing)
-        remove(ongoing.id)
-        addCompletedTransfer({
-          id: ongoing.id,
-          result: TxStatus.Undefined,
-          token: ongoing.token,
-          sourceChain: ongoing.sourceChain,
-          destChain: ongoing.destChain,
-          amount: ongoing.amount,
-          tokenUSDValue: ongoing.tokenUSDValue ?? 0,
-          fees: ongoing.fees,
-          sender: ongoing.sender,
-          recipient: ongoing.recipient,
-          date: ongoing.date,
-          ...(explorerLink && { explorerLink }),
-        } satisfies CompletedTransfer)
-
-        addNotification({
-          message: 'Transfer verification failed.',
-          severity: NotificationSeverity.Warning,
-          dismissible: true,
-        })
-        captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
-        // customCaptureException(
-        //   new Error('Transfer tracking failed'),
-        //   'error',
-        //   [{ hook: 'useOngoingTransferCleaner' }],
-        //   { transfer: ongoingTransfers[0] },
-        // )
-      }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ongoingTransfers])
 
   return { transfers, loading, statusMessages, fetchTransfers }
 }

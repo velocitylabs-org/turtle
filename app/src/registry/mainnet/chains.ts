@@ -1,5 +1,5 @@
-import { Chain } from '@/models/chain'
 import { DWELLIR_KEY } from '@/config'
+import { Chain } from '@/models/chain'
 
 export const Ethereum: Chain = {
   uid: 'ethereum',
@@ -68,6 +68,17 @@ export const Hydration: Chain = {
   rpcConnection: `wss://api-hydradx.dwellir.com/${DWELLIR_KEY}`,
 }
 
+export const Phala: Chain = {
+  uid: 'phala',
+  name: 'Phala',
+  logoURI: '/logos/phala.svg',
+  chainId: 2035,
+  network: 'Polkadot',
+  supportedAddressTypes: ['ss58'],
+  walletType: 'Substrate',
+  rpcConnection: `wss://api-phala.dwellir.com/${DWELLIR_KEY}`,
+}
+
 export const Moonbeam: Chain = {
   uid: 'moonbeam',
   name: 'Moonbeam',
@@ -76,7 +87,7 @@ export const Moonbeam: Chain = {
   destinationFeeDOT: '500000000',
   network: 'Polkadot',
   supportedAddressTypes: ['evm'],
-  walletType: 'SubstrateEVM',
+  walletType: 'EVM',
   rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
 }
 
