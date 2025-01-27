@@ -19,7 +19,6 @@ import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { isTransferringDotBetweenParachains } from '@/utils/ocelloids'
 
 type ID = string
 type Message = string
@@ -53,14 +52,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
           }),
         }
       })
-      .filter(t => {
-        if (t.direction === Direction.WithinPolkadot) {
-          // Includes DOT is transfered between parachains
-          if (isTransferringDotBetweenParachains(t)) return true
-          return false
-        }
-        return true
-      })
+      .filter(t => t.direction !== Direction.WithinPolkadot)
   }
 
   const fetchTransfers = useCallback(async () => {
