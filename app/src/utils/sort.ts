@@ -15,21 +15,17 @@ export const reorderOptionsBySelectedItem = <T>(
 
   const getValue = <T>(obj: T, keyPath: string): string | undefined => {
     return keyPath.split('.').reduce((value: unknown, key: string) => {
-      if (value && typeof value === 'object') {
-        return (value as Record<string, unknown>)[key]
-      }
+      if (value && typeof value === 'object') return (value as Record<string, unknown>)[key]
+
       return undefined
     }, obj) as string | undefined
   }
 
   const reorderedOptions: T[] = []
   options.forEach(option => {
-    const uniqueId = getValue(option, key)
-    if (uniqueId === selectedId) {
-      reorderedOptions.unshift(option)
-    } else {
-      reorderedOptions.push(option)
-    }
+    const uniqueId = getValue<T>(option, key)
+    if (uniqueId === selectedId) reorderedOptions.unshift(option)
+    else reorderedOptions.push(option)
   })
 
   return reorderedOptions

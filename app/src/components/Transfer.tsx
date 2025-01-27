@@ -3,6 +3,7 @@ import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
+import { Chain } from '@/models/chain'
 import { resolveDirection } from '@/services/transfer'
 import { cn } from '@/utils/cn'
 import {
@@ -228,11 +229,11 @@ const Transfer: FC = () => {
               tokenAmount!.token,
             )
 
-            const reorderedOptions = reorderOptionsBySelectedItem(
-              options,
-              'uid',
-              destinationChain?.uid,
-            )
+            const reorderedOptions = reorderOptionsBySelectedItem<
+              Chain & {
+                allowed: boolean
+              }
+            >(options, 'uid', destinationChain?.uid)
 
             return (
               <ChainSelect
