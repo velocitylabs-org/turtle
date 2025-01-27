@@ -11,6 +11,7 @@ export interface SelectProps<T> {
   secondPlaceholder?: string
   trailing?: ReactNode
   disabled?: boolean
+  clearable?: boolean
   error?: string
   className?: string
 }
