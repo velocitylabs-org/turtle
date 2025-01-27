@@ -158,7 +158,10 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
             return (
               <li
                 key={option.uid}
-                className="flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1"
+                className={cn(
+                  'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                  isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                )}
                 onClick={() => handleSelectionChange(option)}
               >
                 <div className="flex items-center gap-2">
