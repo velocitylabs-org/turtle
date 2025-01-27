@@ -174,10 +174,10 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
 
                 {isSelected && clearable && (
                   <Button
-                    label="clear"
+                    label="Clear"
                     size="sm"
                     variant="outline"
-                    className="ml-4 max-w-8"
+                    className="ml-4 max-w-[4.875rem]"
                     onClick={() => {
                       onChange(null)
                       setIsOpen(false)
