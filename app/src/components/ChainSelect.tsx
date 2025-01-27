@@ -10,6 +10,7 @@ import { forwardRef, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
+import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
@@ -187,8 +188,8 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                       setIsOpen(false)
                     }}
                   >
-                    <div className="mr-1 flex items-center">
-                      <Cross stroke="black" />
+                    <div className="mr-1 flex items-center gap-1 text-turtle-foreground">
+                      <Cross stroke={colors['turtle-foreground']} />
                       <span>Clear</span>
                     </div>
                   </Button>
