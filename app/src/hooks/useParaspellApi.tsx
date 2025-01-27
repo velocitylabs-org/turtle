@@ -7,7 +7,7 @@ import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
 import { handleObservableEvents } from '@/utils/papi'
-import { createTx, moonbeamTransfer } from '@/utils/paraspell'
+import { createTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -48,8 +48,6 @@ const useParaspellApi = () => {
     const date = new Date()
     await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
 
-    // TODO: figure out how to add crosschain event stuff
-
     // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
     if (params.environment === Environment.Mainnet && isProduction) {
       trackTransferMetrics({
@@ -78,6 +76,13 @@ const useParaspellApi = () => {
 
     if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
       throw new Error('Signer not found')
+
+    // Validate the transfer
+    setStatus('Validating')
+
+    const validationResult = await validate(params)
+    if (validationResult.type === 'Supported' && !validationResult.success)
+      throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
 
     const tx = await createTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
@@ -149,6 +154,26 @@ const useParaspellApi = () => {
       })
 
       setStatus('Idle')
+    }
+  }
+
+  const validate = async (params: TransferParams): Promise<DryRunResult> => {
+    try {
+      const result = await dryRun(params, params.sourceChain.rpcConnection)
+
+      return {
+        type: 'Supported',
+        ...result,
+      }
+    } catch (e: unknown) {
+      if (e instanceof Error && e.message.includes('DryRunApi is not available'))
+        return { type: 'Unsupported', success: false, failureReason: e.message }
+
+      return {
+        type: 'Supported',
+        success: false,
+        failureReason: (e as Error).message,
+      }
     }
   }
 

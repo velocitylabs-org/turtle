@@ -209,14 +209,14 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
 export function getDurationEstimate(direction: Direction): string {
   switch (direction) {
     case Direction.ToEthereum:
-      return '~30 min to 4 hours'
+      return '~30 min to 1.5 hours'
     case Direction.ToPolkadot:
       return '~30 min'
     // NOTE: We don't support these now but we are leaving a reasonable estimate anyways
     // which is both safe and keeps us from needing to cascade a type-safe setup for these
     // use cases in the meantime.
     case Direction.WithinPolkadot:
-      return '~30-45s'
+      return '~45 seconds'
     case Direction.WithinEthereum:
       return '~5 min'
 

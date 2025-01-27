@@ -8,10 +8,13 @@ import {
   getAllAssetsSymbols,
   getTNode,
   TCurrencyCore,
+  TDryRunResult,
   TNodeDotKsmWithRelayChains,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
+
+export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
 /**
  * Creates a submittable PAPI transaction using Paraspell Builder.
@@ -61,15 +64,6 @@ export const moonbeamTransfer = async (
     throw new Error('Transfer failed: chain id not found.')
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
-  console.log('Moonbeam transfer:', {
-    sourceChainFromId,
-    destinationChainFromId,
-    currencyId,
-    amount,
-    recipient,
-    viemClient,
-  })
-
   return EvmBuilder()
     .from('Moonbeam')
     .to(destinationChainFromId)
@@ -77,6 +71,36 @@ export const moonbeamTransfer = async (
     .address(recipient)
     .signer(viemClient)
     .build()
+}
+
+/**
+ * Dry run a transfer using Paraspell.
+ *
+ * @param params - The transfer parameters
+ * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
+ * @returns - A Promise that resolves a dry run result.
+ * @throws - An error if the dry run api is not available.
+ */
+export const dryRun = async (
+  params: TransferParams,
+  wssEndpoint?: string,
+): Promise<TDryRunResult> => {
+  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Dry Run failed: chain id not found.')
+
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
+    .currency({ ...currencyId, amount })
+    .address(recipient)
+    .dryRun()
 }
 
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
