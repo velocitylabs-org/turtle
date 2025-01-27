@@ -14,6 +14,7 @@ import Button from './Button'
 import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
+import { Cross } from './svg/Cross'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
@@ -177,12 +178,17 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     label="Clear"
                     size="sm"
                     variant="outline"
-                    className="ml-4 max-w-[4.875rem]"
+                    className="max-w-[77px]"
                     onClick={() => {
                       onChange(null)
                       setIsOpen(false)
                     }}
-                  />
+                  >
+                    <div className="mr-1 flex items-center">
+                      <Cross stroke="black" />
+                      <span>Clear</span>
+                    </div>
+                  </Button>
                 )}
               </li>
             )
