@@ -181,7 +181,7 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     label="Clear"
                     size="sm"
                     variant="outline"
-                    className="max-w-[77px]"
+                    className="max-w-[77px] text-sm"
                     onClick={() => {
                       onChange(null)
                       setIsOpen(false)
