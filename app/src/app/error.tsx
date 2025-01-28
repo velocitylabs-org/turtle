@@ -2,11 +2,11 @@
 import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { captureException } from '@sentry/nextjs'
+import { customCaptureException } from '@/utils/sentry'
 
 const Error = ({ error }: { error: Error & { digest?: string } }) => {
   useEffect(() => {
-    captureException(error)
+    customCaptureException(error, 'error', [{ errorBoundaries: 'Unexpected global error' }])
   }, [error])
 
   return (

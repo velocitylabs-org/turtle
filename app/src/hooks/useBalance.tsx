@@ -4,9 +4,9 @@ import { getNativeToken } from '@/registry'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
+import { customCaptureException } from '@/utils/sentry'
 import { toHuman } from '@/utils/transfer'
 import { getTNode, getTransferableAmount } from '@paraspell/sdk'
-import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 
@@ -91,7 +91,9 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
       setBalance(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
-      captureException(error)
+      customCaptureException<UseBalanceParams>(error, 'error', [{ hook: 'useBalance' }], {
+        balanceParams: { env, chain, token, address },
+      })
     } finally {
       setLoading(false)
     }
