@@ -36,7 +36,7 @@
     "@reown/appkit-adapter-wagmi": "^1.6.1",
     "@sentry/nextjs": "^8.35.0",
     "@sentry/profiling-node": "^8.35.0",
-    "@snowbridge/api": "^0.1.23",
+    "@snowbridge/api": "^0.1.28",
     "@snowbridge/contract-types": "^0.1.23",
     "@sodazone/ocelloids-client": "^2.4.4",
     "@talismn/connect-components": "^1.1.8",
