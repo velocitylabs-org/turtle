@@ -1,7 +1,6 @@
 import { Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
-import { captureException } from '@sentry/nextjs'
 import { Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
 import { Signer } from 'ethers'
@@ -115,6 +114,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
         setApproving(false)
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [network, tokenAmount, context, fetchAllowance, addNotification],
   )
 
