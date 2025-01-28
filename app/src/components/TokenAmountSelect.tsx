@@ -147,12 +147,14 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
         <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
           {options.map(option => {
             if (option.token === null || !option.allowed) return null
+            const isSelected = value?.token?.id === option.token.id
+
             return (
               <li
                 key={option.token.id}
                 className={cn(
                   'flex cursor-pointer items-center gap-1 px-3 py-3 hover:bg-turtle-level1',
-                  !option.allowed && 'cursor-not-allowed opacity-50',
+                  isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
                 )}
                 onClick={() => option.allowed && handleSelectionChange(option.token)}
               >

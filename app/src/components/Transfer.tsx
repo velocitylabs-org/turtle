@@ -3,6 +3,7 @@ import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
+import { Chain } from '@/models/chain'
 import { resolveDirection } from '@/services/transfer'
 import { cn } from '@/utils/cn'
 import {
@@ -10,6 +11,7 @@ import {
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
+import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -143,57 +145,74 @@ const Transfer: FC = () => {
         <Controller
           name="sourceChain"
           control={control}
-          render={({ field }) => (
-            <ChainSelect
-              {...field}
-              onChange={handleSourceChainChange}
-              options={getAllowedSourceChains(environment)}
-              floatingLabel="From"
-              placeholder="Source"
-              trailing={<WalletButton walletType={sourceChain?.walletType} />}
-              walletAddress={sourceWallet?.sender?.address}
-              className="z-50"
-              disabled={transferStatus !== 'Idle'}
-            />
-          )}
+          render={({ field }) => {
+            const options = getAllowedSourceChains(environment)
+            const reorderedOptions = reorderOptionsBySelectedItem(options, 'uid', sourceChain?.uid)
+
+            return (
+              <ChainSelect
+                {...field}
+                onChange={handleSourceChainChange}
+                options={reorderedOptions}
+                floatingLabel="From"
+                placeholder="Source"
+                trailing={<WalletButton walletType={sourceChain?.walletType} />}
+                walletAddress={sourceWallet?.sender?.address}
+                className="z-50"
+                disabled={transferStatus !== 'Idle'}
+              />
+            )
+          }}
         />
 
         {/* Token */}
         <Controller
           name="tokenAmount"
           control={control}
-          render={({ field }) => (
-            <TokenAmountSelect
-              {...field}
-              sourceChain={sourceChain}
-              options={getAllowedTokens(environment, sourceChain, destinationChain).map(token => ({
+          render={({ field }) => {
+            const options = getAllowedTokens(environment, sourceChain, destinationChain).map(
+              token => ({
                 token,
                 amount: null,
                 allowed: token.allowed,
-              }))}
-              floatingLabel="Amount"
-              disabled={transferStatus !== 'Idle' || !sourceChain}
-              secondPlaceholder={amountPlaceholder}
-              error={errors.tokenAmount?.amount?.message || tokenAmountError}
-              trailing={
-                <Button
-                  label="Max"
-                  size="sm"
-                  variant="outline"
-                  className="min-w-[40px]"
-                  onClick={handleMaxButtonClick}
-                  disabled={
-                    !sourceWallet?.isConnected ||
-                    !tokenAmount?.token ||
-                    !isBalanceAvailable ||
-                    balanceData?.value === 0n ||
-                    transferStatus !== 'Idle'
-                  }
-                />
-              }
-              className="z-40"
-            />
-          )}
+              }),
+            )
+
+            const reorderedOptions = reorderOptionsBySelectedItem(
+              options,
+              'token.id',
+              tokenAmount?.token?.id,
+            )
+
+            return (
+              <TokenAmountSelect
+                {...field}
+                sourceChain={sourceChain}
+                options={reorderedOptions}
+                floatingLabel="Amount"
+                disabled={transferStatus !== 'Idle' || !sourceChain}
+                secondPlaceholder={amountPlaceholder}
+                error={errors.tokenAmount?.amount?.message || tokenAmountError}
+                trailing={
+                  <Button
+                    label="Max"
+                    size="sm"
+                    variant="outline"
+                    className="min-w-[40px]"
+                    onClick={handleMaxButtonClick}
+                    disabled={
+                      !sourceWallet?.isConnected ||
+                      !tokenAmount?.token ||
+                      !isBalanceAvailable ||
+                      balanceData?.value === 0n ||
+                      transferStatus !== 'Idle'
+                    }
+                  />
+                }
+                className="z-40"
+              />
+            )
+          }}
         />
 
         {/* Swap source and destination chains */}
@@ -203,26 +222,41 @@ const Transfer: FC = () => {
         <Controller
           name="destinationChain"
           control={control}
-          render={({ field }) => (
-            <ChainSelect
-              {...field}
-              onChange={handleDestinationChainChange}
-              options={getAllowedDestinationChains(environment, sourceChain, tokenAmount!.token)}
-              floatingLabel="To"
-              placeholder="Destination"
-              manualRecipient={manualRecipient}
-              onChangeManualRecipient={handleManualRecipientChange}
-              error={manualRecipient.enabled ? manualRecipientError : ''}
-              trailing={
-                shouldDisplayRecipientWalletButton && (
-                  <WalletButton walletType={destinationChain?.walletType} />
-                )
+          render={({ field }) => {
+            const options = getAllowedDestinationChains(
+              environment,
+              sourceChain,
+              tokenAmount!.token,
+            )
+
+            const reorderedOptions = reorderOptionsBySelectedItem<
+              Chain & {
+                allowed: boolean
               }
-              walletAddress={destinationWallet?.sender?.address}
-              className="z-30"
-              disabled={transferStatus !== 'Idle' || !sourceChain || !tokenAmount?.token}
-            />
-          )}
+            >(options, 'uid', destinationChain?.uid)
+
+            return (
+              <ChainSelect
+                {...field}
+                onChange={handleDestinationChainChange}
+                options={reorderedOptions}
+                floatingLabel="To"
+                placeholder="Destination"
+                manualRecipient={manualRecipient}
+                onChangeManualRecipient={handleManualRecipientChange}
+                error={manualRecipient.enabled ? manualRecipientError : ''}
+                trailing={
+                  shouldDisplayRecipientWalletButton && (
+                    <WalletButton walletType={destinationChain?.walletType} />
+                  )
+                }
+                clearable
+                walletAddress={destinationWallet?.sender?.address}
+                className="z-30"
+                disabled={transferStatus !== 'Idle' || !sourceChain || !tokenAmount?.token}
+              />
+            )
+          }}
         />
       </div>
 

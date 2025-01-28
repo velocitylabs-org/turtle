@@ -85,7 +85,7 @@ export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -100,7 +100,7 @@ export const dryRun = async (
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
     .address(recipient)
-    .dryRun()
+    .dryRun(sender.address)
 }
 
 export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
