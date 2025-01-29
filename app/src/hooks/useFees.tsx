@@ -9,18 +9,23 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
 import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
-import { toHuman } from '@/utils/transfer'
+import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import { WalletInfo } from './useWallet'
+import { TokenAmount } from '@/models/select'
 
 const useFees = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
+  sourceWallet?: WalletInfo | undefined,
+  recipient?: string,
+  tokenAmount?: TokenAmount | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
@@ -66,14 +71,55 @@ const useFees = (
           if (!snowbridgeContext || snowbridgeContextError)
             throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
           tokenUSDValue = (await getCachedTokenPrice(Eth.ETH))?.usd ?? 0
-          fees = (
-            await toPolkadot.getSendFee(
-              snowbridgeContext,
-              token.address,
-              destinationChain.chainId,
-              BigInt(0),
-            )
-          ).toString()
+
+          const sendFee = await toPolkadot.getSendFee(
+            snowbridgeContext,
+            token.address,
+            destinationChain.chainId,
+            BigInt(0),
+          )
+          fees = sendFee.toString()
+
+          if (
+            !sourceWallet?.sender?.address ||
+            !recipient ||
+            !tokenAmount?.amount ||
+            !token.address ||
+            !sendFee
+          ) {
+            console.log('break')
+            break
+          }
+
+          const { tx } = await toPolkadot.createTx(
+            snowbridgeContext.config.appContracts.gateway,
+            sourceWallet.sender?.address,
+            recipient,
+            token.address,
+            destinationChain.chainId,
+            safeConvertAmount(tokenAmount.amount, token) ?? 0n,
+            sendFee,
+            // destinationChain.destinationFeeDOT ?? 0n,
+            0n, // to be confirmed with Alistair. getSendFee already add BigInt(0),
+          )
+
+          console.log('Plan tx:', tx)
+          const gas = await snowbridgeContext.ethereum.api.estimateGas(tx)
+          console.log('Plan gas:', gas)
+          // const maxFeePerGas = (await snowbridgeContext.ethereum.api.getFeeData()).maxFeePerGas ?? 0n
+          // const totalCostWei = gas * maxFeePerGas;
+          // const totalCostEth = Number(totalCostWei) / 1e18;  // Convert to ETH
+          // console.log(`Estimated cost: ${totalCostEth} ETH`);
+
+          const feeData = await snowbridgeContext.ethereum.api.getFeeData()
+          const baseFeePerGas = feeData.gasPrice ?? 0n
+          const priorityFeePerGas = feeData.maxPriorityFeePerGas ?? 0n
+          const effectiveGasPrice = baseFeePerGas + priorityFeePerGas
+
+          const totalCostWei = gas * effectiveGasPrice
+          const totalCostEth = Number(totalCostWei) / 1e18
+          console.log(`Estimated cost: ${totalCostEth} ETH`)
+          // console.log('Plan dry run:', await snowbridgeContext.ethereum.api.call(tx))
           break
         }
 
@@ -120,7 +166,17 @@ const useFees = (
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [env, sourceChain, destinationChain, token?.id, snowbridgeContext, addNotification])
+  }, [
+    env,
+    sourceChain,
+    destinationChain,
+    token?.id,
+    snowbridgeContext,
+    addNotification,
+    sourceWallet?.sender?.address,
+    recipient,
+    tokenAmount?.amount,
+  ])
 
   useEffect(() => {
     fetchFees()
