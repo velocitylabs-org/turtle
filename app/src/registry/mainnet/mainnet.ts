@@ -15,7 +15,7 @@ import {
   RelayChain,
 } from './chains'
 import { routes } from './routes'
-import { Eth, Polkadot } from './tokens'
+import { EthereumTokens, PolkadotTokens } from './tokens'
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -37,50 +37,52 @@ export const REGISTRY: Registry = {
     Astar,
   ],
   tokens: [
-    Eth.WETH,
-    Eth.WBTC,
-    Eth.USDC,
-    Polkadot.USDC,
-    Eth.USDT,
-    Polkadot.USDT,
-    Eth.WSTETH,
-    Eth.TBTC,
-    Polkadot.DOT,
-    Eth.DAI,
-    Polkadot.ACA,
-    Polkadot.CFG,
-    Polkadot.BNC,
-    Polkadot.GLMR,
-    Polkadot.PHA,
-    Polkadot.ASTR,
-    Polkadot.INTR,
-    Polkadot.VDOT,
-    Polkadot.IBTC,
-    Eth.MYTH,
-    Polkadot.HDX,
-    Eth.TON,
-    Eth.SHIB,
-    Eth.PEPE,
+    EthereumTokens.WETH,
+    EthereumTokens.WBTC,
+    EthereumTokens.USDC,
+    PolkadotTokens.USDC,
+    EthereumTokens.USDT,
+    PolkadotTokens.USDT,
+    EthereumTokens.WSTETH,
+    EthereumTokens.TBTC,
+    PolkadotTokens.DOT,
+    EthereumTokens.DAI,
+    PolkadotTokens.ACA,
+    PolkadotTokens.CFG,
+    PolkadotTokens.BNC,
+    PolkadotTokens.GLMR,
+    PolkadotTokens.PHA,
+    PolkadotTokens.ASTR,
+    PolkadotTokens.INTR,
+    PolkadotTokens.VDOT,
+    PolkadotTokens.IBTC,
+    EthereumTokens.MYTH,
+    PolkadotTokens.HDX,
+    EthereumTokens.TON,
+    EthereumTokens.SHIB,
+    EthereumTokens.PEPE,
   ],
   routes,
   assetUid: new Map([
     [
       AssetHub.uid,
       new Map([
-        [Eth.USDC.id, { symbol: 'USDC.e' }],
-        [Polkadot.USDC.id, { id: '1337' }],
-        [Eth.USDT.id, { symbol: 'USDT.e' }],
-        [Polkadot.USDT.id, { id: '1984' }],
-        [Eth.WETH.id, { symbol: 'WETH.e' }],
-        [Eth.WBTC.id, { symbol: 'WBTC.e' }],
+        [EthereumTokens.USDC.id, { symbol: 'USDC.e' }],
+        [PolkadotTokens.USDC.id, { id: '1337' }],
+        [EthereumTokens.USDT.id, { symbol: 'USDT.e' }],
+        [PolkadotTokens.USDT.id, { id: '1984' }],
+        [EthereumTokens.WETH.id, { symbol: 'WETH.e' }],
+        [EthereumTokens.WBTC.id, { symbol: 'WBTC.e' }],
       ]),
     ],
     [
       Hydration.uid,
       new Map([
-        [Polkadot.USDC.id, { id: '22' }],
-        [Polkadot.USDT.id, { id: '10' }],
+        [PolkadotTokens.USDC.id, { id: '22' }],
+        [PolkadotTokens.USDT.id, { id: '10' }],
       ]),
     ],
   ]),
 }
+
+export * as Mainnet from './mainnet'

@@ -72,3 +72,5 @@ export const REGISTRY: Registry = {
   ],
   assetUid: new Map(),
 }
+
+export * as Testnet from './testnet'
