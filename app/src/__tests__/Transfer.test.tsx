@@ -1,11 +1,11 @@
-/* import '@testing-library/jest-dom'
 import { getDestChainId } from '@/models/chain'
+import { Mainnet } from '@/registry'
+import { AssetHub, Ethereum } from '@/registry/mainnet/chains'
 import { getTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
+import { describe, expect, it } from '@jest/globals'
 import '@testing-library/jest-dom'
-import { Mainnet } from '@/registry'
-import { AssetHub, Ethereum } from '@/registry/mainnet/chains'
 
 describe('Transfer', () => {
   it('direction ToEthereum', () => {
@@ -64,4 +64,3 @@ describe('Transfer', () => {
     //{"type": "Token2", "value": 13})
   })
 })
- */
