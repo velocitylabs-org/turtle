@@ -12,12 +12,13 @@ import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
 import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
+import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { WalletInfo } from './useWallet'
 import { TokenAmount } from '@/models/select'
+import { ContractTransaction } from 'ethers'
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -80,47 +81,42 @@ const useFees = (
           )
           fees = sendFee.toString()
 
-          if (
-            !sourceWallet?.sender?.address ||
-            !recipient ||
-            !tokenAmount?.amount ||
-            !token.address ||
-            !sendFee
-          ) {
-            console.log('break')
+          try {
+            if (
+              !sourceWallet?.sender?.address ||
+              !recipient ||
+              !tokenAmount?.amount ||
+              !token.address ||
+              !sendFee
+            ) {
+              console.log('break')
+              break
+            }
+
+            const { tx } = await toPolkadot.createTx(
+              snowbridgeContext.config.appContracts.gateway,
+              sourceWallet.sender?.address,
+              recipient,
+              token.address,
+              destinationChain.chainId,
+              safeConvertAmount(tokenAmount.amount, token) ?? 0n,
+              sendFee,
+              0n, // to be confirmed with Alistair. getSendFee already add BigInt(0), // destinationChain.destinationFeeDOT ?? 0n,
+            )
+
+            const estimatedTokenGas = await estimateTransactionFee(
+              tx,
+              snowbridgeContext,
+              nativeToken,
+              tokenUSDValue,
+            )
+            console.log('Estimated cost:', { ...estimatedTokenGas })
+            break
+          } catch (error) {
+            // Estimation can fail for multiple reasons, including ambiguous errors such as insufficient token approval.
+            console.log('Estimated Tx cost failed', error instanceof Error && { ...error })
             break
           }
-
-          const { tx } = await toPolkadot.createTx(
-            snowbridgeContext.config.appContracts.gateway,
-            sourceWallet.sender?.address,
-            recipient,
-            token.address,
-            destinationChain.chainId,
-            safeConvertAmount(tokenAmount.amount, token) ?? 0n,
-            sendFee,
-            // destinationChain.destinationFeeDOT ?? 0n,
-            0n, // to be confirmed with Alistair. getSendFee already add BigInt(0),
-          )
-
-          console.log('Plan tx:', tx)
-          const gas = await snowbridgeContext.ethereum.api.estimateGas(tx)
-          console.log('Plan gas:', gas)
-          // const maxFeePerGas = (await snowbridgeContext.ethereum.api.getFeeData()).maxFeePerGas ?? 0n
-          // const totalCostWei = gas * maxFeePerGas;
-          // const totalCostEth = Number(totalCostWei) / 1e18;  // Convert to ETH
-          // console.log(`Estimated cost: ${totalCostEth} ETH`);
-
-          const feeData = await snowbridgeContext.ethereum.api.getFeeData()
-          const baseFeePerGas = feeData.gasPrice ?? 0n
-          const priorityFeePerGas = feeData.maxPriorityFeePerGas ?? 0n
-          const effectiveGasPrice = baseFeePerGas + priorityFeePerGas
-
-          const totalCostWei = gas * effectiveGasPrice
-          const totalCostEth = Number(totalCostWei) / 1e18
-          console.log(`Estimated cost: ${totalCostEth} ETH`)
-          // console.log('Plan dry run:', await snowbridgeContext.ethereum.api.call(tx))
-          break
         }
 
         case Direction.WithinPolkadot: {
@@ -183,6 +179,37 @@ const useFees = (
   }, [fetchFees])
 
   return { fees, loading, refetch: fetchFees, canPayFees }
+}
+
+/**
+ * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
+ *
+ * @param tx - The contract transaction object.
+ * @param snowbridgeContext - The Snowbridge context containing Ethereum API.
+ * @param nativeToken - The native token.
+ * @param nativeTokenUSDValue - The USD value of the native token.
+ * @returns An object containing the tx estimate gas fee in native tokens and its USD value.
+ */
+const estimateTransactionFee = async (
+  tx: ContractTransaction,
+  snowbridgeContext: Context,
+  nativeToken: Token,
+  nativeTokenUSDValue: number,
+) => {
+  // Fetch gas estimation and fee data
+  const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
+    snowbridgeContext.ethereum.api.estimateGas(tx),
+    snowbridgeContext.ethereum.api.getFeeData(),
+  ])
+
+  // Get effective fee per gas & get USD fee value
+  const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
+  const txFeeInToken = toHuman((txGas * effectiveFeePerGas).toString(), nativeToken)
+
+  return {
+    txFee: txFeeInToken,
+    txFeeInDollars: txFeeInToken * nativeTokenUSDValue,
+  }
 }
 
 export default useFees
