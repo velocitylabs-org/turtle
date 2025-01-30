@@ -1,11 +1,10 @@
 import { Chain } from '@/models/chain'
-import { Origin, Token } from '@/models/token'
-import { getRelayNode } from '@/utils/paraspell'
-import { getNativeAssetSymbol, getTNode, TCurrencyCore } from '@paraspell/sdk'
-import { Environment } from '../store/environmentStore'
+import { Token } from '@/models/token'
+import { Environment } from '@/store/environmentStore'
+import { TCurrencyCore } from '@paraspell/sdk'
+import { rpcConnectionAsHttps } from './helpers'
 import { Bifrost, Hydration, Moonbeam, Mythos } from './mainnet/chains'
 import { Mainnet } from './mainnet/mainnet'
-import { EthereumTokens } from './mainnet/tokens'
 import { Testnet } from './testnet/testnet'
 
 export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi'
@@ -49,50 +48,10 @@ export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
   rpcConnectionAsHttps(Moonbeam.rpcConnection),
 ]
 
-export function getNativeToken(chain: Chain): Token {
-  if (chain.network === 'Ethereum') return EthereumTokens.ETH
-
-  const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
-    ? Environment.Testnet
-    : Environment.Mainnet
-
-  const relay = getRelayNode(env)
-  const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
-
-  const symbol = getNativeAssetSymbol(chainNode)
-  const token = REGISTRY[env].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
-  if (!token) throw Error(`Native Token for ${chain.uid} not found`)
-  return token
-}
-
-export function rpcConnectionAsHttps(rpc?: string): string {
-  if (!rpc) return ''
-  return rpc.replace('wss://', 'https://')
-}
-
 export function getAssetUid(
   env: Environment,
   chainId: string,
   tokenId: string,
 ): LocalAssetUid | undefined {
   return REGISTRY[env].assetUid.get(chainId)?.get(tokenId)
-}
-
-export function isAssetHub(chain: Chain): boolean {
-  return chain.network == 'Polkadot' && chain.chainId === 1000
-}
-
-export function parachain(paraId: number): Origin {
-  return {
-    type: 'Polkadot',
-    paraId,
-  }
-}
-
-export function snowbridgeWrapped(): Origin {
-  return {
-    type: 'Ethereum',
-    bridge: 'Snowbridge',
-  }
 }

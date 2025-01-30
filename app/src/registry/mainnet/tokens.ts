@@ -1,18 +1,5 @@
-import { Origin, Token } from '@/models/token'
-
-export function parachain(paraId: number): Origin {
-  return {
-    type: 'Polkadot',
-    paraId,
-  }
-}
-
-export function snowbridgeWrapped(): Origin {
-  return {
-    type: 'Ethereum',
-    bridge: 'Snowbridge',
-  }
-}
+import { Token } from '@/models/token'
+import { parachain, snowbridgeWrapped } from '../helpers'
 
 // Tokens
 export const EthereumTokens = {
