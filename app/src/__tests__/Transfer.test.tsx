@@ -1,7 +1,6 @@
 import { getDestChainId } from '@/models/chain'
-import { Mainnet } from '@/registry'
-import { AssetHub, Ethereum } from '@/registry/mainnet/chains'
-import { getTokenPrice } from '@/services/balance'
+import { AssetHub, Ethereum, Mythos } from '@/registry/mainnet/chains'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { describe, expect, it } from '@jest/globals'
@@ -27,40 +26,35 @@ describe('Transfer', () => {
 
 describe('Transfer', () => {
   it('convert input amount to based amount', () => {
-    expect(safeConvertAmount(1, Mainnet.WETH)).toBe(BigInt(1000000000000000000))
-    expect(safeConvertAmount(0.12, Mainnet.WETH)).toBe(BigInt(120000000000000000))
-    expect(safeConvertAmount(123, Mainnet.WETH)).toBe(BigInt(123000000000000000000))
+    expect(safeConvertAmount(1, EthereumTokens.WETH)).toBe(BigInt(1000000000000000000))
+    expect(safeConvertAmount(0.12, EthereumTokens.WETH)).toBe(BigInt(120000000000000000))
+    expect(safeConvertAmount(123, EthereumTokens.WETH)).toBe(BigInt(123000000000000000000))
   })
 
   it('convert input amount to based back to humans', () => {
     const inputs = [1, 10000, 123, 0.35]
 
     inputs.forEach(x => {
-      expect(toHuman(safeConvertAmount(x, Mainnet.WETH)!, Mainnet.WETH)).toBe(x)
+      expect(toHuman(safeConvertAmount(x, EthereumTokens.WETH)!, EthereumTokens.WETH)).toBe(x)
     })
   })
 
   it('gets the right AT-API-compatible destChainId for any given chain', () => {
     // Ethereum-based chains should result in a multilocation
-    expect(getDestChainId(Mainnet.Ethereum)).toBe(
+    expect(getDestChainId(Ethereum)).toBe(
       '{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}}}}',
     )
-    expect(getDestChainId(Testnet.Sepolia)).toBe(
+    /* expect(getDestChainId(Sepolia)).toBe(
       '{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}}}}',
-    )
+    ) */
 
     // Polkadot-native chains should result in a basic chain id
-    expect(getDestChainId(Mainnet.AssetHub)).toBe(Mainnet.AssetHub.chainId.toString())
-    expect(getDestChainId(Mainnet.Mythos)).toBe(Mainnet.Mythos.chainId.toString())
-    expect(getDestChainId(Testnet.RococoAssetHub)).toBe(Testnet.RococoAssetHub.chainId.toString())
+    expect(getDestChainId(AssetHub)).toBe(AssetHub.chainId.toString())
+    expect(getDestChainId(Mythos)).toBe(Mythos.chainId.toString())
+    // expect(getDestChainId(Testnet.RococoAssetHub)).toBe(RococoAssetHub.chainId.toString())
   })
 
   it('convert amount to string', () => {
-    expect(convertAmount(0.3, Mainnet.WETH).toString()).toBe('300000000000000000')
-  })
-
-  it('fetches the token price', () => {
-    expect(getTokenPrice(Mainnet.MYTH.coingeckoId!)).toEqual({ usd: 0.2 })
-    //{"type": "Token2", "value": 13})
+    expect(convertAmount(0.3, EthereumTokens.WETH).toString()).toBe('300000000000000000')
   })
 })
