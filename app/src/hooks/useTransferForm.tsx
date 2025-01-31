@@ -65,7 +65,9 @@ const useTransferForm = () => {
   const destinationWallet = useWallet(destinationChain?.walletType)
   const {
     fees,
+    ethereumTxfees,
     loading: loadingFees,
+    refetch: refetchFees,
     canPayFees,
   } = useFees(
     sourceChain,
@@ -278,6 +280,8 @@ const useTransferForm = () => {
     sourceWallet,
     destinationWallet,
     fees,
+    ethereumTxfees,
+    refetchFees,
     loadingFees,
     canPayFees,
     transferStatus,
