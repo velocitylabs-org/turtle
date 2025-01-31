@@ -1,0 +1,41 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "app/**"
+  pull_request:
+    branches:
+      - "**"
+    paths:
+      - "app/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        env:
+          CYPRESS_INSTALL_BINARY: 0 # This disables Cypress binary installation during pnpm install
+        run: pnpm i
+
+      - name: Run Jest tests
+        run: pnpm test
