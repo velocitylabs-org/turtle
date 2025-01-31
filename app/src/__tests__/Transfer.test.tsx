@@ -44,14 +44,10 @@ describe('Transfer', () => {
     expect(getDestChainId(Ethereum)).toBe(
       '{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}}}}',
     )
-    /* expect(getDestChainId(Sepolia)).toBe(
-      '{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"11155111"}}}}}',
-    ) */
 
     // Polkadot-native chains should result in a basic chain id
     expect(getDestChainId(AssetHub)).toBe(AssetHub.chainId.toString())
     expect(getDestChainId(Mythos)).toBe(Mythos.chainId.toString())
-    // expect(getDestChainId(Testnet.RococoAssetHub)).toBe(RococoAssetHub.chainId.toString())
   })
 
   it('convert amount to string', () => {
