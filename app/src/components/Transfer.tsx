@@ -76,7 +76,7 @@ const Transfer: FC = () => {
     network: sourceChain?.network,
     tokenAmount,
     owner: sourceWallet?.sender?.address,
-    refetchFees
+    refetchFees,
   })
 
   const {

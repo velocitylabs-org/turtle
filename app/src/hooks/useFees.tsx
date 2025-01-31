@@ -29,6 +29,7 @@ const useFees = (
   tokenAmount?: TokenAmount | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
+  const [ethereumTxfees, setTransferFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
@@ -39,6 +40,7 @@ const useFees = (
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
       setFees(null)
+      setTransferFees(null)
       return
     }
 
@@ -56,6 +58,7 @@ const useFees = (
         isSnowbridgeContextLoading
       ) {
         setFees(null)
+        setTransferFees(null)
         return
       }
 
@@ -89,7 +92,6 @@ const useFees = (
               !token.address ||
               !sendFee
             ) {
-              console.log('break')
               break
             }
 
@@ -104,16 +106,21 @@ const useFees = (
               0n, // to be confirmed with Alistair. getSendFee already add BigInt(0), // destinationChain.destinationFeeDOT ?? 0n,
             )
 
-            const estimatedTokenGas = await estimateTransactionFee(
+            const { txFees, txFeesInDollars } = await estimateTransactionFees(
               tx,
               snowbridgeContext,
               nativeToken,
               tokenUSDValue,
             )
-            console.log('Estimated cost:', { ...estimatedTokenGas })
+
+            setTransferFees({
+              amount: txFees,
+              token: nativeToken,
+              inDollars: txFeesInDollars ? txFeesInDollars : 0,
+            })
             break
           } catch (error) {
-            // Estimation can fail for multiple reasons, including ambiguous errors such as insufficient token approval.
+            // Estimation can fail for multiple reasons, including errors such as insufficient token approval.
             console.log('Estimated Tx cost failed', error instanceof Error && { ...error })
             break
           }
@@ -151,6 +158,7 @@ const useFees = (
       })
     } catch (error) {
       setFees(null)
+      setTransferFees(null)
       captureException(error)
       console.error(error)
       addNotification({
@@ -178,7 +186,7 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, loading, refetch: fetchFees, canPayFees }
+  return { fees, ethereumTxfees, loading, refetch: fetchFees, canPayFees }
 }
 
 /**
@@ -190,7 +198,7 @@ const useFees = (
  * @param nativeTokenUSDValue - The USD value of the native token.
  * @returns An object containing the tx estimate gas fee in native tokens and its USD value.
  */
-const estimateTransactionFee = async (
+const estimateTransactionFees = async (
   tx: ContractTransaction,
   snowbridgeContext: Context,
   nativeToken: Token,
@@ -204,11 +212,11 @@ const estimateTransactionFee = async (
 
   // Get effective fee per gas & get USD fee value
   const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
-  const txFeeInToken = toHuman((txGas * effectiveFeePerGas).toString(), nativeToken)
+  const txFeesInToken = toHuman((txGas * effectiveFeePerGas).toString(), nativeToken)
 
   return {
-    txFee: txFeeInToken,
-    txFeeInDollars: txFeeInToken * nativeTokenUSDValue,
+    txFees: txFeesInToken,
+    txFeesInDollars: txFeesInToken * nativeTokenUSDValue,
   }
 }
 
