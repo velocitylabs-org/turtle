@@ -122,8 +122,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 <div className="items-right flex">
                   <div>
                     <div className="flex items-center text-right text-turtle-foreground">
-                      {formatAmount(Number(additionalfees.amount))}{' '}
-                      {additionalfees.token.symbol}
+                      {formatAmount(Number(additionalfees.amount))} {additionalfees.token.symbol}
                     </div>
 
                     {additionalfees.inDollars > 0 && (
