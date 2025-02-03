@@ -19,7 +19,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
-  additionalGasfees?: AmountInfo | null
+  additionalfees?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
@@ -30,7 +30,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   loading,
   tokenAmount,
   fees,
-  additionalGasfees,
+  additionalfees,
   durationEstimate,
   direction,
   canPayFees,
@@ -93,7 +93,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 <div>
                   <div className="flex items-center text-right text-turtle-foreground">
                     {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
-                    {isBridgeTransfer && !additionalGasfees && (
+                    {isBridgeTransfer && !additionalfees && (
                       <Tooltip
                         showIcon={false}
                         content={
@@ -114,7 +114,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 </div>
               </div>
             </li>
-            {isBridgeTransfer && additionalGasfees?.amount && (
+            {isBridgeTransfer && additionalfees?.amount && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="font-bold">Estimated transfer fee</div>
@@ -122,13 +122,13 @@ const TxSummary: FC<TxSummaryProps> = ({
                 <div className="items-right flex">
                   <div>
                     <div className="flex items-center text-right text-turtle-foreground">
-                      {formatAmount(Number(additionalGasfees.amount))}{' '}
-                      {additionalGasfees.token.symbol}
+                      {formatAmount(Number(additionalfees.amount))}{' '}
+                      {additionalfees.token.symbol}
                     </div>
 
-                    {additionalGasfees.inDollars > 0 && (
+                    {additionalfees.inDollars > 0 && (
                       <div className="text-right text-turtle-level4">
-                        ${formatAmount(additionalGasfees.inDollars)}
+                        ${formatAmount(additionalfees.inDollars)}
                       </div>
                     )}
                   </div>

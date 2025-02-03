@@ -23,13 +23,12 @@ import { ContractTransaction } from 'ethers'
 const useFees = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
-  token?: Token | null,
+  tokenData?: TokenAmount | null,
   sourceWallet?: WalletInfo | undefined,
   recipient?: string,
-  tokenAmount?: TokenAmount | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [ethereumTxfees, setTransferFees] = useState<AmountInfo | null>(null)
+  const [ethereumTxfees, setEthereumTxFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
@@ -38,9 +37,9 @@ const useFees = (
   const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token) {
+    if (!sourceChain || !destinationChain || !tokenData?.token) {
       setFees(null)
-      setTransferFees(null)
+      setEthereumTxFees(null)
       return
     }
 
@@ -58,7 +57,7 @@ const useFees = (
         isSnowbridgeContextLoading
       ) {
         setFees(null)
-        setTransferFees(null)
+        setEthereumTxFees(null)
         return
       }
 
@@ -78,7 +77,7 @@ const useFees = (
 
           const sendFee = await toPolkadot.getSendFee(
             snowbridgeContext,
-            token.address,
+            tokenData.token.address,
             destinationChain.chainId,
             BigInt(0),
           )
@@ -88,12 +87,14 @@ const useFees = (
             if (
               !sourceWallet?.sender?.address ||
               !recipient ||
-              !tokenAmount?.amount ||
-              !token.address ||
+              !tokenData ||
+              !tokenData.amount ||
+              !tokenData.token.address ||
               !sendFee
             ) {
               break
             }
+            const { amount, token } = tokenData
 
             const { tx } = await toPolkadot.createTx(
               snowbridgeContext.config.appContracts.gateway,
@@ -101,7 +102,7 @@ const useFees = (
               recipient,
               token.address,
               destinationChain.chainId,
-              safeConvertAmount(tokenAmount.amount, token) ?? 0n,
+              safeConvertAmount(amount, token) ?? 0n,
               sendFee,
               0n, // to be confirmed with Alistair. getSendFee already add BigInt(0), // destinationChain.destinationFeeDOT ?? 0n,
             )
@@ -113,7 +114,7 @@ const useFees = (
               tokenUSDValue,
             )
 
-            setTransferFees({
+            setEthereumTxFees({
               amount: txFees,
               token: nativeToken,
               inDollars: txFeesInDollars ? txFeesInDollars : 0,
@@ -131,12 +132,12 @@ const useFees = (
           const sourceChainNode = getTNode(sourceChain.chainId, relay)
           const destinationChainNode = getTNode(destinationChain.chainId, relay)
           if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
-          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
+          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, tokenData.token)
 
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
-            currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
+            currency: { ...currency, amount: BigInt(10 ** tokenData.token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
             accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,
@@ -158,7 +159,7 @@ const useFees = (
       })
     } catch (error) {
       setFees(null)
-      setTransferFees(null)
+      setEthereumTxFees(null)
       captureException(error)
       console.error(error)
       addNotification({
@@ -174,12 +175,12 @@ const useFees = (
     env,
     sourceChain,
     destinationChain,
-    token?.id,
+    tokenData?.token?.id,
     snowbridgeContext,
     addNotification,
     sourceWallet?.sender?.address,
     recipient,
-    tokenAmount?.amount,
+    tokenData?.amount,
   ])
 
   useEffect(() => {

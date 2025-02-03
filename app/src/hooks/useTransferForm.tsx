@@ -72,10 +72,9 @@ const useTransferForm = () => {
   } = useFees(
     sourceChain,
     destinationChain,
-    tokenAmount?.token,
+    tokenAmount,
     sourceWallet,
     getRecipientAddress(manualRecipient, destinationWallet),
-    tokenAmount,
   )
 
   const {
