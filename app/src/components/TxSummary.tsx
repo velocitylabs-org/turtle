@@ -19,6 +19,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
+  additionalGasfees?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
@@ -29,6 +30,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   loading,
   tokenAmount,
   fees,
+  additionalGasfees,
   durationEstimate,
   direction,
   canPayFees,
@@ -64,7 +66,8 @@ const TxSummary: FC<TxSummaryProps> = ({
     const isAmountTooLow =
       transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO
 
-    const showSnowbridgeFeeWarning = direction === Direction.ToPolkadot
+    const isBridgeTransfer =
+      direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
@@ -73,7 +76,7 @@ const TxSummary: FC<TxSummaryProps> = ({
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
-                <div className="font-bold">{showSnowbridgeFeeWarning ? 'Bridging Fee' : 'Fee'}</div>
+                <div className="font-bold">{isBridgeTransfer ? 'Bridging fee' : 'Fee'}</div>
                 {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
@@ -90,7 +93,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 <div>
                   <div className="flex items-center text-right text-turtle-foreground">
                     {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
-                    {showSnowbridgeFeeWarning && (
+                    {isBridgeTransfer && !additionalGasfees && (
                       <Tooltip
                         showIcon={false}
                         content={
@@ -111,6 +114,27 @@ const TxSummary: FC<TxSummaryProps> = ({
                 </div>
               </div>
             </li>
+            {isBridgeTransfer && additionalGasfees?.amount && (
+              <li className="mt-4 flex items-start justify-between border-turtle-level2">
+                <div className="items-left flex flex-col">
+                  <div className="font-bold">Estimated transfer fee</div>
+                </div>
+                <div className="items-right flex">
+                  <div>
+                    <div className="flex items-center text-right text-turtle-foreground">
+                      {formatAmount(Number(additionalGasfees.amount))}{' '}
+                      {additionalGasfees.token.symbol}
+                    </div>
+
+                    {additionalGasfees.inDollars > 0 && (
+                      <div className="text-right text-turtle-level4">
+                        ${formatAmount(additionalGasfees.inDollars)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            )}
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
                 <div className="font-bold">Duration</div>

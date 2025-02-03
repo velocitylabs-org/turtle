@@ -365,7 +365,7 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={tokenAmount}
           fees={fees}
-          ethereumTxfees={ethereumTxfees}
+          additionalGasfees={ethereumTxfees}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
           direction={direction}
