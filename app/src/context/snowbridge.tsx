@@ -1,5 +1,6 @@
 import { SnowbridgeStatus } from '@/models/snowbridge'
-import { rpcConnectionAsHttps, SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
+import { SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
+import { rpcConnectionAsHttps } from '@/registry/helpers'
 import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
 import { Context, contextFactory, environment, status } from '@snowbridge/api'

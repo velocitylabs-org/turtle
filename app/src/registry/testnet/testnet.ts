@@ -1,6 +1,7 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Registry, snowbridgeWrapped } from '..'
+import { Registry } from '..'
+import { snowbridgeWrapped } from '../helpers'
 
 /* Testnet :: Rococo - Sepolia */
 
@@ -72,3 +73,5 @@ export const REGISTRY: Registry = {
   ],
   assetUid: new Map(),
 }
+
+export * as Testnet from './testnet'

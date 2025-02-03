@@ -3,12 +3,11 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
-import { getNativeToken } from '@/registry'
-import { Eth, Polkadot } from '@/registry/mainnet/tokens'
+import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getRelayNode } from '@/utils/paraspell'
+import { getCurrencyId, getNativeToken, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -57,7 +56,7 @@ const useFees = (
         case Direction.ToEthereum: {
           if (!snowbridgeContext || snowbridgeContextError)
             throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
-          tokenUSDValue = (await getCachedTokenPrice(Polkadot.DOT))?.usd ?? 0
+          tokenUSDValue = (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
           fees = (await toEthereum.getSendFee(snowbridgeContext)).toString()
           break
         }
@@ -65,7 +64,7 @@ const useFees = (
         case Direction.ToPolkadot: {
           if (!snowbridgeContext || snowbridgeContextError)
             throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
-          tokenUSDValue = (await getCachedTokenPrice(Eth.ETH))?.usd ?? 0
+          tokenUSDValue = (await getCachedTokenPrice(EthereumTokens.ETH))?.usd ?? 0
           fees = (
             await toPolkadot.getSendFee(
               snowbridgeContext,

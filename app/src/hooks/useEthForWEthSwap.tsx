@@ -3,7 +3,7 @@ import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
-import { Eth } from '@/registry/mainnet/tokens'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
 import { captureException } from '@sentry/nextjs'
 import { Context, environment, toPolkadot } from '@snowbridge/api'
@@ -46,7 +46,9 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
     }
 
     try {
-      const balance = await context.ethereum.api.getBalance(owner).then(x => toHuman(x, Eth.ETH))
+      const balance = await context.ethereum.api
+        .getBalance(owner)
+        .then(x => toHuman(x, EthereumTokens.ETH))
       setEthBalance(balance)
     } catch (error) {
       if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
@@ -78,7 +80,12 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
 
       try {
         await toPolkadot
-          .depositWeth(context, signer, tokenAmount!.token!.address, convertAmount(amount, Eth.ETH))
+          .depositWeth(
+            context,
+            signer,
+            tokenAmount!.token!.address,
+            convertAmount(amount, EthereumTokens.ETH),
+          )
           .then(x => x.wait())
 
         SetIsSwapping(false)

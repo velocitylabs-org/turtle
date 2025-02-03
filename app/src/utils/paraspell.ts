@@ -1,11 +1,14 @@
 import { TransferParams } from '@/hooks/useTransfer'
+import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { getAssetUid } from '@/registry'
+import { getAssetUid, REGISTRY } from '@/registry'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
 import {
   Builder,
   EvmBuilder,
   getAllAssetsSymbols,
+  getNativeAssetSymbol,
   getTNode,
   TCurrencyCore,
   TDryRunResult,
@@ -148,4 +151,21 @@ export function getCurrencyId(
   token: Token,
 ): TCurrencyCore {
   return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
+}
+
+export function getNativeToken(chain: Chain): Token {
+  if (chain.network === 'Ethereum') return EthereumTokens.ETH
+
+  const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
+    ? Environment.Testnet
+    : Environment.Mainnet
+
+  const relay = getRelayNode(env)
+  const chainNode = getTNode(chain.chainId, relay)
+  if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
+
+  const symbol = getNativeAssetSymbol(chainNode)
+  const token = REGISTRY[env].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  if (!token) throw Error(`Native Token for ${chain.uid} not found`)
+  return token
 }
