@@ -95,7 +95,7 @@ const useFees = (
               break
             }
             const { amount, token } = tokenData
-
+            // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
             const { tx } = await toPolkadot.createTx(
               snowbridgeContext.config.appContracts.gateway,
               sourceWallet.sender?.address,
@@ -104,7 +104,7 @@ const useFees = (
               destinationChain.chainId,
               safeConvertAmount(amount, token) ?? 0n,
               sendFee,
-              0n, // to be confirmed with Alistair. getSendFee already add BigInt(0), // destinationChain.destinationFeeDOT ?? 0n,
+              BigInt(0),
             )
 
             const { txFees, txFeesInDollars } = await estimateTransactionFees(
@@ -123,6 +123,16 @@ const useFees = (
           } catch (error) {
             // Estimation can fail for multiple reasons, including errors such as insufficient token approval.
             console.log('Estimated Tx cost failed', error instanceof Error && { ...error })
+            captureException(new Error('Estimated Tx cost failed'), {
+              level: 'warning',
+              tags: {
+                useFeesHook:
+                  error instanceof Error && 'action' in error && typeof error.action === 'string'
+                    ? error.action
+                    : 'estimateTransactionFees',
+              },
+              extra: { error },
+            })
             break
           }
         }
