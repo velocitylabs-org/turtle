@@ -124,7 +124,7 @@ export const Polimec: Chain = {
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
   walletType: 'Substrate',
-  rpcConnection: ``, // TODO
+  rpcConnection: `wss://api-polimec.n.dwellir.com/${DWELLIR_KEY}`,
 }
 
 export const Centrifuge: Chain = {

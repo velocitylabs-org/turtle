@@ -54,6 +54,7 @@ export const REGISTRY: Registry = {
     PolkadotTokens.PHA,
     PolkadotTokens.ASTR,
     PolkadotTokens.INTR,
+    PolkadotTokens.PLMC,
     PolkadotTokens.VDOT,
     PolkadotTokens.IBTC,
     EthereumTokens.MYTH,

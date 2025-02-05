@@ -331,4 +331,16 @@ export const PolkadotTokens = {
     coingeckoId: 'interbtc',
     origin: parachain(2032),
   },
+
+  PLMC: {
+    id: 'plmc',
+    name: 'PLMC',
+    symbol: 'PLMC',
+    logoURI: '/logos/polimec.svg',
+    decimals: 10,
+    address: '',
+    multilocation: '{"parents":1,"interior":{"x1":{"parachain":3344}}}',
+    coingeckoId: 'polimec',
+    origin: parachain(3344),
+  },
 }

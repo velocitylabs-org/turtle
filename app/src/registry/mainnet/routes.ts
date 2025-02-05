@@ -11,6 +11,7 @@ import {
   Moonbeam,
   Mythos,
   Phala,
+  Polimec,
   RelayChain,
 } from './chains'
 import { EthereumTokens, PolkadotTokens } from './tokens'
@@ -208,6 +209,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
   },
+  {
+    from: AssetHub.uid,
+    to: Polimec.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.DOT.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
+  },
 
   // Para To System Routes
   {
@@ -241,6 +248,12 @@ export const routes: Route[] = [
   },
   {
     from: Moonbeam.uid,
+    to: AssetHub.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
+  },
+  {
+    from: Polimec.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
