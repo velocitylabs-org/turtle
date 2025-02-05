@@ -47,6 +47,15 @@ export function feeToHuman(fees: AmountInfo): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
 }
 
+export const getTotalFees = (fees: AmountInfo, additionalfees?: AmountInfo | null) => {
+  const additionalAmount = additionalfees ? Number(additionalfees.amount) : 0
+  const additionalValue = additionalfees?.inDollars || 0
+  const totalFeesAmount = formatAmount(toHuman(fees.amount, fees.token) + additionalAmount)
+  const totalFeesValue = formatAmount(fees.inDollars + additionalValue)
+
+  return { totalFeesAmount, totalFeesValue }
+}
+
 export type FormatLength = 'Short' | 'Long' | 'Longer'
 
 function getMaxSignificantDigits(length: FormatLength): number {

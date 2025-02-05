@@ -15,16 +15,15 @@ import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import { WalletInfo } from './useWallet'
-import { TokenAmount } from '@/models/select'
 import { ContractTransaction } from 'ethers'
 
 const useFees = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
-  tokenData?: TokenAmount | null,
-  sourceWallet?: WalletInfo | undefined,
-  recipient?: string,
+  token?: Token | null,
+  amount?: number | null,
+  senderAddress?: string,
+  recipientAddress?: string,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [ethereumTxfees, setEthereumTxFees] = useState<AmountInfo | null>(null)
@@ -36,7 +35,7 @@ const useFees = (
   const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !tokenData?.token) {
+    if (!sourceChain || !destinationChain || !token) {
       setFees(null)
       setEthereumTxFees(null)
       return
@@ -76,29 +75,22 @@ const useFees = (
 
           const sendFee = await toPolkadot.getSendFee(
             snowbridgeContext,
-            tokenData.token.address,
+            token.address,
             destinationChain.chainId,
             BigInt(0),
           )
           fees = sendFee.toString()
 
           try {
-            if (
-              !sourceWallet?.sender?.address ||
-              !recipient ||
-              !tokenData ||
-              !tokenData.amount ||
-              !tokenData.token.address ||
-              !sendFee
-            ) {
+            if (!senderAddress || !recipientAddress || !amount || !sendFee) {
+              setEthereumTxFees(null)
               break
             }
-            const { amount, token } = tokenData
             // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
             const { tx } = await toPolkadot.createTx(
               snowbridgeContext.config.appContracts.gateway,
-              sourceWallet.sender?.address,
-              recipient,
+              senderAddress,
+              recipientAddress,
               token.address,
               destinationChain.chainId,
               safeConvertAmount(amount, token) ?? 0n,
@@ -141,12 +133,12 @@ const useFees = (
           const sourceChainNode = getTNode(sourceChain.chainId, relay)
           const destinationChainNode = getTNode(destinationChain.chainId, relay)
           if (!sourceChainNode || !destinationChainNode) throw new Error('Chain id not found')
-          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, tokenData.token)
+          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
 
           const info = await getOriginFeeDetails({
             origin: sourceChainNode,
             destination: destinationChainNode,
-            currency: { ...currency, amount: BigInt(10 ** tokenData.token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
+            currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
             accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,
@@ -184,12 +176,12 @@ const useFees = (
     env,
     sourceChain,
     destinationChain,
-    tokenData?.token?.id,
+    token?.id,
     snowbridgeContext,
     addNotification,
-    sourceWallet?.sender?.address,
-    recipient,
-    tokenData?.amount,
+    senderAddress,
+    recipientAddress,
+    amount,
   ])
 
   useEffect(() => {
