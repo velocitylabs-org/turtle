@@ -91,8 +91,10 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
           severity: NotificationSeverity.Success,
         })
       } catch (error) {
+        const message = 'Failed to approve ERC-20 spend'
+        console.log(message, error instanceof Error && { ...error })
         addNotification({
-          message: 'Failed to approve ERC-20 spend',
+          message,
           severity: NotificationSeverity.Error,
         })
         if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))

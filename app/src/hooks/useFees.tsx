@@ -17,6 +17,7 @@ import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 const useFees = (
+  isUpdatingChain: boolean,
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
@@ -30,7 +31,7 @@ const useFees = (
   const env = useEnvironment()
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token) {
+    if (isUpdatingChain || !sourceChain || !destinationChain || !token) {
       setFees(null)
       return
     }
@@ -109,10 +110,11 @@ const useFees = (
     } catch (error) {
       setFees(null)
       captureException(error)
-      console.error(error)
+      const message = 'Failed to fetch the fees. Please try again later.'
+      console.log(message, error instanceof Error && { ...error })
       addNotification({
         severity: NotificationSeverity.Error,
-        message: 'Failed to fetch the fees. Please try again later.',
+        message,
         dismissible: true,
       })
     } finally {

@@ -60,6 +60,7 @@ const useTransferForm = () => {
 
   const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
+  const [isUpdatingChain, setIsUpdatingChain] = useState<boolean>(false)
   const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
@@ -67,7 +68,7 @@ const useTransferForm = () => {
     fees,
     loading: loadingFees,
     canPayFees,
-  } = useFees(sourceChain, destinationChain, tokenAmount?.token)
+  } = useFees(isUpdatingChain, sourceChain, destinationChain, tokenAmount?.token)
 
   const {
     balance: balanceData,
@@ -104,11 +105,15 @@ const useTransferForm = () => {
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
+      setIsUpdatingChain(true)
       setValue('sourceChain', newValue)
 
       if (newValue?.uid === Ethereum.uid) await switchChain(config, { chainId: mainnet.id }) // needed to fetch balance correctly
 
-      if (!newValue || newValue.uid === sourceChain?.uid) return
+      if (!newValue || newValue.uid === sourceChain?.uid) {
+        setIsUpdatingChain(false)
+        return
+      }
       const isSameDestination = destinationChain?.uid === newValue.uid
 
       if (
@@ -117,6 +122,7 @@ const useTransferForm = () => {
         !isSameDestination &&
         isRouteAllowed(environment, newValue, destinationChain, tokenAmount)
       ) {
+        setIsUpdatingChain(false)
         return
       }
 
@@ -124,12 +130,14 @@ const useTransferForm = () => {
         !isSameDestination &&
         isTokenAvailableForSourceChain(environment, newValue, destinationChain, tokenAmount?.token)
       ) {
+        setIsUpdatingChain(false)
         return
       }
 
       // Reset destination and token only if the conditions above are not met
       setValue('destinationChain', null)
       setValue('tokenAmount', { token: null, amount: null })
+      setIsUpdatingChain(false)
     },
     [setValue, sourceChain, destinationChain, tokenAmount, environment],
   )
