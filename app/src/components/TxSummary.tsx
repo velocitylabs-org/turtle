@@ -4,7 +4,7 @@ import { TokenAmount } from '@/models/select'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { cn } from '@/utils/cn'
-import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
+import { getTotalFees, toAmountInfo } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Info } from 'lucide-react'
 import { FC } from 'react'
@@ -19,6 +19,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
+  additionalfees?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
@@ -29,6 +30,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   loading,
   tokenAmount,
   fees,
+  additionalfees,
   durationEstimate,
   direction,
   canPayFees,
@@ -64,7 +66,10 @@ const TxSummary: FC<TxSummaryProps> = ({
     const isAmountTooLow =
       transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO
 
-    const showSnowbridgeFeeWarning = direction === Direction.ToPolkadot
+    const isBridgeTransfer =
+      direction === Direction.ToEthereum || direction === Direction.ToPolkadot
+
+    const { totalFeesAmount, totalFeesValue } = getTotalFees(fees, additionalfees)
 
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
@@ -73,7 +78,7 @@ const TxSummary: FC<TxSummaryProps> = ({
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
-                <div className="font-bold">{showSnowbridgeFeeWarning ? 'Bridging Fee' : 'Fee'}</div>
+                <div className="font-bold">Fee</div>
                 {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
@@ -89,8 +94,8 @@ const TxSummary: FC<TxSummaryProps> = ({
               <div className="items-right flex">
                 <div>
                   <div className="flex items-center text-right text-turtle-foreground">
-                    {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
-                    {showSnowbridgeFeeWarning && (
+                    {totalFeesAmount} {fees.token.symbol}
+                    {isBridgeTransfer && !additionalfees && (
                       <Tooltip
                         showIcon={false}
                         content={
@@ -104,9 +109,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                   </div>
 
                   {fees.inDollars > 0 && (
-                    <div className="text-right text-turtle-level4">
-                      ${formatAmount(fees.inDollars)}
-                    </div>
+                    <div className="text-right text-turtle-level4">${totalFeesValue}</div>
                   )}
                 </div>
               </div>

@@ -8,20 +8,25 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
 import { getCurrencyId, getNativeToken, getRelayNode } from '@/utils/paraspell'
-import { toHuman } from '@/utils/transfer'
+import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
+import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import { ContractTransaction } from 'ethers'
 
 const useFees = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
+  amount?: number | null,
+  senderAddress?: string,
+  recipientAddress?: string,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
+  const [ethereumTxfees, setEthereumTxFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
@@ -32,6 +37,7 @@ const useFees = (
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
       setFees(null)
+      setEthereumTxFees(null)
       return
     }
 
@@ -49,6 +55,7 @@ const useFees = (
         isSnowbridgeContextLoading
       ) {
         setFees(null)
+        setEthereumTxFees(null)
         return
       }
 
@@ -65,15 +72,60 @@ const useFees = (
           if (!snowbridgeContext || snowbridgeContextError)
             throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
           tokenUSDValue = (await getCachedTokenPrice(EthereumTokens.ETH))?.usd ?? 0
-          fees = (
-            await toPolkadot.getSendFee(
-              snowbridgeContext,
+
+          const sendFee = await toPolkadot.getSendFee(
+            snowbridgeContext,
+            token.address,
+            destinationChain.chainId,
+            BigInt(0),
+          )
+          fees = sendFee.toString()
+
+          try {
+            if (!senderAddress || !recipientAddress || !amount || !sendFee) {
+              setEthereumTxFees(null)
+              break
+            }
+            // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
+            const { tx } = await toPolkadot.createTx(
+              snowbridgeContext.config.appContracts.gateway,
+              senderAddress,
+              recipientAddress,
               token.address,
               destinationChain.chainId,
+              safeConvertAmount(amount, token) ?? 0n,
+              sendFee,
               BigInt(0),
             )
-          ).toString()
-          break
+
+            const { txFees, txFeesInDollars } = await estimateTransactionFees(
+              tx,
+              snowbridgeContext,
+              nativeToken,
+              tokenUSDValue,
+            )
+
+            setEthereumTxFees({
+              amount: txFees,
+              token: nativeToken,
+              inDollars: txFeesInDollars ? txFeesInDollars : 0,
+            })
+            break
+          } catch (error) {
+            // Estimation can fail for multiple reasons, including errors such as insufficient token approval.
+            console.log('Estimated Tx cost failed', error instanceof Error && { ...error })
+            captureException(new Error('Estimated Tx cost failed'), {
+              level: 'warning',
+              tags: {
+                useFeesHook:
+                  error instanceof Error && 'action' in error && typeof error.action === 'string'
+                    ? error.action
+                    : 'estimateTransactionFees',
+              },
+              extra: { error },
+            })
+            break
+          }
         }
 
         case Direction.WithinPolkadot: {
@@ -108,6 +160,7 @@ const useFees = (
       })
     } catch (error) {
       setFees(null)
+      setEthereumTxFees(null)
       captureException(error)
       console.error(error)
       addNotification({
@@ -119,13 +172,54 @@ const useFees = (
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [env, sourceChain, destinationChain, token?.id, snowbridgeContext, addNotification])
+  }, [
+    env,
+    sourceChain,
+    destinationChain,
+    token?.id,
+    snowbridgeContext,
+    addNotification,
+    senderAddress,
+    recipientAddress,
+    amount,
+  ])
 
   useEffect(() => {
     fetchFees()
   }, [fetchFees])
 
-  return { fees, loading, refetch: fetchFees, canPayFees }
+  return { fees, ethereumTxfees, loading, refetch: fetchFees, canPayFees }
+}
+
+/**
+ * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
+ *
+ * @param tx - The contract transaction object.
+ * @param snowbridgeContext - The Snowbridge context containing Ethereum API.
+ * @param nativeToken - The native token.
+ * @param nativeTokenUSDValue - The USD value of the native token.
+ * @returns An object containing the tx estimate gas fee in native tokens and its USD value.
+ */
+const estimateTransactionFees = async (
+  tx: ContractTransaction,
+  snowbridgeContext: Context,
+  nativeToken: Token,
+  nativeTokenUSDValue: number,
+) => {
+  // Fetch gas estimation and fee data
+  const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
+    snowbridgeContext.ethereum.api.estimateGas(tx),
+    snowbridgeContext.ethereum.api.getFeeData(),
+  ])
+
+  // Get effective fee per gas & get USD fee value
+  const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
+  const txFeesInToken = toHuman((txGas * effectiveFeePerGas).toString(), nativeToken)
+
+  return {
+    txFees: txFeesInToken,
+    txFeesInDollars: txFeesInToken * nativeTokenUSDValue,
+  }
 }
 
 export default useFees

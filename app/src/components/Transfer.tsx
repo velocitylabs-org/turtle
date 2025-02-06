@@ -52,6 +52,8 @@ const Transfer: FC = () => {
     sourceWallet,
     destinationWallet,
     fees,
+    ethereumTxfees,
+    refetchFees,
     loadingFees,
     canPayFees,
     transferStatus,
@@ -74,6 +76,7 @@ const Transfer: FC = () => {
     network: sourceChain?.network,
     tokenAmount,
     owner: sourceWallet?.sender?.address,
+    refetchFees,
   })
 
   const {
@@ -362,6 +365,7 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={tokenAmount}
           fees={fees}
+          additionalfees={ethereumTxfees}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
           direction={direction}
