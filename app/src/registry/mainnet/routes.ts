@@ -127,6 +127,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.DOT.id],
   },
+  {
+    from: RelayChain.uid,
+    to: Polimec.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.DOT.id],
+  },
 
   // Para To Relay Routes
   {
