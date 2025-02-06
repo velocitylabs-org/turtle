@@ -55,7 +55,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             Loading fees
           </div>
           <Delayed millis={7000}>
-            <div className="animate-slide-up-soft mt-1 text-xs text-turtle-secondary">
+            <div className="animate-slide-up-soft mt-1 text-center text-xs text-turtle-secondary">
               Sorry that it&apos;s taking so long. Hang on or try again
             </div>
           </Delayed>
