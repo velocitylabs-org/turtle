@@ -104,12 +104,10 @@ const useTransferForm = () => {
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
-      setValue('sourceChain', newValue)
-
-      if (newValue?.uid === Ethereum.uid) await switchChain(config, { chainId: mainnet.id }) // needed to fetch balance correctly
-
       if (!newValue || newValue.uid === sourceChain?.uid) return
       const isSameDestination = destinationChain?.uid === newValue.uid
+
+      if (newValue.uid === Ethereum.uid) await switchChain(config, { chainId: mainnet.id }) // needed to fetch balance correctly
 
       if (
         destinationChain &&
@@ -117,6 +115,8 @@ const useTransferForm = () => {
         !isSameDestination &&
         isRouteAllowed(environment, newValue, destinationChain, tokenAmount)
       ) {
+        // Update the source chain here to prevent triggering unexpected states, e.g., the useFees hook.
+        setValue('sourceChain', newValue)
         return
       }
 
@@ -124,10 +124,14 @@ const useTransferForm = () => {
         !isSameDestination &&
         isTokenAvailableForSourceChain(environment, newValue, destinationChain, tokenAmount?.token)
       ) {
+        // Update the source chain here to prevent triggering unexpected states, e.g., the useFees hook.
+        setValue('sourceChain', newValue)
         return
       }
 
+      // Update the source chain here to prevent triggering unexpected states, e.g., the useFees hook.
       // Reset destination and token only if the conditions above are not met
+      setValue('sourceChain', newValue)
       setValue('destinationChain', null)
       setValue('tokenAmount', { token: null, amount: null })
     },
