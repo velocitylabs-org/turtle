@@ -7,9 +7,6 @@ export default function Header() {
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={40} />
         <p className="turtle-text-shadow text-[2rem] font-medium text-white">Turtle</p>
-        <div className="box-shadow flex h-[19px] items-center justify-center rounded-[4px] border border-white bg-white px-[5px]">
-          <p className=" rainbow-text text-[12px] font-bold">BETA</p>
-        </div>
       </Link>
 
       <a href="https://app.turtle.cool" target="_blank">
