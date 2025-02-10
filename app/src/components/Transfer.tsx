@@ -30,6 +30,7 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -137,6 +138,9 @@ const Transfer: FC = () => {
 
   const shouldDisplayTxSummary =
     tokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+
+  const shouldDisplayUsdtRevokeAllowance =
+    erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
 
   return (
     <form
@@ -317,7 +321,7 @@ const Transfer: FC = () => {
             <ActionBanner
               disabled={isApprovingErc20Spend}
               header="Approve ERC-20 token spend"
-              text="We first need your approval to transfer this token from your wallet."
+              text={`We first need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
               image={
                 <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
               }
