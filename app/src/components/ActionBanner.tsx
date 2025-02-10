@@ -22,7 +22,7 @@ const ActionBanner: FC<Props> = ({ disabled, header, text, image, btn }) => {
         disabled ? 'animate-pulse cursor-progress' : '',
       )}
     >
-      <div className="justify-items flex flex-row items-start">
+      <div className="justify-items flex flex-row items-center">
         {image}
         <div className="justify-left ml-3 flex flex-col">
           <div className="text-left text-small font-bold text-turtle-foreground">{header}</div>
