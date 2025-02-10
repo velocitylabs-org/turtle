@@ -89,7 +89,6 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
             await toPolkadot
               .approveTokenSpend(context, signer, tokenAmount!.token!.address, 0n)
               .then(x => x.wait())
-              .then(_ => console.log('refetch'))
               .then(_ => fetchAllowance())
           }
         }
