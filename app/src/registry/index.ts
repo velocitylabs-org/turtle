@@ -3,7 +3,7 @@ import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 import { TCurrencyCore } from '@paraspell/sdk'
 import { rpcConnectionAsHttps } from './helpers'
-import { Bifrost, Hydration, Moonbeam, Mythos } from './mainnet/chains'
+import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from './mainnet/chains'
 import { Mainnet } from './mainnet/mainnet'
 import { Testnet } from './testnet/testnet'
 
@@ -42,6 +42,10 @@ export const REGISTRY = {
 }
 
 export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS: { [paraId: string]: string } = {
+  // Asset Hub
+  "1000": rpcConnectionAsHttps(AssetHub.rpcConnection),
+  // Bridge Hub
+  "1002": rpcConnectionAsHttps(BridgeHub.rpcConnection),
   // Moonbeam
   "2004": rpcConnectionAsHttps(Moonbeam.rpcConnection),
   // Bifrost
