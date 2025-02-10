@@ -8,6 +8,7 @@ import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { convertAmount, toHuman } from '../utils/transfer'
 import useNotification from './useNotification'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
 
 interface Params {
   context?: Context
@@ -78,6 +79,21 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       }
 
       try {
+        if (tokenAmount.token.id === EthereumTokens.USDT.id) {
+          if (!allowance) {
+            await fetchAllowance()
+          }
+
+          if (allowance !== 0) {
+            // USDT first need, to revoke the current allowance, before setting the new one.
+            await toPolkadot
+              .approveTokenSpend(context, signer, tokenAmount!.token!.address, 0n)
+              .then(x => x.wait())
+              .then(_ => console.log('refetch'))
+              .then(_ => fetchAllowance())
+          }
+        }
+
         await toPolkadot
           .approveTokenSpend(
             context,
@@ -103,7 +119,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
         setApproving(false)
       }
     },
-    [network, tokenAmount, context, fetchAllowance, addNotification],
+    [allowance, network, tokenAmount, context, fetchAllowance, addNotification],
   )
 
   return { allowance, loading: loading, approveAllowance, approving }
