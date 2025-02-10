@@ -80,9 +80,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
 
       try {
         if (tokenAmount.token.id === EthereumTokens.USDT.id) {
-          if (!allowance) {
-            await fetchAllowance()
-          }
+          if (allowance == null) await fetchAllowance()
 
           if (allowance !== 0) {
             // USDT first need, to revoke the current allowance, before setting the new one.
