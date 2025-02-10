@@ -208,8 +208,8 @@ const estimateTransactionFees = async (
 ) => {
   // Fetch gas estimation and fee data
   const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
-    snowbridgeContext.ethereum.api.estimateGas(tx),
-    snowbridgeContext.ethereum.api.getFeeData(),
+    snowbridgeContext.ethereum().estimateGas(tx),
+    snowbridgeContext.ethereum().getFeeData(),
   ])
 
   // Get effective fee per gas & get USD fee value

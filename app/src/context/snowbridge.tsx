@@ -3,7 +3,7 @@ import { SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
 import { rpcConnectionAsHttps } from '@/registry/helpers'
 import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
-import { Context, contextFactory, environment, status } from '@snowbridge/api'
+import { Context, environment, status } from '@snowbridge/api'
 
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
@@ -20,8 +20,8 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
 
   // apply custom api endpoints
   if (env === Environment.Mainnet) {
-    x.config.ASSET_HUB_URL = AssetHub.rpcConnection || ''
-    x.config.BRIDGE_HUB_URL = rpcConnectionAsHttps(BridgeHub.rpcConnection)
+    x.config.ASSET_HUB_PARAID = AssetHub.chainId
+    x.config.BRIDGE_HUB_PARAID = BridgeHub.chainId
     x.config.RELAY_CHAIN_URL = rpcConnectionAsHttps(RelayChain.rpcConnection)
     x.config.PARACHAINS = SNOWBRIDGE_MAINNET_PARACHAIN_URLS
   }
@@ -37,18 +37,17 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
 export async function getContext(environment: environment.SnowbridgeEnvironment): Promise<Context> {
   const { config } = environment
 
-  return await contextFactory({
+  return new Context({
     ethereum: {
       execution_url: config.ETHEREUM_API(ALCHEMY_API_KEY),
       beacon_url: config.BEACON_HTTP_API,
     },
     polkadot: {
-      url: {
-        bridgeHub: config.BRIDGE_HUB_URL,
-        assetHub: config.ASSET_HUB_URL,
-        relaychain: config.RELAY_CHAIN_URL,
-        parachains: config.PARACHAINS,
-      },
+      assetHubParaId: config.ASSET_HUB_PARAID,
+      bridgeHubParaId: config.BRIDGE_HUB_PARAID,
+      relaychain: config.RELAY_CHAIN_URL,
+      parachains: config.PARACHAINS,
+      
     },
     appContracts: {
       gateway: config.GATEWAY_CONTRACT,
