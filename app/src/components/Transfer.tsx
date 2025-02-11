@@ -4,6 +4,7 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { Chain } from '@/models/chain'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
 import { cn } from '@/utils/cn'
 import {
@@ -30,7 +31,6 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -136,6 +136,13 @@ const Transfer: FC = () => {
     !loadingFees &&
     canPayFees
 
+  const shouldDisableMaxButton =
+    !sourceWallet?.isConnected ||
+    !tokenAmount?.token ||
+    !isBalanceAvailable ||
+    balanceData?.value === 0n ||
+    transferStatus !== 'Idle'
+
   const shouldDisplayTxSummary =
     tokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 
@@ -207,13 +214,7 @@ const Transfer: FC = () => {
                     variant="outline"
                     className="min-w-[40px]"
                     onClick={handleMaxButtonClick}
-                    disabled={
-                      !sourceWallet?.isConnected ||
-                      !tokenAmount?.token ||
-                      !isBalanceAvailable ||
-                      balanceData?.value === 0n ||
-                      transferStatus !== 'Idle'
-                    }
+                    disabled={shouldDisableMaxButton}
                   />
                 }
                 className="z-40"
