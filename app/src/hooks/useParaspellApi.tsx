@@ -9,9 +9,10 @@ import { isProduction } from '@/utils/env'
 import { handleObservableEvents } from '@/utils/papi'
 import { createTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
+import { RouterBuilder, TRouterEvent } from '@paraspell/xcm-router'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
-import { InvalidTxError, TxEvent } from 'polkadot-api'
+import { TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
@@ -80,9 +81,9 @@ const useParaspellApi = () => {
     // Validate the transfer
     setStatus('Validating')
 
-    const validationResult = await validate(params)
+    /*     const validationResult = await validate(params)
     if (validationResult.type === 'Supported' && !validationResult.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
+      throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`) */
 
     const tx = await createTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
@@ -97,7 +98,7 @@ const useParaspellApi = () => {
     const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
     const date = new Date()
 
-    tx.signSubmitAndWatch(polkadotSigner).subscribe({
+    /*     tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) =>
         await handleTxEvent(event, params, senderAddress, tokenUSDValue, date, setStatus),
       error: callbackError => {
@@ -108,7 +109,26 @@ const useParaspellApi = () => {
         handleSendError(params.sender, callbackError, setStatus)
       },
       complete: () => console.log('The transaction is complete'),
-    })
+    }) */
+
+    await RouterBuilder()
+      .from('Polkadot') //Origin Parachain/Relay chain - OPTIONAL PARAMETER
+      .to('Astar') //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+      .currencyFrom({ symbol: 'DOT' }) // Currency to send - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+      .currencyTo({ symbol: 'ASTR' }) // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+      .amount('1000000') // Amount to send
+      .slippagePct('1') // Max slipppage percentage
+      .senderAddress('') //Injector address
+      .recipientAddress('') //Recipient address
+      .signer(account.pjsSigner as any) //Signer
+      //.evmSenderAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
+      //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+
+      .onStatusChange((status: TRouterEvent) => {
+        //This is how we subscribe to calls that need signing
+        console.log(status.type) //Transaction types
+      })
+      .build()
 
     setStatus('Sending')
   }
