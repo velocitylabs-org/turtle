@@ -47,7 +47,6 @@ export async function getContext(environment: environment.SnowbridgeEnvironment)
       bridgeHubParaId: config.BRIDGE_HUB_PARAID,
       relaychain: config.RELAY_CHAIN_URL,
       parachains: config.PARACHAINS,
-      
     },
     appContracts: {
       gateway: config.GATEWAY_CONTRACT,
