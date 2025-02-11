@@ -45,6 +45,7 @@ const useTransferForm = () => {
     handleSubmit,
     setValue,
     reset,
+    trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     resolver: zodResolver(schema),
@@ -150,6 +151,7 @@ const useTransferForm = () => {
   const handleDestinationChainChange = useCallback(
     (newValue: Chain | null) => {
       setValue('destinationChain', newValue)
+      trigger()
     },
     [setValue],
   )
