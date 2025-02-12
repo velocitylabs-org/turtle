@@ -41,20 +41,14 @@ export const REGISTRY = {
   testnet: Testnet.REGISTRY,
 }
 
-export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS: { [paraId: string]: string } = {
-  // Asset Hub
-  '1000': rpcConnectionAsHttps(AssetHub.rpcConnection),
-  // Bridge Hub
-  '1002': rpcConnectionAsHttps(BridgeHub.rpcConnection),
-  // Moonbeam
-  '2004': rpcConnectionAsHttps(Moonbeam.rpcConnection),
-  // Bifrost
-  '2030': rpcConnectionAsHttps(Bifrost.rpcConnection),
-  // Hydration
-  '2034': rpcConnectionAsHttps(Hydration.rpcConnection),
-  // Mythos
-  '3369': rpcConnectionAsHttps(Mythos.rpcConnection),
-}
+const SNOWBRIDGE_MAINNET_PARACHAINS = [AssetHub, BridgeHub, Moonbeam, Bifrost, Hydration, Mythos]
+
+export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = Object.fromEntries(
+  SNOWBRIDGE_MAINNET_PARACHAINS.map(chain => [
+    chain.chainId.toString(),
+    rpcConnectionAsHttps(chain.rpcConnection),
+  ]),
+)
 
 export function getAssetUid(
   env: Environment,
