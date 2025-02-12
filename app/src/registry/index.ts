@@ -3,7 +3,7 @@ import { Token } from '@/models/token'
 import { Environment } from '@/store/environmentStore'
 import { TCurrencyCore } from '@paraspell/sdk'
 import { rpcConnectionAsHttps } from './helpers'
-import { Bifrost, Hydration, Moonbeam, Mythos } from './mainnet/chains'
+import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from './mainnet/chains'
 import { Mainnet } from './mainnet/mainnet'
 import { Testnet } from './testnet/testnet'
 
@@ -41,12 +41,14 @@ export const REGISTRY = {
   testnet: Testnet.REGISTRY,
 }
 
-export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = [
-  rpcConnectionAsHttps(Mythos.rpcConnection),
-  rpcConnectionAsHttps(Bifrost.rpcConnection),
-  rpcConnectionAsHttps(Hydration.rpcConnection),
-  rpcConnectionAsHttps(Moonbeam.rpcConnection),
-]
+const SNOWBRIDGE_MAINNET_PARACHAINS = [AssetHub, BridgeHub, Moonbeam, Bifrost, Hydration, Mythos]
+
+export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = Object.fromEntries(
+  SNOWBRIDGE_MAINNET_PARACHAINS.map(chain => [
+    chain.chainId.toString(),
+    rpcConnectionAsHttps(chain.rpcConnection),
+  ]),
+)
 
 export function getAssetUid(
   env: Environment,
