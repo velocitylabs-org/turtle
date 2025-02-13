@@ -3,15 +3,13 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
-import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getRelayNode } from '@/utils/paraspell'
-import { safeConvertAmount, toHuman } from '@/utils/transfer'
-import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
+import { getCurrencyId, getNativeToken, getRelayNode, getTNode } from '@/utils/paraspell'
+import { toHuman } from '@/utils/transfer'
+import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -61,19 +59,15 @@ const useFees = (
       switch (route.sdk) {
         case 'ParaSpellApi': {
           const relay = getRelayNode(env)
-          const sourceChainNode = getTNode(sourceChain.chainId, relay)
+          const sourceChainNode = getTNode(sourceChain, relay)
           if (!sourceChainNode) throw new Error('Source chain id not found')
 
-          const destinationChainNode =
-            //todo(nuno)
-            destinationChain.network === 'Ethereum' && destinationChain.chainId === 1
-              ? 'Ethereum'
-              : getTNode(destinationChain.chainId, relay)
+          const destinationChainNode = getTNode(destinationChain, relay)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
           const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
           const info = await getOriginFeeDetails({
-            origin: sourceChainNode,
+            origin: sourceChainNode as TNodeDotKsmWithRelayChains,
             destination: destinationChainNode,
             currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender

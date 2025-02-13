@@ -7,7 +7,6 @@ import { safeConvertAmount, toHuman } from './transfer'
 import { Direction } from '@/services/transfer'
 import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
-import { Error } from '@polkadot/types/interfaces'
 import { Chain } from '@/models/chain'
 import { AmountInfo } from '@/models/transfer'
 import { captureException } from '@sentry/nextjs'
@@ -169,7 +168,7 @@ export const estimateTransactionFees = async (
   context: Context,
   feeToken: Token,
   feeTokenUSDValue: number,
-) => {
+): Promise<AmountInfo> => {
   // Fetch gas estimation and fee data
   const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
     context.ethereum.api.estimateGas(tx),
@@ -178,11 +177,12 @@ export const estimateTransactionFees = async (
 
   // Get effective fee per gas & get USD fee value
   const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
-  const txFeesInToken = toHuman((txGas * effectiveFeePerGas).toString(), feeToken)
+  const fee = toHuman((txGas * effectiveFeePerGas).toString(), feeToken)
 
   return {
-    txFees: txFeesInToken,
-    txFeesInDollars: txFeesInToken * feeTokenUSDValue,
+    amount: fee,
+    token: feeToken,
+    inDollars: fee * feeTokenUSDValue,
   }
 }
 
@@ -206,7 +206,6 @@ export const getFeeEstimate = async (
         fee: {
           amount: (await toEthereum.getSendFee(context)).toString(),
           token: PolkadotTokens.DOT,
-          // todo(nuno): use fee token
           inDollars: (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0,
         },
       }
@@ -215,26 +214,28 @@ export const getFeeEstimate = async (
     case Direction.ToPolkadot: {
       const feeToken = EthereumTokens.ETH
       const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
+      const fee = await toPolkadot.getSendFee(
+        context,
+        token.address,
+        destinationChain.chainId,
+        BigInt(0),
+      )
 
       const bridgingFee: AmountInfo = {
-        amount: await toPolkadot.getSendFee(
-          context,
-          token.address,
-          destinationChain.chainId,
-          BigInt(0),
-        ),
+        amount: fee, 
         token: feeToken,
-        inDollars: feeTokenInDollars,
+        inDollars: toHuman(fee, feeToken) * feeTokenInDollars
+      }
+
+      if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
+        return {
+          origin: 'Ethereum',
+          bridging: bridgingFee,
+          execution: null,
+        }
       }
 
       try {
-        if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
-          return {
-            origin: 'Ethereum',
-            bridging: bridgingFee,
-            execution: null,
-          }
-        }
         // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
         const { tx } = await toPolkadot.createTx(
           context.config.appContracts.gateway,
@@ -247,7 +248,7 @@ export const getFeeEstimate = async (
           BigInt(0),
         )
 
-        const { txFees, txFeesInDollars } = await estimateTransactionFees(
+        const executionFee = await estimateTransactionFees(
           tx,
           context,
           feeToken,
@@ -257,11 +258,7 @@ export const getFeeEstimate = async (
         return {
           origin: 'Ethereum',
           bridging: bridgingFee,
-          execution: {
-            amount: txFees,
-            token: feeToken,
-            inDollars: txFeesInDollars ?? 0,
-          },
+          execution: executionFee
         }
       } catch (error) {
         // Estimation can fail for multiple reasons, including errors such as insufficient token approval.

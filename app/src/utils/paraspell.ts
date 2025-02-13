@@ -9,11 +9,11 @@ import {
   EvmBuilder,
   getAllAssetsSymbols,
   getNativeAssetSymbol,
-  getTNode,
+  getTNode as _getTNode,
   TCurrencyCore,
   TDryRunResult,
-  TNodeDotKsmWithRelayChains,
   type TPapiTransaction,
+  TNodeWithRelayChains,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 
@@ -33,8 +33,8 @@ export const createTx = async (
   const { environment, sourceChain, destinationChain, token, amount, recipient } = params
 
   const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  const sourceChainFromId = _getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = _getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
   else {
@@ -61,8 +61,8 @@ export const moonbeamTransfer = async (
 ): Promise<string> => {
   const { environment, sourceChain, destinationChain, token, amount, recipient } = params
   const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  const sourceChainFromId = _getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = _getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
@@ -91,8 +91,8 @@ export const dryRun = async (
   const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
 
   const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  const sourceChainFromId = _getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = _getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
@@ -106,7 +106,7 @@ export const dryRun = async (
     .dryRun(sender.address)
 }
 
-export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
+export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   let tokenSymbol: string | undefined
@@ -146,7 +146,7 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
  * */
 export function getCurrencyId(
   env: Environment,
-  node: TNodeDotKsmWithRelayChains,
+  node: TNodeWithRelayChains,
   chainId: string,
   token: Token,
 ): TCurrencyCore {
@@ -161,11 +161,17 @@ export function getNativeToken(chain: Chain): Token {
     : Environment.Mainnet
 
   const relay = getRelayNode(env)
-  const chainNode = getTNode(chain.chainId, relay)
+  const chainNode = _getTNode(chain.chainId, relay)
   if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
 
   const symbol = getNativeAssetSymbol(chainNode)
   const token = REGISTRY[env].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
+}
+
+export function getTNode(chain: Chain, relay: 'polkadot'): TNodeWithRelayChains | null {
+  return chain.network === 'Ethereum' && chain.chainId === 1
+    ? 'Ethereum'
+    : _getTNode(chain.chainId, relay)
 }
