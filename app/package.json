@@ -20,7 +20,7 @@
     "@nextui-org/react": "^2.4.8",
     "@number-flow/react": "^0.4.1",
     "@paraspell/sdk": "^8.2.1",
-    "@paraspell/xcm-router": "^2.2.0",
+    "@paraspell/xcm-router": "^2.2.1",
     "@polkadot/api": "^14.3.1",
     "@polkadot/api-base": "^14.3.1",
     "@polkadot/apps-config": "^0.145.1",

@@ -1,4 +1,10 @@
 import { withSentryConfig } from '@sentry/nextjs'
+
+const isDevelopment = process.env.NODE_ENV === 'development'
+const vercelDomain = process.env.NEXT_PUBLIC_VERCEL_URL
+const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
+const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: config => {
@@ -8,7 +14,15 @@ const nextConfig = {
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
+      topLevelAwait: true,
     }
+
+    // Ensure WASM is loaded correctly
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'asset/resource',
+    })
+
     return config
   },
   async headers() {
@@ -18,7 +32,7 @@ const nextConfig = {
         source: '/api/:path*',
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: '*' }, //TODO: replace this your actual origin
+          { key: 'Access-Control-Allow-Origin', value: url },
           { key: 'Access-Control-Allow-Methods', value: 'GET,DELETE,PATCH,POST,PUT' },
           {
             key: 'Access-Control-Allow-Headers',
