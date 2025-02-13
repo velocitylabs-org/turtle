@@ -222,9 +222,9 @@ export const getFeeEstimate = async (
       )
 
       const bridgingFee: AmountInfo = {
-        amount: fee, 
+        amount: fee,
         token: feeToken,
-        inDollars: toHuman(fee, feeToken) * feeTokenInDollars
+        inDollars: toHuman(fee, feeToken) * feeTokenInDollars,
       }
 
       if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
@@ -248,17 +248,12 @@ export const getFeeEstimate = async (
           BigInt(0),
         )
 
-        const executionFee = await estimateTransactionFees(
-          tx,
-          context,
-          feeToken,
-          feeTokenInDollars,
-        )
+        const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
 
         return {
           origin: 'Ethereum',
           bridging: bridgingFee,
-          execution: executionFee
+          execution: executionFee,
         }
       } catch (error) {
         // Estimation can fail for multiple reasons, including errors such as insufficient token approval.
