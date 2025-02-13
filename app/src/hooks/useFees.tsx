@@ -16,7 +16,11 @@ import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { getRoute } from '@/utils/routes'
-import { estimateTransactionFees } from '@/utils/snowbridge'
+import { getFeeEstimate } from '@/utils/snowbridge'
+
+export type Fee =
+  | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
+  | { origin: 'Polkadot'; fee: AmountInfo }
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -45,47 +49,52 @@ const useFees = (
     // nuno
     const route = getRoute(env, sourceChain, destinationChain)
     if (!route) throw new Error('Route not supported')
-    
 
     let direction = resolveDirection(sourceChain, destinationChain)
     direction = sourceChain.chainId === 2034 ? Direction.WithinPolkadot : direction
     // TODO: this should be the fee token, not necessarily the native token. Also adjust the USD value accordingly below.
-    const nativeToken = getNativeToken(sourceChain)
-
-    console.log("Direction is ", direction)
+    const feeToken = getNativeToken(sourceChain)
 
     try {
       setLoading(true)
-      let fees: string
-      let tokenUSDValue: number = 0
-
 
       switch (route.sdk) {
         case 'ParaSpellApi': {
           const relay = getRelayNode(env)
-            const sourceChainNode = getTNode(sourceChain.chainId, relay)
-            if (!sourceChainNode) throw new Error('Source chain id not found')
-           
-            const destinationChainNode = destinationChain.network === "Ethereum" && destinationChain.chainId === 1 ? "Ethereum" : getTNode(destinationChain.chainId, relay)
-            if (!destinationChainNode) throw new Error('Destination chain id not found')
-  
-            const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
-            const info = await getOriginFeeDetails({
-              origin: sourceChainNode,
-              destination: destinationChainNode,
-              currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
-              account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
-              accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
-              api: sourceChain.rpcConnection,
-              ahAccount: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]),
-            })
-            tokenUSDValue = (await getCachedTokenPrice(nativeToken))?.usd ?? 0
-            fees = info.xcmFee.toString()
-            setCanPayFees(info.sufficientForXCM)
-            break
+          const sourceChainNode = getTNode(sourceChain.chainId, relay)
+          if (!sourceChainNode) throw new Error('Source chain id not found')
+
+          const destinationChainNode =
+            //todo(nuno)
+            destinationChain.network === 'Ethereum' && destinationChain.chainId === 1
+              ? 'Ethereum'
+              : getTNode(destinationChain.chainId, relay)
+          if (!destinationChainNode) throw new Error('Destination chain id not found')
+
+          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
+          const info = await getOriginFeeDetails({
+            origin: sourceChainNode,
+            destination: destinationChainNode,
+            currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
+            account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
+            accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
+            api: sourceChain.rpcConnection,
+            ahAccount: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]),
+          })
+
+          const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
+          const fee = info.xcmFee
+          setFees({
+            amount: fee,
+            token: feeToken,
+            inDollars: feeTokenInDollars ? toHuman(fee, feeToken) * feeTokenInDollars : 0,
+          })
+          setCanPayFees(info.sufficientForXCM)
+
+          break
         }
 
-        case 'SnowbridgeApi':  {
+        case 'SnowbridgeApi': {
           const direction = resolveDirection(sourceChain, destinationChain)
           if (
             (direction === Direction.ToEthereum || direction === Direction.ToPolkadot) &&
@@ -96,91 +105,39 @@ const useFees = (
             return
           }
 
-          switch (direction) {
-            case Direction.ToEthereum: {
-              if (!snowbridgeContext || snowbridgeContextError)
-                throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
-              tokenUSDValue = (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
-              fees = (await toEthereum.getSendFee(snowbridgeContext)).toString()
+          const fee = await getFeeEstimate(
+            token,
+            destinationChain,
+            direction,
+            snowbridgeContextError,
+            senderAddress,
+            recipientAddress,
+            amount,
+            snowbridgeContext,
+          )
+          if (!fee) {
+            setFees(null) // todo(nuno): make sure we want to set it to null - what if there's an error after we already got the fees once successfully?
+            setEthereumTxFees(null)
+            return
+          }
+
+          switch (fee.origin) {
+            case 'Ethereum': {
+              setFees(fee.bridging)
+              setEthereumTxFees(fee.execution)
               break
             }
-
-            case Direction.ToPolkadot: {
-              if (!snowbridgeContext || snowbridgeContextError)
-                throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
-              tokenUSDValue = (await getCachedTokenPrice(EthereumTokens.ETH))?.usd ?? 0
-    
-              const sendFee = await toPolkadot.getSendFee(
-                snowbridgeContext,
-                token.address,
-                destinationChain.chainId,
-                BigInt(0),
-              )
-              fees = sendFee.toString()
-    
-              try {
-                if (!senderAddress || !recipientAddress || !amount || !sendFee) {
-                  setEthereumTxFees(null)
-                  break
-                }
-                // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
-                const { tx } = await toPolkadot.createTx(
-                  snowbridgeContext.config.appContracts.gateway,
-                  senderAddress,
-                  recipientAddress,
-                  token.address,
-                  destinationChain.chainId,
-                  safeConvertAmount(amount, token) ?? 0n,
-                  sendFee,
-                  BigInt(0),
-                )
-    
-                const { txFees, txFeesInDollars } = await estimateTransactionFees(
-                  tx,
-                  snowbridgeContext,
-                  nativeToken,
-                  tokenUSDValue,
-                )
-    
-                setEthereumTxFees({
-                  amount: txFees,
-                  token: nativeToken,
-                  inDollars: txFeesInDollars ? txFeesInDollars : 0,
-                })
-                break
-              } catch (error) {
-                // Estimation can fail for multiple reasons, including errors such as insufficient token approval.
-                console.log('Estimated Tx cost failed', error instanceof Error && { ...error })
-                captureException(new Error('Estimated Tx cost failed'), {
-                  level: 'warning',
-                  tags: {
-                    useFeesHook:
-                      error instanceof Error && 'action' in error && typeof error.action === 'string'
-                        ? error.action
-                        : 'estimateTransactionFees',
-                  },
-                  extra: { error },
-                })
-                break
-              }
+            case 'Polkadot': {
+              setFees(fee.fee)
+              break
             }
-
-            default:
-              throw new Error('Unsupported direction for the SnowbridgeAPI')
-
+          }
+          break
         }
-      }
 
-      default:
+        default:
           throw new Error('Unsupported direction')
-    }
-
-    setFees({
-      amount: fees,
-      token: nativeToken,
-      inDollars: tokenUSDValue ? toHuman(fees, nativeToken) * tokenUSDValue : 0,
-    })
-  
+      }
     } catch (error) {
       setFees(null)
       setEthereumTxFees(null)
@@ -214,6 +171,5 @@ const useFees = (
 
   return { fees, ethereumTxfees, loading, refetch: fetchFees, canPayFees }
 }
-
 
 export default useFees

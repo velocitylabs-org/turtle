@@ -1,9 +1,17 @@
 import { AlchemyProvider, ContractTransaction } from 'ethers'
-import { environment, subscan, history, Context } from '@snowbridge/api'
+import { environment, subscan, history, Context, toEthereum, toPolkadot } from '@snowbridge/api'
 import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-types'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 import { Token } from '@/models/token'
-import { toHuman } from './transfer'
+import { safeConvertAmount, toHuman } from './transfer'
+import { Direction } from '@/services/transfer'
+import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
+import { getCachedTokenPrice } from '@/services/balance'
+import { Error } from '@polkadot/types/interfaces'
+import { Chain } from '@/models/chain'
+import { AmountInfo } from '@/models/transfer'
+import { captureException } from '@sentry/nextjs'
+import { Fee } from '@/hooks/useFees'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
 export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 3 // 3 days
@@ -147,26 +155,25 @@ export async function trackFromAhToEthTx(
   return transfers
 }
 
-
 /**
  * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
  *
  * @param tx - The contract transaction object.
- * @param snowbridgeContext - The Snowbridge context containing Ethereum API.
+ * @param context - The Snowbridge context containing Ethereum API.
  * @param feeToken - The fee token.
  * @param nativeTokenUSDValue - The USD value of the fee token.
- * @returns An object containing the tx estimate gas fee in native tokens and its USD value.
+ * @returns An object containing the tx estimate gas fee in the fee token and its USD value.
  */
-const estimateTransactionFees = async (
+export const estimateTransactionFees = async (
   tx: ContractTransaction,
-  snowbridgeContext: Context,
+  context: Context,
   feeToken: Token,
   feeTokenUSDValue: number,
 ) => {
   // Fetch gas estimation and fee data
   const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
-    snowbridgeContext.ethereum.api.estimateGas(tx),
-    snowbridgeContext.ethereum.api.getFeeData(),
+    context.ethereum.api.estimateGas(tx),
+    context.ethereum.api.getFeeData(),
   ])
 
   // Get effective fee per gas & get USD fee value
@@ -176,5 +183,104 @@ const estimateTransactionFees = async (
   return {
     txFees: txFeesInToken,
     txFeesInDollars: txFeesInToken * feeTokenUSDValue,
+  }
+}
+
+export const getFeeEstimate = async (
+  token: Token,
+  destinationChain: Chain,
+  direction: Direction,
+  contextError: any | null,
+
+  senderAddress?: string,
+  recipientAddress?: string,
+  amount?: number | null,
+  context?: Context,
+): Promise<Fee | null> => {
+  if (!context || contextError) throw contextError ?? new Error('Snowbridge context undefined')
+
+  switch (direction) {
+    case Direction.ToEthereum: {
+      return {
+        origin: 'Polkadot',
+        fee: {
+          amount: (await toEthereum.getSendFee(context)).toString(),
+          token: PolkadotTokens.DOT,
+          // todo(nuno): use fee token
+          inDollars: (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0,
+        },
+      }
+    }
+
+    case Direction.ToPolkadot: {
+      const feeToken = EthereumTokens.ETH
+      const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
+
+      const bridgingFee: AmountInfo = {
+        amount: await toPolkadot.getSendFee(
+          context,
+          token.address,
+          destinationChain.chainId,
+          BigInt(0),
+        ),
+        token: feeToken,
+        inDollars: feeTokenInDollars,
+      }
+
+      try {
+        if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
+          return {
+            origin: 'Ethereum',
+            bridging: bridgingFee,
+            execution: null,
+          }
+        }
+        // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
+        const { tx } = await toPolkadot.createTx(
+          context.config.appContracts.gateway,
+          senderAddress,
+          recipientAddress,
+          token.address,
+          destinationChain.chainId,
+          safeConvertAmount(amount, token) ?? 0n,
+          bridgingFee.amount as bigint,
+          BigInt(0),
+        )
+
+        const { txFees, txFeesInDollars } = await estimateTransactionFees(
+          tx,
+          context,
+          feeToken,
+          feeTokenInDollars,
+        )
+
+        return {
+          origin: 'Ethereum',
+          bridging: bridgingFee,
+          execution: {
+            amount: txFees,
+            token: feeToken,
+            inDollars: txFeesInDollars ?? 0,
+          },
+        }
+      } catch (error) {
+        // Estimation can fail for multiple reasons, including errors such as insufficient token approval.
+        console.log('Estimated Tx cost failed', error instanceof Error && { ...error })
+        captureException(new Error('Estimated Tx cost failed'), {
+          level: 'warning',
+          tags: {
+            useFeesHook:
+              error instanceof Error && 'action' in error && typeof error.action === 'string'
+                ? error.action
+                : 'estimateTransactionFees',
+          },
+          extra: { error },
+        })
+        return null
+      }
+    }
+
+    default:
+      throw new Error('Unsupported direction for the SnowbridgeAPI')
   }
 }
