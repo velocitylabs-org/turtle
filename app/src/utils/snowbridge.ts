@@ -171,8 +171,8 @@ export const estimateTransactionFees = async (
 ): Promise<AmountInfo> => {
   // Fetch gas estimation and fee data
   const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
-    context.ethereum.api.estimateGas(tx),
-    context.ethereum.api.getFeeData(),
+    context.ethereum().estimateGas(tx),
+    context.ethereum().getFeeData(),
   ])
 
   // Get effective fee per gas & get USD fee value
