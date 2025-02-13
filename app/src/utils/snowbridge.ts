@@ -190,15 +190,11 @@ export const getFeeEstimate = async (
   token: Token,
   destinationChain: Chain,
   direction: Direction,
-  contextError: any | null,
-
+  context: Context,
   senderAddress?: string,
   recipientAddress?: string,
   amount?: number | null,
-  context?: Context,
 ): Promise<Fee | null> => {
-  if (!context || contextError) throw contextError ?? new Error('Snowbridge context undefined')
-
   switch (direction) {
     case Direction.ToEthereum: {
       return {

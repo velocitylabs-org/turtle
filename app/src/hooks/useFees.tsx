@@ -96,18 +96,20 @@ const useFees = (
             return
           }
 
+          if (!snowbridgeContext || snowbridgeContextError)
+            throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
+
           const fee = await getFeeEstimate(
             token,
             destinationChain,
             direction,
-            snowbridgeContextError,
+            snowbridgeContext,
             senderAddress,
             recipientAddress,
             amount,
-            snowbridgeContext,
           )
           if (!fee) {
-            setFees(null) // todo(nuno): make sure we want to set it to null - what if there's an error after we already got the fees once successfully?
+            setFees(null)
             setEthereumTxFees(null)
             return
           }
