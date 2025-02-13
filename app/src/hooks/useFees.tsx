@@ -6,7 +6,7 @@ import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getRelayNode, getTNode } from '@/utils/paraspell'
+import { getCurrencyId, getNativeToken, getRelayNode, getParaSpellNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -44,13 +44,10 @@ const useFees = (
       return
     }
 
-    // nuno
     const route = getRoute(env, sourceChain, destinationChain)
     if (!route) throw new Error('Route not supported')
 
-    let direction = resolveDirection(sourceChain, destinationChain)
-    direction = sourceChain.chainId === 2034 ? Direction.WithinPolkadot : direction
-    // TODO: this should be the fee token, not necessarily the native token. Also adjust the USD value accordingly below.
+    // TODO: this should be the fee token, not necessarily the native token.
     const feeToken = getNativeToken(sourceChain)
 
     try {
@@ -59,10 +56,10 @@ const useFees = (
       switch (route.sdk) {
         case 'ParaSpellApi': {
           const relay = getRelayNode(env)
-          const sourceChainNode = getTNode(sourceChain, relay)
+          const sourceChainNode = getParaSpellNode(sourceChain, relay)
           if (!sourceChainNode) throw new Error('Source chain id not found')
 
-          const destinationChainNode = getTNode(destinationChain, relay)
+          const destinationChainNode = getParaSpellNode(destinationChain, relay)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
           const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
