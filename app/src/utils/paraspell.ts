@@ -12,8 +12,8 @@ import {
   getTNode,
   TCurrencyCore,
   TDryRunResult,
-  TNodeDotKsmWithRelayChains,
   type TPapiTransaction,
+  TNodeWithRelayChains,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 
@@ -106,7 +106,7 @@ export const dryRun = async (
     .dryRun(sender.address)
 }
 
-export const getTokenSymbol = (sourceChain: TNodeDotKsmWithRelayChains, token: Token) => {
+export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   let tokenSymbol: string | undefined
@@ -146,7 +146,7 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
  * */
 export function getCurrencyId(
   env: Environment,
-  node: TNodeDotKsmWithRelayChains,
+  node: TNodeWithRelayChains,
   chainId: string,
   token: Token,
 ): TCurrencyCore {
@@ -168,4 +168,10 @@ export function getNativeToken(chain: Chain): Token {
   const token = REGISTRY[env].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
+}
+
+export function getParaSpellNode(chain: Chain, relay: 'polkadot'): TNodeWithRelayChains | null {
+  return chain.network === 'Ethereum' && chain.chainId === 1
+    ? 'Ethereum'
+    : getTNode(chain.chainId, relay)
 }

@@ -79,6 +79,7 @@ export const REGISTRY: Registry = {
     [
       Hydration.uid,
       new Map([
+        [EthereumTokens.WETH.id, { id: '1000189' }],
         [PolkadotTokens.USDC.id, { id: '22' }],
         [PolkadotTokens.USDT.id, { id: '10' }],
       ]),
