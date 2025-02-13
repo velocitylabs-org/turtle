@@ -1,7 +1,9 @@
-import { AlchemyProvider } from 'ethers'
-import { environment, subscan, history } from '@snowbridge/api'
+import { AlchemyProvider, ContractTransaction } from 'ethers'
+import { environment, subscan, history, Context } from '@snowbridge/api'
 import { BeefyClient__factory, IGateway__factory } from '@snowbridge/contract-types'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
+import { Token } from '@/models/token'
+import { toHuman } from './transfer'
 
 export const SKIP_LIGHT_CLIENT_UPDATES = true
 export const HISTORY_IN_SECONDS = 60 * 60 * 24 * 3 // 3 days
@@ -143,4 +145,36 @@ export async function trackFromAhToEthTx(
     gateway,
   )
   return transfers
+}
+
+
+/**
+ * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
+ *
+ * @param tx - The contract transaction object.
+ * @param snowbridgeContext - The Snowbridge context containing Ethereum API.
+ * @param feeToken - The fee token.
+ * @param nativeTokenUSDValue - The USD value of the fee token.
+ * @returns An object containing the tx estimate gas fee in native tokens and its USD value.
+ */
+const estimateTransactionFees = async (
+  tx: ContractTransaction,
+  snowbridgeContext: Context,
+  feeToken: Token,
+  feeTokenUSDValue: number,
+) => {
+  // Fetch gas estimation and fee data
+  const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
+    snowbridgeContext.ethereum.api.estimateGas(tx),
+    snowbridgeContext.ethereum.api.getFeeData(),
+  ])
+
+  // Get effective fee per gas & get USD fee value
+  const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
+  const txFeesInToken = toHuman((txGas * effectiveFeePerGas).toString(), feeToken)
+
+  return {
+    txFees: txFeesInToken,
+    txFeesInDollars: txFeesInToken * feeTokenUSDValue,
+  }
 }

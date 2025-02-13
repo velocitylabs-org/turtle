@@ -11,12 +11,12 @@ import { getCurrencyId, getNativeToken, getRelayNode } from '@/utils/paraspell'
 import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, getTNode } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import { ContractTransaction } from 'ethers'
 import { getRoute } from '@/utils/routes'
+import { estimateTransactionFees } from '@/utils/snowbridge'
 
 const useFees = (
   sourceChain?: Chain | null,
@@ -215,35 +215,5 @@ const useFees = (
   return { fees, ethereumTxfees, loading, refetch: fetchFees, canPayFees }
 }
 
-/**
- * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
- *
- * @param tx - The contract transaction object.
- * @param snowbridgeContext - The Snowbridge context containing Ethereum API.
- * @param nativeToken - The native token.
- * @param nativeTokenUSDValue - The USD value of the native token.
- * @returns An object containing the tx estimate gas fee in native tokens and its USD value.
- */
-const estimateTransactionFees = async (
-  tx: ContractTransaction,
-  snowbridgeContext: Context,
-  nativeToken: Token,
-  nativeTokenUSDValue: number,
-) => {
-  // Fetch gas estimation and fee data
-  const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
-    snowbridgeContext.ethereum.api.estimateGas(tx),
-    snowbridgeContext.ethereum.api.getFeeData(),
-  ])
-
-  // Get effective fee per gas & get USD fee value
-  const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
-  const txFeesInToken = toHuman((txGas * effectiveFeePerGas).toString(), nativeToken)
-
-  return {
-    txFees: txFeesInToken,
-    txFeesInDollars: txFeesInToken * nativeTokenUSDValue,
-  }
-}
 
 export default useFees
