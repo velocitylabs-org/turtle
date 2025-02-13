@@ -167,6 +167,12 @@ export const routes: Route[] = [
   },
   {
     from: Hydration.uid,
+    to: Ethereum.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [EthereumTokens.WETH.id],
+  },
+  {
+    from: Hydration.uid,
     to: RelayChain.uid,
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.DOT.id],
