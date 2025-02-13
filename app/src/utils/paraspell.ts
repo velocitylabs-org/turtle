@@ -9,7 +9,7 @@ import {
   EvmBuilder,
   getAllAssetsSymbols,
   getNativeAssetSymbol,
-  getTNode as getTNode,
+  getTNode,
   TCurrencyCore,
   TDryRunResult,
   type TPapiTransaction,
