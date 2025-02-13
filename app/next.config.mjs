@@ -3,6 +3,12 @@ import { withSentryConfig } from '@sentry/nextjs'
 const nextConfig = {
   webpack: config => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
+
+    // Enable WebAssembly support
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    }
     return config
   },
   async headers() {

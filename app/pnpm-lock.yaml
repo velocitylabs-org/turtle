@@ -110,6 +110,9 @@ importers:
       framer-motion:
         specifier: ^11.11.9
         version: 11.18.0(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      hydradx:
+        specifier: link:@galacticcouncil/api-augment/hydradx
+        version: link:@galacticcouncil/api-augment/hydradx
       lucide-react:
         specifier: ^0.446.0
         version: 0.446.0(react@18.3.1)
@@ -153,6 +156,9 @@ importers:
         specifier: ^4.5.5
         version: 4.5.6(@types/react@18.3.18)(react@18.3.1)
     devDependencies:
+      '@galacticcouncil/api-augment':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@testing-library/jest-dom':
         specifier: ^6.6.2
         version: 6.6.3
@@ -899,6 +905,9 @@ packages:
 
   '@frequency-chain/api-augment@1.11.1':
     resolution: {integrity: sha512-CzVjeGrWl8tbTavygZLUICrncjCC54hM5ioJU1Og2OPoX2P4GYf8xoks8MIyj1yOrYX++mzM6Uf0+nCh77QyFw==}
+
+  '@galacticcouncil/api-augment@0.3.0':
+    resolution: {integrity: sha512-f14ftbivheBK8kSnqd8hSQlMPuVLY9571S5yx0LPU6K6m78F3pDPl09OEuJ+dSKHOw8hWzmFxiv0wRMYvDkeKA==}
 
   '@galacticcouncil/math-lbp@1.0.0':
     resolution: {integrity: sha512-G5WsqJpQEkHcN8oFKxPOYqh7GSrt/6X6YQJWTNjxm9aKpXc/xQlTYXybML2J4wZ4VywEnqvX3CmpPfOg7wQkLg==}
@@ -10814,6 +10823,8 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+
+  '@galacticcouncil/api-augment@0.3.0': {}
 
   '@galacticcouncil/math-lbp@1.0.0': {}
 
