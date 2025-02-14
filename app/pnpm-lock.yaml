@@ -21,8 +21,8 @@ importers:
         specifier: ^0.4.1
         version: 0.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@paraspell/sdk':
-        specifier: ^8.3.1
-        version: 8.3.1(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+        specifier: ^8.4.0
+        version: 8.4.0(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@polkadot/api':
         specifier: ^14.0.1
         version: 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -2033,11 +2033,11 @@ packages:
   '@parallel-finance/type-definitions@2.0.1':
     resolution: {integrity: sha512-fC1QfhFFd8oSZqdIh6kmoMNvTxZdQGw1sTAbdYSINyVxyCxKiDg47ZP9bAZFDexL7POqnXnn4pYM7kUAnsT+8Q==}
 
-  '@paraspell/sdk-core@8.3.1':
-    resolution: {integrity: sha512-jBhbACbbtFl/0Oq6U7jA7SygqRmHXvLyMbS759oAJ8cdlfiAb58apHXyRLzXXvCMsgb5jG0EoKcRMfrEm6ADOg==}
+  '@paraspell/sdk-core@8.4.0':
+    resolution: {integrity: sha512-LP9s95G4K+w4XMxB+2QysEVZM8BexeCUKPJ65f5EvzIZmC2liDbBOGuQ7gYT3wfCE1ZbNdk6yGdixjsOJlf19w==}
 
-  '@paraspell/sdk@8.3.1':
-    resolution: {integrity: sha512-pgC8NRjnUmgtJt3E9KHCroNelEGoZYSbYgjA7dUZ9CY1gKPjThktNXtVcnQTc80qpOPO1b4Q3I/UcV5c2v/tjQ==}
+  '@paraspell/sdk@8.4.0':
+    resolution: {integrity: sha512-D2c5M60sDEhjQi/E8lQv+WtqcEmRxG4KUU0pVC3kHQMlDsRLIBiBBDO279IW+0f08e9jOC0Ozjo8QiF4C3clGg==}
     peerDependencies:
       polkadot-api: '>= 1.8.4 < 2'
 
@@ -11800,7 +11800,7 @@ snapshots:
     dependencies:
       '@open-web3/orml-type-definitions': 2.0.1
 
-  '@paraspell/sdk-core@8.3.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@paraspell/sdk-core@8.4.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       viem: 2.23.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -11810,9 +11810,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk@8.3.1(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@paraspell/sdk@8.4.0(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
-      '@paraspell/sdk-core': 8.3.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      '@paraspell/sdk-core': 8.4.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       polkadot-api: 1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0)
       viem: 2.23.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
