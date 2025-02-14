@@ -6,7 +6,7 @@ import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getRelayNode, getParaSpellNode } from '@/utils/paraspell'
+import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -55,11 +55,10 @@ const useFees = (
 
       switch (route.sdk) {
         case 'ParaSpellApi': {
-          const relay = getRelayNode(env)
-          const sourceChainNode = getParaSpellNode(sourceChain, relay)
+          const sourceChainNode = getParaSpellNode(sourceChain)
           if (!sourceChainNode) throw new Error('Source chain id not found')
 
-          const destinationChainNode = getParaSpellNode(destinationChain, relay)
+          const destinationChainNode = getParaSpellNode(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
           const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
