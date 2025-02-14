@@ -208,13 +208,14 @@ export const getFeeEstimate = async (
     }
 
     case Direction.ToPolkadot: {
+      console.log("Will send to Polkadot")
       const feeToken = EthereumTokens.ETH
       const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
       const fee = await toPolkadot.getSendFee(
         context,
         token.address,
         destinationChain.chainId,
-        BigInt(0),
+        BigInt(3769142),
       )
 
       const bridgingFee: AmountInfo = {
@@ -241,7 +242,7 @@ export const getFeeEstimate = async (
           destinationChain.chainId,
           safeConvertAmount(amount, token) ?? 0n,
           bridgingFee.amount as bigint,
-          BigInt(0),
+          BigInt(3769142),
         )
 
         const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
