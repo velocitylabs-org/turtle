@@ -30,7 +30,7 @@ Features:
 - Make transfers between blockchains in a decentralized and trustless way 
 - Intuitive UI that helps you along the way
 - Bridge ERC20 tokens between Ethereum and Polkadot -  Powered by Snowbridge 
-- [Soon]: Seamless XCM Transfers between all Polkadot parachains
+- Seamless XCM Transfers between all Polkadot parachains
 
 <br/>
 Turtle is developed with Typescript, Nextjs, and React.
