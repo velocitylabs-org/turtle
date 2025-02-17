@@ -208,7 +208,7 @@ export const getFeeEstimate = async (
     }
 
     case Direction.ToPolkadot: {
-      console.log("Will send to Polkadot")
+      console.log('Will send to Polkadot')
       const feeToken = EthereumTokens.ETH
       const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
       const fee = await toPolkadot.getSendFee(
