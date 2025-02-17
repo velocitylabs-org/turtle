@@ -113,11 +113,11 @@ const useParaspellApi = () => {
 
     await RouterBuilder()
       .from('Polkadot') //Origin Parachain/Relay chain - OPTIONAL PARAMETER
-      .to('Astar') //Destination Parachain/Relay chain - OPTIONAL PARAMETER
+      .to('Hydration')
       .currencyFrom({ symbol: 'DOT' }) // Currency to send - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
-      .currencyTo({ symbol: 'ASTR' }) // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
-      .amount('1000000') // Amount to send
-      .slippagePct('1') // Max slipppage percentage
+      .currencyTo({ symbol: 'ACA' }) // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+      .amount('1500000000') // Amount to send
+      .slippagePct('2') // Max slipppage percentage
       .senderAddress(account.address) //Injector address
       .recipientAddress(params.recipient) //Recipient address
       .signer(account.pjsSigner as any) //Signer
