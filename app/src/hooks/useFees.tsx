@@ -29,7 +29,7 @@ const useFees = (
   recipientAddress?: string,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [ethereumTxfees, setEthereumTxFees] = useState<AmountInfo | null>(null)
+  const [bridgingFees, setBridgingFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
@@ -40,7 +40,7 @@ const useFees = (
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
       setFees(null)
-      setEthereumTxFees(null)
+      setBridgingFees(null)
       return
     }
 
@@ -91,7 +91,7 @@ const useFees = (
             isSnowbridgeContextLoading
           ) {
             setFees(null)
-            setEthereumTxFees(null)
+            setBridgingFees(null)
             return
           }
 
@@ -109,14 +109,14 @@ const useFees = (
           )
           if (!fee) {
             setFees(null)
-            setEthereumTxFees(null)
+            setBridgingFees(null)
             return
           }
 
           switch (fee.origin) {
             case 'Ethereum': {
               setFees(fee.bridging)
-              setEthereumTxFees(fee.execution)
+              setBridgingFees(fee.execution)
               break
             }
             case 'Polkadot': {
@@ -132,7 +132,7 @@ const useFees = (
       }
     } catch (error) {
       setFees(null)
-      setEthereumTxFees(null)
+      setBridgingFees(null)
       captureException(error)
       console.error(error)
       addNotification({
@@ -161,7 +161,7 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, ethereumTxfees, loading, refetch: fetchFees, canPayFees }
+  return { fees, bridgingFees, loading, refetch: fetchFees, canPayFees }
 }
 
 export default useFees
