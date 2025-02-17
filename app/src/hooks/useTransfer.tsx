@@ -15,7 +15,8 @@ export interface TransferParams {
   environment: Environment
   sender: Sender
   sourceChain: Chain
-  token: Token
+  sourceToken: Token
+  destinationToken: Token
   destinationChain: Chain
   recipient: string
   amount: bigint

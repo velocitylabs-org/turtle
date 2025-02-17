@@ -12,7 +12,7 @@ import { txWasCancelled } from '@/utils/transfer'
 import { RouterBuilder, TRouterEvent } from '@paraspell/xcm-router'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
-import { TxEvent } from 'polkadot-api'
+import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
@@ -30,7 +30,9 @@ const useParaspellApi = () => {
     setStatus('Loading')
 
     try {
-      if (params.sourceChain.uid === 'moonbeam') await handleMoonbeamTransfer(params, setStatus)
+      if (params.sourceToken.id !== params.destinationToken.id) await handleSwap(params, setStatus)
+      else if (params.sourceChain.uid === 'moonbeam')
+        await handleMoonbeamTransfer(params, setStatus)
       else await handlePolkadotTransfer(params, setStatus)
     } catch (e) {
       handleSendError(params.sender, e, setStatus)
@@ -81,9 +83,9 @@ const useParaspellApi = () => {
     // Validate the transfer
     setStatus('Validating')
 
-    /*     const validationResult = await validate(params)
+    const validationResult = await validate(params)
     if (validationResult.type === 'Supported' && !validationResult.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`) */
+      throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
 
     const tx = await createTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
@@ -98,7 +100,7 @@ const useParaspellApi = () => {
     const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
     const date = new Date()
 
-    /*     tx.signSubmitAndWatch(polkadotSigner).subscribe({
+    tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) =>
         await handleTxEvent(event, params, senderAddress, tokenUSDValue, date, setStatus),
       error: callbackError => {
@@ -109,7 +111,31 @@ const useParaspellApi = () => {
         handleSendError(params.sender, callbackError, setStatus)
       },
       complete: () => console.log('The transaction is complete'),
-    }) */
+    })
+
+    setStatus('Sending')
+  }
+
+  const handleSwap = async (params: TransferParams, setStatus: (status: Status) => void) => {
+    const account = params.sender as SubstrateAccount
+
+    if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
+      throw new Error('Signer not found')
+
+    // Validate the transfer
+    setStatus('Validating')
+
+    setStatus('Signing')
+
+    const polkadotSigner = getPolkadotSignerFromPjs(
+      account.address,
+      account.pjsSigner.signPayload as SignPayload,
+      account.pjsSigner.signRaw as SignRaw,
+    )
+
+    const senderAddress = await getSenderAddress(params.sender)
+    const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
+    const date = new Date()
 
     await RouterBuilder()
       .from('Polkadot') //Origin Parachain/Relay chain - OPTIONAL PARAMETER
@@ -129,8 +155,6 @@ const useParaspellApi = () => {
         console.log(status)
       })
       .build()
-
-    setStatus('Sending')
   }
 
   const handleTxEvent = async (
