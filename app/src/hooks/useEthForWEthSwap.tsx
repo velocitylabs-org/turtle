@@ -46,7 +46,8 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
     }
 
     try {
-      const balance = await context.ethereum.api
+      const balance = await context
+        .ethereum()
         .getBalance(owner)
         .then(x => toHuman(x, EthereumTokens.ETH))
       setEthBalance(balance)
