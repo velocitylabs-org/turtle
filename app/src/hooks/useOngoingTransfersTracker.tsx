@@ -125,7 +125,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
-
+          ongoing.fees.amount = ongoing.fees.amount.toString()
           // Move from ongoing to done
           remove(ongoing.id)
           addCompletedTransfer({
