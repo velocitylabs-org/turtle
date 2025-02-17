@@ -12,8 +12,8 @@ import {
   getTNode,
   TCurrencyCore,
   TDryRunResult,
-  type TPapiTransaction,
   TNodeWithRelayChains,
+  type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 
@@ -30,7 +30,7 @@ export const createTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient } = params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -38,7 +38,7 @@ export const createTx = async (
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
   else {
-    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
     return await Builder(wssEndpoint)
       .from(sourceChainFromId)
@@ -59,13 +59,13 @@ export const moonbeamTransfer = async (
   params: TransferParams,
   viemClient: any,
 ): Promise<string> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient } = params
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
   const destinationChainFromId = getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
   return EvmBuilder()
     .from('Moonbeam')
@@ -88,7 +88,8 @@ export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
+  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient, sender } =
+    params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -96,7 +97,7 @@ export const dryRun = async (
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
   return await Builder(wssEndpoint)
     .from(sourceChainFromId)

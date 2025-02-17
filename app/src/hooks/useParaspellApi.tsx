@@ -47,7 +47,7 @@ const useParaspellApi = () => {
     const hash = await moonbeamTransfer(params, viemClient)
 
     const senderAddress = await getSenderAddress(params.sender)
-    const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
+    const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
     await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
 
@@ -57,7 +57,7 @@ const useParaspellApi = () => {
         id: hash,
         sender: senderAddress,
         sourceChain: params.sourceChain,
-        token: params.token,
+        token: params.sourceToken,
         amount: params.amount,
         destinationChain: params.destinationChain,
         tokenUSDValue,
@@ -97,7 +97,7 @@ const useParaspellApi = () => {
     )
 
     const senderAddress = await getSenderAddress(params.sender)
-    const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
+    const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
 
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
@@ -134,7 +134,7 @@ const useParaspellApi = () => {
     )
 
     const senderAddress = await getSenderAddress(params.sender)
-    const tokenUSDValue = (await getCachedTokenPrice(params.token))?.usd ?? 0
+    const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
 
     await RouterBuilder()
@@ -187,7 +187,7 @@ const useParaspellApi = () => {
         id: event.txHash.toString(),
         sender: senderAddress,
         sourceChain: params.sourceChain,
-        token: params.token,
+        token: params.sourceToken,
         amount: params.amount,
         destinationChain: params.destinationChain,
         tokenUSDValue,
@@ -238,7 +238,7 @@ const useParaspellApi = () => {
         addOrUpdate({
           id: txHash,
           sourceChain: params.sourceChain,
-          token: params.token,
+          token: params.sourceToken,
           tokenUSDValue,
           sender: senderAddress,
           destChain: params.destinationChain,
@@ -271,7 +271,7 @@ const useParaspellApi = () => {
     addOrUpdate({
       id: event.txHash.toString(),
       sourceChain: params.sourceChain,
-      token: params.token,
+      token: params.sourceToken,
       tokenUSDValue,
       sender: senderAddress,
       destChain: params.destinationChain,

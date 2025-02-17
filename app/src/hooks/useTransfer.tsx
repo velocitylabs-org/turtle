@@ -36,56 +36,20 @@ const useTransfer = () => {
   const paraspellApi = useParaspellApi()
 
   // The entry point function which is exposed to the components
-  const transfer = async ({
-    environment,
-    sender,
-    sourceChain,
-    token,
-    destinationChain,
-    recipient,
-    amount,
-    fees,
-    onComplete,
-  }: TransferParams) => {
+  const transfer = async (transferDetails: TransferParams) => {
+    const { environment, sourceChain, destinationChain } = transferDetails
     setStatus('Loading')
     const route = getRoute(environment, sourceChain, destinationChain)
     if (!route) throw new Error('Route not supported')
 
     switch (route.sdk) {
-      case 'SnowbridgeApi': {
-        snowbridgeApi.transfer(
-          {
-            environment,
-            sender,
-            sourceChain,
-            token,
-            destinationChain,
-            recipient,
-            amount,
-            fees,
-            onComplete,
-          },
-          setStatus,
-        )
+      case 'SnowbridgeApi':
+        snowbridgeApi.transfer(transferDetails, setStatus)
         break
-      }
 
-      case 'ParaSpellApi': {
-        paraspellApi.transfer(
-          {
-            environment,
-            sender,
-            sourceChain,
-            token,
-            destinationChain,
-            recipient,
-            amount,
-            fees,
-            onComplete,
-          },
-          setStatus,
-        )
-      }
+      case 'ParaSpellApi':
+        paraspellApi.transfer(transferDetails, setStatus)
+        break
     }
   }
 
