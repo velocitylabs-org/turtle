@@ -1,0 +1,9 @@
+node_modules
+.papi
+.github
+LICENSE
+docs
+pnpm-lock.yaml
+*.md
+.env*
+dist
