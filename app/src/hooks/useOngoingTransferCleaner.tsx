@@ -16,6 +16,9 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
     ongoingTransfers.forEach(ongoing => {
       if (startedTooLongAgo(ongoing)) {
         const explorerLink = getExplorerLink(ongoing)
+        //Format fees amount to string to prevent bigint storage issues
+        ongoing.fees.amount = ongoing.fees.amount.toString()
+
         remove(ongoing.id)
         addCompletedTransfer({
           id: ongoing.id,
