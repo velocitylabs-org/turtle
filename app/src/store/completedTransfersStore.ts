@@ -1,6 +1,6 @@
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
 import { CompletedTransfer } from '@/models/transfer'
+import { create } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface CompletedTxState {
   completedTransfers: CompletedTransfer[]
@@ -14,16 +14,26 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
 
       addCompletedTransfer: newCompletedTransfer => {
         if (!newCompletedTransfer) return
+
+        // needed to not run into bigint persistence issues
+        const persistableTransfer = {
+          ...newCompletedTransfer,
+          fees: {
+            ...newCompletedTransfer.fees,
+            amount: newCompletedTransfer.fees.amount.toString(),
+          },
+        }
+
         set(state => {
           // Check if the newCompletedTransfer already exists in the local store
           const transferExists = state.completedTransfers.some(
-            transfer => transfer.id === newCompletedTransfer.id,
+            transfer => transfer.id === persistableTransfer.id,
           )
 
           if (transferExists) return { completedTransfers: state.completedTransfers }
 
           return {
-            completedTransfers: [...state.completedTransfers, newCompletedTransfer],
+            completedTransfers: [...state.completedTransfers, persistableTransfer],
           }
         })
       },
