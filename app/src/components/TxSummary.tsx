@@ -4,7 +4,7 @@ import { TokenAmount } from '@/models/select'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { cn } from '@/utils/cn'
-import { getTotalFees, toAmountInfo } from '@/utils/transfer'
+import { formatAmount, getTotalFees, toAmountInfo } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Info } from 'lucide-react'
 import { FC } from 'react'
@@ -14,6 +14,7 @@ import Delayed from './Delayed'
 import { ExclamationMark } from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
 import { Tooltip } from './Tooltip'
+import { toHuman } from '../utils/transfer';
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
@@ -69,7 +70,7 @@ const TxSummary: FC<TxSummaryProps> = ({
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
-    const { totalFeesAmount, totalFeesValue } = getTotalFees(fees, additionalfees)
+    // const { totalFeesAmount, totalFeesValue } = getTotalFees(fees, additionalfees)
 
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
@@ -78,7 +79,7 @@ const TxSummary: FC<TxSummaryProps> = ({
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
-                <div className="font-bold">Fee</div>
+                <div className="font-bold">Fees</div>
                 {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
@@ -94,25 +95,37 @@ const TxSummary: FC<TxSummaryProps> = ({
               <div className="items-right flex">
                 <div>
                   <div className="flex items-center text-right text-turtle-foreground">
-                    {totalFeesAmount} {fees.token.symbol}
-                    {isBridgeTransfer && !additionalfees && (
-                      <Tooltip
-                        showIcon={false}
-                        content={
-                          'This excludes ETH gas fees. Check your wallet popup for the total amount.'
-                        }
-                        className="max-w-xs text-center sm:max-w-sm"
-                      >
-                        <Info className="ml-0.5 h-3 w-3 text-turtle-foreground" />
-                      </Tooltip>
-                    )}
+                    {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol} 
                   </div>
 
                   {fees.inDollars > 0 && (
-                    <div className="text-right text-turtle-level4">${totalFeesValue}</div>
+                    <div className="text-right text-turtle-level4">${formatAmount(fees.inDollars)}</div>
                   )}
                 </div>
+                
+                <div className='ml-2'>
+                  <div className="flex ml-3 items-center text-right text-turtle-foreground">
+                    {formatAmount(toHuman(additionalfees?.amount ?? 0, additionalfees!.token))} {additionalfees?.token.symbol}
+                  </div>
+
+                  {(additionalfees?.inDollars ?? 0) > 0 && (
+                    <div className="text-right text-turtle-level4">${formatAmount(additionalfees?.inDollars ?? 0)}</div>
+                  )}
+                </div>
+                
+                {isBridgeTransfer && !additionalfees && (
+                      <Tooltip
+                        showIcon={false}
+                        content={
+                          'This includes execution and bridging fees. It may exclude ETH gas fees. Check your wallet popup for the total amount.'
+                        }
+                        className="max-w-xs text-center sm:max-w-sm"
+                      >
+                        <Info className="ml-0.5 h-3 w-3 ml-2 mt-2 text-turtle-foreground" />
+                      </Tooltip>
+                    )}
               </div>
+              
             </li>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">

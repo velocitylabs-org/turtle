@@ -53,7 +53,7 @@ const Transfer: FC = () => {
     sourceWallet,
     destinationWallet,
     fees,
-    ethereumTxfees,
+    bridgingFees,
     refetchFees,
     loadingFees,
     canPayFees,
@@ -370,7 +370,7 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={tokenAmount}
           fees={fees}
-          additionalfees={ethereumTxfees}
+          additionalfees={bridgingFees}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
           direction={direction}

@@ -15,6 +15,9 @@ import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { getRoute } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
+import { PolkadotTokens } from '@/registry/mainnet/tokens'
+import { isAssetHub } from '@/registry/helpers'
+import { toEthereum } from '@snowbridge/api'
 
 export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
@@ -81,6 +84,21 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
+          // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
+          // When bridging from AssetHub, the basic fees already take the bridging fees into account.
+          if (destinationChain.network === 'Ethereum' && !isAssetHub(sourceChain) && snowbridgeContext) {
+            // todo(nuno): Load bridging fees in case it's a bridging transfers
+            const bridgeFeeToken = PolkadotTokens.DOT
+            const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
+            const bridgeFee = await toEthereum.getSendFee(snowbridgeContext)
+            
+            setBridgingFees({
+              amount: bridgeFee,
+              token: bridgeFeeToken,
+              inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+            })
+          }
+        
           break
         }
 
