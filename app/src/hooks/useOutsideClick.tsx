@@ -1,8 +1,8 @@
 import { RefObject, useEffect } from 'react'
 
 export const useOutsideClick = (
-  triggerRef: RefObject<HTMLDivElement>,
-  dropdownRef: RefObject<HTMLDivElement>,
+  triggerRef: RefObject<HTMLDivElement | null>,
+  dropdownRef: RefObject<HTMLDivElement | null>,
   callback: () => void,
 ): void => {
   useEffect(() => {
