@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="https://turtle.cool">
-    <img src="./app/public/turtle.svg" alt="Logo" width="80" height="80">
+    <img src="./widget/public/turtle.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Turtle Widget</h3>
