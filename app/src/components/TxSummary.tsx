@@ -14,7 +14,7 @@ import Delayed from './Delayed'
 import { ExclamationMark } from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
 import { Tooltip } from './Tooltip'
-import { toHuman } from '../utils/transfer';
+import { toHuman } from '../utils/transfer'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
@@ -75,11 +75,11 @@ const TxSummary: FC<TxSummaryProps> = ({
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
         <div className="pt-3">
-          <div className="mt-3 text-center text-lg font-bold text-turtle-foreground">Summary</div>
+          <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
-                <div className="font-bold">Fees</div>
+                <div className="text-sm font-bold">Execution</div>
                 {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
@@ -94,45 +94,62 @@ const TxSummary: FC<TxSummaryProps> = ({
               </div>
               <div className="items-right flex">
                 <div>
-                  <div className="flex items-center text-right text-turtle-foreground">
-                    {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol} 
+                  <div className="flex items-center text-right text-xl text-turtle-foreground">
+                    {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
                   </div>
 
                   {fees.inDollars > 0 && (
-                    <div className="text-right text-turtle-level4">${formatAmount(fees.inDollars)}</div>
+                    <div className="text-right text-sm text-turtle-level4">
+                      ${formatAmount(fees.inDollars)}
+                    </div>
                   )}
                 </div>
-                
-                <div className='ml-2'>
-                  <div className="flex ml-3 items-center text-right text-turtle-foreground">
-                    {formatAmount(toHuman(additionalfees?.amount ?? 0, additionalfees!.token))} {additionalfees?.token.symbol}
-                  </div>
-
-                  {(additionalfees?.inDollars ?? 0) > 0 && (
-                    <div className="text-right text-turtle-level4">${formatAmount(additionalfees?.inDollars ?? 0)}</div>
-                  )}
-                </div>
-                
-                {isBridgeTransfer && !additionalfees && (
-                      <Tooltip
-                        showIcon={false}
-                        content={
-                          'This includes execution and bridging fees. It may exclude ETH gas fees. Check your wallet popup for the total amount.'
-                        }
-                        className="max-w-xs text-center sm:max-w-sm"
-                      >
-                        <Info className="ml-0.5 h-3 w-3 ml-2 mt-2 text-turtle-foreground" />
-                      </Tooltip>
-                    )}
               </div>
-              
             </li>
+
+            {/* Additional fees */}
+            {isBridgeTransfer && additionalfees && (
+              <li className="mt-4 flex items-start justify-between border-turtle-level2">
+                <div className="items-left flex flex-col">
+                  <div className="text-sm font-bold">Bridging</div>
+                  {/* todo(nuno): make this alert specific for the bridging fees */}
+                  {!canPayFees && (
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                      <ExclamationMark
+                        width={16}
+                        height={16}
+                        fill={colors['turtle-foreground']}
+                        className="mr-2"
+                      />
+                      <span>
+                        You don&apos;t have enough {additionalfees.token.symbol} to pay fees
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="items-right flex">
+                  <div>
+                    <div className="flex items-center text-right text-xl text-turtle-foreground">
+                      {formatAmount(toHuman(additionalfees.amount, additionalfees.token))}{' '}
+                      {additionalfees.token.symbol}
+                    </div>
+
+                    {additionalfees.inDollars > 0 && (
+                      <div className="text-right text-sm text-turtle-level4">
+                        ${formatAmount(additionalfees.inDollars)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            )}
+
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
-                <div className="font-bold">Duration</div>
+                <div className="text-sm font-bold">Duration</div>
               </div>
               <div className="items-right flex items-center space-x-0.5">
-                <div className="text-turtle-foreground">{durationEstimate}</div>
+                <div className="text-xl text-turtle-foreground">{durationEstimate}</div>
               </div>
             </li>
           </ul>

@@ -86,19 +86,23 @@ const useFees = (
 
           // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
           // When bridging from AssetHub, the basic fees already take the bridging fees into account.
-          if (destinationChain.network === 'Ethereum' && !isAssetHub(sourceChain) && snowbridgeContext) {
+          if (
+            destinationChain.network === 'Ethereum' &&
+            !isAssetHub(sourceChain) &&
+            snowbridgeContext
+          ) {
             // todo(nuno): Load bridging fees in case it's a bridging transfers
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
             const bridgeFee = await toEthereum.getSendFee(snowbridgeContext)
-            
+
             setBridgingFees({
               amount: bridgeFee,
               token: bridgeFeeToken,
               inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
           }
-        
+
           break
         }
 
