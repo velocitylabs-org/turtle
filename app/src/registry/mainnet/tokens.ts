@@ -239,7 +239,8 @@ export const PolkadotTokens = {
     logoURI: '/logos/usdc.svg',
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation:
+      '{"parents":1,"interior":{"x3":[{"parachain":1000},{"palletInstance":50},{"generalIndex":1337}]}}',
     origin: parachain(1000),
     coingeckoId: 'usd-coin',
   },
@@ -252,7 +253,8 @@ export const PolkadotTokens = {
     logoURI: '/logos/usdt.svg',
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation:
+      '{"parents":1,"interior":{"x3":[{"parachain":1000},{"palletInstance":50},{"generalIndex":1984}]}}',
     origin: parachain(1000),
   },
 
