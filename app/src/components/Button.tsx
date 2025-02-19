@@ -85,7 +85,7 @@ const Button: FC<ButtonProps> = ({
     <NextButton
       isDisabled={disabled}
       disableRipple
-      onClick={onClick}
+      onPress={onClick}
       size={size}
       radius="sm"
       disableAnimation={true}
