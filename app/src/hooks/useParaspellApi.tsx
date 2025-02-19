@@ -7,8 +7,16 @@ import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
 import { handleObservableEvents } from '@/utils/papi'
-import { createTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspell'
+import {
+  createTx,
+  dryRun,
+  DryRunResult,
+  getCurrencyId,
+  getRelayNode,
+  moonbeamTransfer,
+} from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
+import { getTNode } from '@paraspell/sdk'
 import { RouterBuilder, TRouterEvent } from '@paraspell/xcm-router'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -122,9 +130,6 @@ const useParaspellApi = () => {
     if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
       throw new Error('Signer not found')
 
-    // Validate the transfer
-    setStatus('Validating')
-
     setStatus('Signing')
 
     const polkadotSigner = getPolkadotSignerFromPjs(
@@ -137,18 +142,39 @@ const useParaspellApi = () => {
     const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
 
+    const relay = getRelayNode(params.environment)
+    const sourceChainFromId = getTNode(params.sourceChain.chainId, relay)
+    const destinationChainFromId = getTNode(params.destinationChain.chainId, relay)
+    if (!sourceChainFromId || !destinationChainFromId)
+      throw new Error('Transfer failed: chain id not found.')
+
+    const currencyIdFrom = getCurrencyId(
+      params.environment,
+      sourceChainFromId,
+      params.sourceChain.uid,
+      params.sourceToken,
+    )
+
+    const currencyIdTo = getCurrencyId(
+      params.environment,
+      destinationChainFromId,
+      params.destinationChain.uid,
+      params.destinationToken,
+    )
+
+    // TODO: outsource to utils/paraspell.ts
     await RouterBuilder()
       .from('Polkadot') //Origin Parachain/Relay chain - OPTIONAL PARAMETER
       .to('Hydration')
-      .currencyFrom({ symbol: 'DOT' }) // Currency to send - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
-      .currencyTo({ symbol: 'ACA' }) // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+      .currencyFrom(currencyIdFrom) // Currency to send - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
+      .currencyTo(currencyIdTo) // Currency to receive - {id: currencyID, amount: amount} | {symbol: currencySymbol, amount: amount} | {symbol: Native('currencySymbol'), amount: amount} | {symbol: Foreign('currencySymbol'), amount: amount} | {symbol: ForeignAbstract('currencySymbol'), amount: amount} | {multilocation: AssetMultilocationString, amount: amount | AssetMultilocationJson, amount: amount}
       .amount('1500000000') // Amount to send
-      .slippagePct('2') // Max slipppage percentage
+      .slippagePct('1') // Max slipppage percentage
       .senderAddress(account.address) //Injector address
       .recipientAddress(params.recipient) //Recipient address
       .signer(account.pjsSigner as any) //Signer
       //.evmSenderAddress(evmInjector address)   //Optional parameters when origin node is EVM based (Required with evmSigner)
-      //.evmSigner(EVM signer)                     //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
+      //.evmSigner(EVM signer)                   //Optional parameters when origin node is EVM based (Required with evmInjectorAddress)
 
       .onStatusChange((status: TRouterEvent) => {
         //This is how we subscribe to calls that need signing
