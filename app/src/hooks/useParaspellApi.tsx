@@ -162,11 +162,10 @@ const useParaspellApi = () => {
 
     // TODO: outsource to utils/paraspell.ts
     await RouterBuilder()
-      .from('BifrostPolkadot')
-      .to('Acala')
-      .exchange('AcalaDex')
-      .currencyFrom(currencyIdFrom) // DOT
-      .currencyTo({ multilocation }) // ACA
+      .to('Hydration')
+      .exchange('HydrationDex')
+      .currencyFrom({ symbol: 'DOT' }) // DOT
+      .currencyTo({ symbol: 'HDX' }) // ACA
       .amount('1500000000')
       .slippagePct('1')
       .senderAddress(account.address)
