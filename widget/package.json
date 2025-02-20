@@ -16,9 +16,11 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@heroui/react": "^2.7.2",
     "@radix-ui/react-slot": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
