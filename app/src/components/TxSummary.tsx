@@ -4,16 +4,14 @@ import { TokenAmount } from '@/models/select'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { cn } from '@/utils/cn'
-import { formatAmount, getTotalFees, toAmountInfo } from '@/utils/transfer'
+import { formatAmount, toAmountInfo } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Info } from 'lucide-react'
 import { FC } from 'react'
 import { colors } from '../../tailwind.config'
 import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import { ExclamationMark } from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
-import { Tooltip } from './Tooltip'
 import { toHuman } from '../utils/transfer'
 
 interface TxSummaryProps {
@@ -79,7 +77,7 @@ const TxSummary: FC<TxSummaryProps> = ({
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
-                <div className="text-sm font-bold">Execution</div>
+                <div className="text-sm font-bold">{additionalfees ? 'Execution fee' : 'Fee'} </div>
                 {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
@@ -107,11 +105,11 @@ const TxSummary: FC<TxSummaryProps> = ({
               </div>
             </li>
 
-            {/* Additional fees */}
+            {/* Bridging fees */}
             {isBridgeTransfer && additionalfees && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
-                  <div className="text-sm font-bold">Bridging</div>
+                  <div className="text-sm font-bold">Bridging fee</div>
                   {/* todo(nuno): make this alert specific for the bridging fees */}
                   {!canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">

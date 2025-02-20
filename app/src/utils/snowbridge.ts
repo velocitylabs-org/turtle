@@ -197,24 +197,27 @@ export const getFeeEstimate = async (
 ): Promise<Fee | null> => {
   switch (direction) {
     case Direction.ToEthereum: {
+      const amount = await toEthereum.getSendFee(context)
+      const feeTokenInDollars = (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
+
       return {
         origin: 'Polkadot',
         fee: {
-          amount: (await toEthereum.getSendFee(context)).toString(),
+          amount,
           token: PolkadotTokens.DOT,
-          inDollars: (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0,
+          inDollars: toHuman(amount, PolkadotTokens.DOT) * feeTokenInDollars,
         },
       }
     }
 
     case Direction.ToPolkadot: {
-      console.log('Will send to Polkadot')
       const feeToken = EthereumTokens.ETH
       const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
       const fee = await toPolkadot.getSendFee(
         context,
         token.address,
         destinationChain.chainId,
+        //todo(nuno): load this ip from the destinationChain
         BigInt(3769142),
       )
 

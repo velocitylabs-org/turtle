@@ -8,7 +8,11 @@ import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import {
+  getOriginFeeDetails,
+  TNodeDotKsmWithRelayChains,
+  getParaEthTransferFees,
+} from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
@@ -17,7 +21,6 @@ import { getRoute } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { isAssetHub } from '@/registry/helpers'
-import { toEthereum } from '@snowbridge/api'
 
 export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
@@ -55,6 +58,7 @@ const useFees = (
 
     try {
       setLoading(true)
+      setBridgingFees(null)
 
       switch (route.sdk) {
         case 'ParaSpellApi': {
@@ -91,15 +95,15 @@ const useFees = (
             !isAssetHub(sourceChain) &&
             snowbridgeContext
           ) {
-            // todo(nuno): Load bridging fees in case it's a bridging transfers
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
-            const bridgeFee = await toEthereum.getSendFee(snowbridgeContext)
+            //todo(nuno): cache this
+            const bridgingFee = (await getParaEthTransferFees()).reduce((acc, x) => acc + x)
 
             setBridgingFees({
-              amount: bridgeFee,
+              amount: bridgingFee,
               token: bridgeFeeToken,
-              inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+              inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
           }
 
