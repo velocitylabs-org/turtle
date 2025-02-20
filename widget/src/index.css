@@ -2,10 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ... */
-
 @layer base {
+  @font-face {
+    font-family: 'Dazzed';
+    src: url('./assets/fonts/dazzed.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Dazzed-Bold';
+    src: url('./assets/fonts/dazzed-bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+  }
+
   :root {
+    --font-dazzed: 'Dazzed', sans-serif;
+
+    --font-dazzed-bold: 'Dazzed-Bold', sans-serif;
+
     --background: 0 0% 100%;
 
     --foreground: 0 0% 3.9%;

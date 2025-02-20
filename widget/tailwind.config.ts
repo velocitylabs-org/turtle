@@ -62,6 +62,7 @@ export default {
       colors,
       fontFamily: {
         dazzed: ['var(--font-dazzed)'],
+        'dazzed-bold': ['var(--font-dazzed-bold)'],
       },
       fontSize: {
         large: '2rem',
