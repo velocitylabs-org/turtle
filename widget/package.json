@@ -4,6 +4,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/turtle-widget.cjs.js",
+  "module": "./dist/turtle-widget.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/turtle-widget.es.js",
+    "require": "./dist/turtle-widget.cjs.js"
+  },
   "author": "Victor Salomon",
   "contributors": [],
   "license": "Apache-2.0",
@@ -55,6 +66,11 @@
     "tailwindcss": "^3.4.1",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.1.0"
+    "vite": "^6.1.0",
+    "vite-plugin-dts": "^4.5.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.3.1",
+    "react-dom": ">=18.3.1"
   }
 }

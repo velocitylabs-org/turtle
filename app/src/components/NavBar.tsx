@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import { TurtleIcon } from './svg/TurtleIcon'
 import { Tooltip } from './Tooltip'

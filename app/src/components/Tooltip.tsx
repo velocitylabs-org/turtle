@@ -1,6 +1,7 @@
+'use client'
 import TooltipIcon from '@/../public/tooltip-icon.svg'
 import { cn } from '@/utils/cn'
-import { Tooltip as NextTooltip } from '@nextui-org/react'
+import { Tooltip as NextTooltip } from '@heroui/react'
 import Image from 'next/image'
 import React, { FC } from 'react'
 

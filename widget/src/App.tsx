@@ -1,8 +1,9 @@
+import Widget from './Widget'
 import { HeroUIProvider } from '@heroui/react'
 function App() {
   return (
     <HeroUIProvider>
-      <>Turtle Widget</>
+      <Widget />
     </HeroUIProvider>
   )
 }
