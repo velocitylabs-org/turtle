@@ -1,5 +1,7 @@
+import Widget from './Widget'
+
 function App() {
-  return <>Turtle Widget</>
+  return <Widget />
 }
 
 export default App
