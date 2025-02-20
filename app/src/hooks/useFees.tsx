@@ -21,6 +21,7 @@ import { getRoute } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { isAssetHub } from '@/registry/helpers'
+import { getBalance } from './useBalance'
 
 export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
@@ -37,6 +38,7 @@ const useFees = (
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFees, setBridgingFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
+  const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
     useSnowbridgeContext()
@@ -105,6 +107,14 @@ const useFees = (
               token: bridgeFeeToken,
               inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
+
+            console.log("Sender address?", senderAddress)
+            if (senderAddress) {
+              const balance = (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
+              console.log("enough?", bridgingFee, balance)
+
+              setCanPayAdditionalFees(bridgingFee < balance)
+            }
           }
 
           break
@@ -187,7 +197,7 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, bridgingFees, loading, refetch: fetchFees, canPayFees }
+  return { fees, bridgingFees, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
 }
 
 export default useFees

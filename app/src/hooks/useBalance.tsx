@@ -60,24 +60,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
         }
 
         case 'Polkadot': {
-          const node = getParaSpellNode(chain)
-          if (!node) throw new Error('Node not found')
-          const currency = getCurrencyId(env, node, chain.uid, token)
-
-          const balance =
-            (await getTransferableAmount({
-              address,
-              node: node as TNodeDotKsmWithRelayChains,
-              currency,
-              api: chain.rpcConnection,
-            })) ?? 0n
-
-          fetchedBalance = {
-            value: balance,
-            decimals: token.decimals,
-            symbol: token.symbol,
-            formatted: toHuman(balance, token).toString(),
-          }
+          fetchedBalance = await getBalance(env, chain, token, address)
 
           break
         }
@@ -104,3 +87,23 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
 }
 
 export default useBalance
+
+export async function getBalance(env: Environment, chain: Chain, token: Token, address: string): Promise<Erc20Balance | undefined> {
+  const node = getParaSpellNode(chain)
+  if (!node) throw new Error('Node not found')
+  const currency = getCurrencyId(env, node, chain.uid, token)
+
+  const balance = (await getTransferableAmount({
+    address,
+    node: node as TNodeDotKsmWithRelayChains,
+    currency,
+    api: chain.rpcConnection,
+  })) ?? 0n
+
+  return {
+    value: balance,
+    decimals: token.decimals,
+    symbol: token.symbol,
+    formatted: toHuman(balance, token).toString(),
+  }
+}

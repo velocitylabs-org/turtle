@@ -22,6 +22,7 @@ interface TxSummaryProps {
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
+  canPayAdditionalFees: boolean,
   className?: string
 }
 
@@ -33,6 +34,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   durationEstimate,
   direction,
   canPayFees,
+  canPayAdditionalFees,
   className,
 }) => {
   const { price } = useTokenPrice(tokenAmount.token)
@@ -68,8 +70,6 @@ const TxSummary: FC<TxSummaryProps> = ({
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
-    // const { totalFeesAmount, totalFeesValue } = getTotalFees(fees, additionalfees)
-
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
         <div className="pt-3">
@@ -86,7 +86,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                       fill={colors['turtle-foreground']}
                       className="mr-2"
                     />
-                    <span>You don&apos;t have enough {fees.token.symbol} to pay fees</span>
+                    <span>You don&apos;t have enough {fees.token.symbol}</span>
                   </div>
                 )}
               </div>
@@ -110,8 +110,7 @@ const TxSummary: FC<TxSummaryProps> = ({
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="text-sm font-bold">Bridging fee</div>
-                  {/* todo(nuno): make this alert specific for the bridging fees */}
-                  {!canPayFees && (
+                  {!canPayAdditionalFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
@@ -120,7 +119,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                         className="mr-2"
                       />
                       <span>
-                        You don&apos;t have enough {additionalfees.token.symbol} to pay fees
+                        You don&apos;t have enough {additionalfees.token.symbol}
                       </span>
                     </div>
                   )}
