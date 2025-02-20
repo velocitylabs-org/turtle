@@ -1,5 +1,5 @@
 'use client'
-import { Button as NextButton } from '@nextui-org/react'
+import { Button as NextButton } from '@heroui/react'
 import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
