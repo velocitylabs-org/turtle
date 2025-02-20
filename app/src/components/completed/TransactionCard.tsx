@@ -120,7 +120,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
           />
         </div>
         {status === TxStatus.Failed && (
-          <div className="flex items-center justify-between rounded-lg bg-turtle-error/10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
+          <div className="flex items-center justify-between rounded-lg bg-turtle-error-10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
             <div>
               <span className="mr-1 font-semibold">Oops!</span>This transaction failed
             </div>

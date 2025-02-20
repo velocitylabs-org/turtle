@@ -37,6 +37,44 @@
     --letter-spacing-xxl: -0.04em;
     --letter-spacing-xl: -0.03em;
     --letter-spacing-default: 0.03em;
+
+    --turtle-primary: #00ff29;
+    --turtle-primary-dark: #008115;
+    --turtle-primary-light: #d9ffdf;
+
+    --turtle-secondary: #a184dc;
+    --turtle-secondary-transparent: #a184dc26;
+    --turtle-secondary-dark: #513589;
+    --turtle-secondary-light: #f1edfa;
+
+    --turtle-tertiary: #bfdadc;
+    --turtle-tertiary-dark: #196065;
+    --turtle-tertiary-light: #e1fdff;
+
+    --turtle-background: #ffffff;
+    --turtle-foreground: #001b04;
+
+    --turtle-level1: #f6f8fa;
+    --turtle-level2: #ebeff3;
+    --turtle-level3: #c5d1db;
+    --turtle-level4: #a9b8c8;
+    --turtle-level5: #90a1ae;
+    --turtle-level6: #546573;
+
+    --turtle-success: #00ff29;
+    --turtle-success-dark: #008115;
+    --turtle-success-light: #d9ffdf;
+
+    --turtle-warning: #ffff00;
+    --turtle-warning-dark: #7a7c00;
+    --turtle-warning-light: #ffffd9;
+
+    --turtle-error: #ff35c3;
+    --turtle-error-10: #ff35c31a;
+    --turtle-error-dark: #8d1269;
+    --turtle-error-light: #ffe1f6;
+
+    --turtle-note-warn: #ffff0026;
   }
 
   .dark {

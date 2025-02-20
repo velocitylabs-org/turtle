@@ -3,7 +3,7 @@ import { FC, ReactNode, RefObject } from 'react'
 
 interface DropdownProps {
   isOpen: boolean
-  dropdownRef: RefObject<HTMLDivElement>
+  dropdownRef: RefObject<HTMLDivElement | null>
   children: ReactNode
 }
 
