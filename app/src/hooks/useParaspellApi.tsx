@@ -13,11 +13,10 @@ import {
   DryRunResult,
   getCurrencyId,
   getRelayNode,
-  getTokenSymbol,
   moonbeamTransfer,
 } from '@/utils/paraspell'
 import { txWasCancelled } from '@/utils/transfer'
-import { getTNode } from '@paraspell/sdk'
+import { getAssetMultiLocation, getTNode } from '@paraspell/sdk'
 import { RouterBuilder, TRouterEvent } from '@paraspell/xcm-router'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -133,12 +132,6 @@ const useParaspellApi = () => {
 
     setStatus('Signing')
 
-    const polkadotSigner = getPolkadotSignerFromPjs(
-      account.address,
-      account.pjsSigner.signPayload as SignPayload,
-      account.pjsSigner.signRaw as SignRaw,
-    )
-
     const senderAddress = await getSenderAddress(params.sender)
     const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
@@ -155,15 +148,20 @@ const useParaspellApi = () => {
       params.sourceChain.uid,
       params.sourceToken,
     )
-    console.log(params.destinationToken.multilocation)
 
-    const currencyTo = getTokenSymbol(destinationChainFromId, params.destinationToken)
-    const multilocation = params.destinationToken.multilocation
+    const currencyIdTo = getCurrencyId(
+      params.environment,
+      destinationChainFromId,
+      params.destinationChain.uid,
+      params.destinationToken,
+    )
+    const multilocation = getAssetMultiLocation(destinationChainFromId, currencyIdTo)
+    console.log(params.destinationToken.multilocation)
 
     // TODO: outsource to utils/paraspell.ts
     await RouterBuilder()
+      .from('Hydration')
       .to('Hydration')
-      .exchange('HydrationDex')
       .currencyFrom({ symbol: 'DOT' }) // DOT
       .currencyTo({ symbol: 'HDX' }) // ACA
       .amount('1500000000')
@@ -171,7 +169,12 @@ const useParaspellApi = () => {
       .senderAddress(account.address)
       .recipientAddress(params.recipient)
       .signer(account.pjsSigner as any)
-      .onStatusChange((status: TRouterEvent) => console.log(status))
+      .onStatusChange((status: TRouterEvent) => {
+        // TODO outsource to handleRouterEvent
+        // call tx of index currentStep
+        // update/add ongoing transfer
+        // listen for events and update ongoing transfer (tracking)
+      })
       .build()
   }
 

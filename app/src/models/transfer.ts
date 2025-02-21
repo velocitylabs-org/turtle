@@ -7,6 +7,7 @@ import { Chain } from './chain'
 import { FromParachainTrackingResult } from './subscan'
 import { FromEthTrackingResult, FromAhToEthTrackingResult } from './snowbridge'
 import { Token } from './token'
+import { TRouterPlan } from '@paraspell/xcm-router'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
@@ -36,6 +37,10 @@ export interface StoredTransfer extends RawTransfer {
   status?: string
   // WithinPolkadot transfer is considered as finalized
   finalizedAt?: Date
+  swapInformation?: {
+    currentStep?: number
+    plan?: TRouterPlan
+  }
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
