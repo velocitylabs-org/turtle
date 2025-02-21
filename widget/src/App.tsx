@@ -1,5 +1,5 @@
 import Widget from './Widget'
-import { Providers } from './components/providers'
+import { Providers } from './providers'
 function App() {
   return (
     <Providers>

@@ -1,4 +1,4 @@
-import { Button as NextButton } from '@heroui/react'
+import { Button as HeroButton } from '@heroui/react'
 import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from '@/assets/svg/LoadingIcon'
@@ -82,7 +82,7 @@ const Button: FC<ButtonProps> = ({
   cypressID,
 }) => {
   return (
-    <NextButton
+    <HeroButton
       isDisabled={disabled}
       disableRipple
       onPress={onClick}
@@ -108,7 +108,7 @@ const Button: FC<ButtonProps> = ({
 
       {/** Default state - children or label */}
       {!loading && (children || label)}
-    </NextButton>
+    </HeroButton>
   )
 }
 
