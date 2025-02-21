@@ -1,10 +1,10 @@
 import Widget from './Widget'
-import { HeroUIProvider } from '@heroui/react'
+import { Providers } from './components/providers'
 function App() {
   return (
-    <HeroUIProvider>
+    <Providers>
       <Widget />
-    </HeroUIProvider>
+    </Providers>
   )
 }
 
