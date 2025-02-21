@@ -8,10 +8,7 @@ import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import {
-  getOriginFeeDetails,
-  TNodeDotKsmWithRelayChains,
-} from '@paraspell/sdk'
+import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
@@ -103,8 +100,7 @@ const useFees = (
             setBridgingFees({
               amount: bridgingFee,
               token: bridgeFeeToken,
-              inDollars:
-                Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+              inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
             if (senderAddress) {

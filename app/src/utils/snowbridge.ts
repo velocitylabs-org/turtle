@@ -217,7 +217,7 @@ export const getFeeEstimate = async (
         context,
         token.address,
         destinationChain.chainId,
-        BigInt(destinationChain.destinationFeeDOT ?? 0)
+        BigInt(destinationChain.destinationFeeDOT ?? 0),
       )
 
       const bridgingFee: AmountInfo = {
