@@ -103,16 +103,18 @@ const useFees = (
             const bridgingFee = (await getParaEthTransferFees()).reduce((acc, x) => acc + x)
 
             const bridgingFeeCached = await getCachedBridgingFee()
-            console.log("BridgingFee vs Cached", bridgingFee, bridgingFeeCached)
+            console.log('BridgingFee vs Cached', bridgingFee, bridgingFeeCached)
 
             setBridgingFees({
               amount: bridgingFeeCached,
               token: bridgeFeeToken,
-              inDollars: Number(toHuman(bridgingFeeCached, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+              inDollars:
+                Number(toHuman(bridgingFeeCached, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
             if (senderAddress) {
-              const balance = (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
+              const balance =
+                (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
               setCanPayAdditionalFees(bridgingFeeCached < balance)
             }
           }
@@ -201,7 +203,6 @@ const useFees = (
 }
 
 export default useFees
-
 
 /**
  * Fetches and caches the bridging fee of a transfer from AH -> Ethereum.
