@@ -11,7 +11,6 @@ import { toHuman } from '@/utils/transfer'
 import {
   getOriginFeeDetails,
   TNodeDotKsmWithRelayChains,
-  getParaEthTransferFees,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
@@ -99,23 +98,19 @@ const useFees = (
           ) {
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
-            //todo(nuno): cache this
-            const bridgingFee = (await getParaEthTransferFees()).reduce((acc, x) => acc + x)
-
-            const bridgingFeeCached = await getCachedBridgingFee()
-            console.log('BridgingFee vs Cached', bridgingFee, bridgingFeeCached)
+            const bridgingFee = await getCachedBridgingFee()
 
             setBridgingFees({
-              amount: bridgingFeeCached,
+              amount: bridgingFee,
               token: bridgeFeeToken,
               inDollars:
-                Number(toHuman(bridgingFeeCached, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+                Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
             if (senderAddress) {
               const balance =
                 (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
-              setCanPayAdditionalFees(bridgingFeeCached < balance)
+              setCanPayAdditionalFees(bridgingFee < balance)
             }
           }
 
