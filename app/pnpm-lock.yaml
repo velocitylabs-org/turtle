@@ -21,8 +21,8 @@ importers:
         specifier: ^0.4.1
         version: 0.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@paraspell/sdk':
-        specifier: ^8.5.1
-        version: 8.5.1(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+        specifier: ^8.5.2
+        version: 8.5.2(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@polkadot/api':
         specifier: ^14.0.1
         version: 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -2033,11 +2033,11 @@ packages:
   '@parallel-finance/type-definitions@2.0.1':
     resolution: {integrity: sha512-fC1QfhFFd8oSZqdIh6kmoMNvTxZdQGw1sTAbdYSINyVxyCxKiDg47ZP9bAZFDexL7POqnXnn4pYM7kUAnsT+8Q==}
 
-  '@paraspell/sdk-core@8.5.1':
-    resolution: {integrity: sha512-lU+3q/IlXzR/mv7fJevpbdwAJXyc3wVuxZ3gelUj2MSEnqGFTP2LsSYI/v6vqJ0wXCWOW/XxZQyGzwHG9BE9Fg==}
+  '@paraspell/sdk-core@8.5.2':
+    resolution: {integrity: sha512-rHnbhW7gnS7BaH/pxbn+TvH/n08NWRSbP5zghCqW4240PZvxTtKFV6QQmOYbXr6PqmV+Lec9Hi9RWL1yGdo9SQ==}
 
-  '@paraspell/sdk@8.5.1':
-    resolution: {integrity: sha512-pbpXii7jCHSs33B1SkfSVRb9WlB6sN+ptZVQTaoaRqK9AmWnHXj0w8PPnMwTrmrE1hsrwF2puAVPJ+AtN4jceQ==}
+  '@paraspell/sdk@8.5.2':
+    resolution: {integrity: sha512-RhkwKB9jEkH7jDcMFJz0keBO7qE/9vcmme1Ut9VsQdWNYRmq3KQ0UWS7CqN+jYsFQ+MMMSWpsgl3nOvI63e0Jw==}
     peerDependencies:
       polkadot-api: '>= 1.8.4 < 2'
 
@@ -9494,7 +9494,7 @@ snapshots:
 
   '@coinbase/wallet-sdk@4.2.3':
     dependencies:
-      '@noble/hashes': 1.7.0
+      '@noble/hashes': 1.7.1
       clsx: 1.2.1
       eventemitter3: 5.0.1
       preact: 10.25.4
@@ -10354,8 +10354,8 @@ snapshots:
     dependencies:
       '@ethereumjs/tx': 4.2.0
       '@metamask/superstruct': 3.1.0
-      '@noble/hashes': 1.7.0
-      '@scure/base': 1.2.1
+      '@noble/hashes': 1.7.1
+      '@scure/base': 1.2.4
       '@types/debug': 4.1.12
       debug: 4.4.0(supports-color@8.1.1)
       pony-cause: 2.1.11
@@ -10368,8 +10368,8 @@ snapshots:
     dependencies:
       '@ethereumjs/tx': 4.2.0
       '@metamask/superstruct': 3.1.0
-      '@noble/hashes': 1.7.0
-      '@scure/base': 1.2.1
+      '@noble/hashes': 1.7.1
+      '@scure/base': 1.2.4
       '@types/debug': 4.1.12
       debug: 4.4.0(supports-color@8.1.1)
       pony-cause: 2.1.11
@@ -11852,7 +11852,7 @@ snapshots:
     dependencies:
       '@open-web3/orml-type-definitions': 2.0.1
 
-  '@paraspell/sdk-core@8.5.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@paraspell/sdk-core@8.5.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       viem: 2.23.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -11862,9 +11862,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk@8.5.1(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@paraspell/sdk@8.5.2(bufferutil@4.0.9)(polkadot-api@1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
-      '@paraspell/sdk-core': 8.5.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      '@paraspell/sdk-core': 8.5.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       polkadot-api: 1.8.4(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.1)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0)
       viem: 2.23.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -12059,9 +12059,9 @@ snapshots:
 
   '@polkadot-api/substrate-bindings@0.0.1-492c132563ea6b40ae1fc5470dec4cd18768d182.1.0':
     dependencies:
-      '@noble/hashes': 1.7.0
+      '@noble/hashes': 1.7.1
       '@polkadot-api/utils': 0.0.1-492c132563ea6b40ae1fc5470dec4cd18768d182.1.0
-      '@scure/base': 1.2.1
+      '@scure/base': 1.2.4
       scale-ts: 1.6.1
     optional: true
 
@@ -12074,9 +12074,9 @@ snapshots:
 
   '@polkadot-api/substrate-bindings@0.6.0':
     dependencies:
-      '@noble/hashes': 1.7.0
+      '@noble/hashes': 1.7.1
       '@polkadot-api/utils': 0.1.0
-      '@scure/base': 1.2.1
+      '@scure/base': 1.2.4
       scale-ts: 1.6.1
     optional: true
 
@@ -13188,8 +13188,8 @@ snapshots:
 
   '@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2)':
     dependencies:
-      '@noble/curves': 1.8.0
-      '@noble/hashes': 1.7.0
+      '@noble/curves': 1.8.1
+      '@noble/hashes': 1.7.1
       '@polkadot/networks': 12.6.2
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-crypto': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
@@ -15110,7 +15110,7 @@ snapshots:
   '@safe-global/safe-apps-sdk@9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.22.6
-      viem: 2.22.8(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      viem: 2.23.2(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -17612,8 +17612,8 @@ snapshots:
     dependencies:
       '@ecies/ciphers': 0.2.2(@noble/ciphers@1.2.0)
       '@noble/ciphers': 1.2.0
-      '@noble/curves': 1.8.0
-      '@noble/hashes': 1.7.0
+      '@noble/curves': 1.8.1
+      '@noble/hashes': 1.7.1
 
   ed2curve@0.3.0:
     dependencies:
