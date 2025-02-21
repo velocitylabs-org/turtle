@@ -51,7 +51,7 @@ export const routes: Route[] = [
     from: Ethereum.uid,
     to: Bifrost.uid,
     sdk: 'SnowbridgeApi',
-    tokens: [EthereumTokens.WETH.id, EthereumTokens.USDC.id],
+    tokens: [EthereumTokens.WETH.id],
   },
   {
     from: Ethereum.uid,
@@ -233,13 +233,13 @@ export const routes: Route[] = [
     from: Bifrost.uid,
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.USDC.id, EthereumTokens.WETH.id],
+    tokens: [EthereumTokens.WETH.id],
   },
   {
     from: Hydration.uid,
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.WETH.id, EthereumTokens.USDC.id],
+    tokens: [EthereumTokens.WETH.id],
   },
 
   // Para To System

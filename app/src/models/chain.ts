@@ -21,6 +21,7 @@ export interface Chain {
   destinationFeeDOT?: string
   /** Optional parameter for parachains only. Used for AT API transfers. */
   rpcConnection?: string
+  
 }
 
 export type Network = 'Ethereum' | 'Polkadot'
