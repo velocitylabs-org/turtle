@@ -4,6 +4,7 @@ import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import Account from './Account'
+import { Icon } from './Icon'
 import OngoingTransfer from './OngoingTransfer'
 import { ArrowRight } from './svg/ArrowRight'
 import { ArrowUpRight } from './svg/ArrowUpRight'
@@ -17,7 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog'
-import { Icon } from './Icon'
 
 export const OngoingTransferDialog = ({
   transfer,
