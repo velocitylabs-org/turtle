@@ -102,18 +102,18 @@ const useFees = (
             //todo(nuno): cache this
             const bridgingFee = (await getParaEthTransferFees()).reduce((acc, x) => acc + x)
 
+            const bridgingFeeCached = await getCachedBridgingFee()
+            console.log("BridgingFee vs Cached", bridgingFee, bridgingFeeCached)
+
             setBridgingFees({
-              amount: bridgingFee,
+              amount: bridgingFeeCached,
               token: bridgeFeeToken,
-              inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+              inDollars: Number(toHuman(bridgingFeeCached, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
-            console.log("Sender address?", senderAddress)
             if (senderAddress) {
               const balance = (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
-              console.log("enough?", bridgingFee, balance)
-
-              setCanPayAdditionalFees(bridgingFee < balance)
+              setCanPayAdditionalFees(bridgingFeeCached < balance)
             }
           }
 
@@ -201,3 +201,25 @@ const useFees = (
 }
 
 export default useFees
+
+
+/**
+ * Fetches and caches the bridging fee of a transfer from AH -> Ethereum.
+ * It serves as a cached layer.
+ *
+ * @returns - A Promise resolving to the current bridging fee value.
+ */
+const getCachedBridgingFee = async (): Promise<bigint> => {
+  const response = await fetch(`/api/bridging-fee`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const { error } = await response.json()
+    throw new Error(error || `Failed to fetch bridging fee`)
+  }
+  return await response.json().then(BigInt)
+}

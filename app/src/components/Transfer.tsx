@@ -135,7 +135,8 @@ const Transfer: FC = () => {
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
-    canPayFees && (bridgingFees ? canPayAdditionalFees : true)
+    canPayFees &&
+    (bridgingFees ? canPayAdditionalFees : true)
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||

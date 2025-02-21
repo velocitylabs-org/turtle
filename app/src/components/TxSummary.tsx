@@ -22,7 +22,7 @@ interface TxSummaryProps {
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
-  canPayAdditionalFees: boolean,
+  canPayAdditionalFees: boolean
   className?: string
 }
 
@@ -118,9 +118,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                         fill={colors['turtle-foreground']}
                         className="mr-2"
                       />
-                      <span>
-                        You don&apos;t have enough {additionalfees.token.symbol}
-                      </span>
+                      <span>You don&apos;t have enough {additionalfees.token.symbol}</span>
                     </div>
                   )}
                 </div>
