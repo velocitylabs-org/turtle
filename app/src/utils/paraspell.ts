@@ -16,6 +16,8 @@ import {
   TNodeWithRelayChains,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk'
+import { decodeAddress } from '@polkadot/keyring'
+import { u8aToHex } from '@polkadot/util'
 import { captureException } from '@sentry/nextjs'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
@@ -31,7 +33,7 @@ export const createTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -47,9 +49,7 @@ export const createTx = async (
       .currency({ ...currencyId, amount })
       .address(
         recipient,
-        destinationChainFromId === 'Ethereum'
-          ? '13gXC9QmeFyZFY595TMnMLZsEAq34h13xpLTLCuqbrGnTNNv'
-          : undefined,
+        destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
       )
       .build()
   }
@@ -108,9 +108,7 @@ export const dryRun = async (
     .currency({ ...currencyId, amount })
     .address(
       recipient,
-      destinationChainFromId === 'Ethereum'
-        ? '13gXC9QmeFyZFY595TMnMLZsEAq34h13xpLTLCuqbrGnTNNv'
-        : undefined,
+      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
     )
     .dryRun(sender.address)
 }
@@ -183,4 +181,15 @@ export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
     : getTNode(chain.chainId, 'polkadot')
+}
+
+/**
+ * Return the AccountId32 reprsentation of the given `address`. It should represent the same
+ * wallet across any chain in the Polkadot ecosystem.
+ *
+ * @param address - the base address to decode
+ * @returns the AccountId32 presentation of `address`
+ */
+function getAccountId32(address: string): string {
+  return u8aToHex(decodeAddress(address))
 }
