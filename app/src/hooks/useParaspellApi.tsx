@@ -112,7 +112,14 @@ const useParaspellApi = () => {
 
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) =>
-        await handleTxEvent(event, params, senderAddress, tokenUSDValue, date, setStatus),
+        await handleTxEvent(
+          { type: 'papi', eventData: event },
+          params,
+          senderAddress,
+          tokenUSDValue,
+          date,
+          setStatus,
+        ),
       error: callbackError => {
         if (callbackError instanceof InvalidTxError) {
           console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
@@ -184,18 +191,21 @@ const useParaspellApi = () => {
     // TODO update ongoing transfer with message ids and cross chain tracking stuff
   }
 
-  /** Handle the incoming transaction events and update the ongoing transfers accordingly. */
+  /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */
   const handleTxEvent = async (
-    event: TxEvent,
+    event: TransferEvent,
     params: TransferParams,
     senderAddress: string,
     tokenUSDValue: number,
     date: Date,
     setStatus: (status: Status) => void,
   ) => {
-    if (event.type === 'signed') {
+    if (
+      (event.type === 'papi' && event.eventData.type === 'signed') ||
+      (event.type === 'pjs' && event.eventData.status.isBroadcast)
+    ) {
       await addToOngoingTransfers(
-        event.txHash.toString(),
+        event.eventData.txHash.toString(),
         params,
         senderAddress,
         tokenUSDValue,
@@ -205,19 +215,19 @@ const useParaspellApi = () => {
     }
 
     try {
-      const transferEvent: TransferEvent = { type: 'papi', event }
-      updateOngoingTransfers(transferEvent, params, senderAddress, tokenUSDValue, date)
+      updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date)
     } catch (error) {
-      handleSendError(params.sender, error, setStatus, event.txHash.toString())
+      handleSendError(params.sender, error, setStatus, event.eventData.txHash.toString())
     }
 
-    if (
-      params.environment === Environment.Mainnet &&
-      isProduction &&
-      event.type === 'txBestBlocksState'
-    ) {
+    // track once the transfer is in block
+    const isInBlock =
+      (event.type === 'papi' && event.eventData.type === 'txBestBlocksState') ||
+      (event.type === 'pjs' && event.eventData.status.isInBlock)
+
+    if (params.environment === Environment.Mainnet && isProduction && isInBlock) {
       trackTransferMetrics({
-        id: event.txHash.toString(),
+        id: event.eventData.txHash.toString(),
         sender: senderAddress,
         sourceChain: params.sourceChain,
         token: params.sourceToken,
@@ -287,7 +297,9 @@ const useParaspellApi = () => {
     )
   }
 
-  type TransferEvent = { type: 'pjs'; event: ISubmittableResult } | { type: 'papi'; event: TxEvent }
+  type TransferEvent =
+    | { type: 'pjs'; eventData: ISubmittableResult }
+    | { type: 'papi'; eventData: TxEvent }
 
   /** Update the ongoing transfer with the necessary fields to be able to track it. Supports PAPI and PJS events. */
   const updateOngoingTransfers = (
@@ -298,14 +310,14 @@ const useParaspellApi = () => {
     date: Date,
   ) => {
     let eventsData
-    if (event.type === 'papi') eventsData = handleObservableEvents(event.event)
-    else if (event.type === 'pjs') eventsData = handleSubmittableEvents(event.event)
+    if (event.type === 'papi') eventsData = handleObservableEvents(event.eventData)
+    else if (event.type === 'pjs') eventsData = handleSubmittableEvents(event.eventData)
     if (!eventsData) return
 
     const { messageHash, messageId, extrinsicIndex } = eventsData
 
     addOrUpdate({
-      id: event.event.txHash.toString(),
+      id: event.eventData.txHash.toString(),
       sourceChain: params.sourceChain,
       token: params.sourceToken,
       tokenUSDValue,
