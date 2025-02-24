@@ -45,7 +45,7 @@ export const colors = {
   [`${prefix}-note-warn`]: '#FFFF0026',
 }
 
-export default {
+const config: import('tailwindcss').Config = {
   content: [
     './index.html',
     './src/**/*.{ts,tsx,js,jsx}',
@@ -63,6 +63,7 @@ export default {
       colors,
       fontFamily: {
         dazzed: ['var(--font-dazzed)'],
+        'dazzed-bold': ['var(--font-dazzed-bold)'],
       },
       fontSize: {
         large: '2rem',
@@ -93,3 +94,5 @@ export default {
   darkMode: ['class'],
   plugins: [heroui(), tailwindcssAnimate, tailwindcssMotion],
 }
+
+export default config
