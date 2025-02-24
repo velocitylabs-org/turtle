@@ -1,7 +1,11 @@
 import Widget from './Widget'
-
+import { Providers } from './components/providers'
 function App() {
-  return <Widget />
+  return (
+    <Providers>
+      <Widget />
+    </Providers>
+  )
 }
 
 export default App

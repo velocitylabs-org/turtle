@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import tailwindcssAnimate from 'tailwindcss-animate'
+import { heroui } from '@heroui/react'
 
 const prefix = 'turtle'
 
@@ -49,7 +50,11 @@ export const colors = {
 }
 
 export default {
-  content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}'],
+  content: [
+    './index.html',
+    './src/**/*.{ts,tsx,js,jsx}',
+    './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
       container: {
@@ -62,6 +67,7 @@ export default {
       colors,
       fontFamily: {
         dazzed: ['var(--font-dazzed)'],
+        'dazzed-bold': ['var(--font-dazzed-bold)'],
       },
       fontSize: {
         large: '2rem',
@@ -90,7 +96,7 @@ export default {
     },
   },
   darkMode: ['class'],
-  plugins: [tailwindcssAnimate],
+  plugins: [heroui(), tailwindcssAnimate],
 }
 
 // module.exports = {

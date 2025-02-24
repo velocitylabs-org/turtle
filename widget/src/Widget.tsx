@@ -1,5 +1,6 @@
 import { FC, useState } from 'react'
-import { Button } from './components/ui/button'
+import Button from './components/Buttons'
+import { cn } from './lib/utils'
 
 export interface WidgetProps {
   title?: string
@@ -12,12 +13,12 @@ const Widget: FC<WidgetProps> = ({ title = 'Transfers Widget' }) => {
       <h2 className="text-card-foreground mb-4 text-2xl font-bold">{title}</h2>
       <div className="space-x-2">
         <Button
-          variant="outline"
-          className="bg-turtle-secondary"
+          label={`Connect: ${count}`}
+          variant={'primary'}
+          size="sm"
+          className={cn('w-[6rem] text-sm')}
           onClick={() => setCount(count + 1)}
-        >
-          Send {count}
-        </Button>
+        />
       </div>
     </div>
   )
