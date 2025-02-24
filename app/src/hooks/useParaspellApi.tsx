@@ -159,7 +159,7 @@ const useParaspellApi = () => {
     console.log(params.destinationToken.multilocation)
 
     // TODO: outsource to utils/paraspell.ts
-    await RouterBuilder()
+    const routerPlan = await RouterBuilder()
       .from('Hydration')
       .to('Hydration')
       .currencyFrom({ symbol: 'DOT' }) // DOT
@@ -175,7 +175,14 @@ const useParaspellApi = () => {
         // update/add ongoing transfer
         // listen for events and update ongoing transfer (tracking)
       })
-      .build()
+      .buildTransactions()
+
+    // TODO initiate first tx
+    const step1 = routerPlan.at(0)
+
+    // TODO add to ongoing transfers. Including the plan and currentStep
+
+    // TODO update ongoing transfer with message ids and cross chain tracking stuff
   }
 
   const handleTxEvent = async (
