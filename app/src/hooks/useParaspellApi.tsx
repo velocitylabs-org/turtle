@@ -15,9 +15,11 @@ import {
   getRelayNode,
   moonbeamTransfer,
 } from '@/utils/paraspell'
+import { handleSubmittableEvents } from '@/utils/pjs'
 import { txWasCancelled } from '@/utils/transfer'
 import { getAssetMultiLocation, getTNode } from '@paraspell/sdk'
-import { RouterBuilder, TRouterEvent } from '@paraspell/xcm-router'
+import { RouterBuilder } from '@paraspell/xcm-router'
+import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
@@ -91,7 +93,7 @@ const useParaspellApi = () => {
     // Validate the transfer
     setStatus('Validating')
 
-    const validationResult = await validate(params)
+    const validationResult = await validateTransfer(params)
     if (validationResult.type === 'Supported' && !validationResult.success)
       throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
 
@@ -169,22 +171,20 @@ const useParaspellApi = () => {
       .senderAddress(account.address)
       .recipientAddress(params.recipient)
       .signer(account.pjsSigner as any)
-      .onStatusChange((status: TRouterEvent) => {
-        // TODO outsource to handleRouterEvent
-        // call tx of index currentStep
-        // update/add ongoing transfer
-        // listen for events and update ongoing transfer (tracking)
-      })
       .buildTransactions()
 
     // TODO initiate first tx
     const step1 = routerPlan.at(0)
+    /* step1?.tx.signAndSend(account.address, result => {
+      result.
+    }) */
 
     // TODO add to ongoing transfers. Including the plan and currentStep
 
     // TODO update ongoing transfer with message ids and cross chain tracking stuff
   }
 
+  /** Handle the incoming transaction events and update the ongoing transfers accordingly. */
   const handleTxEvent = async (
     event: TxEvent,
     params: TransferParams,
@@ -205,12 +205,17 @@ const useParaspellApi = () => {
     }
 
     try {
-      updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date)
+      const transferEvent: TransferEvent = { type: 'papi', event }
+      updateOngoingTransfers(transferEvent, params, senderAddress, tokenUSDValue, date)
     } catch (error) {
       handleSendError(params.sender, error, setStatus, event.txHash.toString())
     }
 
-    if (params.environment === Environment.Mainnet && isProduction) {
+    if (
+      params.environment === Environment.Mainnet &&
+      isProduction &&
+      event.type === 'txBestBlocksState'
+    ) {
       trackTransferMetrics({
         id: event.txHash.toString(),
         sender: senderAddress,
@@ -229,7 +234,7 @@ const useParaspellApi = () => {
     }
   }
 
-  const validate = async (params: TransferParams): Promise<DryRunResult> => {
+  const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
       const result = await dryRun(params, params.sourceChain.rpcConnection)
 
@@ -282,22 +287,25 @@ const useParaspellApi = () => {
     )
   }
 
+  type TransferEvent = { type: 'pjs'; event: ISubmittableResult } | { type: 'papi'; event: TxEvent }
+
+  /** Update the ongoing transfer with the necessary fields to be able to track it. Supports PAPI and PJS events. */
   const updateOngoingTransfers = (
-    event: TxEvent,
+    event: TransferEvent,
     params: TransferParams,
     senderAddress: string,
     tokenUSDValue: number,
     date: Date,
   ) => {
-    const eventsData = handleObservableEvents(event)
+    let eventsData
+    if (event.type === 'papi') eventsData = handleObservableEvents(event.event)
+    else if (event.type === 'pjs') eventsData = handleSubmittableEvents(event.event)
     if (!eventsData) return
 
     const { messageHash, messageId, extrinsicIndex } = eventsData
 
-    // Update the ongoing tx entry now containing the necessary
-    // fields to be able to track its progress.
     addOrUpdate({
-      id: event.txHash.toString(),
+      id: event.event.txHash.toString(),
       sourceChain: params.sourceChain,
       token: params.sourceToken,
       tokenUSDValue,
