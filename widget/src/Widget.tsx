@@ -1,24 +1,21 @@
-import { FC, useState } from 'react'
-import Button from './components/Buttons'
-import { cn } from './lib/utils'
+import WalletButton from './components/WalletButton'
+import useWallet from './hooks/useWallet'
+import { truncateAddress } from './utils/address'
 
 export interface WidgetProps {
   title?: string
 }
 
-const Widget: FC<WidgetProps> = ({ title = 'Transfers Widget' }) => {
-  const [count, setCount] = useState<number>(0)
+const Widget: React.FC<WidgetProps> = ({ title = 'Transfers Widget' }) => {
+  const sourceWallet = useWallet('SubstrateEVM')
   return (
     <div className="bg-card m-4 mx-auto max-w-sm rounded-lg p-6 text-center shadow-md">
       <h2 className="text-card-foreground mb-4 text-2xl font-bold">{title}</h2>
+      <div>
+        {sourceWallet?.sender?.address && truncateAddress(sourceWallet?.sender?.address, 10)}
+      </div>
       <div className="space-x-2">
-        <Button
-          label={`Connect: ${count}`}
-          variant={'primary'}
-          size="sm"
-          className={cn('w-[6rem] text-sm')}
-          onClick={() => setCount(count + 1)}
-        />
+        <WalletButton walletType="SubstrateEVM" />
       </div>
     </div>
   )
