@@ -18,7 +18,7 @@ import {
 import { handleSubmittableEvents } from '@/utils/pjs'
 import { txWasCancelled } from '@/utils/transfer'
 import { getAssetMultiLocation, getTNode } from '@paraspell/sdk'
-import { RouterBuilder } from '@paraspell/xcm-router'
+import { RouterBuilder, TRouterPlan } from '@paraspell/xcm-router'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -29,6 +29,10 @@ import { moonbeam } from 'wagmi/chains'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
+
+type TransferEvent =
+  | { type: 'pjs'; eventData: ISubmittableResult }
+  | { type: 'papi'; eventData: TxEvent }
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -180,15 +184,21 @@ const useParaspellApi = () => {
       .signer(account.pjsSigner as any)
       .buildTransactions()
 
-    // TODO initiate first tx
+    console.log(routerPlan)
+
     const step1 = routerPlan.at(0)
-    /* step1?.tx.signAndSend(account.address, result => {
-      result.
-    }) */
 
-    // TODO add to ongoing transfers. Including the plan and currentStep
-
-    // TODO update ongoing transfer with message ids and cross chain tracking stuff
+    step1?.tx.signAndSend(account.address, async result => {
+      await handleTxEvent(
+        { type: 'pjs', eventData: result },
+        params,
+        senderAddress,
+        tokenUSDValue,
+        date,
+        setStatus,
+        { plan: routerPlan, currentStep: 0 },
+      )
+    })
   }
 
   /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */
@@ -199,6 +209,7 @@ const useParaspellApi = () => {
     tokenUSDValue: number,
     date: Date,
     setStatus: (status: Status) => void,
+    swapInformation?: { plan: TRouterPlan; currentStep: number },
   ) => {
     if (
       (event.type === 'papi' && event.eventData.type === 'signed') ||
@@ -211,16 +222,17 @@ const useParaspellApi = () => {
         tokenUSDValue,
         date,
         setStatus,
+        swapInformation,
       )
     }
 
     try {
-      updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date)
+      updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date, swapInformation)
     } catch (error) {
       handleSendError(params.sender, error, setStatus, event.eventData.txHash.toString())
     }
 
-    // track once the transfer is in block
+    // collect metrics once the transfer is in block
     const isInBlock =
       (event.type === 'papi' && event.eventData.type === 'txBestBlocksState') ||
       (event.type === 'pjs' && event.eventData.status.isInBlock)
@@ -239,9 +251,8 @@ const useParaspellApi = () => {
         date,
         environment: params.environment,
       })
-
-      setStatus('Idle')
     }
+    setStatus('Idle')
   }
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
@@ -264,13 +275,15 @@ const useParaspellApi = () => {
     }
   }
 
+  // TODO: refactor and reduce the number of parameters. StoredTransfer type should be passed instead.
   const addToOngoingTransfers = async (
     txHash: string,
     params: TransferParams,
     senderAddress: string,
     tokenUSDValue: number,
     date: Date,
-    setStatus: (status: Status) => void,
+    setStatus: (status: Status) => void, // TODO: refactor: can be included in onComplete
+    swapInformation?: { plan: TRouterPlan; currentStep: number },
   ): Promise<void> => {
     // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
     // and unlocking the UI by resetting the form back to 'Idle'.
@@ -291,23 +304,26 @@ const useParaspellApi = () => {
           environment: params.environment,
           fees: params.fees,
           status: `Submitting to ${params.sourceChain.name}`,
+          swapInformation,
         })
         resolve(true)
       }, 2000),
     )
+
+    console.log(
+      `Transfer ${txHash} from ${params.sourceChain.name} to ${params.destinationChain.name} added to ongoing transfers. Swap information: ${swapInformation}`,
+    )
   }
 
-  type TransferEvent =
-    | { type: 'pjs'; eventData: ISubmittableResult }
-    | { type: 'papi'; eventData: TxEvent }
-
   /** Update the ongoing transfer with the necessary fields to be able to track it. Supports PAPI and PJS events. */
+  // TODO: refactor and reduce the number of parameters. StoredTransfer type should be passed instead.
   const updateOngoingTransfers = (
     event: TransferEvent,
     params: TransferParams,
     senderAddress: string,
     tokenUSDValue: number,
     date: Date,
+    swapInformation?: { plan: TRouterPlan; currentStep: number },
   ) => {
     let eventsData
     if (event.type === 'papi') eventsData = handleObservableEvents(event.eventData)
@@ -333,7 +349,12 @@ const useParaspellApi = () => {
       ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
       status: `Arriving at ${params.destinationChain.name}`,
       finalizedAt: new Date(),
+      swapInformation,
     })
+
+    console.log(
+      `Transfer ${event.eventData.txHash} from ${params.sourceChain.name} to ${params.destinationChain.name} updated. Swap information: ${swapInformation}`,
+    )
   }
 
   const handleSendError = (

@@ -1,13 +1,12 @@
-import { Dispatch, SetStateAction } from 'react'
 import { Direction } from '@/services/transfer'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
-
-import { Chain } from './chain'
-import { FromParachainTrackingResult } from './subscan'
-import { FromEthTrackingResult, FromAhToEthTrackingResult } from './snowbridge'
-import { Token } from './token'
 import { TRouterPlan } from '@paraspell/xcm-router'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
+import { Dispatch, SetStateAction } from 'react'
+import { Chain } from './chain'
+import { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
+import { FromParachainTrackingResult } from './subscan'
+import { Token } from './token'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
