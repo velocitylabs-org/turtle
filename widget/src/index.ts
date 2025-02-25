@@ -1,4 +1,4 @@
 import './index.css'
 
-export { default } from './Widget'
+export { Widget } from './Widget'
 export type { WidgetProps } from './Widget'
