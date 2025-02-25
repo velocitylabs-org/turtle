@@ -37,8 +37,8 @@ const useTransferForm = () => {
     setValue,
     // reset,
     // trigger,
-    formState: { errors },
     // formState: { errors, isValid: isValidZodSchema, isValidating},
+    formState: { errors, isValidating },
   } = useForm<FormInputs>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(schema as any),
@@ -68,6 +68,26 @@ const useTransferForm = () => {
     token: tokenAmount?.token ?? undefined,
     address: sourceWallet?.sender?.address,
   })
+
+  const allowFromToSwap = useCallback(() => {
+    return (
+      !isValidating &&
+      transferStatus === 'Idle' &&
+      !!sourceChain &&
+      !!destinationChain &&
+      !!tokenAmount &&
+      isRouteAllowed(environment, sourceChain, destinationChain) &&
+      isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
+    )
+  }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
+
+  const swapFromTo = useCallback(() => {
+    if (allowFromToSwap()) {
+      // Swap chains values
+      setValue('sourceChain', destinationChain)
+      setValue('destinationChain', sourceChain)
+    }
+  }, [sourceChain, destinationChain, setValue, allowFromToSwap])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -157,6 +177,8 @@ const useTransferForm = () => {
     tokenAmount,
     tokenAmountError,
     transferStatus,
+    swapFromTo,
+    allowFromToSwap,
     isBalanceAvailable: balanceData?.value != undefined,
     loadingBalance,
     balanceData,

@@ -8,6 +8,7 @@ import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import TokenAmountSelect from './TokenAmountSelect'
 import Button from './Button'
 import { formatAmount } from '@/utils/transfer'
+import { SwapChains } from './SwapFromToChains'
 
 const Transfer: FC = () => {
   const {
@@ -21,6 +22,8 @@ const Transfer: FC = () => {
     tokenAmount,
     tokenAmountError,
     transferStatus,
+    swapFromTo,
+    allowFromToSwap,
     handleMaxButtonClick,
     handleSubmit,
     isBalanceAvailable,
@@ -116,6 +119,9 @@ const Transfer: FC = () => {
             )
           }}
         />
+
+        {/* Swap source and destination chains */}
+        <SwapChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
       </div>
     </form>
   )
