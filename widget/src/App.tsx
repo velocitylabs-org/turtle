@@ -1,4 +1,4 @@
-import Widget from './Widget'
+import { Widget } from './Widget'
 import SubstrateWalletModal from './components/SubstrateWalletModal'
 import { Providers } from './providers'
 function App() {

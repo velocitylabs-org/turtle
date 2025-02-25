@@ -6,7 +6,7 @@ export interface WidgetProps {
   title?: string
 }
 
-const Widget: React.FC<WidgetProps> = ({ title = 'Transfers Widget' }) => {
+export const Widget: React.FC<WidgetProps> = ({ title = 'Transfers Widget' }) => {
   const sourceWallet = useWallet('SubstrateEVM')
   return (
     <div className="bg-card m-4 mx-auto max-w-sm rounded-lg p-6 text-center shadow-md">
@@ -20,5 +20,3 @@ const Widget: React.FC<WidgetProps> = ({ title = 'Transfers Widget' }) => {
     </div>
   )
 }
-
-export default Widget
