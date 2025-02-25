@@ -29,7 +29,7 @@ importers:
         version: 8.3.1(bufferutil@4.0.9)(polkadot-api@1.9.1(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.2)(rxjs@7.8.1)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@paraspell/xcm-router':
         specifier: ^2.2.2
-        version: 2.2.2(@acala-network/types@6.2.0(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@ethersproject/address@5.7.0)(@polkadot/api-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.6.1)(@polkadot/types-create@15.6.1)(@polkadot/types-known@15.6.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(babel-plugin-macros@3.1.0)(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+        version: 2.2.2(@acala-network/types@6.2.0(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@ethersproject/address@5.7.0)(@polkadot/api-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.7.1)(@polkadot/types-create@15.7.1)(@polkadot/types-known@15.7.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(babel-plugin-macros@3.1.0)(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@polkadot/api':
         specifier: ^15.6.1
         version: 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -2443,6 +2443,10 @@ packages:
     resolution: {integrity: sha512-bJehdpk7/JyHoBbaSKgNB4gWqhG46BEjFGFO+/EJ7FnUDiq3GpnEZR5pJt2dvRYro2/xE5JI4QJIXsgtp1j1Hg==}
     engines: {node: '>=18'}
 
+  '@polkadot/api-augment@15.7.1':
+    resolution: {integrity: sha512-xL/ydO6iqa7/+8z7e3rJbPpsjuv5OJ8j9FhWjhfYpnWLBkkPIOscemAWIcXTDRhQoPKVTKyQPb2495G+yGFBCQ==}
+    engines: {node: '>=18'}
+
   '@polkadot/api-augment@7.15.1':
     resolution: {integrity: sha512-7csQLS6zuYuGq7W1EkTBz1ZmxyRvx/Qpz7E7zPSwxmY8Whb7Yn2effU9XF0eCcRpyfSW8LodF8wMmLxGYs1OaQ==}
     engines: {node: '>=14.0.0'}
@@ -2469,6 +2473,10 @@ packages:
 
   '@polkadot/api-base@15.6.1':
     resolution: {integrity: sha512-debqa8JY6s100V/Pwe0jM0O1PSaKVssXhx9X5XtHLEQOmlkJH4PbqKb7HspGEyuLZNSEneJPbR0+DH3iLErjcQ==}
+    engines: {node: '>=18'}
+
+  '@polkadot/api-base@15.7.1':
+    resolution: {integrity: sha512-5i2RFziPnYj1shhoHlatEyB5vLDPbB9zK0pvJWN5V6lQsYJoiPQ6UpNiQ8JD98qcYRVuKTjlhx03mRQ3FLFgDg==}
     engines: {node: '>=18'}
 
   '@polkadot/api-base@7.15.1':
@@ -2499,6 +2507,10 @@ packages:
     resolution: {integrity: sha512-jKv+JW83Q5W7NTPvScfLkXlaVE1ICSm1lhAS4diy10xkMHyVw4WKwFPszV0cBPGK0msnVBieM09iYf7HiODnFQ==}
     engines: {node: '>=18'}
 
+  '@polkadot/api-derive@15.7.1':
+    resolution: {integrity: sha512-EY0ymkLFJ48PqDRh5Sm06iVhWZe5YdZEErFu6Qseq9U891PQ+g3UJo2kGXrH2JowXRUf/x8SzH/NU85JycTriA==}
+    engines: {node: '>=18'}
+
   '@polkadot/api-derive@7.15.1':
     resolution: {integrity: sha512-CsOQppksQBaa34L1fWRzmfQQpoEBwfH0yTTQxgj3h7rFYGVPxEKGeFjo1+IgI2vXXvOO73Z8E4H/MnbxvKrs1Q==}
     engines: {node: '>=14.0.0'}
@@ -2525,6 +2537,10 @@ packages:
 
   '@polkadot/api@15.6.1':
     resolution: {integrity: sha512-at8NwjetukJxCa/XhHWC0E1SVZETp0fUyZtTfiCoy6D/x5tjXTWdOjaCvGQa6v11A6hUXogmaPtH2GkPbV/QrA==}
+    engines: {node: '>=18'}
+
+  '@polkadot/api@15.7.1':
+    resolution: {integrity: sha512-jV4TWjxcC30FKEn16KBMI2+IPoLvOg1I6rCSKrKEmzAUql58/pd3Lm9tglLdL1Thhajee3iwJtU8DkFayYneUA==}
     engines: {node: '>=18'}
 
   '@polkadot/api@7.15.1':
@@ -2669,6 +2685,10 @@ packages:
     resolution: {integrity: sha512-8Z88QLRpLwKSgIeYSUWWfqSUDTOCZIFGWwEenxEtNevDTtoT72EntK4OkYYEPkkWL4wTzOgcHYiw6XlN5H61Gg==}
     engines: {node: '>=18'}
 
+  '@polkadot/rpc-augment@15.7.1':
+    resolution: {integrity: sha512-6kkD9nLgbC40ZSOYFipU0/CaCyiHr/JCNJNzdLzE1bM4Z/7N4TpywMqlCls/dFFLw1sS9SsgR7SWsLCriGQHKQ==}
+    engines: {node: '>=18'}
+
   '@polkadot/rpc-augment@7.15.1':
     resolution: {integrity: sha512-sK0+mphN7nGz/eNPsshVi0qd0+N0Pqxuebwc1YkUGP0f9EkDxzSGp6UjGcSwWVaAtk9WZZ1MpK1Jwb/2GrKV7Q==}
     engines: {node: '>=14.0.0'}
@@ -2697,6 +2717,10 @@ packages:
     resolution: {integrity: sha512-kqZXuuc0esESM5WYo6yaN8GzzpbDzX9nIUcJiTkOK6lRqz4nP5qid8c2lXQcLJBUmPnTLZe385afRP2iBQa9rA==}
     engines: {node: '>=18'}
 
+  '@polkadot/rpc-core@15.7.1':
+    resolution: {integrity: sha512-/sIHhUvLf29ZiLWPCyhMMaXs5vfKLIrfB/OPOGYy2dR8yKEnBuKbN6Ae54N+mLHGKksi2jNXWhX3Kuu4CbXoeQ==}
+    engines: {node: '>=18'}
+
   '@polkadot/rpc-core@7.15.1':
     resolution: {integrity: sha512-4Sb0e0PWmarCOizzxQAE1NQSr5z0n+hdkrq3+aPohGu9Rh4PodG+OWeIBy7Ov/3GgdhNQyBLG+RiVtliXecM3g==}
     engines: {node: '>=14.0.0'}
@@ -2723,6 +2747,10 @@ packages:
 
   '@polkadot/rpc-provider@15.6.1':
     resolution: {integrity: sha512-M0ogLgfsOZkwwpnlDXbsaTIPnxTe8ouj+m4ux5L1xrjAzu9cYEqJGU1VIyP0l9bfCAD8eG911SuCVUPS2wo8pQ==}
+    engines: {node: '>=18'}
+
+  '@polkadot/rpc-provider@15.7.1':
+    resolution: {integrity: sha512-DLRjOdsJ16RjFR5aTKOvlLhcmFeo3WGC/lJDYZ9J+oTeY4dFJLEF/ERKRWsv9YnYNsOSMkCHq23F7NvCYAjXAg==}
     engines: {node: '>=18'}
 
   '@polkadot/rpc-provider@7.15.1':
@@ -2763,6 +2791,10 @@ packages:
     resolution: {integrity: sha512-8/mGEvH5Crys5muOFwJrkcp6ZEei0N128LK3fUyH4pZ/RC+vht0xNYB5ZEaH8Kax/eeNaUs1yHvoXFZGXFV+BQ==}
     engines: {node: '>=18'}
 
+  '@polkadot/types-augment@15.7.1':
+    resolution: {integrity: sha512-rLQ8nvsLp4XyiTGQigens4JDP5PPFyzlYMdAGMqYsH+K/6TdqStgXciFeUGe2jeir49aCgBgXqQV+/5kNSK2Wg==}
+    engines: {node: '>=18'}
+
   '@polkadot/types-augment@7.15.1':
     resolution: {integrity: sha512-aqm7xT/66TCna0I2utpIekoquKo0K5pnkA/7WDzZ6gyD8he2h0IXfe8xWjVmuyhjxrT/C/7X1aUF2Z0xlOCwzQ==}
     engines: {node: '>=14.0.0'}
@@ -2795,6 +2827,10 @@ packages:
     resolution: {integrity: sha512-wofyTyzmi5rm46XhCrDLtrdACLcMwIhQJEbzSX27947jUY54H53MDqZfZSMT6yyAqIm4x3LM9v0bn9vtq8hfVQ==}
     engines: {node: '>=18'}
 
+  '@polkadot/types-codec@15.7.1':
+    resolution: {integrity: sha512-QxYNDo1SH6VqF5Atcciu1r7MbKQIr8jDIZ0jYtOkrzsw3BvynlI59+3icTRrrK4Uk79D8PD0QWo4r+krJ0VMmQ==}
+    engines: {node: '>=18'}
+
   '@polkadot/types-codec@7.15.1':
     resolution: {integrity: sha512-nI11dT7FGaeDd/fKPD8iJRFGhosOJoyjhZ0gLFFDlKCaD3AcGBRTTY8HFJpP/5QXXhZzfZsD93fVKrosnegU0Q==}
     engines: {node: '>=14.0.0'}
@@ -2823,6 +2859,10 @@ packages:
     resolution: {integrity: sha512-UNDl7MxaClkFr0Lr2OsyGRybDJbTekeO4yb/kjWk+PFOlFFAAGEaVh6guXpZYdyE/uHSUBIR8bco+3Sx3sJUDA==}
     engines: {node: '>=18'}
 
+  '@polkadot/types-create@15.7.1':
+    resolution: {integrity: sha512-baEU+H+GnHOnNAL5hu09lr2m1bK2HiGvrOZq8txLsNpy67uxI04YzzSkckxWdORyix6Yo55rWW0QfaDlSoiP7g==}
+    engines: {node: '>=18'}
+
   '@polkadot/types-create@7.15.1':
     resolution: {integrity: sha512-+HiaHn7XOwP0kv/rVdORlVkNuMoxuvt+jd67A/CeEreJiXqRLu+S61Mdk7wi6719PTaOal1hTDFfyGrtUd8FSQ==}
     engines: {node: '>=14.0.0'}
@@ -2849,6 +2889,10 @@ packages:
 
   '@polkadot/types-known@15.6.1':
     resolution: {integrity: sha512-TEKmu/uD1r9JO9Ws0M2PcvcDFr2QM6j186DbG7kh18JGzoT5gljpH/JyQWos0Yg1N6Y/jq2R87Kl03Qd7EhiuA==}
+    engines: {node: '>=18'}
+
+  '@polkadot/types-known@15.7.1':
+    resolution: {integrity: sha512-G56TRuaxd7rA1eTFMJyoyYkqFmGZsFwrnviIK9HsSuE2uzaV6vrOfit6eIIg+YQGIyWoshRJCDiLizjzwZhdGQ==}
     engines: {node: '>=18'}
 
   '@polkadot/types-known@4.17.1':
@@ -2887,6 +2931,10 @@ packages:
     resolution: {integrity: sha512-8HRwIZD4RRPHQ0O8fv1oywwDbi8AN3pIaFBP29MtcaAA+EEWq8RnIyGJUjOCljWSOOOUiVNEdBwrjVpUeDHXBw==}
     engines: {node: '>=18'}
 
+  '@polkadot/types-support@15.7.1':
+    resolution: {integrity: sha512-uM/DyU48PU+ok4yFeSIhTtdKY46zAYY0cuaK0iBbW4/oIRBdSJQ6U3CnU9iMVNCN5kKJdIR3K7V2uoZGl6GXvw==}
+    engines: {node: '>=18'}
+
   '@polkadot/types-support@7.15.1':
     resolution: {integrity: sha512-FIK251ffVo+NaUXLlaJeB5OvT7idDd3uxaoBM6IwsS87rzt2CcWMyCbu0uX89AHZUhSviVx7xaBxfkGEqMePWA==}
     engines: {node: '>=14.0.0'}
@@ -2913,6 +2961,10 @@ packages:
 
   '@polkadot/types@15.6.1':
     resolution: {integrity: sha512-0tNkHv3QBCksflPxKOcbFNopSnacsmuQJsNWTb0MmWeGKvd2XQ7cY/RotBU3wRdcgzMo3DUK7qBKC2F24VB1DQ==}
+    engines: {node: '>=18'}
+
+  '@polkadot/types@15.7.1':
+    resolution: {integrity: sha512-E4qksl/D+sMpEIH2WDwjC6hDRBu7IBW+tK99QTxZ28F087Xkpjc8W38lzr/bZhodoJQ+lsLQkPh+XpbcaIbelA==}
     engines: {node: '>=18'}
 
   '@polkadot/types@4.17.1':
@@ -10882,7 +10934,7 @@ snapshots:
 
   '@galacticcouncil/math-xyk@1.0.0': {}
 
-  '@galacticcouncil/sdk@5.5.0(@polkadot/api-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.6.1)(@polkadot/types-codec@15.6.1)(@polkadot/types-create@15.6.1)(@polkadot/types-known@15.6.1)(@polkadot/types@15.6.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.4.3)':
+  '@galacticcouncil/sdk@5.5.0(@polkadot/api-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.7.1)(@polkadot/types-codec@15.6.1)(@polkadot/types-create@15.7.1)(@polkadot/types-known@15.7.1)(@polkadot/types@15.6.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.4.3)':
     dependencies:
       '@galacticcouncil/math-lbp': 1.0.0
       '@galacticcouncil/math-liquidity-mining': 1.0.0
@@ -10890,18 +10942,18 @@ snapshots:
       '@galacticcouncil/math-stableswap': 1.2.0
       '@galacticcouncil/math-xyk': 1.0.0
       '@polkadot/api': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@polkadot/api-augment': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/api-augment': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@polkadot/api-derive': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/api-derive': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/keyring': 13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1)
-      '@polkadot/rpc-augment': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@polkadot/rpc-core': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@polkadot/rpc-provider': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-augment': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-core': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-provider': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 15.6.1
-      '@polkadot/types-augment': 15.6.1
+      '@polkadot/types-augment': 15.7.1
       '@polkadot/types-codec': 15.6.1
-      '@polkadot/types-create': 15.6.1
-      '@polkadot/types-known': 15.6.1
+      '@polkadot/types-create': 15.7.1
+      '@polkadot/types-known': 15.7.1
       '@polkadot/util': 13.4.3
       '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.3.1)
       '@thi.ng/cache': 2.3.22
@@ -13082,7 +13134,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/xcm-router@2.2.2(@acala-network/types@6.2.0(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@ethersproject/address@5.7.0)(@polkadot/api-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.6.1)(@polkadot/types-create@15.6.1)(@polkadot/types-known@15.6.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(babel-plugin-macros@3.1.0)(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@paraspell/xcm-router@2.2.2(@acala-network/types@6.2.0(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@ethersproject/address@5.7.0)(@polkadot/api-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.7.1)(@polkadot/types-create@15.7.1)(@polkadot/types-known@15.7.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(babel-plugin-macros@3.1.0)(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/app-util': 4.1.8-14
@@ -13098,7 +13150,7 @@ snapshots:
       '@crypto-dex-sdk/math': 0.1.2
       '@crypto-dex-sdk/parachains-bifrost': 0.1.2(babel-plugin-macros@3.1.0)(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@18.3.1)(typescript@5.7.3)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/token-lists': 0.1.2(@crypto-dex-sdk/currency@0.1.2)(@crypto-dex-sdk/format@0.1.2)(@crypto-dex-sdk/math@0.1.2)(@ethersproject/address@5.7.0)
-      '@galacticcouncil/sdk': 5.5.0(@polkadot/api-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.6.1)(@polkadot/types-codec@15.6.1)(@polkadot/types-create@15.6.1)(@polkadot/types-known@15.6.1)(@polkadot/types@15.6.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.4.3)
+      '@galacticcouncil/sdk': 5.5.0(@polkadot/api-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1))(@polkadot/rpc-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@15.7.1)(@polkadot/types-codec@15.6.1)(@polkadot/types-create@15.7.1)(@polkadot/types-known@15.7.1)(@polkadot/types@15.6.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.4.3)
       '@paraspell/sdk-pjs': 8.5.1(@polkadot/api-base@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types@15.6.1)(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.4.3)(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@polkadot/api': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -13434,7 +13486,7 @@ snapshots:
       '@polkadot/types': 14.3.1
       '@polkadot/types-augment': 14.3.1
       '@polkadot/types-codec': 14.3.1
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
@@ -13448,6 +13500,20 @@ snapshots:
       '@polkadot/types': 15.6.1
       '@polkadot/types-augment': 15.6.1
       '@polkadot/types-codec': 15.6.1
+      '@polkadot/util': 13.4.3
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/api-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/api-base': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-augment': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/types': 15.7.1
+      '@polkadot/types-augment': 15.7.1
+      '@polkadot/types-codec': 15.7.1
       '@polkadot/util': 13.4.3
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -13522,7 +13588,7 @@ snapshots:
     dependencies:
       '@polkadot/rpc-core': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 14.3.1
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       rxjs: 7.8.1
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -13534,6 +13600,18 @@ snapshots:
     dependencies:
       '@polkadot/rpc-core': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 15.6.1
+      '@polkadot/util': 13.4.3
+      rxjs: 7.8.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/api-base@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/rpc-core': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/types': 15.7.1
       '@polkadot/util': 13.4.3
       rxjs: 7.8.1
       tslib: 2.8.1
@@ -13624,8 +13702,8 @@ snapshots:
       '@polkadot/rpc-core': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 14.3.1
       '@polkadot/types-codec': 14.3.1
-      '@polkadot/util': 13.3.1
-      '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.3.1)
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.4.3)
       rxjs: 7.8.1
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -13641,6 +13719,23 @@ snapshots:
       '@polkadot/rpc-core': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 15.6.1
       '@polkadot/types-codec': 15.6.1
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
+      rxjs: 7.8.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/api-derive@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/api': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/api-augment': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/api-base': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-core': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/types': 15.7.1
+      '@polkadot/types-codec': 15.7.1
       '@polkadot/util': 13.4.3
       '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
       rxjs: 7.8.1
@@ -13760,7 +13855,7 @@ snapshots:
       '@polkadot/api-augment': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/api-derive': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@polkadot/keyring': 13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1)
+      '@polkadot/keyring': 13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.4.3)
       '@polkadot/rpc-augment': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/rpc-core': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/rpc-provider': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -13769,8 +13864,8 @@ snapshots:
       '@polkadot/types-codec': 14.3.1
       '@polkadot/types-create': 14.3.1
       '@polkadot/types-known': 14.3.1
-      '@polkadot/util': 13.3.1
-      '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.3.1)
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.4.3)
       eventemitter3: 5.0.1
       rxjs: 7.8.1
       tslib: 2.8.1
@@ -13793,6 +13888,30 @@ snapshots:
       '@polkadot/types-codec': 15.6.1
       '@polkadot/types-create': 15.6.1
       '@polkadot/types-known': 15.6.1
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
+      eventemitter3: 5.0.1
+      rxjs: 7.8.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/api@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/api-augment': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/api-base': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/api-derive': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/keyring': 13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)
+      '@polkadot/rpc-augment': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-core': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-provider': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/types': 15.7.1
+      '@polkadot/types-augment': 15.7.1
+      '@polkadot/types-codec': 15.7.1
+      '@polkadot/types-create': 15.7.1
+      '@polkadot/types-known': 15.7.1
       '@polkadot/util': 13.4.3
       '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
       eventemitter3: 5.0.1
@@ -13966,6 +14085,12 @@ snapshots:
       '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.3.1)
       tslib: 2.8.1
 
+  '@polkadot/keyring@13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.4.3)':
+    dependencies:
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.3.1)
+      tslib: 2.8.1
+
   '@polkadot/keyring@13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)':
     dependencies:
       '@polkadot/util': 13.4.3
@@ -14115,7 +14240,7 @@ snapshots:
       '@polkadot/rpc-core': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 14.3.1
       '@polkadot/types-codec': 14.3.1
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       tslib: 2.8.1
     transitivePeerDependencies:
       - bufferutil
@@ -14127,6 +14252,18 @@ snapshots:
       '@polkadot/rpc-core': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 15.6.1
       '@polkadot/types-codec': 15.6.1
+      '@polkadot/util': 13.4.3
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/rpc-augment@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/rpc-core': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/types': 15.7.1
+      '@polkadot/types-codec': 15.7.1
       '@polkadot/util': 13.4.3
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -14201,7 +14338,7 @@ snapshots:
       '@polkadot/rpc-augment': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/rpc-provider': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 14.3.1
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       rxjs: 7.8.1
       tslib: 2.8.1
     transitivePeerDependencies:
@@ -14214,6 +14351,19 @@ snapshots:
       '@polkadot/rpc-augment': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/rpc-provider': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 15.6.1
+      '@polkadot/util': 13.4.3
+      rxjs: 7.8.1
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/rpc-core@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/rpc-augment': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/rpc-provider': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/types': 15.7.1
       '@polkadot/util': 13.4.3
       rxjs: 7.8.1
       tslib: 2.8.1
@@ -14312,11 +14462,11 @@ snapshots:
 
   '@polkadot/rpc-provider@14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
-      '@polkadot/keyring': 13.3.1(@polkadot/util-crypto@13.3.1(@polkadot/util@13.3.1))(@polkadot/util@13.3.1)
+      '@polkadot/keyring': 13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)
       '@polkadot/types': 14.3.1
       '@polkadot/types-support': 14.3.1
-      '@polkadot/util': 13.3.1
-      '@polkadot/util-crypto': 13.3.1(@polkadot/util@13.3.1)
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
       '@polkadot/x-fetch': 13.3.1
       '@polkadot/x-global': 13.3.1
       '@polkadot/x-ws': 13.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -14336,6 +14486,27 @@ snapshots:
       '@polkadot/keyring': 13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)
       '@polkadot/types': 15.6.1
       '@polkadot/types-support': 15.6.1
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
+      '@polkadot/x-fetch': 13.4.3
+      '@polkadot/x-global': 13.4.3
+      '@polkadot/x-ws': 13.4.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      eventemitter3: 5.0.1
+      mock-socket: 9.3.1
+      nock: 13.5.6
+      tslib: 2.8.1
+    optionalDependencies:
+      '@substrate/connect': 0.8.11(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@polkadot/rpc-provider@15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+    dependencies:
+      '@polkadot/keyring': 13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)
+      '@polkadot/types': 15.7.1
+      '@polkadot/types-support': 15.7.1
       '@polkadot/util': 13.4.3
       '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
       '@polkadot/x-fetch': 13.4.3
@@ -14471,6 +14642,13 @@ snapshots:
       '@polkadot/util': 13.4.3
       tslib: 2.8.1
 
+  '@polkadot/types-augment@15.7.1':
+    dependencies:
+      '@polkadot/types': 15.7.1
+      '@polkadot/types-codec': 15.7.1
+      '@polkadot/util': 13.4.3
+      tslib: 2.8.1
+
   '@polkadot/types-augment@7.15.1':
     dependencies:
       '@babel/runtime': 7.26.7
@@ -14505,7 +14683,7 @@ snapshots:
 
   '@polkadot/types-codec@13.2.1':
     dependencies:
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       '@polkadot/x-bigint': 13.3.1
       tslib: 2.8.1
 
@@ -14516,6 +14694,12 @@ snapshots:
       tslib: 2.8.1
 
   '@polkadot/types-codec@15.6.1':
+    dependencies:
+      '@polkadot/util': 13.4.3
+      '@polkadot/x-bigint': 13.4.3
+      tslib: 2.8.1
+
+  '@polkadot/types-codec@15.7.1':
     dependencies:
       '@polkadot/util': 13.4.3
       '@polkadot/x-bigint': 13.4.3
@@ -14559,6 +14743,12 @@ snapshots:
   '@polkadot/types-create@15.6.1':
     dependencies:
       '@polkadot/types-codec': 15.6.1
+      '@polkadot/util': 13.4.3
+      tslib: 2.8.1
+
+  '@polkadot/types-create@15.7.1':
+    dependencies:
+      '@polkadot/types-codec': 15.7.1
       '@polkadot/util': 13.4.3
       tslib: 2.8.1
 
@@ -14607,7 +14797,7 @@ snapshots:
       '@polkadot/types': 14.3.1
       '@polkadot/types-codec': 14.3.1
       '@polkadot/types-create': 14.3.1
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       tslib: 2.8.1
 
   '@polkadot/types-known@15.6.1':
@@ -14616,6 +14806,15 @@ snapshots:
       '@polkadot/types': 15.6.1
       '@polkadot/types-codec': 15.6.1
       '@polkadot/types-create': 15.6.1
+      '@polkadot/util': 13.4.3
+      tslib: 2.8.1
+
+  '@polkadot/types-known@15.7.1':
+    dependencies:
+      '@polkadot/networks': 13.4.3
+      '@polkadot/types': 15.7.1
+      '@polkadot/types-codec': 15.7.1
+      '@polkadot/types-create': 15.7.1
       '@polkadot/util': 13.4.3
       tslib: 2.8.1
 
@@ -14668,10 +14867,15 @@ snapshots:
 
   '@polkadot/types-support@14.3.1':
     dependencies:
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       tslib: 2.8.1
 
   '@polkadot/types-support@15.6.1':
+    dependencies:
+      '@polkadot/util': 13.4.3
+      tslib: 2.8.1
+
+  '@polkadot/types-support@15.7.1':
     dependencies:
       '@polkadot/util': 13.4.3
       tslib: 2.8.1
@@ -14736,6 +14940,17 @@ snapshots:
       '@polkadot/types-augment': 15.6.1
       '@polkadot/types-codec': 15.6.1
       '@polkadot/types-create': 15.6.1
+      '@polkadot/util': 13.4.3
+      '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
+      rxjs: 7.8.1
+      tslib: 2.8.1
+
+  '@polkadot/types@15.7.1':
+    dependencies:
+      '@polkadot/keyring': 13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)
+      '@polkadot/types-augment': 15.7.1
+      '@polkadot/types-codec': 15.7.1
+      '@polkadot/types-create': 15.7.1
       '@polkadot/util': 13.4.3
       '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
       rxjs: 7.8.1
@@ -14842,13 +15057,26 @@ snapshots:
       '@scure/base': 1.2.4
       tslib: 2.8.1
 
+  '@polkadot/util-crypto@13.3.1(@polkadot/util@13.4.3)':
+    dependencies:
+      '@noble/curves': 1.8.1
+      '@noble/hashes': 1.7.1
+      '@polkadot/networks': 13.3.1
+      '@polkadot/util': 13.4.3
+      '@polkadot/wasm-crypto': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/x-bigint': 13.3.1
+      '@polkadot/x-randomvalues': 13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
+      '@scure/base': 1.2.4
+      tslib: 2.8.1
+
   '@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3)':
     dependencies:
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
       '@polkadot/networks': 13.4.3
       '@polkadot/util': 13.4.3
-      '@polkadot/wasm-crypto': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-crypto': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
       '@polkadot/x-bigint': 13.4.3
       '@polkadot/x-randomvalues': 13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
@@ -14969,11 +15197,18 @@ snapshots:
       '@polkadot/x-randomvalues': 13.3.1(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
       tslib: 2.8.1
 
-  '@polkadot/wasm-bridge@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
+  '@polkadot/wasm-bridge@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
     dependencies:
       '@polkadot/util': 13.4.3
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
-      '@polkadot/x-randomvalues': 13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
+      '@polkadot/x-randomvalues': 13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
+      tslib: 2.8.1
+
+  '@polkadot/wasm-bridge@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
+    dependencies:
+      '@polkadot/util': 13.4.3
+      '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/x-randomvalues': 13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto-asmjs@4.6.1(@polkadot/util@6.11.1)':
@@ -15035,14 +15270,24 @@ snapshots:
       '@polkadot/x-randomvalues': 13.3.1(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto-init@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
+  '@polkadot/wasm-crypto-init@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
     dependencies:
       '@polkadot/util': 13.4.3
-      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
       '@polkadot/wasm-crypto-asmjs': 7.4.1(@polkadot/util@13.4.3)
       '@polkadot/wasm-crypto-wasm': 7.4.1(@polkadot/util@13.4.3)
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
-      '@polkadot/x-randomvalues': 13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
+      '@polkadot/x-randomvalues': 13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
+      tslib: 2.8.1
+
+  '@polkadot/wasm-crypto-init@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
+    dependencies:
+      '@polkadot/util': 13.4.3
+      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-crypto-asmjs': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/wasm-crypto-wasm': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/x-randomvalues': 13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto-wasm@4.6.1(@polkadot/util@6.11.1)':
@@ -15128,15 +15373,26 @@ snapshots:
       '@polkadot/x-randomvalues': 13.3.1(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
       tslib: 2.8.1
 
-  '@polkadot/wasm-crypto@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
+  '@polkadot/wasm-crypto@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
     dependencies:
       '@polkadot/util': 13.4.3
-      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
       '@polkadot/wasm-crypto-asmjs': 7.4.1(@polkadot/util@13.4.3)
-      '@polkadot/wasm-crypto-init': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-crypto-init': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
       '@polkadot/wasm-crypto-wasm': 7.4.1(@polkadot/util@13.4.3)
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
-      '@polkadot/x-randomvalues': 13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
+      '@polkadot/x-randomvalues': 13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
+      tslib: 2.8.1
+
+  '@polkadot/wasm-crypto@7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))':
+    dependencies:
+      '@polkadot/util': 13.4.3
+      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-crypto-asmjs': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/wasm-crypto-init': 7.4.1(@polkadot/util@13.4.3)(@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1)))
+      '@polkadot/wasm-crypto-wasm': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.4.3)
+      '@polkadot/x-randomvalues': 13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))
       tslib: 2.8.1
 
   '@polkadot/wasm-util@6.4.1(@polkadot/util@10.4.2)':
@@ -15261,11 +15517,11 @@ snapshots:
       '@polkadot/x-global': 13.3.1
       tslib: 2.8.1
 
-  '@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.3.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))':
+  '@polkadot/x-randomvalues@13.3.1(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))':
     dependencies:
-      '@polkadot/util': 13.3.1
+      '@polkadot/util': 13.4.3
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.3.1)
-      '@polkadot/x-global': 13.4.3
+      '@polkadot/x-global': 13.3.1
       tslib: 2.8.1
 
   '@polkadot/x-randomvalues@13.4.3(@polkadot/util@13.4.3)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.3.1))':
@@ -17158,7 +17414,7 @@ snapshots:
 
   '@subsocial/definitions@0.8.14(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
-      '@polkadot/api': 15.6.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@polkadot/api': 15.7.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       lodash.camelcase: 4.3.0
     transitivePeerDependencies:
       - bufferutil
