@@ -328,8 +328,9 @@ const useParaspellApi = () => {
     swapInformation?: { plan: TRouterPlan; currentStep: number },
   ) => {
     let eventsData
-    if (event.type === 'papi') eventsData = handleObservableEvents(event.eventData)
-    else if (event.type === 'pjs') eventsData = handleSubmittableEvents(event.eventData)
+    if (event.type === 'papi')
+      eventsData = handleObservableEvents(event.eventData) // TODO: rename
+    else if (event.type === 'pjs') eventsData = handleSubmittableEvents(event.eventData) // TODO: rename
     if (!eventsData) return
 
     const { messageHash, messageId, extrinsicIndex } = eventsData
