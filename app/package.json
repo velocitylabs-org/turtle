@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -17,7 +17,7 @@
   "dependencies": {
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@hookform/resolvers": "3.9.0",
-    "@nextui-org/react": "^2.4.8",
+    "@heroui/react": "2.7.2",
     "@number-flow/react": "^0.4.1",
     "@paraspell/sdk": "^8.3.1",
     "@paraspell/xcm-router": "^2.2.1",

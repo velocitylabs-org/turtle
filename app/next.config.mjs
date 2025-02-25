@@ -7,24 +7,6 @@ const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: config => {
-    config.externals.push('pino-pretty', 'lokijs', 'encoding')
-
-    // Enable WebAssembly support
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-      topLevelAwait: true,
-    }
-
-    // Ensure WASM is loaded correctly
-    config.module.rules.push({
-      test: /\.wasm$/,
-      type: 'asset/resource',
-    })
-
-    return config
-  },
   async headers() {
     return [
       {

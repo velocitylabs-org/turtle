@@ -1,6 +1,5 @@
-import { nextui } from '@nextui-org/react'
+import { heroui } from '@heroui/react'
 import type { Config } from 'tailwindcss'
-const { default: flattenColorPalette } = require('tailwindcss/lib/util/flattenColorPalette')
 
 const prefix = 'turtle'
 
@@ -37,7 +36,7 @@ export const colors = {
   [`${prefix}-warning-light`]: '#FFFFD9',
 
   [`${prefix}-error`]: '#ff35c3',
-  [`${prefix}-error/10`]: '#ff35c31a',
+  [`${prefix}-error-10`]: '#ff35c31a',
   [`${prefix}-error-dark`]: '#8D1269',
   [`${prefix}-error-light`]: '#FFE1F6',
 
@@ -49,7 +48,7 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -60,7 +59,8 @@ const config: Config = {
           '2xl': '1400px',
         },
       },
-      colors: colors,
+      colors,
+
       fontFamily: {
         dazzed: ['var(--font-dazzed)'],
       },
@@ -91,20 +91,6 @@ const config: Config = {
     },
   },
   darkMode: 'class',
-  plugins: [
-    addVariablesForColors,
-    nextui(),
-    require('tailwindcss-animate'),
-    require('tailwindcss-motion'),
-  ],
+  plugins: [heroui(), require('tailwindcss-animate'), require('tailwindcss-motion')],
 }
 export default config
-
-function addVariablesForColors({ addBase, theme }: any) {
-  let allColors = flattenColorPalette(theme('colors'))
-  let newVars = Object.fromEntries(Object.entries(allColors).map(([key, val]) => [`--${key}`, val]))
-
-  addBase({
-    ':root': newVars,
-  })
-}

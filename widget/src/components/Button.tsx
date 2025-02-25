@@ -1,8 +1,7 @@
-'use client'
-import { Button as NextButton } from '@heroui/react'
+import { Button as HeroButton } from '@heroui/react'
 import { FC, ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
-import LoadingIcon from './svg/LoadingIcon'
+import LoadingIcon from '@/assets/svg/LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -31,6 +30,7 @@ const paddingX: Record<ButtonSize, string> = {
   lg: 'px-5',
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const spinnerSize: Record<ButtonSize, number> = {
   sm: 24,
   md: 24,
@@ -82,7 +82,7 @@ const Button: FC<ButtonProps> = ({
   cypressID,
 }) => {
   return (
-    <NextButton
+    <HeroButton
       isDisabled={disabled}
       disableRipple
       onPress={onClick}
@@ -108,7 +108,7 @@ const Button: FC<ButtonProps> = ({
 
       {/** Default state - children or label */}
       {!loading && (children || label)}
-    </NextButton>
+    </HeroButton>
   )
 }
 
