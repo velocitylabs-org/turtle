@@ -168,7 +168,8 @@ const useSnowbridgeApi = () => {
       addOrUpdate({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?
         sourceChain,
-        token: sourceToken,
+        sourceToken,
+        destinationToken,
         tokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,

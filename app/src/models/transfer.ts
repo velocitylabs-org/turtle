@@ -15,7 +15,8 @@ export interface RawTransfer {
   destChain: Chain
   sender: string
   recipient: string
-  token: Token
+  sourceToken: Token
+  destinationToken: Token
   date: Date
   crossChainMessageHash?: string
   parachainMessageId?: string
@@ -69,7 +70,8 @@ export type TransferResult = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Und
 export type CompletedTransfer = {
   id: string
   result: TransferResult
-  token: Token
+  sourceToken: Token
+  destinationToken: Token
   tokenUSDValue?: number
   sourceChain: Chain
   destChain: Chain

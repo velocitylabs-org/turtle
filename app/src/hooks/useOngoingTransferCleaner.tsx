@@ -21,7 +21,8 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
         addCompletedTransfer({
           id: ongoing.id,
           result: TxStatus.Undefined,
-          token: ongoing.token,
+          sourceToken: ongoing.sourceToken,
+          destinationToken: ongoing.destinationToken,
           sourceChain: ongoing.sourceChain,
           destChain: ongoing.destChain,
           amount: ongoing.amount,

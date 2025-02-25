@@ -2,9 +2,12 @@ import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
-
-import { getStatusIcon, TransactionCard } from './TransactionCard'
-
+import { colors } from '../../../tailwind.config'
+import Account from '../Account'
+import { Icon } from '../Icon'
+import { ArrowRight } from '../svg/ArrowRight'
+import { ArrowUpRight } from '../svg/ArrowUpRight'
+import { TokenLogo } from '../TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -13,14 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-
-import Account from '../Account'
-import { ArrowRight } from '../svg/ArrowRight'
-import { ArrowUpRight } from '../svg/ArrowUpRight'
-
-import { colors } from '../../../tailwind.config'
-import { Icon } from '../Icon'
-import { TokenLogo } from '../TokenLogo'
+import { getStatusIcon, TransactionCard } from './TransactionCard'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   return (
@@ -72,8 +68,8 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               getTextColor(tx.result),
             )}
           >
-            <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-            <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40} />
+            <span>{formatAmount(toHuman(tx.amount, tx.destinationToken))}</span>
+            <TokenLogo token={tx.destinationToken} sourceChain={tx.sourceChain} size={40} />
           </h3>
           <div className={cn('flex items-center space-x-4 text-sm', getTextColor(tx.result))}>
             <div>{formatCompletedTransferDate(tx.date)}</div>
@@ -148,12 +144,16 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(tx.amount, tx.token), 'Long')} {tx.token.symbol}
+                    {formatAmount(toHuman(tx.amount, tx.destinationToken), 'Long')}{' '}
+                    {tx.destinationToken.symbol}
                   </div>
                   {typeof tx.tokenUSDValue == 'number' && (
                     <div className="text-turtle-level4">
                       $
-                      {formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')}
+                      {formatAmount(
+                        toHuman(tx.amount, tx.destinationToken) * (tx.tokenUSDValue ?? 0),
+                        'Long',
+                      )}
                     </div>
                   )}
                 </div>

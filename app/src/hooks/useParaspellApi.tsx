@@ -224,6 +224,8 @@ const useParaspellApi = () => {
         setStatus,
         swapInformation,
       )
+
+      setStatus('Idle')
     }
 
     try {
@@ -252,7 +254,6 @@ const useParaspellApi = () => {
         environment: params.environment,
       })
     }
-    setStatus('Idle')
   }
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
@@ -294,7 +295,8 @@ const useParaspellApi = () => {
         addOrUpdate({
           id: txHash,
           sourceChain: params.sourceChain,
-          token: params.sourceToken,
+          sourceToken: params.sourceToken,
+          destinationToken: params.destinationToken,
           tokenUSDValue,
           sender: senderAddress,
           destChain: params.destinationChain,
@@ -331,11 +333,13 @@ const useParaspellApi = () => {
     if (!eventsData) return
 
     const { messageHash, messageId, extrinsicIndex } = eventsData
+    console.log('eventsData', eventsData)
 
     addOrUpdate({
       id: event.eventData.txHash.toString(),
       sourceChain: params.sourceChain,
-      token: params.sourceToken,
+      sourceToken: params.sourceToken,
+      destinationToken: params.destinationToken,
       tokenUSDValue,
       sender: senderAddress,
       destChain: params.destinationChain,
