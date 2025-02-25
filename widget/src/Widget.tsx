@@ -6,9 +6,9 @@ export interface WidgetProps {
 
 export const Widget: React.FC<WidgetProps> = ({ title = 'Transfers Widget' }) => {
   return (
-    <div className="bg-card m-4 mx-auto max-w-sm rounded-lg p-6 text-center shadow-md">
+    <div className="m-4 flex flex-col items-center justify-center p-6">
       <h2 className="text-card-foreground mb-4 text-2xl font-bold">{title}</h2>
-      <div className="space-x-2">
+      <div>
         <Transfer />
       </div>
     </div>
