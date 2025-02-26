@@ -1,5 +1,6 @@
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
+import { StoredTransfer } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
@@ -18,7 +19,7 @@ import {
 import { extractPjsEvents } from '@/utils/pjs'
 import { txWasCancelled } from '@/utils/transfer'
 import { getAssetMultiLocation, getTNode } from '@paraspell/sdk'
-import { RouterBuilder, TRouterPlan } from '@paraspell/xcm-router'
+import { RouterBuilder } from '@paraspell/xcm-router'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -63,7 +64,27 @@ const useParaspellApi = () => {
     const senderAddress = await getSenderAddress(params.sender)
     const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
-    await addToOngoingTransfers(hash, params, senderAddress, tokenUSDValue, date, setStatus)
+
+    const transferToStore = {
+      id: hash,
+      sourceChain: params.sourceChain,
+      sourceToken: params.sourceToken,
+      destinationToken: params.destinationToken,
+      tokenUSDValue,
+      sender: senderAddress,
+      destChain: params.destinationChain,
+      amount: params.amount.toString(),
+      recipient: params.recipient,
+      date,
+      environment: params.environment,
+      fees: params.fees,
+      status: `Submitting to ${params.sourceChain.name}`,
+    }
+
+    await addToOngoingTransfers(transferToStore, () => {
+      setStatus('Idle')
+      params.onComplete?.()
+    })
 
     // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
     if (params.environment === Environment.Mainnet && isProduction) {
@@ -115,15 +136,29 @@ const useParaspellApi = () => {
     const date = new Date()
 
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
-      next: async (event: TxEvent) =>
-        await handleTxEvent(
-          { type: 'papi', eventData: event },
-          params,
-          senderAddress,
+      next: async (event: TxEvent) => {
+        const transferToStore = {
+          id: event.txHash?.toString() ?? '',
+          sourceChain: params.sourceChain,
+          sourceToken: params.sourceToken,
+          destinationToken: params.destinationToken,
           tokenUSDValue,
+          sender: senderAddress,
+          destChain: params.destinationChain,
+          amount: params.amount.toString(),
+          recipient: params.recipient,
           date,
-          setStatus,
-        ),
+          environment: params.environment,
+          fees: params.fees,
+          status: `Submitting to ${params.sourceChain.name}`,
+        }
+
+        try {
+          await handleTxEvent({ type: 'papi', eventData: event }, transferToStore)
+        } catch (error) {
+          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+        }
+      },
       error: callbackError => {
         if (callbackError instanceof InvalidTxError) {
           console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
@@ -189,71 +224,59 @@ const useParaspellApi = () => {
     const step1 = routerPlan.at(0)
 
     step1?.tx.signAndSend(account.address, async result => {
-      await handleTxEvent(
-        { type: 'pjs', eventData: result },
-        params,
-        senderAddress,
+      const transferToStore = {
+        id: result.txHash?.toString() ?? '',
+        sourceChain: params.sourceChain,
+        sourceToken: params.sourceToken,
+        destinationToken: params.destinationToken,
         tokenUSDValue,
+        sender: senderAddress,
+        destChain: params.destinationChain,
+        amount: params.amount.toString(),
+        recipient: params.recipient,
         date,
-        setStatus,
-        { plan: routerPlan, currentStep: 0 },
-      )
+        environment: params.environment,
+        fees: params.fees,
+        status: `Submitting to ${params.sourceChain.name}`,
+        swapInformation: { plan: routerPlan, currentStep: 0 },
+      }
+
+      try {
+        await handleTxEvent({ type: 'pjs', eventData: result }, transferToStore)
+      } catch (error) {
+        handleSendError(params.sender, error, setStatus, result.txHash.toString())
+      }
     })
   }
 
   /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */
-  const handleTxEvent = async (
-    event: TransferEvent,
-    params: TransferParams,
-    senderAddress: string,
-    tokenUSDValue: number,
-    date: Date,
-    setStatus: (status: Status) => void,
-    swapInformation?: { plan: TRouterPlan; currentStep: number },
-  ) => {
+  const handleTxEvent = async (event: TransferEvent, transferToStore: StoredTransfer) => {
     if (
       (event.type === 'papi' && event.eventData.type === 'signed') ||
       (event.type === 'pjs' && event.eventData.status.isBroadcast)
     ) {
-      await addToOngoingTransfers(
-        event.eventData.txHash.toString(),
-        params,
-        senderAddress,
-        tokenUSDValue,
-        date,
-        setStatus,
-        swapInformation,
-      )
-
-      setStatus('Idle')
-    }
-
-    try {
-      updateOngoingTransfers(event, params, senderAddress, tokenUSDValue, date, swapInformation)
-    } catch (error) {
-      handleSendError(params.sender, error, setStatus, event.eventData.txHash.toString())
-    }
-
-    // collect metrics once the transfer is in block
-    const isInBlock =
-      (event.type === 'papi' && event.eventData.type === 'txBestBlocksState') ||
-      (event.type === 'pjs' && event.eventData.status.isInBlock)
-
-    if (params.environment === Environment.Mainnet && isProduction && isInBlock) {
-      trackTransferMetrics({
+      await addToOngoingTransfers({
+        ...transferToStore,
         id: event.eventData.txHash.toString(),
-        sender: senderAddress,
-        sourceChain: params.sourceChain,
-        token: params.sourceToken,
-        amount: params.amount,
-        destinationChain: params.destinationChain,
-        tokenUSDValue,
-        fees: params.fees,
-        recipient: params.recipient,
-        date,
-        environment: params.environment,
       })
     }
+
+    let eventsData
+    if (event.type === 'papi') eventsData = extractPapiEvent(event.eventData)
+    else if (event.type === 'pjs') eventsData = extractPjsEvents(event.eventData)
+    if (!eventsData) return
+
+    const { messageHash, messageId, extrinsicIndex } = eventsData
+
+    addOrUpdate({
+      ...transferToStore,
+      id: event.eventData.txHash.toString(),
+      crossChainMessageHash: messageHash,
+      parachainMessageId: messageId,
+      sourceChainExtrinsicIndex: extrinsicIndex,
+      status: `Arriving at ${transferToStore.destChain.name}`,
+      finalizedAt: new Date(),
+    })
   }
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
@@ -276,88 +299,18 @@ const useParaspellApi = () => {
     }
   }
 
-  // TODO: refactor and reduce the number of parameters. StoredTransfer type should be passed instead.
   const addToOngoingTransfers = async (
-    txHash: string,
-    params: TransferParams,
-    senderAddress: string,
-    tokenUSDValue: number,
-    date: Date,
-    setStatus: (status: Status) => void, // TODO: refactor: can be included in onComplete
-    swapInformation?: { plan: TRouterPlan; currentStep: number },
+    transferToStore: StoredTransfer,
+    onComplete?: () => void,
   ): Promise<void> => {
     // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
     // and unlocking the UI by resetting the form back to 'Idle'.
     await new Promise(resolve =>
       setTimeout(() => {
-        setStatus('Idle')
-        params.onComplete?.()
-        addOrUpdate({
-          id: txHash,
-          sourceChain: params.sourceChain,
-          sourceToken: params.sourceToken,
-          destinationToken: params.destinationToken,
-          tokenUSDValue,
-          sender: senderAddress,
-          destChain: params.destinationChain,
-          amount: params.amount.toString(),
-          recipient: params.recipient,
-          date,
-          environment: params.environment,
-          fees: params.fees,
-          status: `Submitting to ${params.sourceChain.name}`,
-          swapInformation,
-        })
+        addOrUpdate(transferToStore)
+        onComplete?.()
         resolve(true)
       }, 2000),
-    )
-
-    console.log(
-      `Transfer ${txHash} from ${params.sourceChain.name} to ${params.destinationChain.name} added to ongoing transfers. Swap information: ${swapInformation}`,
-    )
-  }
-
-  /** Update the ongoing transfer with the necessary fields to be able to track it. Supports PAPI and PJS events. */
-  // TODO: refactor and reduce the number of parameters. StoredTransfer type should be passed instead.
-  const updateOngoingTransfers = (
-    event: TransferEvent,
-    params: TransferParams,
-    senderAddress: string,
-    tokenUSDValue: number,
-    date: Date,
-    swapInformation?: { plan: TRouterPlan; currentStep: number },
-  ) => {
-    let eventsData
-    if (event.type === 'papi') eventsData = extractPapiEvent(event.eventData)
-    else if (event.type === 'pjs') eventsData = extractPjsEvents(event.eventData)
-    if (!eventsData) return
-
-    const { messageHash, messageId, extrinsicIndex } = eventsData
-    console.log('eventsData', eventsData)
-
-    addOrUpdate({
-      id: event.eventData.txHash.toString(),
-      sourceChain: params.sourceChain,
-      sourceToken: params.sourceToken,
-      destinationToken: params.destinationToken,
-      tokenUSDValue,
-      sender: senderAddress,
-      destChain: params.destinationChain,
-      amount: params.amount.toString(),
-      recipient: params.recipient,
-      date,
-      environment: params.environment,
-      fees: params.fees,
-      ...(messageHash && { crossChainMessageHash: messageHash }),
-      ...(messageId && { parachainMessageId: messageId }),
-      ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
-      status: `Arriving at ${params.destinationChain.name}`,
-      finalizedAt: new Date(),
-      swapInformation,
-    })
-
-    console.log(
-      `Transfer ${event.eventData.txHash} from ${params.sourceChain.name} to ${params.destinationChain.name} updated. Swap information: ${swapInformation}`,
     )
   }
 
