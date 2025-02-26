@@ -162,6 +162,34 @@
     display: none;
     scrollbar-width: none;
   }
+
+  /* Remove arrows from number input */
+  input[type='number'] {
+    appearance: none; /* Standard */
+    -webkit-appearance: none; /* Chrome, Safari */
+    -moz-appearance: textfield; /* Firefox */
+  }
+
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input {
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  input::placeholder {
+    color: var(--turtle-level4);
+    opacity: 1; /* Firefox */
+  }
+
+  input::-ms-input-placeholder {
+    /* Edge 12 -18 */
+    color: var(--turtle-level4);
+  }
 }
 
 @layer utilities {

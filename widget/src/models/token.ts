@@ -23,7 +23,3 @@ export type Bridge = 'Snowbridge' | 'Other'
 
 // The origin of a token
 export type Origin = { type: 'Ethereum'; bridge: Bridge } | { type: 'Polkadot'; paraId: number }
-
-export function getCoingekoId(token: Token): string {
-  return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
-}
