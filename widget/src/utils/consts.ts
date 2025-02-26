@@ -7,4 +7,6 @@ export const environment: string | undefined = import.meta.env.VITE_PUBLIC_ENVIR
 
 export const DWELLIR_KEY: string | undefined = import.meta.env.VITE_PUBLIC_DWELLIR_KEY
 export const ALCHEMY_API_KEY = import.meta.env.VITE_PUBLIC_ALCHEMY_KEY || ''
+
 export const CACHE_REVALIDATE_IN_SECONDS = 180
+export const AMOUNT_VS_FEE_RATIO: number = 10

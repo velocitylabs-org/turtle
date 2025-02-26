@@ -14,14 +14,13 @@ interface Params {
   network?: Network
   tokenAmount: TokenAmount | null
   owner?: string
-  // refetchFees: () => Promise<void>
+  refetchFees: () => Promise<void>
 }
 
 /**
  * Hook to fetch the ERC20 token spend allowance for a given token and owner account.
  */
-const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => {
-  // refetchFees
+const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }: Params) => {
   const { addNotification } = useNotification()
   const [allowance, setAllowance] = useState<number | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
@@ -46,13 +45,14 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
       const fetchedAllowance = (await assetStatusInfo(context, tokenAmount.token.address, owner))
         .tokenGatewayAllowance
       setAllowance(toHuman(fetchedAllowance, tokenAmount.token))
-      // refetchFees()
+      refetchFees()
     } catch (error) {
       console.error('Failed to fetch ERC-20 Token Allowance', error)
       // captureException(error) - Sentry
     } finally {
       setLoading(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [network, owner, tokenAmount, context])
 
   // Reactively fetch the erc20 spend allowance when the relevant form fields change

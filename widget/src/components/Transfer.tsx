@@ -11,7 +11,7 @@ import {
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import TokenAmountSelect from './TokenAmountSelect'
 import Button from './Button'
-import { formatAmount } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
 import { SwapChains } from './SwapFromToChains'
 import { Chain } from '@/models/chain'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -23,6 +23,9 @@ import ActionBanner from './ActionBanner'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
+import { cn } from '@/lib/utils'
+import TxSummary from './TxSummary'
+import SendButton from './SendButton'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -50,12 +53,18 @@ const Transfer: FC = () => {
     loadingBalance,
     balanceData,
     fetchBalance,
-    // refetchFees,
+    loadingFees,
+    fees,
+    ethereumTxfees,
+    canPayFees,
+    refetchFees,
+    isValid,
+    isValidating,
   } = useTransferForm()
 
   const {
     allowance: erc20SpendAllowance,
-    // loading: allowanceLoading,
+    loading: allowanceLoading,
     approveAllowance,
     approving: isApprovingErc20Spend,
   } = useErc20Allowance({
@@ -63,7 +72,7 @@ const Transfer: FC = () => {
     network: sourceChain?.network,
     tokenAmount,
     owner: sourceWallet?.sender?.address,
-    // refetchFees,
+    refetchFees,
   })
 
   const {
@@ -85,13 +94,6 @@ const Transfer: FC = () => {
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
 
-  const shouldDisableMaxButton =
-    !sourceWallet?.isConnected ||
-    !tokenAmount?.token ||
-    !isBalanceAvailable ||
-    balanceData?.value === 0n ||
-    transferStatus !== 'Idle'
-
   const shouldDisplayRecipientWalletButton =
     !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
 
@@ -100,6 +102,16 @@ const Transfer: FC = () => {
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
+
+  const shouldDisableMaxButton =
+    !sourceWallet?.isConnected ||
+    !tokenAmount?.token ||
+    !isBalanceAvailable ||
+    balanceData?.value === 0n ||
+    transferStatus !== 'Idle'
+
+  const shouldDisplayTxSummary =
+    tokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
@@ -118,6 +130,20 @@ const Transfer: FC = () => {
   // How much balance is missing considering the desired transfer amount
   const missingBalance =
     tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
+
+  const direction =
+    sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
+
+  const durationEstimate = direction ? getDurationEstimate(direction) : undefined
+
+  const isTransferAllowed =
+    isValid &&
+    !isValidating &&
+    fees &&
+    transferStatus === 'Idle' &&
+    !requiresErc20SpendApproval &&
+    !loadingFees &&
+    canPayFees
 
   return (
     <form
@@ -345,6 +371,32 @@ const Transfer: FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {shouldDisplayTxSummary && (
+        <TxSummary
+          loading={loadingFees}
+          tokenAmount={tokenAmount}
+          fees={fees}
+          additionalfees={ethereumTxfees}
+          durationEstimate={durationEstimate}
+          canPayFees={canPayFees}
+          direction={direction}
+          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+        />
+      )}
+
+      {/* Transfer Button */}
+      <SendButton
+        className="my-5 w-full"
+        label="Send"
+        size="lg"
+        variant="primary"
+        type="submit"
+        loading={transferStatus !== 'Idle'}
+        disabled={!isTransferAllowed}
+        cypressID="form-submit"
+        status={transferStatus}
+      />
     </form>
   )
 }

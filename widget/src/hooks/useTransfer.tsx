@@ -9,7 +9,7 @@ export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'
 const useTransfer = () => {
   // const [status, setStatus] = useState<Status>('Idle')
   return {
-    transferStatus: 'Idle',
+    transferStatus: 'Idle' as Status,
   }
 }
 
