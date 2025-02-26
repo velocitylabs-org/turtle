@@ -12,7 +12,7 @@ import useSnowbridgeApi from './useSnowbridgeApi'
 export type Sender = JsonRpcSigner | SubstrateAccount
 
 export interface TransferParams {
-  environment: Environment
+  environment: Environment // TODO: remove this
   sender: Sender
   sourceChain: Chain
   sourceToken: Token
@@ -25,7 +25,7 @@ export interface TransferParams {
    * Callback when Turtle has completed submitting the transfer.
    * It does NOT mean that the transfer itself is completed.
    */
-  onComplete?: () => void
+  onComplete?: () => void // TODO: remove this from here. It doesnt belong here.
 }
 
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'

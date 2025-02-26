@@ -4,6 +4,7 @@ import { Token } from '@/models/token'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import {
   Builder,
   EvmBuilder,
@@ -17,6 +18,7 @@ import {
 } from '@paraspell/sdk'
 import { RouterBuilder } from '@paraspell/xcm-router'
 import { captureException } from '@sentry/nextjs'
+import { getSenderAddress } from './address'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -50,19 +52,39 @@ export const createTransferTx = async (
   }
 }
 
-export const createRouterPlan = async (
-  params: TransferParams,
-  account: { address: string; pjsSigner: any },
-) => {
+export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
+  const {
+    environment,
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+    recipient,
+    sender,
+  } = params
+
+  const senderAddress = await getSenderAddress(sender)
+  const account = params.sender as SubstrateAccount
+
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+
+  const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
+  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
+
   const routerPlan = await RouterBuilder()
-    .from('Hydration')
-    .to('Hydration')
-    .currencyFrom({ symbol: 'DOT' }) // DOT
-    .currencyTo({ symbol: 'HDX' }) // ACA
-    .amount('1500000000')
-    .slippagePct('1')
-    .senderAddress(account.address)
-    .recipientAddress(params.recipient)
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
+    .currencyFrom(currencyIdFrom)
+    .currencyTo(currencyTo)
+    .amount(amount)
+    .slippagePct(slippagePct)
+    .senderAddress(senderAddress)
+    .recipientAddress(recipient)
     .signer(account.pjsSigner as any)
     .buildTransactions()
 
