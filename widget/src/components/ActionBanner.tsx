@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/helper'
 import { FC, ReactNode } from 'react'
 
 interface Props {

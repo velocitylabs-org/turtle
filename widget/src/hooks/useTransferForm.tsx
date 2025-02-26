@@ -14,7 +14,8 @@ import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { Ethereum } from '@/registry/mainnet/chains'
 import useBalance from './useBalance'
 import { formatAmount } from '@/utils/transfer'
-import { isValidAddressType } from '@/utils/address'
+import { getRecipientAddress, isValidAddressType } from '@/utils/address'
+import useFees from './useFees'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -38,8 +39,7 @@ const useTransferForm = () => {
     setValue,
     // reset,
     trigger,
-    // formState: { errors, isValid: isValidZodSchema, isValidating},
-    formState: { errors, isValidating },
+    formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(schema as any),
@@ -60,6 +60,21 @@ const useTransferForm = () => {
   const { transferStatus } = useTransfer()
 
   const {
+    fees,
+    loading: loadingFees,
+    canPayFees,
+    ethereumTxfees,
+    refetch: refetchFees,
+  } = useFees(
+    sourceChain,
+    destinationChain,
+    tokenAmount?.token,
+    tokenAmount?.amount,
+    sourceWallet?.sender?.address,
+    getRecipientAddress(manualRecipient, destinationWallet),
+  )
+
+  const {
     balance: balanceData,
     loading: loadingBalance,
     fetchBalance,
@@ -69,6 +84,16 @@ const useTransferForm = () => {
     token: tokenAmount?.token ?? undefined,
     address: sourceWallet?.sender?.address,
   })
+
+  const isFormValid =
+    isValidZodSchema &&
+    !tokenAmountError &&
+    !manualRecipientError &&
+    sourceWallet?.isConnected &&
+    !loadingBalance &&
+    !!balanceData &&
+    (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
+    (manualRecipient.enabled || destinationWallet?.isConnected)
 
   const allowFromToSwap = useCallback(() => {
     return (
@@ -160,10 +185,6 @@ const useTransferForm = () => {
     )
   }, [sourceWallet?.isConnected, tokenAmount?.token, balanceData, setValue])
 
-  const onSubmit: SubmitHandler<FormInputs> = useCallback(data => {
-    console.log(data)
-  }, [])
-
   useEffect(() => {
     if (!tokenAmount?.amount || !sourceWallet?.isConnected) setTokenAmountError('')
     else if (balanceData && balanceData.value === BigInt(0))
@@ -185,10 +206,16 @@ const useTransferForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
+  const onSubmit: SubmitHandler<FormInputs> = useCallback(data => {
+    console.log(data)
+  }, [])
+
   return {
     control,
     errors,
     environment,
+    isValid: isFormValid,
+    isValidating, // Only includes validating zod schema atm
     handleSubmit: handleSubmit(onSubmit),
     sourceChain,
     handleSourceChainChange,
@@ -209,6 +236,11 @@ const useTransferForm = () => {
     loadingBalance,
     balanceData,
     fetchBalance,
+    fees,
+    loadingFees,
+    canPayFees,
+    ethereumTxfees,
+    refetchFees,
   }
 }
 

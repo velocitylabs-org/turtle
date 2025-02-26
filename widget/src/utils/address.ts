@@ -2,6 +2,8 @@ import { isAddress } from 'viem/utils'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
 import { AddressType } from '@/models/chain'
+import { ManualRecipient } from '@/models/select'
+import { WalletInfo } from '@/hooks/useWallet'
 
 /**
  * Truncate a blockchain address by showing the beginning and end parts.
@@ -73,4 +75,22 @@ export const isValidAddressType = (address: string, types: AddressType[]): boole
     }
   }
   return false
+}
+
+/**
+ * Get the recipient address based on the enabled manual input and the connected destination wallet.
+ * @remarks It doesn't check whether the address is valid or not
+ * */
+export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: WalletInfo) => {
+  return manualRecipient.enabled ? manualRecipient.address : wallet?.sender?.address
+}
+
+/** Get a placeholder address for a specific type. Can be used to prefetch the fees before address input, as fees shouldn't differ. */
+export const getPlaceholderAddress = (type: AddressType): string => {
+  switch (type) {
+    case 'evm':
+      return '0xC1af060ab8213AD5EE2Dab1a5891245eBe756400' // Velocity Address
+    case 'ss58':
+      return '5EkE3p9hnUi5p14d7pJnDBjiNYqPNPSutKbyAuvV3mFGGxPi' // Velocity Address
+  }
 }

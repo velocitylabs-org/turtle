@@ -1,4 +1,4 @@
-import { Widget } from './Widget'
+import { Widget } from '@/components/Widget'
 import { Providers } from './providers'
 function App() {
   return (

@@ -1,6 +1,6 @@
-import NotificationSystem from './components/NotificationSystem'
-import SubstrateWalletModal from './components/SubstrateWalletModal'
-import Transfer from './components/Transfer'
+import NotificationSystem from '@/components/NotificationSystem'
+import SubstrateWalletModal from '@/components/SubstrateWalletModal'
+import Transfer from '@/components/Transfer'
 
 export interface WidgetProps {
   title?: string

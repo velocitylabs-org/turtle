@@ -11,7 +11,7 @@ import {
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import TokenAmountSelect from './TokenAmountSelect'
 import Button from './Button'
-import { formatAmount } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
 import { SwapChains } from './SwapFromToChains'
 import { Chain } from '@/models/chain'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -22,6 +22,10 @@ import { Signer } from 'ethers'
 import ActionBanner from './ActionBanner'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
+import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
+import { cn } from '@/utils/helper'
+import TxSummary from './TxSummary'
+import SendButton from './SendButton'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -48,12 +52,19 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     loadingBalance,
     balanceData,
-    // refetchFees,
+    fetchBalance,
+    loadingFees,
+    fees,
+    ethereumTxfees,
+    canPayFees,
+    refetchFees,
+    isValid,
+    isValidating,
   } = useTransferForm()
 
   const {
     allowance: erc20SpendAllowance,
-    // loading: allowanceLoading,
+    loading: allowanceLoading,
     approveAllowance,
     approving: isApprovingErc20Spend,
   } = useErc20Allowance({
@@ -61,7 +72,19 @@ const Transfer: FC = () => {
     network: sourceChain?.network,
     tokenAmount,
     owner: sourceWallet?.sender?.address,
-    // refetchFees,
+    refetchFees,
+  })
+
+  const {
+    ethBalance,
+    swapEthtoWEth,
+    isSwapping: isSwappingEthForWEth,
+  } = useEthForWEthSwap({
+    env: environment,
+    context: snowbridgeContext,
+    chain: sourceChain,
+    tokenAmount,
+    owner: sourceWallet?.sender?.address,
   })
 
   let amountPlaceholder: string
@@ -70,13 +93,6 @@ const Transfer: FC = () => {
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
-
-  const shouldDisableMaxButton =
-    !sourceWallet?.isConnected ||
-    !tokenAmount?.token ||
-    !isBalanceAvailable ||
-    balanceData?.value === 0n ||
-    transferStatus !== 'Idle'
 
   const shouldDisplayRecipientWalletButton =
     !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
@@ -87,10 +103,52 @@ const Transfer: FC = () => {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
 
+  const shouldDisableMaxButton =
+    !sourceWallet?.isConnected ||
+    !tokenAmount?.token ||
+    !isBalanceAvailable ||
+    balanceData?.value === 0n ||
+    transferStatus !== 'Idle'
+
+  const shouldDisplayTxSummary =
+    tokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+
+  const shouldDisplayEthToWEthSwap: boolean =
+    !!sourceWallet &&
+    sourceChain?.network === 'Ethereum' &&
+    tokenAmount?.token?.symbol === 'wETH' &&
+    !!tokenAmount?.amount &&
+    !!balanceData &&
+    !!ethBalance &&
+    // The user wants to send more than the balance available
+    tokenAmount.amount > Number(balanceData.formatted) &&
+    // but they have enough ETH to make it possible
+    tokenAmount.amount - Number(balanceData.formatted) < ethBalance &&
+    // We don't want two ActionBanners showing up at once
+    !requiresErc20SpendApproval
+
+  // How much balance is missing considering the desired transfer amount
+  const missingBalance =
+    tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
+
+  const direction =
+    sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
+
+  const durationEstimate = direction ? getDurationEstimate(direction) : undefined
+
+  const isTransferAllowed =
+    isValid &&
+    !isValidating &&
+    fees &&
+    transferStatus === 'Idle' &&
+    !requiresErc20SpendApproval &&
+    !loadingFees &&
+    canPayFees
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="z-20 flex flex-col gap-1 rounded-3xl border-1 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+      className="z-20 flex flex-col gap-1 bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
     >
       <div className="flex flex-col gap-5">
         {/* Source Chain */}
@@ -276,6 +334,69 @@ const Transfer: FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ETH to wETH Conversion */}
+      <AnimatePresence>
+        {shouldDisplayEthToWEthSwap && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <ActionBanner
+              disabled={isSwappingEthForWEth}
+              header={'Swap ETH for wETH'}
+              text={'Your wETH balance is insufficient but you got enough ETH.'}
+              image={
+                <img
+                  src={'./src/assets/svg/wallet.svg'}
+                  alt={'Wallet illustration'}
+                  width={64}
+                  height={64}
+                />
+              }
+              btn={{
+                onClick: () =>
+                  swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(() =>
+                    fetchBalance(),
+                  ),
+                label: `Swap the difference`,
+              }}
+            ></ActionBanner>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {shouldDisplayTxSummary && (
+        <TxSummary
+          loading={loadingFees}
+          tokenAmount={tokenAmount}
+          fees={fees}
+          additionalfees={ethereumTxfees}
+          durationEstimate={durationEstimate}
+          canPayFees={canPayFees}
+          direction={direction}
+          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+        />
+      )}
+
+      {/* Transfer Button */}
+      <SendButton
+        className="my-5 w-full"
+        label="Send"
+        size="lg"
+        variant="primary"
+        type="submit"
+        loading={transferStatus !== 'Idle'}
+        disabled={!isTransferAllowed}
+        cypressID="form-submit"
+        status={transferStatus}
+      />
     </form>
   )
 }

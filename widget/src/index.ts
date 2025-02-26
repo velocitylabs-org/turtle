@@ -1,4 +1,4 @@
 import './index.css'
 
-export { Widget } from './Widget'
-export type { WidgetProps } from './Widget'
+export { Widget } from '@/components/Widget'
+export type { WidgetProps } from '@/components/Widget'

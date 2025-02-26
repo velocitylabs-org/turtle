@@ -2,7 +2,7 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { FC } from 'react'
 import { Tooltip } from './Tooltip'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/helper'
 import { Icon } from './Icon'
 
 interface TokenLogoProps {

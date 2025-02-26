@@ -67,3 +67,9 @@ export function getNativeToken(chain: Chain): Token {
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
 }
+
+export function getParaSpellNode(chain: Chain, relay: 'polkadot'): TNodeWithRelayChains | null {
+  return chain.network === 'Ethereum' && chain.chainId === 1
+    ? 'Ethereum'
+    : getTNode(chain.chainId, relay)
+}

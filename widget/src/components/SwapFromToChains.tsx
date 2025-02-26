@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/helper'
 import { Swap } from '@/assets/svg/Swap'
 
 export const SwapChains = ({ onClick, disabled }: { onClick: () => void; disabled: boolean }) => {
