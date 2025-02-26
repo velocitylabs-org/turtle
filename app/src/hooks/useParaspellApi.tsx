@@ -9,7 +9,7 @@ import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
 import { extractPapiEvent } from '@/utils/papi'
 import {
-  createTx,
+  createTransferTx,
   dryRun,
   DryRunResult,
   getCurrencyId,
@@ -122,7 +122,7 @@ const useParaspellApi = () => {
     if (validationResult.type === 'Supported' && !validationResult.success)
       throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
 
-    const tx = await createTx(params, params.sourceChain.rpcConnection)
+    const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
 
     const polkadotSigner = getPolkadotSignerFromPjs(
@@ -154,7 +154,10 @@ const useParaspellApi = () => {
         }
 
         try {
-          await handleTxEvent({ type: 'papi', eventData: event }, transferToStore)
+          await handleTxEvent({ type: 'papi', eventData: event }, transferToStore, () => {
+            setStatus('Idle')
+            params.onComplete?.()
+          })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
@@ -242,7 +245,10 @@ const useParaspellApi = () => {
       }
 
       try {
-        await handleTxEvent({ type: 'pjs', eventData: result }, transferToStore)
+        await handleTxEvent({ type: 'pjs', eventData: result }, transferToStore, () => {
+          setStatus('Idle')
+          params.onComplete?.()
+        })
       } catch (error) {
         handleSendError(params.sender, error, setStatus, result.txHash.toString())
       }
@@ -250,15 +256,22 @@ const useParaspellApi = () => {
   }
 
   /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */
-  const handleTxEvent = async (event: TransferEvent, transferToStore: StoredTransfer) => {
+  const handleTxEvent = async (
+    event: TransferEvent,
+    transferToStore: StoredTransfer,
+    onComplete?: () => void,
+  ) => {
     if (
       (event.type === 'papi' && event.eventData.type === 'signed') ||
       (event.type === 'pjs' && event.eventData.status.isBroadcast)
     ) {
-      await addToOngoingTransfers({
-        ...transferToStore,
-        id: event.eventData.txHash.toString(),
-      })
+      await addToOngoingTransfers(
+        {
+          ...transferToStore,
+          id: event.eventData.txHash.toString(),
+        },
+        onComplete,
+      )
     }
 
     let eventsData

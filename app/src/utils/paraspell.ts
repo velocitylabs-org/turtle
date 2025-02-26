@@ -15,6 +15,7 @@ import {
   TNodeWithRelayChains,
   type TPapiTransaction,
 } from '@paraspell/sdk'
+import { RouterBuilder } from '@paraspell/xcm-router'
 import { captureException } from '@sentry/nextjs'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
@@ -26,7 +27,7 @@ export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
  * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
  * @returns - A Promise that resolves a submittable extrinsic transaction.
  */
-export const createTx = async (
+export const createTransferTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
@@ -47,6 +48,25 @@ export const createTx = async (
       .address(recipient)
       .build()
   }
+}
+
+export const createRouterPlan = async (
+  params: TransferParams,
+  account: { address: string; pjsSigner: any },
+) => {
+  const routerPlan = await RouterBuilder()
+    .from('Hydration')
+    .to('Hydration')
+    .currencyFrom({ symbol: 'DOT' }) // DOT
+    .currencyTo({ symbol: 'HDX' }) // ACA
+    .amount('1500000000')
+    .slippagePct('1')
+    .senderAddress(account.address)
+    .recipientAddress(params.recipient)
+    .signer(account.pjsSigner as any)
+    .buildTransactions()
+
+  return routerPlan
 }
 
 /**
