@@ -11,9 +11,10 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  TCurrencyCore,
   TDryRunResult,
+  TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
+  type TCurrencyCore,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { RouterBuilder } from '@paraspell/xcm-router'
@@ -44,7 +45,7 @@ export const createTransferTx = async (
     const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
     return await Builder(wssEndpoint)
-      .from(sourceChainFromId)
+      .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
       .to(destinationChainFromId)
       .currency({ ...currencyId, amount })
       .address(recipient)
@@ -77,7 +78,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
   const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId)
+    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
@@ -142,7 +143,7 @@ export const dryRun = async (
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
   return await Builder(wssEndpoint)
-    .from(sourceChainFromId)
+    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
     .address(recipient)
