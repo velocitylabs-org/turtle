@@ -6,7 +6,7 @@ import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
-import { handleObservableEvents } from '@/utils/papi'
+import { extractPapiEvent } from '@/utils/papi'
 import {
   createTx,
   dryRun,
@@ -15,7 +15,7 @@ import {
   getRelayNode,
   moonbeamTransfer,
 } from '@/utils/paraspell'
-import { handleSubmittableEvents } from '@/utils/pjs'
+import { extractPjsEvents } from '@/utils/pjs'
 import { txWasCancelled } from '@/utils/transfer'
 import { getAssetMultiLocation, getTNode } from '@paraspell/sdk'
 import { RouterBuilder, TRouterPlan } from '@paraspell/xcm-router'
@@ -328,9 +328,8 @@ const useParaspellApi = () => {
     swapInformation?: { plan: TRouterPlan; currentStep: number },
   ) => {
     let eventsData
-    if (event.type === 'papi')
-      eventsData = handleObservableEvents(event.eventData) // TODO: rename
-    else if (event.type === 'pjs') eventsData = handleSubmittableEvents(event.eventData) // TODO: rename
+    if (event.type === 'papi') eventsData = extractPapiEvent(event.eventData)
+    else if (event.type === 'pjs') eventsData = extractPjsEvents(event.eventData)
     if (!eventsData) return
 
     const { messageHash, messageId, extrinsicIndex } = eventsData
