@@ -22,6 +22,7 @@ import { Signer } from 'ethers'
 import ActionBanner from './ActionBanner'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
+import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -48,6 +49,7 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     loadingBalance,
     balanceData,
+    fetchBalance,
     // refetchFees,
   } = useTransferForm()
 
@@ -62,6 +64,18 @@ const Transfer: FC = () => {
     tokenAmount,
     owner: sourceWallet?.sender?.address,
     // refetchFees,
+  })
+
+  const {
+    ethBalance,
+    swapEthtoWEth,
+    isSwapping: isSwappingEthForWEth,
+  } = useEthForWEthSwap({
+    env: environment,
+    context: snowbridgeContext,
+    chain: sourceChain,
+    tokenAmount,
+    owner: sourceWallet?.sender?.address,
   })
 
   let amountPlaceholder: string
@@ -86,6 +100,24 @@ const Transfer: FC = () => {
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
+
+  const shouldDisplayEthToWEthSwap: boolean =
+    !!sourceWallet &&
+    sourceChain?.network === 'Ethereum' &&
+    tokenAmount?.token?.symbol === 'wETH' &&
+    !!tokenAmount?.amount &&
+    !!balanceData &&
+    !!ethBalance &&
+    // The user wants to send more than the balance available
+    tokenAmount.amount > Number(balanceData.formatted) &&
+    // but they have enough ETH to make it possible
+    tokenAmount.amount - Number(balanceData.formatted) < ethBalance &&
+    // We don't want two ActionBanners showing up at once
+    !requiresErc20SpendApproval
+
+  // How much balance is missing considering the desired transfer amount
+  const missingBalance =
+    tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
 
   return (
     <form
@@ -273,6 +305,43 @@ const Transfer: FC = () => {
                 label: 'Sign now',
               }}
             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ETH to wETH Conversion */}
+      <AnimatePresence>
+        {shouldDisplayEthToWEthSwap && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <ActionBanner
+              disabled={isSwappingEthForWEth}
+              header={'Swap ETH for wETH'}
+              text={'Your wETH balance is insufficient but you got enough ETH.'}
+              image={
+                <img
+                  src={'./src/assets/svg/wallet.svg'}
+                  alt={'Wallet illustration'}
+                  width={64}
+                  height={64}
+                />
+              }
+              btn={{
+                onClick: () =>
+                  swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(() =>
+                    fetchBalance(),
+                  ),
+                label: `Swap the difference`,
+              }}
+            ></ActionBanner>
           </motion.div>
         )}
       </AnimatePresence>

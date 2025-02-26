@@ -110,6 +110,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => 
           message: 'Failed to approve ERC-20 spend',
           severity: NotificationSeverity.Error,
         })
+        console.log(error)
         //if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
         // captureException(error) - Sentry
         setApproving(false)
