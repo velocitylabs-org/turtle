@@ -9,17 +9,14 @@ import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
 import { extractPapiEvent } from '@/utils/papi'
 import {
+  createRouterPlan,
   createTransferTx,
   dryRun,
   DryRunResult,
-  getCurrencyId,
-  getRelayNode,
   moonbeamTransfer,
 } from '@/utils/paraspell'
 import { extractPjsEvents } from '@/utils/pjs'
 import { txWasCancelled } from '@/utils/transfer'
-import { getAssetMultiLocation, getTNode } from '@paraspell/sdk'
-import { RouterBuilder } from '@paraspell/xcm-router'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -187,41 +184,7 @@ const useParaspellApi = () => {
     const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
 
-    const relay = getRelayNode(params.environment)
-    const sourceChainFromId = getTNode(params.sourceChain.chainId, relay)
-    const destinationChainFromId = getTNode(params.destinationChain.chainId, relay)
-    if (!sourceChainFromId || !destinationChainFromId)
-      throw new Error('Transfer failed: chain id not found.')
-
-    const currencyIdFrom = getCurrencyId(
-      params.environment,
-      sourceChainFromId,
-      params.sourceChain.uid,
-      params.sourceToken,
-    )
-
-    const currencyIdTo = getCurrencyId(
-      params.environment,
-      destinationChainFromId,
-      params.destinationChain.uid,
-      params.destinationToken,
-    )
-    const multilocation = getAssetMultiLocation(destinationChainFromId, currencyIdTo)
-    console.log(params.destinationToken.multilocation)
-
-    // TODO: outsource to utils/paraspell.ts
-    const routerPlan = await RouterBuilder()
-      .from('Hydration')
-      .to('Hydration')
-      .currencyFrom({ symbol: 'DOT' }) // DOT
-      .currencyTo({ symbol: 'HDX' }) // ACA
-      .amount('1500000000')
-      .slippagePct('1')
-      .senderAddress(account.address)
-      .recipientAddress(params.recipient)
-      .signer(account.pjsSigner as any)
-      .buildTransactions()
-
+    const routerPlan = await createRouterPlan(params)
     console.log(routerPlan)
 
     const step1 = routerPlan.at(0)
