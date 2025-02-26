@@ -23,7 +23,7 @@ import ActionBanner from './ActionBanner'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/helper'
 import TxSummary from './TxSummary'
 import SendButton from './SendButton'
 
