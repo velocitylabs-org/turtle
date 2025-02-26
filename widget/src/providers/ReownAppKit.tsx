@@ -1,27 +1,17 @@
 import { ReactNode } from 'react'
 import { createAppKit } from '@reown/appkit/react'
 import { WagmiProvider } from 'wagmi'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { AppKitNetwork, mainnet as ethereum, moonbeam, sepolia } from '@reown/appkit/networks'
+import { mainnet as ethereum, sepolia } from '@reown/appkit/networks'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { environment, isDevelopment, projectId, vercelDomain } from '@/utils/consts'
-import { Environment } from '@/stores/environments'
+import { Environment } from '@/stores/environmentStore'
+import { mainnet_networks, testnet_networks, wagmiAdapter, wagmiConfig } from './config'
 
 if (!projectId) throw new Error('Project ID is not defined')
-
-const mainnet_networks = [ethereum, moonbeam] as [AppKitNetwork, ...AppKitNetwork[]]
-const testnet_networks = [sepolia] as [AppKitNetwork, ...AppKitNetwork[]]
 
 const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
 
 const queryClient = new QueryClient()
-
-const wagmiAdapter = new WagmiAdapter({
-  projectId: projectId || '',
-  networks: environment === Environment.Testnet ? testnet_networks : mainnet_networks,
-})
-
-const wagmiAdapterConfig = wagmiAdapter.wagmiConfig
 
 const metadata = {
   name: 'turtle-app',
@@ -51,12 +41,10 @@ createAppKit({
   },
 })
 
-function ReownProvider({ children }: { children: ReactNode }) {
+export default function ReownProvider({ children }: { children: ReactNode }) {
   return (
-    <WagmiProvider config={wagmiAdapterConfig}>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   )
 }
-
-export default ReownProvider
