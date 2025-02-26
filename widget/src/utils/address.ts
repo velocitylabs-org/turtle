@@ -1,3 +1,8 @@
+import { isAddress } from 'viem/utils'
+import { decodeAddress, encodeAddress } from '@polkadot/keyring'
+import { hexToU8a, isHex } from '@polkadot/util'
+import { AddressType } from '@/models/chain'
+
 /**
  * Truncate a blockchain address by showing the beginning and end parts.
  *
@@ -14,4 +19,58 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
   const endStr = end > 0 ? str.substring(str.length - end) : ''
 
   return `${startStr}...${endStr}`.toLowerCase()
+}
+
+/**
+ * Validate if a given address is a legitimate Ethereum address.
+ *
+ * @param address - The address string to be validated.
+ * @returns True if the address is a valid Ethereum address, false otherwise.
+ */
+export const isValidEthereumAddress = (address: string): boolean => {
+  return isAddress(address)
+}
+
+/**
+ * Validate if a given address is a legitimate Substrate address.
+ *
+ * @param address - The address string to be validated.
+ * @returns True if the address is a valid Substrate address, false otherwise.
+ */
+export const isValidSubstrateAddress = (address: string): boolean => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Validate if a given address is a legitimate address of a specific address type such as ss58 or evm address.
+ *
+ * @param address - The address string to be validated.
+ * @param types - The address types to validate the address against. Only one type needs to match.
+ * @returns True if the address is a valid address of the network, false otherwise.
+ */
+export const isValidAddressType = (address: string, types: AddressType[]): boolean => {
+  for (const type of types) {
+    switch (type) {
+      case 'evm': {
+        if (isValidEthereumAddress(address)) {
+          return true
+        }
+        break
+      }
+      case 'ss58': {
+        if (isValidSubstrateAddress(address)) {
+          return true
+        }
+        break
+      }
+      default:
+        console.log('Invalid type:', type)
+    }
+  }
+  return false
 }

@@ -6,4 +6,5 @@ export const vercelDomain: string | undefined = import.meta.env.VITE_PUBLIC_VERC
 export const environment: string | undefined = import.meta.env.VITE_PUBLIC_ENVIRONMENT
 
 export const DWELLIR_KEY: string | undefined = import.meta.env.VITE_PUBLIC_DWELLIR_KEY
+export const ALCHEMY_API_KEY = import.meta.env.VITE_PUBLIC_ALCHEMY_KEY || ''
 export const CACHE_REVALIDATE_IN_SECONDS = 180

@@ -14,6 +14,7 @@ import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { Ethereum } from '@/registry/mainnet/chains'
 import useBalance from './useBalance'
 import { formatAmount } from '@/utils/transfer'
+import { isValidAddressType } from '@/utils/address'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -36,7 +37,7 @@ const useTransferForm = () => {
     handleSubmit,
     setValue,
     // reset,
-    // trigger,
+    trigger,
     // formState: { errors, isValid: isValidZodSchema, isValidating},
     formState: { errors, isValidating },
   } = useForm<FormInputs>({
@@ -52,7 +53,7 @@ const useTransferForm = () => {
   const manualRecipient = useWatch({ control, name: 'manualRecipient' })
   const tokenAmount = useWatch({ control, name: 'tokenAmount' })
   const [tokenAmountError, setTokenAmountError] = useState<string>('')
-  // const [manualRecipientError, setManualRecipientError] = useState<string>('')
+  const [manualRecipientError, setManualRecipientError] = useState<string>('')
   // const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
@@ -88,6 +89,11 @@ const useTransferForm = () => {
       setValue('destinationChain', sourceChain)
     }
   }, [sourceChain, destinationChain, setValue, allowFromToSwap])
+
+  const handleManualRecipientChange = useCallback(
+    (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
+    [setValue],
+  )
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -125,18 +131,14 @@ const useTransferForm = () => {
     [setValue, sourceChain, destinationChain, tokenAmount, environment],
   )
 
-  useEffect(() => {
-    if (!tokenAmount?.amount || !sourceWallet?.isConnected) setTokenAmountError('')
-    else if (balanceData && balanceData.value === BigInt(0))
-      setTokenAmountError("That's more than you have in your wallet")
-    else if (
-      tokenAmount?.amount &&
-      balanceData?.value &&
-      tokenAmount.amount > Number(balanceData.formatted)
-    )
-      setTokenAmountError("That's more than you have in your wallet")
-    else setTokenAmountError('')
-  }, [tokenAmount?.amount, balanceData, sourceWallet])
+  const handleDestinationChainChange = useCallback(
+    (newValue: Chain | null) => {
+      setValue('destinationChain', newValue)
+      trigger()
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [setValue],
+  )
 
   const handleMaxButtonClick = useCallback(() => {
     if (
@@ -162,6 +164,27 @@ const useTransferForm = () => {
     console.log(data)
   }, [])
 
+  useEffect(() => {
+    if (!tokenAmount?.amount || !sourceWallet?.isConnected) setTokenAmountError('')
+    else if (balanceData && balanceData.value === BigInt(0))
+      setTokenAmountError("That's more than you have in your wallet")
+    else if (
+      tokenAmount?.amount &&
+      balanceData?.value &&
+      tokenAmount.amount > Number(balanceData.formatted)
+    )
+      setTokenAmountError("That's more than you have in your wallet")
+    else setTokenAmountError('')
+  }, [tokenAmount?.amount, balanceData, sourceWallet])
+
+  // validate recipient address
+  useEffect(() => {
+    setManualRecipientError(
+      isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address',
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
+
   return {
     control,
     errors,
@@ -171,9 +194,12 @@ const useTransferForm = () => {
     handleSourceChainChange,
     handleMaxButtonClick,
     destinationChain,
+    handleDestinationChainChange,
     sourceWallet,
     destinationWallet,
     manualRecipient,
+    manualRecipientError,
+    handleManualRecipientChange,
     tokenAmount,
     tokenAmountError,
     transferStatus,
@@ -184,6 +210,15 @@ const useTransferForm = () => {
     balanceData,
     fetchBalance,
   }
+}
+
+function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
+  return (
+    !manualRecipient.enabled ||
+    !destinationChain ||
+    isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
+    manualRecipient.address === ''
+  )
 }
 
 export default useTransferForm

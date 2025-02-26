@@ -3,14 +3,28 @@ import ChainSelect from './ChainSelect'
 import WalletButton from './WalletButton'
 import { FC } from 'react'
 import useTransferForm from '@/hooks/useTransferForm'
-import { getAllowedSourceChains, getAllowedTokens } from '@/utils/routes'
+import {
+  getAllowedDestinationChains,
+  getAllowedSourceChains,
+  getAllowedTokens,
+} from '@/utils/routes'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import TokenAmountSelect from './TokenAmountSelect'
 import Button from './Button'
 import { formatAmount } from '@/utils/transfer'
 import { SwapChains } from './SwapFromToChains'
+import { Chain } from '@/models/chain'
+import { AnimatePresence, motion } from 'framer-motion'
+import Switch from './Switch'
+import { AlertIcon } from '@/assets/svg/AlertIcon'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
+import { Signer } from 'ethers'
+import ActionBanner from './ActionBanner'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
+import useErc20Allowance from '@/hooks/useErc20Allowance'
 
 const Transfer: FC = () => {
+  const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
     errors,
@@ -19,9 +33,14 @@ const Transfer: FC = () => {
     handleSourceChainChange,
     sourceWallet,
     destinationChain,
+    handleDestinationChainChange,
+    destinationWallet,
     tokenAmount,
     tokenAmountError,
     transferStatus,
+    manualRecipient,
+    manualRecipientError,
+    handleManualRecipientChange,
     swapFromTo,
     allowFromToSwap,
     handleMaxButtonClick,
@@ -29,8 +48,21 @@ const Transfer: FC = () => {
     isBalanceAvailable,
     loadingBalance,
     balanceData,
-    // fetchBalance,
+    // refetchFees,
   } = useTransferForm()
+
+  const {
+    allowance: erc20SpendAllowance,
+    // loading: allowanceLoading,
+    approveAllowance,
+    approving: isApprovingErc20Spend,
+  } = useErc20Allowance({
+    context: snowbridgeContext,
+    network: sourceChain?.network,
+    tokenAmount,
+    owner: sourceWallet?.sender?.address,
+    // refetchFees,
+  })
 
   let amountPlaceholder: string
   if (loadingBalance) amountPlaceholder = 'Loading...'
@@ -45,6 +77,15 @@ const Transfer: FC = () => {
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
     transferStatus !== 'Idle'
+
+  const shouldDisplayRecipientWalletButton =
+    !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
+
+  const requiresErc20SpendApproval =
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
+
+  const shouldDisplayUsdtRevokeAllowance =
+    erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
 
   return (
     <form
@@ -122,7 +163,119 @@ const Transfer: FC = () => {
 
         {/* Swap source and destination chains */}
         <SwapChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
+
+        {/* Destination Chain */}
+        <Controller
+          name="destinationChain"
+          control={control}
+          render={({ field }) => {
+            const options = getAllowedDestinationChains(
+              environment,
+              sourceChain,
+              tokenAmount!.token,
+            )
+
+            const reorderedOptions = reorderOptionsBySelectedItem<
+              Chain & {
+                allowed: boolean
+              }
+            >(options, 'uid', destinationChain?.uid)
+
+            return (
+              <ChainSelect
+                {...field}
+                onChange={handleDestinationChainChange}
+                options={reorderedOptions}
+                floatingLabel="To"
+                placeholder="Destination"
+                manualRecipient={manualRecipient}
+                onChangeManualRecipient={handleManualRecipientChange}
+                error={manualRecipient.enabled ? manualRecipientError : ''}
+                trailing={
+                  shouldDisplayRecipientWalletButton && (
+                    <WalletButton walletType={destinationChain?.walletType} />
+                  )
+                }
+                clearable
+                walletAddress={destinationWallet?.sender?.address}
+                className="z-30"
+                disabled={transferStatus !== 'Idle' || !sourceChain || !tokenAmount?.token}
+              />
+            )
+          }}
+        />
       </div>
+      {destinationChain && (
+        <div className="flex flex-col gap-1">
+          {/* Switch between Wallet and Manual Input */}
+          <Controller
+            name="manualRecipient.enabled"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={field.value}
+                className="items-start pt-1"
+                label="Send to a different address"
+                disabled={transferStatus !== 'Idle'}
+              />
+            )}
+          />
+
+          {/* Manual input warning */}
+          <AnimatePresence>
+            {manualRecipient.enabled && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{
+                  opacity: 1,
+                  height: 'auto',
+                }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.07 }}
+                className="flex items-center gap-1 self-center pt-1"
+              >
+                <AlertIcon />
+                <span className="text-xs">Double check the address to avoid losing funds</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* ERC-20 Spend Approval */}
+      <AnimatePresence>
+        {requiresErc20SpendApproval && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{
+              opacity: 1,
+              height: 'auto',
+            }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-1 self-center pt-1"
+          >
+            <ActionBanner
+              disabled={isApprovingErc20Spend}
+              header="Approve ERC-20 token spend"
+              text={`We first need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
+              image={
+                <img
+                  src={'./src/assets/svg/wallet.svg'}
+                  alt={'Wallet illustration'}
+                  width={64}
+                  height={64}
+                />
+              }
+              btn={{
+                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
+                label: 'Sign now',
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </form>
   )
 }

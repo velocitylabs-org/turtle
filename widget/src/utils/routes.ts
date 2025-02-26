@@ -20,6 +20,30 @@ export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: bo
   return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
 }
 
+/** Filters all chains by selected source chain, selected token and available routes */
+export const getAllowedDestinationChains = (
+  env: Environment,
+  chain: Chain | null,
+  token: Token | null,
+): (Chain & { allowed: boolean })[] => {
+  const routes = REGISTRY[env].routes
+
+  const chains = REGISTRY[env].chains.map(c => {
+    if (!chain || !token) return { ...c, allowed: false }
+
+    const isAllowed = routes.some(
+      route => route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
+    )
+
+    return {
+      ...c,
+      allowed: isAllowed,
+    }
+  })
+
+  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
+}
+
 /** It checks if a route between two chains exists */
 export const isRouteAllowed = (
   environment: Environment,
