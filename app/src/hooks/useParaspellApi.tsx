@@ -174,48 +174,50 @@ const useParaspellApi = () => {
 
   const handleSwap = async (params: TransferParams, setStatus: (status: Status) => void) => {
     const account = params.sender as SubstrateAccount
-
     if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
       throw new Error('Signer not found')
 
     setStatus('Signing')
 
-    const senderAddress = await getSenderAddress(params.sender)
     const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
 
     const routerPlan = await createRouterPlan(params)
-    console.log(routerPlan)
+    console.log('routerPlan: ', routerPlan)
 
     const step1 = routerPlan.at(0)
 
-    step1?.tx.signAndSend(account.address, async result => {
-      const transferToStore = {
-        id: result.txHash?.toString() ?? '',
-        sourceChain: params.sourceChain,
-        sourceToken: params.sourceToken,
-        destinationToken: params.destinationToken,
-        tokenUSDValue,
-        sender: senderAddress,
-        destChain: params.destinationChain,
-        amount: params.amount.toString(),
-        recipient: params.recipient,
-        date,
-        environment: params.environment,
-        fees: params.fees,
-        status: `Submitting to ${params.sourceChain.name}`,
-        swapInformation: { plan: routerPlan, currentStep: 0 },
-      }
+    step1?.tx
+      .signAndSend(account.address, { signer: account.pjsSigner }, async result => {
+        try {
+          const transferToStore = {
+            id: result.txHash?.toString() ?? '',
+            sourceChain: params.sourceChain,
+            sourceToken: params.sourceToken,
+            destinationToken: params.destinationToken,
+            tokenUSDValue,
+            sender: account.address,
+            destChain: params.destinationChain,
+            amount: params.amount.toString(),
+            recipient: params.recipient,
+            date,
+            environment: params.environment,
+            fees: params.fees,
+            status: `Submitting to ${params.sourceChain.name}`,
+            swapInformation: { plan: routerPlan, currentStep: 0 },
+          }
 
-      try {
-        await handleTxEvent({ type: 'pjs', eventData: result }, transferToStore, () => {
-          setStatus('Idle')
-          params.onComplete?.()
-        })
-      } catch (error) {
-        handleSendError(params.sender, error, setStatus, result.txHash.toString())
-      }
-    })
+          await handleTxEvent({ type: 'pjs', eventData: result }, transferToStore, () => {
+            setStatus('Idle')
+            params.onComplete?.()
+          })
+        } catch (error) {
+          handleSendError(params.sender, error, setStatus, result.txHash?.toString())
+        }
+      })
+      .catch(error => handleSendError(params.sender, error, setStatus)) // Handle errors that occur during signAndSend
+
+    setStatus('Sending')
   }
 
   /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */

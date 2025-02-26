@@ -212,8 +212,8 @@ const useTransferForm = () => {
         sender: sourceWallet.sender,
         sourceChain,
         destinationChain,
-        sourceToken: PolkadotTokens.DOT, // TODO: hardcoded for now
-        destinationToken: tokenAmount.token,
+        sourceToken: tokenAmount?.token,
+        destinationToken: PolkadotTokens.DOT, // TODO: hardcoded for now
         amount,
         recipient: recipient,
         fees,
