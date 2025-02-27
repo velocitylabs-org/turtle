@@ -8,7 +8,7 @@ import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
 import { ALCHEMY_API_KEY } from '@/utils/consts'
-import { getCoingekoId, getTokenPrice } from '@/utils/token'
+import { getTokenPrice } from '@/utils/token'
 import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
 import { Context, environment, toEthereum, toPolkadot } from '@snowbridge/api'
 import { AbstractProvider, AlchemyProvider, ContractTransaction } from 'ethers'
@@ -134,14 +134,14 @@ export const getFeeEstimate = async (
         fee: {
           amount: (await toEthereum.getSendFee(context)).toString(),
           token: PolkadotTokens.DOT,
-          inDollars: (await getTokenPrice(getCoingekoId(PolkadotTokens.DOT)))?.usd ?? 0,
+          inDollars: (await getTokenPrice(PolkadotTokens.DOT))?.usd ?? 0,
         },
       }
     }
 
     case Direction.ToPolkadot: {
       const feeToken = EthereumTokens.ETH
-      const feeTokenInDollars = (await getTokenPrice(getCoingekoId(feeToken)))?.usd ?? 0
+      const feeTokenInDollars = (await getTokenPrice(feeToken))?.usd ?? 0
       const fee = await toPolkadot.getSendFee(
         context,
         token.address,

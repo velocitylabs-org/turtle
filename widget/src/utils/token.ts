@@ -4,8 +4,9 @@ import { Token } from '@/models/token'
 export const getCoingekoId = (token: Token): string =>
   token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
 
-export const getTokenPrice = async (tokenId: string): Promise<TokenPrice | null> => {
+export const getTokenPrice = async (token: Token): Promise<TokenPrice | null> => {
   try {
+    const tokenId = getCoingekoId(token)
     const url = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId.toLocaleLowerCase()}&vs_currencies=usd`
     const options = { method: 'GET', headers: { accept: 'application/json' } }
     const result = await fetch(url, options)

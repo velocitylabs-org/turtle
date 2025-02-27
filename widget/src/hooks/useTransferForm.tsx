@@ -13,9 +13,11 @@ import { wagmiConfig } from '@/providers/config'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { Ethereum } from '@/registry/mainnet/chains'
 import useBalance from './useBalance'
-import { formatAmount } from '@/utils/transfer'
-import { getRecipientAddress, isValidAddressType } from '@/utils/address'
+import { formatAmount, safeConvertAmount } from '@/utils/transfer'
+import { getRecipientAddress, isValidRecipient } from '@/utils/address'
 import useFees from './useFees'
+import { NotificationSeverity } from '@/models/notification'
+import { useNotificationStore } from '@/stores/notificationStore'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -33,11 +35,12 @@ const initValues: FormInputs = {
 
 const useTransferForm = () => {
   const environment = useEnvironmentStore(state => state.current)
+  const { addNotification } = useNotificationStore()
   const {
     control,
     handleSubmit,
     setValue,
-    // reset,
+    reset,
     trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
@@ -57,7 +60,7 @@ const useTransferForm = () => {
   // const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
-  const { transferStatus } = useTransfer()
+  const { transfer, transferStatus } = useTransfer()
 
   const {
     fees,
@@ -206,51 +209,101 @@ const useTransferForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
-  const onSubmit: SubmitHandler<FormInputs> = useCallback(data => {
-    console.log(data)
-  }, [])
+  const onSubmit: SubmitHandler<FormInputs> = useCallback(
+    data => {
+      const { sourceChain, destinationChain, tokenAmount, manualRecipient } = data
+      const recipient = getRecipientAddress(manualRecipient, destinationWallet)
+      const amount = tokenAmount ? safeConvertAmount(tokenAmount.amount, tokenAmount.token) : null
+
+      if (
+        !sourceChain ||
+        !recipient ||
+        !sourceWallet?.sender ||
+        !destinationChain ||
+        !tokenAmount?.token ||
+        !amount ||
+        !fees
+      )
+        return
+
+      transfer({
+        environment,
+        sender: sourceWallet.sender,
+        sourceChain,
+        destinationChain,
+        token: tokenAmount.token,
+        amount,
+        recipient: recipient,
+        fees,
+        onComplete: () => {
+          // reset form on success
+          reset()
+
+          addNotification({
+            message: `Transfer added to the queue`,
+            severity: NotificationSeverity.Success,
+          })
+
+          setTimeout(() => {
+            document
+              .getElementById('ongoing-txs')
+              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }, 500)
+        },
+      })
+    },
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, environment, addNotification],
+  )
 
   return {
+    // Form control and validation
     control,
     errors,
-    environment,
     isValid: isFormValid,
-    isValidating, // Only includes validating zod schema atm
+    isValidating,
     handleSubmit: handleSubmit(onSubmit),
+
+    // Environment
+    environment,
+
+    // Chain selection and related handlers
     sourceChain,
-    handleSourceChainChange,
-    handleMaxButtonClick,
     destinationChain,
+    handleSourceChainChange,
     handleDestinationChainChange,
+    swapFromTo,
+    allowFromToSwap,
+
+    // Wallet states
     sourceWallet,
     destinationWallet,
+
+    // Manual recipient handling
     manualRecipient,
     manualRecipientError,
     handleManualRecipientChange,
+
+    // Token and amount handling
     tokenAmount,
     tokenAmountError,
-    transferStatus,
-    swapFromTo,
-    allowFromToSwap,
+    handleMaxButtonClick,
+
+    // Balance related
     isBalanceAvailable: balanceData?.value != undefined,
-    loadingBalance,
     balanceData,
+    loadingBalance,
     fetchBalance,
+
+    // Fees related
     fees,
     loadingFees,
     canPayFees,
     ethereumTxfees,
     refetchFees,
-  }
-}
 
-function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
-  return (
-    !manualRecipient.enabled ||
-    !destinationChain ||
-    isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
-    manualRecipient.address === ''
-  )
+    // Transfer status
+    transferStatus,
+  }
 }
 
 export default useTransferForm

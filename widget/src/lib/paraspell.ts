@@ -1,15 +1,110 @@
+import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
 import {
+  Builder,
+  EvmBuilder,
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
   TCurrencyCore,
+  TDryRunResult,
   TNodeWithRelayChains,
+  TPapiTransaction,
 } from '@paraspell/sdk'
+
+export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
+
+/**
+ * Creates a submittable PAPI transaction using Paraspell Builder.
+ *
+ * @param params - The transfer parameters
+ * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
+ * @returns - A Promise that resolves a submittable extrinsic transaction.
+ */
+export const createTx = async (
+  params: TransferParams,
+  wssEndpoint?: string,
+): Promise<TPapiTransaction> => {
+  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+  else {
+    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+
+    return await Builder(wssEndpoint)
+      .from(sourceChainFromId)
+      .to(destinationChainFromId)
+      .currency({ ...currencyId, amount })
+      .address(recipient)
+      .build()
+  }
+}
+
+/**
+ * Submits a moonbeam xcm transaction using Paraspell EvmBuilder.
+ *
+ * @param params - The transfer parameters
+ * @returns - A Promise that resolves to the tx hash.
+ */
+export const moonbeamTransfer = async (
+  params: TransferParams,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  viemClient: any,
+): Promise<string> => {
+  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+
+  return EvmBuilder()
+    .from('Moonbeam')
+    .to(destinationChainFromId)
+    .currency({ ...currencyId, amount })
+    .address(recipient)
+    .signer(viemClient)
+    .build()
+}
+
+/**
+ * Dry run a transfer using Paraspell.
+ *
+ * @param params - The transfer parameters
+ * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
+ * @returns - A Promise that resolves a dry run result.
+ * @throws - An error if the dry run api is not available.
+ */
+export const dryRun = async (
+  params: TransferParams,
+  wssEndpoint?: string,
+): Promise<TDryRunResult> => {
+  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
+
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Dry Run failed: chain id not found.')
+
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
+    .currency({ ...currencyId, amount })
+    .address(recipient)
+    .dryRun(sender.address)
+}
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
