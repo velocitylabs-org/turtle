@@ -1,8 +1,9 @@
-import { ethers } from 'ethers'
+import { ethers, JsonRpcSigner } from 'ethers'
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { TokenAmount } from '@/models/select'
 import { AmountInfo } from '@/models/transfer'
+import { Sender } from '@/hooks/useTransfer'
 
 export type FormatLength = 'Short' | 'Long' | 'Longer'
 
@@ -159,4 +160,12 @@ export const getTotalFees = (fees: AmountInfo, additionalfees?: AmountInfo | nul
   const totalFeesValue = formatAmount(fees.inDollars + additionalValue)
 
   return { totalFeesAmount, totalFeesValue }
+}
+
+export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
+  if (!(error instanceof Error)) return false
+
+  if (sender instanceof JsonRpcSigner)
+    return error.message.includes('ethers-user-denied') // Ethers connection
+  else return error.message.includes('Cancelled') // Substrate connection
 }

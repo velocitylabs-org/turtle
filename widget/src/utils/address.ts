@@ -1,9 +1,12 @@
 import { isAddress } from 'viem/utils'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
+import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { hexToU8a, isHex } from '@polkadot/util'
-import { AddressType } from '@/models/chain'
+import { AddressType, Chain } from '@/models/chain'
 import { ManualRecipient } from '@/models/select'
 import { WalletInfo } from '@/hooks/useWallet'
+import { Sender } from '@/hooks/useTransfer'
+import { JsonRpcSigner } from 'ethers'
 
 /**
  * Truncate a blockchain address by showing the beginning and end parts.
@@ -77,6 +80,15 @@ export const isValidAddressType = (address: string, types: AddressType[]): boole
   return false
 }
 
+export function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
+  return (
+    !manualRecipient.enabled ||
+    !destinationChain ||
+    isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
+    manualRecipient.address === ''
+  )
+}
+
 /**
  * Get the recipient address based on the enabled manual input and the connected destination wallet.
  * @remarks It doesn't check whether the address is valid or not
@@ -94,3 +106,7 @@ export const getPlaceholderAddress = (type: AddressType): string => {
       return '5EkE3p9hnUi5p14d7pJnDBjiNYqPNPSutKbyAuvV3mFGGxPi' // Velocity Address
   }
 }
+
+/** Get the transfer sender address from the sender origin base (Substrate or Ethereum)*/
+export const getSenderAddress = async (sender: Sender): Promise<string> =>
+  sender instanceof JsonRpcSigner ? await sender.getAddress() : (sender as InjectedAccount).address
