@@ -3,7 +3,7 @@ import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/tra
 import { trackXcm } from './subscan'
 import { FromParachainTrackingResult } from '@/models/subscan'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { trackFromAhToEthTx, trackFromEthTx } from './snowbridge'
+import { historyV2 as history } from '@snowbridge/api'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (
@@ -11,22 +11,29 @@ export const trackTransfers = async (
   ongoingTransfers: OngoingTransfers,
 ) => {
   const transfers: TxTrackingResult[] = []
+  const { toPolkadot, toEthereum, withinPolkadot } = ongoingTransfers
 
-  if (ongoingTransfers.toPolkadot.length) {
-    const ethToParaTx = await trackFromEthTx(env)
-    console.log('From Eth To Polkadot transfers:', ethToParaTx.length)
-    transfers.push(...ethToParaTx)
+  if (toPolkadot.length) {
+    for (const transfer of toPolkadot) {
+      const toParaTx = await history.toPolkadotTransferById(transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+      if (!toParaTx) continue
+      transfers.push(toParaTx)
+    }
   }
 
-  if (ongoingTransfers.toEthereum.length) {
-    const ahToEthereumTx = await trackFromAhToEthTx(env)
-    console.log('From AH To Ethereum transfers:', ahToEthereumTx.length)
-    transfers.push(...ahToEthereumTx)
+  if (toEthereum.length) {
+    for (const transfer of toEthereum) {
+      const toEthereumTx = await history.toEthereumTransferById(
+        transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
+      ) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+      if (!toEthereumTx) continue
+      transfers.push(toEthereumTx)
+    }
   }
 
-  // Keep this until we can test & check tracking process for from Para to AH transfers
-  if (ongoingTransfers.withinPolkadot.length) {
-    const xcmTx = await trackXcm(env, ongoingTransfers.withinPolkadot)
+  // Keep as back-up in case Ocelloids does not support a transfer path
+  if (withinPolkadot.length) {
+    const xcmTx = await trackXcm(env, withinPolkadot)
     console.log('Whithin Polkadot transfers:', xcmTx.length)
     transfers.push(...xcmTx)
   }
