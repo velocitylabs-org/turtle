@@ -7,6 +7,14 @@ const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack: (config, { isServer }) => {
+    config.experiments = { asyncWebAssembly: true, topLevelAwait: true }
+
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'webassembly/async',
+    })
+  },
   async headers() {
     return [
       {
