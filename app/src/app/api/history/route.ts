@@ -31,9 +31,9 @@ const getCachedTransferHistory = unstable_cache(
             if (transfer.sourceChain.chainId === snowbridgeEnv.config.ASSET_HUB_PARAID) {
               transfers.toEthereum.push(transfer)
             } else {
-              console.log('Direct Parachain => Eth tracking to be implemented/verified')
-              // Confirm the tracking process for direct Para to Eth transfer once supported
-              // If tracking process: remove the if/else check
+              console.log('Direct Parachain => Eth tracking')
+              console.log('If/Else to be removed once tested')
+              transfers.toEthereum.push(transfer)
             }
             break
           }
