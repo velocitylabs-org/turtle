@@ -20,15 +20,14 @@ import Image from 'next/image'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
 import ActionBanner from './ActionBanner'
-import Button from './Button'
 import ChainSelect from './ChainSelect'
+import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import { AlertIcon } from './svg/AlertIcon'
 import { SwapChains } from './SwapFromToChains'
 import Switch from './Switch'
-import TokenAmountSelect from './TokenAmountSelect'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
 
@@ -159,68 +158,43 @@ const Transfer: FC = () => {
         <Controller
           name="sourceChain"
           control={control}
-          render={({ field }) => {
-            const options = getAllowedSourceChains(environment)
-            const reorderedOptions = reorderOptionsBySelectedItem(options, 'uid', sourceChain?.uid)
+          render={({ field: chainField }) => (
+            <Controller
+              name="tokenAmount"
+              control={control}
+              render={({ field: tokenField }) => {
+                const chainOptions = getAllowedSourceChains(environment)
+                const tokenOptions = getAllowedTokens(
+                  environment,
+                  sourceChain,
+                  destinationChain,
+                ).map(token => ({
+                  token,
+                  amount: null,
+                  allowed: token.allowed,
+                }))
 
-            return (
-              <ChainSelect
-                {...field}
-                onChange={handleSourceChainChange}
-                options={reorderedOptions}
-                floatingLabel="From"
-                placeholder="Source"
-                trailing={<WalletButton walletType={sourceChain?.walletType} />}
-                walletAddress={sourceWallet?.sender?.address}
-                className="z-50"
-                disabled={transferStatus !== 'Idle'}
-              />
-            )
-          }}
-        />
-
-        {/* Token */}
-        <Controller
-          name="tokenAmount"
-          control={control}
-          render={({ field }) => {
-            const options = getAllowedTokens(environment, sourceChain, destinationChain).map(
-              token => ({
-                token,
-                amount: null,
-                allowed: token.allowed,
-              }),
-            )
-
-            const reorderedOptions = reorderOptionsBySelectedItem(
-              options,
-              'token.id',
-              tokenAmount?.token?.id,
-            )
-
-            return (
-              <TokenAmountSelect
-                {...field}
-                sourceChain={sourceChain}
-                options={reorderedOptions}
-                floatingLabel="Amount"
-                disabled={transferStatus !== 'Idle' || !sourceChain}
-                secondPlaceholder={amountPlaceholder}
-                error={errors.tokenAmount?.amount?.message || tokenAmountError}
-                trailing={
-                  <Button
-                    label="Max"
-                    size="sm"
-                    variant="outline"
-                    className="min-w-[40px]"
-                    onClick={handleMaxButtonClick}
-                    disabled={shouldDisableMaxButton}
+                return (
+                  <ChainTokenSelect
+                    chain={{
+                      value: chainField.value,
+                      onChange: handleSourceChainChange,
+                      options: chainOptions,
+                      walletAddress: sourceWallet?.sender?.address,
+                      error: errors.sourceChain?.message,
+                    }}
+                    token={{
+                      value: tokenField.value,
+                      onChange: tokenField.onChange,
+                      options: tokenOptions,
+                      error: errors.tokenAmount?.amount?.message || tokenAmountError,
+                    }}
+                    disabled={transferStatus !== 'Idle'}
                   />
-                }
-                className="z-40"
-              />
-            )
-          }}
+                )
+              }}
+            />
+          )}
         />
 
         {/* Swap source and destination chains */}

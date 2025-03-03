@@ -23,3 +23,5 @@ export function snowbridgeWrapped(): Origin {
     bridge: 'Snowbridge',
   }
 }
+
+export type WithAllowedTag<T> = T & { allowed: boolean }
