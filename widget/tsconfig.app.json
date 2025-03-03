@@ -16,6 +16,14 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    // Added
+    // "composite": true,
+    "declaration": true,
+    "declarationMap": false,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    // "typeRoots": ["./dist/index.d.ts"],
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
