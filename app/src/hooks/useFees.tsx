@@ -6,15 +6,15 @@ import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getRelayNode, getParaSpellNode } from '@/utils/paraspell'
+import { getCurrencyId, getNativeToken, getParaSpellNode, getRelayNode } from '@/utils/paraspell'
+import { getRoute } from '@/utils/routes'
+import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import { getRoute } from '@/utils/routes'
-import { getFeeEstimate } from '@/utils/snowbridge'
 
 export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
@@ -70,7 +70,6 @@ const useFees = (
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
             accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,
-            ahAccount: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]),
           })
 
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0

@@ -55,7 +55,7 @@ const SubstrateWalletModal: FC = () => {
     }
 
     fetch()
-  }, [isModalOpen])
+  }, [isModalOpen, fetchExtensions, setSelectedExtension])
 
   const filteredAccounts = accounts.filter(account =>
     type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',

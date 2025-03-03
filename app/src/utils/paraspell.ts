@@ -1,3 +1,4 @@
+'use client'
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
@@ -17,7 +18,6 @@ import {
   type TCurrencyCore,
   type TPapiTransaction,
 } from '@paraspell/sdk'
-import { RouterBuilder } from '@paraspell/xcm-router'
 import { captureException } from '@sentry/nextjs'
 import { getSenderAddress } from './address'
 
@@ -77,6 +77,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
+  const { RouterBuilder } = await import('@paraspell/xcm-router')
   const routerPlan = await RouterBuilder()
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
