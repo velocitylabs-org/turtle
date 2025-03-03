@@ -16,8 +16,6 @@ const nextConfig = {
       type: 'webassembly/async',
     })
 
-    config.target = 'web'
-
     return config
   },
   async headers() {
