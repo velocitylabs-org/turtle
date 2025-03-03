@@ -144,8 +144,8 @@ const useFees = (
 
           switch (fee.origin) {
             case 'Ethereum': {
-              setFees(fee.bridging)
-              setBridgingFees(fee.execution)
+              setFees(fee.execution)
+              setBridgingFees(fee.bridging)
               break
             }
             case 'Polkadot': {
