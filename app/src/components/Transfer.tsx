@@ -20,6 +20,7 @@ import Image from 'next/image'
 import { FC } from 'react'
 import { Controller } from 'react-hook-form'
 import ActionBanner from './ActionBanner'
+import Button from './Button'
 import ChainSelect from './ChainSelect'
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
@@ -154,7 +155,6 @@ const Transfer: FC = () => {
       className="z-20 flex flex-col gap-1 rounded-3xl border-1 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
     >
       <div className="flex flex-col gap-5">
-        {/* Source Chain */}
         <Controller
           name="sourceChain"
           control={control}
@@ -164,15 +164,7 @@ const Transfer: FC = () => {
               control={control}
               render={({ field: tokenField }) => {
                 const chainOptions = getAllowedSourceChains(environment)
-                const tokenOptions = getAllowedTokens(
-                  environment,
-                  sourceChain,
-                  destinationChain,
-                ).map(token => ({
-                  token,
-                  amount: null,
-                  allowed: token.allowed,
-                }))
+                const tokenOptions = getAllowedTokens(environment, sourceChain, destinationChain)
 
                 return (
                   <ChainTokenSelect
@@ -180,16 +172,41 @@ const Transfer: FC = () => {
                       value: chainField.value,
                       onChange: handleSourceChainChange,
                       options: chainOptions,
-                      walletAddress: sourceWallet?.sender?.address,
                       error: errors.sourceChain?.message,
+                      clearable: true,
+                      orderBySelected: true,
                     }}
                     token={{
-                      value: tokenField.value,
-                      onChange: tokenField.onChange,
+                      value: tokenField.value?.token ?? null,
+                      onChange: token =>
+                        tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
                       options: tokenOptions,
+                      error: errors.tokenAmount?.token?.message,
+                      clearable: true,
+                      orderBySelected: true,
+                    }}
+                    amount={{
+                      value: tokenField.value?.amount ?? null,
+                      onChange: amount =>
+                        tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.tokenAmount?.amount?.message || tokenAmountError,
+                      trailingAction: (
+                        <Button
+                          onClick={handleMaxButtonClick}
+                          disabled={shouldDisableMaxButton}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Max
+                        </Button>
+                      ),
+                    }}
+                    wallet={{
+                      address: sourceWallet?.sender?.address,
+                      walletButton: <WalletButton walletType={sourceChain?.walletType} />,
                     }}
                     disabled={transferStatus !== 'Idle'}
+                    className="z-40"
                   />
                 )
               }}

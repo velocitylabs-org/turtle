@@ -6,6 +6,7 @@ import { Token } from '@/models/token'
 import { WithAllowedTag } from '@/registry/helpers'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
+import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import Image from 'next/image'
 import { ReactNode, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -26,6 +27,7 @@ interface ChainTokenSelectProps {
     options: WithAllowedTag<Chain>[]
     error?: string
     clearable?: boolean
+    orderBySelected?: boolean
   }
   token: {
     value: Token | null
@@ -33,6 +35,7 @@ interface ChainTokenSelectProps {
     options: WithAllowedTag<Token>[]
     error?: string
     clearable?: boolean
+    orderBySelected?: boolean
   }
   amount?: {
     value: number | null
@@ -96,6 +99,11 @@ const ChainTokenSelect = ({
     (!wallet?.address && (!wallet?.manualInput?.enabled || !wallet?.manualInput?.address)) ||
     (wallet?.manualInput?.enabled && !wallet.manualInput.address)
 
+  // Order the options if needed
+  const chainOptions = chain.orderBySelected
+    ? reorderOptionsBySelectedItem(chain.options, 'uid', chain.value?.uid)
+    : chain.options
+
   return (
     <div className={twMerge('relative w-full', className)} data-cy="chain-select">
       {
@@ -105,7 +113,7 @@ const ChainTokenSelect = ({
       }
       <Tooltip content={chain.error}>
         <div
-          // ref={triggerRef}
+          ref={triggerRef}
           onClick={handleChainClick}
           className={cn(
             'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
@@ -176,7 +184,7 @@ const ChainTokenSelect = ({
       </Tooltip>
 
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
-        {chain.options.map(option => {
+        {chainOptions.map(option => {
           if (!option.allowed) return null
           const isSelected = chain.value?.uid === option.uid
           return (
