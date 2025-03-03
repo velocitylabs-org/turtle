@@ -177,12 +177,12 @@ export const estimateTransactionFees = async (
 
   // Get effective fee per gas & get USD fee value
   const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
-  const fee = toHuman((txGas * effectiveFeePerGas).toString(), feeToken)
+  const fee = txGas * effectiveFeePerGas
 
   return {
     amount: fee,
     token: feeToken,
-    inDollars: fee * feeTokenUSDValue,
+    inDollars: toHuman(fee, feeToken) * feeTokenUSDValue,
   }
 }
 
@@ -244,7 +244,7 @@ export const getFeeEstimate = async (
           destinationChain.chainId,
           safeConvertAmount(amount, token) ?? 0n,
           bridgingFee.amount as bigint,
-          BigInt(3769142),
+          BigInt(destinationChain.destinationFeeDOT ?? 0),
         )
 
         const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
