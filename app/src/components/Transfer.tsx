@@ -17,7 +17,7 @@ import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import ActionBanner from './ActionBanner'
 import Button from './Button'
@@ -149,6 +149,19 @@ const Transfer: FC = () => {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
 
+  // Move options calculation outside render and memoize
+  const chainOptions = useMemo(() => getAllowedSourceChains(environment), [environment])
+
+  // Memoize token options
+  const tokenOptions = useMemo(
+    () =>
+      getAllowedTokens(environment, sourceChain, destinationChain).map(token => ({
+        ...token,
+        allowed: token.allowed,
+      })),
+    [environment, sourceChain, destinationChain],
+  )
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -158,60 +171,61 @@ const Transfer: FC = () => {
         <Controller
           name="sourceChain"
           control={control}
-          render={({ field: chainField }) => (
-            <Controller
-              name="tokenAmount"
-              control={control}
-              render={({ field: tokenField }) => {
-                const chainOptions = getAllowedSourceChains(environment)
-                const tokenOptions = getAllowedTokens(environment, sourceChain, destinationChain)
-
-                return (
-                  <ChainTokenSelect
-                    chain={{
-                      value: chainField.value,
-                      onChange: handleSourceChainChange,
-                      options: chainOptions,
-                      error: errors.sourceChain?.message,
-                      clearable: true,
-                      orderBySelected: true,
-                    }}
-                    token={{
-                      value: tokenField.value?.token ?? null,
-                      onChange: token =>
-                        tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
-                      options: tokenOptions,
-                      error: errors.tokenAmount?.token?.message,
-                      clearable: true,
-                      orderBySelected: true,
-                    }}
-                    amount={{
-                      value: tokenField.value?.amount ?? null,
-                      onChange: amount =>
-                        tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                      error: errors.tokenAmount?.amount?.message || tokenAmountError,
-                      trailingAction: (
-                        <Button
-                          onClick={handleMaxButtonClick}
-                          disabled={shouldDisableMaxButton}
-                          variant="outline"
-                          size="sm"
-                        >
-                          Max
-                        </Button>
-                      ),
-                    }}
-                    wallet={{
-                      address: sourceWallet?.sender?.address,
-                      walletButton: <WalletButton walletType={sourceChain?.walletType} />,
-                    }}
-                    disabled={transferStatus !== 'Idle'}
-                    className="z-40"
-                  />
-                )
-              }}
-            />
-          )}
+          render={({ field: chainField }) => {
+            console.log('outer render')
+            return (
+              <Controller
+                name="tokenAmount"
+                control={control}
+                render={({ field: tokenField }) => {
+                  console.log('inner render')
+                  return (
+                    <ChainTokenSelect
+                      chain={{
+                        value: chainField.value,
+                        onChange: handleSourceChainChange,
+                        options: chainOptions,
+                        error: errors.sourceChain?.message,
+                        clearable: true,
+                        orderBySelected: true,
+                      }}
+                      token={{
+                        value: tokenField.value?.token ?? null,
+                        onChange: token =>
+                          tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                        options: tokenOptions,
+                        error: errors.tokenAmount?.token?.message,
+                        clearable: true,
+                        orderBySelected: true,
+                      }}
+                      amount={{
+                        value: tokenField.value?.amount ?? null,
+                        onChange: amount =>
+                          tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                        error: errors.tokenAmount?.amount?.message || tokenAmountError,
+                        trailingAction: (
+                          <Button
+                            onClick={handleMaxButtonClick}
+                            disabled={shouldDisableMaxButton}
+                            variant="outline"
+                            size="sm"
+                          >
+                            Max
+                          </Button>
+                        ),
+                      }}
+                      wallet={{
+                        address: sourceWallet?.sender?.address,
+                        walletButton: <WalletButton walletType={sourceChain?.walletType} />,
+                      }}
+                      disabled={transferStatus !== 'Idle'}
+                      className="z-40"
+                    />
+                  )
+                }}
+              />
+            )
+          }}
         />
 
         {/* Swap source and destination chains */}
