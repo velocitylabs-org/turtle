@@ -372,7 +372,7 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={tokenAmount}
           fees={fees}
-          additionalfees={bridgingFee}
+          bridgingFees={bridgingFee}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
           canPayAdditionalFees={canPayAdditionalFees}

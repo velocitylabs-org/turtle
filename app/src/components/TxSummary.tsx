@@ -18,7 +18,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
-  additionalfees?: AmountInfo | null
+  bridgingFees?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
@@ -30,7 +30,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   loading,
   tokenAmount,
   fees,
-  additionalfees,
+  bridgingFees,
   durationEstimate,
   direction,
   canPayFees,
@@ -77,7 +77,7 @@ const TxSummary: FC<TxSummaryProps> = ({
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
-                <div className="text-sm font-bold">{additionalfees ? 'Execution fee' : 'Fee'} </div>
+                <div className="text-sm font-bold">{bridgingFees ? 'Execution fee' : 'Fee'} </div>
                 {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
@@ -106,7 +106,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             </li>
 
             {/* Bridging fees */}
-            {isBridgeTransfer && additionalfees && (
+            {isBridgeTransfer && bridgingFees && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="text-sm font-bold">Bridging fee</div>
@@ -118,20 +118,20 @@ const TxSummary: FC<TxSummaryProps> = ({
                         fill={colors['turtle-foreground']}
                         className="mr-2"
                       />
-                      <span>You don&apos;t have enough {additionalfees.token.symbol}</span>
+                      <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
                     </div>
                   )}
                 </div>
                 <div className="items-right flex">
                   <div>
                     <div className="flex items-center text-right text-xl text-turtle-foreground">
-                      {formatAmount(toHuman(additionalfees.amount, additionalfees.token))}{' '}
-                      {additionalfees.token.symbol}
+                      {formatAmount(toHuman(bridgingFees.amount, bridgingFees.token))}{' '}
+                      {bridgingFees.token.symbol}
                     </div>
 
-                    {additionalfees.inDollars > 0 && (
+                    {bridgingFees.inDollars > 0 && (
                       <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(additionalfees.inDollars)}
+                        ${formatAmount(bridgingFees.inDollars)}
                       </div>
                     )}
                   </div>
