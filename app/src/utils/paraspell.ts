@@ -16,9 +16,8 @@ import {
   TNodeWithRelayChains,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk'
-import { decodeAddress } from '@polkadot/keyring'
-import { u8aToHex } from '@polkadot/util'
 import { captureException } from '@sentry/nextjs'
+import { getAccountId32 } from './address'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -181,15 +180,4 @@ export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
     : getTNode(chain.chainId, 'polkadot')
-}
-
-/**
- * Return the AccountId32 reprsentation of the given `address`. It should represent the same
- * wallet across any chain in the Polkadot ecosystem.
- *
- * @param address - the base address to decode
- * @returns the AccountId32 presentation of `address`
- */
-function getAccountId32(address: string): string {
-  return u8aToHex(decodeAddress(address))
 }
