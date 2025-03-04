@@ -16,7 +16,7 @@ export async function GET(_: Request) {
   const fetchBridgingFee = unstable_cache(
     async () => {
       //todo(nuno): in the future we want to pass the granular fee breakdown (bridging + execution)
-      return (await getParaEthTransferFees()).reduce((acc, x) => acc + x)
+      return (await getParaEthTransferFees()).reduce((acc, x) => acc + x).toString()
     },
     [`bridging-fee-ah`],
     {
