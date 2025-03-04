@@ -48,13 +48,12 @@ export const getWalletLogo = (name: Wallet | string, window?: Window): string =>
 
 /**
  * Get the weight of a wallet which used to sort the wallets deterministically.
- * @param name - The name of the wallet.
+ * @param name - The extension name of the wallet.
  * @returns The weight of the wallet.
  */
 export const getWalletWeight = (name: Wallet | string, window?: Window): number => {
-  if (name === 'polkadot-js' && isNovaWallet(window)) {
-    return 1
-  }
+  if (name === 'polkadot-js' && isNovaWallet(window)) return 1
+
   return WALLET_CONFIGS[name as Wallet]?.weight ?? 5
 }
 
