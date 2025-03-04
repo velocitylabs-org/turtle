@@ -53,7 +53,7 @@ const Transfer: FC = () => {
     sourceWallet,
     destinationWallet,
     fees,
-    bridgingFees,
+    bridgingFee,
     refetchFees,
     loadingFees,
     canPayFees,
@@ -136,7 +136,7 @@ const Transfer: FC = () => {
     !requiresErc20SpendApproval &&
     !loadingFees &&
     canPayFees &&
-    (bridgingFees ? canPayAdditionalFees : true)
+    (bridgingFee ? canPayAdditionalFees : true)
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
@@ -372,7 +372,7 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={tokenAmount}
           fees={fees}
-          additionalfees={bridgingFees}
+          additionalfees={bridgingFee}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
           canPayAdditionalFees={canPayAdditionalFees}

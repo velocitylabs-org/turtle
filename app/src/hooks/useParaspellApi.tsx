@@ -203,6 +203,7 @@ const useParaspellApi = () => {
           date,
           environment: params.environment,
           fees: params.fees,
+          bridgingFee: params.bridgingFee,
           status: `Submitting to ${params.sourceChain.name}`,
         })
         resolve(true)
@@ -236,6 +237,7 @@ const useParaspellApi = () => {
       date,
       environment: params.environment,
       fees: params.fees,
+      bridgingFee: params.bridgingFee,
       ...(messageHash && { crossChainMessageHash: messageHash }),
       ...(messageId && { parachainMessageId: messageId }),
       ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),

@@ -47,6 +47,7 @@ const useSnowbridgeApi = () => {
       amount,
       environment,
       fees,
+      bridgingFee,
       onComplete,
     } = params
 
@@ -91,6 +92,7 @@ const useSnowbridgeApi = () => {
           recipient,
           amount,
           fees,
+          bridgingFee,
           onComplete,
         },
         direction,
@@ -124,6 +126,7 @@ const useSnowbridgeApi = () => {
       amount,
       environment,
       fees,
+      bridgingFee,
       onComplete,
     } = params
     try {
@@ -175,6 +178,7 @@ const useSnowbridgeApi = () => {
         environment,
         sendResult,
         fees,
+        bridgingFee,
       } satisfies StoredTransfer)
 
       trackTransferMetrics({

@@ -32,7 +32,7 @@ const useFees = (
   recipientAddress?: string,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [bridgingFees, setBridgingFees] = useState<AmountInfo | null>(null)
+  const [bridgingFee, setBridgingFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -189,7 +189,7 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, bridgingFees, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
+  return { fees, bridgingFee, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
 }
 
 export default useFees
