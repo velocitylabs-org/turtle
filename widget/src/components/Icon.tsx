@@ -15,9 +15,11 @@ export interface IconProps {
  */
 export const Icon: FC<IconProps> = ({ width, height, src, className }) => {
   return (
-    <div
+    <img
+      src={src}
+      width={width}
+      height={height}
       className={cn('rounded-full border-1 bg-cover bg-center', className)}
-      style={{ backgroundImage: `url(${src})`, width: `${width}px`, height: `${height}px` }}
     />
   )
 }

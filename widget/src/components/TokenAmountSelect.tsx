@@ -119,7 +119,11 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                   value={value?.amount ?? ''}
                   onChange={handleAmountChange}
                   onClick={e => e.stopPropagation()}
-                  onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
+                  onWheel={e => {
+                    if (typeof window !== 'undefined' && e.target instanceof HTMLElement) {
+                      e.target.blur()
+                    }
+                  }}
                   autoFocus
                 />
                 {inDollars && (

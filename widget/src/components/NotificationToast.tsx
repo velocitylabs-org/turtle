@@ -3,6 +3,12 @@ import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
+import InfoIcon from '@/assets/svg/severity-info-icon.svg'
+import ErrorIcon from '@/assets/svg/severity-error-icon.svg'
+import WarningIcon from '@/assets/svg/severity-warning-icon.svg'
+import SuccessIcon from '@/assets/svg/severity-success-icon.svg'
+import DefaultIcon from '@/assets/svg/severity-default-icon.svg'
+
 const NOTIFICATION_TTL_MS = 5000
 
 interface NotificationToastProps {
@@ -64,19 +70,19 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
 const renderSeverityIcon = (severity?: NotificationSeverity) => {
   switch (severity) {
     case NotificationSeverity.Info:
-      return <img src={'./src/assets/svg/severity-info-icon.svg'} alt="info icon" />
+      return <img src={InfoIcon} alt="info icon" />
 
     case NotificationSeverity.Error:
-      return <img src={'./src/assets/svg/severity-error-icon.svg'} alt="error icon" />
+      return <img src={ErrorIcon} alt="error icon" />
 
     case NotificationSeverity.Warning:
-      return <img src={'./src/assets/svg/severity-warnign-icon.svg'} alt="warnign icon" />
+      return <img src={WarningIcon} alt="warnign icon" />
 
     case NotificationSeverity.Success:
-      return <img src={'./src/assets/svg/severity-success-icon.svg'} alt="success icon" />
+      return <img src={SuccessIcon} alt="success icon" />
 
     case NotificationSeverity.Default:
-      return <img src={'./src/assets/svg/severity-default-icon.svg'} alt="default icon" />
+      return <img src={DefaultIcon} alt="default icon" />
     default:
       return
   }
