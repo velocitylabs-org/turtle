@@ -74,7 +74,6 @@ const useFees = (
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
             accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,
-            ahAccount: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]),
           })
 
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
