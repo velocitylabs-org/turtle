@@ -161,7 +161,6 @@ export const OngoingTransferDialog = ({
             </div>
 
             {/* Fees */}
-
             {/* Execution fee */}
             <div className="flex items-start justify-between space-x-4">
               <div className="font-bold">{transfer.bridgingFee ? 'Execution fee' : 'Fee'}</div>
