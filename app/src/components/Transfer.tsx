@@ -172,17 +172,15 @@ const Transfer: FC = () => {
           name="sourceChain"
           control={control}
           render={({ field: chainField }) => {
-            console.log('outer render')
             return (
               <Controller
                 name="tokenAmount"
                 control={control}
                 render={({ field: tokenField }) => {
-                  console.log('inner render')
                   return (
                     <ChainTokenSelect
                       chain={{
-                        value: chainField.value,
+                        ...chainField,
                         onChange: handleSourceChainChange,
                         options: chainOptions,
                         error: errors.sourceChain?.message,

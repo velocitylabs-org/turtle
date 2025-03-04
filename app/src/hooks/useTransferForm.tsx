@@ -32,7 +32,7 @@ interface FormInputs {
 const initValues: FormInputs = {
   sourceChain: null,
   destinationChain: null,
-  tokenAmount: { token: null, amount: null },
+  tokenAmount: { token: PolkadotTokens.DOT, amount: null }, // TODO: hardcoded for now
   manualRecipient: { enabled: false, address: '' },
 }
 
@@ -115,7 +115,11 @@ const useTransferForm = () => {
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
-      if (!newValue || newValue.uid === sourceChain?.uid) return
+      if (!newValue) {
+        setValue('sourceChain', null)
+        return
+      }
+      if (newValue.uid === sourceChain?.uid) return
       const isSameDestination = destinationChain?.uid === newValue.uid
 
       if (newValue.uid === Ethereum.uid) await switchChain(config, { chainId: mainnet.id }) // needed to fetch balance correctly

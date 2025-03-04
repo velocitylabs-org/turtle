@@ -15,6 +15,7 @@ import { useEnsAvatar } from 'wagmi'
 import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Dropdown from './Dropdown'
+import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
 import { Cross } from './svg/Cross'
 import { Tooltip } from './Tooltip'
@@ -52,6 +53,8 @@ interface ChainTokenSelectProps {
       onChange: (address: string) => void
     }
   }
+  floatingLabel?: string
+
   disabled?: boolean
   className?: string
 }
@@ -61,6 +64,7 @@ const ChainTokenSelect = ({
   token,
   amount,
   wallet,
+  floatingLabel = 'From',
   disabled,
   className,
 }: ChainTokenSelectProps) => {
@@ -106,11 +110,11 @@ const ChainTokenSelect = ({
 
   return (
     <div className={twMerge('relative w-full', className)} data-cy="chain-select">
-      {
+      {floatingLabel && (
         <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
-          From
+          {floatingLabel}
         </label>
-      }
+      )}
       <Tooltip content={chain.error}>
         <div
           ref={triggerRef}
@@ -141,7 +145,7 @@ const ChainTokenSelect = ({
               </>
             ) : (
               <>
-                {/* TODO: Add placeholder icon */}
+                <ChainIcon />
                 {'Chain'}
               </>
             )}
