@@ -55,7 +55,8 @@ const SubstrateWalletModal: FC = () => {
     }
 
     fetch()
-  }, [isModalOpen, fetchExtensions, setSelectedExtension])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalOpen])
 
   const filteredAccounts = accounts.filter(account =>
     type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
