@@ -13,22 +13,16 @@ export const trackTransfers = async (
   const transfers: TxTrackingResult[] = []
   const { toPolkadot, toEthereum, withinPolkadot } = ongoingTransfers
 
-  if (toPolkadot.length) {
-    for (const transfer of toPolkadot) {
-      const toParaTx = await history.toPolkadotTransferById(transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
-      if (!toParaTx) continue
-      transfers.push(toParaTx)
-    }
+  for (const transfer of toPolkadot) {
+    const tx = await history.toPolkadotTransferById(transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+    if (tx) transfers.push(tx)
   }
 
-  if (toEthereum.length) {
-    for (const transfer of toEthereum) {
-      const toEthereumTx = await history.toEthereumTransferById(
-        transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
-      ) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
-      if (!toEthereumTx) continue
-      transfers.push(toEthereumTx)
-    }
+  for (const transfer of toEthereum) {
+    const tx = await history.toEthereumTransferById(
+      transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
+    ) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+    if (tx) transfers.push(tx)
   }
 
   // Keep as back-up in case Ocelloids does not support a transfer path
