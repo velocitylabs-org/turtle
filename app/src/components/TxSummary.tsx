@@ -4,25 +4,25 @@ import { TokenAmount } from '@/models/select'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { cn } from '@/utils/cn'
-import { getTotalFees, toAmountInfo } from '@/utils/transfer'
+import { formatAmount, toAmountInfo } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Info } from 'lucide-react'
 import { FC } from 'react'
 import { colors } from '../../tailwind.config'
 import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import { ExclamationMark } from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
-import { Tooltip } from './Tooltip'
+import { toHuman } from '../utils/transfer'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
-  additionalfees?: AmountInfo | null
+  bridgingFees?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
+  canPayAdditionalFees: boolean
   className?: string
 }
 
@@ -30,10 +30,11 @@ const TxSummary: FC<TxSummaryProps> = ({
   loading,
   tokenAmount,
   fees,
-  additionalfees,
+  bridgingFees,
   durationEstimate,
   direction,
   canPayFees,
+  canPayAdditionalFees,
   className,
 }) => {
   const { price } = useTokenPrice(tokenAmount.token)
@@ -69,16 +70,14 @@ const TxSummary: FC<TxSummaryProps> = ({
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
-    const { totalFeesAmount, totalFeesValue } = getTotalFees(fees, additionalfees)
-
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
         <div className="pt-3">
-          <div className="mt-3 text-center text-lg font-bold text-turtle-foreground">Summary</div>
+          <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="items-left flex flex-col">
-                <div className="font-bold">Fee</div>
+                <div className="text-sm font-bold">{bridgingFees ? 'Execution fee' : 'Fee'} </div>
                 {!canPayFees && (
                   <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                     <ExclamationMark
@@ -87,39 +86,65 @@ const TxSummary: FC<TxSummaryProps> = ({
                       fill={colors['turtle-foreground']}
                       className="mr-2"
                     />
-                    <span>You don&apos;t have enough {fees.token.symbol} to pay fees</span>
+                    <span>You don&apos;t have enough {fees.token.symbol}</span>
                   </div>
                 )}
               </div>
               <div className="items-right flex">
                 <div>
-                  <div className="flex items-center text-right text-turtle-foreground">
-                    {totalFeesAmount} {fees.token.symbol}
-                    {isBridgeTransfer && !additionalfees && (
-                      <Tooltip
-                        showIcon={false}
-                        content={
-                          'This excludes ETH gas fees. Check your wallet popup for the total amount.'
-                        }
-                        className="max-w-xs text-center sm:max-w-sm"
-                      >
-                        <Info className="ml-0.5 h-3 w-3 text-turtle-foreground" />
-                      </Tooltip>
-                    )}
+                  <div className="flex items-center text-right text-xl text-turtle-foreground">
+                    {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
                   </div>
 
                   {fees.inDollars > 0 && (
-                    <div className="text-right text-turtle-level4">${totalFeesValue}</div>
+                    <div className="text-right text-sm text-turtle-level4">
+                      ${formatAmount(fees.inDollars)}
+                    </div>
                   )}
                 </div>
               </div>
             </li>
+
+            {/* Bridging fees */}
+            {isBridgeTransfer && bridgingFees && (
+              <li className="mt-4 flex items-start justify-between border-turtle-level2">
+                <div className="items-left flex flex-col">
+                  <div className="text-sm font-bold">Bridging fee</div>
+                  {!canPayAdditionalFees && (
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                      <ExclamationMark
+                        width={16}
+                        height={16}
+                        fill={colors['turtle-foreground']}
+                        className="mr-2"
+                      />
+                      <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="items-right flex">
+                  <div>
+                    <div className="flex items-center text-right text-xl text-turtle-foreground">
+                      {formatAmount(toHuman(bridgingFees.amount, bridgingFees.token))}{' '}
+                      {bridgingFees.token.symbol}
+                    </div>
+
+                    {bridgingFees.inDollars > 0 && (
+                      <div className="text-right text-sm text-turtle-level4">
+                        ${formatAmount(bridgingFees.inDollars)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            )}
+
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
-                <div className="font-bold">Duration</div>
+                <div className="text-sm font-bold">Duration</div>
               </div>
               <div className="items-right flex items-center space-x-0.5">
-                <div className="text-turtle-foreground">{durationEstimate}</div>
+                <div className="text-xl text-turtle-foreground">{durationEstimate}</div>
               </div>
             </li>
           </ul>

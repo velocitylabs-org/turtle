@@ -68,7 +68,8 @@ const useTransferForm = () => {
     fees,
     loading: loadingFees,
     canPayFees,
-    ethereumTxfees,
+    bridgingFee,
+    canPayAdditionalFees,
     refetch: refetchFees,
   } = useFees(
     sourceChain,
@@ -215,6 +216,7 @@ const useTransferForm = () => {
         amount,
         recipient: recipient,
         fees,
+        bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success
           reset()
@@ -286,10 +288,11 @@ const useTransferForm = () => {
     sourceWallet,
     destinationWallet,
     fees,
-    ethereumTxfees,
+    bridgingFee,
     refetchFees,
     loadingFees,
     canPayFees,
+    canPayAdditionalFees,
     transferStatus,
     environment,
     tokenAmountError,

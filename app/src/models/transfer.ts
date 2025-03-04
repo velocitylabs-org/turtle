@@ -26,6 +26,7 @@ export interface StoredTransfer extends RawTransfer {
   tokenUSDValue?: number
   amount: string
   fees: AmountInfo
+  bridgingFee: AmountInfo | null
   // Contextual
   environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
@@ -71,6 +72,7 @@ export type CompletedTransfer = {
   destChain: Chain
   amount: string
   fees: AmountInfo
+  bridgingFee: AmountInfo | null
   minTokenRecieved?: string
   minTokenRecievedValue?: number
   sender: string

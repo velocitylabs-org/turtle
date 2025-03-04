@@ -1,4 +1,4 @@
-import { history } from '@snowbridge/api'
+import { historyV2 as history } from '@snowbridge/api'
 
 export type SnowbridgeStatus = {
   toEthereum: number
