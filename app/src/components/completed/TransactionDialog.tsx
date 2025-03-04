@@ -161,10 +161,11 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             </div>
 
             {/* Fees */}
+            {/* Execution fee */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="font-bold">Fees</div>
+              <div className="font-bold">{tx.bridgingFee ? 'Execution fee' : 'Fee'}</div>
               <div className="items-right flex flex-col space-x-1 text-right">
-                <div>
+                <div className="text-lg">
                   {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}{' '}
                   {tx.fees.token.symbol}
                 </div>
@@ -175,6 +176,24 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 )}
               </div>
             </div>
+
+            {/* Bridging fee */}
+            {tx.bridgingFee && (
+              <div className="flex items-start justify-between space-x-4">
+                <div className="font-bold">Bridging fee</div>
+                <div className="items-right flex flex-col space-x-1 text-right">
+                  <div className="text-lg">
+                    {formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}{' '}
+                    {tx.bridgingFee.token.symbol}
+                  </div>
+                  {typeof tx.tokenUSDValue == 'number' && (
+                    <div className="text-turtle-level4">
+                      ${formatAmount(tx.bridgingFee.inDollars, 'Long')}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {tx.explorerLink && (
