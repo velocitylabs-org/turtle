@@ -181,12 +181,22 @@ export const findMatchingTransfer = (
 ) =>
   transfers.find(transfer => {
     if ('submitted' in transfer) {
-      if (resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum')
-        return transfer.id === ongoingTransfer.parachainMessageId
-      return transfer.id === ongoingTransfer.id
+      if (
+        resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum'
+      ) {
+        return (
+          transfer.id === ongoingTransfer.parachainMessageId ||
+          ('extrinsic_hash' in transfer.submitted &&
+            transfer.submitted.extrinsic_hash === ongoingTransfer.id)
+        )
+      } else {
+        return transfer.id === ongoingTransfer.id
+      }
     }
+
     if (ongoingTransfer.crossChainMessageHash)
       return transfer.messageHash === ongoingTransfer.crossChainMessageHash
+
     if (ongoingTransfer.sourceChainExtrinsicIndex)
       return transfer.extrinsicIndex === ongoingTransfer.sourceChainExtrinsicIndex
 
