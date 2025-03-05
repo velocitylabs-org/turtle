@@ -53,8 +53,8 @@ interface ChainTokenSelectProps {
       onChange: (address: string) => void
     }
   }
+  /** The label to display above the whole component when dropdown is not open */
   floatingLabel?: string
-
   disabled?: boolean
   className?: string
 }
@@ -71,13 +71,12 @@ const ChainTokenSelect = ({
   const [isOpen, setIsOpen] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
-
   useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
   // Chain and wallet related hooks
   const addressLookup = useLookupName(chain.value?.network, wallet?.address?.toLowerCase())
-  const addressPlaceholder = wallet?.address ? truncateAddress(wallet.address, 4, 4) : ''
-  const accountName = addressLookup ? addressLookup : addressPlaceholder
+  const walletAddressShortened = wallet?.address ? truncateAddress(wallet.address, 4, 4) : ''
+  const accountName = addressLookup ? addressLookup : walletAddressShortened
   const { data: ensAvatarUrl } = useEnsAvatar({
     name: normalize(addressLookup || '') || undefined,
   })
@@ -110,15 +109,14 @@ const ChainTokenSelect = ({
 
   return (
     <div className={twMerge('relative w-full', className)} data-cy="chain-select">
-      {floatingLabel && (
-        <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
-          {floatingLabel}
-        </label>
-      )}
-
       <div className="flex">
         {/* Chain Selection */}
-        <div className="flex-1">
+        <div className="relative flex-1">
+          {floatingLabel && (
+            <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+              {isOpen ? 'Chain' : floatingLabel}
+            </label>
+          )}
           <Tooltip content={chain.error}>
             <div
               ref={triggerRef}
@@ -131,7 +129,7 @@ const ChainTokenSelect = ({
               )}
               data-cy="chain-select-trigger"
             >
-              <div className="flex h-[3.5rem] flex-grow items-center gap-1">
+              <div className="flex h-[3.0rem] flex-grow items-center gap-1">
                 {chain.value ? (
                   <>
                     <Image
@@ -158,7 +156,10 @@ const ChainTokenSelect = ({
         </div>
 
         {/* Token Selection */}
-        <div className="flex-1">
+        <div className="relative flex-1">
+          <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+            {isOpen ? 'Token' : ''}
+          </label>
           <Tooltip content={token.error}>
             <div
               ref={triggerRef}
@@ -171,7 +172,7 @@ const ChainTokenSelect = ({
               )}
               data-cy="token-select-trigger"
             >
-              <div className="flex h-[3.5rem] flex-grow items-center gap-1">
+              <div className="flex h-[3.0rem] flex-grow items-center gap-1">
                 {token.value ? (
                   <>
                     <Image
