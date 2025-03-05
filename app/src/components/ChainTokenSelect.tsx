@@ -18,8 +18,8 @@ import Dropdown from './Dropdown'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
 import { Cross } from './svg/Cross'
+import TokenIcon from './svg/TokenIcon'
 import { Tooltip } from './Tooltip'
-import VerticalDivider from './VerticalDivider'
 
 interface ChainTokenSelectProps {
   chain: {
@@ -115,78 +115,90 @@ const ChainTokenSelect = ({
           {floatingLabel}
         </label>
       )}
-      <Tooltip content={chain.error}>
-        <div
-          ref={triggerRef}
-          onClick={handleChainClick}
-          className={cn(
-            'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
-            !disabled && 'cursor-pointer',
-            disabled && 'opacity-30',
-            chain.error && 'border-turtle-error',
-          )}
-          data-cy="chain-select-trigger"
-        >
-          <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-            {chain.value ? (
-              <>
-                <Image
-                  src={chain.value.logoURI}
-                  alt={chain.value.name}
-                  width={24}
-                  height={24}
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                />
-                {shouldShowChainName && (
-                  <span className="text-nowrap" data-cy="chain-select-value">
-                    {chain.value.name}
-                  </span>
+
+      <div className="flex">
+        {/* Chain Selection */}
+        <div className="flex-1">
+          <Tooltip content={chain.error}>
+            <div
+              ref={triggerRef}
+              onClick={handleChainClick}
+              className={cn(
+                'flex items-center justify-between rounded-l-md rounded-r-none border-1 border-turtle-level3 bg-background px-3 text-sm',
+                !disabled && 'cursor-pointer',
+                disabled && 'opacity-30',
+                chain.error && 'border-turtle-error',
+              )}
+              data-cy="chain-select-trigger"
+            >
+              <div className="flex h-[3.5rem] flex-grow items-center gap-1">
+                {chain.value ? (
+                  <>
+                    <Image
+                      src={chain.value.logoURI}
+                      alt={chain.value.name}
+                      width={24}
+                      height={24}
+                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                    />
+                    <span className="text-nowrap" data-cy="chain-select-value">
+                      {chain.value.name}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <ChainIcon />
+                    {'Chain'}
+                  </>
                 )}
-              </>
-            ) : (
-              <>
-                <ChainIcon />
-                {'Chain'}
-              </>
-            )}
-            <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1 mr-1" />
-            {ensAvatarUrl && (
-              <Image
-                src={ensAvatarUrl}
-                alt="ENS Avatar"
-                width={24}
-                height={24}
-                className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
-              />
-            )}
-            {!wallet?.manualInput?.enabled && !!chain.value && accountName}
-
-            {/* Manual Recipient Address */}
-            {wallet?.manualInput?.enabled && (
-              <>
-                <VerticalDivider className={wallet.manualInput.address ? 'invisible' : 'visible'} />
-                <input
-                  type="text"
-                  className={cn(
-                    'ml-1 h-[70%] w-full bg-transparent focus:border-0 focus:outline-none',
-                    chain.error && 'text-turtle-error',
-                  )}
-                  placeholder="Address"
-                  autoFocus
-                  value={wallet.manualInput.address}
-                  onChange={handleManualRecipientChange}
-                  onClick={e => e.stopPropagation()}
-                  data-cy="manual-recipient-input"
-                />
-              </>
-            )}
-          </div>
-          {wallet?.walletButton && (
-            <div className="absolute right-0 ml-2 mr-3">{wallet.walletButton}</div>
-          )}
+                <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+              </div>
+            </div>
+          </Tooltip>
         </div>
-      </Tooltip>
 
+        {/* Token Selection */}
+        <div className="flex-1">
+          <Tooltip content={token.error}>
+            <div
+              ref={triggerRef}
+              onClick={handleChainClick}
+              className={cn(
+                'flex items-center justify-between rounded-l-none rounded-r-md border-1 border-l-0 border-turtle-level3 bg-background px-3 text-sm',
+                !disabled && 'cursor-pointer',
+                disabled && 'opacity-30',
+                token.error && 'border-turtle-error',
+              )}
+              data-cy="token-select-trigger"
+            >
+              <div className="flex h-[3.5rem] flex-grow items-center gap-1">
+                {token.value ? (
+                  <>
+                    <Image
+                      src={token.value.logoURI}
+                      alt={token.value.name}
+                      width={24}
+                      height={24}
+                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                    />
+                    <span className="text-nowrap" data-cy="token-select-value">
+                      {token.value.name}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <TokenIcon />
+                    {'Token'}
+                  </>
+                )}
+                <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+              </div>
+            </div>
+          </Tooltip>
+        </div>
+      </div>
+
+      {/* Dropdown */}
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
         {chainOptions.map(option => {
           if (!option.allowed) return null
