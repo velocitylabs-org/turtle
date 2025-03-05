@@ -22,6 +22,7 @@
     "declarationMap": false,
     "emitDeclarationOnly": true,
     "outDir": "dist",
+    // "declarationDir": "./dist",
     // "typeRoots": ["./dist/index.d.ts"],
 
     /* Linting */
