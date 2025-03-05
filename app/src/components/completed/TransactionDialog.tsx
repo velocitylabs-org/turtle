@@ -68,8 +68,8 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               getTextColor(tx.result),
             )}
           >
-            <span>{formatAmount(toHuman(tx.amount, tx.destinationToken))}</span>
-            <TokenLogo token={tx.destinationToken} sourceChain={tx.sourceChain} size={40} />
+            <span>{formatAmount(toHuman(tx.amount, tx.sourceToken))}</span>
+            <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={40} />
           </h3>
           <div className={cn('flex items-center space-x-4 text-sm', getTextColor(tx.result))}>
             <div>{formatCompletedTransferDate(tx.date)}</div>
@@ -144,14 +144,14 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(tx.amount, tx.destinationToken), 'Long')}{' '}
-                    {tx.destinationToken.symbol}
+                    {formatAmount(toHuman(tx.amount, tx.sourceToken), 'Long')}{' '}
+                    {tx.sourceToken.symbol}
                   </div>
                   {typeof tx.tokenUSDValue == 'number' && (
                     <div className="text-turtle-level4">
                       $
                       {formatAmount(
-                        toHuman(tx.amount, tx.destinationToken) * (tx.tokenUSDValue ?? 0),
+                        toHuman(tx.amount, tx.sourceToken) * (tx.tokenUSDValue ?? 0),
                         'Long',
                       )}
                     </div>
