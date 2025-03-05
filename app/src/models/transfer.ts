@@ -16,7 +16,7 @@ export interface RawTransfer {
   sender: string
   recipient: string
   sourceToken: Token
-  destinationToken: Token
+  destinationToken?: Token
   date: Date
   crossChainMessageHash?: string
   parachainMessageId?: string
@@ -71,7 +71,7 @@ export type CompletedTransfer = {
   id: string
   result: TransferResult
   sourceToken: Token
-  destinationToken: Token
+  destinationToken?: Token
   tokenUSDValue?: number
   sourceChain: Chain
   destChain: Chain
