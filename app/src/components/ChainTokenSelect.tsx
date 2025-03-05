@@ -15,11 +15,8 @@ import { useEnsAvatar } from 'wagmi'
 import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Dropdown from './Dropdown'
-import ChainIcon from './svg/ChainIcon'
-import ChevronDown from './svg/ChevronDown'
+import SelectTrigger from './SelectTrigger'
 import { Cross } from './svg/Cross'
-import TokenIcon from './svg/TokenIcon'
-import { Tooltip } from './Tooltip'
 
 interface ChainTokenSelectProps {
   chain: {
@@ -108,51 +105,24 @@ const ChainTokenSelect = ({
     : chain.options
 
   return (
-    <div className={twMerge('relative w-full', className)} data-cy="chain-select">
+    <div className={twMerge('relative w-full', className)}>
+      {/* Triggers */}
       <div className="flex">
         {/* Chain Selection */}
         <div className="relative flex-1">
-          {floatingLabel && (
-            <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
-              {isOpen ? 'Chain' : floatingLabel}
-            </label>
-          )}
-          <Tooltip content={chain.error}>
-            <div
-              ref={triggerRef}
-              onClick={handleChainClick}
-              className={cn(
-                'flex items-center justify-between rounded-l-md rounded-r-none border-1 border-turtle-level3 bg-background px-3 text-sm',
-                !disabled && 'cursor-pointer',
-                disabled && 'opacity-30',
-                chain.error && 'border-turtle-error',
-              )}
-              data-cy="chain-select-trigger"
-            >
-              <div className="flex h-[3.0rem] flex-grow items-center gap-1">
-                {chain.value ? (
-                  <>
-                    <Image
-                      src={chain.value.logoURI}
-                      alt={chain.value.name}
-                      width={24}
-                      height={24}
-                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                    />
-                    <span className="text-nowrap" data-cy="chain-select-value">
-                      {chain.value.name}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <ChainIcon />
-                    {'Chain'}
-                  </>
-                )}
-                <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
-              </div>
-            </div>
-          </Tooltip>
+          <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+            Chain
+          </label>
+
+          <SelectTrigger
+            value={chain.value}
+            error={chain.error}
+            disabled={disabled}
+            onClick={() => setIsOpen(true)}
+            type="chain"
+            className="rounded-l-md rounded-r-none"
+            triggerRef={triggerRef}
+          />
         </div>
 
         {/* Token Selection */}
@@ -160,42 +130,16 @@ const ChainTokenSelect = ({
           <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
             {isOpen ? 'Token' : ''}
           </label>
-          <Tooltip content={token.error}>
-            <div
-              ref={triggerRef}
-              onClick={handleChainClick}
-              className={cn(
-                'flex items-center justify-between rounded-l-none rounded-r-md border-1 border-l-0 border-turtle-level3 bg-background px-3 text-sm',
-                !disabled && 'cursor-pointer',
-                disabled && 'opacity-30',
-                token.error && 'border-turtle-error',
-              )}
-              data-cy="token-select-trigger"
-            >
-              <div className="flex h-[3.0rem] flex-grow items-center gap-1">
-                {token.value ? (
-                  <>
-                    <Image
-                      src={token.value.logoURI}
-                      alt={token.value.name}
-                      width={24}
-                      height={24}
-                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                    />
-                    <span className="text-nowrap" data-cy="token-select-value">
-                      {token.value.name}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <TokenIcon />
-                    {'Token'}
-                  </>
-                )}
-                <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
-              </div>
-            </div>
-          </Tooltip>
+
+          <SelectTrigger
+            value={token.value}
+            error={token.error}
+            disabled={disabled}
+            onClick={() => setIsOpen(true)}
+            type="token"
+            className="rounded-l-none rounded-r-md border-l-0"
+            triggerRef={triggerRef}
+          />
         </div>
       </div>
 
