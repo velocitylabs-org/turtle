@@ -41,7 +41,8 @@ const useSnowbridgeApi = () => {
     const {
       sender,
       sourceChain,
-      token,
+      sourceToken,
+      destinationToken,
       destinationChain,
       recipient,
       amount,
@@ -66,7 +67,7 @@ const useSnowbridgeApi = () => {
         snowbridgeContext,
         sender,
         sourceChain,
-        token,
+        sourceToken,
         destinationChain,
         recipient,
         amount,
@@ -86,7 +87,8 @@ const useSnowbridgeApi = () => {
           environment,
           sender,
           sourceChain,
-          token,
+          sourceToken,
+          destinationToken,
           destinationChain,
           recipient,
           amount,
@@ -118,7 +120,8 @@ const useSnowbridgeApi = () => {
   ) => {
     const {
       sourceChain,
-      token,
+      sourceToken,
+      destinationToken,
       destinationChain,
       recipient,
       amount,
@@ -159,13 +162,14 @@ const useSnowbridgeApi = () => {
       onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
+      const tokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
       const date = new Date()
 
       addOrUpdate({
         id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?
         sourceChain,
-        token,
+        sourceToken,
+        destinationToken,
         tokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
@@ -181,7 +185,7 @@ const useSnowbridgeApi = () => {
         id: sendResult.success?.messageId,
         sender: senderAddress,
         sourceChain,
-        token,
+        token: sourceToken,
         amount,
         destinationChain,
         tokenUSDValue,

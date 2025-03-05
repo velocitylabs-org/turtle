@@ -1,6 +1,6 @@
 import { TxEvent } from 'polkadot-api'
 
-export const handleObservableEvents = (event: TxEvent) => {
+export const extractPapiEvent = (event: TxEvent) => {
   // Wait until block is finalized or in a best block state
   if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
     // Verify transaction hash

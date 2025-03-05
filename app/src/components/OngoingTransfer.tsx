@@ -35,7 +35,8 @@ const OngoingTransfer: FC<{
           color={colors['turtle-secondary']}
         />
         <p className="text-turtle-foreground)] no-letter-spacing text-xl font-normal">
-          {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
+          {formatAmount(toHuman(transfer.amount, transfer.sourceToken))}{' '}
+          {transfer.sourceToken.symbol}
         </p>
         {/* From and to Chains */}
         <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">

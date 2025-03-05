@@ -9,6 +9,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Ethereum } from '@/registry/mainnet/chains'
+import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { safeConvertAmount } from '@/utils/transfer'
@@ -211,7 +212,8 @@ const useTransferForm = () => {
         sender: sourceWallet.sender,
         sourceChain,
         destinationChain,
-        token: tokenAmount.token,
+        sourceToken: tokenAmount?.token,
+        destinationToken: PolkadotTokens.DOT, // TODO: hardcoded for now
         amount,
         recipient: recipient,
         fees,

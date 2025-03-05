@@ -52,6 +52,7 @@ export const useOngoingTransfersStore = create<State>()(
       // Actions
       addOrUpdate: newOngoingTransfer => {
         if (!newOngoingTransfer) return
+        console.log('Adding or updating transfer', newOngoingTransfer)
         set(state => {
           // Update it if it's already present
           if (state.transfers.some(transfer => transfer.id === newOngoingTransfer.id)) {

@@ -1,10 +1,10 @@
-import { captureException } from '@sentry/nextjs'
+import { Notification, NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { Moonbeam } from '@/registry/mainnet/chains'
+import { Direction, resolveDirection } from '@/services/transfer'
+import { captureException } from '@sentry/nextjs'
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink } from './transfer'
-import { NotificationSeverity, Notification } from '@/models/notification'
-import { Direction, resolveDirection } from '@/services/transfer'
-import { Moonbeam } from '@/registry/mainnet/chains'
 
 type ResultNotification = {
   message: string
@@ -203,7 +203,8 @@ const updateTransferStatus = (
   addCompletedTransfer({
     id: transfer.id,
     result: status,
-    token: transfer.token,
+    sourceToken: transfer.sourceToken,
+    destinationToken: transfer.destinationToken,
     sourceChain: transfer.sourceChain,
     destChain: transfer.destChain,
     amount: transfer.amount,

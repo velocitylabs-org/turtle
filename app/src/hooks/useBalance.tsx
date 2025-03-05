@@ -4,7 +4,7 @@ import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { getCurrencyId, getNativeToken, getRelayNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
-import { getTNode, getTransferableAmount } from '@paraspell/sdk'
+import { getTNode, getTransferableAmount, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -68,7 +68,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           const balance =
             (await getTransferableAmount({
               address,
-              node,
+              node: node as TNodeDotKsmWithRelayChains,
               currency,
               api: chain.rpcConnection,
             })) ?? 0n

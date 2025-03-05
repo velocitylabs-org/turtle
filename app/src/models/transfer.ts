@@ -1,11 +1,11 @@
-import { Dispatch, SetStateAction } from 'react'
 import { Direction } from '@/services/transfer'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
-
+import { TRouterPlan } from '@paraspell/xcm-router'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
+import { Dispatch, SetStateAction } from 'react'
 import { Chain } from './chain'
+import { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
 import { FromParachainTrackingResult } from './subscan'
-import { FromEthTrackingResult, FromAhToEthTrackingResult } from './snowbridge'
 import { Token } from './token'
 
 export interface RawTransfer {
@@ -15,7 +15,8 @@ export interface RawTransfer {
   destChain: Chain
   sender: string
   recipient: string
-  token: Token
+  sourceToken: Token
+  destinationToken?: Token
   date: Date
   crossChainMessageHash?: string
   parachainMessageId?: string
@@ -36,6 +37,10 @@ export interface StoredTransfer extends RawTransfer {
   status?: string
   // WithinPolkadot transfer is considered as finalized
   finalizedAt?: Date
+  swapInformation?: {
+    currentStep?: number
+    plan?: TRouterPlan
+  }
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
@@ -65,7 +70,8 @@ export type TransferResult = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Und
 export type CompletedTransfer = {
   id: string
   result: TransferResult
-  token: Token
+  sourceToken: Token
+  destinationToken?: Token
   tokenUSDValue?: number
   sourceChain: Chain
   destChain: Chain

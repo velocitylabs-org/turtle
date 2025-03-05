@@ -55,6 +55,7 @@ const SubstrateWalletModal: FC = () => {
     }
 
     fetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen])
 
   const filteredAccounts = accounts.filter(account =>

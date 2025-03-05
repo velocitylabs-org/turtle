@@ -1,21 +1,25 @@
+'use client'
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import {
   Builder,
   EvmBuilder,
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  TCurrencyCore,
   TDryRunResult,
-  type TPapiTransaction,
+  TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
+  type TCurrencyCore,
+  type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
+import { getSenderAddress } from './address'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -26,11 +30,11 @@ export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
  * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
  * @returns - A Promise that resolves a submittable extrinsic transaction.
  */
-export const createTx = async (
+export const createTransferTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient } = params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -38,15 +42,55 @@ export const createTx = async (
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
   else {
-    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
     return await Builder(wssEndpoint)
-      .from(sourceChainFromId)
+      .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
       .to(destinationChainFromId)
       .currency({ ...currencyId, amount })
       .address(recipient)
       .build()
   }
+}
+
+export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
+  const {
+    environment,
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+    recipient,
+    sender,
+  } = params
+
+  const senderAddress = await getSenderAddress(sender)
+  const account = params.sender as SubstrateAccount
+
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+
+  const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
+  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
+
+  const { RouterBuilder } = await import('@paraspell/xcm-router')
+  const routerPlan = await RouterBuilder()
+    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
+    .to(destinationChainFromId)
+    .currencyFrom(currencyIdFrom)
+    .currencyTo(currencyTo)
+    .amount(amount)
+    .slippagePct(slippagePct)
+    .senderAddress(senderAddress)
+    .recipientAddress(recipient)
+    .signer(account.pjsSigner as any)
+    .buildTransactions()
+
+  return routerPlan
 }
 
 /**
@@ -59,13 +103,13 @@ export const moonbeamTransfer = async (
   params: TransferParams,
   viemClient: any,
 ): Promise<string> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient } = params
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
   const destinationChainFromId = getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
   return EvmBuilder()
     .from('Moonbeam')
@@ -88,7 +132,8 @@ export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
+  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient, sender } =
+    params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -96,10 +141,10 @@ export const dryRun = async (
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
   return await Builder(wssEndpoint)
-    .from(sourceChainFromId)
+    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
     .address(recipient)

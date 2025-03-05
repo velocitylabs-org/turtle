@@ -46,8 +46,8 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-              <span>{tx.token.symbol}</span>
+              <span>{formatAmount(toHuman(tx.amount, tx.sourceToken))}</span>
+              <span>{tx.sourceToken.symbol}</span>
             </div>
             <div
               className={cn(

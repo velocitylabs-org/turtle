@@ -8,7 +8,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
  * @param result - The blockchain result returned by the signAndSend() method.
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
-export const handleSubmittableEvents = (result: ISubmittableResult) => {
+export const extractPjsEvents = (result: ISubmittableResult) => {
   const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } =
     result
   // check for execution errors
