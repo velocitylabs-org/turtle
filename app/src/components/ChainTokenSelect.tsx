@@ -16,6 +16,7 @@ import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Dropdown from './Dropdown'
 import SelectTrigger from './SelectTrigger'
+import ChainIcon from './svg/ChainIcon'
 import { Cross } from './svg/Cross'
 
 interface ChainTokenSelectProps {
@@ -56,6 +57,31 @@ interface ChainTokenSelectProps {
   className?: string
 }
 
+const SearchBar = ({
+  placeholder,
+  value,
+  onChange,
+}: {
+  placeholder: string
+  value: string
+  onChange: (value: string) => void
+}) => {
+  return (
+    <div className="sticky top-0 z-10 flex items-center border-b-1 border-turtle-level3 bg-turtle-background px-3 pb-3 pt-1">
+      <div>
+        <ChainIcon className="h-[2rem] w-[2rem] text-turtle-level5" />
+      </div>
+      <input
+        type="text"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-md border-0 bg-transparent text-sm focus:border-0 focus:outline-none"
+      />
+    </div>
+  )
+}
+
 const ChainTokenSelect = ({
   chain,
   token,
@@ -77,6 +103,19 @@ const ChainTokenSelect = ({
   const { data: ensAvatarUrl } = useEnsAvatar({
     name: normalize(addressLookup || '') || undefined,
   })
+
+  // Add state for search values
+  const [chainSearch, setChainSearch] = useState('')
+  const [tokenSearch, setTokenSearch] = useState('')
+
+  // Filter options based on search
+  const filteredChainOptions = chain.options.filter(
+    option => option.allowed && option.name.toLowerCase().includes(chainSearch.toLowerCase()),
+  )
+
+  const filteredTokenOptions = token.options.filter(
+    option => option.allowed && option.name.toLowerCase().includes(tokenSearch.toLowerCase()),
+  )
 
   const handleChainSelect = (selectedChain: Chain) => {
     chain.onChange(selectedChain)
@@ -152,81 +191,87 @@ const ChainTokenSelect = ({
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
         <div className="flex">
           {/* Chain options (left side) */}
-          <div className="max-h-[300px] flex-1 overflow-y-auto border-r-1 border-turtle-level3">
-            {chainOptions.map(option => {
-              if (!option.allowed) return null
-              const isSelected = chain.value?.uid === option.uid
-              return (
-                <li
-                  key={option.uid}
-                  className={cn(
-                    'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                    isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                  )}
-                  onClick={() => handleChainSelect(option)}
-                >
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={option.logoURI}
-                      alt={option.name}
-                      width={24}
-                      height={24}
-                      priority
-                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                    />
-                    <span className="text-sm">{option.name}</span>
-                  </div>
+          <div className="flex flex-1 flex-col border-r-1 border-turtle-level3">
+            <SearchBar placeholder="Search" value={chainSearch} onChange={setChainSearch} />
 
-                  {isSelected && chain.clearable && (
-                    <ClearButton
-                      onClick={() => {
-                        chain.onChange(null)
-                        setIsOpen(false)
-                      }}
-                    />
-                  )}
-                </li>
-              )
-            })}
+            <div className="max-h-[300px] overflow-y-auto">
+              {filteredChainOptions.map(option => {
+                const isSelected = chain.value?.uid === option.uid
+                return (
+                  <li
+                    key={option.uid}
+                    className={cn(
+                      'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                      isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                    )}
+                    onClick={() => handleChainSelect(option)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={option.logoURI}
+                        alt={option.name}
+                        width={24}
+                        height={24}
+                        priority
+                        className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                      />
+                      <span className="text-sm">{option.name}</span>
+                    </div>
+
+                    {isSelected && chain.clearable && (
+                      <ClearButton
+                        onClick={() => {
+                          chain.onChange(null)
+                          setIsOpen(false)
+                        }}
+                      />
+                    )}
+                  </li>
+                )
+              })}
+            </div>
           </div>
 
           {/* Token options (right side) */}
-          <div className="max-h-[300px] flex-1 overflow-y-auto">
-            {token.options.map(option => {
-              if (!option.allowed) return null
-              const isSelected = token.value?.id === option.id
-              return (
-                <li
-                  key={option.id}
-                  className={cn(
-                    'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                    isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                  )}
-                  onClick={() => handleTokenSelect(option)}
-                >
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={option.logoURI}
-                      alt={option.name}
-                      width={24}
-                      height={24}
-                      priority
-                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                    />
-                    <span className="text-sm">{option.name}</span>
-                  </div>
+          <div className="flex flex-1 flex-col">
+            <SearchBar placeholder="Search" value={tokenSearch} onChange={setTokenSearch} />
 
-                  {isSelected && token.clearable && (
-                    <ClearButton
-                      onClick={() => {
-                        token.onChange(null)
-                        setIsOpen(false)
-                      }}
-                    />
-                  )}
-                </li>
-              )
-            })}
+            <div className="max-h-[300px] overflow-y-auto">
+              {filteredTokenOptions.map(option => {
+                const isSelected = token.value?.id === option.id
+                return (
+                  <li
+                    key={option.id}
+                    className={cn(
+                      'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                      isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                    )}
+                    onClick={() => handleTokenSelect(option)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={option.logoURI}
+                        alt={option.name}
+                        width={24}
+                        height={24}
+                        priority
+                        className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                      />
+                      <span className="text-sm">{option.name}</span>
+                    </div>
+
+                    {isSelected && token.clearable && (
+                      <ClearButton
+                        onClick={() => {
+                          token.onChange(null)
+                          setIsOpen(false)
+                        }}
+                      />
+                    )}
+                  </li>
+                )
+              })}
+            </div>
           </div>
         </div>
       </Dropdown>
