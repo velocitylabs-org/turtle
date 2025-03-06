@@ -240,12 +240,11 @@ const ClearButton = ({ onClick }: { onClick: () => void }) => {
       label="Clear"
       size="sm"
       variant="outline"
-      className="relative z-10 max-w-[77px] text-sm"
+      className="z-10 h-[28px] w-[28px] min-w-5 border-turtle-secondary text-sm hover:border-turtle-secondary"
       onClick={onClick}
     >
-      <div className="mr-1 flex items-center gap-1 text-turtle-foreground">
-        <Cross stroke={colors['turtle-foreground']} />
-        <span>Clear</span>
+      <div className="flex items-center gap-1 text-turtle-foreground">
+        <Cross stroke={colors['turtle-secondary']} />
       </div>
     </Button>
   )
