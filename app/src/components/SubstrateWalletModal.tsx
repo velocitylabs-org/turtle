@@ -1,7 +1,7 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
-import { getWalletLogo, getWalletName } from '@/utils/wallet'
+import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
@@ -105,22 +105,24 @@ const SubstrateWalletModal: FC = () => {
           {currentView === 'extensions' &&
             !loading &&
             (extensions.length > 0 ? (
-              extensions.map(extension => (
-                <Button
-                  key={extension.name}
-                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
-                  variant="outline"
-                  onClick={() => handleExtensionSelect(extension)}
-                >
-                  <div className="flex items-center space-x-2 text-sm">
-                    <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
-                    <span>{getWalletName(extension.name, window)}</span>
-                  </div>
-                  <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
-                    INSTALLED
-                  </span>
-                </Button>
-              ))
+              [...extensions]
+                .sort((a, b) => getWalletWeight(a.name, window) - getWalletWeight(b.name, window))
+                .map(extension => (
+                  <Button
+                    key={extension.name}
+                    className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
+                    variant="outline"
+                    onClick={() => handleExtensionSelect(extension)}
+                  >
+                    <div className="flex items-center space-x-2 text-sm">
+                      <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
+                      <span>{getWalletName(extension.name, window)}</span>
+                    </div>
+                    <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
+                      INSTALLED
+                    </span>
+                  </Button>
+                ))
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <p className="text-center text-sm text-turtle-level6">
