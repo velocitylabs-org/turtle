@@ -16,8 +16,8 @@ import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Dropdown from './Dropdown'
 import SelectTrigger from './SelectTrigger'
-import ChainIcon from './svg/ChainIcon'
 import { Cross } from './svg/Cross'
+import { SearchIcon } from './svg/SearchIcon'
 
 interface ChainTokenSelectProps {
   chain: {
@@ -57,31 +57,6 @@ interface ChainTokenSelectProps {
   className?: string
 }
 
-const SearchBar = ({
-  placeholder,
-  value,
-  onChange,
-}: {
-  placeholder: string
-  value: string
-  onChange: (value: string) => void
-}) => {
-  return (
-    <div className="sticky top-0 z-10 flex items-center border-b-1 border-turtle-level3 bg-turtle-background px-3 pb-3 pt-1">
-      <div>
-        <ChainIcon className="h-[2rem] w-[2rem] text-turtle-level5" />
-      </div>
-      <input
-        type="text"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full rounded-md border-0 bg-transparent text-sm focus:border-0 focus:outline-none"
-      />
-    </div>
-  )
-}
-
 const ChainTokenSelect = ({
   chain,
   token,
@@ -104,18 +79,26 @@ const ChainTokenSelect = ({
     name: normalize(addressLookup || '') || undefined,
   })
 
-  // Add state for search values
+  // Search state
   const [chainSearch, setChainSearch] = useState('')
   const [tokenSearch, setTokenSearch] = useState('')
 
-  // Filter options based on search
+  // Filter the options based on search
   const filteredChainOptions = chain.options.filter(
     option => option.allowed && option.name.toLowerCase().includes(chainSearch.toLowerCase()),
   )
 
+  const sortedAndFilteredChainOptions = chain.orderBySelected
+    ? reorderOptionsBySelectedItem(filteredChainOptions, 'uid', chain.value?.uid)
+    : filteredChainOptions
+
   const filteredTokenOptions = token.options.filter(
     option => option.allowed && option.name.toLowerCase().includes(tokenSearch.toLowerCase()),
   )
+
+  const sortedAndFilteredTokenOptions = token.orderBySelected
+    ? reorderOptionsBySelectedItem(filteredTokenOptions, 'id', token.value?.id)
+    : filteredTokenOptions
 
   const handleChainSelect = (selectedChain: Chain) => {
     chain.onChange(selectedChain)
@@ -126,6 +109,9 @@ const ChainTokenSelect = ({
     token.onChange(selectedToken)
     setIsOpen(false)
   }
+
+  const handleChainClear = () => chain.onChange(null)
+  const handleTokenClear = () => token.onChange(null)
 
   const handleChainClick = () => {
     if (!disabled) {
@@ -142,11 +128,6 @@ const ChainTokenSelect = ({
   const shouldShowChainName =
     (!wallet?.address && (!wallet?.manualInput?.enabled || !wallet?.manualInput?.address)) ||
     (wallet?.manualInput?.enabled && !wallet.manualInput.address)
-
-  // Order the options if needed
-  const chainOptions = chain.orderBySelected
-    ? reorderOptionsBySelectedItem(chain.options, 'uid', chain.value?.uid)
-    : chain.options
 
   return (
     <div className={twMerge('relative w-full', className)}>
@@ -195,7 +176,7 @@ const ChainTokenSelect = ({
             <SearchBar placeholder="Search" value={chainSearch} onChange={setChainSearch} />
 
             <div className="max-h-[300px] overflow-y-auto">
-              {filteredChainOptions.map(option => {
+              {sortedAndFilteredChainOptions.map(option => {
                 const isSelected = chain.value?.uid === option.uid
                 return (
                   <li
@@ -218,14 +199,7 @@ const ChainTokenSelect = ({
                       <span className="text-sm">{option.name}</span>
                     </div>
 
-                    {isSelected && chain.clearable && (
-                      <ClearButton
-                        onClick={() => {
-                          chain.onChange(null)
-                          setIsOpen(false)
-                        }}
-                      />
-                    )}
+                    {isSelected && chain.clearable && <ClearButton onClick={handleChainClear} />}
                   </li>
                 )
               })}
@@ -237,7 +211,7 @@ const ChainTokenSelect = ({
             <SearchBar placeholder="Search" value={tokenSearch} onChange={setTokenSearch} />
 
             <div className="max-h-[300px] overflow-y-auto">
-              {filteredTokenOptions.map(option => {
+              {sortedAndFilteredTokenOptions.map(option => {
                 const isSelected = token.value?.id === option.id
                 return (
                   <li
@@ -260,14 +234,7 @@ const ChainTokenSelect = ({
                       <span className="text-sm">{option.name}</span>
                     </div>
 
-                    {isSelected && token.clearable && (
-                      <ClearButton
-                        onClick={() => {
-                          token.onChange(null)
-                          setIsOpen(false)
-                        }}
-                      />
-                    )}
+                    {isSelected && token.clearable && <ClearButton onClick={handleTokenClear} />}
                   </li>
                 )
               })}
@@ -292,6 +259,32 @@ const ClearButton = ({ onClick }: { onClick: () => void }) => {
         <Cross stroke={colors['turtle-secondary']} />
       </div>
     </Button>
+  )
+}
+
+const SearchBar = ({
+  placeholder,
+  value,
+  onChange,
+}: {
+  placeholder: string
+  value: string
+  onChange: (value: string) => void
+}) => {
+  return (
+    <div className="sticky top-0 z-20 flex items-center gap-3 border-b-1 border-turtle-level3 bg-turtle-background px-3 pb-3 pt-2">
+      <div className="flex h-[2rem] w-[2rem] items-center justify-center">
+        <SearchIcon className="" fill={colors['turtle-level5']} width={17} height={17} />
+      </div>
+
+      <input
+        type="text"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-md border-0 bg-transparent text-sm focus:border-0 focus:outline-none"
+      />
+    </div>
   )
 }
 
