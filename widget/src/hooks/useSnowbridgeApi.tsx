@@ -213,7 +213,7 @@ const useSnowbridgeApi = () => {
   }
 
   const handleValidationFailure = (plan: ValidationResult) => {
-    console.error('Validation failed:', plan)
+    console.log('Validation failed:', plan)
     const errorMessage =
       plan.failure && plan.failure.errors.length > 0
         ? plan.failure.errors[0].message

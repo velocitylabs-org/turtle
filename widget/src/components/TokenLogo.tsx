@@ -5,6 +5,10 @@ import { Tooltip } from './Tooltip'
 import { cn } from '@/utils/helper'
 import { Icon } from './Icon'
 
+import EthereumLogo from '@/assets/logos/ethereum.svg'
+import PolkadotLogo from '@/assets/logos/polkadot.svg'
+import SnowbridgeLogo from '@/assets/logos/snowbridge-badge.svg'
+
 interface TokenLogoProps {
   token: Token
   sourceChain: Chain | null
@@ -54,19 +58,19 @@ function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | 
 
   if (sourceChain.network == 'Ethereum' && token.origin.type === 'Ethereum')
     return {
-      logoURI: './src/assets/logos/ethereum.svg',
+      logoURI: EthereumLogo,
       text: `Ethereum ${token.symbol}`,
     }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Polkadot')
     return {
-      logoURI: './src/assets/logos/polkadot.svg',
+      logoURI: PolkadotLogo,
       text: `Polkadot ${token.symbol}`,
     }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
     switch (token.origin.bridge) {
       case 'Snowbridge':
         return {
-          logoURI: './src/assets/logos/snowbridge-badge.svg',
+          logoURI: SnowbridgeLogo,
           text: `Snowbridge ${token.symbol}`,
         }
       default:
