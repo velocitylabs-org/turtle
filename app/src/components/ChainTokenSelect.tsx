@@ -171,35 +171,37 @@ const ChainTokenSelect = ({
           <div className="flex flex-1 flex-col border-r-1 border-turtle-level3">
             <SearchBar placeholder="Search" value={chainSearch} onChange={setChainSearch} />
 
-            <div className="max-h-[16.5rem] overflow-y-auto">
-              {sortedAndFilteredChainOptions.map(option => {
-                if (!option.allowed) return null
-                const isSelected = chain.value?.uid === option.uid
-                return (
-                  <li
-                    key={option.uid}
-                    className={cn(
-                      'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                      isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                    )}
-                    onClick={() => handleChainSelect(option)}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={option.logoURI}
-                        alt={option.name}
-                        width={24}
-                        height={24}
-                        priority
-                        className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                      />
-                      <span className="text-sm">{option.name}</span>
-                    </div>
+            <div className="max-h-[15rem] overflow-y-auto">
+              <ul className="flex flex-col">
+                {sortedAndFilteredChainOptions.map(option => {
+                  if (!option.allowed) return null
+                  const isSelected = chain.value?.uid === option.uid
+                  return (
+                    <li
+                      key={option.uid}
+                      className={cn(
+                        'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                        isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                      )}
+                      onClick={() => handleChainSelect(option)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={option.logoURI}
+                          alt={option.name}
+                          width={24}
+                          height={24}
+                          priority
+                          className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                        />
+                        <span className="text-sm">{option.name}</span>
+                      </div>
 
-                    {isSelected && chain.clearable && <ClearButton onClick={handleChainClear} />}
-                  </li>
-                )
-              })}
+                      {isSelected && chain.clearable && <ClearButton onClick={handleChainClear} />}
+                    </li>
+                  )
+                })}
+              </ul>
             </div>
           </div>
 
@@ -207,29 +209,31 @@ const ChainTokenSelect = ({
           <div className="flex flex-1 flex-col">
             <SearchBar placeholder="Search" value={tokenSearch} onChange={setTokenSearch} />
 
-            <div className="max-h-[300px] overflow-y-auto">
-              {sortedAndFilteredTokenOptions.map(option => {
-                if (!option.allowed) return null
-                const isSelected = token.value?.id === option.id
+            <div className="max-h-[15rem] overflow-y-auto">
+              <ul className="flex flex-col">
+                {sortedAndFilteredTokenOptions.map(option => {
+                  if (!option.allowed) return null
+                  const isSelected = token.value?.id === option.id
 
-                return (
-                  <li
-                    key={option.id}
-                    className={cn(
-                      'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                      isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                    )}
-                    onClick={() => handleTokenSelect(option)}
-                  >
-                    <div className="flex items-center gap-2">
-                      <TokenLogo token={option} sourceChain={chain.value} />
-                      <span className="text-sm">{option.symbol}</span>
-                    </div>
+                  return (
+                    <li
+                      key={option.id}
+                      className={cn(
+                        'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                        isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                      )}
+                      onClick={() => handleTokenSelect(option)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <TokenLogo token={option} sourceChain={chain.value} />
+                        <span className="text-sm">{option.symbol}</span>
+                      </div>
 
-                    {isSelected && token.clearable && <ClearButton onClick={handleTokenClear} />}
-                  </li>
-                )
-              })}
+                      {isSelected && token.clearable && <ClearButton onClick={handleTokenClear} />}
+                    </li>
+                  )
+                })}
+              </ul>
             </div>
           </div>
         </div>
