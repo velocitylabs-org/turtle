@@ -3,8 +3,8 @@ import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 
 const ESTIMATED_DURATION = {
-  toEthereum: 4 * 60 * 60, // 30 mins in seconds
-  toPolkadot: 30 * 60, // 4h in seconds
+  toEthereum: 2 * 60 * 60, // 2 h in seconds
+  toPolkadot: 30 * 60, // 30mins in seconds
   xcmTransfer: 30, // 30 seconds
 }
 
