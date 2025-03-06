@@ -18,6 +18,7 @@ import Dropdown from './Dropdown'
 import SelectTrigger from './SelectTrigger'
 import { Cross } from './svg/Cross'
 import { SearchIcon } from './svg/SearchIcon'
+import { TokenLogo } from './TokenLogo'
 
 interface ChainTokenSelectProps {
   chain: {
@@ -93,7 +94,7 @@ const ChainTokenSelect = ({
     : filteredChainOptions
 
   const filteredTokenOptions = token.options.filter(
-    option => option.allowed && option.name.toLowerCase().includes(tokenSearch.toLowerCase()),
+    option => option.allowed && option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
   )
 
   const sortedAndFilteredTokenOptions = token.orderBySelected
@@ -110,14 +111,11 @@ const ChainTokenSelect = ({
     setIsOpen(false)
   }
 
-  const handleChainClear = () => chain.onChange(null)
-  const handleTokenClear = () => token.onChange(null)
-
-  const handleChainClick = () => {
-    if (!disabled) {
-      setIsOpen(true)
-    }
+  const handleChainClear = () => {
+    chain.onChange(null)
+    token.onChange(null)
   }
+  const handleTokenClear = () => token.onChange(null)
 
   const handleManualRecipientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (wallet?.manualInput?.onChange) {
@@ -140,11 +138,10 @@ const ChainTokenSelect = ({
           </label>
 
           <SelectTrigger
-            value={chain.value}
+            value={{ type: 'chain', chain: chain.value }}
             error={chain.error}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
-            type="chain"
             className="rounded-l-md rounded-r-none"
             triggerRef={triggerRef}
           />
@@ -157,11 +154,10 @@ const ChainTokenSelect = ({
           </label>
 
           <SelectTrigger
-            value={token.value}
+            value={{ type: 'token', token: token.value, sourceChain: chain.value }}
             error={token.error}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
-            type="token"
             className="rounded-l-none rounded-r-md border-l-0"
             triggerRef={triggerRef}
           />
@@ -177,6 +173,7 @@ const ChainTokenSelect = ({
 
             <div className="max-h-[300px] overflow-y-auto">
               {sortedAndFilteredChainOptions.map(option => {
+                if (!option.allowed) return null
                 const isSelected = chain.value?.uid === option.uid
                 return (
                   <li
@@ -212,7 +209,9 @@ const ChainTokenSelect = ({
 
             <div className="max-h-[300px] overflow-y-auto">
               {sortedAndFilteredTokenOptions.map(option => {
+                if (!option.allowed) return null
                 const isSelected = token.value?.id === option.id
+
                 return (
                   <li
                     key={option.id}
@@ -223,15 +222,8 @@ const ChainTokenSelect = ({
                     onClick={() => handleTokenSelect(option)}
                   >
                     <div className="flex items-center gap-2">
-                      <Image
-                        src={option.logoURI}
-                        alt={option.name}
-                        width={24}
-                        height={24}
-                        priority
-                        className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                      />
-                      <span className="text-sm">{option.name}</span>
+                      <TokenLogo token={option} sourceChain={chain.value} />
+                      <span className="text-sm">{option.symbol}</span>
                     </div>
 
                     {isSelected && token.clearable && <ClearButton onClick={handleTokenClear} />}
