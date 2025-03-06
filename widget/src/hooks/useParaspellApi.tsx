@@ -14,10 +14,13 @@ import { InvalidTxError } from 'polkadot-api'
 import type { TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import { handleObservableEvents } from '@/lib/papi'
+import useOngoingTransfers from './useOngoingTransfers'
 
 const useParaspellApi = () => {
   const { addNotification } = useNotification()
+  const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
   const { data: viemClient } = useConnectorClient<Config>({ chainId: moonbeam.id })
+
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
     setStatus('Loading')
@@ -151,7 +154,7 @@ const useParaspellApi = () => {
       setTimeout(() => {
         setStatus('Idle')
         params.onComplete?.()
-        const addOrUpdate = {
+        addOrUpdate({
           id: txHash,
           sourceChain: params.sourceChain,
           token: params.token,
@@ -164,8 +167,7 @@ const useParaspellApi = () => {
           environment: params.environment,
           fees: params.fees,
           status: `Submitting to ${params.sourceChain.name}`,
-        }
-        console.log('New Ongoing transfer', addOrUpdate)
+        })
         resolve(true)
       }, 2000),
     )
@@ -185,7 +187,7 @@ const useParaspellApi = () => {
 
     // Update the ongoing tx entry now containing the necessary
     // fields to be able to track its progress.
-    const addOrUpdate = {
+    addOrUpdate({
       id: event.txHash.toString(),
       sourceChain: params.sourceChain,
       token: params.token,
@@ -202,8 +204,7 @@ const useParaspellApi = () => {
       ...(extrinsicIndex && { sourceChainExtrinsicIndex: extrinsicIndex }),
       status: `Arriving at ${params.destinationChain.name}`,
       finalizedAt: new Date(),
-    }
-    console.log('Update', addOrUpdate)
+    })
   }
 
   const validate = async (params: TransferParams): Promise<DryRunResult> => {
@@ -236,8 +237,8 @@ const useParaspellApi = () => {
     console.log('Transfer error:', e)
     const cancelledByUser = txWasCancelled(sender, e)
     const message = cancelledByUser ? 'Transfer a̶p̶p̶r̶o̶v̶e̶d rejected' : 'Failed to submit the transfer'
-    console.log('txId:', txId) // To be removed
-    // if (txId) removeOngoing(txId) - Handle Ongoing Tx
+
+    if (txId) removeOngoing(txId)
     // if (!cancelledByUser) captureException(e) - Sentry
 
     addNotification({
