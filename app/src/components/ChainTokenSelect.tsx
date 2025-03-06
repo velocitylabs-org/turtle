@@ -80,6 +80,11 @@ const ChainTokenSelect = ({
 
   const handleChainSelect = (selectedChain: Chain) => {
     chain.onChange(selectedChain)
+    token.onChange(null)
+  }
+
+  const handleTokenSelect = (selectedToken: Token) => {
+    token.onChange(selectedToken)
     setIsOpen(false)
   }
 
@@ -111,7 +116,7 @@ const ChainTokenSelect = ({
         {/* Chain Selection */}
         <div className="relative flex-1">
           <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
-            Chain
+            {isOpen ? 'Chain' : floatingLabel}
           </label>
 
           <SelectTrigger
@@ -145,52 +150,104 @@ const ChainTokenSelect = ({
 
       {/* Dropdown */}
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
-        {chainOptions.map(option => {
-          if (!option.allowed) return null
-          const isSelected = chain.value?.uid === option.uid
-          return (
-            <li
-              key={option.uid}
-              className={cn(
-                'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-              )}
-              onClick={() => handleChainSelect(option)}
-            >
-              <div className="flex items-center gap-2">
-                <Image
-                  src={option.logoURI}
-                  alt={option.name}
-                  width={24}
-                  height={24}
-                  priority
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                />
-                <span className="text-sm">{option.name}</span>
-              </div>
-
-              {isSelected && chain.clearable && (
-                <Button
-                  label="Clear"
-                  size="sm"
-                  variant="outline"
-                  className="max-w-[77px] text-sm"
-                  onClick={() => {
-                    chain.onChange(null)
-                    setIsOpen(false)
-                  }}
+        <div className="flex">
+          {/* Chain options (left side) */}
+          <div className="max-h-[300px] flex-1 overflow-y-auto border-r-1 border-turtle-level3">
+            {chainOptions.map(option => {
+              if (!option.allowed) return null
+              const isSelected = chain.value?.uid === option.uid
+              return (
+                <li
+                  key={option.uid}
+                  className={cn(
+                    'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                    isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                  )}
+                  onClick={() => handleChainSelect(option)}
                 >
-                  <div className="mr-1 flex items-center gap-1 text-turtle-foreground">
-                    <Cross stroke={colors['turtle-foreground']} />
-                    <span>Clear</span>
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={option.logoURI}
+                      alt={option.name}
+                      width={24}
+                      height={24}
+                      priority
+                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                    />
+                    <span className="text-sm">{option.name}</span>
                   </div>
-                </Button>
-              )}
-            </li>
-          )
-        })}
+
+                  {isSelected && chain.clearable && (
+                    <ClearButton
+                      onClick={() => {
+                        chain.onChange(null)
+                        setIsOpen(false)
+                      }}
+                    />
+                  )}
+                </li>
+              )
+            })}
+          </div>
+
+          {/* Token options (right side) */}
+          <div className="max-h-[300px] flex-1 overflow-y-auto">
+            {token.options.map(option => {
+              if (!option.allowed) return null
+              const isSelected = token.value?.id === option.id
+              return (
+                <li
+                  key={option.id}
+                  className={cn(
+                    'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                    isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                  )}
+                  onClick={() => handleTokenSelect(option)}
+                >
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={option.logoURI}
+                      alt={option.name}
+                      width={24}
+                      height={24}
+                      priority
+                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                    />
+                    <span className="text-sm">{option.name}</span>
+                  </div>
+
+                  {isSelected && token.clearable && (
+                    <ClearButton
+                      onClick={() => {
+                        token.onChange(null)
+                        setIsOpen(false)
+                      }}
+                    />
+                  )}
+                </li>
+              )
+            })}
+          </div>
+        </div>
       </Dropdown>
     </div>
+  )
+}
+
+const ClearButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <Button
+      label="Clear"
+      size="sm"
+      variant="outline"
+      className="relative z-10 max-w-[77px] text-sm"
+      onClick={onClick}
+    >
+      <div className="mr-1 flex items-center gap-1 text-turtle-foreground">
+        <Cross stroke={colors['turtle-foreground']} />
+        <span>Clear</span>
+      </div>
+    </Button>
   )
 }
 
