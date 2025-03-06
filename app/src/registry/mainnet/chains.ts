@@ -49,7 +49,7 @@ export const Bifrost: Chain = {
   name: 'Bifrost',
   logoURI: '/logos/bifrost.svg',
   chainId: 2030,
-  destinationFeeDOT: '20000000',
+  destinationFeeDOT: '385000000',
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
   walletType: 'Substrate',
