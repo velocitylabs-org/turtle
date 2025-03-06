@@ -171,7 +171,7 @@ const ChainTokenSelect = ({
           <div className="flex flex-1 flex-col border-r-1 border-turtle-level3">
             <SearchBar placeholder="Search" value={chainSearch} onChange={setChainSearch} />
 
-            <div className="max-h-[300px] overflow-y-auto">
+            <div className="max-h-[16.5rem] overflow-y-auto">
               {sortedAndFilteredChainOptions.map(option => {
                 if (!option.allowed) return null
                 const isSelected = chain.value?.uid === option.uid
