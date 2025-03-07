@@ -196,7 +196,7 @@ const useSnowbridgeApi = () => {
       })
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
-      handleSendError(e)
+      handleSendError(sender, e)
     } finally {
       setStatus('Idle')
     }
@@ -264,52 +264,14 @@ const useSnowbridgeApi = () => {
     }
   }
 
-  // const validate = async (
-  //   direction: Direction,
-  //   snowbridgeContext: Context,
-  //   sender: Sender,
-  //   sourceChain: Chain,
-  //   token: Token,
-  //   destinationChain: Chain,
-  //   recipient: string,
-  //   amount: bigint,
-  //   setStatus: (status: Status) => void,
-  // ): Promise<ValidationResult> => {
-  //   setStatus('Validating')
-  //   switch (direction) {
-  //     case Direction.ToPolkadot:
-  //       return await toPolkadot.validateSend(
-  //         snowbridgeContext,
-  //         sender as Signer,
-  //         recipient,
-  //         token.address,
-  //         destinationChain.chainId,
-  //         amount,
-  //         BigInt(destinationChain.destinationFeeDOT || 0),
-  //       )
-
-  //     case Direction.ToEthereum: {
-  //       const account = sender as SubstrateAccount
-  //       const signer = { signer: account.pjsSigner, address: sender.address }
-  //       return await toEthereum.validateSend(
-  //         snowbridgeContext,
-  //         signer as WalletOrKeypair,
-  //         sourceChain.chainId,
-  //         recipient,
-  //         token.address,
-  //         amount,
-  //       )
-  //     }
-
-  //     default:
-  //       throw new Error('Unsupported flow')
-  //   }
-  // }
-
-  const handleSendError = (e: unknown) => {
+  const handleSendError = (sender: Sender, e: unknown) => {
     console.log('Transfer error:', e)
+    
+    const cancelledByUser = txWasCancelled(sender, e)
+    if (!cancelledByUser) captureException(e)
+
     addNotification({
-      message: 'Failed to submit the transfer',
+      message: cancelledByUser ? 'Transfer rejected' : 'Failed to submit the transfer',
       severity: NotificationSeverity.Error,
     })
   }

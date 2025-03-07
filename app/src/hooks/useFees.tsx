@@ -135,6 +135,7 @@ const useFees = (
             recipientAddress,
             amount,
           )
+          console.log("Returned from getFeeEstimate with", fee)
           if (!fee) {
             setFees(null)
             setBridgingFees(null)

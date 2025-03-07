@@ -70,6 +70,9 @@ const TxSummary: FC<TxSummaryProps> = ({
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
+      console.log("isBridgeTransfer ", isBridgeTransfer)
+      console.log("BridgingFees", bridgingFees)
+
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
         <div className="pt-3">
