@@ -32,7 +32,8 @@ function CopyAddress({ content, address }: { content: string; address: string })
   return (
     <div
       onClick={() => {
-        handleClipboardCopy(address), setShowCopyIndicator(true)
+        handleClipboardCopy(address)
+        setShowCopyIndicator(true)
       }}
       className="flex cursor-pointer items-center space-x-2 text-sm"
     >
