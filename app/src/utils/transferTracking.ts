@@ -3,30 +3,32 @@ import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/tra
 import { trackXcm } from './subscan'
 import { FromParachainTrackingResult } from '@/models/subscan'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { trackFromAhToEthTx, trackFromEthTx } from './snowbridge'
+import { historyV2 as history } from '@snowbridge/api'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
+import { resolveDirection } from '@/services/transfer'
 
 export const trackTransfers = async (
   env: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransfers,
 ) => {
   const transfers: TxTrackingResult[] = []
+  const { toPolkadot, toEthereum, withinPolkadot } = ongoingTransfers
 
-  if (ongoingTransfers.toPolkadot.length) {
-    const ethToParaTx = await trackFromEthTx(env)
-    console.log('From Eth To Polkadot transfers:', ethToParaTx.length)
-    transfers.push(...ethToParaTx)
+  for (const transfer of toPolkadot) {
+    const tx = await history.toPolkadotTransferById(transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+    if (tx) transfers.push(tx)
   }
 
-  if (ongoingTransfers.toEthereum.length) {
-    const ahToEthereumTx = await trackFromAhToEthTx(env)
-    console.log('From AH To Ethereum transfers:', ahToEthereumTx.length)
-    transfers.push(...ahToEthereumTx)
+  for (const transfer of toEthereum) {
+    const tx = await history.toEthereumTransferById(
+      transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
+    )
+    if (tx) transfers.push(tx)
   }
 
-  // Keep this until we can test & check tracking process for from Para to AH transfers
-  if (ongoingTransfers.withinPolkadot.length) {
-    const xcmTx = await trackXcm(env, ongoingTransfers.withinPolkadot)
+  // Keep as back-up in case Ocelloids does not support a transfer path
+  if (withinPolkadot.length) {
+    const xcmTx = await trackXcm(env, withinPolkadot)
     console.log('Whithin Polkadot transfers:', xcmTx.length)
     transfers.push(...xcmTx)
   }
@@ -93,6 +95,9 @@ export function getTransferStatusFromParachain(
   const isBHChannelMsgDelivered =
     'bridgeHubChannelDelivered' in transferResult &&
     transferResult.bridgeHubChannelDelivered?.success
+
+  const isBHXcmDelivered =
+    'bridgeHubXcmDelivered' in transferResult && transferResult.bridgeHubXcmDelivered?.success
   /** Destination chain is Ethereum in XCM transfer*/
   const isDestChainEthereum =
     'destChain' in transferResult && transferResult.destChain === 'ethereum'
@@ -101,7 +106,8 @@ export function getTransferStatusFromParachain(
 
   switch (transferResult.status) {
     case TransferStatus.Pending:
-      if (isBHChannelMsgDelivered || isDestChainEthereum) return 'Arriving at Ethereum'
+      if (isBHChannelMsgDelivered || isBHXcmDelivered || isDestChainEthereum)
+        return 'Arriving at Ethereum'
       if (isBridgeTransferSubmitted) return 'Arriving at Bridge Hub'
       // Default when the above conditions are not met
       return 'Pending'
@@ -174,9 +180,23 @@ export const findMatchingTransfer = (
   ongoingTransfer: StoredTransfer,
 ) =>
   transfers.find(transfer => {
-    if ('submitted' in transfer) return transfer.id === ongoingTransfer.id
+    if ('submitted' in transfer) {
+      if (
+        resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum'
+      ) {
+        return (
+          transfer.id === ongoingTransfer.parachainMessageId ||
+          ('extrinsic_hash' in transfer.submitted &&
+            transfer.submitted.extrinsic_hash === ongoingTransfer.id)
+        )
+      } else {
+        return transfer.id === ongoingTransfer.id
+      }
+    }
+
     if (ongoingTransfer.crossChainMessageHash)
       return transfer.messageHash === ongoingTransfer.crossChainMessageHash
+
     if (ongoingTransfer.sourceChainExtrinsicIndex)
       return transfer.extrinsicIndex === ongoingTransfer.sourceChainExtrinsicIndex
 

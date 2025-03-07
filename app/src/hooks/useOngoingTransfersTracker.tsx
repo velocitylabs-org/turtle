@@ -138,6 +138,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             amount: ongoing.amount,
             tokenUSDValue: ongoing.tokenUSDValue ?? 0,
             fees: ongoing.fees,
+            bridgingFee: ongoing.bridgingFee,
             sender: ongoing.sender,
             recipient: ongoing.recipient,
             date: ongoing.date,

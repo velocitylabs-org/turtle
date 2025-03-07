@@ -6,7 +6,7 @@ import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getRelayNode, getParaSpellNode } from '@/utils/paraspell'
+import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -15,7 +15,12 @@ import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { getRoute } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
+import { PolkadotTokens } from '@/registry/mainnet/tokens'
+import { isAssetHub } from '@/registry/helpers'
+import { getBalance } from './useBalance'
 
+// NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
+// When bridging from AssetHub, the basic fees already take the bridging fees into account.
 export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
   | { origin: 'Polkadot'; fee: AmountInfo }
@@ -29,8 +34,9 @@ const useFees = (
   recipientAddress?: string,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [ethereumTxfees, setEthereumTxFees] = useState<AmountInfo | null>(null)
+  const [bridgingFee, setBridgingFees] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
+  const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
     useSnowbridgeContext()
@@ -40,7 +46,7 @@ const useFees = (
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
       setFees(null)
-      setEthereumTxFees(null)
+      setBridgingFees(null)
       return
     }
 
@@ -52,14 +58,14 @@ const useFees = (
 
     try {
       setLoading(true)
+      setBridgingFees(null)
 
       switch (route.sdk) {
         case 'ParaSpellApi': {
-          const relay = getRelayNode(env)
-          const sourceChainNode = getParaSpellNode(sourceChain, relay)
+          const sourceChainNode = getParaSpellNode(sourceChain)
           if (!sourceChainNode) throw new Error('Source chain id not found')
 
-          const destinationChainNode = getParaSpellNode(destinationChain, relay)
+          const destinationChainNode = getParaSpellNode(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
           const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
@@ -70,7 +76,6 @@ const useFees = (
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
             accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,
-            ahAccount: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]),
           })
 
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
@@ -82,6 +87,28 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
+          if (
+            destinationChain.network === 'Ethereum' &&
+            !isAssetHub(sourceChain) &&
+            snowbridgeContext
+          ) {
+            const bridgeFeeToken = PolkadotTokens.DOT
+            const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
+            const bridgingFee = await getCachedBridgingFee()
+
+            setBridgingFees({
+              amount: bridgingFee,
+              token: bridgeFeeToken,
+              inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+            })
+
+            if (senderAddress) {
+              const balance =
+                (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
+              setCanPayAdditionalFees(bridgingFee < balance)
+            }
+          }
+
           break
         }
 
@@ -92,7 +119,7 @@ const useFees = (
             isSnowbridgeContextLoading
           ) {
             setFees(null)
-            setEthereumTxFees(null)
+            setBridgingFees(null)
             return
           }
 
@@ -110,14 +137,14 @@ const useFees = (
           )
           if (!fee) {
             setFees(null)
-            setEthereumTxFees(null)
+            setBridgingFees(null)
             return
           }
 
           switch (fee.origin) {
             case 'Ethereum': {
-              setFees(fee.bridging)
-              setEthereumTxFees(fee.execution)
+              setFees(fee.execution)
+              setBridgingFees(fee.bridging)
               break
             }
             case 'Polkadot': {
@@ -133,7 +160,7 @@ const useFees = (
       }
     } catch (error) {
       setFees(null)
-      setEthereumTxFees(null)
+      setBridgingFees(null)
       captureException(error)
       console.error(error)
       addNotification({
@@ -162,7 +189,28 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, ethereumTxfees, loading, refetch: fetchFees, canPayFees }
+  return { fees, bridgingFee, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
 }
 
 export default useFees
+
+/**
+ * Fetches and caches the bridging fee of a transfer from AH -> Ethereum.
+ * It serves as a cached layer.
+ *
+ * @returns - A Promise resolving to the current bridging fee value.
+ */
+const getCachedBridgingFee = async (): Promise<bigint> => {
+  const response = await fetch(`/api/bridging-fee`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const { error } = await response.json()
+    throw new Error(error || `Failed to fetch bridging fee`)
+  }
+  return await response.json().then(BigInt)
+}
