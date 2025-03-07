@@ -9,12 +9,7 @@ import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
-import {
-  Context,
-  toEthereumV2,
-  toPolkadotV2,
-  assetsV2,
-} from '@snowbridge/api'
+import { Context, toEthereumV2, toPolkadotV2, assetsV2 } from '@snowbridge/api'
 import { switchChain } from '@wagmi/core'
 import { Signer } from 'ethers'
 import { mainnet } from 'wagmi/chains'
@@ -100,8 +95,6 @@ const useSnowbridgeApi = () => {
       if (checkValidation(validation) === 'Failed') return
 
       await submitTransfer(sender, transfer, params, direction, setStatus)
-
-    
     } catch (e) {
       console.error('Transfer initialization error:', e)
       addNotification({
@@ -138,7 +131,9 @@ const useSnowbridgeApi = () => {
 
       switch (direction) {
         case Direction.ToPolkadot: {
-          response = await (sender as Signer).sendTransaction((transfer as toPolkadotV2.Transfer).tx)
+          response = await (sender as Signer).sendTransaction(
+            (transfer as toPolkadotV2.Transfer).tx,
+          )
           const receipt = await response.wait(1)
           if (!receipt) {
             throw Error(`Transaction ${response.hash} not included`)
@@ -147,9 +142,11 @@ const useSnowbridgeApi = () => {
           break
         }
 
-        case Direction.ToEthereum: {          
+        case Direction.ToEthereum: {
           //todo(nuno): fix this
-          response = await (sender as Signer).sendTransaction((transfer as toPolkadotV2.Transfer).tx)
+          response = await (sender as Signer).sendTransaction(
+            (transfer as toPolkadotV2.Transfer).tx,
+          )
           const receipt = await response.wait(1)
           if (!receipt) {
             throw Error(`Transaction ${response.hash} not included`)
@@ -266,7 +263,7 @@ const useSnowbridgeApi = () => {
 
   const handleSendError = (sender: Sender, e: unknown) => {
     console.log('Transfer error:', e)
-    
+
     const cancelledByUser = txWasCancelled(sender, e)
     if (!cancelledByUser) captureException(e)
 

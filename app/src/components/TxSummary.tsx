@@ -40,10 +40,10 @@ const TxSummary: FC<TxSummaryProps> = ({
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
-  if (!fees && !loading) return null
+  if (!loading && !fees && !bridgingFees) return null
 
   const renderContent = () => {
-    if (loading || !fees) {
+    if (loading) {
       return (
         <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
@@ -65,48 +65,48 @@ const TxSummary: FC<TxSummaryProps> = ({
     }
 
     const isAmountTooLow =
-      transferAmount && transferAmount.inDollars < fees.inDollars * AMOUNT_VS_FEE_RATIO
+      transferAmount && transferAmount.inDollars < (fees?.inDollars ?? 0) * AMOUNT_VS_FEE_RATIO
 
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
-
-      console.log("isBridgeTransfer ", isBridgeTransfer)
-      console.log("BridgingFees", bridgingFees)
 
     return (
       <div className={cn('tx-summary p-4 pt-0', className)}>
         <div className="pt-3">
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>
-            <li className="mt-4 flex items-start justify-between border-turtle-level2">
-              <div className="items-left flex flex-col">
-                <div className="text-sm font-bold">{bridgingFees ? 'Execution fee' : 'Fee'} </div>
-                {!canPayFees && (
-                  <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
-                    <ExclamationMark
-                      width={16}
-                      height={16}
-                      fill={colors['turtle-foreground']}
-                      className="mr-2"
-                    />
-                    <span>You don&apos;t have enough {fees.token.symbol}</span>
-                  </div>
-                )}
-              </div>
-              <div className="items-right flex">
-                <div>
-                  <div className="flex items-center text-right text-xl text-turtle-foreground">
-                    {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
-                  </div>
-
-                  {fees.inDollars > 0 && (
-                    <div className="text-right text-sm text-turtle-level4">
-                      ${formatAmount(fees.inDollars)}
+            {/* Execution fees */}
+            {fees && (
+              <li className="mt-4 flex items-start justify-between border-turtle-level2">
+                <div className="items-left flex flex-col">
+                  <div className="text-sm font-bold">{bridgingFees ? 'Execution fee' : 'Fee'} </div>
+                  {!canPayFees && (
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                      <ExclamationMark
+                        width={16}
+                        height={16}
+                        fill={colors['turtle-foreground']}
+                        className="mr-2"
+                      />
+                      <span>You don&apos;t have enough {fees.token.symbol}</span>
                     </div>
                   )}
                 </div>
-              </div>
-            </li>
+                <div className="items-right flex">
+                  <div>
+                    <div className="flex items-center text-right text-xl text-turtle-foreground">
+                      {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
+                    </div>
+
+                    {fees.inDollars > 0 && (
+                      <div className="text-right text-sm text-turtle-level4">
+                        ${formatAmount(fees.inDollars)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            )}
 
             {/* Bridging fees */}
             {isBridgeTransfer && bridgingFees && (

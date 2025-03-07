@@ -135,8 +135,9 @@ const useFees = (
             recipientAddress,
             amount,
           )
-          console.log("Returned from getFeeEstimate with", fee)
+          console.log('Returned from getFeeEstimate with', fee)
           if (!fee) {
+            console.log('No fees so it will reset them')
             setFees(null)
             setBridgingFees(null)
             return

@@ -46,7 +46,7 @@ export async function getContext(environment: environment.SnowbridgeEnvironment)
     ethereum: {
       beacon_url: config.BEACON_HTTP_API,
       ethChainId,
-      ethChains: { '1': config.ETHEREUM_CHAINS[1](ALCHEMY_API_KEY)},
+      ethChains: { '1': config.ETHEREUM_CHAINS[1](ALCHEMY_API_KEY) },
     },
     polkadot: {
       assetHubParaId: config.ASSET_HUB_PARAID,
