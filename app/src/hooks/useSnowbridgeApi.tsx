@@ -43,14 +43,7 @@ const useSnowbridgeApi = () => {
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    const {
-      sender,
-      sourceChain,
-      token,
-      destinationChain,
-      recipient,
-      amount,
-    } = params
+    const { sender, sourceChain, token, destinationChain, recipient, amount } = params
 
     try {
       if (snowbridgeContext === undefined) {

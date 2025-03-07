@@ -85,7 +85,7 @@ export const getFeeEstimate = async (
         }
 
         if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
-          console.log("Return here", bridgingFee)
+          console.log('Return here', bridgingFee)
           return {
             origin: 'Ethereum',
             bridging: bridgingFee,
