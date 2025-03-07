@@ -17,7 +17,7 @@ import { useEnsAvatar } from 'wagmi'
 import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Dropdown from './Dropdown'
-import SelectTrigger from './SelectTrigger'
+import ChainTrigger from './SelectTrigger'
 import ChevronDown from './svg/ChevronDown'
 import { Cross } from './svg/Cross'
 import { SearchIcon } from './svg/SearchIcon'
@@ -150,12 +150,12 @@ const ChainTokenSelect = ({
             {isOpen ? 'Chain' : floatingLabel}
           </label>
 
-          <SelectTrigger
+          <ChainTrigger
             value={{ type: 'chain', chain: chain.value }}
             error={chain.error}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
-            className="rounded-l-md rounded-r-none rounded-bl-none"
+            className="rounded-md rounded-bl-none rounded-br-none"
             triggerRef={triggerRef}
           />
         </div>
