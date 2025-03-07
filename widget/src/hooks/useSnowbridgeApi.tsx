@@ -14,10 +14,13 @@ import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { WalletOrKeypair } from '@snowbridge/api/dist/toEthereum'
 import { getSenderAddress } from '@/utils/address'
 import { getTokenPrice } from '@/utils/token'
+import useOngoingTransfers from './useOngoingTransfers'
+import { StoredTransfer } from '@/models/transfer'
 
 type ValidationResult = toEthereum.SendValidationResult | toPolkadot.SendValidationResult
 
 const useSnowbridgeApi = () => {
+  const { addOrUpdate } = useOngoingTransfers()
   const { addNotification } = useNotification()
   const { snowbridgeContext } = useSnowbridgeContext()
 
@@ -189,8 +192,27 @@ const useSnowbridgeApi = () => {
       const tokenUSDValue = (await getTokenPrice(token))?.usd ?? 0
       const date = new Date()
 
-      const addOrUpdate = {
-        id: sendResult.success!.messageId ?? 'todo', // TODO(nuno): what's a good fallback?
+      const getTxHash = (sendResult: toEthereum.SendResult | toPolkadot.SendResult) => {
+        if (sendResult.failure) return
+        switch (direction) {
+          case Direction.ToPolkadot: {
+            return sendResult.success?.assetHub && 'txHash' in sendResult.success.assetHub
+              ? sendResult.success?.assetHub.txHash
+              : undefined
+          }
+
+          case Direction.ToEthereum: {
+            return sendResult?.success?.ethereum && 'transactionHash' in sendResult.success.ethereum
+              ? sendResult.success?.ethereum.transactionHash
+              : undefined
+          }
+          default:
+            throw new Error('Snowbridge Tx Hash not found')
+        }
+      }
+
+      addOrUpdate({
+        id: sendResult.success!.messageId ?? '',
         sourceChain,
         token,
         tokenUSDValue,
@@ -200,10 +222,23 @@ const useSnowbridgeApi = () => {
         recipient,
         date,
         environment,
-        sendResult,
+        sendResult: getTxHash(sendResult),
         fees,
-      }
-      console.log('New Ongoing transfer', addOrUpdate)
+      } satisfies StoredTransfer)
+
+      // trackTransferMetrics({
+      //   id: sendResult.success?.messageId,
+      //   sender: senderAddress,
+      //   sourceChain,
+      //   token,
+      //   amount,
+      //   destinationChain,
+      //   tokenUSDValue,
+      //   fees,
+      //   recipient,
+      //   date,
+      //   environment,
+      // })
     } catch (e) {
       // if (!txWasCancelled(sender, e)) captureException(e) - Sentry
       handleSendError(e)

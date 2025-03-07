@@ -33,6 +33,7 @@
     "@paraspell/sdk": "8.3.1",
     "@polkadot/api": "^15.7.2",
     "@polkadot/extension-dapp": "^0.58.4",
+    "@polkadot/react-identicon": "^3.12.2",
     "@polkadot/types": "^15.7.2",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.2",

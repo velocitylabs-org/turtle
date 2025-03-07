@@ -1,4 +1,36 @@
+import { Environment } from '@/stores/environmentStore'
+import { Chain } from './chain'
 import { Token } from './token'
+
+export interface RawTransfer {
+  /** Substrate extrinsic hash or Ethereum transaction hash */
+  id: string
+  sourceChain: Chain
+  destChain: Chain
+  sender: string
+  recipient: string
+  token: Token
+  date: Date
+  crossChainMessageHash?: string
+  parachainMessageId?: string
+  sourceChainExtrinsicIndex?: string
+}
+export interface StoredTransfer extends RawTransfer {
+  // Params
+  tokenUSDValue?: number
+  amount: string
+  fees: AmountInfo
+  // Contextual
+  environment: Environment // to access context
+  // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
+  // that way we can support different fields, for example for xcm-only transfers in the future.
+  sendResult?: string //toEthereum.SendResult | toPolkadot.SendResult
+  // A subscan unique Id shared accross chains to track ongoing transfers
+  uniqueTrackingId?: string
+  status?: string
+  // WithinPolkadot transfer is considered as finalized
+  finalizedAt?: Date
+}
 
 export interface AmountInfo {
   /* The amount in the `token` currency */
