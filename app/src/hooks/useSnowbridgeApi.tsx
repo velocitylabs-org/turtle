@@ -50,10 +50,6 @@ const useSnowbridgeApi = () => {
       destinationChain,
       recipient,
       amount,
-      // environment,
-      // fees,
-      // bridgingFee,
-      // onComplete,
     } = params
 
     try {

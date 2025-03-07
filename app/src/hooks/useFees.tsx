@@ -19,6 +19,8 @@ import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { isAssetHub } from '@/registry/helpers'
 import { getBalance } from './useBalance'
 
+// NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
+// When bridging from AssetHub, the basic fees already take the bridging fees into account.
 export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
   | { origin: 'Polkadot'; fee: AmountInfo }
@@ -85,8 +87,6 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
-          // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
-          // When bridging from AssetHub, the basic fees already take the bridging fees into account.
           if (
             destinationChain.network === 'Ethereum' &&
             !isAssetHub(sourceChain) &&
