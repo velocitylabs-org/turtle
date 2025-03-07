@@ -147,15 +147,13 @@ export const OngoingTransferDialog = ({
                     {formatAmount(toHuman(transfer.amount, transfer.token), 'Long')}{' '}
                     {transfer.token.symbol}
                   </div>
-                  {typeof transfer.tokenUSDValue == 'number' && (
-                    <div className="text-turtle-level4">
-                      $
-                      {formatAmount(
-                        toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
-                        'Long',
-                      )}
-                    </div>
-                  )}
+                  <div className="text-turtle-level4">
+                    $
+                    {formatAmount(
+                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
+                      'Long',
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -169,11 +167,9 @@ export const OngoingTransferDialog = ({
                   {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Long')}{' '}
                   {transfer.fees.token.symbol}
                 </div>
-                {typeof transfer.tokenUSDValue == 'number' && (
-                  <div className="text-turtle-level4">
-                    ${formatAmount(transfer.fees.inDollars, 'Long')}
-                  </div>
-                )}
+                <div className="text-turtle-level4">
+                  ${formatAmount(transfer.fees.inDollars, 'Long')}
+                </div>
               </div>
             </div>
 
@@ -189,11 +185,9 @@ export const OngoingTransferDialog = ({
                     )}{' '}
                     {transfer.bridgingFee.token.symbol}
                   </div>
-                  {typeof transfer.tokenUSDValue == 'number' && (
-                    <div className="text-turtle-level4">
-                      ${formatAmount(transfer.bridgingFee.inDollars, 'Long')}
-                    </div>
-                  )}
+                  <div className="text-turtle-level4">
+                    ${formatAmount(transfer.bridgingFee.inDollars, 'Long')}
+                  </div>
                 </div>
               </div>
             )}

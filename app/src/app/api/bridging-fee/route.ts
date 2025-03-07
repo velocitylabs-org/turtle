@@ -5,7 +5,7 @@ import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 
 /**
- * Fetch the AH -> Ethereum bridging fee
+ * Fetch the AH to Ethereum bridging fee
  *
  * It serves as a cached layer to reduce the latency of requesting this value.
  *
