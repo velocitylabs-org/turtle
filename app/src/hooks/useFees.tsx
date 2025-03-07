@@ -128,6 +128,7 @@ const useFees = (
 
           const fee = await getFeeEstimate(
             token,
+            sourceChain,
             destinationChain,
             direction,
             snowbridgeContext,

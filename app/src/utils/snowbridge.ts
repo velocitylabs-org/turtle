@@ -1,4 +1,4 @@
-import { assetsV2, Context, toEthereum, toPolkadotV2 } from '@snowbridge/api'
+import { assetsV2, Context, toEthereum, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import { Token } from '@/models/token'
 import { safeConvertAmount, toHuman } from './transfer'
 import { Direction } from '@/services/transfer'
@@ -38,6 +38,7 @@ export const estimateTransactionFees = async (
 
 export const getFeeEstimate = async (
   token: Token,
+  sourceChain: Chain,
   destinationChain: Chain,
   direction: Direction,
   context: Context,
@@ -45,9 +46,20 @@ export const getFeeEstimate = async (
   recipientAddress?: string,
   amount?: number | null,
 ): Promise<Fee | null> => {
+  const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(context))
+
   switch (direction) {
     case Direction.ToEthereum: {
-      const amount = await toEthereum.getSendFee(context)
+      const amount = await toEthereumV2
+        .getDeliveryFee(
+          {
+            assetHub: await context.assetHub(),
+            source: await context.parachain(sourceChain.chainId),
+          },
+          sourceChain.chainId,
+          registry,
+        )
+        .then(x => x.totalFeeInDot)
       const feeTokenInDollars = (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
 
       return {
@@ -62,7 +74,6 @@ export const getFeeEstimate = async (
 
     case Direction.ToPolkadot: {
       try {
-        const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(context))
         const feeToken = EthereumTokens.ETH
         const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
 
