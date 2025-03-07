@@ -215,20 +215,11 @@ const useSnowbridgeApi = () => {
   ): Promise<TransferType | undefined> => {
     setStatus('Validating')
 
+    //todo(nuno): DRY and cache this
     const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(snowbridgeContext))
 
     switch (direction) {
       case Direction.ToPolkadot: {
-        //   .createTransfer(
-        //     registry,
-        //     ETHEREUM_ACCOUNT_PUBLIC,
-        //     POLKADOT_ACCOUNT_PUBLIC,
-        //     WETH_CONTRACT,
-        //     destinationChainId,
-        //     amount,
-        //     fee,
-        // );
-
         const fee = await toPolkadotV2.getDeliveryFee(
           {
             gateway: snowbridgeContext.gateway(),

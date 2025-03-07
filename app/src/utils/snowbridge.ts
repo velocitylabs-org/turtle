@@ -1,5 +1,5 @@
 import { ContractTransaction } from 'ethers'
-import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
+import { assetsV2, Context, toEthereum, toPolkadot, toPolkadotV2 } from '@snowbridge/api'
 import { Token } from '@/models/token'
 import { safeConvertAmount, toHuman } from './transfer'
 import { Direction } from '@/services/transfer'
@@ -67,14 +67,19 @@ export const getFeeEstimate = async (
     }
 
     case Direction.ToPolkadot: {
+      const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(context))
       const feeToken = EthereumTokens.ETH
       const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
-      const fee = await toPolkadot.getSendFee(
-        context,
+      const fee = await toPolkadotV2.getDeliveryFee(
+        {
+          gateway: context.gateway(),
+          assetHub: await context.assetHub(),
+          destination: await context.parachain(destinationChain.chainId),
+        },
+        registry,
         token.address,
         destinationChain.chainId,
-        BigInt(destinationChain.destinationFeeDOT ?? 0),
-      )
+      ).then(x => x.destinationExecutionFeeDOT) //todo(nuno): sum up the execution fee on the dest chain as well?
 
       const bridgingFee: AmountInfo = {
         amount: fee,
