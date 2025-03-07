@@ -55,9 +55,9 @@ interface ChainTokenSelectProps {
   wallet?: {
     address?: string
     walletButton?: ReactNode
-    manualInput?: {
+    manualAddressInput?: {
       enabled: boolean
-      address: string
+      value: string
       onChange: (address: string) => void
     }
   }
@@ -130,15 +130,16 @@ const ChainTokenSelect = ({
   }
   const handleTokenClear = () => token.onChange(null)
 
-  const handleManualRecipientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (wallet?.manualInput?.onChange) {
-      wallet.manualInput.onChange(e.target.value)
+  const handleManualAddressInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (wallet?.manualAddressInput?.onChange) {
+      wallet.manualAddressInput.onChange(e.target.value)
     }
   }
 
   const shouldShowChainName =
-    (!wallet?.address && (!wallet?.manualInput?.enabled || !wallet?.manualInput?.address)) ||
-    (wallet?.manualInput?.enabled && !wallet.manualInput.address)
+    (!wallet?.address &&
+      (!wallet?.manualAddressInput?.enabled || !wallet?.manualAddressInput?.value)) ||
+    (wallet?.manualAddressInput?.enabled && !wallet.manualAddressInput.value)
 
   return (
     <div className={twMerge('relative w-full', className)}>

@@ -217,6 +217,15 @@ const Transfer: FC = () => {
                       wallet={{
                         address: sourceWallet?.sender?.address,
                         walletButton: <WalletButton walletType={sourceChain?.walletType} />,
+                        manualAddressInput: {
+                          enabled: manualRecipient.enabled,
+                          value: manualRecipient.address,
+                          onChange: (newValue: string) =>
+                            handleManualRecipientChange({
+                              address: newValue,
+                              enabled: manualRecipient.enabled,
+                            }),
+                        },
                       }}
                       disabled={transferStatus !== 'Idle'}
                       className="z-40"

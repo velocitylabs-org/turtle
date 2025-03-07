@@ -1,7 +1,9 @@
 import { Chain } from '@/models/chain'
+import { ManualRecipient } from '@/models/select'
 import { Token } from '@/models/token'
 import { cn } from '@/utils/cn'
 import Image from 'next/image'
+import { ReactNode } from 'react'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
@@ -12,15 +14,20 @@ interface SelectTriggerProps {
   value:
     | { type: 'chain'; chain: Chain | null }
     | { type: 'token'; token: Token | null; sourceChain: Chain | null }
+  onClick: () => void
+  trailingAction?: ReactNode
   error?: string
   disabled?: boolean
-  onClick: () => void
   className?: string
   /** The ref can be used to close the dropdown when the user clicks outside of it */
   triggerRef?: React.RefObject<HTMLDivElement | null>
+  ensAvatarUrl?: string
+  manualAddressInput?: ManualRecipient
+  accountName?: string
 }
 
 // TODO: rename to ChainTrigger depending on which design version we stick to
+// TODO: cleanup after final design is agreed
 const SelectTrigger = ({
   value,
   error,
@@ -28,6 +35,9 @@ const SelectTrigger = ({
   onClick,
   className,
   triggerRef,
+  ensAvatarUrl,
+  manualAddressInput,
+  accountName,
 }: SelectTriggerProps) => {
   return (
     <Tooltip content={error}>
@@ -79,6 +89,16 @@ const SelectTrigger = ({
             </>
           )}
           <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+          {ensAvatarUrl && (
+            <Image
+              src={ensAvatarUrl}
+              alt="ENS Avatar"
+              width={24}
+              height={24}
+              className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
+            />
+          )}
+          {!manualAddressInput?.enabled && !!value && accountName}
         </div>
       </div>
     </Tooltip>
