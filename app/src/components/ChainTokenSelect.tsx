@@ -1,12 +1,14 @@
 'use client'
 import useLookupName from '@/hooks/useLookupName'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
+import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { WithAllowedTag } from '@/registry/helpers'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
+import NumberFlow from '@number-flow/react'
 import Image from 'next/image'
 import { ReactNode, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -16,9 +18,15 @@ import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Dropdown from './Dropdown'
 import SelectTrigger from './SelectTrigger'
+import ChevronDown from './svg/ChevronDown'
 import { Cross } from './svg/Cross'
 import { SearchIcon } from './svg/SearchIcon'
+import TokenIcon from './svg/TokenIcon'
 import { TokenLogo } from './TokenLogo'
+import { Tooltip } from './Tooltip'
+import VerticalDivider from './VerticalDivider'
+
+const maxDollars = 100000000000 // 100B
 
 interface ChainTokenSelectProps {
   chain: {
@@ -33,6 +41,7 @@ interface ChainTokenSelectProps {
     value: Token | null
     onChange: (token: Token | null) => void
     options: WithAllowedTag<Token>[]
+    sourceChainToDetermineOriginBanner: Chain | null
     error?: string
     clearable?: boolean
     orderBySelected?: boolean
@@ -72,13 +81,17 @@ const ChainTokenSelect = ({
   const dropdownRef = useRef<HTMLDivElement>(null)
   useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
-  // Chain and wallet related hooks
+  // Chain and wallet hooks
   const addressLookup = useLookupName(chain.value?.network, wallet?.address?.toLowerCase())
   const walletAddressShortened = wallet?.address ? truncateAddress(wallet.address, 4, 4) : ''
   const accountName = addressLookup ? addressLookup : walletAddressShortened
   const { data: ensAvatarUrl } = useEnsAvatar({
     name: normalize(addressLookup || '') || undefined,
   })
+
+  // Token hooks
+  const { price } = useTokenPrice(token.value)
+  const inDollars = !!amount?.value && price ? price * amount.value : undefined
 
   // Search state
   const [chainSearch, setChainSearch] = useState('')
@@ -142,13 +155,13 @@ const ChainTokenSelect = ({
             error={chain.error}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
-            className="rounded-l-md rounded-r-none"
+            className="rounded-l-md rounded-r-none rounded-bl-none"
             triggerRef={triggerRef}
           />
         </div>
 
         {/* Token Selection */}
-        <div className="relative flex-1">
+        {/*  <div className="relative flex-1">
           <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
             {isOpen ? 'Token' : ''}
           </label>
@@ -158,11 +171,86 @@ const ChainTokenSelect = ({
             error={token.error}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
-            className="rounded-l-none rounded-r-md border-l-0"
+            className="rounded-l-none rounded-r-md rounded-br-none border-l-0"
             triggerRef={triggerRef}
           />
-        </div>
+        </div> */}
       </div>
+
+      {/* Amount Input */}
+      {/* TODO: contains 2 Token fields for now as we don't know which one we need to show yet */}
+      <Tooltip content={amount?.error}>
+        {/* Token Trigger */}
+        <div
+          ref={triggerRef}
+          onClick={() => setIsOpen(true)}
+          className={cn(
+            'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
+            !disabled && 'cursor-pointer',
+            disabled && 'opacity-30',
+            amount?.error && 'border-turtle-error',
+          )}
+        >
+          {/* Trigger Content */}
+          <div className="flex h-[3.5rem] flex-grow items-center gap-1">
+            <div className="flex items-center gap-1" data-cy="token-select-trigger">
+              {token.value ? (
+                <>
+                  <TokenLogo
+                    token={token.value}
+                    sourceChain={token.sourceChainToDetermineOriginBanner}
+                  />
+                  <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
+                    {token.value.symbol}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <TokenIcon />
+                  Token
+                </>
+              )}
+            </div>
+            <ChevronDown strokeWidth={0.2} className="ml-1" />
+            <VerticalDivider />
+            <div className="align-center ml-1 flex flex-col">
+              <input
+                data-cy="amount-input"
+                disabled={disabled}
+                type="number"
+                className={cn(
+                  'bg-transparent text-sm focus:border-0 focus:outline-none min-[350px]:text-base sm:text-xl',
+                  inDollars && 'animate-slide-up-slight',
+                  amount?.error && 'text-turtle-error',
+                )}
+                placeholder={'Amount'}
+                value={amount?.value ?? ''}
+                onChange={e => amount?.onChange?.(Number(e.target.value) || null)}
+                onClick={e => e.stopPropagation()}
+                onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
+                autoFocus
+              />
+              {inDollars && (
+                <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
+                  <NumberFlow
+                    value={Math.min(inDollars, maxDollars)} // Ensure the value doesn't exceed the max
+                    prefix="$"
+                    format={{
+                      notation: 'compact',
+                      maximumFractionDigits: 3,
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Trailing component. E.g. Max Button */}
+          {amount?.trailingAction && (
+            <div className="absolute right-0 ml-2 mr-3 bg-white">{amount.trailingAction}</div>
+          )}
+        </div>
+      </Tooltip>
 
       {/* Dropdown */}
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
@@ -278,7 +366,7 @@ const SearchBar = ({
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-md border-0 bg-transparent text-sm focus:border-0 focus:outline-none"
+        className="w-full rounded-md border-0 bg-transparent text-sm placeholder:text-turtle-level5 focus:border-0 focus:outline-none"
       />
     </div>
   )

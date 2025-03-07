@@ -192,6 +192,7 @@ const Transfer: FC = () => {
                         onChange: token =>
                           tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
                         options: tokenOptions,
+                        sourceChainToDetermineOriginBanner: sourceChain,
                         error: errors.tokenAmount?.token?.message,
                         clearable: true,
                         orderBySelected: true,
@@ -207,6 +208,7 @@ const Transfer: FC = () => {
                             disabled={shouldDisableMaxButton}
                             variant="outline"
                             size="sm"
+                            className="min-w-[40px]"
                           >
                             Max
                           </Button>

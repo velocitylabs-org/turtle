@@ -20,6 +20,7 @@ interface SelectTriggerProps {
   triggerRef?: React.RefObject<HTMLDivElement | null>
 }
 
+// TODO: rename to ChainTrigger depending on which design version we stick to
 const SelectTrigger = ({
   value,
   error,
@@ -41,7 +42,7 @@ const SelectTrigger = ({
         )}
         data-cy={`${value.type}-select-trigger`}
       >
-        <div className="flex h-[3.0rem] flex-grow items-center gap-2">
+        <div className="flex h-[3.5rem] flex-grow items-center gap-2">
           {value.type === 'chain' ? (
             // Chain display
             value.chain ? (
