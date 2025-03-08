@@ -1,4 +1,4 @@
-import { assetsV2, Context, toEthereum, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { assetsV2, Context, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import { Token } from '@/models/token'
 import { safeConvertAmount, toHuman } from './transfer'
 import { Direction } from '@/services/transfer'
