@@ -199,6 +199,7 @@ const Transfer: FC = () => {
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: errors.tokenAmount?.amount?.message || tokenAmountError,
+                        placeholder: amountPlaceholder,
                         trailingAction: (
                           <Button
                             onClick={handleMaxButtonClick}

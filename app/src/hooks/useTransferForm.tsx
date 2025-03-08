@@ -32,7 +32,7 @@ interface FormInputs {
 const initValues: FormInputs = {
   sourceChain: null,
   destinationChain: null,
-  tokenAmount: { token: PolkadotTokens.DOT, amount: null }, // TODO: hardcoded for now
+  tokenAmount: { token: null, amount: null },
   manualRecipient: { enabled: false, address: '' },
 }
 

@@ -52,6 +52,8 @@ interface ChainTokenSelectProps {
     onChange: (amount: number | null) => void
     error?: string
     trailingAction?: ReactNode
+    /** The placeholder to display when no amount is entered. Could be the max balance available. */
+    placeholder?: string
   }
   wallet?: {
     address?: string
@@ -150,26 +152,10 @@ const ChainTokenSelect = ({
             trailingAction={wallet?.walletButton}
           />
         </div>
-
-        {/* Token Selection */}
-        {/*  <div className="relative flex-1">
-          <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
-            {isOpen ? 'Token' : ''}
-          </label>
-
-          <SelectTrigger
-            value={{ type: 'token', token: token.value, sourceChain: chain.value }}
-            error={token.error}
-            disabled={disabled}
-            onClick={() => setIsOpen(true)}
-            className="rounded-l-none rounded-r-md rounded-br-none border-l-0"
-            triggerRef={triggerRef}
-          />
-        </div> */}
       </div>
 
       {/* Amount Input */}
-      {/* TODO: contains 2 Token fields for now as we don't know which one we need to show yet */}
+      {/* TODO: extract into component */}
       <Tooltip content={amount?.error}>
         {/* Token Trigger */}
         <div
@@ -214,7 +200,7 @@ const ChainTokenSelect = ({
                   inDollars && 'animate-slide-up-slight',
                   amount?.error && 'text-turtle-error',
                 )}
-                placeholder={'Amount'}
+                placeholder={amount?.placeholder ?? 'Amount'}
                 value={amount?.value ?? ''}
                 onChange={e => amount?.onChange?.(Number(e.target.value) || null)}
                 onClick={e => e.stopPropagation()}
