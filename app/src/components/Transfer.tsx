@@ -3,7 +3,6 @@ import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
-import { Chain } from '@/models/chain'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
 import { cn } from '@/utils/cn'
@@ -12,7 +11,6 @@ import {
   getAllowedSourceChains,
   getAllowedTokens,
 } from '@/utils/routes'
-import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -21,7 +19,6 @@ import { FC, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import ActionBanner from './ActionBanner'
 import Button from './Button'
-import ChainSelect from './ChainSelect'
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
 import SendButton from './SendButton'
@@ -219,12 +216,8 @@ const Transfer: FC = () => {
                         walletButton: <WalletButton walletType={sourceChain?.walletType} />,
                         manualAddressInput: {
                           enabled: manualRecipient.enabled,
-                          value: manualRecipient.address,
-                          onChange: (newValue: string) =>
-                            handleManualRecipientChange({
-                              address: newValue,
-                              enabled: manualRecipient.enabled,
-                            }),
+                          address: manualRecipient.address,
+                          onChange: handleManualRecipientChange,
                         },
                       }}
                       disabled={transferStatus !== 'Idle'}
@@ -251,13 +244,7 @@ const Transfer: FC = () => {
               tokenAmount!.token,
             )
 
-            const reorderedOptions = reorderOptionsBySelectedItem<
-              Chain & {
-                allowed: boolean
-              }
-            >(options, 'uid', destinationChain?.uid)
-
-            return (
+            /* return (
               <ChainSelect
                 {...field}
                 onChange={handleDestinationChainChange}
@@ -277,7 +264,9 @@ const Transfer: FC = () => {
                 className="z-30"
                 disabled={transferStatus !== 'Idle' || !sourceChain || !tokenAmount?.token}
               />
-            )
+            ) */
+
+            return <div {...field}></div>
           }}
         />
       </div>

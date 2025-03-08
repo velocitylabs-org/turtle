@@ -2,7 +2,7 @@
 import useLookupName from '@/hooks/useLookupName'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import { Chain } from '@/models/chain'
-import { ManualRecipient, SelectProps } from '@/models/select'
+import { ManualAddressInput, SelectProps } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import Image from 'next/image'
@@ -21,8 +21,8 @@ import VerticalDivider from './VerticalDivider'
 
 interface ChainSelectProps extends SelectProps<Chain> {
   walletAddress?: string
-  manualRecipient?: ManualRecipient
-  onChangeManualRecipient?: (newVal: ManualRecipient) => void
+  manualRecipient?: ManualAddressInput
+  onChangeManualRecipient?: (newVal: ManualAddressInput) => void
 }
 
 const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(

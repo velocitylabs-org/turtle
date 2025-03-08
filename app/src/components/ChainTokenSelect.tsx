@@ -3,6 +3,7 @@ import useLookupName from '@/hooks/useLookupName'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
+import { ManualAddressInput } from '@/models/select'
 import { Token } from '@/models/token'
 import { WithAllowedTag } from '@/registry/helpers'
 import { truncateAddress } from '@/utils/address'
@@ -16,8 +17,8 @@ import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
 import { colors } from '../../tailwind.config'
 import Button from './Button'
+import ChainTrigger from './ChainTrigger'
 import Dropdown from './Dropdown'
-import ChainTrigger from './SelectTrigger'
 import ChevronDown from './svg/ChevronDown'
 import { Cross } from './svg/Cross'
 import { SearchIcon } from './svg/SearchIcon'
@@ -55,11 +56,7 @@ interface ChainTokenSelectProps {
   wallet?: {
     address?: string
     walletButton?: ReactNode
-    manualAddressInput?: {
-      enabled: boolean
-      value: string
-      onChange: (address: string) => void
-    }
+    manualAddressInput?: ManualAddressInput
   }
   /** The label to display above the whole component when dropdown is not open */
   floatingLabel?: string
@@ -130,17 +127,6 @@ const ChainTokenSelect = ({
   }
   const handleTokenClear = () => token.onChange(null)
 
-  const handleManualAddressInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (wallet?.manualAddressInput?.onChange) {
-      wallet.manualAddressInput.onChange(e.target.value)
-    }
-  }
-
-  const shouldShowChainName =
-    (!wallet?.address &&
-      (!wallet?.manualAddressInput?.enabled || !wallet?.manualAddressInput?.value)) ||
-    (wallet?.manualAddressInput?.enabled && !wallet.manualAddressInput.value)
-
   return (
     <div className={twMerge('relative w-full', className)}>
       {/* Triggers */}
@@ -152,12 +138,16 @@ const ChainTokenSelect = ({
           </label>
 
           <ChainTrigger
-            value={{ type: 'chain', chain: chain.value }}
+            value={chain.value}
             error={chain.error}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
             className="rounded-md rounded-bl-none rounded-br-none"
             triggerRef={triggerRef}
+            accountName={accountName}
+            ensAvatar={ensAvatarUrl}
+            manualAddressInput={wallet?.manualAddressInput}
+            trailingAction={wallet?.walletButton}
           />
         </div>
 

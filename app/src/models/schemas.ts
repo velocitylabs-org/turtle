@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { Chain } from '@/models/chain'
-import { ManualRecipient, TokenAmount } from '@/models/select'
+import { ManualAddressInput, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 
 const originSchema = z.discriminatedUnion('type', [
@@ -42,7 +42,7 @@ export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
     .refine(val => val !== null, { message: 'Required', path: ['amount'] }),
 })
 
-export const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
+export const manualRecipientSchema: z.ZodType<Omit<ManualAddressInput, 'onChange'>> = z.object({
   enabled: z.boolean(),
   address: z.string(),
 })
