@@ -1,5 +1,4 @@
-import { ContractTransaction } from 'ethers'
-import { Context, toEthereum, toPolkadot } from '@snowbridge/api'
+import { assetsV2, Context, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import { Token } from '@/models/token'
 import { safeConvertAmount, toHuman } from './transfer'
 import { Direction } from '@/services/transfer'
@@ -20,30 +19,26 @@ import { Fee } from '@/hooks/useFees'
  * @returns An object containing the tx estimate gas fee in the fee token and its USD value.
  */
 export const estimateTransactionFees = async (
-  tx: ContractTransaction,
+  transfer: toPolkadotV2.Transfer,
   context: Context,
   feeToken: Token,
   feeTokenUSDValue: number,
 ): Promise<AmountInfo> => {
-  // Fetch gas estimation and fee data
-  const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
-    context.ethereum().estimateGas(tx),
-    context.ethereum().getFeeData(),
-  ])
-
-  // Get effective fee per gas & get USD fee value
-  const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
-  const fee = txGas * effectiveFeePerGas
+  const { tx } = transfer
+  const estimatedGas = await context.ethereum().estimateGas(tx)
+  const feeData = await context.ethereum().getFeeData()
+  const executionFee = (feeData.gasPrice ?? 0n) * estimatedGas
 
   return {
-    amount: fee,
+    amount: executionFee,
     token: feeToken,
-    inDollars: toHuman(fee, feeToken) * feeTokenUSDValue,
+    inDollars: toHuman(executionFee, feeToken) * feeTokenUSDValue,
   }
 }
 
 export const getFeeEstimate = async (
   token: Token,
+  sourceChain: Chain,
   destinationChain: Chain,
   direction: Direction,
   context: Context,
@@ -51,9 +46,20 @@ export const getFeeEstimate = async (
   recipientAddress?: string,
   amount?: number | null,
 ): Promise<Fee | null> => {
+  const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(context))
+
   switch (direction) {
     case Direction.ToEthereum: {
-      const amount = await toEthereum.getSendFee(context)
+      const amount = await toEthereumV2
+        .getDeliveryFee(
+          {
+            assetHub: await context.assetHub(),
+            source: await context.parachain(sourceChain.chainId),
+          },
+          sourceChain.chainId,
+          registry,
+        )
+        .then(x => x.totalFeeInDot)
       const feeTokenInDollars = (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
 
       return {
@@ -67,42 +73,48 @@ export const getFeeEstimate = async (
     }
 
     case Direction.ToPolkadot: {
-      const feeToken = EthereumTokens.ETH
-      const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
-      const fee = await toPolkadot.getSendFee(
-        context,
-        token.address,
-        destinationChain.chainId,
-        BigInt(destinationChain.destinationFeeDOT ?? 0),
-      )
-
-      const bridgingFee: AmountInfo = {
-        amount: fee,
-        token: feeToken,
-        inDollars: toHuman(fee, feeToken) * feeTokenInDollars,
-      }
-
-      if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
-        return {
-          origin: 'Ethereum',
-          bridging: bridgingFee,
-          execution: null,
-        }
-      }
-
       try {
+        const feeToken = EthereumTokens.ETH
+        const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
+
+        //1. Get bridging fee
+        const fee = await toPolkadotV2.getDeliveryFee(
+          {
+            gateway: context.gateway(),
+            assetHub: await context.assetHub(),
+            destination: await context.parachain(destinationChain.chainId),
+          },
+          registry,
+          token.address,
+          destinationChain.chainId,
+        )
+
+        const bridgingFee: AmountInfo = {
+          amount: fee.totalFeeInWei,
+          token: feeToken,
+          inDollars: toHuman(fee.totalFeeInWei, feeToken) * feeTokenInDollars,
+        }
+
+        if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
+          console.log('Return here', bridgingFee)
+          return {
+            origin: 'Ethereum',
+            bridging: bridgingFee,
+            execution: null,
+          }
+        }
+
+        // 2. Get execution fee
         // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
-        const { tx } = await toPolkadot.createTx(
-          context.config.appContracts.gateway,
+        const tx = await toPolkadotV2.createTransfer(
+          registry,
           senderAddress,
           recipientAddress,
           token.address,
           destinationChain.chainId,
           safeConvertAmount(amount, token) ?? 0n,
-          bridgingFee.amount as bigint,
-          BigInt(destinationChain.destinationFeeDOT ?? 0),
+          fee,
         )
-
         const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
 
         return {
