@@ -45,7 +45,8 @@ const Transfer: FC = () => {
     handleMaxButtonClick,
     sourceChain,
     destinationChain,
-    tokenAmount,
+    sourceTokenAmount,
+    destinationTokenAmount,
     manualRecipient,
     sourceWallet,
     destinationWallet,
@@ -72,7 +73,7 @@ const Transfer: FC = () => {
   } = useErc20Allowance({
     context: snowbridgeContext,
     network: sourceChain?.network,
-    tokenAmount,
+    tokenAmount: sourceTokenAmount,
     owner: sourceWallet?.sender?.address,
     refetchFees,
   })
@@ -85,24 +86,24 @@ const Transfer: FC = () => {
     env: environment,
     context: snowbridgeContext,
     chain: sourceChain,
-    tokenAmount,
+    tokenAmount: sourceTokenAmount,
     owner: sourceWallet?.sender?.address,
   })
 
   const requiresErc20SpendApproval =
-    erc20SpendAllowance !== undefined && erc20SpendAllowance < tokenAmount!.amount!
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount!
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
     sourceChain?.network === 'Ethereum' &&
-    tokenAmount?.token?.symbol === 'wETH' &&
-    !!tokenAmount?.amount &&
+    sourceTokenAmount?.token?.symbol === 'wETH' &&
+    !!sourceTokenAmount?.amount &&
     !!balanceData &&
     !!ethBalance &&
     // The user wants to send more than the balance available
-    tokenAmount.amount > Number(balanceData.formatted) &&
+    sourceTokenAmount.amount > Number(balanceData.formatted) &&
     // but they have enough ETH to make it possible
-    tokenAmount.amount - Number(balanceData.formatted) < ethBalance &&
+    sourceTokenAmount.amount - Number(balanceData.formatted) < ethBalance &&
     // We don't want two ActionBanners showing up at once
     !requiresErc20SpendApproval
 
@@ -111,11 +112,18 @@ const Transfer: FC = () => {
 
   // How much balance is missing considering the desired transfer amount
   const missingBalance =
-    tokenAmount?.amount && balanceData ? tokenAmount.amount - Number(balanceData.formatted) : 0
+    sourceTokenAmount?.amount && balanceData
+      ? sourceTokenAmount.amount - Number(balanceData.formatted)
+      : 0
 
   let amountPlaceholder: string
   if (loadingBalance) amountPlaceholder = 'Loading...'
-  else if (!sourceWallet || !tokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable)
+  else if (
+    !sourceWallet ||
+    !sourceTokenAmount?.token ||
+    !sourceWallet.isConnected ||
+    !isBalanceAvailable
+  )
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
@@ -135,24 +143,38 @@ const Transfer: FC = () => {
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
-    !tokenAmount?.token ||
+    !sourceTokenAmount?.token ||
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
     transferStatus !== 'Idle'
 
   const shouldDisplayTxSummary =
-    tokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 
   const shouldDisplayUsdtRevokeAllowance =
-    erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
+    erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
-  // Move options calculation outside render and memoize
-  const chainOptions = useMemo(() => getAllowedSourceChains(environment), [environment])
+  const sourceChainOptions = useMemo(() => getAllowedSourceChains(environment), [environment])
 
-  // Memoize token options
-  const tokenOptions = useMemo(
+  const destinationChainOptions = useMemo(
+    () => getAllowedDestinationChains(environment, sourceChain, sourceTokenAmount?.token ?? null),
+    [environment, sourceChain, sourceTokenAmount?.token],
+  )
+
+  // TODO: create function to get source token options
+  const sourceTokenOptions = useMemo(
     () =>
       getAllowedTokens(environment, sourceChain, destinationChain).map(token => ({
+        ...token,
+        allowed: token.allowed,
+      })),
+    [environment, sourceChain, destinationChain],
+  )
+
+  // TODO: create function to get destination token options
+  const destinationTokenOptions = useMemo(
+    () =>
+      getAllowedTokens(environment, destinationChain, null).map(token => ({
         ...token,
         allowed: token.allowed,
       })),
@@ -171,7 +193,7 @@ const Transfer: FC = () => {
           render={({ field: chainField }) => {
             return (
               <Controller
-                name="tokenAmount"
+                name="sourceTokenAmount"
                 control={control}
                 render={({ field: tokenField }) => {
                   return (
@@ -179,7 +201,7 @@ const Transfer: FC = () => {
                       chain={{
                         ...chainField,
                         onChange: handleSourceChainChange,
-                        options: chainOptions,
+                        options: sourceChainOptions,
                         error: errors.sourceChain?.message,
                         clearable: true,
                         orderBySelected: true,
@@ -188,9 +210,9 @@ const Transfer: FC = () => {
                         value: tokenField.value?.token ?? null,
                         onChange: token =>
                           tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
-                        options: tokenOptions,
+                        options: sourceTokenOptions,
                         sourceChainToDetermineOriginBanner: sourceChain,
-                        error: errors.tokenAmount?.token?.message,
+                        error: errors.sourceTokenAmount?.token?.message,
                         clearable: true,
                         orderBySelected: true,
                       }}
@@ -198,7 +220,7 @@ const Transfer: FC = () => {
                         value: tokenField.value?.amount ?? null,
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                        error: errors.tokenAmount?.amount?.message || tokenAmountError,
+                        error: errors.sourceTokenAmount?.amount?.message || tokenAmountError,
                         placeholder: amountPlaceholder,
                         trailingAction: (
                           <Button
@@ -238,36 +260,58 @@ const Transfer: FC = () => {
         <Controller
           name="destinationChain"
           control={control}
-          render={({ field }) => {
-            const options = getAllowedDestinationChains(
-              environment,
-              sourceChain,
-              tokenAmount!.token,
-            )
-
-            /* return (
-              <ChainSelect
-                {...field}
-                onChange={handleDestinationChainChange}
-                options={reorderedOptions}
-                floatingLabel="To"
-                placeholder="Destination"
-                manualRecipient={manualRecipient}
-                onChangeManualRecipient={handleManualRecipientChange}
-                error={manualRecipient.enabled ? manualRecipientError : ''}
-                trailing={
-                  shouldDisplayRecipientWalletButton && (
-                    <WalletButton walletType={destinationChain?.walletType} />
-                  )
-                }
-                clearable
-                walletAddress={destinationWallet?.sender?.address}
-                className="z-30"
-                disabled={transferStatus !== 'Idle' || !sourceChain || !tokenAmount?.token}
+          render={({ field: chainField }) => {
+            return (
+              <Controller
+                name="destinationTokenAmount"
+                control={control}
+                render={({ field: tokenField }) => (
+                  <ChainTokenSelect
+                    chain={{
+                      ...chainField,
+                      onChange: handleDestinationChainChange,
+                      options: destinationChainOptions,
+                      error: errors.destinationChain?.message,
+                      clearable: true,
+                      orderBySelected: true,
+                    }}
+                    token={{
+                      value: tokenField.value?.token ?? null,
+                      onChange: token =>
+                        tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                      options: destinationTokenOptions,
+                      error: errors.destinationTokenAmount?.token?.message,
+                      clearable: true,
+                      orderBySelected: true,
+                      sourceChainToDetermineOriginBanner: sourceChain,
+                    }}
+                    amount={{
+                      value: tokenField.value?.amount ?? null,
+                      onChange: amount =>
+                        tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                      error: errors.destinationTokenAmount?.amount?.message,
+                      placeholder: 'Amount',
+                    }}
+                    wallet={{
+                      address: destinationWallet?.sender?.address,
+                      walletButton: shouldDisplayRecipientWalletButton ? (
+                        <WalletButton walletType={destinationChain?.walletType} />
+                      ) : undefined,
+                      manualAddressInput: {
+                        enabled: manualRecipient.enabled,
+                        address: manualRecipient.address,
+                        onChange: handleManualRecipientChange,
+                      },
+                    }}
+                    disabled={
+                      transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token
+                    }
+                    className="z-30"
+                    floatingLabel="To"
+                  />
+                )}
               />
-            ) */
-
-            return <div {...field}></div>
+            )
           }}
         />
       </div>
@@ -372,7 +416,7 @@ const Transfer: FC = () => {
       {shouldDisplayTxSummary && (
         <TxSummary
           loading={loadingFees}
-          tokenAmount={tokenAmount}
+          tokenAmount={sourceTokenAmount}
           fees={fees}
           additionalfees={ethereumTxfees}
           durationEstimate={durationEstimate}
