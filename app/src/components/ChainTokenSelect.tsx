@@ -250,76 +250,145 @@ const ChainTokenSelect = ({
         <div className="flex">
           {/* Chain options (left side) */}
           <div className="flex flex-1 flex-col border-r-1 border-turtle-level3">
-            <SearchBar placeholder="Search" value={chainSearch} onChange={setChainSearch} />
-
-            <div className="max-h-[15rem] overflow-y-auto">
-              <ul className="flex flex-col">
-                {sortedAndFilteredChainOptions.map(option => {
-                  if (!option.allowed) return null
-                  const isSelected = chain.value?.uid === option.uid
-                  return (
-                    <li
-                      key={option.uid}
-                      className={cn(
-                        'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                        isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                      )}
-                      onClick={() => handleChainSelect(option)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <Image
-                          src={option.logoURI}
-                          alt={option.name}
-                          width={24}
-                          height={24}
-                          priority
-                          className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                        />
-                        <span className="text-sm">{option.name}</span>
-                      </div>
-
-                      {isSelected && chain.clearable && <ClearButton onClick={handleChainClear} />}
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
+            <ChainList
+              searchString={chainSearch}
+              setSearchString={setChainSearch}
+              options={sortedAndFilteredChainOptions}
+              selectedChain={chain.value}
+              clearable={chain.clearable}
+              onSelect={handleChainSelect}
+              onClear={handleChainClear}
+            />
           </div>
 
           {/* Token options (right side) */}
           <div className="flex flex-1 flex-col">
-            <SearchBar placeholder="Search" value={tokenSearch} onChange={setTokenSearch} />
-
-            <div className="max-h-[15rem] overflow-y-auto">
-              <ul className="flex flex-col">
-                {sortedAndFilteredTokenOptions.map(option => {
-                  if (!option.allowed) return null
-                  const isSelected = token.value?.id === option.id
-
-                  return (
-                    <li
-                      key={option.id}
-                      className={cn(
-                        'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                        isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                      )}
-                      onClick={() => handleTokenSelect(option)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <TokenLogo token={option} sourceChain={chain.value} />
-                        <span className="text-sm">{option.symbol}</span>
-                      </div>
-
-                      {isSelected && token.clearable && <ClearButton onClick={handleTokenClear} />}
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
+            <TokenList
+              searchString={tokenSearch}
+              setSearchString={setTokenSearch}
+              options={sortedAndFilteredTokenOptions}
+              selectedToken={token.value}
+              clearable={token.clearable}
+              sourceChainToDetermineOriginBanner={token.sourceChainToDetermineOriginBanner}
+              onSelect={handleTokenSelect}
+              onClear={handleTokenClear}
+            />
           </div>
         </div>
       </Dropdown>
     </div>
+  )
+}
+
+interface ChainListProps {
+  searchString: string
+  setSearchString: (value: string) => void
+  options: WithAllowedTag<Chain>[]
+  selectedChain: Chain | null
+  clearable?: boolean
+  onSelect: (chain: Chain) => void
+  onClear: () => void
+}
+
+const ChainList = ({
+  searchString,
+  setSearchString,
+  options,
+  selectedChain,
+  clearable,
+  onSelect,
+  onClear,
+}: ChainListProps) => {
+  return (
+    <>
+      <SearchBar placeholder="Search" value={searchString} onChange={setSearchString} />
+      <div className="max-h-[15rem] overflow-y-auto">
+        <ul className="flex flex-col">
+          {options.map(option => {
+            if (!option.allowed) return null
+            const isSelected = selectedChain?.uid === option.uid
+            return (
+              <li
+                key={option.uid}
+                className={cn(
+                  'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                  isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                )}
+                onClick={() => onSelect(option)}
+              >
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={option.logoURI}
+                    alt={option.name}
+                    width={24}
+                    height={24}
+                    priority
+                    className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                  />
+                  <span className="text-sm">{option.name}</span>
+                </div>
+
+                {isSelected && clearable && <ClearButton onClick={onClear} />}
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </>
+  )
+}
+
+interface TokenListProps {
+  searchString: string
+  setSearchString: (value: string) => void
+  options: WithAllowedTag<Token>[]
+  selectedToken: Token | null
+  clearable?: boolean
+  sourceChainToDetermineOriginBanner: Chain | null
+  onSelect: (token: Token) => void
+  onClear: () => void
+}
+
+const TokenList = ({
+  searchString,
+  setSearchString,
+  options,
+  selectedToken,
+  clearable,
+  sourceChainToDetermineOriginBanner,
+  onSelect,
+  onClear,
+}: TokenListProps) => {
+  return (
+    <>
+      <SearchBar placeholder="Search" value={searchString} onChange={setSearchString} />
+      <div className="max-h-[15rem] overflow-y-auto">
+        <ul className="flex flex-col">
+          {options.map(option => {
+            if (!option.allowed) return null
+            const isSelected = selectedToken?.id === option.id
+
+            return (
+              <li
+                key={option.id}
+                className={cn(
+                  'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                  isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                )}
+                onClick={() => onSelect(option)}
+              >
+                <div className="flex items-center gap-2">
+                  <TokenLogo token={option} sourceChain={sourceChainToDetermineOriginBanner} />
+                  <span className="text-sm">{option.symbol}</span>
+                </div>
+
+                {isSelected && clearable && <ClearButton onClick={onClear} />}
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </>
   )
 }
 
