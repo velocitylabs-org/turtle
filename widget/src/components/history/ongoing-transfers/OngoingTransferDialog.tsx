@@ -95,9 +95,6 @@ export const OngoingTransferDialog = ({
           >
             <div className="my-2 flex items-center justify-between">
               <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
-              <p className="text-normal text-turtle-secondary">
-                {formatOngoingTransferDate(transfer.date)}
-              </p>
             </div>
 
             <TransferEstimate
