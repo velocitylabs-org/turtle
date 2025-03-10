@@ -1,3 +1,4 @@
+import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import { StoredTransfer } from '@/models/transfer'
 
@@ -5,7 +6,7 @@ const OngoingTransfers = ({ ongoingTransfers }: { ongoingTransfers: StoredTransf
   ongoingTransfers.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   // const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
   // useOngoingTransfersCleaner(ongoingTransfers)
-  // useOcelloidsSubscribe(ongoingTransfers)
+  useOcelloidsSubscribe(ongoingTransfers)
 
   return (
     <div
