@@ -103,7 +103,7 @@ export const OngoingTransferDialog = ({
             <TransferEstimate
               transfer={transfer}
               direction={direction}
-              outlinedProgressBar={true}
+              outlinedProgressBar={false}
             />
           </div>
 

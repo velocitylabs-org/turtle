@@ -40,3 +40,30 @@ export interface AmountInfo {
   /* the amount converted to USD dollars */
   inDollars: number
 }
+
+export enum TxStatus {
+  Succeeded = 'Succeeded',
+  Failed = 'failed',
+  Undefined = 'Undefined',
+}
+
+export type TransferResult = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Undefined
+
+export type CompletedTransfer = {
+  id: string
+  result: TransferResult
+  token: Token
+  tokenUSDValue?: number
+  sourceChain: Chain
+  destChain: Chain
+  amount: string
+  fees: AmountInfo
+  minTokenRecieved?: string
+  minTokenRecievedValue?: number
+  sender: string
+  recipient: string
+  date: Date
+  explorerLink?: string
+  errors?: string[]
+}
+export type TransfersByDate = Record<string, CompletedTransfer[]>
