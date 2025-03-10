@@ -1,6 +1,5 @@
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
-import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
@@ -57,8 +56,7 @@ const useFees = (
     const feeToken = getNativeToken(sourceChain)
 
     try {
-      // setLoading(true)
-      // setBridgingFees(null)
+      setBridgingFees(null)
 
       switch (route.sdk) {
         case 'ParaSpellApi': {
@@ -120,15 +118,6 @@ const useFees = (
             setBridgingFees(null)
             return
           }
-
-          console.log(
-            'ALL READY > ',
-            sourceChain,
-            senderAddress,
-            destinationChain,
-            recipientAddress,
-            amount,
-          )
 
           setLoading(true)
           const direction = resolveDirection(sourceChain, destinationChain)
