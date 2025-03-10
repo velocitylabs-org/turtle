@@ -46,6 +46,7 @@ interface ChainTokenSelectProps {
     error?: string
     clearable?: boolean
     orderBySelected?: boolean
+    disabled?: boolean
   }
   amount?: {
     value: number | null
@@ -195,7 +196,7 @@ const ChainTokenSelect = ({
             <div className="align-center ml-1 flex flex-col">
               <input
                 data-cy="amount-input"
-                disabled={disabled}
+                disabled={disabled || token.disabled}
                 type="number"
                 className={cn(
                   'bg-transparent text-sm focus:border-0 focus:outline-none min-[350px]:text-base sm:text-xl',

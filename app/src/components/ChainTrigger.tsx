@@ -63,7 +63,7 @@ const ChainTrigger = ({
         )}
         data-cy="chain-select-trigger"
       >
-        <div className="flex h-[3.5rem] flex-grow items-center gap-2">
+        <div className="flex h-[3.5rem] flex-grow items-center gap-1">
           {value ? (
             <>
               <Image
@@ -81,7 +81,7 @@ const ChainTrigger = ({
             </>
           ) : (
             <>
-              <ChainIcon className="h-[2rem] w-[2rem]" />
+              <ChainIcon />
               <span>Chain</span>
             </>
           )}

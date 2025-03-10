@@ -284,13 +284,14 @@ const Transfer: FC = () => {
                       clearable: true,
                       orderBySelected: true,
                       sourceChainToDetermineOriginBanner: sourceChain,
+                      disabled: true,
                     }}
                     amount={{
                       value: tokenField.value?.amount ?? null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: 'Amount',
+                      placeholder: 'Receive Amount',
                     }}
                     wallet={{
                       address: destinationWallet?.sender?.address,
