@@ -86,11 +86,7 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
-          if (
-            destinationChain.network === 'Ethereum' &&
-            !isAssetHub(sourceChain) &&
-            snowbridgeContext
-          ) {
+          if (destinationChain.network === 'Ethereum' && snowbridgeContext) {
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
             const bridgingFee = await getCachedBridgingFee()

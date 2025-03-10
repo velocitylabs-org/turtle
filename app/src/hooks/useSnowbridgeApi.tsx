@@ -9,7 +9,7 @@ import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
-import { Context, toEthereumV2, toPolkadotV2, assetsV2 } from '@snowbridge/api'
+import { toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import { switchChain } from '@wagmi/core'
 import { Signer } from 'ethers'
 import { mainnet } from 'wagmi/chains'
@@ -18,6 +18,7 @@ import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { Sender, Status, TransferParams } from './useTransfer'
 import { isAssetHub } from '@/registry/helpers'
+import { SnowbridgeContext } from '@/models/snowbridge'
 
 type TransferType = toPolkadotV2.Transfer | toEthereumV2.Transfer
 
@@ -190,7 +191,7 @@ const useSnowbridgeApi = () => {
 
   const createTx = async (
     direction: Direction,
-    snowbridgeContext: Context,
+    snowbridgeContext: SnowbridgeContext,
     sender: Sender,
     // sourceChain: Chain,
     token: Token,
@@ -201,9 +202,6 @@ const useSnowbridgeApi = () => {
   ): Promise<TransferType | undefined> => {
     setStatus('Validating')
 
-    //todo(nuno): DRY and cache this
-    const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(snowbridgeContext))
-
     switch (direction) {
       case Direction.ToPolkadot: {
         const fee = await toPolkadotV2.getDeliveryFee(
@@ -212,13 +210,13 @@ const useSnowbridgeApi = () => {
             assetHub: await snowbridgeContext.assetHub(),
             destination: await snowbridgeContext.parachain(destinationChain.chainId),
           },
-          registry,
+          snowbridgeContext.registry,
           token.address,
           destinationChain.chainId,
         )
 
         return await toPolkadotV2.createTransfer(
-          registry,
+          snowbridgeContext.registry,
           sender.address,
           recipient,
           token.address,

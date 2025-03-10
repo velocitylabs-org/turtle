@@ -62,7 +62,7 @@ export const routes: Route[] = [
   {
     from: AssetHub.uid,
     to: Ethereum.uid,
-    sdk: 'SnowbridgeApi',
+    sdk: 'ParaSpellApi',
     tokens: [
       EthereumTokens.WETH.id,
       EthereumTokens.WBTC.id,
