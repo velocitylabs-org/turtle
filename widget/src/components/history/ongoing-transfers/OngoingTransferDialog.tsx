@@ -16,6 +16,8 @@ import Account from '@/components/Account'
 import { TokenLogo } from '@/components/TokenLogo'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import TransferEstimate from './OngoingTransferEstimate'
+import { getExplorerLink } from '@/utils/explorer'
+import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -25,6 +27,7 @@ export const OngoingTransferDialog = ({
   status?: string
 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const explorerLink = getExplorerLink(transfer)
 
   const getStatus = (status?: string) => {
     if (typeof status === 'string') return status
@@ -171,7 +174,7 @@ export const OngoingTransferDialog = ({
             </div>
           </div>
 
-          {/* {explorerLink && (
+          {explorerLink && (
             <a
               href={explorerLink}
               target="_blank"
@@ -181,7 +184,7 @@ export const OngoingTransferDialog = ({
             >
               <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
             </a>
-          )} */}
+          )}
         </div>
       </DialogContent>
     </Dialog>
