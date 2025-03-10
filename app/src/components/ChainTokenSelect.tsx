@@ -62,6 +62,7 @@ interface ChainTokenSelectProps {
     address?: string
     walletButton?: ReactNode
     manualAddressInput?: ManualAddressInput
+    error?: string
   }
   /** The label to display above the whole component when dropdown is not open */
   floatingLabel?: string
@@ -155,6 +156,7 @@ const ChainTokenSelect = ({
             value={chain.value}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
+            error={wallet?.error}
             className={cn(
               'rounded-md rounded-bl-none rounded-br-none',
               amount?.error && 'border-b-0',

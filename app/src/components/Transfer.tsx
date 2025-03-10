@@ -291,6 +291,7 @@ const Transfer: FC = () => {
                     }}
                     wallet={{
                       address: destinationWallet?.sender?.address,
+                      error: manualRecipient.enabled ? manualRecipientError : '',
                       walletButton: shouldDisplayRecipientWalletButton ? (
                         <WalletButton walletType={destinationChain?.walletType} />
                       ) : undefined,
