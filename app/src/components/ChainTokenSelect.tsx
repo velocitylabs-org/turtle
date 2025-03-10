@@ -11,7 +11,7 @@ import { cn } from '@/utils/cn'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import NumberFlow from '@number-flow/react'
 import Image from 'next/image'
-import { ReactNode, useRef, useState } from 'react'
+import { ReactNode, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
@@ -46,6 +46,8 @@ interface ChainTokenSelectProps {
     error?: string
     clearable?: boolean
     orderBySelected?: boolean
+    /** The token displayed at the top or below the selected token in the dropdown. Can be used to make it easier to select the source token again. */
+    priorityToken?: Token | null
     disabled?: boolean
   }
   amount?: {
@@ -110,9 +112,18 @@ const ChainTokenSelect = ({
     option => option.allowed && option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
   )
 
-  const sortedAndFilteredTokenOptions = token.orderBySelected
-    ? reorderOptionsBySelectedItem(filteredTokenOptions, 'id', token.value?.id)
-    : filteredTokenOptions
+  // Sort the options by priority token and then by selected token
+  const sortedAndFilteredTokenOptions = useMemo(() => {
+    let sorted = filteredTokenOptions
+    // move priority token to the top if it exists
+    if (token.priorityToken)
+      sorted = reorderOptionsBySelectedItem(filteredTokenOptions, 'id', token.priorityToken.id)
+
+    // move selected token to the top if it exists
+    if (token.orderBySelected) sorted = reorderOptionsBySelectedItem(sorted, 'id', token.value?.id)
+
+    return sorted
+  }, [filteredTokenOptions, token.orderBySelected, token.value?.id, token.priorityToken?.id])
 
   const handleChainSelect = (selectedChain: Chain) => {
     chain.onChange(selectedChain)
@@ -336,9 +347,9 @@ const SearchBar = ({
   onChange: (value: string) => void
 }) => {
   return (
-    <div className="sticky top-0 z-20 flex items-center gap-3 border-b-1 border-turtle-level3 bg-turtle-background px-3 pb-3 pt-2">
-      <div className="flex h-[2rem] w-[2rem] items-center justify-center">
-        <SearchIcon className="" fill={colors['turtle-level5']} width={17} height={17} />
+    <div className="sticky top-0 z-20 flex items-center gap-2 border-b-1 border-turtle-level3 bg-turtle-background px-3 py-3">
+      <div className="flex h-[2rem] w-[2rem] shrink-0 items-center justify-center">
+        <SearchIcon fill={colors['turtle-level5']} width={17} height={17} />
       </div>
 
       <input

@@ -237,11 +237,6 @@ const Transfer: FC = () => {
                       wallet={{
                         address: sourceWallet?.sender?.address,
                         walletButton: <WalletButton walletType={sourceChain?.walletType} />,
-                        manualAddressInput: {
-                          enabled: manualRecipient.enabled,
-                          address: manualRecipient.address,
-                          onChange: handleManualRecipientChange,
-                        },
                       }}
                       disabled={transferStatus !== 'Idle'}
                       className="z-40"
@@ -284,6 +279,7 @@ const Transfer: FC = () => {
                       clearable: true,
                       orderBySelected: true,
                       sourceChainToDetermineOriginBanner: sourceChain,
+                      priorityToken: sourceTokenAmount?.token,
                       disabled: true,
                     }}
                     amount={{
