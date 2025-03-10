@@ -141,10 +141,12 @@ const ChainTokenSelect = ({
 
           <ChainTrigger
             value={chain.value}
-            error={chain.error}
             disabled={disabled}
             onClick={() => setIsOpen(true)}
-            className="rounded-md rounded-bl-none rounded-br-none"
+            className={cn(
+              'rounded-md rounded-bl-none rounded-br-none',
+              amount?.error && 'border-b-0',
+            )}
             triggerRef={triggerRef}
             accountName={accountName}
             ensAvatar={ensAvatarUrl}
@@ -165,7 +167,7 @@ const ChainTokenSelect = ({
             'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
             !disabled && 'cursor-pointer',
             disabled && 'opacity-30',
-            amount?.error && 'border-turtle-error',
+            amount?.error && 'border-1 border-turtle-error',
           )}
         >
           {/* Trigger Content */}

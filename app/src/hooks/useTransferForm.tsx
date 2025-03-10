@@ -62,7 +62,7 @@ const useTransferForm = () => {
   const sourceTokenAmount = useWatch({ control, name: 'sourceTokenAmount' })
   const destinationTokenAmount = useWatch({ control, name: 'destinationTokenAmount' })
 
-  const [tokenAmountError, setTokenAmountError] = useState<string>('') // validation on top of zod
+  const [sourceTokenAmountError, setSourceTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
@@ -95,7 +95,7 @@ const useTransferForm = () => {
 
   const isFormValid =
     isValidZodSchema &&
-    !tokenAmountError &&
+    !sourceTokenAmountError &&
     !manualRecipientError &&
     sourceWallet?.isConnected &&
     !loadingBalance &&
@@ -266,16 +266,16 @@ const useTransferForm = () => {
 
   // validate token amount
   useEffect(() => {
-    if (!sourceTokenAmount?.amount || !sourceWallet?.isConnected) setTokenAmountError('')
+    if (!sourceTokenAmount?.amount || !sourceWallet?.isConnected) setSourceTokenAmountError('')
     else if (balanceData && balanceData.value === BigInt(0))
-      setTokenAmountError("That's more than you have in your wallet")
+      setSourceTokenAmountError("That's more than you have in your wallet")
     else if (
       sourceTokenAmount?.amount &&
       balanceData?.value &&
       sourceTokenAmount.amount > Number(balanceData.formatted)
     )
-      setTokenAmountError("That's more than you have in your wallet")
-    else setTokenAmountError('')
+      setSourceTokenAmountError("That's more than you have in your wallet")
+    else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
 
   // reset token amount
@@ -315,7 +315,7 @@ const useTransferForm = () => {
     canPayFees,
     transferStatus,
     environment,
-    tokenAmountError,
+    sourceTokenAmountError,
     manualRecipientError,
     isBalanceAvailable: balanceData?.value != undefined,
     loadingBalance,

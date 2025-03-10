@@ -57,7 +57,7 @@ const Transfer: FC = () => {
     canPayFees,
     transferStatus,
     environment,
-    tokenAmountError,
+    sourceTokenAmountError,
     manualRecipientError,
     isBalanceAvailable,
     loadingBalance,
@@ -220,7 +220,7 @@ const Transfer: FC = () => {
                         value: tokenField.value?.amount ?? null,
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                        error: errors.sourceTokenAmount?.amount?.message || tokenAmountError,
+                        error: errors.sourceTokenAmount?.amount?.message || sourceTokenAmountError,
                         placeholder: amountPlaceholder,
                         trailingAction: (
                           <Button
