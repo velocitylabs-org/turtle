@@ -11,7 +11,7 @@ import { cn } from '@/utils/cn'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import NumberFlow from '@number-flow/react'
 import Image from 'next/image'
-import { ReactNode, useMemo, useRef, useState } from 'react'
+import { ReactNode, RefObject, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
@@ -48,7 +48,6 @@ interface ChainTokenSelectProps {
     orderBySelected?: boolean
     /** The token displayed at the top or below the selected token in the dropdown. Can be used to make it easier to select the source token again. */
     priorityToken?: Token | null
-    disabled?: boolean
   }
   amount?: {
     value: number | null
@@ -57,6 +56,7 @@ interface ChainTokenSelectProps {
     trailingAction?: ReactNode
     /** The placeholder to display when no amount is entered. Could be the max balance available. */
     placeholder?: string
+    disabled?: boolean
   }
   wallet?: {
     address?: string
@@ -97,8 +97,8 @@ const ChainTokenSelect = ({
   const inDollars = !!amount?.value && price ? price * amount.value : undefined
 
   // Search state
-  const [chainSearch, setChainSearch] = useState('')
-  const [tokenSearch, setTokenSearch] = useState('')
+  const [chainSearch, setChainSearch] = useState<string>('')
+  const [tokenSearch, setTokenSearch] = useState<string>('')
 
   // Filter the options based on search
   const filteredChainOptions = chain.options.filter(
@@ -170,80 +170,14 @@ const ChainTokenSelect = ({
         </div>
       </div>
 
-      {/* Amount Input */}
-      {/* TODO: extract into component */}
-      <Tooltip content={amount?.error}>
-        {/* Token Trigger */}
-        <div
-          ref={triggerRef}
-          onClick={() => setIsOpen(true)}
-          className={cn(
-            'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
-            !disabled && 'cursor-pointer',
-            disabled && 'opacity-30',
-            amount?.error && 'border-1 border-turtle-error',
-          )}
-        >
-          {/* Trigger Content */}
-          <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-            <div className="flex items-center gap-1" data-cy="token-select-trigger">
-              {token.value ? (
-                <>
-                  <TokenLogo
-                    token={token.value}
-                    sourceChain={token.sourceChainToDetermineOriginBanner}
-                  />
-                  <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
-                    {token.value.symbol}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <TokenIcon />
-                  Token
-                </>
-              )}
-            </div>
-            <ChevronDown strokeWidth={0.2} className="ml-1" />
-            <VerticalDivider />
-            <div className="align-center ml-1 flex flex-col">
-              <input
-                data-cy="amount-input"
-                disabled={disabled || token.disabled}
-                type="number"
-                className={cn(
-                  'bg-transparent text-sm focus:border-0 focus:outline-none min-[350px]:text-base sm:text-xl',
-                  inDollars && 'animate-slide-up-slight',
-                  amount?.error && 'text-turtle-error',
-                )}
-                placeholder={amount?.placeholder ?? 'Amount'}
-                value={amount?.value ?? ''}
-                onChange={e => amount?.onChange?.(Number(e.target.value) || null)}
-                onClick={e => e.stopPropagation()}
-                onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
-                autoFocus
-              />
-              {inDollars && (
-                <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
-                  <NumberFlow
-                    value={Math.min(inDollars, maxDollars)} // Ensure the value doesn't exceed the max
-                    prefix="$"
-                    format={{
-                      notation: 'compact',
-                      maximumFractionDigits: 3,
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Trailing component. E.g. Max Button */}
-          {amount?.trailingAction && (
-            <div className="absolute right-0 ml-2 mr-3 bg-white">{amount.trailingAction}</div>
-          )}
-        </div>
-      </Tooltip>
+      <TokenAmountInput
+        token={token}
+        amount={amount}
+        disabled={disabled}
+        onTriggerClick={() => setIsOpen(true)}
+        triggerRef={triggerRef}
+        inDollars={inDollars}
+      />
 
       {/* Dropdown */}
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
@@ -277,6 +211,106 @@ const ChainTokenSelect = ({
         </div>
       </Dropdown>
     </div>
+  )
+}
+
+interface TokenAmountInputProps {
+  token: {
+    value: Token | null
+    sourceChainToDetermineOriginBanner: Chain | null
+  }
+  amount?: {
+    value: number | null
+    onChange: (amount: number | null) => void
+    error?: string
+    trailingAction?: ReactNode
+    placeholder?: string
+    disabled?: boolean
+  }
+  onTriggerClick: () => void
+  triggerRef: RefObject<HTMLDivElement | null>
+  disabled?: boolean
+  inDollars?: number
+}
+
+const TokenAmountInput = ({
+  token,
+  amount,
+  disabled,
+  onTriggerClick,
+  triggerRef,
+  inDollars,
+}: TokenAmountInputProps) => {
+  return (
+    <Tooltip content={amount?.error}>
+      <div
+        ref={triggerRef}
+        onClick={onTriggerClick}
+        className={cn(
+          'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
+          !disabled && 'cursor-pointer',
+          disabled && 'opacity-30',
+          amount?.error && 'border-1 border-turtle-error',
+        )}
+      >
+        <div className="flex h-[3.5rem] flex-grow items-center gap-1">
+          <div className="flex items-center gap-1" data-cy="token-select-trigger">
+            {token.value ? (
+              <>
+                <TokenLogo
+                  token={token.value}
+                  sourceChain={token.sourceChainToDetermineOriginBanner}
+                />
+                <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
+                  {token.value.symbol}
+                </span>
+              </>
+            ) : (
+              <>
+                <TokenIcon />
+                Token
+              </>
+            )}
+          </div>
+          <ChevronDown strokeWidth={0.2} className="ml-1" />
+          <VerticalDivider />
+          <div className="align-center ml-1 flex flex-col">
+            <input
+              data-cy="amount-input"
+              disabled={disabled || amount?.disabled}
+              type="number"
+              className={cn(
+                'bg-transparent text-sm focus:border-0 focus:outline-none min-[350px]:text-base sm:text-xl',
+                inDollars && 'animate-slide-up-slight',
+                amount?.error && 'text-turtle-error',
+              )}
+              placeholder={amount?.placeholder ?? 'Amount'}
+              value={amount?.value ?? ''}
+              onChange={e => amount?.onChange?.(Number(e.target.value) || null)}
+              onClick={e => e.stopPropagation()}
+              onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
+              autoFocus
+            />
+            {inDollars && (
+              <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
+                <NumberFlow
+                  value={Math.min(inDollars, maxDollars)}
+                  prefix="$"
+                  format={{
+                    notation: 'compact',
+                    maximumFractionDigits: 3,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {amount?.trailingAction && (
+          <div className="absolute right-0 ml-2 mr-3 bg-white">{amount.trailingAction}</div>
+        )}
+      </div>
+    </Tooltip>
   )
 }
 

@@ -279,7 +279,6 @@ const Transfer: FC = () => {
                       orderBySelected: true,
                       sourceChainToDetermineOriginBanner: sourceChain,
                       priorityToken: sourceTokenAmount?.token,
-                      disabled: true,
                     }}
                     amount={{
                       value: tokenField.value?.amount ?? null,
@@ -287,6 +286,7 @@ const Transfer: FC = () => {
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
                       placeholder: 'Receive Amount',
+                      disabled: true,
                     }}
                     wallet={{
                       address: destinationWallet?.sender?.address,
