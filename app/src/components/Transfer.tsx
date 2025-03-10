@@ -46,7 +46,6 @@ const Transfer: FC = () => {
     sourceChain,
     destinationChain,
     sourceTokenAmount,
-    destinationTokenAmount,
     manualRecipient,
     sourceWallet,
     destinationWallet,

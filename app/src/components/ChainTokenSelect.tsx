@@ -124,7 +124,7 @@ const ChainTokenSelect = ({
     if (token.orderBySelected) sorted = reorderOptionsBySelectedItem(sorted, 'id', token.value?.id)
 
     return sorted
-  }, [filteredTokenOptions, token.orderBySelected, token.value?.id, token.priorityToken?.id])
+  }, [filteredTokenOptions, token.orderBySelected, token.value?.id, token.priorityToken])
 
   const handleChainSelect = (selectedChain: Chain) => {
     chain.onChange(selectedChain)
