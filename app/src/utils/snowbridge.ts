@@ -42,9 +42,9 @@ export const getFeeEstimate = async (
   destinationChain: Chain,
   direction: Direction,
   context: Context,
-  senderAddress?: string,
-  recipientAddress?: string,
-  amount?: number | null,
+  senderAddress: string,
+  recipientAddress: string,
+  amount: number,
 ): Promise<Fee | null> => {
   const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(context))
 
@@ -93,15 +93,6 @@ export const getFeeEstimate = async (
           amount: fee.totalFeeInWei,
           token: feeToken,
           inDollars: toHuman(fee.totalFeeInWei, feeToken) * feeTokenInDollars,
-        }
-
-        if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
-          console.log('Return here', bridgingFee)
-          return {
-            origin: 'Ethereum',
-            bridging: bridgingFee,
-            execution: null,
-          }
         }
 
         // 2. Get execution fee

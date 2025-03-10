@@ -1,6 +1,5 @@
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
-import { NotificationSeverity } from '@/models/notification'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
@@ -57,11 +56,11 @@ const useFees = (
     const feeToken = getNativeToken(sourceChain)
 
     try {
-      setLoading(true)
       setBridgingFees(null)
 
       switch (route.sdk) {
         case 'ParaSpellApi': {
+          setLoading(true)
           const sourceChainNode = getParaSpellNode(sourceChain)
           if (!sourceChainNode) throw new Error('Source chain id not found')
 
@@ -113,6 +112,14 @@ const useFees = (
         }
 
         case 'SnowbridgeApi': {
+          if (!sourceChain || !senderAddress || !destinationChain || !recipientAddress || !amount) {
+            setLoading(false)
+            setFees(null)
+            setBridgingFees(null)
+            return
+          }
+
+          setLoading(true)
           const direction = resolveDirection(sourceChain, destinationChain)
           if (
             (direction === Direction.ToEthereum || direction === Direction.ToPolkadot) &&
@@ -136,9 +143,7 @@ const useFees = (
             recipientAddress,
             amount,
           )
-          console.log('Returned from getFeeEstimate with', fee)
           if (!fee) {
-            console.log('No fees so it will reset them')
             setFees(null)
             setBridgingFees(null)
             return
@@ -165,12 +170,12 @@ const useFees = (
       setFees(null)
       setBridgingFees(null)
       captureException(error)
-      console.error(error)
-      addNotification({
-        severity: NotificationSeverity.Error,
-        message: 'Failed to fetch the fees. Please try again later.',
-        dismissible: true,
-      })
+      console.error('useFees > error is', error)
+      // addNotification({
+      //   severity: NotificationSeverity.Error,
+      //   message: 'Failed to fetch the fees. Please try again later.',
+      //   dismissible: true,
+      // })
     } finally {
       setLoading(false)
     }
