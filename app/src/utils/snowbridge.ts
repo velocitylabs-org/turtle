@@ -1,4 +1,4 @@
-import { assetsV2, Context, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { Context, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import { Token } from '@/models/token'
 import { safeConvertAmount, toHuman } from './transfer'
 import { Direction } from '@/services/transfer'
@@ -8,6 +8,7 @@ import { Chain } from '@/models/chain'
 import { AmountInfo } from '@/models/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Fee } from '@/hooks/useFees'
+import { SnowbridgeContext } from '@/models/snowbridge'
 
 /**
  * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
@@ -41,13 +42,11 @@ export const getFeeEstimate = async (
   sourceChain: Chain,
   destinationChain: Chain,
   direction: Direction,
-  context: Context,
+  context: SnowbridgeContext,
   senderAddress: string,
   recipientAddress: string,
   amount: number,
 ): Promise<Fee | null> => {
-  const registry = await assetsV2.buildRegistry(await assetsV2.fromContext(context))
-
   switch (direction) {
     case Direction.ToEthereum: {
       const amount = await toEthereumV2
@@ -57,7 +56,7 @@ export const getFeeEstimate = async (
             source: await context.parachain(sourceChain.chainId),
           },
           sourceChain.chainId,
-          registry,
+          context.registry,
         )
         .then(x => x.totalFeeInDot)
       const feeTokenInDollars = (await getCachedTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
@@ -84,7 +83,7 @@ export const getFeeEstimate = async (
             assetHub: await context.assetHub(),
             destination: await context.parachain(destinationChain.chainId),
           },
-          registry,
+          context.registry,
           token.address,
           destinationChain.chainId,
         )
@@ -98,7 +97,7 @@ export const getFeeEstimate = async (
         // 2. Get execution fee
         // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
         const tx = await toPolkadotV2.createTransfer(
-          registry,
+          context.registry,
           senderAddress,
           recipientAddress,
           token.address,
