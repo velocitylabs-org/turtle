@@ -253,7 +253,7 @@ const TokenAmountInput = ({
     <Tooltip content={amount?.error}>
       <div
         ref={triggerRef}
-        onClick={onTriggerClick}
+        onClick={disabled ? undefined : onTriggerClick}
         className={cn(
           'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
           !disabled && 'cursor-pointer',
