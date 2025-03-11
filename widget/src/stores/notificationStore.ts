@@ -13,9 +13,15 @@ interface State {
 export const useNotificationStore = create<State>(set => ({
   notifications: [],
   addNotification: notification =>
-    set(state => ({
-      notifications: [...state.notifications, { ...notification, id: Date.now() }],
-    })),
+    set(state => {
+      const exists = state.notifications.some(
+        n => n.message === notification.message && n.severity === notification.severity,
+      )
+      if (exists) return state
+      return {
+        notifications: [...state.notifications, { ...notification, id: Date.now() }],
+      }
+    }),
   removeNotification: id =>
     set(state => ({
       notifications: state.notifications.filter(n => n.id !== id),
