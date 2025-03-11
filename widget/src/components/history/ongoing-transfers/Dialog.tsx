@@ -1,6 +1,6 @@
 import { StoredTransfer } from '@/models/transfer'
 import { formatAmount, resolveDirection, toHuman } from '@/utils/transfer'
-import OngoingTransfer from './OngoingTransfer'
+import OngoingTransfer from './Card'
 import {
   Dialog,
   DialogContent,
