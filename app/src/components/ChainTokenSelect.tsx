@@ -144,10 +144,9 @@ const ChainTokenSelect = ({
 
   return (
     <div className={twMerge('relative w-full', className)}>
-      {/* Triggers */}
       <div className="flex">
-        {/* Chain Selection */}
         <div className="relative flex-1">
+          {/* 1. Floating Label */}
           <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
             {isOpen ? 'Chain' : floatingLabel}
           </label>
@@ -168,6 +167,15 @@ const ChainTokenSelect = ({
             trailingAction={wallet?.walletButton}
           />
         </div>
+
+        {/* 2. Floating Label */}
+        {isOpen && (
+          <div className="relative flex-1">
+            <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+              {isOpen ? 'Token' : ''}
+            </label>
+          </div>
+        )}
       </div>
 
       <TokenAmountInput
