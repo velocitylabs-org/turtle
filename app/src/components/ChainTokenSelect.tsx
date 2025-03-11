@@ -172,7 +172,7 @@ const ChainTokenSelect = ({
         {isOpen && (
           <div className="relative flex-1">
             <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
-              {isOpen ? 'Token' : ''}
+              Token
             </label>
           </div>
         )}
