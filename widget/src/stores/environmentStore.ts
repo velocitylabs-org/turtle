@@ -1,3 +1,4 @@
+import { environment } from '@/utils/consts'
 import { create } from 'zustand'
 
 export enum Environment {
@@ -16,10 +17,7 @@ interface State {
 
 export const useEnvironmentStore = create<State>(set => ({
   // State
-  current:
-    process.env.NEXT_PUBLIC_ENVIRONMENT === Environment.Testnet
-      ? Environment.Testnet
-      : Environment.Mainnet,
+  current: environment === Environment.Testnet ? Environment.Testnet : Environment.Mainnet,
 
   // Actions
   switchTo: environment =>

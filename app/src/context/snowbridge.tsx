@@ -4,6 +4,7 @@ import { rpcConnectionAsHttps } from '@/registry/helpers'
 import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
 import { Context, environment, status } from '@snowbridge/api'
+import { AbstractProvider, AlchemyProvider } from 'ethers'
 
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
@@ -35,12 +36,17 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
 }
 
 export async function getContext(environment: environment.SnowbridgeEnvironment): Promise<Context> {
-  const { config } = environment
+  const { config, ethChainId, name } = environment
+  const ethereumProvider = new AlchemyProvider(ethChainId, ALCHEMY_API_KEY)
+  const ethChains: { [ethChainId: string]: string | AbstractProvider } = {}
+  ethChains[ethChainId.toString()] = ethereumProvider
 
   return new Context({
+    environment: name,
     ethereum: {
-      execution_url: config.ETHEREUM_API(ALCHEMY_API_KEY),
       beacon_url: config.BEACON_HTTP_API,
+      ethChainId,
+      ethChains: { '1': config.ETHEREUM_CHAINS[1](ALCHEMY_API_KEY) },
     },
     polkadot: {
       assetHubParaId: config.ASSET_HUB_PARAID,

@@ -21,6 +21,7 @@ export interface TransferParams {
   recipient: string
   amount: bigint
   fees: AmountInfo
+  bridgingFee: AmountInfo | null
   /**
    * Callback when Turtle has completed submitting the transfer.
    * It does NOT mean that the transfer itself is completed.

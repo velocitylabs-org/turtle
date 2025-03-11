@@ -12,14 +12,14 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
+  TCurrencyCore,
   TDryRunResult,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
-  type TCurrencyCore,
-  type TPapiTransaction,
+  TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { getSenderAddress } from './address'
+import { getAccountId32, getSenderAddress } from './address'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -34,7 +34,8 @@ export const createTransferTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient, sender } =
+    params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -48,7 +49,10 @@ export const createTransferTx = async (
       .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
       .to(destinationChainFromId)
       .currency({ ...currencyId, amount })
-      .address(recipient)
+      .address(
+        recipient,
+        destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+      )
       .build()
   }
 }
@@ -79,8 +83,8 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
 
   const { RouterBuilder } = await import('@paraspell/xcm-router')
   const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
-    .to(destinationChainFromId)
+    .from(sourceChainFromId as any) // TODO: replace any
+    .to(destinationChainFromId as any) // TODO: replace any
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
     .amount(amount)
@@ -113,7 +117,7 @@ export const moonbeamTransfer = async (
 
   return EvmBuilder()
     .from('Moonbeam')
-    .to(destinationChainFromId)
+    .to(destinationChainFromId as TNodeDotKsmWithRelayChains)
     .currency({ ...currencyId, amount })
     .address(recipient)
     .signer(viemClient)
@@ -134,10 +138,8 @@ export const dryRun = async (
 ): Promise<TDryRunResult> => {
   const { environment, sourceChain, destinationChain, sourceToken, amount, recipient, sender } =
     params
-
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
@@ -147,7 +149,10 @@ export const dryRun = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
-    .address(recipient)
+    .address(
+      recipient,
+      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+    )
     .dryRun(sender.address)
 }
 
@@ -215,8 +220,8 @@ export function getNativeToken(chain: Chain): Token {
   return token
 }
 
-export function getParaSpellNode(chain: Chain, relay: 'polkadot'): TNodeWithRelayChains | null {
+export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
-    : getTNode(chain.chainId, relay)
+    : getTNode(chain.chainId, 'polkadot')
 }

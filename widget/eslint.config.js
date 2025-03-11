@@ -5,7 +5,6 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import prettier from 'eslint-plugin-prettier/recommended'
-import jsxA11y from 'eslint-plugin-jsx-a11y'
 import importPlugin from 'eslint-plugin-import'
 
 export default tseslint.config(
@@ -15,7 +14,6 @@ export default tseslint.config(
       js.configs.recommended,
       ...tseslint.configs.recommended,
       react.configs.flat.recommended,
-      jsxA11y.flatConfigs.recommended,
       importPlugin.flatConfigs.recommended,
       prettier,
     ],
