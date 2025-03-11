@@ -69,7 +69,6 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.DAI.id,
-      EthereumTokens.MYTH.id,
       EthereumTokens.WSTETH.id,
       EthereumTokens.TBTC.id,
       EthereumTokens.TON.id,
