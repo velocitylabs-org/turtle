@@ -266,12 +266,6 @@ export const routes: Route[] = [
     tokens: [PolkadotTokens.USDC.id],
   },
   {
-    from: Mythos.uid,
-    to: AssetHub.uid,
-    sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.MYTH.id],
-  },
-  {
     from: Moonbeam.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
