@@ -210,6 +210,7 @@ const updateTransferStatus = (
     amount: transfer.amount,
     tokenUSDValue: transfer.tokenUSDValue ?? 0,
     fees: transfer.fees,
+    bridgingFee: transfer.bridgingFee,
     sender: transfer.sender,
     recipient: transfer.recipient,
     date: transfer.date,

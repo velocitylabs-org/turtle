@@ -17,7 +17,7 @@ import {
 import { EthereumTokens, PolkadotTokens } from './tokens'
 
 export const routes: Route[] = [
-  // Snowbridge Routes
+  // Ethereum -> Polkadot
   {
     from: Ethereum.uid,
     to: AssetHub.uid,
@@ -57,19 +57,18 @@ export const routes: Route[] = [
     from: Ethereum.uid,
     to: Hydration.uid,
     sdk: 'SnowbridgeApi',
-    tokens: [EthereumTokens.WETH.id, EthereumTokens.WBTC.id],
+    tokens: [EthereumTokens.WETH.id, EthereumTokens.USDC.id, EthereumTokens.WBTC.id],
   },
   {
     from: AssetHub.uid,
     to: Ethereum.uid,
-    sdk: 'SnowbridgeApi',
+    sdk: 'ParaSpellApi',
     tokens: [
       EthereumTokens.WETH.id,
       EthereumTokens.WBTC.id,
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.DAI.id,
-      EthereumTokens.MYTH.id,
       EthereumTokens.WSTETH.id,
       EthereumTokens.TBTC.id,
       EthereumTokens.TON.id,
@@ -165,12 +164,6 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.DOT.id],
   },
-  // {
-  //   from: Hydration.uid,
-  //   to: Ethereum.uid,
-  //   sdk: 'ParaSpellApi',
-  //   tokens: [EthereumTokens.WETH.id],
-  // },
   {
     from: Hydration.uid,
     to: RelayChain.uid,
@@ -195,7 +188,13 @@ export const routes: Route[] = [
     from: AssetHub.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
-    tokens: [PolkadotTokens.DOT.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
+    tokens: [
+      PolkadotTokens.DOT.id,
+      PolkadotTokens.USDC.id,
+      PolkadotTokens.USDT.id,
+      EthereumTokens.WETH.id,
+      EthereumTokens.USDC.id,
+    ],
   },
   {
     from: AssetHub.uid,
@@ -228,7 +227,21 @@ export const routes: Route[] = [
     tokens: [PolkadotTokens.DOT.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
   },
 
-  // Para To System Routes
+  // Para to Ethereum
+  {
+    from: Bifrost.uid,
+    to: Ethereum.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [EthereumTokens.WETH.id],
+  },
+  {
+    from: Hydration.uid,
+    to: Ethereum.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [EthereumTokens.WETH.id],
+  },
+
+  // Para To System
   {
     from: Hydration.uid,
     to: AssetHub.uid,

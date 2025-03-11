@@ -47,9 +47,9 @@ export function feeToHuman(fees: AmountInfo): string {
   return toHuman(fees.amount, fees.token).toFixed(10)
 }
 
-export const getTotalFees = (fees: AmountInfo, additionalfees?: AmountInfo | null) => {
-  const additionalAmount = additionalfees ? Number(additionalfees.amount) : 0
-  const additionalValue = additionalfees?.inDollars || 0
+export const getTotalFees = (fees: AmountInfo, bridgingFees?: AmountInfo | null) => {
+  const additionalAmount = bridgingFees ? Number(bridgingFees.amount) : 0
+  const additionalValue = bridgingFees?.inDollars || 0
   const totalFeesAmount = formatAmount(toHuman(fees.amount, fees.token) + additionalAmount)
   const totalFeesValue = formatAmount(fees.inDollars + additionalValue)
 
@@ -218,7 +218,7 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
 export function getDurationEstimate(direction: Direction): string {
   switch (direction) {
     case Direction.ToEthereum:
-      return '~30 min to 1.5 hours'
+      return '~30 min to 1½ hours'
     case Direction.ToPolkadot:
       return '~30 min'
     // NOTE: We don't support these now but we are leaving a reasonable estimate anyways

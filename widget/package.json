@@ -28,6 +28,8 @@
   },
   "dependencies": {
     "@heroui/react": "^2.7.2",
+    "@hookform/resolvers": "4.1.2",
+    "@paraspell/sdk": "^8.5.2",
     "@polkadot/api": "^15.6.1",
     "@polkadot/extension-dapp": "^0.58.4",
     "@radix-ui/react-dialog": "^1.1.6",
@@ -42,11 +44,13 @@
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-motion": "^1.1.0",
     "viem": "^2.23.4",
     "wagmi": "^2.14.11",
+    "zod": "^3.24.2",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -62,7 +66,6 @@
     "eslint-config-prettier": "^10.0.1",
     "eslint-import-resolver-typescript": "^3.8.0",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",

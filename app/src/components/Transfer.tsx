@@ -50,10 +50,11 @@ const Transfer: FC = () => {
     sourceWallet,
     destinationWallet,
     fees,
-    ethereumTxfees,
+    bridgingFee,
     refetchFees,
     loadingFees,
     canPayFees,
+    canPayAdditionalFees,
     transferStatus,
     environment,
     sourceTokenAmountError,
@@ -138,7 +139,8 @@ const Transfer: FC = () => {
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
-    canPayFees
+    canPayFees &&
+    (bridgingFee ? canPayAdditionalFees : true)
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
@@ -415,9 +417,10 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={sourceTokenAmount}
           fees={fees}
-          additionalfees={ethereumTxfees}
+          bridgingFees={bridgingFee}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
+          canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
         />
