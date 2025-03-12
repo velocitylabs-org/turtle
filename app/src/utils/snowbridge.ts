@@ -119,8 +119,8 @@ export const getFeeEstimate = async (
           },
           tx,
         )
-        
-        if (checkValidation(validation) === 'Failed')
+
+        if (findValidationError(validation))
           return {
             origin: 'Ethereum',
             bridging: bridgingFee,
@@ -128,7 +128,6 @@ export const getFeeEstimate = async (
           }
 
         const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
-
         return {
           origin: 'Ethereum',
           bridging: bridgingFee,
@@ -156,10 +155,8 @@ export const getFeeEstimate = async (
   }
 }
 
-export const checkValidation = (
-    validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
-  ): 'Succeeded' | 'Failed' => {
-    const error = validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
-    
-    return error ? 'Failed' : 'Succeeded'
-  }
+export const findValidationError = (
+  validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
+): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
+  return validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
+}
