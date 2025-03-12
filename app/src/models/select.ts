@@ -16,9 +16,13 @@ export interface SelectProps<T> {
   className?: string
 }
 
-export interface ManualRecipient {
+export interface ManualAddressValue {
   enabled: boolean
   address: string
+}
+
+export interface ManualAddressInput extends ManualAddressValue {
+  onChange: (newValue: ManualAddressValue) => void
 }
 
 export interface TokenAmount {

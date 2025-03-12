@@ -1,7 +1,7 @@
 import { Sender } from '@/hooks/useTransfer'
 import { WalletInfo } from '@/hooks/useWallet'
 import { AddressType } from '@/models/chain'
-import { ManualRecipient } from '@/models/select'
+import { ManualAddressValue } from '@/models/select'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
@@ -84,7 +84,7 @@ export const isValidSubstrateAddress = (address: string): boolean => {
  * Get the recipient address based on the enabled manual input and the connected destination wallet.
  * @remarks It doesn't check whether the address is valid or not
  * */
-export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: WalletInfo) => {
+export const getRecipientAddress = (manualRecipient: ManualAddressValue, wallet?: WalletInfo) => {
   return manualRecipient.enabled ? manualRecipient.address : wallet?.sender?.address
 }
 

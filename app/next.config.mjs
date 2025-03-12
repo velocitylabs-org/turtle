@@ -7,7 +7,7 @@ const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config, { isServer }) => {
+  webpack: config => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     config.experiments = { asyncWebAssembly: true, topLevelAwait: true, layers: true }
 
