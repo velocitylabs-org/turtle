@@ -9,6 +9,7 @@ import { AmountInfo } from '@/models/transfer'
 import { captureException } from '@sentry/nextjs'
 import { Fee } from '@/hooks/useFees'
 import { SnowbridgeContext } from '@/models/snowbridge'
+import { isAssetHub } from '@/registry/helpers'
 
 /**
  * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
@@ -105,8 +106,28 @@ export const getFeeEstimate = async (
           safeConvertAmount(amount, token) ?? 0n,
           fee,
         )
-        const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
 
+        const validation = await toPolkadotV2.validateTransfer(
+          {
+            ethereum: context.ethereum(),
+            gateway: context.gateway(),
+            bridgeHub: await context.bridgeHub(),
+            assetHub: await context.assetHub(),
+            destParachain: isAssetHub(destinationChain)
+              ? undefined
+              : await context.parachain(destinationChain.chainId),
+          },
+          tx,
+        )
+
+        if (findValidationError(validation))
+          return {
+            origin: 'Ethereum',
+            bridging: bridgingFee,
+            execution: null,
+          }
+
+        const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
         return {
           origin: 'Ethereum',
           bridging: bridgingFee,
@@ -132,4 +153,10 @@ export const getFeeEstimate = async (
     default:
       throw new Error('Unsupported direction for the SnowbridgeAPI')
   }
+}
+
+export const findValidationError = (
+  validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
+): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
+  return validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
 }
