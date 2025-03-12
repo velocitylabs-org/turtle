@@ -1,8 +1,7 @@
 'use client'
-import { mainnet_networks, testnet_networks, wagmiAdapter } from '@/config'
-import { Environment } from '@/store/environmentStore'
-import { environment, isDevelopment, projectId, vercelDomain } from '@/utils/env'
-import { mainnet as ethereum, sepolia } from '@reown/appkit/networks'
+import { mainnet_networks, wagmiAdapter } from '@/config'
+import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
+import { mainnet as ethereum } from '@reown/appkit/networks'
 import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
@@ -27,8 +26,8 @@ const metadata = {
 // Create modal
 export const modal = createAppKit({
   adapters: [wagmiAdapter],
-  networks: environment === Environment.Testnet ? testnet_networks : mainnet_networks,
-  defaultNetwork: environment === Environment.Testnet ? sepolia : ethereum,
+  networks: mainnet_networks,
+  defaultNetwork: ethereum,
   allowUnsupportedChain: false,
   metadata: metadata,
   projectId,
