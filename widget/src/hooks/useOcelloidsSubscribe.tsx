@@ -10,7 +10,7 @@ import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useNotification from '@/hooks/useNotification'
 
 const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
-  const { remove, updateStatus } = useOngoingTransfers()
+  const { remove, updateStatus, updateProgress } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const { current: subscribedTransfers } = useRef(new Set<string>())
@@ -34,6 +34,7 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
               addCompletedTransfer,
               updateStatus,
               addNotification,
+              updateProgress,
             )
             subscribedTransfers.add(t.id)
           } catch (error) {

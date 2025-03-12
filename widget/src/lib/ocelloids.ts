@@ -80,6 +80,7 @@ export const xcmOcceloidsSubscribe = async (
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void,
   updateStatus: (id: string) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
+  updateProgress: (id: string) => void,
 ) => {
   try {
     const { id: txHash, sourceChain, destChain } = transfer
@@ -113,6 +114,7 @@ export const xcmOcceloidsSubscribe = async (
                     remove,
                     addCompletedTransfer,
                     addNotification,
+                    updateProgress,
                     hopOutcome,
                   )
                   ws.close()
@@ -127,6 +129,7 @@ export const xcmOcceloidsSubscribe = async (
                   remove,
                   addCompletedTransfer,
                   addNotification,
+                  updateProgress,
                   finalOutcome,
                 )
                 ws.close()
@@ -139,6 +142,7 @@ export const xcmOcceloidsSubscribe = async (
                   remove,
                   addCompletedTransfer,
                   addNotification,
+                  updateProgress,
                 )
                 ws.close()
                 break
@@ -191,43 +195,48 @@ const updateTransferStatus = (
   remove: (id: string) => void,
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
+  updateProgress: (id: string) => void,
   transferOutcome?: 'Success' | 'Fail',
 ) => {
   const notification = getNotification(xcmMsgType, transferOutcome)
   if (!notification) return
 
-  const { status, message, severity } = notification
-  const explorerLink = getExplorerLink(transfer)
+  updateProgress(transfer.id)
 
-  remove(transfer.id)
+  setTimeout(() => {
+    const { status, message, severity } = notification
+    const explorerLink = getExplorerLink(transfer)
 
-  addCompletedTransfer({
-    id: transfer.id,
-    result: status,
-    token: transfer.token,
-    sourceChain: transfer.sourceChain,
-    destChain: transfer.destChain,
-    amount: transfer.amount,
-    tokenUSDValue: transfer.tokenUSDValue ?? 0,
-    fees: transfer.fees,
-    sender: transfer.sender,
-    recipient: transfer.recipient,
-    date: transfer.date,
-    ...(explorerLink && { explorerLink }),
-  } satisfies CompletedTransfer)
+    remove(transfer.id)
 
-  addNotification({
-    message,
-    severity,
-    dismissible: true,
-  })
+    addCompletedTransfer({
+      id: transfer.id,
+      result: status,
+      token: transfer.token,
+      sourceChain: transfer.sourceChain,
+      destChain: transfer.destChain,
+      amount: transfer.amount,
+      tokenUSDValue: transfer.tokenUSDValue ?? 0,
+      fees: transfer.fees,
+      sender: transfer.sender,
+      recipient: transfer.recipient,
+      date: transfer.date,
+      ...(explorerLink && { explorerLink }),
+    } satisfies CompletedTransfer)
 
-  if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
-    console.log(new Error(`Ocelloids tracking error:${message}`))
-  // captureException(new Error(`Ocelloids tracking error:${message}`), {
-  //   tags: { XcmNotificationType: xcmMsgType, ...(transferOutcome && { transferOutcome }) },
-  //   extra: { transfer },
-  // }) - Sentry
+    addNotification({
+      message,
+      severity,
+      dismissible: true,
+    })
+
+    if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
+      console.log(new Error(`Ocelloids tracking error:${message}`))
+    // captureException(new Error(`Ocelloids tracking error:${message}`), {
+    //   tags: { XcmNotificationType: xcmMsgType, ...(transferOutcome && { transferOutcome }) },
+    //   extra: { transfer },
+    // }) - Sentry
+  }, 1500)
 }
 
 const getNotification = (
