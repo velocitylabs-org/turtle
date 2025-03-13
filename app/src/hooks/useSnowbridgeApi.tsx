@@ -9,6 +9,7 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { findValidationError } from '@/utils/snowbridge'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
@@ -26,21 +27,6 @@ const useSnowbridgeApi = () => {
   const { addOrUpdate } = useOngoingTransfers()
   const { addNotification } = useNotification()
   const { snowbridgeContext } = useSnowbridgeContext()
-
-  const checkValidation = (
-    validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
-  ): 'Succeeded' | 'Failed' => {
-    const error = validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
-    if (error) {
-      addNotification({
-        message: error.message ?? 'Validation Failed',
-        severity: NotificationSeverity.Error,
-      })
-      return 'Failed'
-    }
-
-    return 'Succeeded'
-  }
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
@@ -82,7 +68,14 @@ const useSnowbridgeApi = () => {
         transfer,
       )
 
-      if (checkValidation(validation) === 'Failed') return
+      const validationError = findValidationError(validation)
+      if (validationError) {
+        addNotification({
+          message: validationError.message ?? 'Validation Failed',
+          severity: NotificationSeverity.Error,
+        })
+        return
+      }
 
       await submitTransfer(sender, transfer, params, direction, setStatus)
     } catch (e) {

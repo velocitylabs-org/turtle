@@ -114,7 +114,15 @@ const useTransferForm = () => {
       isRouteAllowed(environment, sourceChain, destinationChain) &&
       isRouteAllowed(environment, destinationChain, sourceChain, sourceTokenAmount)
     )
-  }, [environment, destinationChain, sourceChain, sourceTokenAmount, isValidating, transferStatus])
+  }, [
+    environment,
+    destinationChain,
+    sourceChain,
+    sourceTokenAmount,
+    isValidating,
+    transferStatus,
+    sourceTokenAmountError,
+  ])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
