@@ -147,7 +147,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 <div className="text-sm font-bold">Duration</div>
               </div>
               <div className="items-right flex items-center space-x-0.5">
-                <div className="text-xl text-turtle-foreground">{durationEstimate}</div>
+                <div className="text-xl text-right text-turtle-foreground">{durationEstimate}</div>
               </div>
             </li>
           </ul>
