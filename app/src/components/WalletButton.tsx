@@ -91,7 +91,12 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
         className={cn('text-sm', isConnected ? '' : 'md:w-[4.875rem]')}
         onClick={buttonFunction}
       >
-        {isConnected ? <Cross stroke={colors['turtle-foreground']} /> : null}
+        {isConnected ? (
+          <span>
+            <Cross stroke={colors['turtle-foreground']} className="md:hidden" />{' '}
+            <span className="hidden md:inline">Disconnect</span>
+          </span>
+        ) : null}
       </Button>
     </motion.div>
   )

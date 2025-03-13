@@ -73,13 +73,17 @@ const TxSummary: FC<TxSummaryProps> = ({
     return (
       <div className={cn('tx-summary p-0 pt-0', className)}>
         <div className="pt-3">
-          <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
+          <div className="mt-3 text-center text-lg font-bold text-turtle-foreground md:text-xl">
+            Summary
+          </div>
           <ul>
             {/* Execution fees */}
             {fees && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
-                  <div className="text-sm font-bold pt-[3px]">{bridgingFees ? 'Execution fee' : 'Fee'} </div>
+                  <div className="pt-[3px] text-sm font-bold">
+                    {bridgingFees ? 'Execution fee' : 'Fee'}{' '}
+                  </div>
                   {!canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
@@ -94,7 +98,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 </div>
                 <div className="items-right flex">
                   <div>
-                    <div className="flex items-center text-right text-xl text-turtle-foreground">
+                    <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
                       {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
                     </div>
 
@@ -112,7 +116,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             {isBridgeTransfer && bridgingFees && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
-                  <div className="text-sm font-bold pt-[3px]">Bridging fee</div>
+                  <div className="pt-[3px] text-sm font-bold">Bridging fee</div>
                   {!canPayAdditionalFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
@@ -127,7 +131,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 </div>
                 <div className="items-right flex">
                   <div>
-                    <div className="flex items-center text-right text-xl text-turtle-foreground">
+                    <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
                       {formatAmount(toHuman(bridgingFees.amount, bridgingFees.token))}{' '}
                       {bridgingFees.token.symbol}
                     </div>
@@ -144,10 +148,12 @@ const TxSummary: FC<TxSummaryProps> = ({
 
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
-                <div className="text-sm font-bold pt-[3px]">Duration</div>
+                <div className="pt-[3px] text-sm font-bold">Duration</div>
               </div>
               <div className="items-right flex items-center space-x-0.5">
-                <div className="text-right text-xl text-turtle-foreground">{durationEstimate}</div>
+                <div className="text-right text-lg text-turtle-foreground md:text-xl">
+                  {durationEstimate}
+                </div>
               </div>
             </li>
           </ul>
