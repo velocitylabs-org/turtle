@@ -7,9 +7,9 @@ import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
 import { cn } from '@/utils/cn'
 import {
-  getAllowedDestinationChains,
-  getAllowedSourceChains,
-  getAllowedTokens,
+  getTransferDestinationChains,
+  getTransferSourceChains,
+  getTransferTokens,
 } from '@/utils/routes'
 import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
@@ -155,17 +155,17 @@ const Transfer: FC = () => {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
-  const sourceChainOptions = useMemo(() => getAllowedSourceChains(environment), [environment])
+  const sourceChainOptions = useMemo(() => getTransferSourceChains(environment), [environment])
 
   const destinationChainOptions = useMemo(
-    () => getAllowedDestinationChains(environment, sourceChain, sourceTokenAmount?.token ?? null),
+    () => getTransferDestinationChains(environment, sourceChain, sourceTokenAmount?.token ?? null),
     [environment, sourceChain, sourceTokenAmount?.token],
   )
 
   // TODO: create function to get source token options
   const sourceTokenOptions = useMemo(
     () =>
-      getAllowedTokens(environment, sourceChain, destinationChain).map(token => ({
+      getTransferTokens(environment, sourceChain, destinationChain).map(token => ({
         ...token,
         allowed: token.allowed,
       })),
@@ -175,7 +175,7 @@ const Transfer: FC = () => {
   // TODO: create function to get destination token options
   const destinationTokenOptions = useMemo(
     () =>
-      getAllowedTokens(environment, destinationChain, null).map(token => ({
+      getTransferTokens(environment, destinationChain, null).map(token => ({
         ...token,
         allowed: token.allowed,
       })),

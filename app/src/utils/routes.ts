@@ -1,11 +1,12 @@
-import { REGISTRY, Route } from '@/registry'
 import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
+import { REGISTRY, Route } from '@/registry'
+import { WithAllowedTag } from '@/registry/helpers'
 import { Environment } from '@/store/environmentStore'
 
 /** Filters all chains by available routes. */
-export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: boolean })[] => {
+export const getTransferSourceChains = (env: Environment): WithAllowedTag<Chain>[] => {
   const routes = REGISTRY[env].routes
 
   const chains = REGISTRY[env].chains.map(chain => {
@@ -17,15 +18,15 @@ export const getAllowedSourceChains = (env: Environment): (Chain & { allowed: bo
     }
   })
 
-  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
+  return orderByAllowedTag(chains)
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
-export const getAllowedDestinationChains = (
+export const getTransferDestinationChains = (
   env: Environment,
   chain: Chain | null,
   token: Token | null,
-): (Chain & { allowed: boolean })[] => {
+): WithAllowedTag<Chain>[] => {
   const routes = REGISTRY[env].routes
 
   const chains = REGISTRY[env].chains.map(c => {
@@ -41,15 +42,15 @@ export const getAllowedDestinationChains = (
     }
   })
 
-  return orderByAllowedTag(chains) as (Chain & { allowed: boolean })[]
+  return orderByAllowedTag(chains)
 }
 
 /** Filters all tokens by by selected source chain and available routes */
-export const getAllowedTokens = (
+export const getTransferTokens = (
   env: Environment,
   sourceChain: Chain | null,
   destinationChain: Chain | null,
-): (Token & { allowed: boolean })[] => {
+): WithAllowedTag<Token>[] => {
   const routes = REGISTRY[env].routes
 
   const tokens = REGISTRY[env].tokens.map(token => {
@@ -68,11 +69,11 @@ export const getAllowedTokens = (
     }
   })
 
-  return orderByAllowedTag(tokens) as (Token & { allowed: boolean })[]
+  return orderByAllowedTag(tokens)
 }
 
-const orderByAllowedTag = (list: { allowed: boolean }[]) => {
-  return list.sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
+const orderByAllowedTag = <T extends WithAllowedTag<unknown>>(list: T[]): T[] => {
+  return [...list].sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
 }
 
 /** It checks if a route between two chains exists */
@@ -101,7 +102,7 @@ export const isTokenAvailableForSourceChain = (
   token?: Token | null,
 ): boolean => {
   if (!sourceChain || !token) return false
-  return getAllowedTokens(env, sourceChain, destinationChain ?? null).some(
+  return getTransferTokens(env, sourceChain, destinationChain ?? null).some(
     t => t.allowed && t.id === token.id,
   )
 }
