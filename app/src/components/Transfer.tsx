@@ -210,7 +210,7 @@ const Transfer: FC = () => {
                 secondPlaceholder={amountPlaceholder}
                 error={errors.tokenAmount?.amount?.message || tokenAmountError}
                 trailing={
-                  <Button
+                  tokenAmount?.amount ? <></> : <Button
                     label="Max"
                     size="sm"
                     variant="outline"
