@@ -89,7 +89,7 @@ const Button: FC<ButtonProps> = ({
       isDisabled={disabled}
       disableRipple
       onPress={onClick}
-      size={size === 'xs' ? "sm" : size}
+      size={size === 'xs' ? 'sm' : size}
       radius="sm"
       disableAnimation={true}
       className={twMerge('w-full', styles[variant], sizeHeights[size], paddingX[size], className)}

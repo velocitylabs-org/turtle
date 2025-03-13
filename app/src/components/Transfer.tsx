@@ -210,14 +210,18 @@ const Transfer: FC = () => {
                 secondPlaceholder={amountPlaceholder}
                 error={errors.tokenAmount?.amount?.message || tokenAmountError}
                 trailing={
-                  tokenAmount?.amount ? <></> : <Button
-                    label="Max"
-                    size="sm"
-                    variant="outline"
-                    className="min-w-[40px]"
-                    onClick={handleMaxButtonClick}
-                    disabled={shouldDisableMaxButton}
-                  />
+                  tokenAmount?.amount ? (
+                    <></>
+                  ) : (
+                    <Button
+                      label="Max"
+                      size="sm"
+                      variant="outline"
+                      className="min-w-[40px]"
+                      onClick={handleMaxButtonClick}
+                      disabled={shouldDisableMaxButton}
+                    />
+                  )
                 }
                 className="z-40"
               />
