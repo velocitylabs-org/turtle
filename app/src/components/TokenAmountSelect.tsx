@@ -87,7 +87,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             )}
           >
             {/* Trigger Content */}
-            <div className="flex h-[3.5rem] flex-grow items-center gap-1">
+            <div className="flex h-[3.5rem] flex-grow items-center gap-1 min-w-0">
               <div className="flex items-center gap-1" data-cy="token-select-trigger">
                 {value?.token ? (
                   <>
@@ -105,7 +105,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
               </div>
               <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
-              <div className="align-center ml-1 flex flex-col">
+              <div className="align-center ml-1 flex flex-col min-w-0">
                 <input
                   ref={inputRef}
                   data-cy="amount-input"
@@ -139,7 +139,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             </div>
 
             {/* Trailing component. E.g. Max Button */}
-            {trailing && <div className="absolute right-0 ml-2 mr-3 bg-white">{trailing}</div>}
+            {trailing && <div className="absolute md:right-0 ml-2 mr-3 right-0 bg-white ">{trailing}</div>}
           </div>
         </Tooltip>
 

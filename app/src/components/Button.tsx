@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
-type ButtonSize = 'sm' | 'md' | 'lg'
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 const styles = {
   primary:
@@ -20,18 +20,21 @@ const styles = {
 }
 
 const sizeHeights: Record<ButtonSize, string> = {
+  xs: 'h-[20px]',
   sm: 'h-[1.625rem]',
   md: 'h-[2.5rem]',
   lg: 'h-[3.5rem]',
 }
 
 const paddingX: Record<ButtonSize, string> = {
+  xs: 'px-1',
   sm: 'px-2',
   md: 'px-3',
   lg: 'px-5',
 }
 
 export const spinnerSize: Record<ButtonSize, number> = {
+  xs: 16,
   sm: 24,
   md: 24,
   lg: 40,
@@ -86,7 +89,7 @@ const Button: FC<ButtonProps> = ({
       isDisabled={disabled}
       disableRipple
       onPress={onClick}
-      size={size}
+      size={size === 'xs' ? "sm" : size}
       radius="sm"
       disableAnimation={true}
       className={twMerge('w-full', styles[variant], sizeHeights[size], paddingX[size], className)}
