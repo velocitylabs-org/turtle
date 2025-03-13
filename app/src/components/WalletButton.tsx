@@ -5,6 +5,8 @@ import { WalletType } from '@/models/chain'
 import { cn } from '@/utils/cn'
 import { motion } from 'framer-motion'
 import Button from './Button'
+import { Cross } from './svg/Cross'
+import { colors } from '../../tailwind.config'
 
 interface WalletButtonProps {
   /** The wallet type of the chain. */
@@ -86,9 +88,11 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
         variant={isConnected ? 'outline' : 'primary'}
         disabled={disabled}
         size="sm"
-        className={cn('text-sm', isConnected ? '' : 'w-[4.875rem]')}
+        className={cn('text-sm', isConnected ? '' : 'md:w-[4.875rem]')}
         onClick={buttonFunction}
-      />
+      >
+        {isConnected ? <Cross stroke={colors['turtle-foreground']} /> : null}
+      </Button>
     </motion.div>
   )
 }
