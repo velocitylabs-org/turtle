@@ -71,7 +71,7 @@ const TxSummary: FC<TxSummaryProps> = ({
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
     return (
-      <div className={cn('tx-summary p-4 pt-0', className)}>
+      <div className={cn('tx-summary p-0 pt-0', className)}>
         <div className="pt-3">
           <div className="mt-3 text-center text-xl font-bold text-turtle-foreground">Summary</div>
           <ul>
@@ -79,7 +79,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             {fees && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
-                  <div className="text-sm font-bold">{bridgingFees ? 'Execution fee' : 'Fee'} </div>
+                  <div className="text-sm font-bold pt-[3px]">{bridgingFees ? 'Execution fee' : 'Fee'} </div>
                   {!canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
@@ -112,7 +112,7 @@ const TxSummary: FC<TxSummaryProps> = ({
             {isBridgeTransfer && bridgingFees && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
-                  <div className="text-sm font-bold">Bridging fee</div>
+                  <div className="text-sm font-bold pt-[3px]">Bridging fee</div>
                   {!canPayAdditionalFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
@@ -144,7 +144,7 @@ const TxSummary: FC<TxSummaryProps> = ({
 
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
-                <div className="text-sm font-bold">Duration</div>
+                <div className="text-sm font-bold pt-[3px]">Duration</div>
               </div>
               <div className="items-right flex items-center space-x-0.5">
                 <div className="text-right text-xl text-turtle-foreground">{durationEstimate}</div>
