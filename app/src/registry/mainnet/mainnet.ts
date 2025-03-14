@@ -37,6 +37,7 @@ export const REGISTRY: Registry = {
     Astar,
   ],
   tokens: [
+    EthereumTokens.ETH,
     EthereumTokens.WETH,
     EthereumTokens.WBTC,
     EthereumTokens.USDC,
