@@ -10,7 +10,7 @@ function CopyAddress({
 }: {
   content: string
   address: string
-  showIcon: boolean
+  showIcon?: boolean
 }) {
   const { addNotification } = useNotification()
   const [showCopyIndicator, setShowCopyIndicator] = useState(false)
