@@ -188,8 +188,9 @@ const useParaspellApi = () => {
     console.log('routerPlan: ', routerPlan)
 
     const step1 = routerPlan.at(0)
+    if (!step1) throw new Error('No steps in router plan')
 
-    step1?.tx
+    step1.tx
       .signAndSend(account.address, { signer: account.pjsSigner }, async result => {
         try {
           const transferToStore = {
