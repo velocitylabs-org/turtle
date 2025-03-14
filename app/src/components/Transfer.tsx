@@ -210,14 +210,18 @@ const Transfer: FC = () => {
                 secondPlaceholder={amountPlaceholder}
                 error={errors.tokenAmount?.amount?.message || tokenAmountError}
                 trailing={
-                  <Button
-                    label="Max"
-                    size="sm"
-                    variant="outline"
-                    className="min-w-[40px]"
-                    onClick={handleMaxButtonClick}
-                    disabled={shouldDisableMaxButton}
-                  />
+                  tokenAmount?.amount ? (
+                    <></>
+                  ) : (
+                    <Button
+                      label="Max"
+                      size="sm"
+                      variant="outline"
+                      className="min-w-[40px]"
+                      onClick={handleMaxButtonClick}
+                      disabled={shouldDisableMaxButton}
+                    />
+                  )
                 }
                 className="z-40"
               />
@@ -324,7 +328,7 @@ const Transfer: FC = () => {
             <ActionBanner
               disabled={isApprovingErc20Spend}
               header="Approve ERC-20 token spend"
-              text={`We first need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
+              text={`We need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
               image={
                 <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
               }

@@ -104,11 +104,16 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                     height={24}
                     className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
                   />
-                  {shouldShowChainName && (
-                    <span className="text-nowrap" data-cy="chain-select-value">
-                      {value.name}
-                    </span>
-                  )}
+
+                  <span
+                    className={cn(
+                      shouldShowChainName ? '' : 'hidden md:inline',
+                      'ml-1 text-nowrap',
+                    )}
+                    data-cy="chain-select-value"
+                  >
+                    {value.name}
+                  </span>
                 </>
               ) : (
                 <>
