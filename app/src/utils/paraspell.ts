@@ -185,7 +185,7 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
 }
 
 /**
- * Get the ParaSpell currency id in the form of `TCurrencyCore`.
+ * Get the ParaSpell currency id in the form of `TCurrencyCore`. Used to convert a turtle token to a paraspell token object.
  *
  * @remarks We prioritize an local asset id if specified in our registry and otherwise
  * default to the token symbol.
