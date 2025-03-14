@@ -9,10 +9,9 @@ export const trackXcm = async (
 ) => {
   try {
     const xcmTransfers: FromParachainTrackingResult[] = []
-    if (!env.config.SUBSCAN_API) throw Error(`No subscan api urls configured for ${env.name}`)
     const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
     if (!subscanKey) throw Error('Missing Subscan Key')
-    const relaychain = subscan.createApi(env.config.SUBSCAN_API.RELAY_CHAIN_URL, subscanKey)
+    const relaychain = subscan.createApi(env.config.RELAY_CHAIN_URL, subscanKey)
 
     for (const transfer of ongoingTransfers) {
       const { crossChainMessageHash, sourceChainExtrinsicIndex } = transfer
