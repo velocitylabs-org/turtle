@@ -9,9 +9,8 @@ export const EthereumTokens = {
     symbol: 'ETH',
     logoURI: '/logos/ethereum.svg',
     decimals: 18,
-    address: '',
-    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
-    multilocation: '',
+    address: '0x0000000000000000000000000000000000000000',
+    multilocation: '{"parents": "2", "interior": { "X1": [{ "GlobalConsensus": { "Ethereum": "1" } }] } }',
     coingeckoId: 'ethereum',
     origin: snowbridgeWrapped(),
   },
