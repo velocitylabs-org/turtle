@@ -45,11 +45,11 @@ importers:
         specifier: ^1.6.8
         version: 1.6.8(@types/react@19.0.8)(@wagmi/core@2.16.4(@tanstack/query-core@5.66.4)(@types/react@19.0.8)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(wagmi@2.14.11(@tanstack/query-core@5.66.4)(@tanstack/react-query@5.66.9(react@19.0.0))(@types/react@19.0.8)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2))(zod@3.24.2))(zod@3.24.2)
       '@snowbridge/api':
-        specifier: ^0.1.35
-        version: 0.1.35(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
+        specifier: ^0.1.44
+        version: 0.1.44(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)
       '@snowbridge/contract-types':
-        specifier: ^0.1.35
-        version: 0.1.35(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: ^0.1.44
+        version: 0.1.44(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@sodazone/ocelloids-client':
         specifier: ^2.4.4
         version: 2.4.4(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -2712,11 +2712,11 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@snowbridge/api@0.1.35':
-    resolution: {integrity: sha512-kh2EXSB+yJ6wSlFQmxmEdn8wL4rRm1NT8O3rm2pEylrelcpOJmDYtQkpH7nBSUMUh8P7Nr6LDxtQI6wOoshMfA==}
+  '@snowbridge/api@0.1.44':
+    resolution: {integrity: sha512-1PaPyMR2KkVB73ZgEY87EQerMHNVyMnLCPgtyeKhOmSuuCHeppFSJZXGbKixMYh9g33H+QMsBTJnz/NFdb5ofg==}
 
-  '@snowbridge/contract-types@0.1.35':
-    resolution: {integrity: sha512-THCkKtCPjNcM7mSEyt4J/BLOk7NlvxcoJXWntKY5E5rJEkILhlTZS1O23n1Vi+aWCPhxAczfZ5mSRC90whXvIA==}
+  '@snowbridge/contract-types@0.1.44':
+    resolution: {integrity: sha512-0sz11hgghkxJewqmOLAHOIZVPfylJnUtPQi4wNRliX1k7Wee0JX5RBtLEf5iB7uREs2Zd+OC6DTXuowgheiQUQ==}
 
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
@@ -10294,14 +10294,14 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@snowbridge/api@0.1.35(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)':
+  '@snowbridge/api@0.1.44(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)':
     dependencies:
       '@polkadot/api': 14.3.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/keyring': 13.4.3(@polkadot/util-crypto@13.4.3(@polkadot/util@13.4.3))(@polkadot/util@13.4.3)
       '@polkadot/types': 14.3.1
       '@polkadot/util': 13.4.3
       '@polkadot/util-crypto': 13.4.3(@polkadot/util@13.4.3)
-      '@snowbridge/contract-types': 0.1.35(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@snowbridge/contract-types': 0.1.44(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@typechain/ethers-v6': 0.5.1(ethers@6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10))(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       rxjs: 7.8.2
@@ -10312,7 +10312,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@snowbridge/contract-types@0.1.35(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@snowbridge/contract-types@0.1.44(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
