@@ -6,8 +6,9 @@ const useOngoingTransfers = () => {
   const remove = useOngoingTransfersStore.getState().remove
   const updateUniqueId = useOngoingTransfersStore.getState().updateUniqueId
   const updateStatus = useOngoingTransfersStore.getState().updateStatus
+  const updateProgress = useOngoingTransfersStore.getState().updateProgress
 
-  return { ongoingTransfers, addOrUpdate, remove, updateUniqueId, updateStatus }
+  return { ongoingTransfers, addOrUpdate, remove, updateUniqueId, updateStatus, updateProgress }
 }
 
 export default useOngoingTransfers

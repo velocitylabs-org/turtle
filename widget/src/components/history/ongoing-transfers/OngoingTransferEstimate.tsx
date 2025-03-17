@@ -17,7 +17,12 @@ const TransferEstimate: FC<TransferEstimateProps> = ({
 }) => {
   const progress = useTransferProgress(transfer, direction)
 
-  return <ProgressBar progress={progress} outlinedProgressBar={outlinedProgressBar} />
+  return (
+    <ProgressBar
+      progress={transfer.progress ?? progress}
+      outlinedProgressBar={outlinedProgressBar}
+    />
+  )
 }
 
 export default TransferEstimate

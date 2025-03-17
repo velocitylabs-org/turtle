@@ -2,7 +2,7 @@ import { ethers, JsonRpcSigner } from 'ethers'
 import { Chain, Network } from '@/models/chain'
 import { Token } from '@/models/token'
 import { TokenAmount } from '@/models/select'
-import { AmountInfo } from '@/models/transfer'
+import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { Sender } from '@/hooks/useTransfer'
 
 export type FormatLength = 'Short' | 'Long' | 'Longer'
@@ -168,4 +168,24 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
   if (sender instanceof JsonRpcSigner)
     return error.message.includes('ethers-user-denied') // Ethers connection
   else return error.message.includes('Cancelled') // Substrate connection
+}
+
+/**
+ * Checks if an ongoing transfer is outdated and should be marked as undefined:
+ * - XCM transfers are considered outdated after 30 mins.
+ * - Bridge transfers are considered outdated after 6 hours.
+ *
+ * @param transfer - The ongoing transfer to check.
+ * @returns A boolean indicating whether the transfer is outdated.
+ */
+export const startedTooLongAgo = (
+  transfer: StoredTransfer,
+  thresholdInHours = { xcm: 0.5, bridge: 6 },
+) => {
+  const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const timeBuffer =
+    direction === Direction.WithinPolkadot
+      ? thresholdInHours.xcm * 60 * 60 * 1000
+      : thresholdInHours.bridge * 60 * 60 * 1000
+  return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
 }

@@ -1,6 +1,6 @@
 import { StoredTransfer } from '@/models/transfer'
 import { formatAmount, resolveDirection, toHuman } from '@/utils/transfer'
-import OngoingTransfer from './OngoingTransfer'
+import OngoingTransfer from './Card'
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,8 @@ import Account from '@/components/Account'
 import { TokenLogo } from '@/components/TokenLogo'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import TransferEstimate from './OngoingTransferEstimate'
+import { getExplorerLink } from '@/utils/explorer'
+import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -25,6 +27,7 @@ export const OngoingTransferDialog = ({
   status?: string
 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const explorerLink = getExplorerLink(transfer)
 
   const getStatus = (status?: string) => {
     if (typeof status === 'string') return status
@@ -95,15 +98,12 @@ export const OngoingTransferDialog = ({
           >
             <div className="my-2 flex items-center justify-between">
               <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
-              <p className="text-normal text-turtle-secondary">
-                {formatOngoingTransferDate(transfer.date)}
-              </p>
             </div>
 
             <TransferEstimate
               transfer={transfer}
               direction={direction}
-              outlinedProgressBar={true}
+              outlinedProgressBar={false}
             />
           </div>
 
@@ -174,7 +174,7 @@ export const OngoingTransferDialog = ({
             </div>
           </div>
 
-          {/* {explorerLink && (
+          {explorerLink && (
             <a
               href={explorerLink}
               target="_blank"
@@ -184,7 +184,7 @@ export const OngoingTransferDialog = ({
             >
               <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
             </a>
-          )} */}
+          )}
         </div>
       </DialogContent>
     </Dialog>

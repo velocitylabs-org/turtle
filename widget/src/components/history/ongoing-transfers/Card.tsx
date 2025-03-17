@@ -11,7 +11,7 @@ const OngoingTransfer: FC<{
   transfer: StoredTransfer
 }> = ({ transfer }) => {
   return (
-    <div className="mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
+    <div className="mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer hover:bg-turtle-secondary-light/50">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <LoadingIcon
@@ -21,7 +21,7 @@ const OngoingTransfer: FC<{
             strokeWidth={5}
             color={colors['turtle-secondary']}
           />
-          <p className="text-turtle-foreground)] no-letter-spacing text-xl font-normal">
+          <p className="no-letter-spacing text-xl font-normal text-turtle-foreground">
             {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
           </p>
           {/* From and to Chains */}
@@ -46,7 +46,7 @@ const OngoingTransfer: FC<{
             />
           </div>
         </div>
-        <p className="text-normal text-right text-turtle-secondary">
+        <p className="text-right text-sm text-turtle-secondary">
           {formatOngoingTransferDate(transfer.date)}
         </p>
       </div>

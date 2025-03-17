@@ -12,12 +12,12 @@ const ProgressBar: FC<ProgressBarProps> = ({ progress, outlinedProgressBar }) =>
       {!outlinedProgressBar ? (
         <div
           className={cn(
-            'mb-4 h-2 overflow-hidden rounded-full bg-turtle-secondary-light',
+            'mb-4 h-2 overflow-hidden rounded-full border border-turtle-secondary-dark bg-white',
             progress <= 0 && 'animate-pulse',
           )}
         >
           <div
-            className="h-full rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-1000 ease-in-out"
+            className="h-full rounded-full bg-turtle-secondary transition-all duration-1000 ease-in-out"
             style={{ transform: `translateX(-${100 - (progress || 0)}%)` }}
           />
         </div>
