@@ -8,14 +8,10 @@ import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import TransfersHistory from './history/TransfersHistory'
 
-export interface WidgetProps {
-  title?: string
-}
-
 export type TransferTab = 'New' | 'History'
 export type TransferTabOptions = TransferTab
 
-export const Widget: React.FC<WidgetProps> = () => {
+export const Widget = () => {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const { completedTransfers } = useCompletedTransfers()
 

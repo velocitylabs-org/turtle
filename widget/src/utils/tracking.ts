@@ -1,7 +1,12 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { historyV2 as history } from '@snowbridge/api'
-import { TxTrackingResult, StoredTransfer, OngoingTransfers } from '@/models/transfer'
-import { resolveDirection } from './transfer'
+import {
+  TxTrackingResult,
+  StoredTransfer,
+  OngoingTransfers,
+  OngoingTransferWithDirection,
+} from '@/models/transfer'
+import { Direction, resolveDirection } from './transfer'
 import { FromParaToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (ongoingTransfers: OngoingTransfers) => {
@@ -151,4 +156,56 @@ export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
     txTrackingResult.status === TransferStatus.Complete ||
     txTrackingResult.status === TransferStatus.Failed
   )
+}
+
+const formatTransfersWithDirection = (
+  ongoingTransfers: StoredTransfer[],
+): OngoingTransferWithDirection[] => {
+  return ongoingTransfers
+    .map(t => {
+      const direction = resolveDirection(t.sourceChain, t.destChain)
+      return {
+        id: t.id,
+        sourceChain: t.sourceChain,
+        destChain: t.destChain,
+        sender: t.sender,
+        recipient: t.recipient,
+        token: t.token,
+        date: t.date,
+        direction,
+        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
+        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+        ...(t.sourceChainExtrinsicIndex && {
+          sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
+        }),
+      }
+    })
+    .filter(t => t.direction !== Direction.WithinPolkadot)
+}
+
+export const getFormattedOngoingTransfers = (ongoingTransfers: StoredTransfer[]) => {
+  const transfers: OngoingTransfers = {
+    toEthereum: [],
+    toPolkadot: [],
+  }
+
+  const formattedTransfers = formatTransfersWithDirection(ongoingTransfers)
+  if (!formattedTransfers.length) return transfers
+
+  formattedTransfers.forEach(transfer => {
+    switch (transfer.direction) {
+      case Direction.ToEthereum: {
+        transfers.toEthereum.push(transfer)
+        break
+      }
+      case Direction.ToPolkadot: {
+        transfers.toPolkadot.push(transfer)
+        break
+      }
+      default:
+        throw new Error('Direction not supported')
+    }
+  })
+
+  return transfers
 }

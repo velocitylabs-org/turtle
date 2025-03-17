@@ -1,22 +1,16 @@
 import { NotificationSeverity } from '@/models/notification'
-import {
-  CompletedTransfer,
-  OngoingTransfers,
-  OngoingTransferWithDirection,
-  StoredTransfer,
-  TxStatus,
-  TxTrackingResult,
-} from '@/models/transfer'
-import { Direction, resolveDirection } from '@/utils/transfer'
+import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getExplorerLink } from '@/utils/explorer'
 import {
   findMatchingTransfer,
+  getFormattedOngoingTransfers,
   getTransferStatus,
   isCompletedTransfer,
   trackTransfers,
 } from '@/utils/tracking'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -24,94 +18,39 @@ import useOngoingTransfers from './useOngoingTransfers'
 type ID = string
 type Message = string
 
+const REVALIDATE = 30 * 1000 // 30 seconds
+
 const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
-  const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
-  const [loading, setLoading] = useState<boolean>(true)
-  const { remove, updateUniqueId } = useOngoingTransfers()
+  const { remove, updateProgress } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
 
-  const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
-    return ongoingTransfers
-      .map(t => {
-        const direction = resolveDirection(t.sourceChain, t.destChain)
-        return {
-          id: t.id,
-          sourceChain: t.sourceChain,
-          destChain: t.destChain,
-          sender: t.sender,
-          recipient: t.recipient,
-          token: t.token,
-          date: t.date,
-          direction,
-          ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
-          ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
-          ...(t.sourceChainExtrinsicIndex && {
-            sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
-          }),
-        }
-      })
-      .filter(t => t.direction !== Direction.WithinPolkadot)
+  const {
+    data: transfers,
+    isLoading: loading,
+    error: trackingError,
+  } = useQuery({
+    queryKey: ['ongoing-transfers', ongoingTransfers.map(t => t.id)],
+    queryFn: async () => {
+      const formattedTransfers = getFormattedOngoingTransfers(ongoingTransfers)
+      return trackTransfers(formattedTransfers)
+    },
+    refetchInterval: REVALIDATE,
+    staleTime: REVALIDATE,
+    enabled: ongoingTransfers.length > 0,
+  })
+
+  if (trackingError) {
+    console.error('Failed to track transfers:', trackingError.message)
   }
-
-  const fetchTransfers = useCallback(async () => {
-    const formattedTransfers: OngoingTransferWithDirection[] =
-      formatTransfersWithDirection(ongoingTransfers)
-    if (!formattedTransfers.length) return
-
-    setLoading(true)
-    try {
-      const transfers: OngoingTransfers = {
-        toEthereum: [],
-        toPolkadot: [],
-      }
-
-      formattedTransfers.map(transfer => {
-        switch (transfer.direction) {
-          case Direction.ToEthereum: {
-            transfers.toEthereum.push(transfer)
-            break
-          }
-          case Direction.ToPolkadot: {
-            transfers.toPolkadot.push(transfer)
-            break
-          }
-          default:
-            throw new Error('Direction not supported')
-        }
-      })
-
-      setTransfers(await trackTransfers(transfers))
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }, [ongoingTransfers])
-
-  const ongoingTransfersRef = useRef(ongoingTransfers)
-
-  // initiate automatic updates every 30s
-  useEffect(() => {
-    if (ongoingTransfersRef.current.length > 0) fetchTransfers()
-    const intervalId = setInterval(() => {
-      if (ongoingTransfersRef.current.length > 0) fetchTransfers()
-    }, 30 * 1000)
-
-    return () => clearInterval(intervalId)
-  }, [fetchTransfers])
-
-  // update on ongoing transfers change
-  useEffect(() => {
-    ongoingTransfersRef.current = ongoingTransfers
-    if (ongoingTransfers.length > 0) fetchTransfers()
-  }, [ongoingTransfers, fetchTransfers])
 
   // update ongoing and completed transfers
   useEffect(() => {
+    if (!transfers) return
+
     ongoingTransfers.forEach(ongoing => {
-      if (transfers && 'error' in transfers) return
+      if ('error' in transfers) return
 
       const foundTransfer = findMatchingTransfer(transfers, ongoing)
 
@@ -121,6 +60,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
         setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
 
         if (isCompletedTransfer(foundTransfer)) {
+          updateProgress(ongoing.id)
           const explorerLink = getExplorerLink(ongoing)
 
           // Move from ongoing to done
@@ -149,9 +89,14 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
         }
       }
     })
-  }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateUniqueId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification])
 
-  return { transfers, loading, statusMessages, fetchTransfers }
+  return {
+    transfers: transfers ?? [],
+    loading,
+    statusMessages,
+  }
 }
 
 export default useOngoingTransfersTracker
