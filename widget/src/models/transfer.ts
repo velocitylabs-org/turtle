@@ -1,6 +1,8 @@
 import { Environment } from '@/stores/environmentStore'
 import { Chain } from './chain'
 import { Token } from './token'
+import { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
+import { Direction } from '@/utils/transfer'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
@@ -30,6 +32,16 @@ export interface StoredTransfer extends RawTransfer {
   status?: string
   // WithinPolkadot transfer is considered as finalized
   finalizedAt?: Date
+  progress?: number
+}
+
+export interface OngoingTransferWithDirection extends RawTransfer {
+  direction: Direction
+}
+
+export interface OngoingTransfers {
+  toEthereum: OngoingTransferWithDirection[] // Parachain => Eth transfer
+  toPolkadot: OngoingTransferWithDirection[] // Eth => Parachain transfer
 }
 
 export interface AmountInfo {
@@ -67,3 +79,7 @@ export type CompletedTransfer = {
   errors?: string[]
 }
 export type TransfersByDate = Record<string, CompletedTransfer[]>
+
+export type TxTrackingResult =
+  // Snowbridge API | Snowbridge API | Subscan API
+  FromEthTrackingResult | FromParaToEthTrackingResult //| FromParachainTrackingResult

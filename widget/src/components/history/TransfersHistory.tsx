@@ -3,6 +3,7 @@ import { OngoingTransferDialog } from './ongoing-transfers/Dialog'
 import { CompletedTransfer, StoredTransfer } from '@/models/transfer'
 import { CompletedTransferDialog } from './completed-transfers/Dialog'
 import useOngoingTransferCleaner from '@/hooks/useOngoingTransferCleaner'
+import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 
 const TransfersHistory = ({
   ongoingTransfers,
@@ -13,6 +14,7 @@ const TransfersHistory = ({
 }) => {
   ongoingTransfers.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   completedTransfers.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
   useOngoingTransferCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
 
@@ -28,7 +30,7 @@ const TransfersHistory = ({
           {ongoingTransfers.length > 0 && (
             <div>
               {ongoingTransfers.map(tx => (
-                <OngoingTransferDialog key={tx.id} transfer={tx} /> //status={statusMessages[tx.id]}
+                <OngoingTransferDialog key={tx.id} transfer={tx} status={statusMessages[tx.id]} />
               ))}
             </div>
           )}
