@@ -12,7 +12,6 @@ import { Success } from '@/assets/svg/Success'
 import { colors } from '../../../../tailwind.config'
 import { getSVGColor } from './Dialog'
 
-/* eslint-disable react-refresh/only-export-components */
 export const getStatusIcon = (status: TransferResult) => {
   switch (status) {
     case TxStatus.Failed:
@@ -35,13 +34,13 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
         getBorder(status),
       )}
     >
-      <div className="w-full space-y-2">
+      <div className="w-full space-y-2 overflow-x-auto">
         <div className="flex items-center justify-between">
-          <div className="flex max-w-xs space-x-2 overflow-x-auto">
+          <div className="flex items-center">
             <div>{getStatusIcon(status)}</div>
             <div
               className={cn(
-                'no-letter-spacing text-xl font-normal',
+                'no-letter-spacing px-2 text-lg font-normal sm:text-xl',
                 transferFailed ? 'text-turtle-error' : 'text-turtle-foreground',
               )}
             >
@@ -50,7 +49,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             </div>
             <div
               className={cn(
-                'ml-2 flex h-[24px] items-center space-x-1 rounded-full border p-1',
+                'flex h-[24px] items-center space-x-1 rounded-full border p-1',
                 transferFailed && 'border-turtle-error bg-turtle-error-light',
               )}
             >
@@ -87,7 +86,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
 
           <div
             className={cn(
-              'text-right text-sm',
+              'flex-1 text-right text-sm',
               transferFailed ? 'text-turtle-error' : 'text-turtle-level5',
             )}
           >
