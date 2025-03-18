@@ -53,7 +53,10 @@ export default App;
 ### Next.js (With SSR Handling)
 
 ```tsx
+"use client";
+
 import dynamic from "next/dynamic";
+
 const Widget = dynamic(
   () =>
     import("@velocitylabs-org/turtle-widget").then(({ Widget }) => {
@@ -67,7 +70,6 @@ const Widget = dynamic(
     loading: () => <div>Loading Turtle Widget</div>,
   }
 );
-
 
 function Home() {
   return (
