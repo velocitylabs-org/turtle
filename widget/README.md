@@ -19,6 +19,63 @@
 
 <!-- ABOUT THE PROJECT -->
 
-## About
+## 🐢 About
 
-Turtle is your go to app when it comes to cross-chain transfers that leverage fully trustless infrastructure. We aim to provide a unified experience to transfer tokens anywhere.
+Turtle is your go-to app for cross-chain transfers leveraging fully trustless infrastructure.  
+We aim to provide a **unified experience** for transferring tokens anywhere.
+
+
+## 📦 Installation
+
+```sh
+npm install @velocitylabs-org/turtle-widget
+```
+
+
+## Usage
+
+### React/Vite
+
+```tsx
+import { Widget } from "@velocitylabs-org/turtle-widget";
+
+function App() {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center">
+      <Widget />
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Next.js (With SSR Handling)
+
+```tsx
+import dynamic from "next/dynamic";
+const Widget = dynamic(
+  () =>
+    import("@velocitylabs-org/turtle-widget").then(({ Widget }) => {
+      if (!Widget) {
+        throw new Error("Turtle Widget not found");
+      }
+      return Widget;
+    }),
+  {
+    ssr: false,
+    loading: () => <div>Loading Turtle Widget</div>,
+  }
+);
+
+
+function Home() {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center">
+      <Widget />
+    </div>
+  );
+}
+
+export default Home;
+```
