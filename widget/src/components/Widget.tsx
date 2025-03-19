@@ -11,7 +11,7 @@ import TransfersHistory from './history/TransfersHistory'
 export type TransferTab = 'New' | 'History'
 export type TransferTabOptions = TransferTab
 
-export const Widget = () => {
+const Widget = () => {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const { completedTransfers } = useCompletedTransfers()
 
@@ -57,3 +57,4 @@ export const Widget = () => {
     </Providers>
   )
 }
+export default Widget
