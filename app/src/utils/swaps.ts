@@ -89,6 +89,7 @@ export const getSwapsDestinationChains = (sourceChain: Chain, _sourceToken: Toke
 }
 
 /** returns all allowed destination tokens for a swap. */
+// TODO: implement
 export const getSwapsDestinationTokens = (destinationChain: Chain): Token[] => {
   return []
 }
