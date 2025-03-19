@@ -57,19 +57,10 @@ export default App;
 
 import dynamic from "next/dynamic";
 
-const Widget = dynamic(
-  () =>
-    import("@velocitylabs-org/turtle-widget").then(({ Widget }) => {
-      if (!Widget) {
-        throw new Error("Turtle Widget not found");
-      }
-      return Widget;
-    }),
-  {
-    ssr: false,
-    loading: () => <div>Loading Turtle Widget</div>,
-  }
-);
+const Widget = dynamic(() => import("turtle-widget"), {
+  loading: () => <div>Loading Turtle Widget</div>,
+  ssr: false,
+});
 
 function Home() {
   return (
