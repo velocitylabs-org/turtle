@@ -33,7 +33,7 @@ const SkeletonTokens = () => {
 
 const SkeletonCard = () => {
   return (
-    <div className="flex items-center rounded-2xl border border-turtle-level3 bg-white p-4 sm:gap-4">
+    <div className="flex items-center rounded-2xl border border-turtle-level3 p-4 sm:gap-4">
       <div className="w-full space-y-2">
         {/* Transaction skeleton header */}
         <div className="flex items-center justify-between space-x-2 overflow-x-auto">
@@ -57,9 +57,9 @@ const SkeletonCard = () => {
 
 const HistoryLoaderSkeleton = () => {
   return (
-    <div className="z-20 mb-12 flex max-w-[90vw] flex-col gap-1 rounded-2xl border bg-red-500 p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
+    <div className="z-20 mb-12 flex max-w-[90vw] flex-col gap-4 rounded-3xl border p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
       {Array.from({ length: 2 }, (_, i) => i + 1).map(idx => (
-        <div key={idx} className="z-30 border">
+        <div key={idx} className="z-30">
           <div className="w-full space-y-4">
             <Skeleton className="h-5 w-1/3" />
             {Array.from({ length: 2 }, (_, i) => i + 1).map(idx => (

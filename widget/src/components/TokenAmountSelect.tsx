@@ -142,7 +142,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             </div>
 
             {/* Trailing component. E.g. Max Button */}
-            {trailing && <div className="absolute right-0 ml-2 mr-3 bg-white">{trailing}</div>}
+            {trailing && <div className="absolute right-0 ml-2 mr-3">{trailing}</div>}
           </div>
         </Tooltip>
 

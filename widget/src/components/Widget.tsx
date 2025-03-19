@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import NotificationSystem from '@/components/NotificationSystem'
 import SubstrateWalletModal from '@/components/SubstrateWalletModal'
 import TransferForm from '@/components/Transfer'
@@ -6,7 +7,7 @@ import { ArrowLeft, History } from 'lucide-react'
 import { useState } from 'react'
 import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import TransfersHistory from './history/TransfersHistory'
+import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
 
 export type TransferTab = 'New' | 'History'
 export type TransferTabOptions = TransferTab
@@ -17,6 +18,8 @@ const Widget = () => {
 
   const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
   const isHistoryTabSelected = newTransferInit === 'History'
+
+  const TransfersHistory = lazy(() => import('@/components/history/TransfersHistory'))
 
   return (
     <Providers>
@@ -45,10 +48,12 @@ const Widget = () => {
           {!isHistoryTabSelected ? (
             <TransferForm />
           ) : (
-            <TransfersHistory
-              ongoingTransfers={ongoingTransfers}
-              completedTransfers={completedTransfers ?? []}
-            />
+            <Suspense fallback={<HistoryLoaderSkeleton />}>
+              <TransfersHistory
+                ongoingTransfers={ongoingTransfers}
+                completedTransfers={completedTransfers ?? []}
+              />
+            </Suspense>
           )}
         </div>
         <NotificationSystem />
