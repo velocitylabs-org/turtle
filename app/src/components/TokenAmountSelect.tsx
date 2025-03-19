@@ -20,6 +20,11 @@ export interface TokenAmountSelectProps extends SelectProps<TokenAmount> {
   sourceChain: Chain | null
 }
 
+const numberFlowFormat = {
+  notation: 'compact' as const,
+  maximumFractionDigits: 3,
+}
+
 const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
   (
     {
@@ -128,10 +133,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                     <NumberFlow
                       value={Math.min(inDollars, maxDollars)} // Ensure the value doesn't exceed the max
                       prefix="$"
-                      format={{
-                        notation: 'compact',
-                        maximumFractionDigits: 3,
-                      }}
+                      format={numberFlowFormat}
                     />
                   </div>
                 )}

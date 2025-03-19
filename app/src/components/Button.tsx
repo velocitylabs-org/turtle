@@ -7,7 +7,7 @@ import LoadingIcon from './svg/LoadingIcon'
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
-const styles = {
+const classes = {
   primary:
     'bg-turtle-primary border border-black hover:border-black focus:border-black active:border-black disabled:border-black disabled:opacity-30',
   secondary:
@@ -17,6 +17,10 @@ const styles = {
   ghost: 'bg-transparent disabled:opacity-30',
   update:
     'border-1 bg-turtle-secondary border border-turtle-secondary-dark text-turtle-secondary-dark disabled:opacity-100 disabled:bg-opacity-50 disabled:border-opacity-40',
+}
+
+const styles = {
+  outline: 'none',
 }
 
 const sizeHeights: Record<ButtonSize, string> = {
@@ -92,11 +96,9 @@ const Button: FC<ButtonProps> = ({
       size={size === 'xs' ? 'sm' : size}
       radius="sm"
       disableAnimation={true}
-      className={twMerge('w-full', styles[variant], sizeHeights[size], paddingX[size], className)}
+      className={twMerge('w-full', classes[variant], sizeHeights[size], paddingX[size], className)}
       type={type}
-      style={{
-        outline: 'none',
-      }}
+      style={styles}
       data-cy={cypressID}
     >
       {/** Loading state */}
