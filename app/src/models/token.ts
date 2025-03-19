@@ -1,3 +1,8 @@
+import { REGISTRY } from '@/registry/mainnet/mainnet'
+import { TMultiLocation } from '@paraspell/sdk'
+import { deepEqual } from '@paraspell/sdk-common'
+import { captureException } from '@sentry/nextjs'
+
 export interface Token {
   id: string
   name: string
@@ -7,7 +12,7 @@ export interface Token {
   address: string
   // The xcm multilocation of an asset serves as a contextual identifier of said asset.
   // Learn more at https://guide.kusama.network/docs/learn/xcm/fundamentals/multilocation-summary
-  multilocation: string
+  multilocation: TMultiLocation
   // The coingeko token id, used to fetch the token price. It's not always the token symbol.
   // Examples:
   //   - https://www.coingecko.com/en/coins/bifrost-native-coin
@@ -26,4 +31,17 @@ export type Origin = { type: 'Ethereum'; bridge: Bridge } | { type: 'Polkadot'; 
 
 export function getCoingekoId(token: Token): string {
   return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
+}
+
+export function getTokenByMultilocation(multilocation: TMultiLocation): Token | undefined {
+  const token = REGISTRY.tokens.find(token => deepEqual(token.multilocation, multilocation))
+
+  // Usually a token should be found, so log a warning if not
+  if (!token)
+    captureException(new Error('Token multilocation not found'), {
+      level: 'warning',
+      extra: { multilocation },
+    })
+
+  return token
 }
