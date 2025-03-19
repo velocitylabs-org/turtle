@@ -402,8 +402,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/acala.svg',
     decimals: 12,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2000,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0000000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'acala',
     origin: parachain(2000),
   },
@@ -415,7 +429,14 @@ export const PolkadotTokens = {
     logoURI: '/logos/astar.svg',
     decimals: 18,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 2006,
+        },
+      },
+    },
     coingeckoId: 'astar',
     origin: parachain(2006),
   },
@@ -427,8 +448,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/bifrost.svg',
     decimals: 12,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2030,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'bifrost-native-coin',
     origin: parachain(2030),
   },
@@ -440,8 +475,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/cfg.svg',
     decimals: 18,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2031"},{"GeneralKey":"0x0001"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2031,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'centrifuge',
     origin: parachain(2031),
   },
@@ -453,7 +502,19 @@ export const PolkadotTokens = {
     logoURI: '/logos/hydra.svg',
     decimals: 12,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2034,
+          },
+          {
+            GeneralIndex: 0,
+          },
+        ],
+      },
+    },
     coingeckoId: 'hydradx',
     origin: parachain(2034),
   },
@@ -466,7 +527,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/usdc.svg',
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X3: [
+          {
+            Parachain: 1000,
+          },
+          {
+            PalletInstance: 50,
+          },
+          {
+            GeneralIndex: 1337,
+          },
+        ],
+      },
+    },
     origin: parachain(1000),
     coingeckoId: 'usd-coin',
   },
@@ -479,7 +555,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/usdt.svg',
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X3: [
+          {
+            Parachain: 1000,
+          },
+          {
+            PalletInstance: 50,
+          },
+          {
+            GeneralIndex: 1984,
+          },
+        ],
+      },
+    },
     origin: parachain(1000),
   },
 
@@ -490,8 +581,19 @@ export const PolkadotTokens = {
     logoURI: '/logos/moonbeam.svg',
     decimals: 18,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2004,
+          },
+          {
+            PalletInstance: 10,
+          },
+        ],
+      },
+    },
     coingeckoId: 'moonbeam',
     origin: parachain(2004),
   },
@@ -503,7 +605,14 @@ export const PolkadotTokens = {
     logoURI: '/logos/phala.svg',
     decimals: 12,
     address: '',
-    multilocation: '"{"parents":1,"interior":{"x1":{"parachain":2035}}}"',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 2035,
+        },
+      },
+    },
     coingeckoId: 'pha',
     origin: parachain(2035),
   },
@@ -515,8 +624,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/interlay.svg',
     decimals: 10,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2032,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0002000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'interlay',
     origin: parachain(2032),
   },
@@ -528,7 +651,12 @@ export const PolkadotTokens = {
     symbol: 'DOT',
     decimals: 10,
     address: '',
-    multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        Here: null,
+      },
+    },
     coingeckoId: 'polkadot',
     origin: parachain(0),
   },
@@ -540,8 +668,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/vdot.svg',
     decimals: 10,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0900000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2030,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0900000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'voucher-dot',
     origin: parachain(2030),
   },
@@ -553,8 +695,22 @@ export const PolkadotTokens = {
     logoURI: '/logos/ibtc.svg',
     decimals: 8,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2032,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'interbtc',
     origin: parachain(2032),
   },
@@ -566,8 +722,15 @@ export const PolkadotTokens = {
     logoURI: '/logos/polimec.svg',
     decimals: 10,
     address: '',
-    multilocation: '{"parents":1,"interior":{"x1":{"parachain":3344}}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 3344,
+        },
+      },
+    },
     coingeckoId: 'polimec',
     origin: parachain(3344),
   },
-}
+} as const satisfies Record<string, Token>
