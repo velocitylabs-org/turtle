@@ -10,8 +10,18 @@ export const EthereumTokens = {
     logoURI: '/logos/ethereum.svg',
     decimals: 18,
     address: '',
-    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
-    multilocation: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          GlobalConsensus: {
+            Ethereum: {
+              chainId: 1,
+            },
+          },
+        },
+      },
+    },
     coingeckoId: 'ethereum',
     origin: snowbridgeWrapped(),
   },
@@ -24,8 +34,26 @@ export const EthereumTokens = {
     logoURI: '/logos/usdc.svg',
     decimals: 6,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
     coingeckoId: 'usd-coin',
   },
@@ -37,8 +65,26 @@ export const EthereumTokens = {
     logoURI: '/logos/dai.svg',
     decimals: 18,
     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6b175474e89094c44da98b954eedeac495271d0f"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x6b175474e89094c44da98b954eedeac495271d0f',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -49,8 +95,27 @@ export const EthereumTokens = {
     logoURI: '/logos/usdt.svg',
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xdac17f958d2ee523a2206206994597c13d831ec7"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+            },
+          },
+        ],
+      },
+    },
+
     origin: snowbridgeWrapped(),
   },
 
@@ -61,8 +126,26 @@ export const EthereumTokens = {
     logoURI: '/logos/weth.svg',
     decimals: 18,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'weth',
     origin: snowbridgeWrapped(),
   },
@@ -74,8 +157,26 @@ export const EthereumTokens = {
     logoURI: '/logos/veth.svg',
     decimals: 18,
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -86,8 +187,26 @@ export const EthereumTokens = {
     logoURI: '/logos/wbtc.svg',
     decimals: 8,
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -98,8 +217,26 @@ export const EthereumTokens = {
     logoURI: '/logos/myth.svg',
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'mythos',
     origin: snowbridgeWrapped(),
   },
@@ -111,8 +248,26 @@ export const EthereumTokens = {
     logoURI: '/logos/shib.svg',
     decimals: 18,
     address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -123,8 +278,26 @@ export const EthereumTokens = {
     logoURI: '/logos/pepe.svg',
     decimals: 18,
     address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6982508145454Ce325dDbE47a25d4ec3d2311933"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x6982508145454ce325ddbe47a25d4ec3d2311933',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -135,8 +308,26 @@ export const EthereumTokens = {
     logoURI: '/logos/ton.svg',
     decimals: 9,
     address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x582d872a1b094fc48f5de31d3b73f2d9be47def1"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'the-open-network',
     origin: snowbridgeWrapped(),
   },
@@ -148,8 +339,26 @@ export const EthereumTokens = {
     logoURI: 'logos/wsteth.svg',
     decimals: 18,
     address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'bridged-wrapped-lido-staked-ether-scroll',
     origin: snowbridgeWrapped(),
   },
@@ -161,8 +370,26 @@ export const EthereumTokens = {
     logoURI: '/logos/tbtc.svg',
     decimals: 18,
     address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x18084fbA666a33d37592fA2633fD49a74DD93a88"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x18084fba666a33d37592fa2633fd49a74dd93a88',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 } as const satisfies Record<string, Token>
