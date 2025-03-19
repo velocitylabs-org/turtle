@@ -1,3 +1,7 @@
+import { REGISTRY } from '@/registry'
+import { Environment } from '@/store/environmentStore'
+import { TMultiLocation } from '@paraspell/sdk'
+
 export interface Token {
   id: string
   name: string
@@ -26,4 +30,11 @@ export type Origin = { type: 'Ethereum'; bridge: Bridge } | { type: 'Polkadot'; 
 
 export function getCoingekoId(token: Token): string {
   return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
+}
+
+export function getTokenByMultilocation(multilocation: TMultiLocation): Token {
+  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.multilocation === multilocation)
+  if (!token) throw new Error(`Token not found for multilocation: ${multilocation}`)
+
+  return token
 }
