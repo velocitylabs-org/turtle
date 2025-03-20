@@ -3,12 +3,6 @@ import { AssetHub } from '@/registry/mainnet/chains'
 import { Environment } from '@/stores/environmentStore'
 
 const EXPLORERS: { [environment in Environment]: { [explorerName: string]: string } } = {
-  [Environment.Testnet]: {
-    etherscan: 'https://sepolia.etherscan.io/',
-    subscan_assethub: 'https://assethub-rococo.subscan.io/',
-    subscan_brigehub: 'https://bridgehub-rococo.subscan.io/',
-    subscan_relaychain: 'https://rococo.subscan.io/',
-  },
   [Environment.Mainnet]: {
     etherscan: 'https://etherscan.io/',
     subscan_assethub: 'https://assethub-polkadot.subscan.io/',

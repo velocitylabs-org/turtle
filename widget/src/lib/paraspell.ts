@@ -129,9 +129,6 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
     case Environment.Mainnet:
       return 'polkadot'
 
-    case Environment.Testnet:
-      return 'polkadot' // TODO: change to Paseo once available
-
     default:
       throw new Error('Cannot find relay node. Unsupported environment')
   }
@@ -149,9 +146,7 @@ export function getCurrencyId(
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
-    ? Environment.Testnet
-    : Environment.Mainnet
+  const env = Environment.Mainnet
 
   const relay = getRelayNode(env)
   const chainNode = getTNode(chain.chainId, relay)
