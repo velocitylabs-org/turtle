@@ -24,30 +24,41 @@ const Widget = () => {
     <Providers>
       <div className="m-4 flex flex-col items-center justify-center p-6">
         <div className="relative">
-          <div
-            className="z-15 absolute -top-4 right-8 max-w-[90vw] rounded-lg bg-white"
-            onClick={() => setNewTransferInit(newTransferInit === 'New' ? 'History' : 'New')}
-          >
-            <div className="animation-bounce relative m-1 cursor-pointer rounded-lg border p-3">
-              {ongoingTransfers.length > 0 && !isHistoryTabSelected && (
-                <div className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-turtle-secondary bg-background text-foreground">
-                  <span className="text-xs">{ongoingTransfers.length}</span>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turtle-secondary-dark opacity-25" />
-                </div>
-              )}
-              <div>
-                {isHistoryTabSelected ? (
-                  <ArrowLeft className="h-4 w-4" />
-                ) : (
-                  <History className="h-4 w-4" />
+          {(ongoingTransfers.length > 0 ||
+            (completedTransfers && completedTransfers.length > 0)) && (
+            <div
+              className="z-15 absolute -top-5 right-8 max-w-[90vw] rounded-lg bg-white"
+              onClick={() => setNewTransferInit(newTransferInit === 'New' ? 'History' : 'New')}
+            >
+              <div className="animation-bounce relative m-1 cursor-pointer rounded-lg border p-3">
+                {ongoingTransfers.length > 0 && !isHistoryTabSelected && (
+                  <div className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-turtle-secondary bg-background text-foreground">
+                    <span className="text-xs">{ongoingTransfers.length}</span>
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turtle-secondary-dark opacity-25" />
+                  </div>
                 )}
+                <div>
+                  {isHistoryTabSelected ? (
+                    <ArrowLeft className="h-4 w-4" />
+                  ) : (
+                    <History className="h-4 w-4" />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
           {!isHistoryTabSelected ? (
             <TransferForm />
           ) : (
-            <Suspense fallback={<HistoryLoaderSkeleton />}>
+            <Suspense
+              fallback={
+                <HistoryLoaderSkeleton
+                  length={
+                    ongoingTransfers.length + (completedTransfers ? completedTransfers.length : 0)
+                  }
+                />
+              }
+            >
               <TransfersHistory
                 ongoingTransfers={ongoingTransfers}
                 completedTransfers={completedTransfers ?? []}

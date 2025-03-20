@@ -55,17 +55,11 @@ const SkeletonCard = () => {
   )
 }
 
-const HistoryLoaderSkeleton = () => {
+const HistoryLoaderSkeleton = ({ length }: { length: number }) => {
   return (
     <div className="z-20 mb-12 flex max-w-[90vw] flex-col gap-4 rounded-3xl border p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
-      {Array.from({ length: 2 }, (_, i) => i + 1).map(idx => (
-        <div key={idx} className="z-30">
-          <div className="w-full space-y-2">
-            {Array.from({ length: 2 }, (_, i) => i + 1).map(idx => (
-              <SkeletonCard key={idx} />
-            ))}
-          </div>
-        </div>
+      {Array.from({ length }, (_, i) => i + 1).map(idx => (
+        <SkeletonCard key={idx} />
       ))}
     </div>
   )
