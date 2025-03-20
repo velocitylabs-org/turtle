@@ -4,12 +4,19 @@ import { truncateAddress } from '@/utils/address'
 import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { colors } from '../../tailwind.config'
 import Button, { spinnerSize } from './Button'
 import { Icon } from './Icon'
 import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
+
+const footerAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.3 },
+}
 
 const SubstrateWalletModal: FC = () => {
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
@@ -62,6 +69,15 @@ const SubstrateWalletModal: FC = () => {
     type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
   )
 
+  const heightAnimationProps = useMemo(
+    () => ({
+      initial: { height: currentView === 'extensions' ? '10rem' : '11.8rem' },
+      animate: { height: currentView === 'extensions' ? '10rem' : '11.8rem' },
+      transition: { duration: 0.5, type: 'spring' },
+    }),
+    [currentView],
+  )
+
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
@@ -86,9 +102,7 @@ const SubstrateWalletModal: FC = () => {
         <motion.div
           className="flex max-h-[15rem] min-h-[130px] flex-col items-center justify-start space-y-2 overflow-y-auto p-6 pt-3 text-base"
           layout
-          initial={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
-          animate={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
-          transition={{ duration: 0.5, type: 'spring' }}
+          {...heightAnimationProps}
         >
           {/* Loading */}
           {loading && (
@@ -166,13 +180,7 @@ const SubstrateWalletModal: FC = () => {
         </motion.div>
 
         {/* Footer */}
-        <motion.div
-          layout
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-        >
+        <motion.div layout {...footerAnimationProps}>
           {currentView === 'extensions' && <Footer />}
         </motion.div>
       </DialogContent>
