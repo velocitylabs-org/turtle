@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import Image from 'next/image'
 import Navbar from '@/components/NavBar'
 
+const imageStyles = { objectFit: 'cover' as const }
+
 const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
   useEffect(() => {
     captureException(error)
@@ -18,7 +20,7 @@ const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
           alt="Turtle Background"
           className="relative z-0"
           fill
-          style={{ objectFit: 'cover' }}
+          style={imageStyles}
           sizes="100vw"
           priority
         />

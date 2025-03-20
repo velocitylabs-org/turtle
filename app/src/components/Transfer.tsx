@@ -29,6 +29,20 @@ import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
 
+const manualInputAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.07 },
+}
+
+const approvalAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.3 },
+}
+
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
@@ -180,6 +194,23 @@ const Transfer: FC = () => {
         allowed: token.allowed,
       })),
     [environment, sourceChain, destinationChain],
+  )
+
+  const approveAllowanceButton = useMemo(
+    () => ({
+      onClick: () => approveAllowance(sourceWallet?.sender as Signer),
+      label: 'Sign now',
+    }),
+    [approveAllowance, sourceWallet?.sender],
+  )
+
+  const swapEthToWEthButton = useMemo(
+    () => ({
+      onClick: () =>
+        swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ => fetchBalance()),
+      label: `Swap the difference`,
+    }),
+    [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
   )
 
   return (
@@ -337,14 +368,8 @@ const Transfer: FC = () => {
           <AnimatePresence>
             {manualRecipient.enabled && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{
-                  opacity: 1,
-                  height: 'auto',
-                }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.07 }}
                 className="flex items-center gap-1 self-center pt-1"
+                {...manualInputAnimationProps}
               >
                 <AlertIcon />
                 <span className="text-xs">Double check the address to avoid losing funds</span>
@@ -358,14 +383,8 @@ const Transfer: FC = () => {
       <AnimatePresence>
         {requiresErc20SpendApproval && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: 1,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
+            {...approvalAnimationProps}
           >
             <ActionBanner
               disabled={isApprovingErc20Spend}
@@ -374,10 +393,7 @@ const Transfer: FC = () => {
               image={
                 <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
               }
-              btn={{
-                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
-                label: 'Sign now',
-              }}
+              btn={approveAllowanceButton}
             />
           </motion.div>
         )}
@@ -387,28 +403,16 @@ const Transfer: FC = () => {
       <AnimatePresence>
         {shouldDisplayEthToWEthSwap && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: 1,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
+            {...approvalAnimationProps}
           >
             <ActionBanner
               disabled={isSwappingEthForWEth}
               header={'Swap ETH for wETH'}
               text={'Your wETH balance is insufficient but you got enough ETH.'}
               image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
-              btn={{
-                onClick: () =>
-                  swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ =>
-                    fetchBalance(),
-                  ),
-                label: `Swap the difference`,
-              }}
-            ></ActionBanner>
+              btn={swapEthToWEthButton}
+            />
           </motion.div>
         )}
       </AnimatePresence>

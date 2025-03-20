@@ -29,6 +29,11 @@ import VerticalDivider from './VerticalDivider'
 
 const maxDollars = 100000000000 // 100B
 
+const numberFlowFormat = {
+  notation: 'compact' as const,
+  maximumFractionDigits: 3,
+}
+
 interface ChainTokenSelectProps {
   chain: {
     value: Chain | null
@@ -304,10 +309,7 @@ const TokenAmountInput = ({
                 <NumberFlow
                   value={Math.min(inDollars, maxDollars)}
                   prefix="$"
-                  format={{
-                    notation: 'compact',
-                    maximumFractionDigits: 3,
-                  }}
+                  format={numberFlowFormat}
                 />
               </div>
             )}
