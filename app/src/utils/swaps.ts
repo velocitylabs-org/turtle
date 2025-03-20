@@ -3,7 +3,8 @@ import { Token } from '@/models/token'
 import { REGISTRY } from '@/registry'
 import { Hydration } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
-import { getExchangeAssets, TRouterAsset } from '@paraspell/xcm-router'
+import { getExchangeAssets } from '@paraspell/xcm-router'
+import { getTokenByMultilocation } from './token'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
 /** contains all supported paraspell dexes mapped to the chain they run on */
@@ -35,15 +36,8 @@ export const getDex = (chain: Chain): Dex | undefined => {
 /** returns all tokens supported by a dex */
 export const getDexTokens = (dex: Dex): Token[] =>
   getExchangeAssets(dex)
-    .map(asset => getTokenByRouterAsset(asset))
+    .map(asset => (asset.multiLocation ? getTokenByMultilocation(asset.multiLocation) : undefined))
     .filter((token): token is Token => token !== undefined)
-
-// TODO: work in progress. Currently rely on symbol only.
-/** returns a turtle token by a paraspell router asset */
-export const getTokenByRouterAsset = (asset: TRouterAsset): Token | undefined => {
-  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === asset.symbol)
-  return token
-}
 
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => getSupportedDexChains()
@@ -88,8 +82,24 @@ export const getSwapsDestinationChains = (sourceChain: Chain, _sourceToken: Toke
   return chains
 }
 
+// TODO: use trading pairs once available in xcm-router sdk. Enables support for non-omnipool dexes.
 /** returns all allowed destination tokens for a swap. */
-// TODO: implement
-export const getSwapsDestinationTokens = (destinationChain: Chain): Token[] => {
-  return []
+export const getSwapsDestinationTokens = (
+  sourceChain: Chain,
+  sourceToken: Token,
+  destinationChain: Chain,
+): Token[] => {
+  const dex = getDex(sourceChain)
+  if (!dex) return []
+  const dexTokensWithoutSourceToken = getDexTokens(dex).filter(token => token.id !== sourceToken.id)
+
+  if (sourceChain.uid === destinationChain.uid) return dexTokensWithoutSourceToken
+
+  // if destination chain is different, filter tokens by routes
+  const route = REGISTRY[Environment.Mainnet].routes.find(
+    route => route.from === sourceChain.uid && route.to === destinationChain.uid,
+  )
+  if (!route) return []
+
+  return dexTokensWithoutSourceToken.filter(token => route.tokens.includes(token.id))
 }
