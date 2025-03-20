@@ -15,7 +15,7 @@ interface WalletButtonProps {
   className?: string
 }
 
-const walletButtonAnimationProps = {
+const animationProps = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
@@ -81,12 +81,7 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
   })()
 
   return (
-    <motion.div
-      key={walletType}
-      className={className}
-      data-cy="connect-button"
-      {...walletButtonAnimationProps}
-    >
+    <motion.div key={walletType} className={className} data-cy="connect-button" {...animationProps}>
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}
         variant={isConnected ? 'outline' : 'primary'}
