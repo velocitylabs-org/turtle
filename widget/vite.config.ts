@@ -4,10 +4,12 @@ import react from '@vitejs/plugin-react-swc'
 import dts from 'vite-plugin-dts'
 import tailwindcss from 'tailwindcss'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
   plugins: [
     react(),
+    nodePolyfills(),
     dts({
       tsconfigPath: 'tsconfig.app.json',
       outDir: 'dist',
