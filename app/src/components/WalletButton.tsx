@@ -15,6 +15,12 @@ interface WalletButtonProps {
   className?: string
 }
 
+const animationProps = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+}
+
 /** Wallet button component that is intended to support connecting to various different networks based on its address type. */
 const WalletButton = ({ walletType, className }: WalletButtonProps) => {
   const {
@@ -75,14 +81,7 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
   })()
 
   return (
-    <motion.div
-      key={walletType}
-      className={className}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      data-cy="connect-button"
-    >
+    <motion.div key={walletType} className={className} data-cy="connect-button" {...animationProps}>
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}
         variant={isConnected ? 'outline' : 'primary'}
