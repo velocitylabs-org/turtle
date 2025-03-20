@@ -41,7 +41,7 @@
     "@reown/appkit-adapter-wagmi": "^1.6.8",
     "@snowbridge/api": "^0.1.44",
     "@snowbridge/contract-types": "^0.1.44",
-    "@sodazone/ocelloids-client": "^2.4.4",
+    "@sodazone/ocelloids-client": "^2.4.5",
     "@tanstack/react-query": "^5.66.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

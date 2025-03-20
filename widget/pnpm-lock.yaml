@@ -51,8 +51,8 @@ importers:
         specifier: ^0.1.44
         version: 0.1.44(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@sodazone/ocelloids-client':
-        specifier: ^2.4.4
-        version: 2.4.4(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        specifier: ^2.4.5
+        version: 2.4.5(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@tanstack/react-query':
         specifier: ^5.66.9
         version: 5.66.9(react@19.0.0)
@@ -2733,8 +2733,8 @@ packages:
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
 
-  '@sodazone/ocelloids-client@2.4.4':
-    resolution: {integrity: sha512-saQZhbODukXrML3I+iYKYzCnCMwHmzaxe66TpXs7QtvpVeZFDJ6nyABAsFChpx6mchSckMM7SNDVOmbs2GdMcw==}
+  '@sodazone/ocelloids-client@2.4.5':
+    resolution: {integrity: sha512-ukZbiBe+Wl+a/94U1u/JMhv5ZhwgnckdH+yCw/q2DFXM9f+4KliUJvB4SlOy3Iy6aglUDO4qQc9Hik2MxPjP9Q==}
     engines: {node: '>=18'}
     peerDependencies:
       ws: '*'
@@ -10521,7 +10521,7 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@sodazone/ocelloids-client@2.4.4(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+  '@sodazone/ocelloids-client@2.4.5(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       isows: 1.0.6(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ky: 1.7.5
