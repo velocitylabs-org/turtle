@@ -7,10 +7,11 @@ import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
 import { cn } from '@/utils/cn'
 import {
-  getTransferDestinationChains,
-  getTransferSourceChains,
-  getTransferTokens,
-} from '@/utils/routes'
+  getSwapsDestinationChains,
+  getSwapsDestinationTokens,
+  getSwapsSourceChains,
+  getSwapsSourceTokens,
+} from '@/utils/swaps'
 import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -169,31 +170,42 @@ const Transfer: FC = () => {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
-  const sourceChainOptions = useMemo(() => getTransferSourceChains(environment), [environment])
+  const sourceChainOptions = getSwapsSourceChains().map(chain => ({
+    ...chain,
+    allowed: true,
+  }))
 
   const destinationChainOptions = useMemo(
-    () => getTransferDestinationChains(environment, sourceChain, sourceTokenAmount?.token ?? null),
-    [environment, sourceChain, sourceTokenAmount?.token],
+    () =>
+      getSwapsDestinationChains(sourceChain, sourceTokenAmount?.token ?? null).map(chain => ({
+        ...chain,
+        allowed: true,
+      })),
+    [sourceChain, sourceTokenAmount?.token],
   )
 
   // TODO: create function to get source token options
   const sourceTokenOptions = useMemo(
     () =>
-      getTransferTokens(environment, sourceChain, destinationChain).map(token => ({
+      getSwapsSourceTokens(sourceChain).map(token => ({
         ...token,
-        allowed: token.allowed,
+        allowed: true,
       })),
-    [environment, sourceChain, destinationChain],
+    [sourceChain],
   )
 
   // TODO: create function to get destination token options
   const destinationTokenOptions = useMemo(
     () =>
-      getTransferTokens(environment, destinationChain, null).map(token => ({
+      getSwapsDestinationTokens(
+        sourceChain,
+        sourceTokenAmount?.token ?? null,
+        destinationChain,
+      ).map(token => ({
         ...token,
-        allowed: token.allowed,
+        allowed: true,
       })),
-    [environment, sourceChain, destinationChain],
+    [sourceChain, sourceTokenAmount?.token, destinationChain],
   )
 
   const approveAllowanceButton = useMemo(

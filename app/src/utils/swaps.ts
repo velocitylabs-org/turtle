@@ -43,7 +43,9 @@ export const getDexTokens = (dex: Dex): Token[] =>
 export const getSwapsSourceChains = (): Chain[] => getSupportedDexChains()
 
 /** returns all allowed source tokens for a swap. Currently only supports 1-signature flows. */
-export const getSwapsSourceTokens = (sourceChain: Chain): Token[] => {
+export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
+  if (!sourceChain) return []
+
   const dex = getDex(sourceChain)
   if (!dex) return []
 
@@ -51,7 +53,11 @@ export const getSwapsSourceTokens = (sourceChain: Chain): Token[] => {
 }
 
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
-export const getSwapsDestinationChains = (sourceChain: Chain, _sourceToken: Token): Chain[] => {
+export const getSwapsDestinationChains = (
+  sourceChain: Chain | null,
+  sourceToken: Token | null,
+): Chain[] => {
+  if (!sourceChain || !sourceToken) return []
   let chains: Chain[] = []
 
   // add dex chain itself
@@ -85,10 +91,12 @@ export const getSwapsDestinationChains = (sourceChain: Chain, _sourceToken: Toke
 // TODO: use trading pairs once available in xcm-router sdk. Enables support for non-omnipool dexes.
 /** returns all allowed destination tokens for a swap. */
 export const getSwapsDestinationTokens = (
-  sourceChain: Chain,
-  sourceToken: Token,
-  destinationChain: Chain,
+  sourceChain: Chain | null,
+  sourceToken: Token | null,
+  destinationChain: Chain | null,
 ): Token[] => {
+  if (!sourceChain || !sourceToken || !destinationChain) return []
+
   const dex = getDex(sourceChain)
   if (!dex) return []
   const dexTokensWithoutSourceToken = getDexTokens(dex).filter(token => token.id !== sourceToken.id)
