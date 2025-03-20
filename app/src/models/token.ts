@@ -38,7 +38,7 @@ export function getTokenByMultilocation(multilocation: TMultiLocation): Token | 
 
   // Usually a token should be found, so log a warning if not
   if (!token)
-    captureException(new Error('Token multilocation not found'), {
+    captureException(new Error('Token not found by multilocation'), {
       level: 'warning',
       extra: { multilocation },
     })
