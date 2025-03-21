@@ -22,9 +22,9 @@ const Error: FC<ErrorProps> = ({ error }) => {
         src="/turtle-background.webp"
         alt="Turtle Background"
         className="relative z-0"
+        fill
         style={imageStyles}
         sizes="100vw"
-        fill
         priority
       />
       {/* background overlay*/}
