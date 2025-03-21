@@ -11,9 +11,9 @@ const NotFound = () => {
         src="/turtle-background.webp"
         alt="Turtle Background for not found 404 page"
         className="relative z-0"
+        fill
         style={imageStyles}
         sizes="100vw"
-        fill
         priority
       />
       {/* background overlay*/}
