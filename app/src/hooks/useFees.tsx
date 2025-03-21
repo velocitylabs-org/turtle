@@ -48,9 +48,10 @@ const useFees = (
       return
     }
 
-    const sdk = isSameChain(sourceChain, destinationChain)
-      ? 'ParaSpellApi'
-      : getRoute(env, sourceChain, destinationChain)?.sdk
+    const sdk =
+      isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
+        ? 'ParaSpellApi'
+        : getRoute(env, sourceChain, destinationChain)?.sdk
 
     if (!sdk) throw new Error('Route not supported')
 

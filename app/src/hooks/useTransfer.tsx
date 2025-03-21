@@ -41,9 +41,10 @@ const useTransfer = () => {
     const { environment, sourceChain, destinationChain } = transferDetails
     setStatus('Loading')
 
-    const sdk = isSameChain(sourceChain, destinationChain)
-      ? 'ParaSpellApi'
-      : getRoute(environment, sourceChain, destinationChain)?.sdk
+    const sdk =
+      isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
+        ? 'ParaSpellApi'
+        : getRoute(environment, sourceChain, destinationChain)?.sdk
     if (!sdk) throw new Error('Route not supported')
 
     switch (sdk) {
