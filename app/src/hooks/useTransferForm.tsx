@@ -111,18 +111,10 @@ const useTransferForm = () => {
       !!sourceChain &&
       !!destinationChain &&
       !!sourceTokenAmount &&
-      isRouteAllowed(environment, sourceChain, destinationChain) &&
-      isRouteAllowed(environment, destinationChain, sourceChain, sourceTokenAmount)
+      isRouteAllowed(sourceChain, destinationChain) &&
+      isRouteAllowed(destinationChain, sourceChain, sourceTokenAmount)
     )
-  }, [
-    environment,
-    destinationChain,
-    sourceChain,
-    sourceTokenAmount,
-    isValidating,
-    transferStatus,
-    sourceTokenAmountError,
-  ])
+  }, [destinationChain, sourceChain, sourceTokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -139,7 +131,7 @@ const useTransferForm = () => {
         destinationChain &&
         sourceTokenAmount &&
         !isSameDestination &&
-        isRouteAllowed(environment, newValue, destinationChain, sourceTokenAmount)
+        isRouteAllowed(newValue, destinationChain, sourceTokenAmount)
       ) {
         // Update the source chain here to prevent triggering unexpected states, e.g., the useFees hook.
         setValue('sourceChain', newValue)
@@ -148,12 +140,7 @@ const useTransferForm = () => {
 
       if (
         !isSameDestination &&
-        isTokenAvailableForSourceChain(
-          environment,
-          newValue,
-          destinationChain,
-          sourceTokenAmount?.token,
-        )
+        isTokenAvailableForSourceChain(newValue, destinationChain, sourceTokenAmount?.token)
       ) {
         // Update the source chain here to prevent triggering unexpected states, e.g., the useFees hook.
         setValue('sourceChain', newValue)

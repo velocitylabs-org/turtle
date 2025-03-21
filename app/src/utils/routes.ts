@@ -1,15 +1,15 @@
 import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { REGISTRY, Route } from '@/registry'
+import { Route } from '@/registry'
 import { WithAllowedTag } from '@/registry/helpers'
-import { Environment } from '@/store/environmentStore'
+import { REGISTRY } from '@/registry/mainnet/mainnet'
 
 /** Filters all chains by available routes. */
-export const getTransferSourceChains = (env: Environment): WithAllowedTag<Chain>[] => {
-  const routes = REGISTRY[env].routes
+export const getTransferSourceChains = (): WithAllowedTag<Chain>[] => {
+  const routes = REGISTRY.routes
 
-  const chains = REGISTRY[env].chains.map(chain => {
+  const chains = REGISTRY.chains.map(chain => {
     const isAllowed = routes.some(route => route.from === chain.uid)
 
     return {
@@ -23,13 +23,12 @@ export const getTransferSourceChains = (env: Environment): WithAllowedTag<Chain>
 
 /** Filters all chains by selected source chain, selected token and available routes */
 export const getTransferDestinationChains = (
-  env: Environment,
   chain: Chain | null,
   token: Token | null,
 ): WithAllowedTag<Chain>[] => {
-  const routes = REGISTRY[env].routes
+  const routes = REGISTRY.routes
 
-  const chains = REGISTRY[env].chains.map(c => {
+  const chains = REGISTRY.chains.map(c => {
     if (!chain || !token) return { ...c, allowed: false }
 
     const isAllowed = routes.some(
@@ -47,13 +46,12 @@ export const getTransferDestinationChains = (
 
 /** Filters all tokens by by selected source chain and available routes */
 export const getTransferTokens = (
-  env: Environment,
   sourceChain: Chain | null,
   destinationChain: Chain | null,
 ): WithAllowedTag<Token>[] => {
-  const routes = REGISTRY[env].routes
+  const routes = REGISTRY.routes
 
-  const tokens = REGISTRY[env].tokens.map(token => {
+  const tokens = REGISTRY.tokens.map(token => {
     if (!sourceChain) return { ...token, allowed: false }
 
     const isAllowed = routes.some(
@@ -77,13 +75,8 @@ const orderByAllowedTag = <T extends WithAllowedTag<unknown>>(list: T[]): T[] =>
 }
 
 /** It checks if a route between two chains exists */
-export const isRouteAllowed = (
-  environment: Environment,
-  fromChain: Chain,
-  toChain: Chain,
-  tokenAmount?: TokenAmount,
-) => {
-  const routes = REGISTRY[environment].routes
+export const isRouteAllowed = (fromChain: Chain, toChain: Chain, tokenAmount?: TokenAmount) => {
+  const routes = REGISTRY.routes
 
   if (tokenAmount && tokenAmount.token) {
     const { id } = tokenAmount.token
@@ -96,19 +89,18 @@ export const isRouteAllowed = (
 }
 
 export const isTokenAvailableForSourceChain = (
-  env: Environment,
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
 ): boolean => {
   if (!sourceChain || !token) return false
-  return getTransferTokens(env, sourceChain, destinationChain ?? null).some(
+  return getTransferTokens(sourceChain, destinationChain ?? null).some(
     t => t.allowed && t.id === token.id,
   )
 }
 
-export const getRoute = (env: Environment, from: Chain, to: Chain): Route | undefined => {
-  return REGISTRY[env].routes.find(route => route.from === from.uid && route.to === to.uid)
+export const getRoute = (from: Chain, to: Chain): Route | undefined => {
+  return REGISTRY.routes.find(route => route.from === from.uid && route.to === to.uid)
 }
 
 export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {

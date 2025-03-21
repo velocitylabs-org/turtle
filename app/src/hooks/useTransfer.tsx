@@ -38,13 +38,13 @@ const useTransfer = () => {
 
   // The entry point function which is exposed to the components
   const transfer = async (transferDetails: TransferParams) => {
-    const { environment, sourceChain, destinationChain } = transferDetails
+    const { sourceChain, destinationChain } = transferDetails
     setStatus('Loading')
 
     const sdk =
       isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
         ? 'ParaSpellApi'
-        : getRoute(environment, sourceChain, destinationChain)?.sdk
+        : getRoute(sourceChain, destinationChain)?.sdk
     if (!sdk) throw new Error('Route not supported')
 
     switch (sdk) {
