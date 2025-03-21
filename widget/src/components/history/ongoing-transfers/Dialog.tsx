@@ -141,7 +141,7 @@ export const OngoingTransferDialog = ({
           </div>
 
           {/* sender */}
-          <div className="relative mt-2 w-full rounded-lg border border-turtle-level3">
+          {/* <div className="relative mt-2 w-full rounded-lg border border-turtle-level3">
             <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
               Sender
             </div>
@@ -163,6 +163,38 @@ export const OngoingTransferDialog = ({
                 address={transfer.recipient}
                 size={24}
               />
+            </div>
+          </div> */}
+
+          {/* sender */}
+          <div className="relative mt-2 grid w-full grid-cols-1 grid-rows-2 gap-2 sm:grid-cols-2 sm:grid-rows-1 sm:gap-1">
+            <div className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-full border border-turtle-level3 bg-white p-2">
+              <ArrowRight className="h-3 w-3 rotate-90 sm:rotate-0" />
+            </div>
+            <div className="relative rounded-lg border border-turtle-level3 p-4 text-sm">
+              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
+                Sender
+              </div>
+              <Account
+                network={transfer.sourceChain.network}
+                addressType={transfer.sourceChain.supportedAddressTypes?.at(0)}
+                address={transfer.sender}
+                size={24}
+              />
+            </div>
+
+            <div className="relative rounded-lg border border-turtle-level3 p-4 text-right text-sm">
+              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5 sm:left-auto sm:right-2.5">
+                Receiver
+              </div>
+              <div className="flex items-center justify-start sm:justify-end">
+                <Account
+                  network={transfer.destChain.network}
+                  addressType={transfer.destChain.supportedAddressTypes?.at(0)}
+                  address={transfer.recipient}
+                  size={24}
+                />
+              </div>
             </div>
           </div>
 
