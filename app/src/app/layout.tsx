@@ -9,6 +9,7 @@ import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { twMerge } from 'tailwind-merge'
 import './globals.css'
+import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
   metadataBase: new URL(TURTLE_CONFIG.url!),
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   const cookies = (await headers()).get('cookie')
 
@@ -33,9 +34,8 @@ export default async function RootLayout({
         <Navbar />
         <NotificationSystem />
         <ContextProvider cookies={cookies}>
-          {<HeroProvider>{children}</HeroProvider>}
+          <HeroProvider>{children}</HeroProvider>
         </ContextProvider>
-
         <Analytics />
       </body>
     </html>

@@ -12,7 +12,7 @@ import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import { ExclamationMark } from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
-import { toHuman } from '../utils/transfer'
+import { toHuman } from '@/utils/transfer'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount

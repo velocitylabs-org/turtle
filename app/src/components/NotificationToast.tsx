@@ -7,7 +7,7 @@ import WarningIcon from '@/../public/severity-warning-icon.svg'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 const NOTIFICATION_TTL_MS = 5000
@@ -24,10 +24,7 @@ interface NotificationToastProps {
   removeNotification: (id: number) => void
 }
 
-const NotificationToast: React.FC<NotificationToastProps> = ({
-  notification,
-  removeNotification,
-}) => {
+const NotificationToast: FC<NotificationToastProps> = ({ notification, removeNotification }) => {
   // Remove notification after TTL
   useEffect(() => {
     const timeoutRef = setTimeout(() => {

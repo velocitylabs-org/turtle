@@ -1,9 +1,7 @@
-import { FC } from 'react'
-
 import { HomeComponentSelect } from '@/components/HomeComponentSelect'
 import { TurtlesBackground } from '@/components/TurtlesBackground'
 
-const App: FC = async () => {
+const App = () => {
   return (
     <main>
       <TurtlesBackground />

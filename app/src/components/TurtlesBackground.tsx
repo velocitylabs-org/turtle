@@ -1,8 +1,9 @@
 import Image from 'next/image'
+import { FC } from 'react'
 
 const imageStyle = { objectFit: 'cover' as const }
 
-export const TurtlesBackground: React.FC = () => {
+export const TurtlesBackground: FC = () => {
   return (
     <div className="absolute top-0 z-0 h-[80vh] w-full">
       <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">

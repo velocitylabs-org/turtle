@@ -1,6 +1,4 @@
-import { FC } from 'react'
-
-const Credits: FC = () => {
+const Credits = () => {
   return (
     <div className="credits rainbow-text mt-6 flex flex-col text-center text-xs">
       <div>
