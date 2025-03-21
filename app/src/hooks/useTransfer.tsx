@@ -3,7 +3,7 @@ import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
-import { getRoute } from '@/utils/routes'
+import { getRoute, isSameChain } from '@/utils/routes'
 import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
 import useParaspellApi from './useParaspellApi'
@@ -40,10 +40,13 @@ const useTransfer = () => {
   const transfer = async (transferDetails: TransferParams) => {
     const { environment, sourceChain, destinationChain } = transferDetails
     setStatus('Loading')
-    const route = getRoute(environment, sourceChain, destinationChain)
-    if (!route) throw new Error('Route not supported')
 
-    switch (route.sdk) {
+    const sdk = isSameChain(sourceChain, destinationChain)
+      ? 'ParaSpellApi'
+      : getRoute(environment, sourceChain, destinationChain)?.sdk
+    if (!sdk) throw new Error('Route not supported')
+
+    switch (sdk) {
       case 'SnowbridgeApi':
         snowbridgeApi.transfer(transferDetails, setStatus)
         break

@@ -7,7 +7,7 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
-import { getRoute } from '@/utils/routes'
+import { getRoute, isSameChain } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
@@ -48,8 +48,11 @@ const useFees = (
       return
     }
 
-    const route = getRoute(env, sourceChain, destinationChain)
-    if (!route) throw new Error('Route not supported')
+    const sdk = isSameChain(sourceChain, destinationChain)
+      ? 'ParaSpellApi'
+      : getRoute(env, sourceChain, destinationChain)?.sdk
+
+    if (!sdk) throw new Error('Route not supported')
 
     // TODO: this should be the fee token, not necessarily the native token.
     const feeToken = getNativeToken(sourceChain)
@@ -57,7 +60,7 @@ const useFees = (
     try {
       setBridgingFees(null)
 
-      switch (route.sdk) {
+      switch (sdk) {
         case 'ParaSpellApi': {
           setLoading(true)
           const sourceChainNode = getParaSpellNode(sourceChain)

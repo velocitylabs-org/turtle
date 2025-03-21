@@ -110,3 +110,7 @@ export const isTokenAvailableForSourceChain = (
 export const getRoute = (env: Environment, from: Chain, to: Chain): Route | undefined => {
   return REGISTRY[env].routes.find(route => route.from === from.uid && route.to === to.uid)
 }
+
+export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
+  return chain1.uid === chain2.uid
+}
