@@ -4,6 +4,12 @@ import { Token } from '@/models/token'
 import { Route } from '@/registry'
 import { WithAllowedTag } from '@/registry/helpers'
 import { REGISTRY } from '@/registry/mainnet/mainnet'
+import {
+  getSwapsDestinationChains,
+  getSwapsDestinationTokens,
+  getSwapsSourceChains,
+  getSwapsSourceTokens,
+} from './paraspellSwaps'
 
 /** Filters all chains by available routes. */
 export const getTransferSourceChains = (): WithAllowedTag<Chain>[] => {
@@ -105,4 +111,58 @@ export const getRoute = (from: Chain, to: Chain): Route | undefined => {
 
 export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
   return chain1.uid === chain2.uid
+}
+
+export const getAllowedSourceChains = (): Chain[] => {
+  const transferSourceChains = getTransferSourceChains()
+  const swapSourceChains = getSwapsSourceChains()
+
+  // deduplicate
+  const chainMap = new Map(
+    [...transferSourceChains, ...swapSourceChains].map(chain => [chain.uid, chain]),
+  )
+
+  return Array.from(chainMap.values())
+}
+
+export const getAllowedSourceTokens = (
+  sourceChain: Chain | null,
+  destinationChain: Chain | null,
+): Token[] => {
+  const transferTokens = getTransferTokens(sourceChain, destinationChain)
+  const swapTokens = getSwapsSourceTokens(sourceChain)
+
+  // deduplicate
+  const tokenMap = new Map([...transferTokens, ...swapTokens].map(token => [token.id, token]))
+
+  return Array.from(tokenMap.values())
+}
+
+export const getAllowedDestinationChains = (
+  sourceChain: Chain | null,
+  sourceToken: Token | null,
+): Chain[] => {
+  const transferDestinationChains = getTransferDestinationChains(sourceChain, sourceToken)
+  const swapDestinationChains = getSwapsDestinationChains(sourceChain, sourceToken)
+
+  // deduplicate
+  const chainMap = new Map(
+    [...transferDestinationChains, ...swapDestinationChains].map(chain => [chain.uid, chain]),
+  )
+
+  return Array.from(chainMap.values())
+}
+
+export const getAllowedDestinationTokens = (
+  sourceChain: Chain | null,
+  sourceToken: Token | null,
+  destinationChain: Chain | null,
+): Token[] => {
+  const transferTokens = getTransferTokens(sourceChain, destinationChain)
+  const swapTokens = getSwapsDestinationTokens(sourceChain, sourceToken, destinationChain)
+
+  // deduplicate
+  const tokenMap = new Map([...transferTokens, ...swapTokens].map(token => [token.id, token]))
+
+  return Array.from(tokenMap.values())
 }
