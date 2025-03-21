@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, FC } from 'react'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
@@ -10,7 +10,7 @@ type LoadingIconProps = {
   className?: string
 } & SvgProps
 
-const LoadingIcon: React.FC<LoadingIconProps> = ({
+const LoadingIcon: FC<LoadingIconProps> = ({
   width = 34,
   height = 24,
   color = '#001B04',

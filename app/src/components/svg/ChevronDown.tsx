@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, FC } from 'react'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
@@ -10,7 +10,7 @@ type ChevronDownProps = {
   className?: string
 } & SvgProps
 
-const ChevronDown: React.FC<ChevronDownProps> = ({
+const ChevronDown: FC<ChevronDownProps> = ({
   width = 14,
   height = 6,
   color = 'currentColor',

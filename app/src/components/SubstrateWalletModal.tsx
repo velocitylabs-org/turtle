@@ -4,7 +4,7 @@ import { truncateAddress } from '@/utils/address'
 import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { colors } from '../../tailwind.config'
 import Button, { spinnerSize } from './Button'
 import { Icon } from './Icon'
@@ -18,7 +18,7 @@ const footerAnimationProps = {
   transition: { duration: 0.3 },
 }
 
-const SubstrateWalletModal: FC = () => {
+const SubstrateWalletModal = () => {
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const {
     isModalOpen,
@@ -187,7 +187,7 @@ const SubstrateWalletModal: FC = () => {
   )
 }
 
-const Footer: FC = () => {
+const Footer = () => {
   return (
     <div className="mb-1 mt-4 text-center text-xs text-gray-500">
       Haven&apos;t got a wallet?{' '}
