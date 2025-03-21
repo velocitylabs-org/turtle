@@ -1,5 +1,5 @@
 import { StoredTransfer } from '@/models/transfer'
-import { formatAmount, resolveDirection, toHuman } from '@/utils/transfer'
+import { Direction, formatAmount, resolveDirection, toHuman } from '@/utils/transfer'
 import OngoingTransfer from './Card'
 import {
   Dialog,
@@ -18,6 +18,7 @@ import { formatOngoingTransferDate } from '@/utils/datetime'
 import TransferEstimate from './OngoingTransferEstimate'
 import { getExplorerLink } from '@/utils/explorer'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
+import LoadingIcon from '@/assets/svg/LoadingIcon'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -34,6 +35,8 @@ export const OngoingTransferDialog = ({
     if (transfer.status) return transfer.status
     return 'Pending'
   }
+
+  const isFinalTransferStep = getStatus(status)?.includes(transfer.destChain.name)
 
   return (
     <Dialog>
@@ -93,18 +96,48 @@ export const OngoingTransferDialog = ({
           {/* Update and progress bar */}
           <div
             className={
-              'block h-[60px] w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark'
+              'block w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark'
             }
           >
-            <div className="my-2 flex items-center justify-between">
-              <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
-            </div>
+            {direction !== Direction.WithinPolkadot ? (
+              <>
+                <div className="my-2 flex items-center">
+                  <p className="text-left font-bold text-turtle-secondary-dark">
+                    {getStatus(status)}
+                  </p>
+                </div>
+                <TransferEstimate
+                  transfer={transfer}
+                  direction={direction}
+                  outlinedProgressBar={false}
+                />
+              </>
+            ) : (
+              <>
+                <div className="my-2 flex items-center">
+                  {!isFinalTransferStep && (
+                    <LoadingIcon
+                      className="mr-2 animate-spin"
+                      width={24}
+                      height={24}
+                      strokeWidth={5}
+                      color={colors['turtle-secondary']}
+                    />
+                  )}
+                  <p className="text-left font-bold text-turtle-secondary-dark">
+                    {getStatus(status)}
+                  </p>
+                </div>
 
-            <TransferEstimate
-              transfer={transfer}
-              direction={direction}
-              outlinedProgressBar={false}
-            />
+                {isFinalTransferStep && (
+                  <TransferEstimate
+                    transfer={transfer}
+                    direction={direction}
+                    outlinedProgressBar={false}
+                  />
+                )}
+              </>
+            )}
           </div>
 
           {/* sender */}
