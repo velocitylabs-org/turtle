@@ -1,9 +1,14 @@
+import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { REGISTRY } from '@/registry'
 import { Hydration } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
+import { getTNode } from '@paraspell/sdk'
 import { getExchangeAssets } from '@paraspell/xcm-router'
+import { getSenderAddress } from './address'
+import { getCurrencyId, getRelayNode, getTokenSymbol } from './paraspellTransfer'
 import { getTokenByMultilocation } from './token'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
@@ -16,6 +21,46 @@ export const DEX_TO_CHAIN_MAP = {
 } as const
 
 export type Dex = keyof typeof DEX_TO_CHAIN_MAP
+
+export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
+  const {
+    environment,
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+    recipient,
+    sender,
+  } = params
+
+  const senderAddress = await getSenderAddress(sender)
+  const account = params.sender as SubstrateAccount
+
+  const relay = getRelayNode(environment)
+  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
+  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+
+  const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
+  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
+
+  const { RouterBuilder } = await import('@paraspell/xcm-router')
+  const routerPlan = await RouterBuilder()
+    .from(sourceChainFromId as any) // TODO: replace any
+    .to(destinationChainFromId as any) // TODO: replace any
+    .currencyFrom(currencyIdFrom)
+    .currencyTo(currencyTo)
+    .amount(amount)
+    .slippagePct(slippagePct)
+    .senderAddress(senderAddress)
+    .recipientAddress(recipient)
+    .signer(account.pjsSigner as any)
+    .buildTransactions()
+
+  return routerPlan
+}
 
 /** returns all supported dex paraspell nodes */
 export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
@@ -58,7 +103,7 @@ export const getSwapsDestinationChains = (
   sourceToken: Token | null,
 ): Chain[] => {
   if (!sourceChain || !sourceToken) return []
-  let chains: Chain[] = []
+  const chains: Chain[] = []
 
   // add dex chain itself
   const dex = getDex(sourceChain)

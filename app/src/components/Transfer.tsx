@@ -11,7 +11,7 @@ import {
   getSwapsDestinationTokens,
   getSwapsSourceChains,
   getSwapsSourceTokens,
-} from '@/utils/swaps'
+} from '@/utils/paraspellSwaps'
 import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'

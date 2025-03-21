@@ -5,7 +5,6 @@ import { Token } from '@/models/token'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
-import { SubstrateAccount } from '@/store/substrateWalletStore'
 import {
   Builder,
   EvmBuilder,
@@ -19,7 +18,7 @@ import {
   TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { getAccountId32, getSenderAddress } from './address'
+import { getAccountId32 } from './address'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -55,46 +54,6 @@ export const createTransferTx = async (
       )
       .build()
   }
-}
-
-export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
-  const {
-    environment,
-    sourceChain,
-    destinationChain,
-    sourceToken,
-    destinationToken,
-    amount,
-    recipient,
-    sender,
-  } = params
-
-  const senderAddress = await getSenderAddress(sender)
-  const account = params.sender as SubstrateAccount
-
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
-  if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer failed: chain id not found.')
-
-  const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
-  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
-
-  const { RouterBuilder } = await import('@paraspell/xcm-router')
-  const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId as any) // TODO: replace any
-    .to(destinationChainFromId as any) // TODO: replace any
-    .currencyFrom(currencyIdFrom)
-    .currencyTo(currencyTo)
-    .amount(amount)
-    .slippagePct(slippagePct)
-    .senderAddress(senderAddress)
-    .recipientAddress(recipient)
-    .signer(account.pjsSigner as any)
-    .buildTransactions()
-
-  return routerPlan
 }
 
 /**
