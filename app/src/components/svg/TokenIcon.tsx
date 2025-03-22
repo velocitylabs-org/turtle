@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, FC } from 'react'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
@@ -10,7 +10,7 @@ type TokenIconProps = {
   className?: string
 } & SvgProps
 
-const TokenIcon: React.FC<TokenIconProps> = ({
+const TokenIcon: FC<TokenIconProps> = ({
   width = 24,
   height = 24,
   color = '#A184DC',

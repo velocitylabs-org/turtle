@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import { ComponentPropsWithoutRef, FC } from 'react'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
@@ -10,7 +10,7 @@ type ChainIconProps = {
   className?: string
 } & SvgProps
 
-const ChainIcon: React.FC<ChainIconProps> = ({
+const ChainIcon: FC<ChainIconProps> = ({
   width = 24,
   height = 24,
   color = '#A184DC',

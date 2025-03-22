@@ -5,6 +5,15 @@ import { cn } from '@/utils/cn'
 import Identicon from '@polkadot/react-identicon'
 import CopyAddress from './ClipboardCopy'
 
+interface AccountProps {
+  network: Network
+  addressType?: AddressType
+  address: string
+  className?: string
+  allowCopy?: boolean
+  size?: number
+}
+
 function Account({
   network,
   addressType,
@@ -12,14 +21,7 @@ function Account({
   className,
   allowCopy = true,
   size = 14,
-}: {
-  network: Network
-  addressType?: AddressType
-  address: string
-  className?: string
-  allowCopy?: boolean
-  size?: number
-}) {
+}: AccountProps) {
   const accountName = useLookupName(network, address)
   const accountDisplay = accountName ? accountName : truncateAddress(address, 4, 4)
 

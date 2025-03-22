@@ -1,12 +1,16 @@
 'use client'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { captureException } from '@sentry/nextjs'
 
 const imageStyles = { objectFit: 'cover' as const }
 
-const Error = ({ error }: { error: Error & { digest?: string } }) => {
+interface ErrorProps {
+  error: Error & { digest?: string }
+}
+
+const Error: FC<ErrorProps> = ({ error }) => {
   useEffect(() => {
     captureException(error)
   }, [error])
