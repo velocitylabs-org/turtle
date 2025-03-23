@@ -5,10 +5,7 @@ interface CrossProps extends ComponentPropsWithoutRef<'svg'> {
   stroke?: string
 }
 
-export default function Cross({
-  stroke = colors['turtle-secondary'],
-  ...props
-}: CrossProps) {
+export default function Cross({ stroke = colors['turtle-secondary'], ...props }: CrossProps) {
   return (
     <svg
       width="24"
