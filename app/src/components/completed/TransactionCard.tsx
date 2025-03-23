@@ -58,9 +58,9 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
             >
               <div className="relative h-4 w-4 rounded-full">
                 <Image
+                  fill
                   src={tx.sourceChain.logoURI}
                   alt={`${tx.sourceChain.name}`}
-                  fill={true}
                   className={cn(
                     'rounded-full border bg-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
@@ -73,9 +73,9 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
               />
               <div className="relative h-4 w-4 rounded-full">
                 <Image
+                  fill
                   src={tx.destChain.logoURI}
                   alt={`${tx.destChain.name}`}
-                  fill={true}
                   className={cn(
                     'rounded-full border bg-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',

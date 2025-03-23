@@ -10,7 +10,7 @@ function SkeletonAddresses() {
         <Skeleton className="h-4 w-4 rounded-full border-turtle-level3" />
         <Skeleton className="h-5 w-20" />
       </div>
-      <ArrowRight className="h-3 w-3" {...{ fill: colors['turtle-level2'] }} />
+      <ArrowRight className="h-3 w-3" fill={colors['turtle-level2']} />
       {/* Transaction skeleton recipient */}
       <div className="flex items-center gap-x-2">
         <Skeleton className="h-4 w-4 rounded-full border-turtle-level3" />
@@ -24,7 +24,7 @@ function SkeletonTokens() {
   return (
     <div className="items-centern flex space-x-2 rounded-2xl border px-1 py-0.5">
       <Skeleton className="h-4 w-4 rounded-full" />
-      <ArrowRight className="w-[0.45rem h-[0.45rem]" {...{ fill: colors['turtle-level2'] }} />
+      <ArrowRight className="w-[0.45rem h-[0.45rem]" fill={colors['turtle-level2']} />
       <Skeleton className="h-4 w-4 rounded-full" />
     </div>
   )
