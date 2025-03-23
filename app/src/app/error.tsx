@@ -6,7 +6,11 @@ import { captureException } from '@sentry/nextjs'
 
 const imageStyles = { objectFit: 'cover' as const }
 
-const Error = ({ error }: { error: Error & { digest?: string } }) => {
+interface ErrorProps {
+  error: Error & { digest?: string }
+}
+
+export default function Error({ error }: ErrorProps) {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -43,5 +47,3 @@ const Error = ({ error }: { error: Error & { digest?: string } }) => {
     </div>
   )
 }
-
-export default Error

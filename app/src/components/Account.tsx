@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn'
 import Identicon from '@polkadot/react-identicon'
 import CopyAddress from './ClipboardCopy'
 
-function Account({
+export default function Account({
   network,
   addressType,
   address,
@@ -79,4 +79,3 @@ function Account({
     </div>
   )
 }
-export default Account

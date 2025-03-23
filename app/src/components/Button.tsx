@@ -1,6 +1,6 @@
 'use client'
 import { Button as NextButton } from '@heroui/react'
-import { FC, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import LoadingIcon from './svg/LoadingIcon'
 
@@ -69,7 +69,7 @@ export interface ButtonProps {
   cypressID?: string
 }
 
-const Button: FC<ButtonProps> = ({
+export default function Button({
   label = '',
   onClick = () => {},
   className,
@@ -87,7 +87,7 @@ const Button: FC<ButtonProps> = ({
   ),
   type = 'button',
   cypressID,
-}) => {
+}: ButtonProps) {
   return (
     <NextButton
       isDisabled={disabled}
@@ -116,5 +116,3 @@ const Button: FC<ButtonProps> = ({
     </NextButton>
   )
 }
-
-export default Button

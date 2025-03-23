@@ -1,9 +1,8 @@
-import { ArrowRight } from '../svg/ArrowRight'
+import ArrowRight from '../svg/ArrowRight'
 import { Skeleton } from '../ui/skeleton'
-
 import { colors } from '../../../tailwind.config'
 
-const SkeletonAddresses = () => {
+function SkeletonAddresses() {
   return (
     <div className="flex items-center justify-start space-x-4">
       {/* Transaction skeleton sender */}
@@ -21,7 +20,7 @@ const SkeletonAddresses = () => {
   )
 }
 
-const SkeletonTokens = () => {
+function SkeletonTokens() {
   return (
     <div className="items-centern flex space-x-2 rounded-2xl border px-1 py-0.5">
       <Skeleton className="h-4 w-4 rounded-full" />
@@ -31,7 +30,7 @@ const SkeletonTokens = () => {
   )
 }
 
-const SkeletonCard = () => {
+function SkeletonCard() {
   return (
     <div className="flex items-center rounded-2xl border border-turtle-level3 p-4 sm:gap-4">
       <div className="w-full space-y-2">
@@ -55,7 +54,7 @@ const SkeletonCard = () => {
   )
 }
 
-const TransactionLoaderSkeleton = () => {
+export default function TransactionLoaderSkeleton() {
   return (
     <div className="z-20 mb-12 flex max-w-[90vw] flex-col gap-4 rounded-3xl bg-white p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
       {Array.from({ length: 2 }, (_, i) => i + 1).map(idx => (
@@ -71,5 +70,3 @@ const TransactionLoaderSkeleton = () => {
     </div>
   )
 }
-
-export default TransactionLoaderSkeleton

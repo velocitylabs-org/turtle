@@ -6,13 +6,12 @@ import { Direction } from '@/services/transfer'
 import { cn } from '@/utils/cn'
 import { formatAmount, toAmountInfo } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
-import { FC } from 'react'
 import { colors } from '../../tailwind.config'
 import { spinnerSize } from './Button'
 import Delayed from './Delayed'
-import { ExclamationMark } from './svg/ExclamationMark'
+import ExclamationMark from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
-import { toHuman } from '../utils/transfer'
+import { toHuman } from '@/utils/transfer'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
@@ -36,7 +35,7 @@ const animationConfig = {
   exit: { opacity: 0, height: 0, transition: { duration: 0.2 } },
 }
 
-const TxSummary: FC<TxSummaryProps> = ({
+export default function TxSummary({
   loading,
   tokenAmount,
   fees,
@@ -46,7 +45,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   canPayFees,
   canPayAdditionalFees,
   className,
-}) => {
+}: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
@@ -190,5 +189,3 @@ const TxSummary: FC<TxSummaryProps> = ({
     </AnimatePresence>
   )
 }
-
-export default TxSummary

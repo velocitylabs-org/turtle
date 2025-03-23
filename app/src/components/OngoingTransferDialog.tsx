@@ -4,11 +4,11 @@ import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import Account from './Account'
-import { Icon } from './Icon'
+import Icon from './Icon'
 import OngoingTransfer from './OngoingTransfer'
-import { ArrowRight } from './svg/ArrowRight'
-import { ArrowUpRight } from './svg/ArrowUpRight'
-import { TokenLogo } from './TokenLogo'
+import ArrowRight from './svg/ArrowRight'
+import ArrowUpRight from './svg/ArrowUpRight'
+import TokenLogo from './TokenLogo'
 import TransferEstimate from './TransferEstimate'
 import {
   Dialog,
@@ -19,13 +19,12 @@ import {
   DialogTrigger,
 } from './ui/dialog'
 
-export const OngoingTransferDialog = ({
-  transfer,
-  status,
-}: {
+interface OngoingTransferDialogProps {
   transfer: StoredTransfer
   status?: string
-}) => {
+}
+
+export default function OngoingTransferDialog({ transfer, status }: OngoingTransferDialogProps) {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
@@ -209,5 +208,3 @@ export const OngoingTransferDialog = ({
     </Dialog>
   )
 }
-
-export default OngoingTransferDialog

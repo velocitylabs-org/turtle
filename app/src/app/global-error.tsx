@@ -6,7 +6,11 @@ import Navbar from '@/components/NavBar'
 
 const imageStyles = { objectFit: 'cover' as const }
 
-const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
+interface ErrorProps {
+  error: Error & { digest?: string }
+}
+
+export default function GlobalError({ error }: ErrorProps) {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -46,5 +50,3 @@ const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
     </html>
   )
 }
-
-export default GlobalError
