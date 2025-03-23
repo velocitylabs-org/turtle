@@ -1,3 +1,4 @@
+'use client'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 import { DisplaysTransfers } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'

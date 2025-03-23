@@ -1,3 +1,4 @@
+'use client'
 import DefaultIcon from '@/../public/severity-default-icon.svg'
 import ErrorIcon from '@/../public/severity-error-icon.svg'
 import InfoIcon from '@/../public/severity-info-icon.svg'
