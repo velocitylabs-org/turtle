@@ -1,6 +1,7 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { getExchangeOutputAmount } from '@/utils/paraspellSwap'
+import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
 interface UseSwapOutputAmountParams {
@@ -9,7 +10,6 @@ interface UseSwapOutputAmountParams {
   sourceToken: Token | null
   destinationToken: Token | null
   amount: string | null
-  enabled?: boolean
 }
 
 export function useSwapOutputAmount({
@@ -18,7 +18,6 @@ export function useSwapOutputAmount({
   sourceToken,
   destinationToken,
   amount,
-  enabled = true,
 }: UseSwapOutputAmountParams) {
   return useQuery({
     queryKey: [
@@ -30,9 +29,8 @@ export function useSwapOutputAmount({
       amount,
     ],
     queryFn: async () => {
-      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) {
+      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
         return null
-      }
 
       try {
         const output = await getExchangeOutputAmount(
@@ -44,17 +42,15 @@ export function useSwapOutputAmount({
         )
         return output
       } catch (error) {
+        captureException(error, {
+          level: 'error',
+          extra: { sourceChain, destinationChain, sourceToken, destinationToken, amount },
+        })
         console.error('Failed to fetch swap output amount:', error)
-        throw error
+        return null
       }
     },
-    enabled:
-      enabled &&
-      !!sourceChain &&
-      !!destinationChain &&
-      !!sourceToken &&
-      !!destinationToken &&
-      !!amount,
+    enabled: !!sourceChain && !!destinationChain && !!sourceToken && !!destinationToken && !!amount,
     staleTime: 10000, // Cache results for 10 seconds
     retry: 2, // Retry failed requests twice
   })
