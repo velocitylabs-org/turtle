@@ -1,10 +1,16 @@
 'use client'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { captureException } from '@sentry/nextjs'
 
-const Error = ({ error }: { error: Error & { digest?: string } }) => {
+const imageStyles = { objectFit: 'cover' as const }
+
+interface ErrorProps {
+  error: Error & { digest?: string }
+}
+
+const Error: FC<ErrorProps> = ({ error }) => {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -17,7 +23,7 @@ const Error = ({ error }: { error: Error & { digest?: string } }) => {
         alt="Turtle Background"
         className="relative z-0"
         fill
-        style={{ objectFit: 'cover' }}
+        style={imageStyles}
         sizes="100vw"
         priority
       />

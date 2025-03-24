@@ -30,7 +30,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
       </DialogTrigger>
       <DialogContent
         className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
-        hideCloseButton={true}
+        hideCloseButton
       >
         <DialogHeader
           className={cn(
