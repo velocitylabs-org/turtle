@@ -2,7 +2,6 @@ import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { Route } from '@/registry'
-import { WithAllowedTag } from '@/registry/helpers'
 import { REGISTRY } from '@/registry/mainnet/mainnet'
 import {
   getSwapsDestinationChains,
@@ -12,72 +11,40 @@ import {
 } from './paraspellSwaps'
 
 /** Filters all chains by available routes. */
-export const getTransferSourceChains = (): WithAllowedTag<Chain>[] => {
-  const routes = REGISTRY.routes
-
-  const chains = REGISTRY.chains.map(chain => {
-    const isAllowed = routes.some(route => route.from === chain.uid)
-
-    return {
-      ...chain,
-      allowed: isAllowed,
-    }
-  })
-
-  return orderByAllowedTag(chains)
+export const getTransferSourceChains = (): Chain[] => {
+  return REGISTRY.chains.filter(chain => REGISTRY.routes.some(route => route.from === chain.uid))
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
 export const getTransferDestinationChains = (
-  chain: Chain | null,
+  sourceChain: Chain | null,
   token: Token | null,
-): WithAllowedTag<Chain>[] => {
-  const routes = REGISTRY.routes
+): Chain[] => {
+  if (!sourceChain || !token) return []
 
-  const chains = REGISTRY.chains.map(c => {
-    if (!chain || !token) return { ...c, allowed: false }
-
-    const isAllowed = routes.some(
-      route => route.from === chain.uid && route.tokens.includes(token.id) && route.to === c.uid,
-    )
-
-    return {
-      ...c,
-      allowed: isAllowed,
-    }
-  })
-
-  return orderByAllowedTag(chains)
+  return REGISTRY.chains.filter(c =>
+    REGISTRY.routes.some(
+      route =>
+        route.from === sourceChain.uid && route.tokens.includes(token.id) && route.to === c.uid,
+    ),
+  )
 }
 
-/** Filters all tokens by by selected source chain and available routes */
+/** Filters all tokens by selected source chain and available routes */
 export const getTransferTokens = (
   sourceChain: Chain | null,
   destinationChain: Chain | null,
-): WithAllowedTag<Token>[] => {
-  const routes = REGISTRY.routes
+): Token[] => {
+  if (!sourceChain) return []
 
-  const tokens = REGISTRY.tokens.map(token => {
-    if (!sourceChain) return { ...token, allowed: false }
-
-    const isAllowed = routes.some(
+  return REGISTRY.tokens.filter(token =>
+    REGISTRY.routes.some(
       route =>
         route.from === sourceChain.uid &&
         route.tokens.includes(token.id) &&
         (!destinationChain || route.to === destinationChain.uid),
-    )
-
-    return {
-      ...token,
-      allowed: isAllowed,
-    }
-  })
-
-  return orderByAllowedTag(tokens)
-}
-
-const orderByAllowedTag = <T extends WithAllowedTag<unknown>>(list: T[]): T[] => {
-  return [...list].sort((a, b) => (a.allowed === b.allowed ? 0 : a.allowed ? -1 : 1))
+    ),
+  )
 }
 
 /** It checks if a route between two chains exists */
@@ -100,9 +67,7 @@ export const isTokenAvailableForSourceChain = (
   token?: Token | null,
 ): boolean => {
   if (!sourceChain || !token) return false
-  return getTransferTokens(sourceChain, destinationChain ?? null).some(
-    t => t.allowed && t.id === token.id,
-  )
+  return getTransferTokens(sourceChain, destinationChain ?? null).some(t => t.id === token.id)
 }
 
 export const getRoute = (from: Chain, to: Chain): Route | undefined => {
@@ -129,6 +94,8 @@ export const getAllowedSourceTokens = (
   sourceChain: Chain | null,
   destinationChain: Chain | null,
 ): Token[] => {
+  if (!sourceChain) return []
+
   const transferTokens = getTransferTokens(sourceChain, destinationChain)
   const swapTokens = getSwapsSourceTokens(sourceChain)
 
@@ -142,6 +109,8 @@ export const getAllowedDestinationChains = (
   sourceChain: Chain | null,
   sourceToken: Token | null,
 ): Chain[] => {
+  if (!sourceChain || !sourceToken) return []
+
   const transferDestinationChains = getTransferDestinationChains(sourceChain, sourceToken)
   const swapDestinationChains = getSwapsDestinationChains(sourceChain, sourceToken)
 
@@ -158,8 +127,12 @@ export const getAllowedDestinationTokens = (
   sourceToken: Token | null,
   destinationChain: Chain | null,
 ): Token[] => {
-  const transferTokens = getTransferTokens(sourceChain, destinationChain)
+  if (!sourceChain || !sourceToken || !destinationChain) return []
+
+  const transferTokens = sourceToken ? [sourceToken] : []
   const swapTokens = getSwapsDestinationTokens(sourceChain, sourceToken, destinationChain)
+
+  console.log('swapTokens: ', swapTokens)
 
   // deduplicate
   const tokenMap = new Map([...transferTokens, ...swapTokens].map(token => [token.id, token]))

@@ -50,6 +50,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const routerPlan = await RouterBuilder()
     .from(sourceChainFromId as any) // TODO: replace any
     .to(destinationChainFromId as any) // TODO: replace any
+    .exchange('HydrationDex') // only Hydration is supported for now
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
     .amount(amount)
