@@ -170,41 +170,21 @@ const Transfer: FC = () => {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
-  const sourceChainOptions = getAllowedSourceChains().map(chain => ({
-    ...chain,
-    allowed: true,
-  }))
+  const sourceChainOptions = getAllowedSourceChains()
 
   const destinationChainOptions = useMemo(
-    () =>
-      getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null).map(chain => ({
-        ...chain,
-        allowed: true,
-      })),
+    () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null),
     [sourceChain, sourceTokenAmount?.token],
   )
 
-  // TODO: create function to get source token options
   const sourceTokenOptions = useMemo(
-    () =>
-      getAllowedSourceTokens(sourceChain, destinationChain).map(token => ({
-        ...token,
-        allowed: true,
-      })),
+    () => getAllowedSourceTokens(sourceChain, destinationChain),
     [sourceChain],
   )
 
-  // TODO: create function to get destination token options
   const destinationTokenOptions = useMemo(
     () =>
-      getAllowedDestinationTokens(
-        sourceChain,
-        sourceTokenAmount?.token ?? null,
-        destinationChain,
-      ).map(token => ({
-        ...token,
-        allowed: true,
-      })),
+      getAllowedDestinationTokens(sourceChain, sourceTokenAmount?.token ?? null, destinationChain),
     [sourceChain, sourceTokenAmount?.token, destinationChain],
   )
 

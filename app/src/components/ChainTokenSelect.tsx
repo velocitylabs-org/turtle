@@ -5,7 +5,6 @@ import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
 import { ManualAddressInput } from '@/models/select'
 import { Token } from '@/models/token'
-import { WithAllowedTag } from '@/registry/helpers'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
@@ -38,7 +37,7 @@ interface ChainTokenSelectProps {
   chain: {
     value: Chain | null
     onChange: (chain: Chain | null) => void
-    options: WithAllowedTag<Chain>[]
+    options: Chain[]
     error?: string
     clearable?: boolean
     orderBySelected?: boolean
@@ -46,7 +45,7 @@ interface ChainTokenSelectProps {
   token: {
     value: Token | null
     onChange: (token: Token | null) => void
-    options: WithAllowedTag<Token>[]
+    options: Token[]
     sourceChainToDetermineOriginBanner: Chain | null
     error?: string
     clearable?: boolean
@@ -106,16 +105,16 @@ const ChainTokenSelect = ({
   const [tokenSearch, setTokenSearch] = useState<string>('')
 
   // Filter the options based on search
-  const filteredChainOptions = chain.options.filter(
-    option => option.allowed && option.name.toLowerCase().includes(chainSearch.toLowerCase()),
+  const filteredChainOptions = chain.options.filter(option =>
+    option.name.toLowerCase().includes(chainSearch.toLowerCase()),
   )
 
   const sortedAndFilteredChainOptions = chain.orderBySelected
     ? reorderOptionsBySelectedItem(filteredChainOptions, 'uid', chain.value?.uid)
     : filteredChainOptions
 
-  const filteredTokenOptions = token.options.filter(
-    option => option.allowed && option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
+  const filteredTokenOptions = token.options.filter(option =>
+    option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
   )
 
   // Sort the options by priority token and then by selected token
@@ -327,7 +326,7 @@ const TokenAmountInput = ({
 interface ChainListProps {
   searchString: string
   setSearchString: (value: string) => void
-  options: WithAllowedTag<Chain>[]
+  options: Chain[]
   selectedChain: Chain | null
   clearable?: boolean
   onSelect: (chain: Chain) => void
@@ -348,34 +347,31 @@ const ChainList = ({
       <SearchBar placeholder="Search" value={searchString} onChange={setSearchString} />
       <div className="max-h-[15rem] overflow-y-auto">
         <ul className="flex flex-col">
-          {options.map(option => {
-            if (!option.allowed) return null
-            const isSelected = selectedChain?.uid === option.uid
-            return (
-              <li
-                key={option.uid}
-                className={cn(
-                  'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                  isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                )}
-                onClick={() => onSelect(option)}
-              >
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={option.logoURI}
-                    alt={option.name}
-                    width={24}
-                    height={24}
-                    priority
-                    className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                  />
-                  <span className="text-sm">{option.name}</span>
-                </div>
+          {options.map(option => (
+            <li
+              key={option.uid}
+              className={cn(
+                'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                selectedChain?.uid === option.uid &&
+                  'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+              )}
+              onClick={() => onSelect(option)}
+            >
+              <div className="flex items-center gap-2">
+                <Image
+                  src={option.logoURI}
+                  alt={option.name}
+                  width={24}
+                  height={24}
+                  priority
+                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                />
+                <span className="text-sm">{option.name}</span>
+              </div>
 
-                {isSelected && clearable && <ClearButton onClick={onClear} />}
-              </li>
-            )
-          })}
+              {selectedChain?.uid === option.uid && clearable && <ClearButton onClick={onClear} />}
+            </li>
+          ))}
         </ul>
       </div>
     </>
@@ -385,7 +381,7 @@ const ChainList = ({
 interface TokenListProps {
   searchString: string
   setSearchString: (value: string) => void
-  options: WithAllowedTag<Token>[]
+  options: Token[]
   selectedToken: Token | null
   clearable?: boolean
   sourceChainToDetermineOriginBanner: Chain | null
@@ -408,28 +404,24 @@ const TokenList = ({
       <SearchBar placeholder="Search" value={searchString} onChange={setSearchString} />
       <div className="max-h-[15rem] overflow-y-auto">
         <ul className="flex flex-col">
-          {options.map(option => {
-            if (!option.allowed) return null
-            const isSelected = selectedToken?.id === option.id
+          {options.map(option => (
+            <li
+              key={option.id}
+              className={cn(
+                'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
+                selectedToken?.id === option.id &&
+                  'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+              )}
+              onClick={() => onSelect(option)}
+            >
+              <div className="flex items-center gap-2">
+                <TokenLogo token={option} sourceChain={sourceChainToDetermineOriginBanner} />
+                <span className="text-sm">{option.symbol}</span>
+              </div>
 
-            return (
-              <li
-                key={option.id}
-                className={cn(
-                  'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                  isSelected && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
-                )}
-                onClick={() => onSelect(option)}
-              >
-                <div className="flex items-center gap-2">
-                  <TokenLogo token={option} sourceChain={sourceChainToDetermineOriginBanner} />
-                  <span className="text-sm">{option.symbol}</span>
-                </div>
-
-                {isSelected && clearable && <ClearButton onClick={onClear} />}
-              </li>
-            )
-          })}
+              {selectedToken?.id === option.id && clearable && <ClearButton onClick={onClear} />}
+            </li>
+          ))}
         </ul>
       </div>
     </>
