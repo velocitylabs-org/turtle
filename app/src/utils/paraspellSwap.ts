@@ -8,7 +8,7 @@ import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getTNode } from '@paraspell/sdk'
 import { getExchangeAssets } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
-import { getCurrencyId, getRelayNode, getTokenSymbol } from './paraspellTransfer'
+import { getCurrencyId, getParaSpellNode, getRelayNode, getTokenSymbol } from './paraspellTransfer'
 import { getTokenByMultilocation } from './token'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
@@ -61,6 +61,39 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     .buildTransactions()
 
   return routerPlan
+}
+
+export const getExchangeOutputAmount = async (
+  sourceChain: Chain,
+  destinationChain: Chain,
+  sourceToken: Token,
+  destinationToken: Token,
+  amount: string,
+) => {
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+
+  const currencyIdFrom = getCurrencyId(
+    Environment.Mainnet,
+    sourceChainFromId,
+    sourceChain.uid,
+    sourceToken,
+  )
+  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
+
+  const { RouterBuilder } = await import('@paraspell/xcm-router')
+  const amountOut = await RouterBuilder()
+    .from(sourceChainFromId as any) // TODO: replace any
+    .to(destinationChainFromId as any) // TODO: replace any
+    .exchange('HydrationDex') // only Hydration is supported for now
+    .currencyFrom(currencyIdFrom)
+    .currencyTo(currencyTo)
+    .amount(amount)
+    .getBestAmountOut()
+
+  return amountOut
 }
 
 /** returns all supported dex paraspell nodes */
