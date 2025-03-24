@@ -5,7 +5,6 @@ import { TCurrencyCore } from '@paraspell/sdk'
 import { rpcConnectionAsHttps } from './helpers'
 import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from './mainnet/chains'
 import { Mainnet } from './mainnet/mainnet'
-import { Testnet } from './testnet/testnet'
 
 export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi'
 
@@ -38,7 +37,6 @@ export interface Route {
 
 export const REGISTRY = {
   mainnet: Mainnet.REGISTRY,
-  testnet: Testnet.REGISTRY,
 }
 
 const SNOWBRIDGE_MAINNET_PARACHAINS = [AssetHub, BridgeHub, Moonbeam, Bifrost, Hydration, Mythos]

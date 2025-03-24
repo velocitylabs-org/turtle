@@ -52,7 +52,7 @@ _Parachain prerequisites coming soon._
 - run `pnpm i` again
 - import chainName in the code. Update `src/utils/papi.ts` to support the new type.
 
-**4. ⛓️ Test both Testnet & Mainnet routes before merging to main branch. -** Either locally or from a deployed version: (Test flows && **Tracking**)
+**4. ⛓️ Test Mainnet routes before merging to main branch. -** Either locally or from a deployed version: (Test flows && **Tracking**)
 
 - Wait for transfers to be completed, look for Explorer(s) (Etherscan or Subscan) - Transfer must be displayed in the completed transfer tab.
 

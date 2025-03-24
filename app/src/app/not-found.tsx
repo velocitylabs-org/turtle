@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+const imageStyles = { objectFit: 'cover' as const }
+
 const NotFound = () => {
   return (
     <div className="w-full">
@@ -10,7 +12,7 @@ const NotFound = () => {
         alt="Turtle Background for not found 404 page"
         className="relative z-0"
         fill
-        style={{ objectFit: 'cover' }}
+        style={imageStyles}
         sizes="100vw"
         priority
       />

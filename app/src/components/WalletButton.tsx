@@ -5,12 +5,20 @@ import { WalletType } from '@/models/chain'
 import { cn } from '@/utils/cn'
 import { motion } from 'framer-motion'
 import Button from './Button'
+import { Cross } from './svg/Cross'
+import { colors } from '../../tailwind.config'
 
 interface WalletButtonProps {
   /** The wallet type of the chain. */
   walletType?: WalletType
   /** Additional classes to apply to the button. */
   className?: string
+}
+
+const animationProps = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
 }
 
 /** Wallet button component that is intended to support connecting to various different networks based on its address type. */
@@ -73,22 +81,22 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
   })()
 
   return (
-    <motion.div
-      key={walletType}
-      className={className}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      data-cy="connect-button"
-    >
+    <motion.div key={walletType} className={className} data-cy="connect-button" {...animationProps}>
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}
         variant={isConnected ? 'outline' : 'primary'}
         disabled={disabled}
         size="sm"
-        className={cn('text-sm', isConnected ? '' : 'w-[4.875rem]')}
+        className={cn('text-sm', isConnected ? '' : 'md:w-[4.875rem]')}
         onClick={buttonFunction}
-      />
+      >
+        {isConnected ? (
+          <span>
+            <Cross stroke={colors['turtle-foreground']} className="md:hidden" />{' '}
+            <span className="hidden md:inline">Disconnect</span>
+          </span>
+        ) : null}
+      </Button>
     </motion.div>
   )
 }

@@ -1,6 +1,8 @@
 import Image from 'next/image'
 
-export const TurtlesBackground: React.FC = () => {
+const imageStyle = { objectFit: 'cover' as const }
+
+export const TurtlesBackground = () => {
   return (
     <div className="absolute top-0 z-0 h-[80vh] w-full">
       <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
@@ -8,7 +10,7 @@ export const TurtlesBackground: React.FC = () => {
           src="/turtle-background.webp"
           alt="Turtle Background"
           fill
-          style={{ objectFit: 'cover' }}
+          style={imageStyle}
           quality={100}
           sizes="100vw"
           priority

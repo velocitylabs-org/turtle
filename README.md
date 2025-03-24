@@ -27,10 +27,11 @@ Turtle is your go to app when it comes to cross-chain transfers that leverage fu
 
 Features:
 
-- Make transfers between blockchains in a decentralized and trustless way 
+- Make transfers between blockchains in a decentralized and trustless way
 - Intuitive UI that helps you along the way
-- Bridge ERC20 tokens between Ethereum and Polkadot -  Powered by Snowbridge 
-- Seamless XCM Transfers between all Polkadot parachains
+- Bridge ERC20 tokens between Ethereum and Polkadot - Powered by Snowbridge
+- Seamless XCM Transfers between all Polkadot parachains - Powered by Paraspell
+- [Coming Soon] Combine transfers with token swaps - Powered by Paraspell
 
 <br/>
 Turtle is developed with Typescript, Nextjs, and React.
@@ -50,14 +51,6 @@ Don't forget to give the project a star. Thanks for your support!
 <a href="https://github.com/velocitylabs-org/turtle/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=velocitylabs-org/turtle" alt="contrib.rocks image" />
 </a>
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ROADMAP -->
-
-## Roadmap
-
-- Coming Soon
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

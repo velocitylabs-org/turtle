@@ -17,7 +17,7 @@ import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import ActionBanner from './ActionBanner'
 import Button from './Button'
@@ -31,6 +31,20 @@ import Switch from './Switch'
 import TokenAmountSelect from './TokenAmountSelect'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
+
+const manualInputAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.07 },
+}
+
+const approvalAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.3 },
+}
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -53,10 +67,11 @@ const Transfer: FC = () => {
     sourceWallet,
     destinationWallet,
     fees,
-    ethereumTxfees,
+    bridgingFee,
     refetchFees,
     loadingFees,
     canPayFees,
+    canPayAdditionalFees,
     transferStatus,
     environment,
     tokenAmountError,
@@ -134,7 +149,8 @@ const Transfer: FC = () => {
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
-    canPayFees
+    canPayFees &&
+    (bridgingFee ? canPayAdditionalFees : true)
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
@@ -148,6 +164,23 @@ const Transfer: FC = () => {
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && tokenAmount?.token?.id === EthereumTokens.USDT.id
+
+  const approveAllowanceButton = useMemo(
+    () => ({
+      onClick: () => approveAllowance(sourceWallet?.sender as Signer),
+      label: 'Sign now',
+    }),
+    [approveAllowance, sourceWallet?.sender],
+  )
+
+  const swapEthToWEthButton = useMemo(
+    () => ({
+      onClick: () =>
+        swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ => fetchBalance()),
+      label: `Swap the difference`,
+    }),
+    [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
+  )
 
   return (
     <form
@@ -208,14 +241,18 @@ const Transfer: FC = () => {
                 secondPlaceholder={amountPlaceholder}
                 error={errors.tokenAmount?.amount?.message || tokenAmountError}
                 trailing={
-                  <Button
-                    label="Max"
-                    size="sm"
-                    variant="outline"
-                    className="min-w-[40px]"
-                    onClick={handleMaxButtonClick}
-                    disabled={shouldDisableMaxButton}
-                  />
+                  tokenAmount?.amount ? (
+                    <></>
+                  ) : (
+                    <Button
+                      label="Max"
+                      size="sm"
+                      variant="outline"
+                      className="min-w-[40px]"
+                      onClick={handleMaxButtonClick}
+                      disabled={shouldDisableMaxButton}
+                    />
+                  )
                 }
                 className="z-40"
               />
@@ -289,14 +326,8 @@ const Transfer: FC = () => {
           <AnimatePresence>
             {manualRecipient.enabled && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{
-                  opacity: 1,
-                  height: 'auto',
-                }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.07 }}
                 className="flex items-center gap-1 self-center pt-1"
+                {...manualInputAnimationProps}
               >
                 <AlertIcon />
                 <span className="text-xs">Double check the address to avoid losing funds</span>
@@ -310,26 +341,17 @@ const Transfer: FC = () => {
       <AnimatePresence>
         {requiresErc20SpendApproval && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: 1,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
+            {...approvalAnimationProps}
           >
             <ActionBanner
               disabled={isApprovingErc20Spend}
               header="Approve ERC-20 token spend"
-              text={`We first need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
+              text={`We need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
               image={
                 <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
               }
-              btn={{
-                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
-                label: 'Sign now',
-              }}
+              btn={approveAllowanceButton}
             />
           </motion.div>
         )}
@@ -339,28 +361,16 @@ const Transfer: FC = () => {
       <AnimatePresence>
         {shouldDisplayEthToWEthSwap && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: 1,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
+            {...approvalAnimationProps}
           >
             <ActionBanner
               disabled={isSwappingEthForWEth}
               header={'Swap ETH for wETH'}
               text={'Your wETH balance is insufficient but you got enough ETH.'}
               image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
-              btn={{
-                onClick: () =>
-                  swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ =>
-                    fetchBalance(),
-                  ),
-                label: `Swap the difference`,
-              }}
-            ></ActionBanner>
+              btn={swapEthToWEthButton}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -370,9 +380,10 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={tokenAmount}
           fees={fees}
-          additionalfees={ethereumTxfees}
+          bridgingFees={bridgingFee}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
+          canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
         />

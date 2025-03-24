@@ -54,13 +54,13 @@ export const OngoingTransferDialog = ({
           <DialogDescription className="sr-only">
             Ongoing transfer status and details
           </DialogDescription>
-          <div className={'flex items-center justify-center space-x-4 text-turtle-secondary-dark'}>
+          <div className="flex items-center justify-center space-x-4 text-turtle-secondary-dark">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
                 src={transfer.sourceChain.logoURI}
                 width={32}
                 height={32}
-                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+                className="rounded-full border border-turtle-secondary-dark bg-background"
               />
               <div className="text-sm">{transfer.sourceChain.name}</div>
             </div>
@@ -70,7 +70,7 @@ export const OngoingTransferDialog = ({
                 src={transfer.destChain.logoURI}
                 width={32}
                 height={32}
-                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+                className="rounded-full border border-turtle-secondary-dark bg-background"
               />
               <div className="text-sm">{transfer.destChain.name}</div>
             </div>
@@ -83,7 +83,7 @@ export const OngoingTransferDialog = ({
             <span>{formatAmount(toHuman(transfer.amount, transfer.token))}</span>
             <TokenLogo token={transfer.token} sourceChain={transfer.sourceChain} size={40} />
           </h3>
-          <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
+          <div className="flex items-center space-x-4 text-sm text-turtle-secondary-dark">
             <div>{formatOngoingTransferDate(transfer.date)}</div>
           </div>
         </DialogHeader>
@@ -91,11 +91,7 @@ export const OngoingTransferDialog = ({
         {/* Modal content */}
         <div className="mt-[-1px] flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary border-t-turtle-secondary-dark bg-white p-4 sm:p-10">
           {/* Update and progress bar */}
-          <div
-            className={
-              'block h-[60px] w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark'
-            }
-          >
+          <div className="block h-[60px] w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark">
             <div className="my-2 flex items-center justify-between">
               <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
               <p className="text-normal text-turtle-secondary">
@@ -147,34 +143,50 @@ export const OngoingTransferDialog = ({
                     {formatAmount(toHuman(transfer.amount, transfer.token), 'Long')}{' '}
                     {transfer.token.symbol}
                   </div>
-                  {typeof transfer.tokenUSDValue == 'number' && (
-                    <div className="text-turtle-level4">
-                      $
-                      {formatAmount(
-                        toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
-                        'Long',
-                      )}
-                    </div>
-                  )}
+                  <div className="text-turtle-level4">
+                    $
+                    {formatAmount(
+                      toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
+                      'Long',
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Fees */}
+            {/* Execution fee */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="font-bold">Fees</div>
+              <div className="font-bold">{transfer.bridgingFee ? 'Execution fee' : 'Fee'}</div>
               <div className="items-right flex flex-col space-x-1 text-right">
                 <div className="text-lg">
                   {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Long')}{' '}
                   {transfer.fees.token.symbol}
                 </div>
-                {typeof transfer.tokenUSDValue == 'number' && (
-                  <div className="text-turtle-level4">
-                    ${formatAmount(transfer.fees.inDollars, 'Long')}
-                  </div>
-                )}
+                <div className="text-turtle-level4">
+                  ${formatAmount(transfer.fees.inDollars, 'Long')}
+                </div>
               </div>
             </div>
+
+            {/* Bridging fee */}
+            {transfer.bridgingFee && (
+              <div className="flex items-start justify-between space-x-4">
+                <div className="font-bold">Bridging fee</div>
+                <div className="items-right flex flex-col space-x-1 text-right">
+                  <div className="text-lg">
+                    {formatAmount(
+                      toHuman(transfer.bridgingFee.amount, transfer.bridgingFee.token),
+                      'Long',
+                    )}{' '}
+                    {transfer.bridgingFee.token.symbol}
+                  </div>
+                  <div className="text-turtle-level4">
+                    ${formatAmount(transfer.bridgingFee.inDollars, 'Long')}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {explorerLink && (

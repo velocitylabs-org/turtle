@@ -4,7 +4,7 @@ import { AddressType } from '@/models/chain'
 import { ManualRecipient } from '@/models/select'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
-import { hexToU8a, isHex } from '@polkadot/util'
+import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
 import { JsonRpcSigner } from 'ethers'
 import { isAddress } from 'viem/utils'
 
@@ -100,4 +100,14 @@ export const getPlaceholderAddress = (type: AddressType): string => {
     case 'ss58':
       return '5EkE3p9hnUi5p14d7pJnDBjiNYqPNPSutKbyAuvV3mFGGxPi' // Velocity Address
   }
+}
+/**
+ * Return the AccountId32 reprsentation of the given `address`. It should represent the same
+ * wallet across any chain in the Polkadot ecosystem.
+ *
+ * @param address - the base address to decode
+ * @returns the AccountId32 presentation of `address`
+ */
+export function getAccountId32(address: string): string {
+  return u8aToHex(decodeAddress(address))
 }

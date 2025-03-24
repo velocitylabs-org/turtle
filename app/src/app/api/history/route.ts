@@ -28,13 +28,7 @@ const getCachedTransferHistory = unstable_cache(
       ongoingTransfers.map(transfer => {
         switch (transfer.direction) {
           case Direction.ToEthereum: {
-            if (transfer.sourceChain.chainId === snowbridgeEnv.config.ASSET_HUB_PARAID) {
-              transfers.toEthereum.push(transfer)
-            } else {
-              console.log('Direct Parachain => Eth tracking to be implemented/verified')
-              // Confirm the tracking process for direct Para to Eth transfer once supported
-              // If tracking process: remove the if/else check
-            }
+            transfers.toEthereum.push(transfer)
             break
           }
           case Direction.ToPolkadot: {
