@@ -8,7 +8,7 @@ import {
   getSwapsDestinationTokens,
   getSwapsSourceChains,
   getSwapsSourceTokens,
-} from './paraspellSwaps'
+} from './paraspellSwap'
 
 /** Filters all chains by available routes. */
 export const getTransferSourceChains = (): Chain[] => {
