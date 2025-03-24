@@ -246,7 +246,7 @@ export const routes: Route[] = [
     from: Hydration.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
-    tokens: [PolkadotTokens.DOT.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
+    tokens: [EthereumTokens.WETH.id, EthereumTokens.USDC.id, PolkadotTokens.DOT.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
   },
   {
     from: Bifrost.uid,
