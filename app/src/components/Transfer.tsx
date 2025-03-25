@@ -207,7 +207,7 @@ const Transfer: FC = () => {
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
   )
   // TODO refactor
-  const { outputAmount } = useSwapOutputAmount({
+  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
     sourceChain,
     destinationChain,
     sourceToken: sourceTokenAmount?.token ?? null,
@@ -324,7 +324,7 @@ const Transfer: FC = () => {
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: 'Receive Amount',
+                      placeholder: isLoadingOutputAmount ? 'Loading...' : 'Receive Amount',
                       disabled: true,
                     }}
                     wallet={{
