@@ -6,13 +6,13 @@ import { formatAmount, toHuman } from '@/utils/transfer'
 import { getStatusIcon, TransactionCard } from './TransactionCard'
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../ui/dialog'
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
 
 import Account from '../Account'
 import { ArrowRight } from '../svg/ArrowRight'
@@ -24,25 +24,22 @@ import { TokenLogo } from '../TokenLogo'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   return (
-    <Dialog>
-      <DialogTrigger className="w-full">
+    <Drawer>
+      <DrawerTrigger className="w-full">
         <TransactionCard tx={tx} />
-      </DialogTrigger>
-      <DialogContent
-        className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
-        hideCloseButton
-      >
-        <DialogHeader
+      </DrawerTrigger>
+      <DrawerContent className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]">
+        <DrawerHeader
           className={cn(
             'flex flex-col items-center justify-center space-y-4 rounded-t-4xl border py-6',
             getBorder(tx.result),
             getBg(tx.result),
           )}
         >
-          <DialogTitle className="sr-only">Completed transfer</DialogTitle>
-          <DialogDescription className="sr-only">
+          <DrawerTitle className="sr-only">Completed transfer</DrawerTitle>
+          <DrawerDescription className="sr-only">
             Completed transfer status and details
-          </DialogDescription>
+          </DrawerDescription>
           <div
             className={cn('flex items-center justify-center space-x-4', getTextColor(tx.result))}
           >
@@ -79,7 +76,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <div>{formatCompletedTransferDate(tx.date)}</div>
             <div>{formatHours(tx.date)}</div>
           </div>
-        </DialogHeader>
+        </DrawerHeader>
 
         {/* Modal content */}
         <div
@@ -208,8 +205,8 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             </a>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   )
 }
 
