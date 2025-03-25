@@ -6,7 +6,7 @@ import { Hydration } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getTNode } from '@paraspell/sdk'
-import { getExchangeAssets } from '@paraspell/xcm-router'
+import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
 import { getCurrencyId, getParaSpellNode, getRelayNode, getTokenSymbol } from './paraspellTransfer'
 import { getTokenByMultilocation } from './token'
@@ -46,7 +46,6 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
-  const { RouterBuilder } = await import('@paraspell/xcm-router')
   const routerPlan = await RouterBuilder()
     .from(sourceChainFromId as any) // TODO: replace any
     .to(destinationChainFromId as any) // TODO: replace any
@@ -68,8 +67,9 @@ export const getExchangeOutputAmount = async (
   destinationChain: Chain,
   sourceToken: Token,
   destinationToken: Token,
+  /** Amount in the source token's decimal base */
   amount: string,
-) => {
+): Promise<bigint> => {
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
@@ -83,17 +83,20 @@ export const getExchangeOutputAmount = async (
   )
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
-  const { RouterBuilder } = await import('@paraspell/xcm-router')
   const amountOut = await RouterBuilder()
     .from(sourceChainFromId as any) // TODO: replace any
     .to(destinationChainFromId as any) // TODO: replace any
-    .exchange('HydrationDex') // only Hydration is supported for now
+    .exchange('HydrationDex') // TODO: hardcoded for now. Add to params once more available
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
     .amount(amount)
     .getBestAmountOut()
 
-  return amountOut
+  console.log(sourceChainFromId, destinationChainFromId, currencyIdFrom, currencyTo, amount)
+
+  console.log(amountOut)
+
+  return amountOut.amountOut
 }
 
 /** returns all supported dex paraspell nodes */

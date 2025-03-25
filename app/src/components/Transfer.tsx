@@ -2,6 +2,7 @@
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
+import { useSwapOutputAmount } from '@/hooks/useSwapOutputAmount'
 import useTransferForm from '@/hooks/useTransferForm'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
@@ -12,7 +13,7 @@ import {
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -61,6 +62,7 @@ const Transfer: FC = () => {
     sourceChain,
     destinationChain,
     sourceTokenAmount,
+    destinationTokenAmount,
     manualRecipient,
     sourceWallet,
     destinationWallet,
@@ -204,6 +206,15 @@ const Transfer: FC = () => {
     }),
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
   )
+  // TODO refactor
+  const { outputAmount } = useSwapOutputAmount({
+    sourceChain,
+    destinationChain,
+    sourceToken: sourceTokenAmount?.token ?? null,
+    destinationToken: destinationTokenAmount?.token ?? null,
+    amount:
+      safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? null,
+  })
 
   return (
     <form
@@ -307,7 +318,9 @@ const Transfer: FC = () => {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amount={{
-                      value: tokenField.value?.amount ?? null,
+                      value: outputAmount
+                        ? toHuman(outputAmount, destinationTokenAmount?.token!)
+                        : null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,

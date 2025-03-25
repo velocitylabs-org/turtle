@@ -9,7 +9,14 @@ interface UseSwapOutputAmountParams {
   destinationChain: Chain | null
   sourceToken: Token | null
   destinationToken: Token | null
+  /** Amount in the source token's decimal base */
   amount: string | null
+}
+
+interface SwapOutputAmountResult {
+  /** The output amount, or null if not available */
+  outputAmount: bigint | null | undefined
+  isLoading: boolean
 }
 
 export function useSwapOutputAmount({
@@ -18,8 +25,8 @@ export function useSwapOutputAmount({
   sourceToken,
   destinationToken,
   amount,
-}: UseSwapOutputAmountParams) {
-  return useQuery({
+}: UseSwapOutputAmountParams): SwapOutputAmountResult {
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: [
       'swapOutputAmount',
       sourceChain?.uid,
@@ -54,4 +61,9 @@ export function useSwapOutputAmount({
     staleTime: 10000, // Cache results for 10 seconds
     retry: 2, // Retry failed requests twice
   })
+
+  return {
+    outputAmount: data,
+    isLoading: isLoading || isFetching,
+  }
 }
