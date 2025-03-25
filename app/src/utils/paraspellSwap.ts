@@ -9,6 +9,7 @@ import { getTNode } from '@paraspell/sdk'
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
 import { getCurrencyId, getParaSpellNode, getRelayNode, getTokenSymbol } from './paraspellTransfer'
+import { isSameChain } from './routes'
 import { getTokenByMultilocation } from './token'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
@@ -92,10 +93,6 @@ export const getExchangeOutputAmount = async (
     .amount(amount)
     .getBestAmountOut()
 
-  console.log(sourceChainFromId, destinationChainFromId, currencyIdFrom, currencyTo, amount)
-
-  console.log(amountOut)
-
   return amountOut.amountOut
 }
 
@@ -148,6 +145,7 @@ export const getSwapsDestinationChains = (
   chains.push(sourceChain)
 
   const dexTokens = new Set(getDexTokens(dex).map(token => token.id)) // Use Set for O(1) lookups
+  if (!dexTokens.has(sourceToken.id)) return []
 
   // get transfer routes we can reach from the source chain
   const routes = REGISTRY[Environment.Mainnet].routes.filter(
@@ -181,10 +179,13 @@ export const getSwapsDestinationTokens = (
 
   const dex = getDex(sourceChain)
   if (!dex) return []
-  const dexTokensWithoutSourceToken = getDexTokens(dex).filter(token => token.id !== sourceToken.id)
+  const dexTokens = getDexTokens(dex)
 
-  if (sourceChain.uid === destinationChain.uid) return dexTokensWithoutSourceToken
+  if (!dexTokens.some(token => token.id === sourceToken.id)) return []
 
+  const dexTokensWithoutSourceToken = dexTokens.filter(token => token.id !== sourceToken.id)
+  if (isSameChain(sourceChain, destinationChain)) return dexTokensWithoutSourceToken
+  console.log('PAST')
   // if destination chain is different, filter tokens by routes
   const route = REGISTRY[Environment.Mainnet].routes.find(
     route => route.from === sourceChain.uid && route.to === destinationChain.uid,
