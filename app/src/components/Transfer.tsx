@@ -364,9 +364,9 @@ export default function Transfer() {
           >
             <ActionBanner
               disabled={isSwappingEthForWEth}
-              header="Swap ETH for wETH'"
+              header="Swap ETH for wETH"
               text="Your wETH balance is insufficient but you got enough ETH."
-              image={<Image src="/wallet.svg'" alt="Wallet" width={64} height={64} />}
+              image={<Image src="/wallet.svg" alt="Wallet" width={64} height={64} />}
               btn={swapEthToWEthButton}
             />
           </motion.div>
