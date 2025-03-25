@@ -39,6 +39,8 @@ export function useSwapOutputAmount({
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
         return null
 
+      if (sourceToken.id === destinationToken.id) return null
+
       try {
         const output = await getExchangeOutputAmount(
           sourceChain,

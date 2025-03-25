@@ -27,7 +27,7 @@ interface ChainTriggerProps {
   accountName?: string
 }
 
-const ChainTrigger = ({
+export default function ChainTrigger({
   value,
   error,
   disabled,
@@ -38,7 +38,7 @@ const ChainTrigger = ({
   ensAvatar,
   manualAddressInput,
   accountName,
-}: ChainTriggerProps) => {
+}: ChainTriggerProps) {
   const shouldShowChainName =
     (!accountName && (!manualAddressInput?.enabled || !manualAddressInput?.address)) ||
     (manualAddressInput?.enabled && !manualAddressInput.address)
@@ -122,5 +122,3 @@ const ChainTrigger = ({
     </Tooltip>
   )
 }
-
-export default ChainTrigger

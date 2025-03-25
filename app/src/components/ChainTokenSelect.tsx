@@ -74,7 +74,7 @@ interface ChainTokenSelectProps {
   className?: string
 }
 
-const ChainTokenSelect = ({
+export default function ChainTokenSelect({
   chain,
   token,
   amount,
@@ -82,7 +82,7 @@ const ChainTokenSelect = ({
   floatingLabel = 'From',
   disabled,
   className,
-}: ChainTokenSelectProps) => {
+}: ChainTokenSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -469,5 +469,3 @@ const SearchBar = ({
     </div>
   )
 }
-
-export default ChainTokenSelect

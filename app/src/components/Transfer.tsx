@@ -107,6 +107,16 @@ const Transfer: FC = () => {
     owner: sourceWallet?.sender?.address,
   })
 
+  // TODO refactor
+  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
+    sourceChain,
+    destinationChain,
+    sourceToken: sourceTokenAmount?.token ?? null,
+    destinationToken: destinationTokenAmount?.token ?? null,
+    amount:
+      safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? null,
+  })
+
   const requiresErc20SpendApproval =
     erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount!
 
@@ -144,6 +154,11 @@ const Transfer: FC = () => {
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
+
+  let receiveAmountPlaceholder = 'Receive Amount'
+  if (isLoadingOutputAmount) receiveAmountPlaceholder = 'Loading...'
+  else if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id)
+    receiveAmountPlaceholder = ''
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
@@ -206,15 +221,6 @@ const Transfer: FC = () => {
     }),
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
   )
-  // TODO refactor
-  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
-    sourceChain,
-    destinationChain,
-    sourceToken: sourceTokenAmount?.token ?? null,
-    destinationToken: destinationTokenAmount?.token ?? null,
-    amount:
-      safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? null,
-  })
 
   return (
     <form
@@ -324,7 +330,7 @@ const Transfer: FC = () => {
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: isLoadingOutputAmount ? 'Loading...' : 'Receive Amount',
+                      placeholder: receiveAmountPlaceholder,
                       disabled: true,
                     }}
                     wallet={{
