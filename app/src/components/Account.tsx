@@ -14,7 +14,7 @@ interface AccountProps {
   size?: number
 }
 
-function Account({
+export default function Account({
   network,
   addressType,
   address,
@@ -81,4 +81,3 @@ function Account({
     </div>
   )
 }
-export default Account

@@ -3,7 +3,7 @@ import TooltipIcon from '@/../public/tooltip-icon.svg'
 import { cn } from '@/utils/cn'
 import { Tooltip as NextTooltip } from '@heroui/react'
 import Image from 'next/image'
-import React, { FC } from 'react'
+import React from 'react'
 
 export interface TooltipProps {
   content: React.ReactNode
@@ -22,13 +22,13 @@ const classNames = {
   arrow: ['bg-black'],
 }
 
-export const Tooltip: FC<TooltipProps> = ({
+export default function Tooltip({
   children,
   content,
   className,
   showIcon = true,
   showArrow = true,
-}) => {
+}: TooltipProps) {
   if (!content) return <>{children}</>
   return (
     <NextTooltip

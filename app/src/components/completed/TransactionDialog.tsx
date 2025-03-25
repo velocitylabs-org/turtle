@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn'
 import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
-import { getStatusIcon, TransactionCard } from './TransactionCard'
+import TransactionCard, { getStatusIcon } from './TransactionCard'
 
 import {
   Dialog,
@@ -15,12 +15,12 @@ import {
 } from '../ui/dialog'
 
 import Account from '../Account'
-import { ArrowRight } from '../svg/ArrowRight'
-import { ArrowUpRight } from '../svg/ArrowUpRight'
+import ArrowRight from '../svg/ArrowRight'
+import ArrowUpRight from '../svg/ArrowUpRight'
 
 import { colors } from '../../../tailwind.config'
-import { Icon } from '../Icon'
-import { TokenLogo } from '../TokenLogo'
+import Icon from '../Icon'
+import TokenLogo from '../TokenLogo'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   return (

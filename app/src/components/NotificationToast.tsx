@@ -7,7 +7,7 @@ import WarningIcon from '@/../public/severity-warning-icon.svg'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { FC, useEffect } from 'react'
+import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 const NOTIFICATION_TTL_MS = 5000
@@ -24,7 +24,10 @@ interface NotificationToastProps {
   removeNotification: (id: number) => void
 }
 
-const NotificationToast: FC<NotificationToastProps> = ({ notification, removeNotification }) => {
+export default function NotificationToast({
+  notification,
+  removeNotification,
+}: NotificationToastProps) {
   // Remove notification after TTL
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
@@ -68,7 +71,7 @@ const NotificationToast: FC<NotificationToastProps> = ({ notification, removeNot
   )
 }
 
-const renderSeverityIcon = (severity?: NotificationSeverity) => {
+function renderSeverityIcon(severity?: NotificationSeverity) {
   switch (severity) {
     case NotificationSeverity.Info:
       return <Image src={InfoIcon} alt="info icon" />
@@ -90,7 +93,7 @@ const renderSeverityIcon = (severity?: NotificationSeverity) => {
   }
 }
 
-const getSeverityHeader = (severity: NotificationSeverity) => {
+function getSeverityHeader(severity: NotificationSeverity) {
   switch (severity) {
     case NotificationSeverity.Info:
       return 'Btw'
@@ -108,5 +111,3 @@ const getSeverityHeader = (severity: NotificationSeverity) => {
       return ''
   }
 }
-
-export default NotificationToast

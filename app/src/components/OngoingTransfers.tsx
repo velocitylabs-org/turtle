@@ -1,19 +1,18 @@
 'use client'
-
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 import { DisplaysTransfers } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
-import { ArrowRight } from './svg/ArrowRight'
+import ArrowRight from './svg/ArrowRight'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 
-const OngoingTransfers = ({
+export default function OngoingTransfers({
   newTransferInit,
   setNewTransferInit,
   hasCompletedTransfers,
-}: DisplaysTransfers) => {
+}: DisplaysTransfers) {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
@@ -52,5 +51,3 @@ const OngoingTransfers = ({
     </div>
   )
 }
-
-export default OngoingTransfers

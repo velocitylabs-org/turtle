@@ -9,7 +9,7 @@ interface CopyAddressProps {
   showIcon?: boolean
 }
 
-function CopyAddress({ content, address, showIcon = true }: CopyAddressProps) {
+export default function CopyAddress({ content, address, showIcon = true }: CopyAddressProps) {
   const { addNotification } = useNotification()
   const [showCopyIndicator, setShowCopyIndicator] = useState(false)
 
@@ -54,4 +54,3 @@ function CopyAddress({ content, address, showIcon = true }: CopyAddressProps) {
     </div>
   )
 }
-export default CopyAddress

@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn'
 import Image from 'next/image'
 
-export const WalletNotAccessible = () => {
+export function WalletNotAccessible() {
   return (
     <div className={cn('-mt-8 rounded-[20px] bg-turtle-secondary-light p-3')}>
       <div className="justify-items flex flex-row items-center">
