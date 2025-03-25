@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '../../tailwind.config'
 import Button, { spinnerSize } from './Button'
-import { Icon } from './Icon'
+import Icon from './Icon'
 import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
@@ -18,7 +18,7 @@ const footerAnimationProps = {
   transition: { duration: 0.3 },
 }
 
-const SubstrateWalletModal = () => {
+export default function SubstrateWalletModal() {
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const {
     isModalOpen,
@@ -187,7 +187,7 @@ const SubstrateWalletModal = () => {
   )
 }
 
-const Footer = () => {
+function Footer() {
   return (
     <div className="mb-1 mt-4 text-center text-xs text-gray-500">
       Haven&apos;t got a wallet?{' '}
@@ -200,5 +200,3 @@ const Footer = () => {
     </div>
   )
 }
-
-export default SubstrateWalletModal

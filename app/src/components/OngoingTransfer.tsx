@@ -3,18 +3,19 @@ import { Direction } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
-import { FC } from 'react'
 import { colors } from '../../tailwind.config'
 import Account from './Account'
-import { ArrowRight } from './svg/ArrowRight'
+import ArrowRight from './svg/ArrowRight'
 import LoadingIcon from './svg/LoadingIcon'
 import TransferEstimate from './TransferEstimate'
 
-const OngoingTransfer: FC<{
+interface OngoingTransferProps {
   direction: Direction
   transfer: StoredTransfer
   status: string
-}> = ({ direction, transfer, status }) => {
+}
+
+export default function OngoingTransfer({ direction, transfer, status }: OngoingTransferProps) {
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -23,9 +24,7 @@ const OngoingTransfer: FC<{
           {formatOngoingTransferDate(transfer.date)}
         </p>
       </div>
-
       <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={false} />
-
       <div className="mb-2 flex items-center">
         <LoadingIcon
           className="mr-2 animate-spin"
@@ -75,5 +74,3 @@ const OngoingTransfer: FC<{
     </div>
   )
 }
-
-export default OngoingTransfer

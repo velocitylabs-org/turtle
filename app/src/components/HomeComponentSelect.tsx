@@ -1,12 +1,10 @@
 'use client'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-
 import Menu from '@/components/Menu'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { TransferTabOptions } from '@/models/transfer'
-
 import OngoingTransfers from './OngoingTransfers'
 import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
 import { cn } from '@/utils/cn'
@@ -15,7 +13,7 @@ const TransferHistory = dynamic(() => import('@/components/completed/Transaction
   loading: () => <TransactionLoaderSkeleton />,
 })
 
-export const HomeComponentSelect = () => {
+export default function HomeComponentSelect() {
   const { completedTransfers } = useCompletedTransfers()
   const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
   const hasCompletedTransfers = !!completedTransfers && completedTransfers.length > 0

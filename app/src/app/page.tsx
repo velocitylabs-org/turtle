@@ -1,7 +1,7 @@
-import { HomeComponentSelect } from '@/components/HomeComponentSelect'
-import { TurtlesBackground } from '@/components/TurtlesBackground'
+import HomeComponentSelect from '@/components/HomeComponentSelect'
+import TurtlesBackground from '@/components/TurtlesBackground'
 
-const App = () => {
+export default function App() {
   return (
     <main>
       <TurtlesBackground />
@@ -11,5 +11,3 @@ const App = () => {
     </main>
   )
 }
-
-export default App

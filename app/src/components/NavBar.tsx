@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
-import { TurtleIcon } from './svg/TurtleIcon'
-import { Tooltip } from './Tooltip'
+import TurtleIcon from './svg/TurtleIcon'
+import Tooltip from './Tooltip'
 
 export default function NavBar() {
   return (
@@ -15,7 +15,6 @@ export default function NavBar() {
           </Tooltip>
         </div>
       </Link>
-
       <nav>
         <ul className="items-center space-x-6">
           <li>
