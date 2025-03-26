@@ -57,6 +57,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     .slippagePct(slippagePct)
     .senderAddress(senderAddress)
     .recipientAddress(recipient)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .signer(account.pjsSigner as any)
     .buildTransactions()
 

@@ -63,19 +63,20 @@ export const createTransferTx = async (
  */
 export const moonbeamTransfer = async (
   params: TransferParams,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   viemClient: any,
 ): Promise<string> => {
   const { environment, sourceChain, destinationChain, sourceToken, amount, recipient } = params
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
 
   return EvmBuilder()
     .from('Moonbeam')
-    .to(destinationChainFromId as TNodeDotKsmWithRelayChains)
+    .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
     .address(recipient)
     .signer(viemClient)
