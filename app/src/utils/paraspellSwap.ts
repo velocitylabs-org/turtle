@@ -41,13 +41,15 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
 
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
+  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
+    throw new Error('Transfer failed: Ethereum is not supported.')
 
   const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
   const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId as any) // TODO: replace any
-    .to(destinationChainFromId as any) // TODO: replace any
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
     .exchange('HydrationDex') // only Hydration is supported for now
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
@@ -73,6 +75,8 @@ export const getExchangeOutputAmount = async (
   const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
+  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
+    throw new Error('Transfer failed: Ethereum is not supported.')
 
   const currencyIdFrom = getCurrencyId(
     Environment.Mainnet,
@@ -83,9 +87,9 @@ export const getExchangeOutputAmount = async (
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
   const amountOut = await RouterBuilder()
-    .from(sourceChainFromId as any) // TODO: replace any
-    .to(destinationChainFromId as any) // TODO: replace any
-    .exchange('HydrationDex') // TODO: hardcoded for now. Add to params once more available
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
+    .exchange('HydrationDex') // TODO: hardcoded for now as it's the only dex supported.
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
     .amount(amount)
