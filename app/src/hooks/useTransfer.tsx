@@ -3,7 +3,7 @@ import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
-import { getRoute, isSameChain } from '@/utils/routes'
+import { resolveSdk } from '@/utils/routes'
 import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
 import useParaspellApi from './useParaspellApi'
@@ -41,10 +41,7 @@ const useTransfer = () => {
     const { sourceChain, destinationChain } = transferDetails
     setStatus('Loading')
 
-    const sdk =
-      isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
-        ? 'ParaSpellApi'
-        : getRoute(sourceChain, destinationChain)?.sdk
+    const sdk = resolveSdk(sourceChain, destinationChain)
     if (!sdk) throw new Error('Route not supported')
 
     switch (sdk) {

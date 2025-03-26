@@ -7,7 +7,7 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspellTransfer'
-import { getRoute, isSameChain } from '@/utils/routes'
+import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
@@ -48,11 +48,7 @@ const useFees = (
       return
     }
 
-    const sdk =
-      isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
-        ? 'ParaSpellApi'
-        : getRoute(sourceChain, destinationChain)?.sdk
-
+    const sdk = resolveSdk(sourceChain, destinationChain)
     if (!sdk) throw new Error('Route not supported')
 
     // TODO: this should be the fee token, not necessarily the native token.
