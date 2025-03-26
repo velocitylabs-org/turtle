@@ -4,6 +4,7 @@ import { Token } from '@/models/token'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
+import { getAccountId32 } from '@/utils/address'
 import {
   Builder,
   EvmBuilder,
@@ -12,6 +13,7 @@ import {
   getTNode,
   TCurrencyCore,
   TDryRunResult,
+  TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
   TPapiTransaction,
 } from '@paraspell/sdk'
@@ -29,7 +31,7 @@ export const createTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -40,10 +42,13 @@ export const createTx = async (
     const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(wssEndpoint)
-      .from(sourceChainFromId)
+      .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
       .to(destinationChainFromId)
       .currency({ ...currencyId, amount })
-      .address(recipient)
+      .address(
+        recipient,
+        destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+      )
       .build()
   }
 }
@@ -69,7 +74,7 @@ export const moonbeamTransfer = async (
 
   return EvmBuilder()
     .from('Moonbeam')
-    .to(destinationChainFromId)
+    .to(destinationChainFromId as TNodeDotKsmWithRelayChains)
     .currency({ ...currencyId, amount })
     .address(recipient)
     .signer(viemClient)
@@ -89,20 +94,21 @@ export const dryRun = async (
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
   const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
-
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
   return await Builder(wssEndpoint)
-    .from(sourceChainFromId)
+    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
-    .address(recipient)
+    .address(
+      recipient,
+      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+    )
     .dryRun(sender.address)
 }
 
@@ -134,6 +140,13 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
   }
 }
 
+/**
+ * Get the ParaSpell currency id in the form of `TCurrencyCore`.
+ *
+ * @remarks We prioritize an local asset id if specified in our registry and otherwise
+ * default to the token symbol.
+ *
+ * */
 export function getCurrencyId(
   env: Environment,
   node: TNodeWithRelayChains,
@@ -158,8 +171,8 @@ export function getNativeToken(chain: Chain): Token {
   return token
 }
 
-export function getParaSpellNode(chain: Chain, relay: 'polkadot'): TNodeWithRelayChains | null {
+export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
-    : getTNode(chain.chainId, relay)
+    : getTNode(chain.chainId, 'polkadot')
 }
