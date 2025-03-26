@@ -5,10 +5,9 @@ import { REGISTRY } from '@/registry'
 import { Hydration } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
-import { getTNode } from '@paraspell/sdk'
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
-import { getCurrencyId, getParaSpellNode, getRelayNode, getTokenSymbol } from './paraspellTransfer'
+import { getCurrencyId, getParaSpellNode, getTokenSymbol } from './paraspellTransfer'
 import { isSameChain } from './routes'
 import { getTokenByMultilocation } from './token'
 
@@ -37,10 +36,9 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
 
   const senderAddress = await getSenderAddress(sender)
   const account = params.sender as SubstrateAccount
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
 
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
 

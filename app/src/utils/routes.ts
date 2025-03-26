@@ -1,7 +1,7 @@
 import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { Route } from '@/registry'
+import { Route, TransferSDK } from '@/registry'
 import { REGISTRY } from '@/registry/mainnet/mainnet'
 import {
   getSwapsDestinationChains,
@@ -70,14 +70,6 @@ export const isTokenAvailableForSourceChain = (
   return getTransferTokens(sourceChain, destinationChain ?? null).some(t => t.id === token.id)
 }
 
-export const getRoute = (from: Chain, to: Chain): Route | undefined => {
-  return REGISTRY.routes.find(route => route.from === from.uid && route.to === to.uid)
-}
-
-export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
-  return chain1.uid === chain2.uid
-}
-
 export const getAllowedSourceChains = (): Chain[] => {
   const transferSourceChains = getTransferSourceChains()
   const swapSourceChains = getSwapsSourceChains()
@@ -139,4 +131,35 @@ export const getAllowedDestinationTokens = (
   const tokenMap = new Map([...transferTokens, ...swapTokens].map(token => [token.id, token]))
 
   return Array.from(tokenMap.values())
+}
+
+export const getRoute = (from: Chain, to: Chain): Route | undefined => {
+  return REGISTRY.routes.find(route => route.from === from.uid && route.to === to.uid)
+}
+
+export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
+  return chain1.uid === chain2.uid
+}
+
+export const isSamePolkadotChain = (
+  sourceChain?: Chain | null,
+  destinationChain?: Chain | null,
+): boolean => {
+  return Boolean(
+    sourceChain &&
+      destinationChain &&
+      isSameChain(sourceChain, destinationChain) &&
+      sourceChain.network === 'Polkadot',
+  )
+}
+
+export const resolveSdk = (
+  sourceChain?: Chain | null,
+  destinationChain?: Chain | null,
+): TransferSDK | undefined => {
+  if (!sourceChain || !destinationChain) return
+
+  return isSamePolkadotChain(sourceChain, destinationChain)
+    ? 'ParaSpellApi'
+    : getRoute(sourceChain, destinationChain)?.sdk
 }
