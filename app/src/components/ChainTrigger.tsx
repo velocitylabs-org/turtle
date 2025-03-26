@@ -6,7 +6,7 @@ import { ReactNode } from 'react'
 import { GetEnsAvatarReturnType } from 'viem'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
-import { Tooltip } from './Tooltip'
+import Tooltip from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 interface ChainTriggerProps {
