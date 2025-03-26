@@ -107,14 +107,12 @@ export default function Transfer() {
     owner: sourceWallet?.sender?.address,
   })
 
-  // TODO refactor
   const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
     sourceChain,
     destinationChain,
-    sourceToken: sourceTokenAmount?.token ?? null,
-    destinationToken: destinationTokenAmount?.token ?? null,
-    amount:
-      safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? null,
+    sourceToken: sourceTokenAmount?.token,
+    destinationToken: destinationTokenAmount?.token,
+    amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString(),
   })
 
   const requiresErc20SpendApproval =

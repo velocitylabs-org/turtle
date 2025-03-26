@@ -5,16 +5,15 @@ import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
 interface UseSwapOutputAmountParams {
-  sourceChain: Chain | null
-  destinationChain: Chain | null
-  sourceToken: Token | null
-  destinationToken: Token | null
+  sourceChain?: Chain | null
+  destinationChain?: Chain | null
+  sourceToken?: Token | null
+  destinationToken?: Token | null
   /** Amount in the source token's decimal base */
-  amount: string | null
+  amount?: string | null
 }
 
 interface SwapOutputAmountResult {
-  /** The output amount, or null if not available */
   outputAmount: bigint | null | undefined
   isLoading: boolean
 }
