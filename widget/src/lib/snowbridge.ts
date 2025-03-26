@@ -1,17 +1,18 @@
 import { Fee } from '@/hooks/useFees'
 import { Chain } from '@/models/chain'
+import { SnowbridgeContext } from '@/models/snowbridge'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
 import { SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
-import { rpcConnectionAsHttps } from '@/registry/helpers'
+import { isAssetHub, rpcConnectionAsHttps } from '@/registry/helpers'
 import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
 import { ALCHEMY_API_KEY } from '@/utils/consts'
 import { getTokenPrice } from '@/utils/token'
 import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
-import { Context, environment, toEthereum, toPolkadot } from '@snowbridge/api'
-import { AbstractProvider, AlchemyProvider, ContractTransaction } from 'ethers'
+import { Context, environment, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { AbstractProvider, AlchemyProvider } from 'ethers'
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -50,7 +51,8 @@ export async function getContext(environment: environment.SnowbridgeEnvironment)
     environment: name,
     ethereum: {
       ethChainId,
-      ethChains,
+      // ethChains,
+      ethChains: { '1': config.ETHEREUM_CHAINS[1](ALCHEMY_API_KEY) },
       beacon_url: config.BEACON_HTTP_API,
     },
     polkadot: {
@@ -96,91 +98,116 @@ export async function getSnowBridgeContext(environment: Environment): Promise<Co
  * @returns An object containing the tx estimate gas fee in the fee token and its USD value.
  */
 export const estimateTransactionFees = async (
-  tx: ContractTransaction,
+  transfer: toPolkadotV2.Transfer,
   context: Context,
   feeToken: Token,
   feeTokenUSDValue: number,
 ): Promise<AmountInfo> => {
-  // Fetch gas estimation and fee data
-  const [txGas, { gasPrice, maxPriorityFeePerGas }] = await Promise.all([
-    context.ethereum().estimateGas(tx),
-    context.ethereum().getFeeData(),
-  ])
-
-  // Get effective fee per gas & get USD fee value
-  const effectiveFeePerGas = (gasPrice ?? 0n) + (maxPriorityFeePerGas ?? 0n)
-  const fee = toHuman((txGas * effectiveFeePerGas).toString(), feeToken)
+  const { tx } = transfer
+  const estimatedGas = await context.ethereum().estimateGas(tx)
+  const feeData = await context.ethereum().getFeeData()
+  const executionFee = (feeData.gasPrice ?? 0n) * estimatedGas
 
   return {
-    amount: fee,
+    amount: executionFee,
     token: feeToken,
-    inDollars: fee * feeTokenUSDValue,
+    inDollars: toHuman(executionFee, feeToken) * feeTokenUSDValue,
   }
 }
 
 export const getFeeEstimate = async (
   token: Token,
+  sourceChain: Chain,
   destinationChain: Chain,
   direction: Direction,
-  context: Context,
-  senderAddress?: string,
-  recipientAddress?: string,
-  amount?: number | null,
+  context: SnowbridgeContext,
+  senderAddress: string,
+  recipientAddress: string,
+  amount: number,
 ): Promise<Fee | null> => {
   switch (direction) {
     case Direction.ToEthereum: {
+      const amount = await toEthereumV2
+        .getDeliveryFee(
+          {
+            assetHub: await context.assetHub(),
+            source: await context.parachain(sourceChain.chainId),
+          },
+          sourceChain.chainId,
+          context.registry,
+        )
+        .then(x => x.totalFeeInDot)
+      const feeTokenInDollars = (await getTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
+
       return {
         origin: 'Polkadot',
         fee: {
-          amount: (await toEthereum.getSendFee(context)).toString(),
+          amount,
           token: PolkadotTokens.DOT,
-          inDollars: (await getTokenPrice(PolkadotTokens.DOT))?.usd ?? 0,
+          inDollars: toHuman(amount, PolkadotTokens.DOT) * feeTokenInDollars,
         },
       }
     }
 
     case Direction.ToPolkadot: {
-      const feeToken = EthereumTokens.ETH
-      const feeTokenInDollars = (await getTokenPrice(feeToken))?.usd ?? 0
-      const fee = await toPolkadot.getSendFee(
-        context,
-        token.address,
-        destinationChain.chainId,
-        BigInt(0),
-      )
-
-      const bridgingFee: AmountInfo = {
-        amount: fee,
-        token: feeToken,
-        inDollars: toHuman(fee, feeToken) * feeTokenInDollars,
-      }
-
-      if (!senderAddress || !recipientAddress || !amount || !bridgingFee.amount) {
-        return {
-          origin: 'Ethereum',
-          bridging: bridgingFee,
-          execution: null,
-        }
-      }
-
       try {
+        const feeToken = EthereumTokens.ETH
+        const feeTokenInDollars = (await getTokenPrice(feeToken))?.usd ?? 0
+
+        //1. Get bridging fee
+        const fee = await toPolkadotV2.getDeliveryFee(
+          {
+            gateway: context.gateway(),
+            assetHub: await context.assetHub(),
+            destination: await context.parachain(destinationChain.chainId),
+          },
+          context.registry,
+          token.address,
+          destinationChain.chainId,
+        )
+
+        const bridgingFees: AmountInfo = {
+          amount: fee.totalFeeInWei,
+          token: feeToken,
+          inDollars: toHuman(fee.totalFeeInWei, feeToken) * feeTokenInDollars,
+        }
+
+        // 2. Get execution fee
         // Sender, Recipient and amount can't be defaulted here since the Smart contract verify the ERC20 token allowance.
-        const { tx } = await toPolkadot.createTx(
-          context.config.appContracts.gateway,
+        const tx = await toPolkadotV2.createTransfer(
+          context.registry,
           senderAddress,
           recipientAddress,
           token.address,
           destinationChain.chainId,
           safeConvertAmount(amount, token) ?? 0n,
-          bridgingFee.amount as bigint,
-          BigInt(0),
+          fee,
         )
 
-        const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
+        const validation = await toPolkadotV2.validateTransfer(
+          {
+            ethereum: context.ethereum(),
+            gateway: context.gateway(),
+            bridgeHub: await context.bridgeHub(),
+            assetHub: await context.assetHub(),
+            destParachain: isAssetHub(destinationChain)
+              ? undefined
+              : await context.parachain(destinationChain.chainId),
+          },
+          tx,
+        )
 
+        if (findValidationError(validation))
+          return {
+            origin: 'Ethereum',
+            bridging: bridgingFees,
+            execution: null,
+          }
+
+        const executionFee = await estimateTransactionFees(tx, context, feeToken, feeTokenInDollars)
         return {
           origin: 'Ethereum',
-          bridging: bridgingFee,
+          bridging: bridgingFees,
           execution: executionFee,
         }
       } catch (error) {
@@ -203,4 +230,10 @@ export const getFeeEstimate = async (
     default:
       throw new Error('Unsupported direction for the SnowbridgeAPI')
   }
+}
+
+export const findValidationError = (
+  validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
+): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
+  return validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
 }
