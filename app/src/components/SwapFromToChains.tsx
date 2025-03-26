@@ -1,7 +1,12 @@
 import { cn } from '@/utils/cn'
-import { Swap } from './svg/Swap'
+import Swap from './svg/Swap'
 
-export const SwapChains = ({ onClick, disabled }: { onClick: () => void; disabled: boolean }) => {
+interface SwapChainsProps {
+  onClick: () => void
+  disabled: boolean
+}
+
+export default function SwapFromToChains({ onClick, disabled }: SwapChainsProps) {
   return (
     <div
       onClick={() => !disabled && onClick()}

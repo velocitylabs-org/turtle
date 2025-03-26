@@ -1,9 +1,7 @@
-import { FC } from 'react'
+import HomeComponentSelect from '@/components/HomeComponentSelect'
+import TurtlesBackground from '@/components/TurtlesBackground'
 
-import { HomeComponentSelect } from '@/components/HomeComponentSelect'
-import { TurtlesBackground } from '@/components/TurtlesBackground'
-
-const App: FC = async () => {
+export default function App() {
   return (
     <main>
       <TurtlesBackground />
@@ -13,5 +11,3 @@ const App: FC = async () => {
     </main>
   )
 }
-
-export default App

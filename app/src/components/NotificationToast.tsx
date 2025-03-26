@@ -24,10 +24,10 @@ interface NotificationToastProps {
   removeNotification: (id: number) => void
 }
 
-const NotificationToast: React.FC<NotificationToastProps> = ({
+export default function NotificationToast({
   notification,
   removeNotification,
-}) => {
+}: NotificationToastProps) {
   // Remove notification after TTL
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
@@ -71,7 +71,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   )
 }
 
-const renderSeverityIcon = (severity?: NotificationSeverity) => {
+function renderSeverityIcon(severity?: NotificationSeverity) {
   switch (severity) {
     case NotificationSeverity.Info:
       return <Image src={InfoIcon} alt="info icon" />
@@ -93,7 +93,7 @@ const renderSeverityIcon = (severity?: NotificationSeverity) => {
   }
 }
 
-const getSeverityHeader = (severity: NotificationSeverity) => {
+function getSeverityHeader(severity: NotificationSeverity) {
   switch (severity) {
     case NotificationSeverity.Info:
       return 'Btw'
@@ -111,5 +111,3 @@ const getSeverityHeader = (severity: NotificationSeverity) => {
       return ''
   }
 }
-
-export default NotificationToast

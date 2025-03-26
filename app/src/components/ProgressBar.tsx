@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import { cn } from '@/utils/cn'
 
 interface ProgressBarProps {
@@ -6,7 +5,7 @@ interface ProgressBarProps {
   outlinedProgressBar: boolean
 }
 
-const ProgressBar: FC<ProgressBarProps> = ({ progress, outlinedProgressBar }) => {
+export default function ProgressBar({ progress, outlinedProgressBar }: ProgressBarProps) {
   return (
     <>
       {!outlinedProgressBar ? (
@@ -34,5 +33,3 @@ const ProgressBar: FC<ProgressBarProps> = ({ progress, outlinedProgressBar }) =>
     </>
   )
 }
-
-export default ProgressBar

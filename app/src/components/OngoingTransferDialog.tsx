@@ -4,11 +4,11 @@ import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import Account from './Account'
-import { Icon } from './Icon'
+import Icon from './Icon'
 import OngoingTransfer from './OngoingTransfer'
-import { ArrowRight } from './svg/ArrowRight'
-import { ArrowUpRight } from './svg/ArrowUpRight'
-import { TokenLogo } from './TokenLogo'
+import ArrowRight from './svg/ArrowRight'
+import ArrowUpRight from './svg/ArrowUpRight'
+import TokenLogo from './TokenLogo'
 import TransferEstimate from './TransferEstimate'
 import {
   Dialog,
@@ -19,13 +19,12 @@ import {
   DialogTrigger,
 } from './ui/dialog'
 
-export const OngoingTransferDialog = ({
-  transfer,
-  status,
-}: {
+interface OngoingTransferDialogProps {
   transfer: StoredTransfer
   status?: string
-}) => {
+}
+
+export default function OngoingTransferDialog({ transfer, status }: OngoingTransferDialogProps) {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
@@ -54,13 +53,13 @@ export const OngoingTransferDialog = ({
           <DialogDescription className="sr-only">
             Ongoing transfer status and details
           </DialogDescription>
-          <div className={'flex items-center justify-center space-x-4 text-turtle-secondary-dark'}>
+          <div className="flex items-center justify-center space-x-4 text-turtle-secondary-dark">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
                 src={transfer.sourceChain.logoURI}
                 width={32}
                 height={32}
-                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+                className="rounded-full border border-turtle-secondary-dark bg-background"
               />
               <div className="text-sm">{transfer.sourceChain.name}</div>
             </div>
@@ -70,7 +69,7 @@ export const OngoingTransferDialog = ({
                 src={transfer.destChain.logoURI}
                 width={32}
                 height={32}
-                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+                className="rounded-full border border-turtle-secondary-dark bg-background"
               />
               <div className="text-sm">{transfer.destChain.name}</div>
             </div>
@@ -83,7 +82,7 @@ export const OngoingTransferDialog = ({
             <span>{formatAmount(toHuman(transfer.amount, transfer.sourceToken))}</span>
             <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={40} />
           </h3>
-          <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
+          <div className="flex items-center space-x-4 text-sm text-turtle-secondary-dark">
             <div>{formatOngoingTransferDate(transfer.date)}</div>
           </div>
         </DialogHeader>
@@ -91,11 +90,7 @@ export const OngoingTransferDialog = ({
         {/* Modal content */}
         <div className="mt-[-1px] flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary border-t-turtle-secondary-dark bg-white p-4 sm:p-10">
           {/* Update and progress bar */}
-          <div
-            className={
-              'block h-[60px] w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark'
-            }
-          >
+          <div className="block h-[60px] w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark">
             <div className="my-2 flex items-center justify-between">
               <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
               <p className="text-normal text-turtle-secondary">
@@ -210,5 +205,3 @@ export const OngoingTransferDialog = ({
     </Dialog>
   )
 }
-
-export default OngoingTransferDialog

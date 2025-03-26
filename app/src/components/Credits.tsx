@@ -1,6 +1,4 @@
-import { FC } from 'react'
-
-const Credits: FC = () => {
+export default function Credits() {
   return (
     <div className="credits rainbow-text mt-6 flex flex-col text-center text-xs">
       <div>
@@ -22,5 +20,3 @@ const Credits: FC = () => {
     </div>
   )
 }
-
-export default Credits

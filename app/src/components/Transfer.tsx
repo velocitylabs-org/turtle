@@ -16,7 +16,7 @@ import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { FC, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import ActionBanner from './ActionBanner'
 import Button from './Button'
@@ -24,8 +24,8 @@ import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
-import { AlertIcon } from './svg/AlertIcon'
-import { SwapChains } from './SwapFromToChains'
+import AlertIcon from './svg/AlertIcon'
+import SwapChains from './SwapFromToChains'
 import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
@@ -44,7 +44,7 @@ const approvalAnimationProps = {
   transition: { duration: 0.3 },
 }
 
-const Transfer: FC = () => {
+export default function Transfer() {
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
@@ -382,9 +382,7 @@ const Transfer: FC = () => {
               disabled={isApprovingErc20Spend}
               header="Approve ERC-20 token spend"
               text={`We need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
-              image={
-                <Image src={'/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />
-              }
+              image={<Image src="/wallet.svg" alt="Wallet illustration" width={64} height={64} />}
               btn={approveAllowanceButton}
             />
           </motion.div>
@@ -400,9 +398,9 @@ const Transfer: FC = () => {
           >
             <ActionBanner
               disabled={isSwappingEthForWEth}
-              header={'Swap ETH for wETH'}
-              text={'Your wETH balance is insufficient but you got enough ETH.'}
-              image={<Image src={'/wallet.svg'} alt={'Wallet'} width={64} height={64} />}
+              header="Swap ETH for wETH"
+              text="Your wETH balance is insufficient but you got enough ETH."
+              image={<Image src="/wallet.svg" alt="Wallet" width={64} height={64} />}
               btn={swapEthToWEthButton}
             />
           </motion.div>
@@ -441,5 +439,3 @@ const Transfer: FC = () => {
     </form>
   )
 }
-
-export default Transfer
