@@ -4,10 +4,10 @@ import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
-import { Icon } from '../Icon'
-import { ArrowRight } from '../svg/ArrowRight'
-import { ArrowUpRight } from '../svg/ArrowUpRight'
-import { TokenLogo } from '../TokenLogo'
+import Icon from '../Icon'
+import ArrowRight from '../svg/ArrowRight'
+import ArrowUpRight from '../svg/ArrowUpRight'
+import TokenLogo from '../TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import { getStatusIcon, TransactionCard } from './TransactionCard'
+import TransactionCard, { getStatusIcon } from './TransactionCard'
 
 export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
   return (
@@ -26,7 +26,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
       </DialogTrigger>
       <DialogContent
         className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[30.5rem]"
-        hideCloseButton={true}
+        hideCloseButton
       >
         <DialogHeader
           className={cn(

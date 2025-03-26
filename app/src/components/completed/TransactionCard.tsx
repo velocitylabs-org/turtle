@@ -1,20 +1,17 @@
 import Image from 'next/image'
-
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
-
 import Account from '../Account'
-import { ArrowRight } from '../svg/ArrowRight'
-import { Fail } from '../svg/Fail'
-import { Info } from '../svg/Info'
-import { Success } from '../svg/Success'
-
+import ArrowRight from '../svg/ArrowRight'
+import Fail from '../svg/Fail'
+import Info from '../svg/Info'
+import Success from '../svg/Success'
 import { colors } from '../../../tailwind.config'
 import { getSVGColor } from './TransactionDialog'
 
-export const getStatusIcon = (status: TransferResult) => {
+export function getStatusIcon(status: TransferResult) {
   switch (status) {
     case TxStatus.Failed:
       return <Fail width={24} height={24} fill={getSVGColor(status)} />
@@ -25,7 +22,11 @@ export const getStatusIcon = (status: TransferResult) => {
   }
 }
 
-export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
+interface TransactionCardProps {
+  tx: CompletedTransfer
+}
+
+export default function TransactionCard({ tx }: TransactionCardProps) {
   const status = tx.result
   const transferFailed = status === TxStatus.Failed
 
@@ -57,9 +58,9 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
             >
               <div className="relative h-4 w-4 rounded-full">
                 <Image
+                  fill
                   src={tx.sourceChain.logoURI}
                   alt={`${tx.sourceChain.name}`}
-                  fill={true}
                   className={cn(
                     'rounded-full border bg-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
@@ -72,9 +73,9 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
               />
               <div className="relative h-4 w-4 rounded-full">
                 <Image
+                  fill
                   src={tx.destChain.logoURI}
                   alt={`${tx.destChain.name}`}
-                  fill={true}
                   className={cn(
                     'rounded-full border bg-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
@@ -144,7 +145,7 @@ export const TransactionCard = ({ tx }: { tx: CompletedTransfer }) => {
   )
 }
 
-const getBorder = (result: TransferResult) => {
+function getBorder(result: TransferResult) {
   switch (result) {
     case TxStatus.Undefined:
       return 'border-turtle-tertiary-dark/60 hover:border-turtle-tertiary-dark'

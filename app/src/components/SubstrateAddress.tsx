@@ -1,15 +1,15 @@
 import { truncateAddress } from '@/utils/address'
 import Identicon from '@polkadot/react-identicon'
-import React, { FC } from 'react'
+import { MouseEvent } from 'react'
 
 interface SubstrateAddressProps {
   /** The Address to display. */
   substrateAddress: string
 }
 
-const SubstrateAddress: FC<SubstrateAddressProps> = ({ substrateAddress }) => {
+export default function SubstrateAddress({ substrateAddress }: SubstrateAddressProps) {
   // Prevents click event propagation
-  const handleIdenticonClick = (event: React.MouseEvent) => {
+  const handleIdenticonClick = (event: MouseEvent) => {
     event.stopPropagation()
   }
 
@@ -22,5 +22,3 @@ const SubstrateAddress: FC<SubstrateAddressProps> = ({ substrateAddress }) => {
     </div>
   )
 }
-
-export default SubstrateAddress

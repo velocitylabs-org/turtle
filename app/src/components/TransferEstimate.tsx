@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import useTransferProgress from '@/hooks/useTransferProgress'
 import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
@@ -10,14 +9,12 @@ interface TransferEstimateProps {
   outlinedProgressBar: boolean
 }
 
-const TransferEstimate: FC<TransferEstimateProps> = ({
+export default function TransferEstimate({
   transfer,
   direction,
   outlinedProgressBar,
-}) => {
+}: TransferEstimateProps) {
   const progress = useTransferProgress(transfer, direction)
 
   return <ProgressBar progress={progress} outlinedProgressBar={outlinedProgressBar} />
 }
-
-export default TransferEstimate

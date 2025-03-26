@@ -7,7 +7,7 @@ interface DelayProps {
   children?: React.ReactNode
 }
 
-const Delayed: React.FC<DelayProps> = ({ millis, children }) => {
+export default function Delayed({ millis, children }: DelayProps) {
   const [shouldShow, setShouldShow] = useState<boolean>(false)
 
   // Should show when the delay timeout is reached
@@ -19,5 +19,3 @@ const Delayed: React.FC<DelayProps> = ({ millis, children }) => {
   // Render
   return shouldShow ? children : null
 }
-
-export default Delayed

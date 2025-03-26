@@ -1,13 +1,12 @@
 import { DisplaysTransfers } from '@/models/transfer'
 import { cn } from '@/utils/cn'
-
 import Button from './Button'
 
-const Menu = ({
+export default function Menu({
   newTransferInit,
   setNewTransferInit,
   hasCompletedTransfers,
-}: DisplaysTransfers) => {
+}: DisplaysTransfers) {
   const initNewTransaction = newTransferInit === 'New'
   return (
     <div className="relative flex items-center gap-2">
@@ -33,5 +32,3 @@ const Menu = ({
     </div>
   )
 }
-
-export default Menu
