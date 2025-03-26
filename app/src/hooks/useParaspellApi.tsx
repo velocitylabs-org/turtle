@@ -8,13 +8,8 @@ import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
 import { extractPapiEvent } from '@/utils/papi'
-import {
-  createRouterPlan,
-  createTransferTx,
-  dryRun,
-  DryRunResult,
-  moonbeamTransfer,
-} from '@/utils/paraspell'
+import { createRouterPlan } from '@/utils/paraspellSwap'
+import { createTransferTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
 import { extractPjsEvents } from '@/utils/pjs'
 import { txWasCancelled } from '@/utils/transfer'
 import { ISubmittableResult } from '@polkadot/types/types'

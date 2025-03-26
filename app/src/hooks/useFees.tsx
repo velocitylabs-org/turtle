@@ -6,8 +6,8 @@ import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
-import { getRoute } from '@/utils/routes'
+import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspellTransfer'
+import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
@@ -48,8 +48,8 @@ const useFees = (
       return
     }
 
-    const route = getRoute(env, sourceChain, destinationChain)
-    if (!route) throw new Error('Route not supported')
+    const sdk = resolveSdk(sourceChain, destinationChain)
+    if (!sdk) throw new Error('Route not supported')
 
     // TODO: this should be the fee token, not necessarily the native token.
     const feeToken = getNativeToken(sourceChain)
@@ -57,7 +57,7 @@ const useFees = (
     try {
       setBridgingFees(null)
 
-      switch (route.sdk) {
+      switch (sdk) {
         case 'ParaSpellApi': {
           setLoading(true)
           const sourceChainNode = getParaSpellNode(sourceChain)
