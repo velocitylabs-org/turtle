@@ -70,10 +70,6 @@ export const isTokenAvailableForSourceChain = (
   return getTransferTokens(sourceChain, destinationChain ?? null).some(t => t.id === token.id)
 }
 
-export const getRoute = (from: Chain, to: Chain): Route | undefined => {
-  return REGISTRY.routes.find(route => route.from === from.uid && route.to === to.uid)
-}
-
 export const getAllowedSourceChains = (): Chain[] => {
   const transferSourceChains = getTransferSourceChains()
   const swapSourceChains = getSwapsSourceChains()
@@ -125,15 +121,20 @@ export const getAllowedDestinationTokens = (
 ): Token[] => {
   if (!sourceChain || !sourceToken || !destinationChain) return []
 
-  const transferTokens = sourceToken ? [sourceToken] : []
+  const transferTokens = isSameChain(sourceChain, destinationChain) ? [] : [sourceToken]
   const swapTokens = getSwapsDestinationTokens(sourceChain, sourceToken, destinationChain)
 
   console.log('swapTokens: ', swapTokens)
+  console.log('transferTokens: ', transferTokens)
 
   // deduplicate
   const tokenMap = new Map([...transferTokens, ...swapTokens].map(token => [token.id, token]))
 
   return Array.from(tokenMap.values())
+}
+
+export const getRoute = (from: Chain, to: Chain): Route | undefined => {
+  return REGISTRY.routes.find(route => route.from === from.uid && route.to === to.uid)
 }
 
 export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {

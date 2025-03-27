@@ -19,11 +19,11 @@ import Button from './Button'
 import ChainTrigger from './ChainTrigger'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
-import { Cross } from './svg/Cross'
+import Cross from './svg/Cross'
 import { SearchIcon } from './svg/SearchIcon'
 import TokenIcon from './svg/TokenIcon'
-import { TokenLogo } from './TokenLogo'
-import { Tooltip } from './Tooltip'
+import TokenLogo from './TokenLogo'
+import Tooltip from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 const maxDollars = 100000000000 // 100B
@@ -74,7 +74,7 @@ interface ChainTokenSelectProps {
   className?: string
 }
 
-const ChainTokenSelect = ({
+export default function ChainTokenSelect({
   chain,
   token,
   amount,
@@ -82,7 +82,7 @@ const ChainTokenSelect = ({
   floatingLabel = 'From',
   disabled,
   className,
-}: ChainTokenSelectProps) => {
+}: ChainTokenSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -469,5 +469,3 @@ const SearchBar = ({
     </div>
   )
 }
-
-export default ChainTokenSelect

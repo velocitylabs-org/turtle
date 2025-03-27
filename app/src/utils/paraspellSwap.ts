@@ -5,9 +5,10 @@ import { REGISTRY } from '@/registry'
 import { Hydration } from '@/registry/mainnet/chains'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
-import { getExchangeAssets } from '@paraspell/xcm-router'
+import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
 import { getCurrencyId, getParaSpellNode, getTokenSymbol } from './paraspellTransfer'
+import { isSameChain } from './routes'
 import { getTokenByMultilocation } from './token'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
@@ -40,14 +41,15 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
 
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
+  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
+    throw new Error('Transfer failed: Ethereum is not supported.')
 
   const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
-  const { RouterBuilder } = await import('@paraspell/xcm-router')
   const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId as any) // TODO: replace any
-    .to(destinationChainFromId as any) // TODO: replace any
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
     .exchange('HydrationDex') // only Hydration is supported for now
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
@@ -55,10 +57,46 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     .slippagePct(slippagePct)
     .senderAddress(senderAddress)
     .recipientAddress(recipient)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .signer(account.pjsSigner as any)
     .buildTransactions()
 
   return routerPlan
+}
+
+export const getExchangeOutputAmount = async (
+  sourceChain: Chain,
+  destinationChain: Chain,
+  sourceToken: Token,
+  destinationToken: Token,
+  /** Amount in the source token's decimal base */
+  amount: string,
+): Promise<bigint> => {
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
+    throw new Error('Transfer failed: Ethereum is not supported.')
+
+  const currencyIdFrom = getCurrencyId(
+    Environment.Mainnet,
+    sourceChainFromId,
+    sourceChain.uid,
+    sourceToken,
+  )
+  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
+
+  const amountOut = await RouterBuilder()
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
+    .exchange('HydrationDex') // TODO: hardcoded for now as it's the only dex supported.
+    .currencyFrom(currencyIdFrom)
+    .currencyTo(currencyTo)
+    .amount(amount)
+    .getBestAmountOut()
+
+  return amountOut.amountOut
 }
 
 /** returns all supported dex paraspell nodes */
@@ -110,6 +148,7 @@ export const getSwapsDestinationChains = (
   chains.push(sourceChain)
 
   const dexTokens = new Set(getDexTokens(dex).map(token => token.id)) // Use Set for O(1) lookups
+  if (!dexTokens.has(sourceToken.id)) return []
 
   // get transfer routes we can reach from the source chain
   const routes = REGISTRY[Environment.Mainnet].routes.filter(
@@ -143,10 +182,13 @@ export const getSwapsDestinationTokens = (
 
   const dex = getDex(sourceChain)
   if (!dex) return []
-  const dexTokensWithoutSourceToken = getDexTokens(dex).filter(token => token.id !== sourceToken.id)
+  const dexTokens = getDexTokens(dex)
 
-  if (sourceChain.uid === destinationChain.uid) return dexTokensWithoutSourceToken
+  if (!dexTokens.some(token => token.id === sourceToken.id)) return []
 
+  const dexTokensWithoutSourceToken = dexTokens.filter(token => token.id !== sourceToken.id)
+  if (isSameChain(sourceChain, destinationChain)) return dexTokensWithoutSourceToken
+  console.log('PAST')
   // if destination chain is different, filter tokens by routes
   const route = REGISTRY[Environment.Mainnet].routes.find(
     route => route.from === sourceChain.uid && route.to === destinationChain.uid,

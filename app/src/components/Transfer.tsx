@@ -2,6 +2,7 @@
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
+import { useSwapOutputAmount } from '@/hooks/useSwapOutputAmount'
 import useTransferForm from '@/hooks/useTransferForm'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
@@ -12,7 +13,7 @@ import {
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -61,6 +62,7 @@ export default function Transfer() {
     sourceChain,
     destinationChain,
     sourceTokenAmount,
+    destinationTokenAmount,
     manualRecipient,
     sourceWallet,
     destinationWallet,
@@ -105,6 +107,14 @@ export default function Transfer() {
     owner: sourceWallet?.sender?.address,
   })
 
+  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
+    sourceChain,
+    destinationChain,
+    sourceToken: sourceTokenAmount?.token,
+    destinationToken: destinationTokenAmount?.token,
+    amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString(),
+  })
+
   const requiresErc20SpendApproval =
     erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount!
 
@@ -142,6 +152,11 @@ export default function Transfer() {
     amountPlaceholder = 'Amount'
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
+
+  let receiveAmountPlaceholder = 'Receive Amount'
+  if (isLoadingOutputAmount) receiveAmountPlaceholder = 'Loading...'
+  else if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id)
+    receiveAmountPlaceholder = ''
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
@@ -307,11 +322,14 @@ export default function Transfer() {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amount={{
-                      value: tokenField.value?.amount ?? null,
+                      value:
+                        outputAmount && destinationTokenAmount?.token
+                          ? toHuman(outputAmount, destinationTokenAmount.token)
+                          : null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: 'Receive Amount',
+                      placeholder: receiveAmountPlaceholder,
                       disabled: true,
                     }}
                     wallet={{
