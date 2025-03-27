@@ -322,9 +322,10 @@ export default function Transfer() {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amount={{
-                      value: outputAmount
-                        ? toHuman(outputAmount, destinationTokenAmount?.token!)
-                        : null,
+                      value:
+                        outputAmount && destinationTokenAmount?.token
+                          ? toHuman(outputAmount, destinationTokenAmount.token)
+                          : null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
