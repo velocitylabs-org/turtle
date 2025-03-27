@@ -11,7 +11,7 @@ import {
   getParaEthTransferFees,
   TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useEnvironmentStore } from '@/stores/environmentStore'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { getRoute } from '@/utils/routes'
@@ -30,14 +30,17 @@ export type Fee =
 const getBridgeFeeToken = (destinationChain?: Chain | null): Token | null =>
   destinationChain?.network === 'Ethereum' ? PolkadotTokens.DOT : null
 
-const useCachedBridgingFee = (destinationChain?: Chain | null) => {
+const getFeeToken = (sourceChain?: Chain | null): Token | null =>
+  !sourceChain ? null : getNativeToken(sourceChain)
+
+const useCachedBridgingFee = (bridgeFeeToken: Token | null) => {
   return useQuery({
-    queryKey: ['bridging-fee-ah'],
+    queryKey: ['bridging-fee-ah', bridgeFeeToken?.id],
     queryFn: async () => {
       return (await getParaEthTransferFees()).reduce((acc, x) => acc + BigInt(x), 0n)
     },
-    staleTime: CACHE_REVALIDATE_IN_SECONDS * 1000, // 3 minutes,
-    enabled: destinationChain?.network === 'Ethereum',
+    enabled: !!bridgeFeeToken,
+    staleTime: CACHE_REVALIDATE_IN_SECONDS * 1000,
   })
 }
 
@@ -49,9 +52,13 @@ const useFees = (
   senderAddress?: string,
   recipientAddress?: string,
 ) => {
-  const { price: tokenPrice } = useTokenPrice(token)
-  const { price: bridgeFeeTokenPrice } = useTokenPrice(getBridgeFeeToken(destinationChain))
-  const { data: cachedBridgingFees } = useCachedBridgingFee(destinationChain)
+  const feeToken = useMemo(() => getFeeToken(sourceChain), [sourceChain])
+  const bridgeFeeToken = useMemo(() => getBridgeFeeToken(destinationChain), [destinationChain])
+
+  const { price: tokenPrice } = useTokenPrice(feeToken)
+  const { price: bridgeFeeTokenPrice } = useTokenPrice(bridgeFeeToken)
+  const { data: cachedBridgingFees, isLoading: isCachedBridgingFeesLoading } =
+    useCachedBridgingFee(bridgeFeeToken)
 
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFees, setBridgingFees] = useState<AmountInfo | null>(null)
@@ -108,7 +115,7 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
-          if (destinationChain.network === 'Ethereum') {
+          if (destinationChain.network === 'Ethereum' && !isCachedBridgingFeesLoading) {
             const bridgeFeeToken = getBridgeFeeToken(destinationChain) ?? PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = bridgeFeeTokenPrice ?? 0
             const bridgingFees = cachedBridgingFees ?? 0n
@@ -209,6 +216,7 @@ const useFees = (
     senderAddress,
     recipientAddress,
     amount,
+    isCachedBridgingFeesLoading,
   ])
 
   useEffect(() => {
