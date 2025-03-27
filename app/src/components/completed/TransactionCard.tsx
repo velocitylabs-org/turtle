@@ -24,18 +24,21 @@ export function getStatusIcon(status: TransferResult) {
 
 interface TransactionCardProps {
   tx: CompletedTransfer
+  selectTx:   (tx: CompletedTransfer) => void
 }
 
-export default function TransactionCard({ tx }: TransactionCardProps) {
+export default function TransactionCard({ tx, selectTx }: TransactionCardProps) {
   const status = tx.result
   const transferFailed = status === TxStatus.Failed
 
   return (
     <div
+      role="button"
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
         getBorder(status),
       )}
+      onClick={() => selectTx(tx)}
     >
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
