@@ -2,7 +2,7 @@ import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { REGISTRY } from '@/registry'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
+import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
 import {
   Builder,
@@ -144,6 +144,14 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
  * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
  */
 export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TCurrencyCore {
+  // TODO: Edge Cases. Remove once Paraspell fixed it.
+  if (
+    token.id === PolkadotTokens.ASTR.id ||
+    token.id === EthereumTokens.MYTH.id ||
+    token.id === PolkadotTokens.DOT.id
+  )
+    return node ? { symbol: getTokenSymbol(node, token) } : { symbol: token.symbol }
+
   if (token.multilocation) return { multilocation: token.multilocation }
   if (node) return { symbol: getTokenSymbol(node, token) }
 
