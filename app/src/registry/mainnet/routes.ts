@@ -14,7 +14,7 @@ import {
   Polimec,
   RelayChain,
 } from './chains'
-import { EthereumTokens, PolkadotTokens } from './tokens';
+import { EthereumTokens, PolkadotTokens } from './tokens'
 
 export const routes: Route[] = [
   // Ethereum -> Polkadot
@@ -184,7 +184,12 @@ export const routes: Route[] = [
     from: AssetHub.uid,
     to: Bifrost.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
+    tokens: [
+      EthereumTokens.ETH.id,
+      EthereumTokens.WETH.id,
+      PolkadotTokens.USDC.id,
+      PolkadotTokens.USDT.id,
+    ],
   },
   {
     from: AssetHub.uid,

@@ -40,9 +40,7 @@ const useFees = (
     useSnowbridgeContext()
   const { addNotification } = useNotification()
   const env = useEnvironment()
-  const {
-    balance: feeBalance,
-  } = useBalance({
+  const { balance: feeBalance } = useBalance({
     env: env,
     chain: sourceChain,
     token: sourceChain ? getNativeToken(sourceChain) : undefined,

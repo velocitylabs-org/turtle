@@ -46,7 +46,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       setLoading(true)
       const fetchedAllowance = (await assetStatusInfo(context, tokenAmount.token.address, owner))
         .tokenGatewayAllowance
-        console.log("FetchedALlowance is ", toHuman(fetchedAllowance, tokenAmount.token))
+      console.log('FetchedALlowance is ', toHuman(fetchedAllowance, tokenAmount.token))
       setAllowance(toHuman(fetchedAllowance, tokenAmount.token))
       refetchFees()
     } catch (error) {
@@ -81,7 +81,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       }
 
       try {
-        console.log("Will approve token allowance", tokenAmount.token)
+        console.log('Will approve token allowance', tokenAmount.token)
         if (tokenAmount.token.id === EthereumTokens.USDT.id) {
           if (allowance == null) await fetchAllowance()
 

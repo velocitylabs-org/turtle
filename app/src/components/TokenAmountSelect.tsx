@@ -92,7 +92,11 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
           >
             {/* Trigger Content */}
             <div className="flex h-[3.5rem] min-w-0 flex-grow items-center">
-              <div className="flex items-center gap-1" data-cy="token-select-trigger" onClick={handleTriggerClick}>
+              <div
+                className="flex items-center gap-1"
+                data-cy="token-select-trigger"
+                onClick={handleTriggerClick}
+              >
                 {value?.token ? (
                   <>
                     <TokenLogo token={value.token} sourceChain={sourceChain} />

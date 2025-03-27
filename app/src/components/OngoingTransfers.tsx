@@ -19,7 +19,6 @@ const OngoingTransfers = ({
   )
   const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
 
-  
   useOngoingTransfersCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
 

@@ -336,7 +336,6 @@ const Transfer: FC = () => {
           </AnimatePresence>
         </div>
       )}
-      
 
       {/* ERC-20 Spend Approval */}
       <AnimatePresence>

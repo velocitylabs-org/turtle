@@ -56,7 +56,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
 
           if (fetchedBalance)
             // apply a 90% factor to safe-guard for fees and other unseen costs
-            fetchedBalance.formatted = (toHuman(fetchedBalance.value, token) * 0.9) .toString() // override formatted value
+            fetchedBalance.formatted = (toHuman(fetchedBalance.value, token) * 0.9).toString() // override formatted value
           break
         }
 
