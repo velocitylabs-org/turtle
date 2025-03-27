@@ -11,6 +11,7 @@ import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import { ExclamationMark } from '@/assets/svg/ExclamationMark'
 import LoadingIcon from '@/assets/svg/LoadingIcon'
+import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
@@ -81,93 +82,111 @@ const TxSummary: FC<TxSummaryProps> = ({
     return (
       <div className={cn('tx-summary p-0 pt-0', className)}>
         <div className="pt-3">
-          <div className="mt-3 text-center text-lg font-bold text-turtle-foreground md:text-xl">
-            Summary
+          <div className="relative my-4 flex max-w-3xl flex-col gap-3 rounded-lg border bg-white p-3 shadow-sm">
+            <div className="absolute -top-2.5 left-2.5 bg-white px-1 text-sm text-turtle-level5">
+              Summary
+            </div>
+            <div className="flex items-center justify-between space-x-4 py-2">
+              {fees && (
+                <div className="flex items-center gap-2">
+                  <div className="rounded-md bg-amber-50 p-1.5">
+                    <Zap className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">
+                      {bridgingFees ? 'Execution fee' : 'Fee'}
+                    </p>
+                    <div className="flex flex-col items-baseline gap-0.5">
+                      <span className="text-sm font-medium">
+                        {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
+                      </span>
+                      {fees.inDollars > 0 && (
+                        <span className="text-xs text-gray-400">
+                          ${formatAmount(fees.inDollars)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!isBridgeTransfer ? (
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-md bg-purple-50 p-1.5">
+                      <Clock className="h-4 w-4 text-purple-600" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Duration</p>
+                    <span className="text-sm font-medium">{durationEstimate}</span>
+                  </div>
+                </div>
+              ) : (
+                bridgingFees && (
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-md bg-blue-50 p-1.5">
+                      <ArrowRightLeft className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Bridging fee</p>
+                      <div className="flex flex-col items-baseline gap-0.5">
+                        <span className="text-sm font-medium">
+                          {formatAmount(toHuman(bridgingFees.amount, bridgingFees.token))}{' '}
+                          {bridgingFees.token.symbol}
+                        </span>
+                        {bridgingFees.inDollars > 0 && (
+                          <span className="text-xs text-gray-400">
+                            ${formatAmount(bridgingFees.inDollars)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+
+            {isBridgeTransfer && (
+              <>
+                <div className="border-t border-gray-100" />
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-md bg-purple-50 p-1.5">
+                      <Clock className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <p className="text-xs text-gray-500">Duration</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium">{durationEstimate}</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-          <ul>
-            {/* Execution fees */}
-            {fees && (
-              <li className="mt-4 flex items-start justify-between border-turtle-level2">
-                <div className="items-left flex flex-col">
-                  <div className="pt-[3px] text-sm font-bold">
-                    {bridgingFees ? 'Execution fee' : 'Fee'}{' '}
-                  </div>
-                  {!canPayFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
-                      <ExclamationMark
-                        width={16}
-                        height={16}
-                        fill={colors['turtle-foreground']}
-                        className="mr-2"
-                      />
-                      <span>You don&apos;t have enough {fees.token.symbol}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="items-right flex">
-                  <div>
-                    <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
-                    </div>
 
-                    {fees.inDollars > 0 && (
-                      <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(fees.inDollars)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </li>
-            )}
-
-            {/* Bridging fees */}
-            {isBridgeTransfer && bridgingFees && (
-              <li className="mt-4 flex items-start justify-between border-turtle-level2">
-                <div className="items-left flex flex-col">
-                  <div className="pt-[3px] text-sm font-bold">Bridging fee</div>
-                  {!canPayAdditionalFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
-                      <ExclamationMark
-                        width={16}
-                        height={16}
-                        fill={colors['turtle-foreground']}
-                        className="mr-2"
-                      />
-                      <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="items-right flex">
-                  <div>
-                    <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {formatAmount(toHuman(bridgingFees.amount, bridgingFees.token))}{' '}
-                      {bridgingFees.token.symbol}
-                    </div>
-
-                    {bridgingFees.inDollars > 0 && (
-                      <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(bridgingFees.inDollars)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </li>
-            )}
-
-            <li className="mt-4 flex items-start justify-between border-turtle-level2">
-              <div className="flex">
-                <div className="pt-[3px] text-sm font-bold">Duration</div>
-              </div>
-              <div className="items-right flex items-center space-x-0.5">
-                <div className="text-right text-lg text-turtle-foreground md:text-xl">
-                  {durationEstimate}
-                </div>
-              </div>
-            </li>
-          </ul>
-
-          {canPayFees && isAmountTooLow && (
-            <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
+          {!canPayFees && fees ? (
+            <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+              <ExclamationMark
+                width={16}
+                height={16}
+                fill={colors['turtle-foreground']}
+                className="mr-2"
+              />
+              <span>You don&apos;t have enough {fees.token.symbol}</span>
+            </div>
+          ) : !canPayAdditionalFees && bridgingFees ? (
+            <div className="mx-auto flex w-fit items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+              <ExclamationMark
+                width={16}
+                height={16}
+                fill={colors['turtle-foreground']}
+                className="mr-2"
+              />
+              <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
+            </div>
+          ) : (canPayFees || (isBridgeTransfer && canPayAdditionalFees)) && isAmountTooLow ? (
+            <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}
                 height={20}
@@ -176,7 +195,19 @@ const TxSummary: FC<TxSummaryProps> = ({
               />
               <div className="text-small">The amount is a bit too low to justify the fees</div>
             </div>
-          )}
+          ) : null}
+
+          {/* {(canPayFees || (isBridgeTransfer && canPayAdditionalFees)) && isAmountTooLow && (
+            <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
+              <ExclamationMark
+                width={20}
+                height={20}
+                fill={colors['turtle-foreground']}
+                className="mr-3"
+              />
+              <div className="text-small">The amount is a bit too low to justify the fees</div>
+            </div>
+          )} */}
         </div>
       </div>
     )
