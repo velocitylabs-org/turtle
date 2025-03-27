@@ -1,7 +1,7 @@
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { getAssetUid, REGISTRY } from '@/registry'
+import { REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
 import {
@@ -12,9 +12,9 @@ import {
   getTNode,
   TCurrencyCore,
   TDryRunResult,
-  type TPapiTransaction,
-  TNodeWithRelayChains,
   TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+  type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { getAccountId32 } from './address'
@@ -40,7 +40,7 @@ export const createTx = async (
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
   else {
-    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+    const currencyId = getParaspellToken(token, sourceChainFromId)
 
     return await Builder(wssEndpoint)
       .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
@@ -70,7 +70,7 @@ export const moonbeamTransfer = async (
   const destinationChainFromId = getTNode(destinationChain.chainId, relay)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getParaspellToken(token, sourceChainFromId)
 
   return EvmBuilder()
     .from('Moonbeam')
@@ -93,13 +93,13 @@ export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
+  const { sourceChain, destinationChain, token, amount, recipient, sender } = params
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getParaspellToken(token, sourceChainFromId)
 
   return await Builder(wssEndpoint)
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
@@ -141,19 +141,13 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
 }
 
 /**
- * Get the ParaSpell currency id in the form of `TCurrencyCore`.
- *
- * @remarks We prioritize an local asset id if specified in our registry and otherwise
- * default to the token symbol.
- *
- * */
-export function getCurrencyId(
-  env: Environment,
-  node: TNodeWithRelayChains,
-  chainId: string,
-  token: Token,
-): TCurrencyCore {
-  return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
+ * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
+ */
+export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TCurrencyCore {
+  if (token.multilocation) return { multilocation: token.multilocation }
+  if (node) return { symbol: getTokenSymbol(node, token) }
+
+  return { symbol: token.symbol }
 }
 
 export function getNativeToken(chain: Chain): Token {
