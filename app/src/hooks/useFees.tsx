@@ -15,7 +15,7 @@ import useSnowbridgeContext from './useSnowbridgeContext'
 import { getRoute } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { PolkadotTokens } from '@/registry/mainnet/tokens'
-import { getBalance } from './useBalance'
+import useBalance from './useBalance'
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
 // When bridging from AssetHub, the basic fees already take the bridging fees into account.
@@ -40,6 +40,14 @@ const useFees = (
     useSnowbridgeContext()
   const { addNotification } = useNotification()
   const env = useEnvironment()
+  const {
+    balance: feeBalance,
+  } = useBalance({
+    env: env,
+    chain: sourceChain,
+    token: sourceChain ? getNativeToken(sourceChain) : undefined,
+    address: senderAddress,
+  })
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
@@ -88,19 +96,16 @@ const useFees = (
           if (destinationChain.network === 'Ethereum') {
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
-            const bridgingFee = await getCachedBridgingFee()
+            const bridgeFee = await getCachedBridgingFee()
 
             setBridgingFees({
-              amount: bridgingFee,
+              amount: bridgeFee,
               token: bridgeFeeToken,
-              inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+              inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
-            if (senderAddress) {
-              const balance =
-                (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
-              setCanPayAdditionalFees(bridgingFee < balance)
-            }
+            const totalCost = BigInt(fees?.amount ?? 0n) + BigInt(bridgingFee?.amount ?? 0n)
+            setCanPayAdditionalFees(totalCost < BigInt(feeBalance?.value ?? 0n))
           }
 
           break
@@ -148,6 +153,9 @@ const useFees = (
             case 'Ethereum': {
               setFees(fee.execution)
               setBridgingFees(fee.bridging)
+
+              const totalCost = BigInt(fee.execution?.amount ?? 0n) + BigInt(fee.bridging.amount)
+              setCanPayAdditionalFees(totalCost < BigInt(feeBalance?.value ?? 0n))
               break
             }
             case 'Polkadot': {

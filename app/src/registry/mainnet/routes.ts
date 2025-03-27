@@ -52,7 +52,7 @@ export const routes: Route[] = [
     from: Ethereum.uid,
     to: Bifrost.uid,
     sdk: 'SnowbridgeApi',
-    tokens: [EthereumTokens.WETH.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
   },
   {
     from: Ethereum.uid,
@@ -184,7 +184,7 @@ export const routes: Route[] = [
     from: AssetHub.uid,
     to: Bifrost.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.WETH.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
   },
   {
     from: AssetHub.uid,
@@ -234,7 +234,7 @@ export const routes: Route[] = [
     from: Bifrost.uid,
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.WETH.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
   },
   {
     from: Hydration.uid,
@@ -255,6 +255,9 @@ export const routes: Route[] = [
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
     tokens: [
+      EthereumTokens.ETH.id,
+      EthereumTokens.WETH.id,
+
       PolkadotTokens.DOT.id,
       EthereumTokens.WETH.id,
       PolkadotTokens.USDC.id,
