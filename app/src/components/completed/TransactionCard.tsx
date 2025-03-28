@@ -9,7 +9,7 @@ import Fail from '../svg/Fail'
 import Info from '../svg/Info'
 import Success from '../svg/Success'
 import { colors } from '../../../tailwind.config'
-import { getSVGColor } from './TransactionDialog'
+import { getSVGColor } from './TransactionCardDetail'
 
 export function getStatusIcon(status: TransferResult) {
   switch (status) {
@@ -158,3 +158,4 @@ function getBorder(result: TransferResult) {
       return 'border-turtle-level3 hover:bg-turtle-level1'
   }
 }
+

@@ -68,6 +68,7 @@ const config: Config = {
         dazzed: ['var(--font-dazzed)'],
       },
       fontSize: {
+        xs: '0.8125rem', // 13px
         large: '2rem',
       },
       borderRadius: {

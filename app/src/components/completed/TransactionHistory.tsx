@@ -4,7 +4,7 @@ import { cn } from '@/utils/cn'
 import { formatTransfersByDate } from '@/utils/transfer'
 import TransactionCard from '@/components/completed/TransactionCard'
 import { useCallback, useState } from 'react'
-import TransactionHistoryCardDetail from './TransactionHistoryCardDetail'
+import TransactionCardDetail from './TransactionCardDetail'
 import DynamicTray from '@/components/DynamicTray'
 import { useMemo } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -43,7 +43,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
 
   const TransactionHistoryCardDetailComp = useMemo(
     () => (
-      <TransactionHistoryCardDetail
+      <TransactionCardDetail
         tx={selectedTxForDetail}
         unSelectTx={unSelectTx}
       />
