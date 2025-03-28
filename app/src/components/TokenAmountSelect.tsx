@@ -83,7 +83,6 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
           {/* Trigger */}
           <div
             ref={triggerRef}
-            onClick={handleTriggerClick}
             className={cn(
               'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
               !disabled && 'cursor-pointer',
@@ -92,8 +91,12 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             )}
           >
             {/* Trigger Content */}
-            <div className="flex h-[3.5rem] min-w-0 flex-grow items-center gap-1">
-              <div className="flex items-center gap-1" data-cy="token-select-trigger">
+            <div className="flex h-[3.5rem] min-w-0 flex-grow items-center">
+              <div
+                className="flex items-center gap-1"
+                data-cy="token-select-trigger"
+                onClick={handleTriggerClick}
+              >
                 {value?.token ? (
                   <>
                     <TokenLogo token={value.token} sourceChain={sourceChain} />
@@ -107,10 +110,10 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
                     {placeholder}
                   </>
                 )}
+                <ChevronDown strokeWidth={0.2} className="mx-1.5" />
               </div>
-              <ChevronDown strokeWidth={0.2} className="ml-1" />
               <VerticalDivider />
-              <div className="align-center ml-1 flex min-w-0 flex-col">
+              <div className="align-center ml-2 flex min-w-0 flex-col">
                 <input
                   ref={inputRef}
                   data-cy="amount-input"

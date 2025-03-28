@@ -9,7 +9,7 @@ export const EthereumTokens = {
     symbol: 'ETH',
     logoURI: '/logos/ethereum.svg',
     decimals: 18,
-    address: '',
+    address: '0x0000000000000000000000000000000000000000',
     multilocation: {
       parents: 1,
       interior: {
