@@ -10,26 +10,39 @@ import Account from '@/components/Account'
 import { colors } from '../../../tailwind.config'
 import ArrowUpRight from '@/components/svg/ArrowUpRight'
 import Tooltip from '@/components/Tooltip'
-import Cross from'@/components/svg/Cross'
+import Cross from '@/components/svg/Cross'
 
 interface TransactionHistoryCardDetailProps {
-  tx: CompletedTransfer | null,
-  unSelectTx: () => void,
+  tx: CompletedTransfer | null
+  unSelectTx: () => void
 }
 
-export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHistoryCardDetailProps) {
-  if (!tx) return null;
+export default function TransactionCardDetail({
+  tx,
+  unSelectTx,
+}: TransactionHistoryCardDetailProps) {
+  if (!tx) return null
   return (
     <div className="relative">
       <Tooltip showIcon={false} content="Go Back">
-        <div role="button" onClick={() => unSelectTx()} className="absolute top-[-22] right-[-15] sm:top-[-23] sm:right-[-23] p-[4] flex items-center justify-center">
-          <Cross className="h-[20] w-[20] sm:h-[25] sm:w-[25]" stroke={colors['turtle-foreground']}/>
+        <div
+          role="button"
+          onClick={() => unSelectTx()}
+          className="absolute right-[-15] top-[-22] flex items-center justify-center p-[4] sm:right-[-23] sm:top-[-23]"
+        >
+          <Cross
+            className="h-[20] w-[20] sm:h-[25] sm:w-[25]"
+            stroke={colors['turtle-foreground']}
+          />
         </div>
       </Tooltip>
-      <div
-        className="flex flex-col gap-2 mb-4"
-      >
-        <div className={cn('flex items-center justify-center space-x-2 rounded-2xl border w-fit m-auto py-1 px-2', getTextColor(tx.result))}>
+      <div className="mb-4 flex flex-col gap-2">
+        <div
+          className={cn(
+            'm-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border px-2 py-1',
+            getTextColor(tx.result),
+          )}
+        >
           <div className="turtle-success-dark flex items-center justify-center space-x-1">
             <Icon
               src={tx.sourceChain.logoURI}
@@ -52,7 +65,7 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
         </div>
         <h3
           className={cn(
-            'xxl-letter-spacing text-lg flex items-center justify-center space-x-3 leading-none sm:text-4xl',
+            'xxl-letter-spacing flex items-center justify-center space-x-3 text-lg leading-none sm:text-4xl',
             getTextColor(tx.result),
           )}
         >
@@ -78,7 +91,7 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
       >
         <div
           className={cn(
-            'flex w-full items-center gap-2 rounded-lg px-3 py-1 text-xs justify-center',
+            'flex w-full items-center justify-center gap-2 rounded-lg px-3 py-1 text-xs',
             getTextColor(tx.result),
             getBg(tx.result),
             getBorder(tx.result),
@@ -99,9 +112,9 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             </p>
           )}
         </div>
-        <div className="relative mt-2 w-full rounded-lg border border-turtle-level3 flex flex-col sm:flex-row">
+        <div className="relative mt-2 flex w-full flex-col rounded-lg border border-turtle-level3 sm:flex-row">
           {/* sender */}
-          <div className="relative p-4 text-sm flex-1">
+          <div className="relative flex-1 p-4 text-sm">
             <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
               Sender
             </div>
@@ -114,7 +127,7 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             />
           </div>
           {/* Receiver */}
-          <div className="relative p-4 text-sm flex-1 border-t sm:border-t-0 sm:border-l">
+          <div className="relative flex-1 border-t p-4 text-sm sm:border-l sm:border-t-0">
             <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
               Receiver
             </div>
@@ -133,28 +146,34 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             label="Amount"
             amount={formatAmount(toHuman(tx.amount, tx.token), 'Long')}
             symbol={tx.token.symbol}
-            usdValue={typeof tx.tokenUSDValue === 'number' 
-              ? formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')
-              : undefined}
+            usdValue={
+              typeof tx.tokenUSDValue === 'number'
+                ? formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')
+                : undefined
+            }
           />
-          
+
           <SummaryRow
             label={tx.bridgingFee ? 'Execution fee' : 'Fee'}
             amount={formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}
             symbol={tx.fees.token.symbol}
-            usdValue={typeof tx.tokenUSDValue === 'number' 
-              ? formatAmount(tx.fees.inDollars, 'Long')
-              : undefined}
+            usdValue={
+              typeof tx.tokenUSDValue === 'number'
+                ? formatAmount(tx.fees.inDollars, 'Long')
+                : undefined
+            }
           />
-          
+
           {tx.bridgingFee && (
             <SummaryRow
               label="Bridging fee"
               amount={formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}
               symbol={tx.bridgingFee.token.symbol}
-              usdValue={typeof tx.tokenUSDValue === 'number'
-                ? formatAmount(tx.bridgingFee.inDollars, 'Long')
-                : undefined}
+              usdValue={
+                typeof tx.tokenUSDValue === 'number'
+                  ? formatAmount(tx.bridgingFee.inDollars, 'Long')
+                  : undefined
+              }
             />
           )}
         </div>
@@ -164,36 +183,32 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             target="_blank"
             rel="noopener noreferrer"
             aria-label="View your completed transaction on block explorer"
-            className="w-full md:w-auto flex items-center justify-center space-x-2 rounded-lg border border-turtle-level3 text-sm hover:text-turtle-level5 py-1 sm:py-1.5 px-3"
+            className="flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 px-3 py-1 text-sm hover:text-turtle-level5 sm:py-1.5 md:w-auto"
           >
             <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
           </a>
-          )}
+        )}
       </div>
     </div>
   )
 }
 
 interface SummaryRowProps {
-  label: string;
-  amount: string;
-  symbol: string;
-  usdValue?: string;
+  label: string
+  amount: string
+  symbol: string
+  usdValue?: string
 }
 
 function SummaryRow({ label, amount, symbol, usdValue }: SummaryRowProps) {
   return (
     <div className="flex items-start justify-between space-x-4">
-      <div className="font-bold text-sm">{label}</div>
+      <div className="text-sm font-bold">{label}</div>
       <div className="items-right flex flex-col space-x-1 text-right">
         <div className="text-sm">
           {amount} {symbol}
         </div>
-        {usdValue && (
-          <div className="text-xs text-turtle-level4">
-            ${usdValue}
-          </div>
-        )}
+        {usdValue && <div className="text-xs text-turtle-level4">${usdValue}</div>}
       </div>
     </div>
   )
@@ -243,7 +258,7 @@ const getBorderTop = (result: TransferResult) => {
   }
 }
 
-export function getSVGColor (result: TransferResult) {
+export function getSVGColor(result: TransferResult) {
   switch (result) {
     case TxStatus.Undefined:
       return colors['turtle-tertiary-dark']

@@ -29,11 +29,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
               {formatCompletedTransferDate(date)}
             </p>
             {transfers.reverse().map((tx, idx) => (
-              <TransactionCard
-                key={idx + tx.id + tx.sender}
-                selectTx={selectTx}
-                tx={tx}
-              />
+              <TransactionCard key={idx + tx.id + tx.sender} selectTx={selectTx} tx={tx} />
             ))}
           </div>
         </div>
@@ -42,12 +38,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
   )
 
   const TransactionHistoryCardDetailComp = useMemo(
-    () => (
-      <TransactionCardDetail
-        tx={selectedTxForDetail}
-        unSelectTx={unSelectTx}
-      />
-    ),
+    () => <TransactionCardDetail tx={selectedTxForDetail} unSelectTx={unSelectTx} />,
     [selectedTxForDetail, unSelectTx],
   )
 

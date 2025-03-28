@@ -163,4 +163,3 @@ function getBorder(result: TransferResult) {
       return 'border-turtle-level3 hover:bg-turtle-level1'
   }
 }
-
