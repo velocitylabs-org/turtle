@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from 'react'
 import { Direction } from '@/services/transfer'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
@@ -49,12 +48,6 @@ export interface OngoingTransfers {
   withinPolkadot: OngoingTransferWithDirection[] // XCM transfer: Parachain to AH, AH to Parachain, Parachain to Parachain, etc
 }
 
-export interface DisplaysTransfers {
-  newTransferInit: TransferTab
-  setNewTransferInit: Dispatch<SetStateAction<TransferTab>>
-  hasCompletedTransfers: boolean
-}
-
 export enum TxStatus {
   Succeeded = 'Succeeded',
   Failed = 'failed',
@@ -92,8 +85,7 @@ export interface AmountInfo {
   inDollars: number
 }
 
-export type TransferTab = 'New' | 'Done'
-export type TransferTabOptions = TransferTab
+export type TabOptions = 'New' | 'Done'
 
 export type TxTrackingResult =
   // Snowbridge API | Snowbridge API | Subscan API
