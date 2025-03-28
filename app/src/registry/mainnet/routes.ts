@@ -189,6 +189,7 @@ export const routes: Route[] = [
       EthereumTokens.WETH.id,
       PolkadotTokens.USDC.id,
       PolkadotTokens.USDT.id,
+      PolkadotTokens.DOT.id,
     ],
   },
   {

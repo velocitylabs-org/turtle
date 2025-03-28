@@ -46,6 +46,12 @@ const useFees = (
     token: sourceChain ? getNativeToken(sourceChain) : undefined,
     address: senderAddress,
   })
+  const { balance: dotBalance } = useBalance({
+    env: env,
+    chain: sourceChain,
+    token: PolkadotTokens.DOT,
+    address: senderAddress,
+  })
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
@@ -61,7 +67,9 @@ const useFees = (
     const feeToken = getNativeToken(sourceChain)
 
     try {
+      // reset
       setBridgingFees(null)
+      setCanPayAdditionalFees(true)
 
       switch (route.sdk) {
         case 'ParaSpellApi': {
@@ -102,10 +110,15 @@ const useFees = (
               inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
-            const totalCost = BigInt(fees?.amount ?? 0n) + BigInt(bridgingFee?.amount ?? 0n)
-            setCanPayAdditionalFees(totalCost < BigInt(feeBalance?.value ?? 0n))
-          }
+            // if the bridging fee is the same as the execution fee, sum them both before checking the user can pay for it all.
+            const toPay =
+              fees?.token === bridgeFeeToken ? BigInt(fees.amount) + bridgeFee : bridgeFee
 
+            // if the dotBalance is not available, we act as if it's ok. This prevents a delay
+            // in the UI showing the error label for insufficient fee balance, which is particularely
+            // noticable when switching chains.
+            setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
+          }
           break
         }
 
@@ -192,6 +205,8 @@ const useFees = (
     senderAddress,
     recipientAddress,
     amount,
+    dotBalance,
+    feeBalance,
   ])
 
   useEffect(() => {
