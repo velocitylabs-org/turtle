@@ -2,7 +2,7 @@ import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { Erc20Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
-import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
+import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspell'
 import { toHuman } from '@/utils/transfer'
 import { getTransferableAmount, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -60,7 +60,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
         }
 
         case 'Polkadot': {
-          fetchedBalance = await getBalance(env, chain, token, address)
+          fetchedBalance = await getBalance(chain, token, address)
 
           break
         }
@@ -89,14 +89,13 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
 export default useBalance
 
 export async function getBalance(
-  env: Environment,
   chain: Chain,
   token: Token,
   address: string,
 ): Promise<Erc20Balance | undefined> {
   const node = getParaSpellNode(chain)
   if (!node) throw new Error('Node not found')
-  const currency = getCurrencyId(env, node, chain.uid, token)
+  const currency = getParaspellToken(token, node)
 
   const balance =
     (await getTransferableAmount({
