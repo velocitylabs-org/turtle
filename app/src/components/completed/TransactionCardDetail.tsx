@@ -129,56 +129,33 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
         </div>
         {/* Summary */}
         <div className="summary w-full space-y-1 px-3">
-          {/* Amount */}
-          <div className="flex items-start justify-between space-x-4">
-            <div className="font-bold text-sm">Amount</div>
-            <div className="items-right flex flex-col space-x-1">
-              <div className="text-right">
-                <div className="text-sm">
-                  {formatAmount(toHuman(tx.amount, tx.token), 'Long')} {tx.token.symbol}
-                </div>
-                {typeof tx.tokenUSDValue == 'number' && (
-                  <div className="text-xs text-turtle-level4">
-                    $
-                    {formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Execution fee */}
-          <div className="flex items-start justify-between space-x-4">
-            <div className="font-bold text-sm">{tx.bridgingFee ? 'Execution fee' : 'Fee'}</div>
-            <div className="items-right flex flex-col space-x-1 text-right">
-              <div className="text-sm">
-                {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}{' '}
-                {tx.fees.token.symbol}
-              </div>
-              {typeof tx.tokenUSDValue == 'number' && (
-                <div className="text-xs text-turtle-level4">
-                  ${formatAmount(tx.fees.inDollars, 'Long')}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Bridging fee */}
+          <SummaryRow
+            label="Amount"
+            amount={formatAmount(toHuman(tx.amount, tx.token), 'Long')}
+            symbol={tx.token.symbol}
+            usdValue={typeof tx.tokenUSDValue === 'number' 
+              ? formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')
+              : undefined}
+          />
+          
+          <SummaryRow
+            label={tx.bridgingFee ? 'Execution fee' : 'Fee'}
+            amount={formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}
+            symbol={tx.fees.token.symbol}
+            usdValue={typeof tx.tokenUSDValue === 'number' 
+              ? formatAmount(tx.fees.inDollars, 'Long')
+              : undefined}
+          />
+          
           {tx.bridgingFee && (
-            <div className="flex items-start justify-between space-x-4">
-              <div className="font-bold text-sm">Bridging fee</div>
-              <div className="items-right flex flex-col space-x-1 text-right">
-                <div className="text-sm">
-                  {formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}{' '}
-                  {tx.bridgingFee.token.symbol}
-                </div>
-                {typeof tx.tokenUSDValue == 'number' && (
-                  <div className="text-xs text-turtle-level4">
-                    ${formatAmount(tx.bridgingFee.inDollars, 'Long')}
-                  </div>
-                )}
-              </div>
-            </div>
+            <SummaryRow
+              label="Bridging fee"
+              amount={formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}
+              symbol={tx.bridgingFee.token.symbol}
+              usdValue={typeof tx.tokenUSDValue === 'number'
+                ? formatAmount(tx.bridgingFee.inDollars, 'Long')
+                : undefined}
+            />
           )}
         </div>
         {tx.explorerLink && (
@@ -192,6 +169,31 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
           </a>
           )}
+      </div>
+    </div>
+  )
+}
+
+interface SummaryRowProps {
+  label: string;
+  amount: string;
+  symbol: string;
+  usdValue?: string;
+}
+
+function SummaryRow({ label, amount, symbol, usdValue }: SummaryRowProps) {
+  return (
+    <div className="flex items-start justify-between space-x-4">
+      <div className="font-bold text-sm">{label}</div>
+      <div className="items-right flex flex-col space-x-1 text-right">
+        <div className="text-sm">
+          {amount} {symbol}
+        </div>
+        {usdValue && (
+          <div className="text-xs text-turtle-level4">
+            ${usdValue}
+          </div>
+        )}
       </div>
     </div>
   )
