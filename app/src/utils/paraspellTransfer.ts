@@ -2,8 +2,8 @@
 import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { getAssetUid, REGISTRY } from '@/registry'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
+import { REGISTRY } from '@/registry'
+import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
 import {
   Builder,
@@ -15,7 +15,7 @@ import {
   TDryRunResult,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
-  TPapiTransaction,
+  type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { getAccountId32 } from './address'
@@ -33,8 +33,7 @@ export const createTransferTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient, sender } =
-    params
+  const { sourceChain, destinationChain, sourceToken, amount, recipient, sender } = params
 
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
@@ -42,7 +41,7 @@ export const createTransferTx = async (
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
 
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
+  const currencyId = getParaspellToken(sourceToken, sourceChainFromId)
 
   return await Builder(wssEndpoint)
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
@@ -66,13 +65,14 @@ export const moonbeamTransfer = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   viemClient: any,
 ): Promise<string> => {
-  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient } = params
+  const { sourceChain, destinationChain, sourceToken, amount, recipient } = params
 
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
+
+  const currencyId = getParaspellToken(sourceToken, sourceChainFromId)
 
   return EvmBuilder()
     .from('Moonbeam')
@@ -95,14 +95,13 @@ export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
-  const { environment, sourceChain, destinationChain, sourceToken, amount, recipient, sender } =
-    params
+  const { sourceChain, destinationChain, sourceToken, amount, recipient, sender } = params
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
+  const currencyId = getParaspellToken(sourceToken, sourceChainFromId)
 
   return await Builder(wssEndpoint)
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
@@ -144,19 +143,21 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
 }
 
 /**
- * Get the ParaSpell currency id in the form of `TCurrencyCore`. Used to convert a turtle token to a paraspell token object.
- *
- * @remarks We prioritize an local asset id if specified in our registry and otherwise
- * default to the token symbol.
- *
- * */
-export function getCurrencyId(
-  env: Environment,
-  node: TNodeWithRelayChains,
-  chainId: string,
-  token: Token,
-): TCurrencyCore {
-  return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
+ * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
+ */
+export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TCurrencyCore {
+  // TODO: Edge Cases. Remove once Paraspell fixed it.
+  if (
+    token.id === PolkadotTokens.ASTR.id ||
+    token.id === EthereumTokens.MYTH.id ||
+    token.id === PolkadotTokens.DOT.id
+  )
+    return node ? { symbol: getTokenSymbol(node, token) } : { symbol: token.symbol }
+
+  if (token.multilocation) return { multilocation: token.multilocation }
+  if (node) return { symbol: getTokenSymbol(node, token) }
+
+  return { symbol: token.symbol }
 }
 
 export function getNativeToken(chain: Chain): Token {

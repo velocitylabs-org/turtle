@@ -7,7 +7,7 @@ import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
-import { getCurrencyId, getParaSpellNode, getTokenSymbol } from './paraspellTransfer'
+import { getParaSpellNode, getParaspellToken, getTokenSymbol } from './paraspellTransfer'
 import { isSameChain } from './routes'
 import { getTokenByMultilocation } from './token'
 
@@ -24,7 +24,6 @@ export type Dex = keyof typeof DEX_TO_CHAIN_MAP
 
 export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
   const {
-    environment,
     sourceChain,
     destinationChain,
     sourceToken,
@@ -44,7 +43,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
     throw new Error('Transfer failed: Ethereum is not supported.')
 
-  const currencyIdFrom = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, sourceToken)
+  const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
   const routerPlan = await RouterBuilder()
@@ -79,12 +78,7 @@ export const getExchangeOutputAmount = async (
   if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
     throw new Error('Transfer failed: Ethereum is not supported.')
 
-  const currencyIdFrom = getCurrencyId(
-    Environment.Mainnet,
-    sourceChainFromId,
-    sourceChain.uid,
-    sourceToken,
-  )
+  const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
   const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
 
   const amountOut = await RouterBuilder()

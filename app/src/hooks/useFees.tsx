@@ -6,7 +6,7 @@ import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspellTransfer'
+import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
@@ -66,7 +66,7 @@ const useFees = (
           const destinationChainNode = getParaSpellNode(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
-          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
+          const currency = getParaspellToken(token, sourceChainNode)
           const info = await getOriginFeeDetails({
             origin: sourceChainNode as TNodeDotKsmWithRelayChains,
             destination: destinationChainNode,
@@ -98,7 +98,7 @@ const useFees = (
 
             if (senderAddress) {
               const balance =
-                (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
+                (await getBalance(sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
               setCanPayAdditionalFees(bridgingFee < balance)
             }
           }
