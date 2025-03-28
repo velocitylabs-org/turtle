@@ -10,6 +10,7 @@ import Info from '../svg/Info'
 import Success from '../svg/Success'
 import { colors } from '../../../tailwind.config'
 import { getSVGColor } from './TransactionCardDetail'
+import { useCallback } from 'react'
 
 export function getStatusIcon(status: TransferResult) {
   switch (status) {
@@ -24,21 +25,25 @@ export function getStatusIcon(status: TransferResult) {
 
 interface TransactionCardProps {
   tx: CompletedTransfer
-  selectTx:   (tx: CompletedTransfer) => void
+  selectTx: (tx: CompletedTransfer) => void
 }
 
 export default function TransactionCard({ tx, selectTx }: TransactionCardProps) {
   const status = tx.result
   const transferFailed = status === TxStatus.Failed
 
+  const onContainerClick = useCallback(() => {
+    selectTx(tx)
+  }, [selectTx, tx])
+
   return (
     <div
       role="button"
+      onClick={onContainerClick}
       className={cn(
         'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
         getBorder(status),
       )}
-      onClick={() => selectTx(tx)}
     >
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
