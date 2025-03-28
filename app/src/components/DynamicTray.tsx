@@ -51,7 +51,7 @@ function DynamicTray({
 
   // Calculate container height
   const containerStyles = useMemo(() => {
-    let height = 0
+    let height
     if (swapCondition) {
       // Use swapElHeight when available, fallback to baseElHeight to prevent flickering
       // during initial render when swapElHeight might be temporarily 0
