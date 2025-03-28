@@ -185,7 +185,7 @@ const TxSummary: FC<TxSummaryProps> = ({
               />
               <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
             </div>
-          ) : (canPayFees || (isBridgeTransfer && canPayAdditionalFees)) && isAmountTooLow ? (
+          ) : canPayFees && isAmountTooLow ? (
             <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}
@@ -196,18 +196,6 @@ const TxSummary: FC<TxSummaryProps> = ({
               <div className="text-small">The amount is a bit too low to justify the fees</div>
             </div>
           ) : null}
-
-          {/* {(canPayFees || (isBridgeTransfer && canPayAdditionalFees)) && isAmountTooLow && (
-            <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
-              <ExclamationMark
-                width={20}
-                height={20}
-                fill={colors['turtle-foreground']}
-                className="mr-3"
-              />
-              <div className="text-small">The amount is a bit too low to justify the fees</div>
-            </div>
-          )} */}
         </div>
       </div>
     )
