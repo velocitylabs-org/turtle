@@ -22,8 +22,8 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
   return (
     <div className="relative">
       <Tooltip showIcon={false} content="Go Back">
-        <div role="button" onClick={() => unSelectTx()} className="absolute top-[-23] right-[-23] p-[4] flex items-center justify-center">
-          <Cross className="h-[25] w-[25]" stroke={colors['turtle-foreground']}/>
+        <div role="button" onClick={() => unSelectTx()} className="absolute top-[-22] right-[-15] sm:top-[-23] sm:right-[-23] p-[4] flex items-center justify-center">
+          <Cross className="h-[20] w-[20] sm:h-[25] sm:w-[25]" stroke={colors['turtle-foreground']}/>
         </div>
       </Tooltip>
       <div
@@ -37,7 +37,7 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
               height={22}
               className={cn('rounded-full border bg-background', getBorder(tx.result))}
             />
-            <div className="text-sm">{tx.sourceChain.name}</div>
+            <div className="text-xs sm:text-sm">{tx.sourceChain.name}</div>
           </div>
           <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
           <div className="turtle-success-dark flex items-center justify-center space-x-1">
@@ -47,12 +47,12 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
               height={22}
               className={cn('rounded-full border bg-background', getBorder(tx.result))}
             />
-            <div className="text-sm">{tx.destChain.name}</div>
+            <div className="text-xs sm:text-sm">{tx.destChain.name}</div>
           </div>
         </div>
         <h3
           className={cn(
-            'xxl-letter-spacing text-md flex items-center justify-center space-x-3 leading-none sm:text-4xl',
+            'xxl-letter-spacing text-lg flex items-center justify-center space-x-3 leading-none sm:text-4xl',
             getTextColor(tx.result),
           )}
         >
@@ -78,7 +78,7 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
       >
         <div
           className={cn(
-            'flex w-full items-center gap-2 rounded-lg px-1 py-1 text-xs justify-center',
+            'flex w-full items-center gap-2 rounded-lg px-3 py-1 text-xs justify-center',
             getTextColor(tx.result),
             getBg(tx.result),
             getBorder(tx.result),
@@ -99,10 +99,10 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             </p>
           )}
         </div>
-        {/* sender */}
-        <div className="relative mt-2 w-full rounded-lg border border-turtle-level3 flex">
-          <div className="relative flex-1 p-4 text-sm">
-            <div className="absolute -top-2 left-3 bg-white px-0.5 text-xs text-turtle-level5">
+        <div className="relative mt-2 w-full rounded-lg border border-turtle-level3 flex flex-col sm:flex-row">
+          {/* sender */}
+          <div className="relative p-4 text-sm flex-1">
+            <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
               Sender
             </div>
             <Account
@@ -114,8 +114,8 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             />
           </div>
           {/* Receiver */}
-          <div className="relative flex-1 p-4 text-sm border-l">
-            <div className="absolute -top-2 left-3 bg-white px-0.5 text-xs text-turtle-level5">
+          <div className="relative p-4 text-sm flex-1 border-t sm:border-t-0 sm:border-l">
+            <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
               Receiver
             </div>
             <Account
