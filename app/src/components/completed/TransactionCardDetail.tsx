@@ -127,11 +127,11 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             />
           </div>
         </div>
-        {/*Summary*/}
-        <div className="summary flex w-full justify-end gap-2 pr-3">
+        {/* Summary */}
+        <div className="summary w-full space-y-1 px-3">
           {/* Amount */}
-          <div className="flex flex-col items-end space-x-4">
-            <div className="font-bold">Amount</div>
+          <div className="flex items-start justify-between space-x-4">
+            <div className="font-bold text-sm">Amount</div>
             <div className="items-right flex flex-col space-x-1">
               <div className="text-right">
                 <div className="text-sm">
@@ -139,38 +139,41 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
                 </div>
                 {typeof tx.tokenUSDValue == 'number' && (
                   <div className="text-xs text-turtle-level4">
-                    ${formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')}
+                    $
+                    {formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')}
                   </div>
                 )}
               </div>
             </div>
           </div>
+
           {/* Execution fee */}
-          <div className="flex flex-col items-end space-x-4">
-            <div className="font-bold">{tx.bridgingFee ? 'Execution fee' : 'Fee'}</div>
+          <div className="flex items-start justify-between space-x-4">
+            <div className="font-bold text-sm">{tx.bridgingFee ? 'Execution fee' : 'Fee'}</div>
             <div className="items-right flex flex-col space-x-1 text-right">
-              <div className="text-xs">
+              <div className="text-sm">
                 {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}{' '}
                 {tx.fees.token.symbol}
               </div>
               {typeof tx.tokenUSDValue == 'number' && (
-                <div className="text-sm text-turtle-level4">
+                <div className="text-xs text-turtle-level4">
                   ${formatAmount(tx.fees.inDollars, 'Long')}
                 </div>
               )}
             </div>
           </div>
+
           {/* Bridging fee */}
           {tx.bridgingFee && (
-            <div className="flex flex-col items-end space-x-4">
-              <div className="font-bold">Bridging fee</div>
+            <div className="flex items-start justify-between space-x-4">
+              <div className="font-bold text-sm">Bridging fee</div>
               <div className="items-right flex flex-col space-x-1 text-right">
-                <div className="text-xs">
+                <div className="text-sm">
                   {formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}{' '}
                   {tx.bridgingFee.token.symbol}
                 </div>
                 {typeof tx.tokenUSDValue == 'number' && (
-                  <div className="text-sm text-turtle-level4">
+                  <div className="text-xs text-turtle-level4">
                     ${formatAmount(tx.bridgingFee.inDollars, 'Long')}
                   </div>
                 )}
@@ -184,7 +187,7 @@ export default function TransactionCardDetail({ tx, unSelectTx }: TransactionHis
             target="_blank"
             rel="noopener noreferrer"
             aria-label="View your completed transaction on block explorer"
-            className="flex items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 px-4 text-sm hover:text-turtle-level5 sm:m-0 mt-5"
+            className="w-full md:w-auto flex items-center justify-center space-x-2 rounded-lg border border-turtle-level3 text-sm hover:text-turtle-level5 py-1 sm:py-1.5 px-3"
           >
             <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
           </a>
