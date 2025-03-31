@@ -26,7 +26,6 @@ import Credits from './Credits'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import AlertIcon from './svg/AlertIcon'
-import SwapChains from './SwapFromToChains'
 import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
@@ -289,7 +288,8 @@ export default function Transfer() {
         />
 
         {/* Swap source and destination chains */}
-        <SwapChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
+        {/* TODO: find a new way for swaps and enable again. Or remove. */}
+        {/* <SwapChains onClick={swapFromTo} disabled={!allowFromToSwap()} /> */}
 
         {/* Destination Chain */}
         <Controller

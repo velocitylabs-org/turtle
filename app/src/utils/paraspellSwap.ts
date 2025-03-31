@@ -46,6 +46,16 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
   const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
+  console.log(
+    sourceChainFromId,
+    destinationChainFromId,
+    currencyIdFrom,
+    currencyTo,
+    amount,
+    senderAddress,
+    recipient,
+  )
+
   const routerPlan = await RouterBuilder()
     .from(sourceChainFromId)
     .to(destinationChainFromId)
