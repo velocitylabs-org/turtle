@@ -18,8 +18,8 @@ importers:
         specifier: ^0.5.5
         version: 0.5.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@paraspell/sdk':
-        specifier: 8.3.1
-        version: 8.3.1(bufferutil@4.0.9)(polkadot-api@1.9.2(@microsoft/api-extractor@7.50.0(@types/node@22.13.4))(@swc/core@1.10.17(@swc/helpers@0.5.15))(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
+        specifier: 8.9.0
+        version: 8.9.0(bufferutil@4.0.9)(polkadot-api@1.9.2(@microsoft/api-extractor@7.50.0(@types/node@22.13.4))(@swc/core@1.10.17(@swc/helpers@0.5.15))(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       '@polkadot/api':
         specifier: ^15.7.2
         version: 15.7.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -1426,13 +1426,22 @@ packages:
       react: ^18 || ^19
       react-dom: ^18 || ^19
 
-  '@paraspell/sdk-core@8.3.1':
-    resolution: {integrity: sha512-jBhbACbbtFl/0Oq6U7jA7SygqRmHXvLyMbS759oAJ8cdlfiAb58apHXyRLzXXvCMsgb5jG0EoKcRMfrEm6ADOg==}
+  '@paraspell/assets@8.9.0':
+    resolution: {integrity: sha512-+brCB8Y9mDFg7r3T4coG4qg4OBrEHcp0yk2V4Z6CdcCnhYMEJqJlKXV3PttM9meuyFFCoQmONYFDUp+f3m6f8A==}
 
-  '@paraspell/sdk@8.3.1':
-    resolution: {integrity: sha512-pgC8NRjnUmgtJt3E9KHCroNelEGoZYSbYgjA7dUZ9CY1gKPjThktNXtVcnQTc80qpOPO1b4Q3I/UcV5c2v/tjQ==}
+  '@paraspell/pallets@8.9.0':
+    resolution: {integrity: sha512-UiKxGfQhP1+Tma5nXWeXwqQ72/ox4v0ieMS8D4YHJlGp3ETApIz/eZKDY0rmYieDnUtxynNVu8uAkCIASPyVjw==}
+
+  '@paraspell/sdk-common@8.9.0':
+    resolution: {integrity: sha512-KBB2MhmKt0XBuobokcKCMquD22zvXoFXAlL2rsMuev4+XJBddcVV9cFVdjoCVZ06/Fy8BZY5b5YiKBkK39/ZuQ==}
+
+  '@paraspell/sdk-core@8.9.0':
+    resolution: {integrity: sha512-Obrt4ySlZNTj9L+mbK4pwDXr+W6sQ2eOi7Xi5Jl/ZyIVQb3oVzp8oCODF7Q4FBad4OJNdllgVd60uopcym+/xQ==}
+
+  '@paraspell/sdk@8.9.0':
+    resolution: {integrity: sha512-iY9JPvWJn1SlNWu3LgdMpbivwylqwxIx0AZ5F6OLgtJZsKLfOBQOj3kgyEHpZAQgoL7QWYWEPr1hCK3kAIpnbA==}
     peerDependencies:
-      polkadot-api: '>= 1.8.4 < 2'
+      polkadot-api: '>= 1.9.3 < 2'
 
   '@paulmillr/qr@0.2.1':
     resolution: {integrity: sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==}
@@ -5022,6 +5031,14 @@ packages:
       typescript:
         optional: true
 
+  ox@0.6.9:
+    resolution: {integrity: sha512-wi5ShvzE4eOcTwQVsIPdFr+8ycyX+5le/96iAJutaZAvCes1J0+RvpEPg5QDPDiaR0XQQAvZVl7AwqQcINuUug==}
+    peerDependencies:
+      typescript: '>=5.4.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   p-limit@2.3.0:
     resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
     engines: {node: '>=6'}
@@ -6243,6 +6260,14 @@ packages:
       '@types/react':
         optional: true
       react:
+        optional: true
+
+  viem@2.23.14:
+    resolution: {integrity: sha512-ol8UKYT418u+7Lg83Ut7WJe7iOn1daGAqaofCoPe5z7eGR/XCu3ydja7eL7Z5ffwp6r0RoXeWkpun78UYhKygA==}
+    peerDependencies:
+      typescript: '>=5.0.4'
+    peerDependenciesMeta:
+      typescript:
         optional: true
 
   viem@2.23.4:
@@ -8343,22 +8368,36 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
-  '@paraspell/sdk-core@8.3.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)':
+  '@paraspell/assets@8.9.0':
     dependencies:
+      '@paraspell/sdk-common': 8.9.0
+
+  '@paraspell/pallets@8.9.0':
+    dependencies:
+      '@paraspell/sdk-common': 8.9.0
+
+  '@paraspell/sdk-common@8.9.0': {}
+
+  '@paraspell/sdk-core@8.9.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)':
+    dependencies:
+      '@paraspell/assets': 8.9.0
+      '@paraspell/pallets': 8.9.0
+      '@paraspell/sdk-common': 8.9.0
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      viem: 2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
+      viem: 2.23.14(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
     transitivePeerDependencies:
       - bufferutil
       - typescript
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk@8.3.1(bufferutil@4.0.9)(polkadot-api@1.9.2(@microsoft/api-extractor@7.50.0(@types/node@22.13.4))(@swc/core@1.10.17(@swc/helpers@0.5.15))(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)':
+  '@paraspell/sdk@8.9.0(bufferutil@4.0.9)(polkadot-api@1.9.2(@microsoft/api-extractor@7.50.0(@types/node@22.13.4))(@swc/core@1.10.17(@swc/helpers@0.5.15))(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.7.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)':
     dependencies:
-      '@paraspell/sdk-core': 8.3.1(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
+      '@noble/hashes': 1.7.1
+      '@paraspell/sdk-core': 8.9.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       polkadot-api: 1.9.2(@microsoft/api-extractor@7.50.0(@types/node@22.13.4))(@swc/core@1.10.17(@swc/helpers@0.5.15))(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.7.0)
-      viem: 2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
+      viem: 2.23.14(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -13140,6 +13179,10 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
+  isows@1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+    dependencies:
+      ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+
   iterator.prototype@1.1.5:
     dependencies:
       define-data-property: 1.1.4
@@ -13655,6 +13698,20 @@ snapshots:
       - zod
 
   ox@0.6.7(typescript@5.7.3)(zod@3.24.2):
+    dependencies:
+      '@adraffy/ens-normalize': 1.11.0
+      '@noble/curves': 1.8.1
+      '@noble/hashes': 1.7.1
+      '@scure/bip32': 1.6.2
+      '@scure/bip39': 1.5.4
+      abitype: 1.0.8(typescript@5.7.3)(zod@3.24.2)
+      eventemitter3: 5.0.1
+    optionalDependencies:
+      typescript: 5.7.3
+    transitivePeerDependencies:
+      - zod
+
+  ox@0.6.9(typescript@5.7.3)(zod@3.24.2):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.1
@@ -14912,6 +14969,23 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.8
       react: 19.0.0
+
+  viem@2.23.14(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.2):
+    dependencies:
+      '@noble/curves': 1.8.1
+      '@noble/hashes': 1.7.1
+      '@scure/bip32': 1.6.2
+      '@scure/bip39': 1.5.4
+      abitype: 1.0.8(typescript@5.7.3)(zod@3.24.2)
+      isows: 1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      ox: 0.6.9(typescript@5.7.3)(zod@3.24.2)
+      ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    optionalDependencies:
+      typescript: 5.7.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - zod
 
   viem@2.23.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.22.4):
     dependencies:

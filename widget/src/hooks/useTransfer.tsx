@@ -22,6 +22,7 @@ export interface TransferParams {
   recipient: string
   amount: bigint
   fees: AmountInfo
+  bridgingFees: AmountInfo | null
   /**
    * Callback when Turtle has completed submitting the transfer.
    * It does NOT mean that the transfer itself is completed.
@@ -44,6 +45,7 @@ const useTransfer = () => {
     recipient,
     amount,
     fees,
+    bridgingFees,
     onComplete,
   }: TransferParams) => {
     setStatus('Loading')
@@ -62,6 +64,7 @@ const useTransfer = () => {
             recipient,
             amount,
             fees,
+            bridgingFees,
             onComplete,
           },
           setStatus,
@@ -80,6 +83,7 @@ const useTransfer = () => {
             recipient,
             amount,
             fees,
+            bridgingFees,
             onComplete,
           },
           setStatus,

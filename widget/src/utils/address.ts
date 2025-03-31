@@ -1,7 +1,7 @@
 import { isAddress } from 'viem/utils'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
-import { hexToU8a, isHex } from '@polkadot/util'
+import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
 import { AddressType, Chain } from '@/models/chain'
 import { ManualRecipient } from '@/models/select'
 import { WalletInfo } from '@/hooks/useWallet'
@@ -110,3 +110,14 @@ export const getPlaceholderAddress = (type: AddressType): string => {
 /** Get the transfer sender address from the sender origin base (Substrate or Ethereum)*/
 export const getSenderAddress = async (sender: Sender): Promise<string> =>
   sender instanceof JsonRpcSigner ? await sender.getAddress() : (sender as InjectedAccount).address
+
+/**
+ * Return the AccountId32 reprsentation of the given `address`. It should represent the same
+ * wallet across any chain in the Polkadot ecosystem.
+ *
+ * @param address - the base address to decode
+ * @returns the AccountId32 presentation of `address`
+ */
+export function getAccountId32(address: string): string {
+  return u8aToHex(decodeAddress(address))
+}

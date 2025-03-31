@@ -1,10 +1,17 @@
-import { CompletedTransfer } from '@/models/transfer'
+import { AmountInfo, CompletedTransfer } from '@/models/transfer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface CompletedTxState {
   completedTransfers: CompletedTransfer[]
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void
+}
+
+const serializeFeeAmount = (fees: AmountInfo): AmountInfo => {
+  return {
+    ...fees,
+    amount: fees.amount.toString(),
+  }
 }
 
 export const useCompletedTransfersStore = create<CompletedTxState>()(
@@ -18,10 +25,10 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
         // needed to not run into bigint persistence issues
         const persistableTransfer = {
           ...newCompletedTransfer,
-          fees: {
-            ...newCompletedTransfer.fees,
-            amount: newCompletedTransfer.fees.amount.toString(),
-          },
+          fees: serializeFeeAmount(newCompletedTransfer.fees),
+          ...(newCompletedTransfer.bridgingFees && {
+            bridgingFee: serializeFeeAmount(newCompletedTransfer.bridgingFees),
+          }),
         }
 
         set(state => {

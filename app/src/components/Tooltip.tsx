@@ -13,6 +13,15 @@ export interface TooltipProps {
   showArrow?: boolean
 }
 
+const classNames = {
+  base: [
+    // arrow color
+    'before:bg-black before:rounded-[-10px] before:translate-y-[-1px]',
+  ],
+  content: ['p-[4px] rounded-[8px]', 'text-white bg-black'],
+  arrow: ['bg-black'],
+}
+
 export const Tooltip: FC<TooltipProps> = ({
   children,
   content,
@@ -32,14 +41,7 @@ export const Tooltip: FC<TooltipProps> = ({
           {content}
         </div>
       }
-      classNames={{
-        base: [
-          // arrow color
-          'before:bg-black before:rounded-[-10px] before:translate-y-[-1px]',
-        ],
-        content: ['p-[4px] rounded-[8px]', 'text-white bg-black'],
-        arrow: ['bg-black'],
-      }}
+      classNames={classNames}
     >
       {children}
     </NextTooltip>

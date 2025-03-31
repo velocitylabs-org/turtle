@@ -1,10 +1,16 @@
 'use client'
 import { captureException } from '@sentry/nextjs'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import Image from 'next/image'
 import Navbar from '@/components/NavBar'
 
-const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
+const imageStyles = { objectFit: 'cover' as const }
+
+interface ErrorProps {
+  error: Error & { digest?: string }
+}
+
+const GlobalError: FC<ErrorProps> = ({ error }) => {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -18,7 +24,7 @@ const GlobalError = ({ error }: { error: Error & { digest?: string } }) => {
           alt="Turtle Background"
           className="relative z-0"
           fill
-          style={{ objectFit: 'cover' }}
+          style={imageStyles}
           sizes="100vw"
           priority
         />

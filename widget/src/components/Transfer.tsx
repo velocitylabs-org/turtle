@@ -1,7 +1,7 @@
 import { Controller } from 'react-hook-form'
 import ChainSelect from './ChainSelect'
 import WalletButton from './WalletButton'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import useTransferForm from '@/hooks/useTransferForm'
 import {
   getAllowedDestinationChains,
@@ -26,6 +26,20 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import { cn } from '@/utils/helper'
 import TxSummary from './TxSummary'
 import SendButton from './SendButton'
+
+const manualInputAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.07 },
+}
+
+const approvalAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.3 },
+}
 
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
@@ -55,9 +69,10 @@ const Transfer: FC = () => {
     loadingBalance,
     fetchBalance,
     fees,
+    bridgingFees,
     loadingFees,
     canPayFees,
-    ethereumTxfees,
+    canPayAdditionalFees,
     refetchFees,
     transferStatus,
   } = useTransferForm()
@@ -143,7 +158,25 @@ const Transfer: FC = () => {
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
-    canPayFees
+    canPayFees &&
+    (bridgingFees ? canPayAdditionalFees : true)
+
+  const approveAllowanceButton = useMemo(
+    () => ({
+      onClick: () => approveAllowance(sourceWallet?.sender as Signer),
+      label: 'Sign now',
+    }),
+    [approveAllowance, sourceWallet?.sender],
+  )
+
+  const swapEthToWEthButton = useMemo(
+    () => ({
+      onClick: () =>
+        swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(() => fetchBalance()),
+      label: `Swap the difference`,
+    }),
+    [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
+  )
 
   return (
     <form
@@ -284,14 +317,8 @@ const Transfer: FC = () => {
           <AnimatePresence>
             {manualRecipient.enabled && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{
-                  opacity: 1,
-                  height: 'auto',
-                }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.07 }}
                 className="flex items-center gap-1 self-center pt-1"
+                {...manualInputAnimationProps}
               >
                 <AlertIcon />
                 <span className="text-xs">Double check the address to avoid losing funds</span>
@@ -305,14 +332,8 @@ const Transfer: FC = () => {
       <AnimatePresence>
         {requiresErc20SpendApproval && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: 1,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
             className="flex items-center gap-1 self-center pt-1"
+            {...approvalAnimationProps}
           >
             <ActionBanner
               disabled={isApprovingErc20Spend}
@@ -326,10 +347,7 @@ const Transfer: FC = () => {
                   height={64}
                 />
               }
-              btn={{
-                onClick: () => approveAllowance(sourceWallet?.sender as Signer),
-                label: 'Sign now',
-              }}
+              btn={approveAllowanceButton}
             />
           </motion.div>
         )}
@@ -360,14 +378,8 @@ const Transfer: FC = () => {
                   height={64}
                 />
               }
-              btn={{
-                onClick: () =>
-                  swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(() =>
-                    fetchBalance(),
-                  ),
-                label: `Swap the difference`,
-              }}
-            ></ActionBanner>
+              btn={swapEthToWEthButton}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -377,9 +389,10 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={tokenAmount}
           fees={fees}
-          additionalfees={ethereumTxfees}
+          bridgingFees={bridgingFees}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
+          canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
         />

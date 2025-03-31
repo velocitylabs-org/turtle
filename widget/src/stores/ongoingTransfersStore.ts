@@ -47,6 +47,9 @@ export const useOngoingTransfersStore = create<State>()(
         const persistableTransfer = {
           ...newOngoingTransfer,
           fees: serializeFeeAmount(newOngoingTransfer.fees),
+          ...(newOngoingTransfer.bridgingFees && {
+            bridgingFee: serializeFeeAmount(newOngoingTransfer.bridgingFees),
+          }),
         }
 
         set(state => {

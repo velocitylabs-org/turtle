@@ -18,6 +18,7 @@ import ChevronDown from './svg/ChevronDown'
 import { Cross } from './svg/Cross'
 import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
+import CopyAddress from './ClipboardCopy'
 
 interface ChainSelectProps extends SelectProps<Chain> {
   walletAddress?: string
@@ -92,31 +93,37 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
               error && 'border-turtle-error',
             )}
             data-cy="chain-select-trigger"
-            onClick={handleTriggerClick}
           >
-            <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-              {value ? (
-                <>
-                  <Image
-                    src={value.logoURI}
-                    alt={value.name}
-                    width={24}
-                    height={24}
-                    className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-                  />
-                  {shouldShowChainName && (
-                    <span className="text-nowrap" data-cy="chain-select-value">
+            <div className="flex h-[3.5rem] flex-grow items-center">
+              <div onClick={handleTriggerClick} className="flex flex-row items-center">
+                {value ? (
+                  <>
+                    <Image
+                      src={value.logoURI}
+                      alt={value.name}
+                      width={24}
+                      height={24}
+                      className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                    />
+
+                    <span
+                      className={cn(
+                        shouldShowChainName ? '' : 'hidden md:inline',
+                        'ml-1.5 text-nowrap',
+                      )}
+                      data-cy="chain-select-value"
+                    >
                       {value.name}
                     </span>
-                  )}
-                </>
-              ) : (
-                <>
-                  {placeholderIcon}
-                  {placeholder}
-                </>
-              )}
-              <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1 mr-1" />
+                  </>
+                ) : (
+                  <>
+                    {placeholderIcon}
+                    {placeholder}
+                  </>
+                )}
+                <ChevronDown strokeWidth={0.2} height={6} width={14} className="mx-2" />
+              </div>
               {ensAvatarUrl && (
                 <Image
                   src={ensAvatarUrl}
@@ -126,7 +133,9 @@ const ChainSelect = forwardRef<HTMLDivElement, ChainSelectProps>(
                   className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
                 />
               )}
-              {!manualRecipient?.enabled && !!value && accountName}
+              {!manualRecipient?.enabled && !!value && (
+                <CopyAddress content={accountName} address={walletAddress ?? ''} showIcon={false} />
+              )}
 
               {/* Manual Recipient Address */}
               {manualRecipient && manualRecipient.enabled && (

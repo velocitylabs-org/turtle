@@ -7,20 +7,24 @@ import WarningIcon from '@/../public/severity-warning-icon.svg'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 const NOTIFICATION_TTL_MS = 5000
+
+const motionProps = {
+  initial: { y: -15, scale: 0.95 },
+  animate: { y: 0, scale: 1 },
+  exit: { x: '100%', opacity: 0 },
+  transition: { duration: 0.35, ease: 'easeOut' },
+}
 
 interface NotificationToastProps {
   notification: Notification
   removeNotification: (id: number) => void
 }
 
-const NotificationToast: React.FC<NotificationToastProps> = ({
-  notification,
-  removeNotification,
-}) => {
+const NotificationToast: FC<NotificationToastProps> = ({ notification, removeNotification }) => {
   // Remove notification after TTL
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
@@ -36,14 +40,11 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   return (
     <motion.div
       layout
-      initial={{ y: -15, scale: 0.95 }}
-      animate={{ y: 0, scale: 1 }}
-      exit={{ x: '100%', opacity: 0 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
       role="alert"
       className={twMerge(
         'pointer-events-auto flex h-[2rem] flex-row items-center gap-[0.25rem] text-nowrap rounded-[8px] bg-turtle-foreground py-[0.25rem] pl-[0.25rem] pr-[0.5rem]',
       )}
+      {...motionProps}
     >
       {/* Notification Icon */}
       {renderSeverityIcon(notification.severity)}

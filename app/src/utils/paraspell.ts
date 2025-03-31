@@ -14,8 +14,10 @@ import {
   TDryRunResult,
   type TPapiTransaction,
   TNodeWithRelayChains,
+  TNodeDotKsmWithRelayChains,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
+import { getAccountId32 } from './address'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -30,7 +32,7 @@ export const createTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
+  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
 
   const relay = getRelayNode(environment)
   const sourceChainFromId = getTNode(sourceChain.chainId, relay)
@@ -41,10 +43,13 @@ export const createTx = async (
     const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
     return await Builder(wssEndpoint)
-      .from(sourceChainFromId)
+      .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
       .to(destinationChainFromId)
       .currency({ ...currencyId, amount })
-      .address(recipient)
+      .address(
+        recipient,
+        destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+      )
       .build()
   }
 }
@@ -69,7 +74,7 @@ export const moonbeamTransfer = async (
 
   return EvmBuilder()
     .from('Moonbeam')
-    .to(destinationChainFromId)
+    .to(destinationChainFromId as TNodeDotKsmWithRelayChains)
     .currency({ ...currencyId, amount })
     .address(recipient)
     .signer(viemClient)
@@ -89,20 +94,21 @@ export const dryRun = async (
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
   const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
-
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Dry Run failed: chain id not found.')
 
   const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
   return await Builder(wssEndpoint)
-    .from(sourceChainFromId)
+    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount })
-    .address(recipient)
+    .address(
+      recipient,
+      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+    )
     .dryRun(sender.address)
 }
 
@@ -129,9 +135,6 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
     case Environment.Mainnet:
       return 'polkadot'
 
-    case Environment.Testnet:
-      return 'polkadot' // TODO: change to Paseo once available
-
     default:
       throw new Error('Cannot find relay node. Unsupported environment')
   }
@@ -156,9 +159,7 @@ export function getCurrencyId(
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const env = REGISTRY.testnet.chains.map(c => c.uid).includes(chain.uid)
-    ? Environment.Testnet
-    : Environment.Mainnet
+  const env = Environment.Mainnet
 
   const relay = getRelayNode(env)
   const chainNode = getTNode(chain.chainId, relay)
@@ -170,8 +171,8 @@ export function getNativeToken(chain: Chain): Token {
   return token
 }
 
-export function getParaSpellNode(chain: Chain, relay: 'polkadot'): TNodeWithRelayChains | null {
+export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
-    : getTNode(chain.chainId, relay)
+    : getTNode(chain.chainId, 'polkadot')
 }

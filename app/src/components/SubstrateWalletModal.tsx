@@ -1,17 +1,24 @@
 'use client'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
-import { getWalletLogo, getWalletName } from '@/utils/wallet'
+import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { colors } from '../../tailwind.config'
 import Button, { spinnerSize } from './Button'
 import { Icon } from './Icon'
 import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
-const SubstrateWalletModal: FC = () => {
+const footerAnimationProps = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: 'auto' },
+  exit: { opacity: 0, height: 0 },
+  transition: { duration: 0.3 },
+}
+
+const SubstrateWalletModal = () => {
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const {
     isModalOpen,
@@ -61,6 +68,15 @@ const SubstrateWalletModal: FC = () => {
     type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
   )
 
+  const heightAnimationProps = useMemo(
+    () => ({
+      initial: { height: currentView === 'extensions' ? '10rem' : '11.8rem' },
+      animate: { height: currentView === 'extensions' ? '10rem' : '11.8rem' },
+      transition: { duration: 0.5, type: 'spring' },
+    }),
+    [currentView],
+  )
+
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
@@ -85,9 +101,7 @@ const SubstrateWalletModal: FC = () => {
         <motion.div
           className="flex max-h-[15rem] min-h-[130px] flex-col items-center justify-start space-y-2 overflow-y-auto p-6 pt-3 text-base"
           layout
-          initial={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
-          animate={{ height: currentView === 'extensions' ? '10rem' : '11.8rem' }}
-          transition={{ duration: 0.5, type: 'spring' }}
+          {...heightAnimationProps}
         >
           {/* Loading */}
           {loading && (
@@ -105,22 +119,24 @@ const SubstrateWalletModal: FC = () => {
           {currentView === 'extensions' &&
             !loading &&
             (extensions.length > 0 ? (
-              extensions.map(extension => (
-                <Button
-                  key={extension.name}
-                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
-                  variant="outline"
-                  onClick={() => handleExtensionSelect(extension)}
-                >
-                  <div className="flex items-center space-x-2 text-sm">
-                    <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
-                    <span>{getWalletName(extension.name, window)}</span>
-                  </div>
-                  <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
-                    INSTALLED
-                  </span>
-                </Button>
-              ))
+              [...extensions]
+                .sort((a, b) => getWalletWeight(a.name, window) - getWalletWeight(b.name, window))
+                .map(extension => (
+                  <Button
+                    key={extension.name}
+                    className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
+                    variant="outline"
+                    onClick={() => handleExtensionSelect(extension)}
+                  >
+                    <div className="flex items-center space-x-2 text-sm">
+                      <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
+                      <span>{getWalletName(extension.name, window)}</span>
+                    </div>
+                    <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
+                      INSTALLED
+                    </span>
+                  </Button>
+                ))
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <p className="text-center text-sm text-turtle-level6">
@@ -163,13 +179,7 @@ const SubstrateWalletModal: FC = () => {
         </motion.div>
 
         {/* Footer */}
-        <motion.div
-          layout
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-        >
+        <motion.div layout {...footerAnimationProps}>
           {currentView === 'extensions' && <Footer />}
         </motion.div>
       </DialogContent>
@@ -177,7 +187,7 @@ const SubstrateWalletModal: FC = () => {
   )
 }
 
-const Footer: FC = () => {
+const Footer = () => {
   return (
     <div className="mb-1 mt-4 text-center text-xs text-gray-500">
       Haven&apos;t got a wallet?{' '}
