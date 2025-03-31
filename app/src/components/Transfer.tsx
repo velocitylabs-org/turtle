@@ -58,6 +58,7 @@ export default function Transfer() {
     swapFromTo,
     handleManualRecipientChange,
     handleMaxButtonClick,
+    handleSourceTokenChange,
     sourceChain,
     destinationChain,
     sourceTokenAmount,
@@ -246,8 +247,7 @@ export default function Transfer() {
                       }}
                       token={{
                         value: tokenField.value?.token ?? null,
-                        onChange: token =>
-                          tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                        onChange: handleSourceTokenChange,
                         options: sourceTokenOptions,
                         sourceChainToDetermineOriginBanner: sourceChain,
                         error: errors.sourceTokenAmount?.token?.message,
