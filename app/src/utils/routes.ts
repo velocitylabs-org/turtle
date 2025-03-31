@@ -121,14 +121,16 @@ export const getAllowedDestinationTokens = (
 ): Token[] => {
   if (!sourceChain || !sourceToken || !destinationChain) return []
 
-  const transferTokens = isSameChain(sourceChain, destinationChain) ? [] : [sourceToken]
+  const includeSourceTokenForTransfer =
+    !isSameChain(sourceChain, destinationChain) &&
+    getTransferTokens(sourceChain, destinationChain).some(t => t.id === sourceToken.id)
+
   const swapTokens = getSwapsDestinationTokens(sourceChain, sourceToken, destinationChain)
 
-  console.log('swapTokens: ', swapTokens)
-  console.log('transferTokens: ', transferTokens)
+  const allowedTokens = [...(includeSourceTokenForTransfer ? [sourceToken] : []), ...swapTokens]
 
   // deduplicate
-  const tokenMap = new Map([...transferTokens, ...swapTokens].map(token => [token.id, token]))
+  const tokenMap = new Map(allowedTokens.map(token => [token.id, token]))
 
   return Array.from(tokenMap.values())
 }
