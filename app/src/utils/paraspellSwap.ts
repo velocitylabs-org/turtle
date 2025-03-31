@@ -7,7 +7,7 @@ import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
-import { getParaSpellNode, getParaspellToken, getTokenSymbol } from './paraspellTransfer'
+import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
 import { isSameChain } from './routes'
 import { getTokenByMultilocation } from './token'
 
@@ -44,7 +44,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     throw new Error('Transfer failed: Ethereum is not supported.')
 
   const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
-  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
+  const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
   const routerPlan = await RouterBuilder()
     .from(sourceChainFromId)
@@ -79,7 +79,7 @@ export const getExchangeOutputAmount = async (
     throw new Error('Transfer failed: Ethereum is not supported.')
 
   const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
-  const currencyTo = { symbol: getTokenSymbol(destinationChainFromId, destinationToken) }
+  const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
   const amountOut = await RouterBuilder()
     .from(sourceChainFromId)
