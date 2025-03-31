@@ -1,12 +1,10 @@
 'use client'
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-
-import Menu from '@/components/Menu'
+import TabNavigation from '@/components/TabNavigation'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import { TransferTabOptions } from '@/models/transfer'
-
+import { TabOptions } from '@/models/transfer'
 import OngoingTransfers from './OngoingTransfers'
 import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
 import { cn } from '@/utils/cn'
@@ -15,32 +13,28 @@ const TransferHistory = dynamic(() => import('@/components/completed/Transaction
   loading: () => <TransactionLoaderSkeleton />,
 })
 
-export const HomeComponentSelect = () => {
+export default function AppHome() {
   const { completedTransfers } = useCompletedTransfers()
-  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
+  const [selectedTab, setSelectedTab] = useState<TabOptions>('New')
   const hasCompletedTransfers = !!completedTransfers && completedTransfers.length > 0
-  const isCompletedTabSelected = newTransferInit === 'Done'
+  const isDoneTabSelected = selectedTab === 'Done'
 
   return (
     <>
-      <Menu
-        newTransferInit={newTransferInit}
-        setNewTransferInit={setNewTransferInit}
+      <TabNavigation
+        selectedTab={selectedTab}
+        setSelectedTab={setSelectedTab}
         hasCompletedTransfers={hasCompletedTransfers}
       />
-
-      <div className={cn('z-15 relative max-w-[90vw]', isCompletedTabSelected && 'hidden')}>
+      <div className={cn('z-15 relative max-w-[90vw]', isDoneTabSelected && 'hidden')}>
         <Transfer />
         <OngoingTransfers
-          newTransferInit={newTransferInit}
-          setNewTransferInit={setNewTransferInit}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
           hasCompletedTransfers={hasCompletedTransfers}
         />
       </div>
-
-      {isCompletedTabSelected && hasCompletedTransfers && completedTransfers && (
-        <TransferHistory transfers={completedTransfers!} />
-      )}
+      {isDoneTabSelected && <TransferHistory transfers={completedTransfers!} />}
     </>
   )
 }

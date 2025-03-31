@@ -1,10 +1,10 @@
 'use client'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import React, { FC } from 'react'
-import { Tooltip } from './Tooltip'
+import React from 'react'
+import Tooltip from './Tooltip'
 import { cn } from '@/utils/cn'
-import { Icon } from './Icon'
+import Icon from './Icon'
 
 interface TokenLogoProps {
   token: Token
@@ -13,7 +13,7 @@ interface TokenLogoProps {
   className?: string
 }
 
-export const TokenLogo: FC<TokenLogoProps> = ({ token, sourceChain, size = 32, className }) => {
+export default function TokenLogo({ token, sourceChain, size = 32, className }: TokenLogoProps) {
   const originBadge = getOriginBadge(token, sourceChain)
 
   return (

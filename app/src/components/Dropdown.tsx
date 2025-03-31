@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { FC, ReactNode, RefObject } from 'react'
+import { ReactNode, RefObject } from 'react'
 
 interface DropdownProps {
   isOpen: boolean
@@ -7,7 +7,7 @@ interface DropdownProps {
   children: ReactNode
 }
 
-const dropdownAnimationProps = {
+const animationProps = {
   initial: { height: '3.6rem' },
   animate: {
     height: 'auto',
@@ -23,14 +23,14 @@ const dropdownAnimationProps = {
   },
 }
 
-const Dropdown: FC<DropdownProps> = ({ isOpen, dropdownRef, children }) => {
+export default function Dropdown({ isOpen, dropdownRef, children }: DropdownProps) {
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
           ref={dropdownRef}
           className="absolute left-0 right-0 top-0 z-20 max-h-[16.5rem] overflow-y-auto rounded-md border-1 border-turtle-level3 bg-white shadow-2xl"
-          {...dropdownAnimationProps}
+          {...animationProps}
         >
           <ul className="flex flex-col pt-2">{children}</ul>
         </motion.div>
@@ -38,5 +38,3 @@ const Dropdown: FC<DropdownProps> = ({ isOpen, dropdownRef, children }) => {
     </AnimatePresence>
   )
 }
-
-export default Dropdown
