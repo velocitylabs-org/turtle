@@ -27,7 +27,7 @@ const Widget = () => {
           {(ongoingTransfers.length > 0 ||
             (completedTransfers && completedTransfers.length > 0)) && (
             <div
-              className="z-15 absolute -top-5 right-8 max-w-[90vw] rounded-lg bg-white"
+              className="absolute -top-5 right-8 z-30 max-w-[90vw] rounded-lg bg-background"
               onClick={() => setNewTransferInit(newTransferInit === 'New' ? 'History' : 'New')}
             >
               <div className="animation-bounce relative m-1 cursor-pointer rounded-lg border p-3">
