@@ -10,8 +10,8 @@ import { forwardRef, useRef, useState } from 'react'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import TokenIcon from './svg/TokenIcon'
-import { TokenLogo } from './TokenLogo'
-import { Tooltip } from './Tooltip'
+import TokenLogo from './TokenLogo'
+import Tooltip from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 const maxDollars = 100000000000 // 100B

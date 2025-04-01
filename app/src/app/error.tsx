@@ -1,5 +1,5 @@
 'use client'
-import { FC, useEffect } from 'react'
+import { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { captureException } from '@sentry/nextjs'
@@ -10,7 +10,7 @@ interface ErrorProps {
   error: Error & { digest?: string }
 }
 
-const Error: FC<ErrorProps> = ({ error }) => {
+export default function Error({ error }: ErrorProps) {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -47,5 +47,3 @@ const Error: FC<ErrorProps> = ({ error }) => {
     </div>
   )
 }
-
-export default Error

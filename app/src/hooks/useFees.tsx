@@ -2,20 +2,27 @@ import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
+import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/utils/paraspell'
+import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspell'
+import { getRoute } from '@/utils/routes'
+import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
+import { getBalance } from './useBalance'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
+<<<<<<< HEAD
 import { getRoute } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import useBalance from './useBalance'
+=======
+>>>>>>> origin/main
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
 // When bridging from AssetHub, the basic fees already take the bridging fees into account.
@@ -80,7 +87,7 @@ const useFees = (
           const destinationChainNode = getParaSpellNode(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
-          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
+          const currency = getParaspellToken(token, sourceChainNode)
           const info = await getOriginFeeDetails({
             origin: sourceChainNode as TNodeDotKsmWithRelayChains,
             destination: destinationChainNode,
@@ -99,6 +106,7 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
+          // The bridging fee when sending to Ethereum is paid in DOT
           if (destinationChain.network === 'Ethereum') {
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0

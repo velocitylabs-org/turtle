@@ -1,15 +1,13 @@
-import { HomeComponentSelect } from '@/components/HomeComponentSelect'
-import { TurtlesBackground } from '@/components/TurtlesBackground'
+import AppHome from '@/components/AppHome'
+import TurtlesBackground from '@/components/TurtlesBackground'
 
-const App = () => {
+export default function App() {
   return (
     <main>
       <TurtlesBackground />
       <section className="z-10 mt-10 flex flex-col items-center justify-center gap-8 sm:mt-6 sm:p-5">
-        <HomeComponentSelect />
+        <AppHome />
       </section>
     </main>
   )
 }
-
-export default App

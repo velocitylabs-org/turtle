@@ -1,6 +1,6 @@
 'use client'
 import { captureException } from '@sentry/nextjs'
-import { FC, useEffect } from 'react'
+import { useEffect } from 'react'
 import Image from 'next/image'
 import Navbar from '@/components/NavBar'
 
@@ -10,7 +10,7 @@ interface ErrorProps {
   error: Error & { digest?: string }
 }
 
-const GlobalError: FC<ErrorProps> = ({ error }) => {
+export default function GlobalError({ error }: ErrorProps) {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -50,5 +50,3 @@ const GlobalError: FC<ErrorProps> = ({ error }) => {
     </html>
   )
 }
-
-export default GlobalError

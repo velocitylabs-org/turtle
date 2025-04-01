@@ -5,7 +5,7 @@ import { WalletType } from '@/models/chain'
 import { cn } from '@/utils/cn'
 import { motion } from 'framer-motion'
 import Button from './Button'
-import { Cross } from './svg/Cross'
+import Cross from './svg/Cross'
 import { colors } from '../../tailwind.config'
 
 interface WalletButtonProps {
@@ -21,8 +21,8 @@ const animationProps = {
   exit: { opacity: 0 },
 }
 
-/** Wallet button component that is intended to support connecting to various different networks based on its address type. */
-const WalletButton = ({ walletType, className }: WalletButtonProps) => {
+// Wallet button component that is intended to support connecting to various different networks based on its address type.
+export default function WalletButton({ walletType, className }: WalletButtonProps) {
   const {
     disconnect: disconnectEvm,
     isConnected: evmIsConnected,
@@ -100,5 +100,3 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
     </motion.div>
   )
 }
-
-export default WalletButton

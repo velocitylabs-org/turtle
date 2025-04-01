@@ -1,19 +1,25 @@
 'use client'
-
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
-import { DisplaysTransfers } from '@/models/transfer'
+import { TabOptions } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
-import { ArrowRight } from './svg/ArrowRight'
+import ArrowRight from './svg/ArrowRight'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
+import { Dispatch, SetStateAction } from 'react'
 
-const OngoingTransfers = ({
-  newTransferInit,
-  setNewTransferInit,
+interface OngoingTransfersProps {
+  selectedTab: TabOptions
+  setSelectedTab: Dispatch<SetStateAction<TabOptions>>
+  hasCompletedTransfers: boolean
+}
+
+export default function OngoingTransfers({
+  selectedTab,
+  setSelectedTab,
   hasCompletedTransfers,
-}: DisplaysTransfers) => {
+}: OngoingTransfersProps) {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
@@ -36,7 +42,7 @@ const OngoingTransfers = ({
 
             {hasCompletedTransfers && (
               <button
-                onClick={() => newTransferInit === 'New' && setNewTransferInit('Done')}
+                onClick={() => selectedTab === 'New' && setSelectedTab('Done')}
                 disabled={!hasCompletedTransfers}
                 className="flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-turtle-foreground"
               >
@@ -53,5 +59,3 @@ const OngoingTransfers = ({
     </div>
   )
 }
-
-export default OngoingTransfers
