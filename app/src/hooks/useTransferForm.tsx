@@ -112,10 +112,19 @@ const useTransferForm = () => {
       !!sourceChain &&
       !!destinationChain &&
       !!sourceTokenAmount &&
+      !!destinationTokenAmount &&
+      sourceTokenAmount.token?.id === destinationTokenAmount.token?.id &&
       isRouteAllowed(sourceChain, destinationChain) &&
       isRouteAllowed(destinationChain, sourceChain, sourceTokenAmount)
     )
-  }, [destinationChain, sourceChain, sourceTokenAmount, isValidating, transferStatus])
+  }, [
+    destinationChain,
+    sourceChain,
+    sourceTokenAmount,
+    destinationTokenAmount,
+    isValidating,
+    transferStatus,
+  ])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {

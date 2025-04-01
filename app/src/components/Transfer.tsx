@@ -29,6 +29,7 @@ import AlertIcon from './svg/AlertIcon'
 import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
+import SwapFromToChains from './SwapFromToChains'
 
 const manualInputAnimationProps = {
   initial: { opacity: 0, height: 0 },
@@ -288,8 +289,7 @@ export default function Transfer() {
         />
 
         {/* Swap source and destination chains */}
-        {/* TODO: find a new way for swaps and enable again. Or remove. */}
-        {/* <SwapChains onClick={swapFromTo} disabled={!allowFromToSwap()} /> */}
+        <SwapFromToChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
 
         {/* Destination Chain */}
         <Controller
