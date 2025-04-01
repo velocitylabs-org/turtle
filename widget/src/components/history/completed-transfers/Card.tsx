@@ -41,7 +41,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             <div>{getStatusIcon(status)}</div>
             <div
               className={cn(
-                'no-letter-spacing px-2 text-lg font-normal sm:text-xl',
+                'px-2 text-lg font-normal tracking-[0] sm:text-xl',
                 transferFailed ? 'text-turtle-error' : 'text-turtle-foreground',
               )}
             >

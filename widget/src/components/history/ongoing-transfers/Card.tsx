@@ -21,7 +21,7 @@ const OngoingTransfer: FC<{
             strokeWidth={5}
             color={colors['turtle-secondary']}
           />
-          <p className="no-letter-spacing text-lg font-normal text-turtle-foreground sm:text-xl">
+          <p className="text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
             {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
           </p>
           {/* From and to Chains */}
