@@ -6,43 +6,43 @@ import { heroui } from '@heroui/react'
 const prefix = 'turtle'
 
 export const colors = {
-  [`${prefix}-primary`]: '#00FF29',
-  [`${prefix}-primary-dark`]: '#008115',
-  [`${prefix}-primary-light`]: '#D9FFDF',
+  [`${prefix}-primary`]: 'var(--turtle-primary)',
+  [`${prefix}-primary-dark`]: 'var(--turtle-primary-dark)',
+  [`${prefix}-primary-light`]: 'var(--turtle-primary-light)',
 
-  [`${prefix}-secondary`]: '#A184DC',
-  [`${prefix}-secondary-transparent`]: '#A184DC26',
-  [`${prefix}-secondary-dark`]: '#513589',
-  [`${prefix}-secondary-light`]: '#F1EDFA',
+  [`${prefix}-secondary`]: 'var(--turtle-secondary)',
+  [`${prefix}-secondary-transparent`]: 'var(--turtle-secondary-transparent)',
+  [`${prefix}-secondary-dark`]: 'var(--turtle-secondary-dark)',
+  [`${prefix}-secondary-light`]: 'var(--turtle-secondary-light)',
 
-  [`${prefix}-tertiary`]: '#BFDADC',
-  [`${prefix}-tertiary-dark`]: '#196065',
-  [`${prefix}-tertiary-light`]: '#E1FDFF',
+  [`${prefix}-tertiary`]: 'var(--turtle-tertiary)',
+  [`${prefix}-tertiary-dark`]: 'var(--turtle-tertiary-dark)',
+  [`${prefix}-tertiary-light`]: 'var(--turtle-tertiary-light)',
 
-  [`${prefix}-background`]: '#FFFFFF',
-  [`${prefix}-foreground`]: '#001B04',
+  [`${prefix}-background`]: 'var(--turtle-background)',
+  [`${prefix}-foreground`]: 'var(--turtle-foreground)',
 
-  [`${prefix}-level1`]: '#F6F8FA',
-  [`${prefix}-level2`]: '#EBEFF3',
-  [`${prefix}-level3`]: '#C5D1DB',
-  [`${prefix}-level4`]: '#A9B8C8',
-  [`${prefix}-level5`]: '#90A1AE',
-  [`${prefix}-level6`]: '#546573',
+  [`${prefix}-level1`]: 'var(--turtle-level1)',
+  [`${prefix}-level2`]: 'var(--turtle-level2)',
+  [`${prefix}-level3`]: 'var(--turtle-level3)',
+  [`${prefix}-level4`]: 'var(--turtle-level4)',
+  [`${prefix}-level5`]: 'var(--turtle-level5)',
+  [`${prefix}-level6`]: 'var(--turtle-level6)',
 
-  [`${prefix}-success`]: '#00FF29',
-  [`${prefix}-success-dark`]: '#008115',
-  [`${prefix}-success-light`]: '#D9FFDF',
+  [`${prefix}-success`]: 'var(--turtle-success)',
+  [`${prefix}-success-dark`]: 'var(--turtle-success-dark)',
+  [`${prefix}-success-light`]: 'var(--turtle-success-light)',
 
-  [`${prefix}-warning`]: '#FFFF00',
-  [`${prefix}-warning-dark`]: '#7A7C00',
-  [`${prefix}-warning-light`]: '#FFFFD9',
+  [`${prefix}-warning`]: 'var(--turtle-warning)',
+  [`${prefix}-warning-dark`]: 'var(--turtle-warning-dark)',
+  [`${prefix}-warning-light`]: 'var(--turtle-warning-light)',
 
-  [`${prefix}-error`]: '#ff35c3',
-  [`${prefix}-error/10`]: '#ff35c31a',
-  [`${prefix}-error-dark`]: '#8D1269',
-  [`${prefix}-error-light`]: '#FFE1F6',
+  [`${prefix}-error`]: 'var(--turtle-error)',
+  [`${prefix}-error/10`]: 'var(--turtle-error-10)',
+  [`${prefix}-error-dark`]: 'var(--turtle-error-dark)',
+  [`${prefix}-error-light`]: 'var(--turtle-error-light)',
 
-  [`${prefix}-note-warn`]: '#FFFF0026',
+  [`${prefix}-note-warn`]: 'var(--turtle-note-warn)',
 }
 
 const config: import('tailwindcss').Config = {
@@ -74,6 +74,8 @@ const config: import('tailwindcss').Config = {
       },
       backgroundColor: {
         'btn-disabled': colors[`${prefix}-primary`],
+        'dialog-overlay':
+          'rgba(var(--turtle-dialog-overlay-rgb), var(--turtle-dialog-overlay-opacity))',
       },
       keyframes: {
         'accordion-down': {
