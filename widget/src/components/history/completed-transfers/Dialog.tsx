@@ -48,7 +48,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 src={tx.sourceChain.logoURI}
                 width={32}
                 height={32}
-                className={cn('rounded-full border bg-background', getBorder(tx.result))}
+                className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}
               />
               <div className="text-sm">{tx.sourceChain.name}</div>
             </div>
@@ -58,7 +58,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 src={tx.destChain.logoURI}
                 width={32}
                 height={32}
-                className={cn('rounded-full border bg-background', getBorder(tx.result))}
+                className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}
               />
               <div className="text-sm">{tx.destChain.name}</div>
             </div>

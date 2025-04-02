@@ -61,7 +61,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
                   width={16}
                   height={16}
                   className={cn(
-                    'rounded-full border bg-background',
+                    'rounded-full border bg-turtle-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />
@@ -77,7 +77,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
                   width={16}
                   height={16}
                   className={cn(
-                    'rounded-full border bg-background',
+                    'rounded-full border bg-turtle-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />

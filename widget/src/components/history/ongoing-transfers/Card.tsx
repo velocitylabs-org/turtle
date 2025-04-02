@@ -32,7 +32,7 @@ const OngoingTransfer: FC<{
               alt="Source Chain"
               width={16}
               height={16}
-              className="h-[16px] rounded-full border border-turtle-secondary-dark bg-background"
+              className="h-[16px] rounded-full border border-turtle-secondary-dark bg-turtle-background"
             />
             <ArrowRight
               className="h-[0.45rem] w-[0.45rem]"
@@ -43,7 +43,7 @@ const OngoingTransfer: FC<{
               alt="Destination Chain"
               width={16}
               height={16}
-              className="h-[16px] w-4 rounded-full border border-turtle-secondary-dark bg-background"
+              className="h-[16px] w-4 rounded-full border border-turtle-secondary-dark bg-turtle-background"
             />
           </div>
         </div>

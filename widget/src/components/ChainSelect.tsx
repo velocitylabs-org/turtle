@@ -73,7 +73,7 @@ const ChainSelect = ({
   return (
     <div ref={ref} className={cn('relative w-full', className)} data-cy="chain-select">
       {floatingLabel && (
-        <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+        <label className="absolute -top-2 left-3 z-30 origin-top-left bg-turtle-background px-1 text-xs text-turtle-level5">
           {floatingLabel}
         </label>
       )}
@@ -82,7 +82,7 @@ const ChainSelect = ({
         <div
           ref={triggerRef}
           className={cn(
-            'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+            'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-turtle-background px-3 text-sm',
             !disabled && 'cursor-pointer',
             disabled && 'opacity-30',
             error && 'border-turtle-error',
@@ -98,7 +98,7 @@ const ChainSelect = ({
                   alt={value.name}
                   width={24}
                   height={24}
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-turtle-background"
                 />
                 {shouldShowChainName && (
                   <span className="text-nowrap" data-cy="chain-select-value">
@@ -119,7 +119,7 @@ const ChainSelect = ({
                 alt="ENS Avatar"
                 width={24}
                 height={24}
-                className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
+                className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-turtle-background"
               />
             )}
             {!manualRecipient?.enabled && !!value && accountName}
@@ -166,7 +166,7 @@ const ChainSelect = ({
                   alt={option.name}
                   width={24}
                   height={24}
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-turtle-background"
                 />
                 <span className="text-sm">{option.name}</span>
               </div>
