@@ -9,6 +9,7 @@ import {
   getSwapsSourceChains,
   getSwapsSourceTokens,
 } from './paraspellSwap'
+import { isSameToken } from './token'
 
 /** Filters all chains by available routes. */
 export const getTransferSourceChains = (): Chain[] => {
@@ -123,7 +124,7 @@ export const getAllowedDestinationTokens = (
 
   const includeSourceTokenForTransfer =
     !isSameChain(sourceChain, destinationChain) &&
-    getTransferTokens(sourceChain, destinationChain).some(t => t.id === sourceToken.id)
+    getTransferTokens(sourceChain, destinationChain).some(t => isSameToken(t, sourceToken))
 
   const swapTokens = getSwapsDestinationTokens(sourceChain, sourceToken, destinationChain)
 

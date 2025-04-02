@@ -11,6 +11,7 @@ import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import { createTransferTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
 import { extractPjsEvents } from '@/utils/pjs'
+import { isSameToken } from '@/utils/token'
 import { txWasCancelled } from '@/utils/transfer'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
@@ -37,7 +38,8 @@ const useParaspellApi = () => {
     setStatus('Loading')
 
     try {
-      if (params.sourceToken.id !== params.destinationToken.id) await handleSwap(params, setStatus)
+      if (!isSameToken(params.sourceToken, params.destinationToken))
+        await handleSwap(params, setStatus)
       else if (params.sourceChain.uid === 'moonbeam')
         await handleMoonbeamTransfer(params, setStatus)
       else await handlePolkadotTransfer(params, setStatus)
@@ -174,16 +176,17 @@ const useParaspellApi = () => {
     if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
       throw new Error('Signer not found')
 
-    setStatus('Signing')
+    setStatus('Loading')
 
     const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const date = new Date()
 
     const routerPlan = await createRouterPlan(params)
-    console.log('routerPlan: ', routerPlan)
 
     const step1 = routerPlan.at(0)
     if (!step1) throw new Error('No steps in router plan')
+
+    setStatus('Signing')
 
     step1.tx
       .signAndSend(account.address, { signer: account.pjsSigner }, async result => {

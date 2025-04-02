@@ -9,7 +9,7 @@ import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
 import { isSameChain } from './routes'
-import { getTokenByMultilocation } from './token'
+import { getTokenByMultilocation, isSameToken } from './token'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
 /** contains all supported paraspell dexes mapped to the chain they run on */
@@ -188,11 +188,11 @@ export const getSwapsDestinationTokens = (
   if (!dex) return []
   const dexTokens = getDexTokens(dex)
 
-  if (!dexTokens.some(token => token.id === sourceToken.id)) return []
+  if (!dexTokens.some(token => isSameToken(token, sourceToken))) return []
 
-  const dexTokensWithoutSourceToken = dexTokens.filter(token => token.id !== sourceToken.id)
+  const dexTokensWithoutSourceToken = dexTokens.filter(token => !isSameToken(token, sourceToken))
   if (isSameChain(sourceChain, destinationChain)) return dexTokensWithoutSourceToken
-  console.log('PAST')
+
   // if destination chain is different, filter tokens by routes
   const route = REGISTRY[Environment.Mainnet].routes.find(
     route => route.from === sourceChain.uid && route.to === destinationChain.uid,
