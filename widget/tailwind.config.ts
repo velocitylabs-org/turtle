@@ -11,12 +11,17 @@ export const colors = {
   [`${prefix}-primary-light`]: 'var(--turtle-primary-light)',
 
   [`${prefix}-secondary`]: 'var(--turtle-secondary)',
+  [`${prefix}-secondary-50`]: 'var(--turtle-secondary-50)',
   [`${prefix}-secondary-transparent`]: 'var(--turtle-secondary-transparent)',
   [`${prefix}-secondary-dark`]: 'var(--turtle-secondary-dark)',
+  [`${prefix}-secondary-dark-40`]: 'var(--turtle-secondary-dark-40)',
   [`${prefix}-secondary-light`]: 'var(--turtle-secondary-light)',
+  [`${prefix}-secondary-light-50`]: 'var(--turtle-secondary-light-50)',
 
   [`${prefix}-tertiary`]: 'var(--turtle-tertiary)',
+  [`${prefix}-tertiary-70`]: 'var(--turtle-tertiary-70)',
   [`${prefix}-tertiary-dark`]: 'var(--turtle-tertiary-dark)',
+  [`${prefix}-tertiary-dark-60`]: 'var(--turtle-tertiary-dark-60)',
   [`${prefix}-tertiary-light`]: 'var(--turtle-tertiary-light)',
 
   [`${prefix}-background`]: 'var(--turtle-background)',

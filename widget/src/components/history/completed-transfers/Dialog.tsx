@@ -240,7 +240,7 @@ const getTextColor = (result: TransferResult) => {
 const getBg = (result: TransferResult) => {
   switch (result) {
     case TxStatus.Undefined:
-      return 'bg-turtle-tertiary/70'
+      return 'bg-turtle-tertiary-70'
     case TxStatus.Failed:
       return 'bg-turtle-error-light'
     default:

@@ -11,7 +11,7 @@ const OngoingTransfer: FC<{
   transfer: StoredTransfer
 }> = ({ transfer }) => {
   return (
-    <div className="mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer hover:bg-turtle-secondary-light/50">
+    <div className="hover:bg-turtle-secondary-light-50 mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <LoadingIcon

@@ -149,7 +149,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
 const getBorder = (result: TransferResult) => {
   switch (result) {
     case TxStatus.Undefined:
-      return 'border-turtle-tertiary-dark/60 hover:border-turtle-tertiary-dark'
+      return 'border-turtle-tertiary-dark-60 hover:border-turtle-tertiary-dark'
     case TxStatus.Failed:
       return 'border-turtle-error hover:border-turtle-error-dark'
     case TxStatus.Succeeded:

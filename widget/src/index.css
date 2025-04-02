@@ -43,12 +43,17 @@
     --turtle-primary-light: #d9ffdf;
 
     --turtle-secondary: #a184dc;
+    --turtle-secondary-50: #a184dc50;
     --turtle-secondary-transparent: #a184dc26;
     --turtle-secondary-dark: #513589;
+    --turtle-secondary-dark-40: #51358940;
     --turtle-secondary-light: #f1edfa;
+    --turtle-secondary-light-50: #f1edfa50;
 
     --turtle-tertiary: #bfdadc;
+    --turtle-tertiary-70: #bfdadc70;
     --turtle-tertiary-dark: #196065;
+    --turtle-tertiary-dark-60: #19606560;
     --turtle-tertiary-light: #e1fdff;
 
     --turtle-background: #ffffff;
