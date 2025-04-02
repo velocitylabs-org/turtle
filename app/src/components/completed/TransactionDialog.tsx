@@ -68,7 +68,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               getTextColor(tx.result),
             )}
           >
-            <span>{formatAmount(toHuman(tx.amount, tx.sourceToken))}</span>
+            <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
             <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={40} />
           </h3>
           <div className={cn('flex items-center space-x-4 text-sm', getTextColor(tx.result))}>
@@ -144,14 +144,14 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(tx.amount, tx.sourceToken), 'Long')}{' '}
+                    {formatAmount(toHuman(tx.sourceAmount, tx.sourceToken), 'Long')}{' '}
                     {tx.sourceToken.symbol}
                   </div>
-                  {typeof tx.tokenUSDValue == 'number' && (
+                  {typeof tx.sourceTokenUSDValue == 'number' && (
                     <div className="text-turtle-level4">
                       $
                       {formatAmount(
-                        toHuman(tx.amount, tx.sourceToken) * (tx.tokenUSDValue ?? 0),
+                        toHuman(tx.sourceAmount, tx.sourceToken) * (tx.sourceTokenUSDValue ?? 0),
                         'Long',
                       )}
                     </div>
@@ -169,7 +169,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}{' '}
                   {tx.fees.token.symbol}
                 </div>
-                {typeof tx.tokenUSDValue == 'number' && (
+                {typeof tx.sourceTokenUSDValue == 'number' && (
                   <div className="text-turtle-level4">
                     ${formatAmount(tx.fees.inDollars, 'Long')}
                   </div>
@@ -186,7 +186,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
                     {formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}{' '}
                     {tx.bridgingFee.token.symbol}
                   </div>
-                  {typeof tx.tokenUSDValue == 'number' && (
+                  {typeof tx.sourceTokenUSDValue == 'number' && (
                     <div className="text-turtle-level4">
                       ${formatAmount(tx.bridgingFee.inDollars, 'Long')}
                     </div>

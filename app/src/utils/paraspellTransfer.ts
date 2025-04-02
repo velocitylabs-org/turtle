@@ -33,7 +33,7 @@ export const createTransferTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { sourceChain, destinationChain, sourceToken, amount, recipient, sender } = params
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
 
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
@@ -46,7 +46,7 @@ export const createTransferTx = async (
   return await Builder(wssEndpoint)
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
-    .currency({ ...currencyId, amount })
+    .currency({ ...currencyId, amount: sourceAmount })
     .address(
       recipient,
       destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
@@ -65,7 +65,7 @@ export const moonbeamTransfer = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   viemClient: any,
 ): Promise<string> => {
-  const { sourceChain, destinationChain, sourceToken, amount, recipient } = params
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
 
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
@@ -77,7 +77,7 @@ export const moonbeamTransfer = async (
   return EvmBuilder()
     .from('Moonbeam')
     .to(destinationChainFromId)
-    .currency({ ...currencyId, amount })
+    .currency({ ...currencyId, amount: sourceAmount })
     .address(recipient)
     .signer(viemClient)
     .build()
@@ -95,7 +95,7 @@ export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
-  const { sourceChain, destinationChain, sourceToken, amount, recipient, sender } = params
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
@@ -106,7 +106,7 @@ export const dryRun = async (
   return await Builder(wssEndpoint)
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
-    .currency({ ...currencyId, amount })
+    .currency({ ...currencyId, amount: sourceAmount })
     .address(
       recipient,
       destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,

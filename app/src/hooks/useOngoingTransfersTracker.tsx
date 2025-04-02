@@ -13,6 +13,7 @@ import {
   getTransferStatus,
   isCompletedTransfer,
 } from '@/utils/transferTracking'
+import { captureException } from '@sentry/nextjs'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
@@ -137,8 +138,10 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             destinationToken: ongoing.destinationToken,
             sourceChain: ongoing.sourceChain,
             destChain: ongoing.destChain,
-            amount: ongoing.amount,
-            tokenUSDValue: ongoing.tokenUSDValue ?? 0,
+            sourceAmount: ongoing.sourceAmount,
+            destinationAmount: ongoing.destinationAmount,
+            sourceTokenUSDValue: ongoing.sourceTokenUSDValue ?? 0,
+            destinationTokenUSDValue: ongoing.destinationTokenUSDValue,
             fees: ongoing.fees,
             bridgingFee: ongoing.bridgingFee,
             sender: ongoing.sender,
@@ -155,7 +158,36 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
         }
       } else {
         // ongoing transfer not found. This means it is more than 2 weeks old.
-        // TODO: handle this case
+        // Clean up the transfer and mark it as undefined
+        const explorerLink = getExplorerLink(ongoing)
+        remove(ongoing.id)
+        addCompletedTransfer({
+          id: ongoing.id,
+          result: TxStatus.Undefined,
+          sourceToken: ongoing.sourceToken,
+          destinationToken: ongoing.destinationToken,
+          sourceChain: ongoing.sourceChain,
+          destChain: ongoing.destChain,
+          sourceAmount: ongoing.sourceAmount,
+          destinationAmount: ongoing.destinationAmount,
+          sourceTokenUSDValue: ongoing.sourceTokenUSDValue ?? 0,
+          destinationTokenUSDValue: ongoing.destinationTokenUSDValue ?? 0,
+          fees: ongoing.fees,
+          bridgingFee: ongoing.bridgingFee,
+          sender: ongoing.sender,
+          recipient: ongoing.recipient,
+          date: ongoing.date,
+          ...(explorerLink && { explorerLink }),
+        } satisfies CompletedTransfer)
+
+        addNotification({
+          message: 'Transfer tracking failed - transfer older than 2 weeks',
+          severity: NotificationSeverity.Warning,
+          dismissible: true,
+        })
+        captureException(new Error('Transfer tracking failed - transfer older than 2 weeks'), {
+          extra: { ongoing },
+        })
       }
     })
   }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateUniqueId])

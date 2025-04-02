@@ -2,7 +2,6 @@ import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { TRouterPlan } from '@paraspell/xcm-router'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { Dispatch, SetStateAction } from 'react'
 import { Chain } from './chain'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
 import { FromParachainTrackingResult } from './subscan'
@@ -24,8 +23,10 @@ export interface RawTransfer {
 }
 export interface StoredTransfer extends RawTransfer {
   // Params
-  tokenUSDValue?: number
-  amount: string
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
   // Contextual
@@ -67,10 +68,12 @@ export type CompletedTransfer = {
   result: TransferResult
   sourceToken: Token
   destinationToken?: Token
-  tokenUSDValue?: number
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
   sourceChain: Chain
   destChain: Chain
-  amount: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
   minTokenRecieved?: string

@@ -34,7 +34,7 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
           color={colors['turtle-secondary']}
         />
         <p className="text-turtle-foreground)] no-letter-spacing text-xl font-normal">
-          {formatAmount(toHuman(transfer.amount, transfer.sourceToken))}{' '}
+          {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}{' '}
           {transfer.sourceToken.symbol}
         </p>
         {/* From and to Chains */}

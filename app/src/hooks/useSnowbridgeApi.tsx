@@ -30,7 +30,7 @@ const useSnowbridgeApi = () => {
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    const { sender, sourceChain, sourceToken, destinationChain, recipient, amount } = params
+    const { sender, sourceChain, sourceToken, destinationChain, recipient, sourceAmount } = params
 
     try {
       if (snowbridgeContext === undefined) {
@@ -50,7 +50,7 @@ const useSnowbridgeApi = () => {
         sourceToken,
         destinationChain,
         recipient,
-        amount,
+        sourceAmount,
         setStatus,
       )) as toPolkadotV2.Transfer
 
@@ -103,7 +103,7 @@ const useSnowbridgeApi = () => {
       destinationToken,
       destinationChain,
       recipient,
-      amount,
+      sourceAmount,
       environment,
       fees,
       bridgingFee,
@@ -152,10 +152,10 @@ const useSnowbridgeApi = () => {
         sourceChain,
         sourceToken,
         destinationToken,
-        tokenUSDValue,
+        sourceTokenUSDValue: tokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
-        amount: amount.toString(),
+        sourceAmount: sourceAmount.toString(),
         recipient,
         date,
         environment,
@@ -168,7 +168,7 @@ const useSnowbridgeApi = () => {
         sender: senderAddress,
         sourceChain,
         token: sourceToken,
-        amount,
+        amount: sourceAmount,
         destinationChain,
         tokenUSDValue,
         fees,

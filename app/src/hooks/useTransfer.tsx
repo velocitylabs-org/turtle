@@ -19,7 +19,8 @@ export interface TransferParams {
   destinationToken: Token
   destinationChain: Chain
   recipient: string
-  amount: bigint
+  sourceAmount: bigint
+  destinationAmount?: bigint
   fees: AmountInfo
   bridgingFee: AmountInfo | null
   /**

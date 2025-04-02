@@ -28,7 +28,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     destinationChain,
     sourceToken,
     destinationToken,
-    amount,
+    sourceAmount,
     recipient,
     sender,
   } = params
@@ -52,7 +52,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     .exchange('HydrationDex') // only Hydration is supported for now
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
-    .amount(amount)
+    .amount(sourceAmount)
     .slippagePct(slippagePct)
     .senderAddress(senderAddress)
     .recipientAddress(recipient)
