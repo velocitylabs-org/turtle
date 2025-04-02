@@ -46,16 +46,6 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
   const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
-  console.log(
-    sourceChainFromId,
-    destinationChainFromId,
-    currencyIdFrom,
-    currencyTo,
-    amount,
-    senderAddress,
-    recipient,
-  )
-
   const routerPlan = await RouterBuilder()
     .from(sourceChainFromId as any) // TODO: remove any once xcm-router is updated
     .to(destinationChainFromId as any) // TODO: remove any once xcm-router is updated
