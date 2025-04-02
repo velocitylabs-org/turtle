@@ -29,7 +29,7 @@ export interface TransferParams {
   onComplete?: () => void // TODO: remove this from here. It doesnt belong here.
 }
 
-export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'
+export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending' | 'Prepare Swap'
 
 const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')

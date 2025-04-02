@@ -20,7 +20,7 @@
     "@hookform/resolvers": "3.9.0",
     "@number-flow/react": "^0.4.1",
     "@paraspell/sdk": "^8.9.0",
-    "@paraspell/xcm-router": "^8.9.0",
+    "@paraspell/xcm-router": "^8.9.3",
     "@polkadot/api": "^15.8.1",
     "@polkadot/api-base": "^15.8.1",
     "@polkadot/apps-config": "^0.145.1",
