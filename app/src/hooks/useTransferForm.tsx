@@ -8,6 +8,7 @@ import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ManualAddressValue, TokenAmount } from '@/models/select'
+import { Token } from '@/models/token'
 import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
@@ -111,10 +112,19 @@ const useTransferForm = () => {
       !!sourceChain &&
       !!destinationChain &&
       !!sourceTokenAmount &&
+      !!destinationTokenAmount &&
+      sourceTokenAmount.token?.id === destinationTokenAmount.token?.id &&
       isRouteAllowed(sourceChain, destinationChain) &&
       isRouteAllowed(destinationChain, sourceChain, sourceTokenAmount)
     )
-  }, [destinationChain, sourceChain, sourceTokenAmount, isValidating, transferStatus])
+  }, [
+    destinationChain,
+    sourceChain,
+    sourceTokenAmount,
+    destinationTokenAmount,
+    isValidating,
+    transferStatus,
+  ])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -154,6 +164,15 @@ const useTransferForm = () => {
       setValue('sourceTokenAmount', { token: null, amount: null })
     },
     [setValue, sourceChain, destinationChain, sourceTokenAmount],
+  )
+
+  const handleSourceTokenChange = useCallback(
+    async (newValue: Token | null) => {
+      setValue('sourceTokenAmount', { token: newValue, amount: null })
+      setValue('destinationChain', null)
+      setValue('destinationTokenAmount', { token: null, amount: null })
+    },
+    [setValue],
   )
 
   const handleDestinationChainChange = useCallback(
@@ -308,6 +327,7 @@ const useTransferForm = () => {
     handleSubmit: handleSubmit(onSubmit),
     handleSourceChainChange,
     handleDestinationChainChange,
+    handleSourceTokenChange,
     swapFromTo,
     handleManualRecipientChange,
     handleMaxButtonClick,

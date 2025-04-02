@@ -1,6 +1,7 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { getExchangeOutputAmount } from '@/utils/paraspellSwap'
+import { isSameToken } from '@/utils/token'
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
@@ -38,7 +39,7 @@ export function useSwapOutputAmount({
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
         return null
 
-      if (sourceToken.id === destinationToken.id) return null
+      if (isSameToken(sourceToken, destinationToken)) return null
 
       try {
         const output = await getExchangeOutputAmount(

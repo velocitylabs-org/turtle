@@ -26,10 +26,10 @@ import Credits from './Credits'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import AlertIcon from './svg/AlertIcon'
-import SwapChains from './SwapFromToChains'
 import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
+import SwapFromToChains from './SwapFromToChains'
 
 const manualInputAnimationProps = {
   initial: { opacity: 0, height: 0 },
@@ -59,6 +59,7 @@ export default function Transfer() {
     swapFromTo,
     handleManualRecipientChange,
     handleMaxButtonClick,
+    handleSourceTokenChange,
     sourceChain,
     destinationChain,
     sourceTokenAmount,
@@ -247,8 +248,7 @@ export default function Transfer() {
                       }}
                       token={{
                         value: tokenField.value?.token ?? null,
-                        onChange: token =>
-                          tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                        onChange: handleSourceTokenChange,
                         options: sourceTokenOptions,
                         sourceChainToDetermineOriginBanner: sourceChain,
                         error: errors.sourceTokenAmount?.token?.message,
@@ -289,7 +289,7 @@ export default function Transfer() {
         />
 
         {/* Swap source and destination chains */}
-        <SwapChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
+        <SwapFromToChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
 
         {/* Destination Chain */}
         <Controller

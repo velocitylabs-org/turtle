@@ -19,3 +19,7 @@ export function getTokenByMultilocation(multilocation: TMultiLocation): Token | 
 
   return token
 }
+
+export function isSameToken(token1: Token, token2: Token): boolean {
+  return token1.id === token2.id
+}
