@@ -1,10 +1,6 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://turtle.cool">
-    <img src="./public/turtle.svg" alt="Logo" width="80" height="80">
-  </a>
-
   <h3 align="center">Turtle Widget</h3>
 
   <p align="center">
@@ -28,7 +24,7 @@ We aim to provide a **unified experience** for transferring tokens anywhere.
 ## 📦 Installation
 
 ```sh
-npm install @velocitylabs-org/turtle-widget
+pnpm install @velocitylabs-org/turtle-widget
 ```
 
 
@@ -37,17 +33,23 @@ npm install @velocitylabs-org/turtle-widget
 ### React/Vite
 
 ```tsx
-import { Widget } from "@velocitylabs-org/turtle-widget";
+import Widget, { WidgetTheme } from "@velocitylabs-org/turtle-widget";
 
-function App() {
+const theme = {
+  primary: "#DBB3B1", // HexColor
+  dialogOverlayRgb: "219, 179, 177", // RGBColor
+  dialogOverlayOpacity: 0.5, // number
+} satisfies WidgetTheme;
+
+function Home() {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <Widget />
+      <Widget theme={theme} />
     </div>
   );
 }
 
-export default App;
+export default Home;
 ```
 
 ### Next.js (With SSR Handling)
@@ -56,16 +58,26 @@ export default App;
 "use client";
 
 import dynamic from "next/dynamic";
+import type { WidgetTheme } from "@velocitylabs-org/turtle-widget";
 
-const Widget = dynamic(() => import("@velocitylabs-org/turtle-widget"), {
-  loading: () => <div>Loading Turtle Widget...</div>,
-  ssr: false,
-});
+const Widget = dynamic<{ theme?: WidgetTheme }>(
+  () => import("@velocitylabs-org/turtle-widget"),
+  {
+    loading: () => <div>Loading Turtle Widget...</div>,
+    ssr: false,
+  }
+);
+
+const theme = {
+  primary: "#DBB3B1", // HexColor
+  dialogOverlayRgb: "219, 179, 177", // RGBColor
+  dialogOverlayOpacity: 0.5, // number
+} satisfies WidgetTheme;
 
 function Home() {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <Widget />
+      <Widget theme={theme} />
     </div>
   );
 }
