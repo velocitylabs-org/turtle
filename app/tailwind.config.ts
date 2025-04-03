@@ -52,6 +52,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '480px',
+      },
       container: {
         center: true,
         padding: '2rem',
@@ -65,6 +68,7 @@ const config: Config = {
         dazzed: ['var(--font-dazzed)'],
       },
       fontSize: {
+        xs: '0.8125rem', // 13px
         large: '2rem',
       },
       borderRadius: {
