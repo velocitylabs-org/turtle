@@ -33,18 +33,12 @@ pnpm install @velocitylabs-org/turtle-widget
 ### React/Vite
 
 ```tsx
-import Widget, { WidgetTheme } from "@velocitylabs-org/turtle-widget";
-
-const theme = {
-  primary: "#DBB3B1", // HexColor
-  dialogOverlayRgb: "219, 179, 177", // RGBColor
-  dialogOverlayOpacity: 0.5, // number
-} satisfies WidgetTheme;
+import Widget from "@velocitylabs-org/turtle-widget";
 
 function Home() {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <Widget theme={theme} />
+      <Widget />
     </div>
   );
 }
@@ -53,6 +47,29 @@ export default Home;
 ```
 
 ### Next.js (With SSR Handling)
+
+```tsx
+"use client";
+
+import dynamic from "next/dynamic";
+
+const Widget = dynamic(() => import("@velocitylabs-org/turtle-widget"), {
+  loading: () => <div>Loading Turtle Widget...</div>,
+  ssr: false,
+});
+
+function Home() {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center">
+      <Widget />
+    </div>
+  );
+}
+
+export default Home;
+```
+
+## Theme configuration 
 
 ```tsx
 "use client";
@@ -72,6 +89,7 @@ const theme = {
   primary: "#DBB3B1", // HexColor
   dialogOverlayRgb: "219, 179, 177", // RGBColor
   dialogOverlayOpacity: 0.5, // number
+  //...
 } satisfies WidgetTheme;
 
 function Home() {
