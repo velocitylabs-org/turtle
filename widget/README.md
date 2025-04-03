@@ -69,7 +69,18 @@ function Home() {
 export default Home;
 ```
 
-## Theme configuration 
+## 🎨 Theme configuration 
+
+The Turtle widget supports full theme customization.
+
+You can pass a theme prop to <Widget /> to override default styles like colors, background, overlay opacity, and more.
+
+🧩 Types
+```tsx
+import type { WidgetTheme } from "@velocitylabs-org/turtle-widget";
+```
+
+### 🧑‍💻 Usage with Next.js
 
 ```tsx
 "use client";
@@ -102,3 +113,14 @@ function Home() {
 
 export default Home;
 ```
+
+### Available theme keys:
+
+- primary, primaryDark, primaryLight
+- secondary, secondaryDark, secondaryLight, secondary50, secondaryTransparent (...)
+- tertiary, tertiaryDark, tertiaryLight, tertiary70 (...)
+- background, foreground
+- level1 to level6
+- success, warning, error (+ dark/light variants, ...) 
+- dialogOverlayRgb, dialogOverlayOpacity
+- noteWarn
