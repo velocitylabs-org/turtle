@@ -72,7 +72,6 @@ export default Home;
 ## 🎨 Theme configuration 
 
 The Turtle widget supports full theme customization.
-
 You can pass a theme prop to <Widget /> to override default styles like colors, background, overlay opacity, and more.
 
 🧩 Types

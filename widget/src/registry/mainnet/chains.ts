@@ -129,7 +129,7 @@ export const Moonbeam: Chain = {
   network: 'Polkadot',
   supportedAddressTypes: ['evm'],
   walletType: 'EVM',
-  rpcConnection: `wss://api-moonbeam.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-moonbeam.n.dwellir.com/${DWELLIR_KEY}`,
 }
 
 export const Mythos: Chain = {
@@ -175,5 +175,5 @@ export const RelayChain: Chain = {
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
   walletType: 'Substrate',
-  rpcConnection: `wss://api-polkadot.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-moonbeam.n.dwellir.com/${DWELLIR_KEY}`,
 }
