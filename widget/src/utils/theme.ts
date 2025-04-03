@@ -1,8 +1,8 @@
 // Type for hex colors that must start with #
-type HexColor = `#${string}`
+export type HexColor = `#${string}`
 
 // Type for RGB format (e.g. "161, 132, 220")
-type RGBValues = `${number}, ${number}, ${number}`
+export type RGBValues = `${number}, ${number}, ${number}`
 
 export interface WidgetTheme {
   // Primary colors
