@@ -184,11 +184,7 @@ export const routes: Route[] = [
     from: AssetHub.uid,
     to: Bifrost.uid,
     sdk: 'ParaSpellApi',
-    tokens: [
-      PolkadotTokens.USDC.id,
-      PolkadotTokens.USDT.id,
-      PolkadotTokens.DOT.id,
-    ],
+    tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
   },
   {
     from: AssetHub.uid,
@@ -258,11 +254,7 @@ export const routes: Route[] = [
     from: Bifrost.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
-    tokens: [
-      PolkadotTokens.DOT.id,
-      PolkadotTokens.USDC.id,
-      PolkadotTokens.USDT.id,
-    ],
+    tokens: [PolkadotTokens.DOT.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
   },
   {
     from: Centrifuge.uid,
