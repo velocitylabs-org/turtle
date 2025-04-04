@@ -190,7 +190,11 @@ export const findMatchingTransfer = (
             transfer.submitted.extrinsic_hash === ongoingTransfer.id)
         )
       } else {
-        return transfer.id === ongoingTransfer.id
+        return (
+          transfer.id === ongoingTransfer.id ||
+          ('transactionHash' in transfer.submitted &&
+            transfer.submitted.transactionHash === ongoingTransfer.id)
+        )
       }
     }
 

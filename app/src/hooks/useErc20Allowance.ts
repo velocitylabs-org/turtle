@@ -35,6 +35,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       !tokenAmount.amount ||
       tokenAmount.amount <= 0 ||
       !tokenAmount.token ||
+      tokenAmount.token.id === 'eth' ||
       !owner
     ) {
       setAllowance(undefined)
@@ -45,6 +46,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       setLoading(true)
       const fetchedAllowance = (await assetStatusInfo(context, tokenAmount.token.address, owner))
         .tokenGatewayAllowance
+      console.log('FetchedALlowance is ', toHuman(fetchedAllowance, tokenAmount.token))
       setAllowance(toHuman(fetchedAllowance, tokenAmount.token))
       refetchFees()
     } catch (error) {
