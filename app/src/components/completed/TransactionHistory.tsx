@@ -1,6 +1,6 @@
 import { CompletedTransfer } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
-import { TransactionDialog } from './TransactionDialog'
+import TransactionDialog from './TransactionDialog'
 import { cn } from '@/utils/cn'
 import { formatTransfersByDate } from '@/utils/transfer'
 
