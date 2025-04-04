@@ -13,7 +13,7 @@ import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
-import { getBalance } from './useBalance'
+import useBalance from './useBalance'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 

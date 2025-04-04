@@ -38,7 +38,7 @@ describe('Routes', () => {
   it('should not have duplicate tokens in routes', () => {
     routes.forEach(route => {
       const tokenSet = new Set(route.tokens)
-      
+
       expect(tokenSet.size).toBe(route.tokens.length)
     })
   })
