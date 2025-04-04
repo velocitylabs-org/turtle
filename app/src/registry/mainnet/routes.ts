@@ -185,8 +185,6 @@ export const routes: Route[] = [
     to: Bifrost.uid,
     sdk: 'ParaSpellApi',
     tokens: [
-      EthereumTokens.ETH.id,
-      EthereumTokens.WETH.id,
       PolkadotTokens.USDC.id,
       PolkadotTokens.USDT.id,
       PolkadotTokens.DOT.id,
@@ -261,9 +259,6 @@ export const routes: Route[] = [
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
     tokens: [
-      EthereumTokens.ETH.id,
-      EthereumTokens.WETH.id,
-
       PolkadotTokens.DOT.id,
       PolkadotTokens.USDC.id,
       PolkadotTokens.USDT.id,

@@ -116,7 +116,7 @@ const useFees = (
               fees?.token === bridgeFeeToken ? BigInt(fees.amount) + bridgeFee : bridgeFee
 
             // if the dotBalance is not available, we act as if it's ok. This prevents a delay
-            // in the UI showing the error label for insufficient fee balance, which is particularely
+            // in the UI showing the error label for insufficient fee balance, which is particularly
             // noticable when switching chains.
             setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
           }

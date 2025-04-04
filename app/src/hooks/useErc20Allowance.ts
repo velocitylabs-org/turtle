@@ -81,7 +81,6 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       }
 
       try {
-        console.log('Will approve token allowance', tokenAmount.token)
         if (tokenAmount.token.id === EthereumTokens.USDT.id) {
           if (allowance == null) await fetchAllowance()
 
