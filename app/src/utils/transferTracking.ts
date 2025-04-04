@@ -16,7 +16,6 @@ export const trackTransfers = async (
 
   for (const transfer of toPolkadot) {
     const tx = await history.toPolkadotTransferById(transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
-    console.log('tracking tx is ', JSON.stringify(tx))
     if (tx) transfers.push(tx)
   }
 
