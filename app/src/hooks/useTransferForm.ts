@@ -163,7 +163,7 @@ const useTransferForm = () => {
       setValue('destinationChain', null)
       setValue('sourceTokenAmount', { token: null, amount: null })
     },
-    [setValue, sourceChain, destinationChain, sourceTokenAmount, environment],
+    [setValue, sourceChain, destinationChain, sourceTokenAmount],
   )
 
   const handleSourceTokenChange = useCallback(
@@ -226,8 +226,11 @@ const useTransferForm = () => {
         manualRecipient,
       } = data
       const recipient = getRecipientAddress(manualRecipient, destinationWallet)
-      const amount = sourceTokenAmount
+      const sourceAmount = sourceTokenAmount
         ? safeConvertAmount(sourceTokenAmount.amount, sourceTokenAmount.token)
+        : null
+      const destinationAmount = destinationTokenAmount
+        ? safeConvertAmount(destinationTokenAmount.amount, destinationTokenAmount.token)
         : null
 
       if (
@@ -237,7 +240,7 @@ const useTransferForm = () => {
         !destinationChain ||
         !sourceTokenAmount?.token ||
         !destinationTokenAmount?.token ||
-        !amount ||
+        !sourceAmount ||
         !fees
       )
         return
@@ -249,7 +252,8 @@ const useTransferForm = () => {
         destinationChain,
         sourceToken: sourceTokenAmount?.token,
         destinationToken: destinationTokenAmount?.token,
-        amount,
+        sourceAmount: sourceAmount,
+        destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
         fees,
         bridgingFee: bridgingFee,

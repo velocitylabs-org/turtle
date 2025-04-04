@@ -23,8 +23,10 @@ export interface RawTransfer {
 }
 export interface StoredTransfer extends RawTransfer {
   // Params
-  tokenUSDValue?: number
-  amount: string
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
   // Contextual
@@ -66,10 +68,12 @@ export type CompletedTransfer = {
   result: TransferResult
   sourceToken: Token
   destinationToken?: Token
-  tokenUSDValue?: number
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
   sourceChain: Chain
   destChain: Chain
-  amount: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
   minTokenRecieved?: string

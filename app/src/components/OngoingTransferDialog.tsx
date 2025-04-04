@@ -79,7 +79,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
               'xxl-letter-spacing flex items-center space-x-3 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
-            <span>{formatAmount(toHuman(transfer.amount, transfer.sourceToken))}</span>
+            <span>{formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}</span>
             <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={40} />
           </h3>
           <div className="flex items-center space-x-4 text-sm text-turtle-secondary-dark">
@@ -139,14 +139,14 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(transfer.amount, transfer.sourceToken), 'Long')}{' '}
+                    {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken), 'Long')}{' '}
                     {transfer.sourceToken.symbol}
                   </div>
                   <div className="text-turtle-level4">
                     $
                     {formatAmount(
-                      toHuman(transfer.amount, transfer.sourceToken) *
-                        (transfer.tokenUSDValue ?? 0),
+                      toHuman(transfer.sourceAmount, transfer.sourceToken) *
+                        (transfer.sourceTokenUSDValue ?? 0),
                       'Long',
                     )}
                   </div>

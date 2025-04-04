@@ -64,10 +64,10 @@ const useParaspellApi = () => {
       sourceChain: params.sourceChain,
       sourceToken: params.sourceToken,
       destinationToken: params.destinationToken,
-      tokenUSDValue,
+      sourceTokenUSDValue: tokenUSDValue,
       sender: senderAddress,
       destChain: params.destinationChain,
-      amount: params.amount.toString(),
+      sourceAmount: params.sourceAmount.toString(),
       recipient: params.recipient,
       date,
       environment: params.environment,
@@ -88,7 +88,7 @@ const useParaspellApi = () => {
         sender: senderAddress,
         sourceChain: params.sourceChain,
         token: params.sourceToken,
-        amount: params.amount,
+        amount: params.sourceAmount,
         destinationChain: params.destinationChain,
         tokenUSDValue,
         fees: params.fees,
@@ -137,10 +137,10 @@ const useParaspellApi = () => {
           sourceChain: params.sourceChain,
           sourceToken: params.sourceToken,
           destinationToken: params.destinationToken,
-          tokenUSDValue,
+          sourceTokenUSDValue: tokenUSDValue,
           sender: senderAddress,
           destChain: params.destinationChain,
-          amount: params.amount.toString(),
+          sourceAmount: params.sourceAmount.toString(),
           recipient: params.recipient,
           date,
           environment: params.environment,
@@ -178,7 +178,8 @@ const useParaspellApi = () => {
 
     setStatus('Loading')
 
-    const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     const routerPlan = await createRouterPlan(params)
@@ -196,10 +197,12 @@ const useParaspellApi = () => {
             sourceChain: params.sourceChain,
             sourceToken: params.sourceToken,
             destinationToken: params.destinationToken,
-            tokenUSDValue,
+            sourceTokenUSDValue,
+            destinationTokenUSDValue,
             sender: account.address,
             destChain: params.destinationChain,
-            amount: params.amount.toString(),
+            sourceAmount: params.sourceAmount.toString(),
+            destinationAmount: params.destinationAmount?.toString(),
             recipient: params.recipient,
             date,
             environment: params.environment,

@@ -1,14 +1,14 @@
-import Image from 'next/image'
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
+import Image from 'next/image'
+import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
 import Info from '../svg/Info'
 import Success from '../svg/Success'
-import { colors } from '../../../tailwind.config'
 import { getSVGColor } from './TransactionDialog'
 
 export function getStatusIcon(status: TransferResult) {
@@ -47,7 +47,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              <span>{formatAmount(toHuman(tx.amount, tx.sourceToken))}</span>
+              <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
               <span>{tx.sourceToken.symbol}</span>
             </div>
             <div
