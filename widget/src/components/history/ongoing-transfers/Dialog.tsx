@@ -63,7 +63,7 @@ export const OngoingTransferDialog = ({
                 src={transfer.sourceChain.logoURI}
                 width={32}
                 height={32}
-                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+                className={'rounded-full border border-turtle-secondary-dark bg-turtle-background'}
               />
               <div className="text-sm">{transfer.sourceChain.name}</div>
             </div>
@@ -73,7 +73,7 @@ export const OngoingTransferDialog = ({
                 src={transfer.destChain.logoURI}
                 width={32}
                 height={32}
-                className={'rounded-full border border-turtle-secondary-dark bg-background'}
+                className={'rounded-full border border-turtle-secondary-dark bg-turtle-background'}
               />
               <div className="text-sm">{transfer.destChain.name}</div>
             </div>

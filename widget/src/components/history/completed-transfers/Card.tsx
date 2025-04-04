@@ -41,7 +41,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             <div>{getStatusIcon(status)}</div>
             <div
               className={cn(
-                'no-letter-spacing px-2 text-lg font-normal sm:text-xl',
+                'px-2 text-lg font-normal tracking-[0] sm:text-xl',
                 transferFailed ? 'text-turtle-error' : 'text-turtle-foreground',
               )}
             >
@@ -61,7 +61,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
                   width={16}
                   height={16}
                   className={cn(
-                    'rounded-full border bg-background',
+                    'rounded-full border bg-turtle-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />
@@ -77,7 +77,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
                   width={16}
                   height={16}
                   className={cn(
-                    'rounded-full border bg-background',
+                    'rounded-full border bg-turtle-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />
@@ -149,7 +149,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
 const getBorder = (result: TransferResult) => {
   switch (result) {
     case TxStatus.Undefined:
-      return 'border-turtle-tertiary-dark/60 hover:border-turtle-tertiary-dark'
+      return 'border-turtle-tertiary-dark-60 hover:border-turtle-tertiary-dark'
     case TxStatus.Failed:
       return 'border-turtle-error hover:border-turtle-error-dark'
     case TxStatus.Succeeded:

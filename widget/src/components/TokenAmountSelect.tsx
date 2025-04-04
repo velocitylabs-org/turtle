@@ -66,7 +66,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
         {floatingLabel && (
           <label
             className={cn(
-              'top absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5',
+              'top absolute -top-2 left-3 z-30 origin-top-left bg-turtle-background px-1 text-xs text-turtle-level5',
               error && 'text-turtle-error',
             )}
           >
@@ -79,7 +79,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             ref={triggerRef}
             onClick={handleTriggerClick}
             className={cn(
-              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-background px-3 text-sm',
+              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-turtle-background px-3 text-sm',
               !disabled && 'cursor-pointer',
               disabled && 'opacity-30',
               error && 'border-turtle-error',

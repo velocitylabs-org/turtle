@@ -11,7 +11,8 @@ const OngoingTransfer: FC<{
   transfer: StoredTransfer
 }> = ({ transfer }) => {
   return (
-    <div className="mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer hover:bg-turtle-secondary-light/50">
+    //prettier-ignore
+    <div className="hover:bg-turtle-secondary-light-50 mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <LoadingIcon
@@ -21,7 +22,7 @@ const OngoingTransfer: FC<{
             strokeWidth={5}
             color={colors['turtle-secondary']}
           />
-          <p className="no-letter-spacing text-lg font-normal text-turtle-foreground sm:text-xl">
+          <p className="text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
             {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
           </p>
           {/* From and to Chains */}
@@ -31,7 +32,7 @@ const OngoingTransfer: FC<{
               alt="Source Chain"
               width={16}
               height={16}
-              className="h-[16px] rounded-full border border-turtle-secondary-dark bg-background"
+              className="h-[16px] rounded-full border border-turtle-secondary-dark bg-turtle-background"
             />
             <ArrowRight
               className="h-[0.45rem] w-[0.45rem]"
@@ -42,7 +43,7 @@ const OngoingTransfer: FC<{
               alt="Destination Chain"
               width={16}
               height={16}
-              className="h-[16px] w-4 rounded-full border border-turtle-secondary-dark bg-background"
+              className="h-[16px] w-4 rounded-full border border-turtle-secondary-dark bg-turtle-background"
             />
           </div>
         </div>
@@ -50,7 +51,6 @@ const OngoingTransfer: FC<{
           {formatOngoingTransferDate(transfer.date)}
         </p>
       </div>
-
       <div className="flex items-center">
         <Account
           network={transfer.sourceChain.network}
