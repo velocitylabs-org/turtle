@@ -16,13 +16,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { getBalance } from './useBalance'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
-<<<<<<< HEAD
-import { getRoute } from '@/utils/routes'
-import { getFeeEstimate } from '@/utils/snowbridge'
-import { PolkadotTokens } from '@/registry/mainnet/tokens'
-import useBalance from './useBalance'
-=======
->>>>>>> origin/main
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
 // When bridging from AssetHub, the basic fees already take the bridging fees into account.
