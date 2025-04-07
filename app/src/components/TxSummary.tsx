@@ -91,7 +91,7 @@ export default function TxSummary({
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="pt-[3px] text-sm font-bold">
-                    {bridgingFees ? 'Execution fee' : 'Fee'}{' '}
+                    {bridgingFees ? 'Destination Chain Fee' : 'Fee'}{' '}
                   </div>
                   {!canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
@@ -125,7 +125,7 @@ export default function TxSummary({
             {isBridgeTransfer && bridgingFees && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
-                  <div className="pt-[3px] text-sm font-bold">Bridging fee</div>
+                  <div className="pt-[3px] text-sm font-bold">Bridge fee</div>
                   {!canPayAdditionalFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
@@ -157,7 +157,7 @@ export default function TxSummary({
 
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
-                <div className="pt-[3px] text-sm font-bold">Duration</div>
+                <div className="pt-[3px] text-sm font-bold">Waiting Time</div>
               </div>
               <div className="items-right flex items-center space-x-0.5">
                 <div className="text-right text-lg text-turtle-foreground md:text-xl">

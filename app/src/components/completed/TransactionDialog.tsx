@@ -163,7 +163,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             {/* Fees */}
             {/* Execution fee */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="font-bold">{tx.bridgingFee ? 'Execution fee' : 'Fee'}</div>
+              <div className="font-bold">{tx.bridgingFee ? 'Destination Chain Fee' : 'Fee'}</div>
               <div className="items-right flex flex-col space-x-1 text-right">
                 <div className="text-lg">
                   {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}{' '}
@@ -180,7 +180,7 @@ export const TransactionDialog = ({ tx }: { tx: CompletedTransfer }) => {
             {/* Bridging fee */}
             {tx.bridgingFee && (
               <div className="flex items-start justify-between space-x-4">
-                <div className="font-bold">Bridging fee</div>
+                <div className="font-bold">Bridge fee</div>
                 <div className="items-right flex flex-col space-x-1 text-right">
                   <div className="text-lg">
                     {formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}{' '}
