@@ -16,8 +16,7 @@ import { colors } from '../../../tailwind.config'
 import Icon from '../Icon'
 import TokenLogo from '../TokenLogo'
 import { formatHours } from '@/utils/datetime'
-import Tooltip from '@/components/Tooltip'
-import ArrowUpRight from '@/components/svg/ArrowUpRight'
+import ArrowUpRight from '../svg/ArrowUpRight'
 
 interface TransactionDialogProps {
   tx: CompletedTransfer
@@ -45,23 +44,6 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             <DialogDescription className="sr-only">
               Completed transfer status and details
             </DialogDescription>
-            {tx.explorerLink && (
-              <Tooltip showIcon={false} content="View on Block Explorer">
-                <a
-                  href={tx.explorerLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="View transaction on block explorer"
-                  className={cn(
-                    'absolute right-[20px] top-[15px] flex items-center justify-center rounded-lg border px-1 py-1 text-sm hover:text-turtle-level5',
-                    getBorder(tx.result),
-                    getTextColor(tx.result),
-                  )}
-                >
-                  <ArrowUpRight className="hover:text-turtle-level5" />
-                </a>
-              </Tooltip>
-            )}
             <div
               className={cn(
                 'm-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border px-2 py-1',
@@ -199,6 +181,18 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                       : undefined
                   }
                 />
+              )}
+              {tx.explorerLink && (
+                <a
+                  href={tx.explorerLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View your completed transaction on block explorer"
+                  className="!mt-4 mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 px-3 py-1.5 text-sm hover:text-turtle-level5"
+                >
+                  <p>View on Block Explorer</p>{' '}
+                  <ArrowUpRight className="hover:text-turtle-level5" />
+                </a>
               )}
             </div>
           </div>
