@@ -151,9 +151,6 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             dismissible: true,
           })
         }
-      } else {
-        // ongoing transfer not found. This means it is more than 2 weeks old.
-        // TODO: handle this case
       }
     })
   }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateUniqueId])
