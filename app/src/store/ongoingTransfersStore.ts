@@ -43,6 +43,9 @@ const storage: PersistStorage<StoredTransfer[]> = {
   },
 }
 
+// Current version of the store schema
+const currentVersion = 1
+
 export const useOngoingTransfersStore = create<State>()(
   persist(
     set => ({
@@ -108,6 +111,23 @@ export const useOngoingTransfersStore = create<State>()(
     {
       name: 'turtle-ongoing-transactions',
       storage,
+      version: currentVersion,
+      migrate: (persistedState, version) => {
+        // If the stored version is current, return the state as is
+        if (version === currentVersion) return persistedState as StoredTransfer[]
+
+        // Handle migrations for different versions
+        if (version === 0) {
+          // Transform the data structure as needed for version 1
+          return (persistedState as StoredTransfer[]).map(transfer => ({
+            ...transfer,
+            // TODO: Transform the data structure as needed for version 1
+          }))
+        }
+
+        // If we don't know how to migrate, return an empty array
+        return []
+      },
     },
   ),
 )
