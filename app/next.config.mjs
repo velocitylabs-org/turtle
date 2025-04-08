@@ -32,14 +32,11 @@ const nextConfig = {
   },
 }
 
-/*
- * - Sentry is enabled only in production builds to ensure error tracking in the live environment.
- * - The Sentry SDK does not fully support Turbopack. In local development, running with the `--turbo` flag (e.g., using `next dev --turbo`)
- *   leads to incomplete server-side instrumentation and prevents the SDK from loading in the browser.
- * - Therefore, to avoid these issues during development, Sentry initialization is skipped when running locally with Turbopack.
- * - In production, builds should be done without the `--turbo` flag, so that Sentry functions correctly.
- * - For more details, see: https://github.com/getsentry/sentry-javascript/issues/8105
- */
+// Sentry is enabled only in production builds to ensure error tracking in the live environment.
+// The Sentry SDK does not fully support Turbopack. In local development, running with the `--turbo` flag (e.g., using `next dev --turbo`)
+// Therefore, to avoid these issues during development, Sentry initialization is skipped when running locally.
+// In production, builds should be done without the `--turbo` flag, so that Sentry functions correctly.
+// For more details, see: https://github.com/getsentry/sentry-javascript/issues/8105
 export default isProduction
   ? withSentryConfig(
       nextConfig,
