@@ -13,4 +13,6 @@ export const dazzed = localFont({
   ],
   variable: '--font-dazzed',
   display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'sans-serif'],
 })
