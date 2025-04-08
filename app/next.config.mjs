@@ -3,14 +3,6 @@ import { withSentryConfig } from '@sentry/nextjs'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const nextConfig = {
-  compress: true,
-  compiler: {
-    removeConsole: isProduction
-      ? {
-          exclude: ['error', 'warn'],
-        }
-      : false,
-  },
   async headers() {
     return [
       {
