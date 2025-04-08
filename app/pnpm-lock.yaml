@@ -64,10 +64,10 @@ importers:
         specifier: ^1.1.0
         version: 1.1.2(@types/react@19.0.10)(react@19.0.0)
       '@reown/appkit':
-        specifier: ^1.6.1
+        specifier: ^1.6.9
         version: 1.6.9(@types/react@19.0.10)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@reown/appkit-adapter-wagmi':
-        specifier: ^1.6.1
+        specifier: ^1.6.9
         version: 1.6.9(@types/react@19.0.10)(@wagmi/core@2.16.5(@tanstack/query-core@5.67.2)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.2)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.2)(utf-8-validate@5.0.10)(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.14.12(@tanstack/query-core@5.67.2)(@tanstack/react-query@5.67.2(react@19.0.0))(@types/react@19.0.10)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.2)(utf-8-validate@5.0.10)(viem@2.23.9(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8))(zod@3.23.8)
       '@sentry/nextjs':
         specifier: ^8.35.0
@@ -9068,8 +9068,8 @@ packages:
       typescript:
         optional: true
 
-  viem@2.26.0:
-    resolution: {integrity: sha512-Osht20EySRAcfMhCGAJaWuaREXM7y9vDloLvUTXuAfFq7JNGM5+o1wsE4LXw1KpRBrBliIAJjM+c2wMtMEvlCQ==}
+  viem@2.24.1:
+    resolution: {integrity: sha512-xptFlc081SIPz+ZNDeb0XS/Nn5PU28onq+im+UxEAPCXTIuL1kfw1GTnV8NhbUNoEONnrwcZNqoI0AT0ADF5XQ==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
@@ -11998,7 +11998,7 @@ snapshots:
       '@paraspell/pallets': 8.9.6
       '@paraspell/sdk-common': 8.9.6
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      viem: 2.26.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8)
+      viem: 2.24.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -12011,7 +12011,7 @@ snapshots:
       '@paraspell/sdk-core': 8.9.6(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8)
       ethers: 6.13.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       polkadot-api: 1.9.5(bufferutil@4.0.9)(jiti@1.21.7)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.7.0)
-      viem: 2.26.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8)
+      viem: 2.24.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -21790,7 +21790,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  viem@2.26.0(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8):
+  viem@2.24.1(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.23.8):
     dependencies:
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
