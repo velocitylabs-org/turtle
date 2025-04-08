@@ -111,9 +111,6 @@ importers:
       framer-motion:
         specifier: ^11.11.9
         version: 11.18.2(@emotion/is-prop-valid@1.2.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      import-in-the-middle:
-        specifier: ^1.13.1
-        version: 1.13.1
       lucide-react:
         specifier: ^0.446.0
         version: 0.446.0(react@19.0.0)
@@ -132,9 +129,6 @@ importers:
       react-hook-form:
         specifier: 7.53.0
         version: 7.53.0(react@19.0.0)
-      require-in-the-middle:
-        specifier: ^7.5.2
-        version: 7.5.2
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
@@ -20666,7 +20660,7 @@ snapshots:
     dependencies:
       debug: 4.4.0(supports-color@8.1.1)
       module-details-from-path: 1.0.3
-      resolve: 1.22.10
+      resolve: 1.22.8
     transitivePeerDependencies:
       - supports-color
 
