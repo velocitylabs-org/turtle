@@ -11,7 +11,9 @@ import { ReactNode, Suspense, lazy } from 'react'
 
 // Lazy load non-critical components
 const NotificationSystem = lazy(() => import('@/components/NotificationSystem'))
-const VercelAnalytics = lazy(() => import('@vercel/analytics/react').then(mod => ({ default: mod.Analytics })))
+const VercelAnalytics = lazy(() =>
+  import('@vercel/analytics/react').then(mod => ({ default: mod.Analytics })),
+)
 
 export const metadata: Metadata = {
   metadataBase: new URL(TURTLE_CONFIG.url!),
