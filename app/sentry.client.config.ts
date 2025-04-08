@@ -2,10 +2,16 @@
 // The config you add here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from '@sentry/nextjs'
+import {
+  init,
+  browserProfilingIntegration,
+  replayIntegration,
+  feedbackIntegration,
+} from '@sentry/nextjs'
 
-Sentry.init({
+init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  enabled: process.env.NODE_ENV === 'production',
 
   // The percentage of transactions that get sent, defined between 0 and 1.
   // For example, to send 20% of transactions, set tracesSampleRate to 0.2
@@ -29,15 +35,15 @@ Sentry.init({
 
   integrations: [
     // Add browser profiling integration to the list of integrations
-    Sentry.browserProfilingIntegration(),
+    browserProfilingIntegration(),
 
-    Sentry.replayIntegration({
+    replayIntegration({
       maskAllText: false,
       blockAllMedia: false,
       maskAllInputs: false,
     }),
 
-    Sentry.feedbackIntegration({
+    feedbackIntegration({
       colorScheme: 'light',
     }),
   ],
