@@ -10,6 +10,37 @@ import useOngoingTransfers from './useOngoingTransfers'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { TransferStatus } from '@snowbridge/api/dist/history_v2'
 
+type ResultNotification = {
+  message: string
+  severity: NotificationSeverity
+  shouldCaptureException: boolean
+}
+
+const getNotification = (status: TxStatus): ResultNotification | undefined => {
+  switch (status) {
+    case TxStatus.Undefined: {
+      return {
+        message: 'Something went wrong',
+        severity: NotificationSeverity.Warning,
+        shouldCaptureException: true,
+      }
+    }
+    case TxStatus.Failed: {
+      return {
+        message: 'Transfer failed!',
+        severity: NotificationSeverity.Error,
+        shouldCaptureException: true,
+      }
+    }
+    default:
+      return {
+        message: 'Transfer completed!',
+        severity: NotificationSeverity.Success,
+        shouldCaptureException: false,
+      }
+  }
+}
+
 const retryStatusVerification = async (transfer: StoredTransfer): Promise<TxStatus> => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
 
@@ -68,19 +99,22 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
             ...(explorerLink && { explorerLink }),
           } satisfies CompletedTransfer)
 
-          if (retriedStatus === TxStatus.Undefined) {
+          const notificationPayload = getNotification(retriedStatus)
+          if (notificationPayload) {
+            const { message, severity, shouldCaptureException } = notificationPayload
+
             addNotification({
-              message: 'Transfer tracking failed',
-              severity: NotificationSeverity.Warning,
+              message: message,
+              severity: severity,
               dismissible: true,
             })
-            captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
-          } else {
-            addNotification({
-              message: 'Transfer completed',
-              severity: NotificationSeverity.Success,
-              dismissible: true,
-            })
+
+            shouldCaptureException &&
+              captureException(new Error(message), {
+                level: 'warning',
+                tags: { hook: 'useOngoingTransfersCleaner' },
+                extra: { transfer: ongoing },
+              })
           }
         }
       }
