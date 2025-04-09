@@ -169,7 +169,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
               />
               {transfer.bridgingFee && (
                 <SummaryRow
-                  label="Bridging fee"
+                  label="Bridge fee"
                   amount={formatAmount(
                     toHuman(transfer.bridgingFee.amount, transfer.bridgingFee.token),
                     'Long',
