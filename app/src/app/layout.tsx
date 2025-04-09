@@ -1,15 +1,15 @@
-import HeroProvider from '@/components/HeroProvider'
-import Navbar from '@/components/NavBar'
-import NotificationSystem from '@/components/NotificationSystem'
-import { dazzed } from '@/components/fonts/fonts'
-import ContextProvider from '@/context'
-import { TURTLE_CONFIG } from '@/utils/turle.config'
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
-import { twMerge } from 'tailwind-merge'
-import './globals.css'
 import { ReactNode } from 'react'
+import { twMerge } from 'tailwind-merge'
+import { dazzed } from '@/components/fonts/fonts'
+import HeroProvider from '@/components/HeroProvider'
+import Navbar from '@/components/NavBar'
+import NotificationSystem from '@/components/NotificationSystem'
+import ContextProvider from '@/context'
+import { TURTLE_CONFIG } from '@/utils/turle.config'
+import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL(TURTLE_CONFIG.url!),

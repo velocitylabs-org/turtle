@@ -1,9 +1,9 @@
+import { TMultiLocation } from '@paraspell/sdk'
 import { z } from 'zod'
 
 import { Chain } from '@/models/chain'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
-import { TMultiLocation } from '@paraspell/sdk'
 
 const originSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('Ethereum'), bridge: z.enum(['Snowbridge']) }),

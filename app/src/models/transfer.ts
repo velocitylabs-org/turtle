@@ -1,10 +1,10 @@
-import { Direction } from '@/services/transfer'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
+import { Direction } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 
 import { Chain } from './chain'
-import { FromParachainTrackingResult } from './subscan'
 import { FromEthTrackingResult, FromAhToEthTrackingResult } from './snowbridge'
+import { FromParachainTrackingResult } from './subscan'
 import { Token } from './token'
 
 export interface RawTransfer {

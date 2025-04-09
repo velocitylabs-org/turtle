@@ -1,7 +1,7 @@
+import { Dispatch, SetStateAction } from 'react'
+import { TabOptions } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import Button from './Button'
-import { TabOptions } from '@/models/transfer'
-import { Dispatch, SetStateAction } from 'react'
 
 interface TabNavigationProps {
   selectedTab: TabOptions

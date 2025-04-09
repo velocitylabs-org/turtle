@@ -1,12 +1,12 @@
 'use client'
+import { motion } from 'framer-motion'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { WalletType } from '@/models/chain'
 import { cn } from '@/utils/cn'
-import { motion } from 'framer-motion'
+import { colors } from '../../tailwind.config'
 import Button from './Button'
 import Cross from './svg/Cross'
-import { colors } from '../../tailwind.config'
 
 interface WalletButtonProps {
   /** The wallet type of the chain. */

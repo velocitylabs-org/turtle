@@ -1,11 +1,10 @@
-import { environment } from '@snowbridge/api'
-import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
-import { trackXcm } from './subscan'
-import { FromParachainTrackingResult } from '@/models/subscan'
+import { environment, historyV2 as history } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { historyV2 as history } from '@snowbridge/api'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
+import { FromParachainTrackingResult } from '@/models/subscan'
+import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
+import { trackXcm } from './subscan'
 
 export const trackTransfers = async (
   env: environment.SnowbridgeEnvironment,

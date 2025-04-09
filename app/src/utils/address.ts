@@ -1,12 +1,12 @@
-import { Sender } from '@/hooks/useTransfer'
-import { WalletInfo } from '@/hooks/useWallet'
-import { AddressType } from '@/models/chain'
-import { ManualRecipient } from '@/models/select'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
 import { JsonRpcSigner } from 'ethers'
 import { isAddress } from 'viem/utils'
+import { Sender } from '@/hooks/useTransfer'
+import { WalletInfo } from '@/hooks/useWallet'
+import { AddressType } from '@/models/chain'
+import { ManualRecipient } from '@/models/select'
 
 /**
  * Truncate a blockchain address by showing the beginning and end parts.

@@ -1,13 +1,13 @@
 'use client'
-import { useState } from 'react'
 import dynamic from 'next/dynamic'
+import { useState } from 'react'
 import TabNavigation from '@/components/TabNavigation'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { TabOptions } from '@/models/transfer'
-import OngoingTransfers from './OngoingTransfers'
-import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
 import { cn } from '@/utils/cn'
+import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
+import OngoingTransfers from './OngoingTransfers'
 
 const TransferHistory = dynamic(() => import('@/components/completed/TransactionHistory'), {
   loading: () => <TransactionLoaderSkeleton />,

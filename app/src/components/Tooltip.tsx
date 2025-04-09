@@ -1,9 +1,9 @@
 'use client'
-import TooltipIcon from '@/../public/tooltip-icon.svg'
-import { cn } from '@/utils/cn'
 import { Tooltip as NextTooltip } from '@heroui/react'
 import Image from 'next/image'
 import React from 'react'
+import TooltipIcon from '@/../public/tooltip-icon.svg'
+import { cn } from '@/utils/cn'
 
 export interface TooltipProps {
   content: React.ReactNode

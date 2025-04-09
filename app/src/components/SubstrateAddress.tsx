@@ -1,6 +1,6 @@
-import { truncateAddress } from '@/utils/address'
 import Identicon from '@polkadot/react-identicon'
 import { MouseEvent } from 'react'
+import { truncateAddress } from '@/utils/address'
 
 interface SubstrateAddressProps {
   /** The Address to display. */

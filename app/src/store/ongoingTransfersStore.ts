@@ -1,7 +1,7 @@
-import { StoredTransfer } from '@/models/transfer'
 import { parse, stringify } from 'flatted'
 import { create } from 'zustand'
 import { persist, PersistStorage, StorageValue } from 'zustand/middleware'
+import { StoredTransfer } from '@/models/transfer'
 
 interface State {
   // State

@@ -1,7 +1,7 @@
-import { projectId } from '@/utils/env'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { AppKitNetwork, mainnet as ethereum, moonbeam } from '@reown/appkit/networks'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { cookieStorage, createStorage } from '@wagmi/core'
+import { projectId } from '@/utils/env'
 
 export const mainnet_networks = [ethereum, moonbeam] as [AppKitNetwork, ...AppKitNetwork[]]
 

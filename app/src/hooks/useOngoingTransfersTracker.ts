@@ -1,3 +1,5 @@
+import { TransferStatus } from '@snowbridge/api/dist/history'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
@@ -13,8 +15,6 @@ import {
   getTransferStatus,
   isCompletedTransfer,
 } from '@/utils/transferTracking'
-import { TransferStatus } from '@snowbridge/api/dist/history'
-import { useCallback, useEffect, useRef, useState } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'

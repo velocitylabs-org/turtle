@@ -1,7 +1,7 @@
-import useNotification from '@/hooks/useNotification'
-import { NotificationSeverity } from '@/models/notification'
 import { Copy, CopyCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import useNotification from '@/hooks/useNotification'
+import { NotificationSeverity } from '@/models/notification'
 
 interface CopyAddressProps {
   content: string
