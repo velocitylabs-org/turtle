@@ -1,8 +1,3 @@
-export const fetchCache = 'default-no-store' // Dont cache fetches unless asked.
-export const dynamic = 'force-dynamic' // Always run dynamically
-export const revalidate = 30 // Keep cache for 2 minutes
-export const maxDuration = 90 // Timout adter
-
 import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { getEnvironment } from '@/context/snowbridge'
@@ -11,6 +6,11 @@ import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfe
 import { Direction } from '@/services/transfer'
 import { Environment, environmentFromStr } from '@/store/environmentStore'
 import { getErrorMessage, trackTransfers } from '@/utils/transferTracking'
+
+export const fetchCache = 'default-no-store' // Dont cache fetches unless asked.
+export const dynamic = 'force-dynamic' // Always run dynamically
+export const revalidate = 30 // Keep cache for 2 minutes
+export const maxDuration = 90 // Timout adter
 
 const CACHE_REVALIDATE_IN_SECONDS = 30
 
