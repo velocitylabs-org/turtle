@@ -1,7 +1,7 @@
-import { Token } from '@/models/token'
-import { REGISTRY } from '@/registry/mainnet/mainnet'
 import { deepEqual, TMultiLocation } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
+import { Token } from '@/models/token'
+import { REGISTRY } from '@/registry/mainnet/mainnet'
 
 export function getCoingekoId(token: Token): string {
   return token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')

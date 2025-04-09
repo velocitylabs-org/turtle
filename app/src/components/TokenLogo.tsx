@@ -1,10 +1,10 @@
 'use client'
+import React from 'react'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import React from 'react'
-import Tooltip from './Tooltip'
 import { cn } from '@/utils/cn'
 import Icon from './Icon'
+import Tooltip from './Tooltip'
 
 interface TokenLogoProps {
   token: Token

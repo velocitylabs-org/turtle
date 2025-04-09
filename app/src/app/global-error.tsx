@@ -1,7 +1,7 @@
 'use client'
 import { captureException } from '@sentry/nextjs'
-import { useEffect } from 'react'
 import Image from 'next/image'
+import { useEffect } from 'react'
 import Navbar from '@/components/NavBar'
 
 const imageStyles = { objectFit: 'cover' as const }

@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
+import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import useNotification from '@/hooks/useNotification'
+import useOngoingTransfers from '@/hooks/useOngoingTransfers'
+import { StoredTransfer } from '@/models/transfer'
 import {
   getOcelloidsAgentApi,
   getSubscribableTransfers,
   xcmOcceloidsSubscribe,
 } from '@/utils/ocelloids'
-import { StoredTransfer } from '@/models/transfer'
-import useOngoingTransfers from '@/hooks/useOngoingTransfers'
-import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import useNotification from '@/hooks/useNotification'
 
 const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
   const { remove, updateStatus } = useOngoingTransfers()

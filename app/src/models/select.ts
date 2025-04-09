@@ -1,5 +1,5 @@
-import { Token } from '@/models/token'
 import { ReactNode } from 'react'
+import { Token } from '@/models/token'
 
 export interface SelectProps<T> {
   value: T | null

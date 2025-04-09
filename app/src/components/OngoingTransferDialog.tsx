@@ -1,16 +1,18 @@
+import { useCallback } from 'react'
+import Tooltip from '@/components/Tooltip'
 import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import Account from './Account'
+import { SummaryRow } from './completed/TransactionDialog'
 import Icon from './Icon'
 import OngoingTransfer from './OngoingTransfer'
 import ArrowRight from './svg/ArrowRight'
 import ArrowUpRight from './svg/ArrowUpRight'
 import TokenLogo from './TokenLogo'
 import TransferEstimate from './TransferEstimate'
-import { SummaryRow } from './completed/TransactionDialog'
 import {
   Dialog,
   DialogContent,
@@ -19,8 +21,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog'
-import Tooltip from '@/components/Tooltip'
-import { useCallback } from 'react'
 
 interface OngoingTransferDialogProps {
   transfer: StoredTransfer

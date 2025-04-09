@@ -1,7 +1,13 @@
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
+import { formatHours } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
-import TransactionCard, { getStatusIcon } from './TransactionCard'
+import { colors } from '../../../tailwind.config'
+import Account from '../Account'
+import Icon from '../Icon'
+import ArrowRight from '../svg/ArrowRight'
+import ArrowUpRight from '../svg/ArrowUpRight'
+import TokenLogo from '../TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -10,13 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import Account from '../Account'
-import ArrowRight from '../svg/ArrowRight'
-import { colors } from '../../../tailwind.config'
-import Icon from '../Icon'
-import TokenLogo from '../TokenLogo'
-import { formatHours } from '@/utils/datetime'
-import ArrowUpRight from '../svg/ArrowUpRight'
+import TransactionCard, { getStatusIcon } from './TransactionCard'
 
 interface TransactionDialogProps {
   tx: CompletedTransfer

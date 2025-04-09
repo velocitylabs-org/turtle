@@ -1,13 +1,13 @@
 'use client'
+import { Dispatch, SetStateAction } from 'react'
+import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
+import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 import { TabOptions } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { colors } from '../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
 import ArrowRight from './svg/ArrowRight'
-import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
-import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
-import { Dispatch, SetStateAction } from 'react'
 
 interface OngoingTransfersProps {
   selectedTab: TabOptions

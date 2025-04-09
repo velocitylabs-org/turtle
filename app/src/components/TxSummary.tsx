@@ -1,17 +1,16 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { TokenAmount } from '@/models/select'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { cn } from '@/utils/cn'
-import { formatAmount, toAmountInfo } from '@/utils/transfer'
-import { AnimatePresence, motion } from 'framer-motion'
+import { formatAmount, toAmountInfo , toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import ExclamationMark from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
-import { toHuman } from '@/utils/transfer'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount

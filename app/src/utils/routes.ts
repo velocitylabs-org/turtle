@@ -1,7 +1,7 @@
-import { REGISTRY, Route } from '@/registry'
 import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
+import { REGISTRY, Route } from '@/registry'
 import { Environment } from '@/store/environmentStore'
 
 /** Filters all chains by available routes. */

@@ -1,4 +1,9 @@
 'use client'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { switchChain } from '@wagmi/core'
+import { useCallback, useEffect, useState } from 'react'
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { mainnet } from 'viem/chains'
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
@@ -11,13 +16,7 @@ import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
-import { safeConvertAmount } from '@/utils/transfer'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { switchChain } from '@wagmi/core'
-import { useCallback, useEffect, useState } from 'react'
-import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
-import { mainnet } from 'viem/chains'
-import { formatAmount } from '../utils/transfer'
+import { safeConvertAmount, formatAmount } from '@/utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
 
@@ -111,15 +110,7 @@ const useTransferForm = () => {
       isRouteAllowed(environment, sourceChain, destinationChain) &&
       isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
     )
-  }, [
-    environment,
-    destinationChain,
-    sourceChain,
-    tokenAmount,
-    isValidating,
-    transferStatus,
-    tokenAmountError,
-  ])
+  }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {

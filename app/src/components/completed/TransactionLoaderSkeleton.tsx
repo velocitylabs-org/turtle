@@ -1,6 +1,6 @@
+import { colors } from '../../../tailwind.config'
 import ArrowRight from '../svg/ArrowRight'
 import { Skeleton } from '../ui/skeleton'
-import { colors } from '../../../tailwind.config'
 
 function SkeletonAddresses() {
   return (

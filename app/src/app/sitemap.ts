@@ -1,5 +1,5 @@
-import { TURTLE_CONFIG } from '@/utils/turle.config'
 import type { MetadataRoute } from 'next'
+import { TURTLE_CONFIG } from '@/utils/turle.config'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const defaultSite: MetadataRoute.Sitemap = [
