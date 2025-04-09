@@ -1,19 +1,15 @@
 import HeroProvider from '@/components/HeroProvider'
 import Navbar from '@/components/NavBar'
+import NotificationSystem from '@/components/NotificationSystem'
 import { dazzed } from '@/components/fonts/fonts'
 import ContextProvider from '@/context'
 import { TURTLE_CONFIG } from '@/utils/turle.config'
+import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { twMerge } from 'tailwind-merge'
 import './globals.css'
-import { ReactNode, Suspense, lazy } from 'react'
-
-// Lazy load non-critical components
-const NotificationSystem = lazy(() => import('@/components/NotificationSystem'))
-const VercelAnalytics = lazy(() =>
-  import('@vercel/analytics/react').then(mod => ({ default: mod.Analytics })),
-)
+import { ReactNode } from 'react'
 
 export const metadata: Metadata = {
   metadataBase: new URL(TURTLE_CONFIG.url!),
@@ -36,15 +32,11 @@ export default async function RootLayout({
     <html lang="en" className="h-full">
       <body className={twMerge(dazzed.variable, 'min-h-full bg-turtle-tertiary font-dazzed')}>
         <Navbar />
-        <Suspense>
-          <NotificationSystem />
-        </Suspense>
+        <NotificationSystem />
         <ContextProvider cookies={cookies}>
           <HeroProvider>{children}</HeroProvider>
         </ContextProvider>
-        <Suspense>
-          <VercelAnalytics />
-        </Suspense>
+        <Analytics />
       </body>
     </html>
   )
