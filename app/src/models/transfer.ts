@@ -113,6 +113,27 @@ export type CompletedTransfer = {
   explorerLink?: string
   errors?: string[]
 }
+
+/** Version 0 of a completed transfer. It was used before introducing swaps. */
+export type CompletedTransferV0 = {
+  id: string
+  result: TransferResult
+  token: Token
+  tokenUSDValue?: number
+  sourceChain: Chain
+  destChain: Chain
+  amount: string
+  fees: AmountInfo
+  bridgingFee: AmountInfo | null
+  minTokenRecieved?: string
+  minTokenRecievedValue?: number
+  sender: string
+  recipient: string
+  date: Date
+  explorerLink?: string
+  errors?: string[]
+}
+
 export type TransfersByDate = Record<string, CompletedTransfer[]>
 
 export interface AmountInfo {

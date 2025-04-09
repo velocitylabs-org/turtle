@@ -1,4 +1,4 @@
-import { AmountInfo, CompletedTransfer } from '@/models/transfer'
+import { AmountInfo, CompletedTransfer, CompletedTransferV0 } from '@/models/transfer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
@@ -7,15 +7,12 @@ interface CompletedTxState {
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void
 }
 
-const serializeFeeAmount = (fees: AmountInfo): AmountInfo => {
-  return {
-    ...fees,
-    amount: fees.amount.toString(),
-  }
-}
+const serializeFeeAmount = (fees: AmountInfo): AmountInfo => ({
+  ...fees,
+  amount: fees.amount.toString(),
+})
 
-// Current version of the store schema
-const currentVersion = 1
+const currentStoreVersion = 1
 
 export const useCompletedTransfersStore = create<CompletedTxState>()(
   persist(
@@ -52,25 +49,38 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
       name: 'turtle-completed-transactions',
       storage: createJSONStorage(() => localStorage),
       partialize: state => ({ completedTransfers: state.completedTransfers }),
-      version: currentVersion,
+      version: currentStoreVersion,
       migrate: (persistedState, version) => {
-        // If the stored version is current, return the state as is
-        if (version === currentVersion) return persistedState as any
+        if (version === currentStoreVersion) return persistedState
 
-        // Handle migrations for different versions
-        // For example, if we're upgrading from version 0 to 1:
         if (version === 0) {
-          // Transform the data structure as needed for version 1
-          return {
-            completedTransfers:
-              (persistedState as any).completedTransfers?.map((transfer: CompletedTransfer) => ({
-                ...transfer,
-                // Add new fields or transform existing ones
-              })) || [],
-          }
+          const oldTransfers = persistedState as { completedTransfers: CompletedTransferV0[] }
+
+          const migratedTransfers = oldTransfers.completedTransfers.map(transfer => ({
+            id: transfer.id,
+            result: transfer.result,
+            sourceChain: transfer.sourceChain,
+            destChain: transfer.destChain,
+            sender: transfer.sender,
+            recipient: transfer.recipient,
+            date: transfer.date,
+            fees: transfer.fees,
+            bridgingFee: transfer.bridgingFee,
+            minTokenRecieved: transfer.minTokenRecieved,
+            minTokenRecievedValue: transfer.minTokenRecievedValue,
+            explorerLink: transfer.explorerLink,
+            errors: transfer.errors,
+
+            // V0 Migrations
+            sourceToken: transfer.token,
+            sourceTokenUSDValue: transfer.tokenUSDValue,
+            sourceAmount: transfer.amount,
+          }))
+
+          return { completedTransfers: migratedTransfers }
         }
 
-        // If we don't know how to migrate, return an empty state
+        console.warn(`Unknown completed transfers version ${version}, resetting to initial state`)
         return { completedTransfers: [] }
       },
     },

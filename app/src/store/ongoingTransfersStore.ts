@@ -2,8 +2,7 @@ import { AmountInfo, StoredTransfer, StoredTransferV0 } from '@/models/transfer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-// Current version of the store schema
-const currentVersion = 1
+const currentStoreVersion = 1
 
 interface State {
   // State
@@ -94,9 +93,9 @@ export const useOngoingTransfersStore = create<State>()(
     {
       name: 'turtle-ongoing-transactions',
       storage: createJSONStorage(() => localStorage),
-      version: currentVersion,
+      version: currentStoreVersion,
       migrate: (persistedState, version) => {
-        if (version === currentVersion) return persistedState
+        if (version === currentStoreVersion) return persistedState
 
         if (version === 0) {
           const oldTransfers = persistedState as { transfers: StoredTransferV0[] }
