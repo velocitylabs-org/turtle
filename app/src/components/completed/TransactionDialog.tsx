@@ -169,7 +169,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
               />
               {tx.bridgingFee && (
                 <SummaryRow
-                  label="Bridging fee"
+                  label="Bridge fee"
                   amount={formatAmount(
                     toHuman(tx.bridgingFee.amount, tx.bridgingFee.token),
                     'Long',
