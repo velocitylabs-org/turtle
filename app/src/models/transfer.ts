@@ -47,15 +47,11 @@ export interface StoredTransfer extends RawTransfer {
 
 /** Version 0 of a stored transfer. It was used before introducing swaps. */
 export interface StoredTransferV0 extends RawTransferV0 {
-  // Params
   tokenUSDValue?: number
   amount: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
-  // Contextual
   environment: Environment // to access context
-  // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
-  // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
   // A subscan unique Id shared accross chains to track ongoing transfers
   uniqueTrackingId?: string

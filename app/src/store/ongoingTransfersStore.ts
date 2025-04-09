@@ -1,8 +1,9 @@
-import { StoredTransfer } from '@/models/transfer'
-import { parse, stringify } from 'flatted'
+import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { create } from 'zustand'
-import { persist, PersistStorage, StorageValue } from 'zustand/middleware'
+import { persist, PersistStorage } from 'zustand/middleware'
 
+// Current version of the store schema
+const currentVersion = 1
 interface State {
   // State
   transfers: StoredTransfer[]
@@ -14,37 +15,25 @@ interface State {
   remove: (id: string) => void
 }
 
-// Serialization - Stringify function for BigInt
-function stringifyWithBigInt(value: StorageValue<StoredTransfer[]>) {
-  return stringify(value, (_key, val) => (typeof val === 'bigint' ? `${val}n` : val))
-}
-
-// Serialization - Parse function for BigInt
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function parseWithBigInt(value: any) {
-  return parse(value, (_key, val) => {
-    if (typeof val === 'string' && /^\d+n$/.test(val)) {
-      return BigInt(val.slice(0, -1))
-    }
-    return val
-  })
-}
-
 const storage: PersistStorage<StoredTransfer[]> = {
   getItem: name => {
     const storedValue = localStorage.getItem(name)
-    return storedValue ? parseWithBigInt(storedValue) : null
+    return storedValue ? JSON.parse(storedValue) : null
   },
   setItem: (name, value) => {
-    localStorage.setItem(name, stringifyWithBigInt(value))
+    localStorage.setItem(name, JSON.stringify(value))
   },
   removeItem: name => {
     localStorage.removeItem(name)
   },
 }
 
-// Current version of the store schema
-const currentVersion = 1
+const serializeFeeAmount = (fees: AmountInfo): AmountInfo => {
+  return {
+    ...fees,
+    amount: fees.amount.toString(),
+  }
+}
 
 export const useOngoingTransfersStore = create<State>()(
   persist(
@@ -55,20 +44,30 @@ export const useOngoingTransfersStore = create<State>()(
       // Actions
       addOrUpdate: newOngoingTransfer => {
         if (!newOngoingTransfer) return
-        console.log('Adding or updating transfer', newOngoingTransfer)
+
+        const persistableTransfer = {
+          ...newOngoingTransfer,
+          fees: serializeFeeAmount(newOngoingTransfer.fees),
+          ...(newOngoingTransfer.bridgingFee && {
+            bridgingFee: serializeFeeAmount(newOngoingTransfer.bridgingFee),
+          }),
+          swapInformation: undefined, // set to undefined for now to avoid circular references. It's not used at the moment for 1 click swaps.
+        }
+
+        console.log('Adding or updating transfer', persistableTransfer)
         set(state => {
           // Update it if it's already present
-          if (state.transfers.some(transfer => transfer.id === newOngoingTransfer.id)) {
+          if (state.transfers.some(transfer => transfer.id === persistableTransfer.id)) {
             return {
               transfers: state.transfers.map(tx =>
-                tx.id === newOngoingTransfer.id ? newOngoingTransfer : tx,
+                tx.id === persistableTransfer.id ? persistableTransfer : tx,
               ),
             }
           }
 
           // Add it
           return {
-            transfers: [...state.transfers, newOngoingTransfer],
+            transfers: [...state.transfers, persistableTransfer],
           }
         })
       },
@@ -112,22 +111,43 @@ export const useOngoingTransfersStore = create<State>()(
       name: 'turtle-ongoing-transactions',
       storage,
       version: currentVersion,
-      migrate: (persistedState, version) => {
+      /* migrate: (persistedState, version) => {
         // If the stored version is current, return the state as is
-        if (version === currentVersion) return persistedState as StoredTransfer[]
+        if (version === currentVersion) return persistedState
 
         // Handle migrations for different versions
         if (version === 0) {
-          // Transform the data structure as needed for version 1
-          return (persistedState as StoredTransfer[]).map(transfer => ({
-            ...transfer,
-            // TODO: Transform the data structure as needed for version 1
-          }))
+          const oldTransfers = persistedState as StoredTransferV0[]
+          // Transform StoredTransferV0 to StoredTransfer
+          const migratedTransfers = oldTransfers.map(oldTransfer => ({
+            id: oldTransfer.id,
+            sourceChain: oldTransfer.sourceChain,
+            destChain: oldTransfer.destChain,
+            sender: oldTransfer.sender,
+            recipient: oldTransfer.recipient,
+            sourceToken: oldTransfer.token,
+            date: oldTransfer.date,
+            crossChainMessageHash: oldTransfer.crossChainMessageHash,
+            parachainMessageId: oldTransfer.parachainMessageId,
+            sourceChainExtrinsicIndex: oldTransfer.sourceChainExtrinsicIndex,
+            sourceTokenUSDValue: oldTransfer.tokenUSDValue,
+            sourceAmount: oldTransfer.amount,
+            destinationAmount: undefined,
+            fees: oldTransfer.fees,
+            bridgingFee: oldTransfer.bridgingFee,
+            environment: oldTransfer.environment,
+            sendResult: oldTransfer.sendResult,
+            uniqueTrackingId: oldTransfer.uniqueTrackingId,
+            status: oldTransfer.status,
+            finalizedAt: oldTransfer.finalizedAt,
+          })) as StoredTransfer[]
+
+          return { transfers: migratedTransfers }
         }
 
         // If we don't know how to migrate, return an empty array
-        return []
-      },
+        return { transfers: [] }
+      }, */
     },
   ),
 )
