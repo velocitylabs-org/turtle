@@ -91,7 +91,7 @@ export default function TxSummary({
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="pt-[3px] text-sm font-bold">
-                    {bridgingFees ? 'Destination Chain Fee' : 'Fee'}{' '}
+                    {bridgingFees ? 'Execution Fee' : 'Fee'}{' '}
                   </div>
                   {!canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">

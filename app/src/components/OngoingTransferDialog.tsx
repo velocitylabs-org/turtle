@@ -156,9 +156,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
             {/* Fees */}
             {/* Execution fee */}
             <div className="flex items-start justify-between space-x-4">
-              <div className="font-bold">
-                {transfer.bridgingFee ? 'Destination Chain Fee' : 'Fee'}
-              </div>
+              <div className="font-bold">{transfer.bridgingFee ? 'Execution Fee' : 'Fee'}</div>
               <div className="items-right flex flex-col space-x-1 text-right">
                 <div className="text-lg">
                   {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Long')}{' '}
