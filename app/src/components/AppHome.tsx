@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn'
 
 const TransferHistory = dynamic(() => import('@/components/completed/TransactionHistory'), {
   loading: () => <TransactionLoaderSkeleton />,
+  ssr: false,
 })
 
 export default function AppHome() {
