@@ -2,15 +2,15 @@ import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
-import { colors } from '../../tailwind.config'
-import Account from './Account'
-import Icon from './Icon'
+import { colors } from '../../../tailwind.config'
+import Account from '../Account'
+import Icon from '../Icon'
 import OngoingTransfer from './OngoingTransfer'
-import ArrowRight from './svg/ArrowRight'
-import ArrowUpRight from './svg/ArrowUpRight'
-import TokenLogo from './TokenLogo'
-import TransferEstimate from './TransferEstimate'
-import { SummaryRow } from './completed/TransactionDialog'
+import ArrowRight from '../svg/ArrowRight'
+import ArrowUpRight from '../svg/ArrowUpRight'
+import TokenLogo from '../TokenLogo'
+import TransferEstimate from '../TransferEstimate'
+import { SummaryRow } from '../completed/TransactionDialog'
 import {
   Dialog,
   DialogContent,
@@ -18,8 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog'
-import Tooltip from '@/components/Tooltip'
+} from '../ui/dialog'
 import { useCallback } from 'react'
 
 interface OngoingTransferDialogProps {
@@ -55,19 +54,6 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
             <DialogDescription className="sr-only">
               Ongoing transfer status and details
             </DialogDescription>
-            {explorerLink && (
-              <Tooltip showIcon={false} content="View on Block Explorer">
-                <a
-                  href={explorerLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="View transaction on block explorer"
-                  className="absolute right-[20px] top-[15px] flex items-center justify-center rounded-lg border border-turtle-secondary-dark px-1 py-1 text-sm text-turtle-secondary-dark hover:text-turtle-level5"
-                >
-                  <ArrowUpRight className="hover:text-turtle-level5" />
-                </a>
-              </Tooltip>
-            )}
             <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border border-turtle-secondary-dark bg-turtle-secondary-light px-2 py-1 text-turtle-secondary-dark">
               <div className="turtle-success-dark flex items-center justify-center space-x-1">
                 <Icon
@@ -177,6 +163,18 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                   symbol={transfer.bridgingFee.token.symbol}
                   usdValue={formatAmount(transfer.bridgingFee.inDollars, 'Long')}
                 />
+              )}
+              {explorerLink && (
+                <a
+                  href={explorerLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View your completed transaction on block explorer"
+                  className="!mt-4 mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 px-3 py-1.5 text-sm hover:text-turtle-level5"
+                >
+                  <p>View on Block Explorer</p>{' '}
+                  <ArrowUpRight className="hover:text-turtle-level5" />
+                </a>
               )}
             </div>
           </div>
