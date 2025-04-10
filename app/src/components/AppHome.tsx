@@ -5,12 +5,13 @@ import TabNavigation from '@/components/TabNavigation'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { TabOptions } from '@/models/transfer'
-import OngoingTransfers from './OngoingTransfers'
+import OngoingTransfers from './ongoing/OngoingTransfers'
 import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
 import { cn } from '@/utils/cn'
 
 const TransferHistory = dynamic(() => import('@/components/completed/TransactionHistory'), {
   loading: () => <TransactionLoaderSkeleton />,
+  ssr: false,
 })
 
 export default function AppHome() {

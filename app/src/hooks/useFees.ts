@@ -13,7 +13,7 @@ import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { useCallback, useEffect, useState } from 'react'
-import { getBalance } from './useBalance'
+import useBalance from './useBalance'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
@@ -40,6 +40,18 @@ const useFees = (
     useSnowbridgeContext()
   const { addNotification } = useNotification()
   const env = useEnvironment()
+  const { balance: feeBalance } = useBalance({
+    env: env,
+    chain: sourceChain,
+    token: sourceChain ? getNativeToken(sourceChain) : undefined,
+    address: senderAddress,
+  })
+  const { balance: dotBalance } = useBalance({
+    env: env,
+    chain: sourceChain,
+    token: PolkadotTokens.DOT,
+    address: senderAddress,
+  })
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
@@ -55,7 +67,9 @@ const useFees = (
     const feeToken = getNativeToken(sourceChain)
 
     try {
+      // reset
       setBridgingFees(null)
+      setCanPayAdditionalFees(true)
 
       switch (sdk) {
         case 'ParaSpellApi': {
@@ -85,24 +99,27 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
+          // The bridging fee when sending to Ethereum is paid in DOT
           if (destinationChain.network === 'Ethereum') {
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
-            const bridgingFee = await getCachedBridgingFee()
+            const bridgeFee = await getCachedBridgingFee()
 
             setBridgingFees({
-              amount: bridgingFee,
+              amount: bridgeFee,
               token: bridgeFeeToken,
-              inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+              inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
-            if (senderAddress) {
-              const balance =
-                (await getBalance(sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
-              setCanPayAdditionalFees(bridgingFee < balance)
-            }
-          }
+            // if the bridging fee is the same as the execution fee, sum them both before checking the user can pay for it all.
+            const toPay =
+              fees?.token === bridgeFeeToken ? BigInt(fees.amount) + bridgeFee : bridgeFee
 
+            // if the dotBalance is not available, we act as if it's ok. This prevents a delay
+            // in the UI showing the error label for insufficient fee balance, which is particularly
+            // noticable when switching chains.
+            setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
+          }
           break
         }
 
@@ -148,6 +165,9 @@ const useFees = (
             case 'Ethereum': {
               setFees(fee.execution)
               setBridgingFees(fee.bridging)
+
+              const totalCost = BigInt(fee.execution?.amount ?? 0n) + BigInt(fee.bridging.amount)
+              setCanPayAdditionalFees(totalCost < BigInt(feeBalance?.value ?? 0n))
               break
             }
             case 'Polkadot': {
@@ -186,6 +206,8 @@ const useFees = (
     senderAddress,
     recipientAddress,
     amount,
+    dotBalance,
+    feeBalance,
   ])
 
   useEffect(() => {

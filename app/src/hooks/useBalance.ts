@@ -55,7 +55,8 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
               : (await fetchErc20Balance()).data
 
           if (fetchedBalance)
-            fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString() // override formatted value
+            // apply a 90% factor to safe-guard for fees and other unseen costs
+            fetchedBalance.formatted = (toHuman(fetchedBalance.value, token) * 0.9).toString() // override formatted value
           break
         }
 
