@@ -45,6 +45,35 @@ export interface StoredTransfer extends RawTransfer {
   }
 }
 
+/** Version 0 of a stored transfer. It was used before introducing swaps. */
+export interface StoredTransferV0 extends RawTransferV0 {
+  tokenUSDValue?: number
+  amount: string
+  fees: AmountInfo
+  bridgingFee: AmountInfo | null
+  environment: Environment // to access context
+  sendResult?: toEthereum.SendResult | toPolkadot.SendResult
+  // A subscan unique Id shared accross chains to track ongoing transfers
+  uniqueTrackingId?: string
+  status?: string
+  // WithinPolkadot transfer is considered as finalized
+  finalizedAt?: Date
+}
+
+export interface RawTransferV0 {
+  /** Substrate extrinsic hash or Ethereum transaction hash */
+  id: string
+  sourceChain: Chain
+  destChain: Chain
+  sender: string
+  recipient: string
+  token: Token
+  date: Date
+  crossChainMessageHash?: string
+  parachainMessageId?: string
+  sourceChainExtrinsicIndex?: string
+}
+
 export interface OngoingTransferWithDirection extends RawTransfer {
   direction: Direction
 }
@@ -84,6 +113,27 @@ export type CompletedTransfer = {
   explorerLink?: string
   errors?: string[]
 }
+
+/** Version 0 of a completed transfer. It was used before introducing swaps. */
+export type CompletedTransferV0 = {
+  id: string
+  result: TransferResult
+  token: Token
+  tokenUSDValue?: number
+  sourceChain: Chain
+  destChain: Chain
+  amount: string
+  fees: AmountInfo
+  bridgingFee: AmountInfo | null
+  minTokenRecieved?: string
+  minTokenRecievedValue?: number
+  sender: string
+  recipient: string
+  date: Date
+  explorerLink?: string
+  errors?: string[]
+}
+
 export type TransfersByDate = Record<string, CompletedTransfer[]>
 
 export interface AmountInfo {
