@@ -3,11 +3,11 @@ import { Direction } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
-import { colors } from '../../tailwind.config'
-import Account from './Account'
-import ArrowRight from './svg/ArrowRight'
-import LoadingIcon from './svg/LoadingIcon'
-import TransferEstimate from './TransferEstimate'
+import { colors } from '../../../tailwind.config'
+import Account from '../Account'
+import ArrowRight from '../svg/ArrowRight'
+import LoadingIcon from '../svg/LoadingIcon'
+import TransferEstimate from '../TransferEstimate'
 
 interface OngoingTransferProps {
   direction: Direction
