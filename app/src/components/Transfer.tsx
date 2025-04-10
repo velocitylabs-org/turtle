@@ -80,6 +80,8 @@ export default function Transfer() {
     loadingBalance,
     balanceData,
     fetchBalance,
+    insufficientWalletFunds,
+    setMaxLessFees,
   } = useTransferForm()
 
   const {
@@ -150,6 +152,7 @@ export default function Transfer() {
     !requiresErc20SpendApproval &&
     !loadingFees &&
     canPayFees &&
+    !insufficientWalletFunds &&
     (bridgingFee ? canPayAdditionalFees : true)
 
   const shouldDisableMaxButton =
@@ -384,6 +387,8 @@ export default function Transfer() {
           canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+          insufficientWalletFunds={insufficientWalletFunds}
+          setMaxLessFees={setMaxLessFees}
         />
       )}
 
