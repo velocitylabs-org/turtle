@@ -17,7 +17,7 @@ import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
-import { formatAmount } from '../utils/transfer'
+import { formatAmount } from '@/utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
 
