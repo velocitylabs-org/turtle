@@ -298,3 +298,18 @@ export const startedTooLongAgo = (
       : thresholdInHours.bridge * 60 * 60 * 1000
   return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
 }
+
+/**
+ * Checks if a transfer was a swap (has destination token and amount)
+ * @param transfer - The transfer to check
+ * @returns if the transfer was a swap
+ */
+export const isSwapTransfer = (
+  transfer: CompletedTransfer,
+): transfer is CompletedTransfer & {
+  destinationToken: Token
+  destinationAmount: string
+} => {
+  console.log('isSwapTransfer', transfer)
+  return !!transfer.destinationToken && !!transfer.destinationAmount
+}

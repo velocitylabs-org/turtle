@@ -26,10 +26,10 @@ import Credits from './Credits'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import AlertIcon from './svg/AlertIcon'
+import SwapFromToChains from './SwapFromToChains'
 import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
-import SwapFromToChains from './SwapFromToChains'
 
 const manualInputAnimationProps = {
   initial: { opacity: 0, height: 0 },
@@ -171,7 +171,8 @@ export default function Transfer() {
     !requiresErc20SpendApproval &&
     !loadingFees &&
     canPayFees &&
-    (bridgingFee ? canPayAdditionalFees : true)
+    (bridgingFee ? canPayAdditionalFees : true) &&
+    isLoadingOutputAmount
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
