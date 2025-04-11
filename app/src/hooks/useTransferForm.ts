@@ -275,38 +275,36 @@ const useTransferForm = () => {
     else setTokenAmountError('')
   }, [tokenAmount?.amount, balanceData, sourceWallet])
 
-  const insufficientWalletFunds = useMemo(() => {
+  const exceedsTransferableBalance = useMemo(() => {
     const hasFees = Boolean(fees?.token?.id && fees?.amount)
-    const hasTransfer = Boolean(tokenAmount?.token?.id && tokenAmount?.amount)
+    const hasTokenAmount = Boolean(tokenAmount?.token?.id && tokenAmount?.amount)
     const hasBalance = Boolean(balanceData?.formatted)
     const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
 
-    if (hasFees && hasTransfer && hasBalance) {
-      // Add non-null assertions since we've verified these values exist
-      const feesToken = fees!.token!.id
-      const feesAmountValue =
-        toHuman(fees!.amount, fees!.token) +
-        (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
-      const transferToken = tokenAmount!.token!.id
-      const transferAmountValue = tokenAmount!.amount!
-      const balanceAmountValue = Number(balanceData!.formatted)
-      const payingFeesSameToken = feesToken === transferToken
-      const insufficientFunds = transferAmountValue + feesAmountValue > balanceAmountValue
+    if (!hasFees || !hasTokenAmount || !hasBalance) return false
 
-      return payingFeesSameToken && insufficientFunds
-    }
+    // Add non-null assertions since we've verified these values exist
+    const feesToken = fees!.token!.id
+    const feesAmount =
+      toHuman(fees!.amount, fees!.token) +
+      (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
+    const transferToken = tokenAmount!.token!.id
+    const transferAmount = tokenAmount!.amount!
+    const balanceAmount = Number(balanceData!.formatted)
+    const payingFeesSameToken = feesToken === transferToken
+    const insufficientFunds = transferAmount + feesAmount > balanceAmount
 
-    return false
+    return payingFeesSameToken && insufficientFunds
   }, [fees, bridgingFee, balanceData, tokenAmount])
 
-  const setMaxLessFees = useCallback(() => {
-    if (insufficientWalletFunds && tokenAmount?.token) {
+  const setTransferableBalance = useCallback(() => {
+    if (exceedsTransferableBalance && tokenAmount?.token) {
       const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
-      const feesAmountValue =
+      const feesAmount =
         toHuman(fees!.amount, fees!.token) +
         (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
-      const balanceAmountValue = Number(balanceData!.formatted)
-      const newAmount = balanceAmountValue - feesAmountValue
+      const balanceAmount = Number(balanceData!.formatted)
+      const newAmount = balanceAmount - feesAmount
       setValue(
         'tokenAmount',
         {
@@ -317,7 +315,7 @@ const useTransferForm = () => {
         { shouldValidate: true },
       )
     }
-  }, [insufficientWalletFunds, tokenAmount?.token, bridgingFee, fees, balanceData, setValue])
+  }, [exceedsTransferableBalance, tokenAmount?.token, bridgingFee, fees, balanceData, setValue])
 
   // reset token amount
   useEffect(() => {
@@ -362,8 +360,8 @@ const useTransferForm = () => {
     loadingBalance,
     balanceData,
     fetchBalance,
-    insufficientWalletFunds,
-    setMaxLessFees,
+    exceedsTransferableBalance,
+    setTransferableBalance,
   }
 }
 
