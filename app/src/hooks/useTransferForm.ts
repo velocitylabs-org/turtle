@@ -11,13 +11,13 @@ import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
-import { safeConvertAmount } from '@/utils/transfer'
+import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { switchChain } from '@wagmi/core'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
-import { formatAmount } from '../utils/transfer'
+import { formatAmount } from '@/utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
 
@@ -275,6 +275,48 @@ const useTransferForm = () => {
     else setTokenAmountError('')
   }, [tokenAmount?.amount, balanceData, sourceWallet])
 
+  const exceedsTransferableBalance = useMemo(() => {
+    const hasFees = Boolean(fees?.token?.id && fees?.amount)
+    const hasTokenAmount = Boolean(tokenAmount?.token?.id && tokenAmount?.amount)
+    const hasBalance = Boolean(balanceData?.formatted)
+    const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+
+    if (!hasFees || !hasTokenAmount || !hasBalance) return false
+
+    // Add non-null assertions since we've verified these values exist
+    const feesToken = fees!.token!.id
+    const feesAmount =
+      toHuman(fees!.amount, fees!.token) +
+      (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
+    const transferToken = tokenAmount!.token!.id
+    const transferAmount = tokenAmount!.amount!
+    const balanceAmount = Number(balanceData!.formatted)
+    const payingFeesSameToken = feesToken === transferToken
+    const insufficientFunds = transferAmount + feesAmount > balanceAmount
+
+    return payingFeesSameToken && insufficientFunds
+  }, [fees, bridgingFee, balanceData, tokenAmount])
+
+  const setTransferableBalance = useCallback(() => {
+    if (exceedsTransferableBalance && tokenAmount?.token) {
+      const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+      const feesAmount =
+        toHuman(fees!.amount, fees!.token) +
+        (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
+      const balanceAmount = Number(balanceData!.formatted)
+      const newAmount = balanceAmount - feesAmount
+      setValue(
+        'tokenAmount',
+        {
+          token: tokenAmount.token,
+          // Parse as number, then format to our display standard, then parse again as number
+          amount: Number(formatAmount(newAmount, 'Longer')),
+        },
+        { shouldValidate: true },
+      )
+    }
+  }, [exceedsTransferableBalance, tokenAmount?.token, bridgingFee, fees, balanceData, setValue])
+
   // reset token amount
   useEffect(() => {
     if (tokenId)
@@ -318,6 +360,8 @@ const useTransferForm = () => {
     loadingBalance,
     balanceData,
     fetchBalance,
+    exceedsTransferableBalance,
+    setTransferableBalance,
   }
 }
 
