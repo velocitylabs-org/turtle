@@ -117,14 +117,14 @@ export default function TxSummary({
                         className="mr-2"
                       />
                       <span>
-                        We need some of that to pay fees -{' '}
+                        We need some of that to pay fees{' '}
                         {exceedsTransferableBalance && (
                           <span
                             role="button"
                             onClick={setTransferableBalance}
                             className="ml-1 cursor-pointer underline"
                           >
-                            Apply
+                            Ok
                           </span>
                         )}
                       </span>
