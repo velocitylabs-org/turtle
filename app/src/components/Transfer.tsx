@@ -2,7 +2,6 @@
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
-import { useSwapOutputAmount } from '@/hooks/useSwapOutputAmount'
 import useTransferForm from '@/hooks/useTransferForm'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
@@ -13,7 +12,7 @@ import {
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate, safeConvertAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -81,6 +80,7 @@ export default function Transfer() {
     loadingBalance,
     balanceData,
     fetchBalance,
+    isLoadingOutputAmount,
   } = useTransferForm()
 
   const {
@@ -106,14 +106,6 @@ export default function Transfer() {
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,
     owner: sourceWallet?.sender?.address,
-  })
-
-  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
-    sourceChain,
-    destinationChain,
-    sourceToken: sourceTokenAmount?.token,
-    destinationToken: destinationTokenAmount?.token,
-    amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString(),
   })
 
   const requiresErc20SpendApproval =
@@ -172,7 +164,7 @@ export default function Transfer() {
     !loadingFees &&
     canPayFees &&
     (bridgingFee ? canPayAdditionalFees : true) &&
-    isLoadingOutputAmount
+    !isLoadingOutputAmount
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
@@ -323,10 +315,7 @@ export default function Transfer() {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amount={{
-                      value:
-                        outputAmount && destinationTokenAmount?.token
-                          ? toHuman(outputAmount, destinationTokenAmount.token)
-                          : null,
+                      value: destinationTokenAmount?.amount ?? null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
