@@ -42,7 +42,6 @@ export function useSwapOutputAmount({
       if (isSameToken(sourceToken, destinationToken)) return null
 
       try {
-        console.log('called')
         const output = await getExchangeOutputAmount(
           sourceChain,
           destinationChain,
