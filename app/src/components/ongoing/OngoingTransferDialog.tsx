@@ -1,7 +1,7 @@
 import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, getExplorerLink, toHuman } from '@/utils/transfer'
+import { formatAmount, getExplorerLink, isSwapTransfer, toHuman } from '@/utils/transfer'
 import { useCallback } from 'react'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
@@ -83,6 +83,20 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                 sourceChain={transfer.sourceChain}
                 size={35}
               />
+
+              {isSwapTransfer(transfer) && (
+                <>
+                  <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
+                  <span>
+                    {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}
+                  </span>
+                  <TokenLogo
+                    token={transfer.destinationToken}
+                    sourceChain={transfer.destChain}
+                    size={35}
+                  />
+                </>
+              )}
             </h3>
 
             {/* Update and progress bar */}
@@ -139,7 +153,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
             {/* Summary */}
             <div className="summary mb-2 w-full space-y-1 px-3">
               <SummaryRow
-                label="Amount"
+                label="Amount Sent"
                 amount={formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken), 'Long')}
                 symbol={transfer.sourceToken.symbol}
                 usdValue={
@@ -152,12 +166,34 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                     : undefined
                 }
               />
+
+              {isSwapTransfer(transfer) && (
+                <SummaryRow
+                  label="Amount Received"
+                  amount={formatAmount(
+                    toHuman(transfer.destinationAmount, transfer.destinationToken),
+                    'Long',
+                  )}
+                  symbol={transfer.destinationToken.symbol}
+                  usdValue={
+                    typeof transfer.destinationTokenUSDValue === 'number'
+                      ? formatAmount(
+                          toHuman(transfer.destinationAmount, transfer.destinationToken) *
+                            (transfer.destinationTokenUSDValue ?? 0),
+                          'Long',
+                        )
+                      : undefined
+                  }
+                />
+              )}
+
               <SummaryRow
                 label={transfer.bridgingFee ? 'Execution fee' : 'Fee'}
                 amount={formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Long')}
                 symbol={transfer.fees.token.symbol}
                 usdValue={formatAmount(transfer.fees.inDollars, 'Long')}
               />
+
               {transfer.bridgingFee && (
                 <SummaryRow
                   label="Bridging fee"
@@ -169,6 +205,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                   usdValue={formatAmount(transfer.bridgingFee.inDollars, 'Long')}
                 />
               )}
+
               {explorerLink && (
                 <a
                   href={explorerLink}

@@ -1,7 +1,7 @@
 import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwapTransfer, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
@@ -36,6 +36,17 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
         <p className="text-turtle-foreground)] no-letter-spacing text-xl font-normal">
           {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}{' '}
           {transfer.sourceToken.symbol}
+          {isSwapTransfer(transfer) && (
+            <>
+              {' '}
+              <ArrowRight
+                className="mx-1 inline h-3 w-3"
+                fill={colors['turtle-secondary-dark']}
+              />{' '}
+              {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}{' '}
+              {transfer.destinationToken.symbol}
+            </>
+          )}
         </p>
         {/* From and to Chains */}
         <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">

@@ -304,12 +304,11 @@ export const startedTooLongAgo = (
  * @param transfer - The transfer to check
  * @returns if the transfer was a swap
  */
-export const isSwapTransfer = (
-  transfer: CompletedTransfer,
-): transfer is CompletedTransfer & {
+export const isSwapTransfer = <T extends { destinationToken?: Token; destinationAmount?: string }>(
+  transfer: T,
+): transfer is T & {
   destinationToken: Token
   destinationAmount: string
 } => {
-  console.log('isSwapTransfer', transfer)
   return !!transfer.destinationToken && !!transfer.destinationAmount
 }
