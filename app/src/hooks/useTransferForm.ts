@@ -285,16 +285,17 @@ const useTransferForm = () => {
 
     // Add non-null assertions since we've verified these values exist
     const feesToken = fees!.token!.id
-    const feesAmount =
-      toHuman(fees!.amount, fees!.token) +
-      (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
     const transferToken = tokenAmount!.token!.id
+    if (feesToken !== transferToken) return false
+
+    const baseFees = toHuman(fees!.amount, fees!.token)
+    const bridgingFees = hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0
+    const totalFeesAmount = baseFees + bridgingFees
     const transferAmount = tokenAmount!.amount!
     const balanceAmount = Number(balanceData!.formatted)
-    const payingFeesSameToken = feesToken === transferToken
-    const insufficientFunds = transferAmount + feesAmount > balanceAmount
+    const insufficientFunds = transferAmount + totalFeesAmount > balanceAmount
 
-    return payingFeesSameToken && insufficientFunds
+    return insufficientFunds
   }, [fees, bridgingFee, balanceData, tokenAmount])
 
   const setTransferableBalance = useCallback(() => {
