@@ -118,15 +118,13 @@ export default function TxSummary({
                       />
                       <span>
                         We need some of that to pay fees{' '}
-                        {exceedsTransferableBalance && (
-                          <span
-                            role="button"
-                            onClick={setTransferableBalance}
-                            className="ml-1 cursor-pointer underline"
-                          >
-                            Ok
-                          </span>
-                        )}
+                        <span
+                          role="button"
+                          onClick={setTransferableBalance}
+                          className="ml-1 cursor-pointer underline"
+                        >
+                          Ok
+                        </span>
                       </span>
                     </div>
                   )}
