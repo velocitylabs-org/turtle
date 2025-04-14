@@ -190,7 +190,7 @@ export default function Transfer() {
 
   const sourceTokenOptions = useMemo(
     () => getAllowedSourceTokens(sourceChain, destinationChain),
-    [sourceChain],
+    [sourceChain, destinationChain],
   )
 
   const destinationTokenOptions = useMemo(
@@ -249,6 +249,7 @@ export default function Transfer() {
                         error: errors.sourceTokenAmount?.token?.message,
                         clearable: true,
                         orderBySelected: true,
+                        showVerticalDivider: true,
                       }}
                       amount={{
                         value: tokenField.value?.amount ?? null,
@@ -315,6 +316,7 @@ export default function Transfer() {
                       orderBySelected: true,
                       sourceChainToDetermineOriginBanner: sourceChain,
                       priorityToken: sourceTokenAmount?.token,
+                      showVerticalDivider: false,
                     }}
                     amount={{
                       value: destinationTokenAmount?.amount ?? null,

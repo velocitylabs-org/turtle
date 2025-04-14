@@ -30,6 +30,7 @@ const useFees = (
   amount?: number | null,
   senderAddress?: string,
   recipientAddress?: string,
+  destToken?: Token | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFees] = useState<AmountInfo | null>(null)
@@ -54,7 +55,7 @@ const useFees = (
   })
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token) {
+    if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
       setBridgingFees(null)
       return
@@ -208,6 +209,7 @@ const useFees = (
     amount,
     dotBalance,
     feeBalance,
+    destToken,
   ])
 
   useEffect(() => {

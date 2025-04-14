@@ -49,6 +49,7 @@ interface ChainTokenSelectProps {
     sourceChainToDetermineOriginBanner: Chain | null
     error?: string
     clearable?: boolean
+    showVerticalDivider?: boolean
     orderBySelected?: boolean
     /** The token displayed at the top or below the selected token in the dropdown. Can be used to make it easier to select the source token again. */
     priorityToken?: Token | null
@@ -230,6 +231,7 @@ interface TokenAmountInputProps {
   token: {
     value: Token | null
     sourceChainToDetermineOriginBanner: Chain | null
+    showVerticalDivider?: boolean
   }
   amount?: {
     value: number | null
@@ -285,7 +287,7 @@ const TokenAmountInput = ({
             )}
           </div>
           <ChevronDown strokeWidth={0.2} className="ml-1" />
-          <VerticalDivider />
+          {token.showVerticalDivider && <VerticalDivider />}
           <div className="align-center ml-1 flex flex-col">
             <input
               data-cy="amount-input"
