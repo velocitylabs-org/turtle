@@ -2,6 +2,7 @@
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
+import { useSwapOutputAmount } from '@/hooks/useSwapOutputAmount'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
@@ -12,7 +13,7 @@ import { Token } from '@/models/token'
 import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
-import { safeConvertAmount } from '@/utils/transfer'
+import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useState } from 'react'
@@ -63,6 +64,10 @@ const useTransferForm = () => {
   const sourceTokenAmount = useWatch({ control, name: 'sourceTokenAmount' })
   const destinationTokenAmount = useWatch({ control, name: 'destinationTokenAmount' })
 
+  const sourceAmount = useWatch({ control, name: 'sourceTokenAmount.amount' })
+  const sourceToken = useWatch({ control, name: 'sourceTokenAmount.token' })
+  const destToken = useWatch({ control, name: 'destinationTokenAmount.token' })
+
   const [sourceTokenAmountError, setSourceTokenAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = sourceTokenAmount?.token?.id
@@ -94,6 +99,29 @@ const useTransferForm = () => {
     token: sourceTokenAmount?.token ?? undefined,
     address: sourceWallet?.sender?.address,
   })
+
+  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken: destToken,
+    amount:
+      sourceAmount && sourceToken
+        ? safeConvertAmount(sourceAmount, sourceToken)?.toString()
+        : undefined,
+  })
+
+  // Update destination amount when output amount changes
+  useEffect(() => {
+    if (isLoadingOutputAmount || !outputAmount) {
+      setValue('destinationTokenAmount.amount', null)
+      return
+    }
+
+    if (outputAmount && destToken) {
+      setValue('destinationTokenAmount.amount', toHuman(outputAmount, destToken))
+    }
+  }, [outputAmount, isLoadingOutputAmount, destToken, setValue])
 
   const isFormValid =
     isValidZodSchema &&
@@ -352,6 +380,7 @@ const useTransferForm = () => {
     loadingBalance,
     balanceData,
     fetchBalance,
+    isLoadingOutputAmount,
   }
 }
 

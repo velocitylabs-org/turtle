@@ -1,7 +1,7 @@
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwapTransfer, toHuman } from '@/utils/transfer'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import Icon from '../Icon'
@@ -80,6 +80,13 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             >
               <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
               <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={35} />
+              {isSwapTransfer(tx) && (
+                <>
+                  <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
+                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
+                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={35} />
+                </>
+              )}
             </h3>
 
             {/* Status bar */}
@@ -148,7 +155,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             {/*Summary*/}
             <div className="summary mb-2 w-full space-y-1 px-3">
               <SummaryRow
-                label="Amount"
+                label="Amount Sent"
                 amount={formatAmount(toHuman(tx.sourceAmount, tx.sourceToken), 'Long')}
                 symbol={tx.sourceToken.symbol}
                 usdValue={
@@ -160,6 +167,23 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                     : undefined
                 }
               />
+
+              {isSwapTransfer(tx) && (
+                <SummaryRow
+                  label="Amount Received"
+                  amount={formatAmount(toHuman(tx.destinationAmount, tx.destinationToken), 'Long')}
+                  symbol={tx.destinationToken.symbol}
+                  usdValue={
+                    typeof tx.destinationTokenUSDValue === 'number'
+                      ? formatAmount(
+                          toHuman(tx.destinationAmount, tx.destinationToken) *
+                            (tx.destinationTokenUSDValue ?? 0),
+                          'Long',
+                        )
+                      : undefined
+                  }
+                />
+              )}
               <SummaryRow
                 label={tx.bridgingFee ? 'Execution fee' : 'Fee'}
                 amount={formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}
@@ -170,6 +194,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                     : undefined
                 }
               />
+
               {tx.bridgingFee && (
                 <SummaryRow
                   label="Bridging fee"
@@ -185,6 +210,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                   }
                 />
               )}
+
               {tx.explorerLink && (
                 <a
                   href={tx.explorerLink}

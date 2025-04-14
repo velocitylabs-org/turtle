@@ -2,7 +2,6 @@
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
-import { useSwapOutputAmount } from '@/hooks/useSwapOutputAmount'
 import useTransferForm from '@/hooks/useTransferForm'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { resolveDirection } from '@/services/transfer'
@@ -13,7 +12,7 @@ import {
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate, safeConvertAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -26,10 +25,10 @@ import Credits from './Credits'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import AlertIcon from './svg/AlertIcon'
+import SwapFromToChains from './SwapFromToChains'
 import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
-import SwapFromToChains from './SwapFromToChains'
 
 const manualInputAnimationProps = {
   initial: { opacity: 0, height: 0 },
@@ -81,6 +80,7 @@ export default function Transfer() {
     loadingBalance,
     balanceData,
     fetchBalance,
+    isLoadingOutputAmount,
   } = useTransferForm()
 
   const {
@@ -106,14 +106,6 @@ export default function Transfer() {
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,
     owner: sourceWallet?.sender?.address,
-  })
-
-  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
-    sourceChain,
-    destinationChain,
-    sourceToken: sourceTokenAmount?.token,
-    destinationToken: destinationTokenAmount?.token,
-    amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString(),
   })
 
   const requiresErc20SpendApproval =
@@ -163,6 +155,8 @@ export default function Transfer() {
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
+  const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
+
   const isTransferAllowed =
     isValid &&
     !isValidating &&
@@ -171,7 +165,8 @@ export default function Transfer() {
     !requiresErc20SpendApproval &&
     !loadingFees &&
     canPayFees &&
-    (bridgingFee ? canPayAdditionalFees : true)
+    canPayBridgingFee &&
+    !isLoadingOutputAmount
 
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
@@ -322,10 +317,7 @@ export default function Transfer() {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amount={{
-                      value:
-                        outputAmount && destinationTokenAmount?.token
-                          ? toHuman(outputAmount, destinationTokenAmount.token)
-                          : null,
+                      value: destinationTokenAmount?.amount ?? null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,

@@ -27,5 +27,6 @@ export interface ManualAddressInput extends ManualAddressValue {
 
 export interface TokenAmount {
   token: Token | null
+  /** amount in human readable format */
   amount: number | null
 }
