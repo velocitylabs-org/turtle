@@ -1,16 +1,22 @@
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import {
+  CompletedTransfer,
+  PapiEvents,
+  PjsEvents,
+  StoredTransfer,
+  TxStatus,
+} from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
-import { extractPapiEvent, PapiEvents } from '@/utils/papi'
+import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import { createTransferTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
-import { extractPjsEvents, PjsEvents } from '@/utils/pjs'
+import { extractPjsEvents } from '@/utils/pjs'
 import { isSameToken } from '@/utils/token'
 import { getExplorerLink, txWasCancelled } from '@/utils/transfer'
 import { ISubmittableResult } from '@polkadot/types/types'

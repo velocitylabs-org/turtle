@@ -1,12 +1,6 @@
+import { PjsEvents } from '@/models/transfer'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ISubmittableResult } from '@polkadot/types/types'
-
-export type PjsEvents = {
-  messageHash: string | undefined
-  messageId: string | undefined
-  extrinsicIndex: string | undefined
-  isBatchCompleted: boolean | undefined
-}
 
 /**
  * Processes blockchain events and handles extrinsic success or failure.
@@ -49,7 +43,6 @@ export const extractPjsEvents = (result: ISubmittableResult): PjsEvents | undefi
     let isBatchCompleted: boolean | undefined
     // Filter the events to get the needed data
     events.forEach(({ event: { data, method, section } }) => {
-      console.log('event', { method, section, data })
       // Get messageHash from parachainSystem pallet (ex: DOT from Para to Para )
       if (method === 'UpwardMessageSent' && section === 'parachainSystem') {
         messageHash = data[0].toString()
@@ -69,6 +62,7 @@ export const extractPjsEvents = (result: ISubmittableResult): PjsEvents | undefi
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messageId = (data.messageId as any).toString()
       }
+      // Get BatchCompleted from utility pallet for Non local swap
       if (method === 'BatchCompleted' && section === 'utility') {
         isBatchCompleted = true
       }
