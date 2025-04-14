@@ -1,18 +1,18 @@
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import { StoredTransfer } from '@/models/transfer'
+import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { isProduction } from '@/utils/env'
-import { extractPapiEvent } from '@/utils/papi'
+import { extractPapiEvent, PapiEvents } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import { createTransferTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
-import { extractPjsEvents } from '@/utils/pjs'
+import { extractPjsEvents, PjsEvents } from '@/utils/pjs'
 import { isSameToken } from '@/utils/token'
-import { txWasCancelled } from '@/utils/transfer'
+import { getExplorerLink, txWasCancelled } from '@/utils/transfer'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -23,13 +23,16 @@ import { moonbeam } from 'wagmi/chains'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-
+import useCompletedTransfers from './useCompletedTransfers'
+import { isLocalSwap, isNonLocalSwap } from '@/utils/routes'
+import { wait } from '@/utils/datetime'
 type TransferEvent =
   | { type: 'pjs'; eventData: ISubmittableResult }
   | { type: 'papi'; eventData: TxEvent }
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
+  const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const { data: viemClient } = useConnectorClient<Config>({ chainId: moonbeam.id })
 
@@ -244,12 +247,12 @@ const useParaspellApi = () => {
       )
     }
 
-    let eventsData
-    if (event.type === 'papi') eventsData = extractPapiEvent(event.eventData)
-    else if (event.type === 'pjs') eventsData = extractPjsEvents(event.eventData)
-    if (!eventsData) return
+    let onchainEvents: PjsEvents | PapiEvents | undefined
+    if (event.type === 'papi') onchainEvents = extractPapiEvent(event.eventData)
+    else if (event.type === 'pjs') onchainEvents = extractPjsEvents(event.eventData)
+    if (!onchainEvents) return
 
-    const { messageHash, messageId, extrinsicIndex } = eventsData
+    const { messageHash, messageId, extrinsicIndex } = onchainEvents
 
     addOrUpdate({
       ...transferToStore,
@@ -260,6 +263,50 @@ const useParaspellApi = () => {
       status: `Arriving at ${transferToStore.destChain.name}`,
       finalizedAt: new Date(),
     })
+
+    monitorBatchSwap(transferToStore, onchainEvents)
+    handleLocalSwapStorage(transferToStore)
+  }
+
+  const isBatchCompleted = (onchainEvents: PjsEvents | PapiEvents) => {
+    return !!('isBatchCompleted' in onchainEvents && onchainEvents.isBatchCompleted === true)
+  }
+
+  const monitorBatchSwap = (transfer: StoredTransfer, eventsData: PjsEvents | PapiEvents) => {
+    // Non local swap are handled with the BatchAll extinsic from utility pallet
+    if (isNonLocalSwap(transfer) && !isBatchCompleted(eventsData))
+      throw new Error('Swap transfer did not completed - Batch failed')
+
+    return
+  }
+
+  const handleLocalSwapStorage = async (transfer: StoredTransfer) => {
+    if (!isLocalSwap(transfer)) return
+
+    // Wait for 3 seconds to ensure user can read swap status update
+    // before completing the transfer
+    await wait(3000)
+
+    const explorerLink = getExplorerLink(transfer)
+    removeOngoing(transfer.id)
+    addCompletedTransfer({
+      id: transfer.id,
+      result: TxStatus.Succeeded,
+      sourceToken: transfer.sourceToken,
+      destinationToken: transfer.destinationToken,
+      sourceChain: transfer.sourceChain,
+      destChain: transfer.destChain,
+      sourceAmount: transfer.sourceAmount,
+      destinationAmount: transfer.destinationAmount,
+      sourceTokenUSDValue: transfer.sourceTokenUSDValue ?? 0,
+      destinationTokenUSDValue: transfer.destinationTokenUSDValue,
+      fees: transfer.fees,
+      bridgingFee: transfer.bridgingFee,
+      sender: transfer.sender,
+      recipient: transfer.recipient,
+      date: transfer.date,
+      ...(explorerLink && { explorerLink }),
+    } satisfies CompletedTransfer)
   }
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {

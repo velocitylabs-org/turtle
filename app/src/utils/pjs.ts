@@ -1,6 +1,13 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ISubmittableResult } from '@polkadot/types/types'
 
+export type PjsEvents = {
+  messageHash: string | undefined
+  messageId: string | undefined
+  extrinsicIndex: string | undefined
+  isBatchCompleted: boolean | undefined
+}
+
 /**
  * Processes blockchain events and handles extrinsic success or failure.
  * It listens to the transaction process, checks for errors, and filters relevant data.
@@ -8,7 +15,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
  * @param result - The blockchain result returned by the signAndSend() method.
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
-export const extractPjsEvents = (result: ISubmittableResult) => {
+export const extractPjsEvents = (result: ISubmittableResult): PjsEvents | undefined => {
   const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } =
     result
   // check for execution errors
@@ -39,9 +46,10 @@ export const extractPjsEvents = (result: ISubmittableResult) => {
 
     let messageHash: string | undefined
     let messageId: string | undefined
-
+    let isBatchCompleted: boolean | undefined
     // Filter the events to get the needed data
     events.forEach(({ event: { data, method, section } }) => {
+      console.log('event', { method, section, data })
       // Get messageHash from parachainSystem pallet (ex: DOT from Para to Para )
       if (method === 'UpwardMessageSent' && section === 'parachainSystem') {
         messageHash = data[0].toString()
@@ -61,11 +69,14 @@ export const extractPjsEvents = (result: ISubmittableResult) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messageId = (data.messageId as any).toString()
       }
+      if (method === 'BatchCompleted' && section === 'utility') {
+        isBatchCompleted = true
+      }
     })
     if (!messageHash && !messageId && !extrinsicIndex)
       throw new Error('MessageHash, MessageId and ExtrinsicIndex are all missing')
 
-    return { messageHash, messageId, extrinsicIndex }
+    return { messageHash, messageId, extrinsicIndex, isBatchCompleted }
   }
 }
 

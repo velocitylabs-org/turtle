@@ -1,6 +1,7 @@
 import { Chain } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
+import { StoredTransfer } from '@/models/transfer'
 import { Route, TransferSDK } from '@/registry'
 import { REGISTRY } from '@/registry/mainnet/mainnet'
 import {
@@ -165,4 +166,34 @@ export const resolveSdk = (
   return isSamePolkadotChain(sourceChain, destinationChain)
     ? 'ParaSpellApi'
     : getRoute(sourceChain, destinationChain)?.sdk
+}
+
+/**
+ * Checks if a transfer is a swap inside the same chain:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean indicating whether the transfer is a local swap or not.
+ */
+export const isLocalSwap = (transfer: StoredTransfer) => {
+  const { sourceToken, destinationToken, sourceChain, destChain } = transfer
+  return !!(
+    destinationToken &&
+    !isSameToken(sourceToken, destinationToken) &&
+    isSameChain(sourceChain, destChain)
+  )
+}
+
+/**
+ * Checks if a transfer is a swap between two different chains:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean indicating whether the transfer is swap between two differents chainsor not.
+ */
+export const isNonLocalSwap = (transfer: StoredTransfer) => {
+  const { sourceToken, destinationToken, sourceChain, destChain } = transfer
+  return !!(
+    destinationToken &&
+    !isSameToken(sourceToken, destinationToken) &&
+    !isSameChain(sourceChain, destChain)
+  )
 }
