@@ -185,6 +185,13 @@ export default function Transfer() {
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
   )
 
+  const tokenAmountSelectError = useMemo(() => {
+    if (errors.tokenAmount?.amount?.message) return errors.tokenAmount.amount.message
+    if (tokenAmountError) return tokenAmountError
+    if (exceedsTransferableBalance) return 'Insufficient funds to cover the fees'
+    return undefined
+  }, [errors.tokenAmount?.amount?.message, tokenAmountError, exceedsTransferableBalance])
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -242,7 +249,7 @@ export default function Transfer() {
                 floatingLabel="Amount"
                 disabled={transferStatus !== 'Idle' || !sourceChain}
                 secondPlaceholder={amountPlaceholder}
-                error={errors.tokenAmount?.amount?.message || tokenAmountError}
+                error={tokenAmountSelectError}
                 trailing={
                   tokenAmount?.amount ? (
                     <></>

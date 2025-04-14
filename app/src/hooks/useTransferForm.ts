@@ -281,7 +281,12 @@ const useTransferForm = () => {
     if (feesToken !== transferToken) return false
 
     const baseFees = toHuman(fees!.amount, fees!.token)
-    const bridgingFees = hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0
+    // Only add bridging fees if they exist AND their token ID matches the fees token ID
+    let bridgingFees = 0
+    if (hasBridgingFee && bridgingFee!.token!.id === feesToken) {
+      bridgingFees = toHuman(bridgingFee!.amount, bridgingFee!.token)
+    }
+
     const totalFeesAmount = baseFees + bridgingFees
     const transferAmount = tokenAmount!.amount!
     const balanceAmount = Number(balanceData!.formatted)
@@ -292,7 +297,10 @@ const useTransferForm = () => {
 
   const setTransferableBalance = useCallback(() => {
     if (exceedsTransferableBalance && tokenAmount?.token) {
-      const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+      // Only include bridging fee if denominated in same token as base fees
+      const hasBridgingFee = Boolean(
+        bridgingFee?.token?.id && bridgingFee?.amount && fees?.token?.id === bridgingFee?.token?.id,
+      )
       const feesAmount =
         toHuman(fees!.amount, fees!.token) +
         (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
