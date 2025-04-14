@@ -47,8 +47,8 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
   const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId as any) // TODO: remove any once xcm-router is updated
-    .to(destinationChainFromId as any) // TODO: remove any once xcm-router is updated
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
     .exchange('HydrationDex') // only Hydration is supported for now
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
@@ -82,8 +82,8 @@ export const getExchangeOutputAmount = async (
   const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
   const amountOut = await RouterBuilder()
-    .from(sourceChainFromId as any) // TODO: remove any once xcm-router is updated
-    .to(destinationChainFromId as any) // TODO: remove any once xcm-router is updated
+    .from(sourceChainFromId)
+    .to(destinationChainFromId)
     .exchange('HydrationDex') // TODO: hardcoded for now as it's the only dex supported.
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
