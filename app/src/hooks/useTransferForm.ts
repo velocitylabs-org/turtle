@@ -17,7 +17,7 @@ import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
-import { formatAmount } from '../utils/transfer'
+import { formatAmount } from '@/utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
 
@@ -111,15 +111,7 @@ const useTransferForm = () => {
       isRouteAllowed(environment, sourceChain, destinationChain) &&
       isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
     )
-  }, [
-    environment,
-    destinationChain,
-    sourceChain,
-    tokenAmount,
-    isValidating,
-    transferStatus,
-    tokenAmountError,
-  ])
+  }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -162,7 +154,7 @@ const useTransferForm = () => {
       setValue('destinationChain', newValue)
       trigger()
     },
-    [setValue],
+    [setValue, trigger],
   )
 
   const swapFromTo = useCallback(() => {
