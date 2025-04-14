@@ -279,7 +279,7 @@ const useParaspellApi = () => {
   }
 
   const monitorBatchSwap = (transfer: StoredTransfer, eventsData: PjsEvents | PapiEvents) => {
-    // Non local swap are handled with the BatchAll extinsic from utility pallet
+    // swap + transer are handled with the BatchAll extinsic from utility pallet
     if (isNonLocalSwap(transfer) && !isBatchCompleted(eventsData))
       throw new Error('Swap transfer did not completed - Batch failed')
 
