@@ -58,7 +58,7 @@ export const routes: Route[] = [
     from: Ethereum.uid,
     to: Hydration.uid,
     sdk: 'SnowbridgeApi',
-    tokens: [EthereumTokens.WETH.id, EthereumTokens.USDC.id, EthereumTokens.WBTC.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.USDC.id, EthereumTokens.WBTC.id],
   },
   {
     from: AssetHub.uid,
@@ -240,7 +240,7 @@ export const routes: Route[] = [
     from: Hydration.uid,
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.WETH.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
   },
 
   // Para To System
