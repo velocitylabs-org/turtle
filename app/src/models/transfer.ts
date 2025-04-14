@@ -150,3 +150,15 @@ export type TabOptions = 'New' | 'Done'
 export type TxTrackingResult =
   // Snowbridge API | Snowbridge API | Subscan API
   FromEthTrackingResult | FromAhToEthTrackingResult | FromParachainTrackingResult
+
+type onChainBaseEvents = {
+  messageHash?: string
+  messageId?: string
+  extrinsicIndex?: string
+}
+
+export type PapiEvents = onChainBaseEvents
+
+export type PjsEvents = onChainBaseEvents & {
+  isBatchCompleted?: boolean
+}

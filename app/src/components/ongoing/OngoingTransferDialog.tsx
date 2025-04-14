@@ -1,7 +1,7 @@
 import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, getExplorerLink, isSwapTransfer, toHuman } from '@/utils/transfer'
+import { formatAmount, getExplorerLink, isSwap, toHuman } from '@/utils/transfer'
 import { useCallback } from 'react'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
@@ -33,7 +33,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
   const sourceAmountHuman = toHuman(transfer.sourceAmount, transfer.sourceToken)
   const sourceAmountUSD = sourceAmountHuman * (transfer.sourceTokenUSDValue ?? 0)
 
-  const destinationAmountHuman = isSwapTransfer(transfer)
+  const destinationAmountHuman = isSwap(transfer)
     ? toHuman(transfer.destinationAmount, transfer.destinationToken)
     : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
@@ -92,7 +92,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                 size={35}
               />
 
-              {isSwapTransfer(transfer) && (
+              {isSwap(transfer) && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
                   <span>{formatAmount(destinationAmountHuman, 'Long')}</span>
@@ -165,7 +165,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                 usdValue={formatAmount(sourceAmountUSD, 'Long')}
               />
 
-              {isSwapTransfer(transfer) && (
+              {isSwap(transfer) && (
                 <SummaryRow
                   label="Amount Received"
                   amount={formatAmount(destinationAmountHuman, 'Long')}

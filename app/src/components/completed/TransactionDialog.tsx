@@ -1,7 +1,7 @@
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
-import { formatAmount, isSwapTransfer, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import Icon from '../Icon'
@@ -80,7 +80,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             >
               <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
               <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={35} />
-              {isSwapTransfer(tx) && (
+              {isSwap(tx) && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
                   <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
@@ -168,7 +168,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                 }
               />
 
-              {isSwapTransfer(tx) && (
+              {isSwap(tx) && (
                 <SummaryRow
                   label="Amount Received"
                   amount={formatAmount(toHuman(tx.destinationAmount, tx.destinationToken), 'Long')}
