@@ -7,6 +7,7 @@ import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
+import { isSameChain } from './routes'
 
 /**
  * Safe version of `convertAmount` that handles `null` and `undefined` params
@@ -311,4 +312,24 @@ export const isSwapTransfer = <T extends { destinationToken?: Token; destination
   destinationAmount: string
 } => {
   return !!transfer.destinationToken && !!transfer.destinationAmount
+}
+
+/**
+ * Checks if a transfer is a swap within the same chain:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSameChainSwap = (transfer: StoredTransfer) => {
+  return isSwapTransfer(transfer) && isSameChain(transfer.sourceChain, transfer.destChain)
+}
+
+/**
+ * Checks if a transfer is a swap + XCM between two different chains:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSwapWithTransfer = (transfer: StoredTransfer) => {
+  return isSwapTransfer(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }

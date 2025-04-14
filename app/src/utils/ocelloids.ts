@@ -4,8 +4,7 @@ import { Moonbeam } from '@/registry/mainnet/chains'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { captureException } from '@sentry/nextjs'
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { getExplorerLink } from './transfer'
-import { isLocalSwap } from './routes'
+import { getExplorerLink, isSameChainSwap } from './transfer'
 
 type ResultNotification = {
   message: string
@@ -29,7 +28,8 @@ export const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE |
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
   transfers.filter(
     t =>
-      resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot && !isLocalSwap(t),
+      resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot &&
+      !isSameChainSwap(t),
   )
 
 export const initOcelloidsClient = (API_KEY: string) => {

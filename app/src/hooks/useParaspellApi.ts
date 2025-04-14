@@ -18,7 +18,12 @@ import { createRouterPlan } from '@/utils/paraspellSwap'
 import { createTransferTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
 import { extractPjsEvents } from '@/utils/pjs'
 import { isSameToken } from '@/utils/token'
-import { getExplorerLink, txWasCancelled } from '@/utils/transfer'
+import {
+  getExplorerLink,
+  isSameChainSwap,
+  isSwapWithTransfer,
+  txWasCancelled,
+} from '@/utils/transfer'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
 import { switchChain } from '@wagmi/core'
@@ -30,7 +35,6 @@ import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
 import useCompletedTransfers from './useCompletedTransfers'
-import { isLocalSwap, isNonLocalSwap } from '@/utils/routes'
 import { wait } from '@/utils/datetime'
 type TransferEvent =
   | { type: 'pjs'; eventData: ISubmittableResult }
@@ -270,24 +274,27 @@ const useParaspellApi = () => {
       finalizedAt: new Date(),
     })
 
-    monitorBatchSwap(transferToStore, onchainEvents)
-    handleLocalSwapStorage(transferToStore)
+    monitorSwapWithTransfer(transferToStore, onchainEvents)
+    handleSameChainSwapStorage(transferToStore)
   }
 
   const isBatchCompleted = (onchainEvents: PjsEvents | PapiEvents) => {
     return !!('isBatchCompleted' in onchainEvents && onchainEvents.isBatchCompleted)
   }
 
-  const monitorBatchSwap = (transfer: StoredTransfer, eventsData: PjsEvents | PapiEvents) => {
-    // swap + transer are handled with the BatchAll extinsic from utility pallet
-    if (isNonLocalSwap(transfer) && !isBatchCompleted(eventsData))
+  const monitorSwapWithTransfer = (
+    transfer: StoredTransfer,
+    eventsData: PjsEvents | PapiEvents,
+  ) => {
+    // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
+    if (isSwapWithTransfer(transfer) && !isBatchCompleted(eventsData))
       throw new Error('Swap transfer did not completed - Batch failed')
 
     return
   }
 
-  const handleLocalSwapStorage = async (transfer: StoredTransfer) => {
-    if (!isLocalSwap(transfer)) return
+  const handleSameChainSwapStorage = async (transfer: StoredTransfer) => {
+    if (!isSameChainSwap(transfer)) return
 
     // Wait for 3 seconds to ensure user can read swap status update
     // before completing the transfer
