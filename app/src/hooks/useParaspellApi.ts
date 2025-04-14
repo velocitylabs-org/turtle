@@ -275,7 +275,7 @@ const useParaspellApi = () => {
   }
 
   const isBatchCompleted = (onchainEvents: PjsEvents | PapiEvents) => {
-    return !!('isBatchCompleted' in onchainEvents && onchainEvents.isBatchCompleted === true)
+    return !!('isBatchCompleted' in onchainEvents && onchainEvents.isBatchCompleted)
   }
 
   const monitorBatchSwap = (transfer: StoredTransfer, eventsData: PjsEvents | PapiEvents) => {
