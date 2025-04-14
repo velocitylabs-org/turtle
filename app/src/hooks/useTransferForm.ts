@@ -111,15 +111,7 @@ const useTransferForm = () => {
       isRouteAllowed(environment, sourceChain, destinationChain) &&
       isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
     )
-  }, [
-    environment,
-    destinationChain,
-    sourceChain,
-    tokenAmount,
-    isValidating,
-    transferStatus,
-    tokenAmountError,
-  ])
+  }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -162,7 +154,7 @@ const useTransferForm = () => {
       setValue('destinationChain', newValue)
       trigger()
     },
-    [setValue],
+    [setValue, trigger],
   )
 
   const swapFromTo = useCallback(() => {
