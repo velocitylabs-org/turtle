@@ -13,13 +13,12 @@ import { Token } from '@/models/token'
 import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
-import { safeConvertAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
-import { formatAmount } from '../utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
 
@@ -208,7 +207,7 @@ const useTransferForm = () => {
       setValue('destinationChain', newValue)
       trigger()
     },
-    [setValue],
+    [setValue, trigger],
   )
 
   const swapFromTo = useCallback(() => {
