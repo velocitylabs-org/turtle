@@ -155,6 +155,8 @@ export default function Transfer() {
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
+  const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
+
   const isTransferAllowed =
     isValid &&
     !isValidating &&
@@ -163,7 +165,7 @@ export default function Transfer() {
     !requiresErc20SpendApproval &&
     !loadingFees &&
     canPayFees &&
-    (bridgingFee ? canPayAdditionalFees : true) &&
+    canPayBridgingFee &&
     !isLoadingOutputAmount
 
   const shouldDisableMaxButton =
