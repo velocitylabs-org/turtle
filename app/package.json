@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --transformIgnorePatterns \"node_modules/(?!@toolz/allow)/\" --debug",
+    "test": "jest --transformIgnorePatterns \"node_modules/(?!@toolz/allow)/\"",
     "test:watch": "jest --watch",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
