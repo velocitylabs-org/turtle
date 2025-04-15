@@ -146,7 +146,7 @@ export default function Transfer() {
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
 
-  let receiveAmountPlaceholder = 'Receive Amount'
+  let receiveAmountPlaceholder = 'Receive Token'
   if (isLoadingOutputAmount) receiveAmountPlaceholder = 'Loading...'
   else if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id)
     receiveAmountPlaceholder = ''
@@ -249,7 +249,6 @@ export default function Transfer() {
                         error: errors.sourceTokenAmount?.token?.message,
                         clearable: true,
                         orderBySelected: true,
-                        showVerticalDivider: true,
                       }}
                       amount={{
                         value: tokenField.value?.amount ?? null,
@@ -316,7 +315,6 @@ export default function Transfer() {
                       orderBySelected: true,
                       sourceChainToDetermineOriginBanner: sourceChain,
                       priorityToken: sourceTokenAmount?.token,
-                      showVerticalDivider: false,
                     }}
                     amount={{
                       value: destinationTokenAmount?.amount ?? null,
