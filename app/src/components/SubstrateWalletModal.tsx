@@ -80,15 +80,25 @@ export default function SubstrateWalletModal() {
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl border-1 border-black pb-4 focus:outline-none min-[460px]:max-w-[25rem]"
-        hideCloseButton={true}
+        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl pb-4 focus:outline-none min-[460px]:max-w-[24rem]"
+        hideCloseButton={false}
+        overlayProps={{
+          className: 'bg-black/70',
+        }}
+        closeButtonProps={{
+          className:
+            'top-[18px] right-[18px] focus:ring-0 hover:bg-gray-100 opacity-100 p-1 rounded-[10px]',
+          iconClassName: 'h-[18px] w-[18px]',
+        }}
       >
         {/* Header */}
         <DialogHeader className="flex items-center justify-center rounded-t-4xl p-4">
           {currentView === 'accounts' && (
             <div className="absolute left-0">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
-                ←
+                <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[10px] p-[13px] text-[17px] opacity-100 hover:bg-gray-100">
+                  ←
+                </span>
               </Button>
             </div>
           )}
@@ -99,7 +109,7 @@ export default function SubstrateWalletModal() {
 
         {/* Animate Height Transition */}
         <motion.div
-          className="flex max-h-[15rem] min-h-[130px] flex-col items-center justify-start space-y-2 overflow-y-auto p-6 pt-3 text-base"
+          className="flex max-h-[15rem] min-h-[240px] flex-col items-center justify-start space-y-2 overflow-y-auto p-6 pt-3 text-base"
           layout
           {...heightAnimationProps}
         >
@@ -124,7 +134,7 @@ export default function SubstrateWalletModal() {
                 .map(extension => (
                   <Button
                     key={extension.name}
-                    className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
+                    className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover=true]:bg-[#f6f6f6] data-[hover=true]:opacity-100"
                     variant="outline"
                     onClick={() => handleExtensionSelect(extension)}
                   >
@@ -132,7 +142,7 @@ export default function SubstrateWalletModal() {
                       <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
                       <span>{getWalletName(extension.name, window)}</span>
                     </div>
-                    <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
+                    <span className="rounded-[5px] bg-turtle-primary-light px-[6px] py-[3px] text-[11px] font-bold text-turtle-primary-dark text-opacity-80">
                       INSTALLED
                     </span>
                   </Button>
@@ -153,17 +163,19 @@ export default function SubstrateWalletModal() {
               filteredAccounts.map(account => (
                 <Button
                   key={account.address}
-                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-turtle-level1 bg-opacity-70 p-4 hover:bg-opacity-95"
+                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover=true]:bg-[#f6f6f6] data-[hover=true]:opacity-100"
                   variant="outline"
                   onClick={() => handleAccountSelect(account)}
                 >
                   <div className="flex flex-col items-start space-y-1 text-sm">
-                    <span className="font-medium">{account.name || 'Unnamed Account'}</span>
+                    <span className="text-[13px] font-medium">
+                      {account.name || 'Unnamed Account'}
+                    </span>
                     <span className="text-xs text-turtle-level6">
                       {truncateAddress(account.address)}
                     </span>
                   </div>
-                  <span className="rounded-[5px] bg-turtle-primary-light px-[5px] py-[3px] text-[9px] text-xs font-bold text-turtle-primary-dark text-opacity-80">
+                  <span className="rounded-[5px] bg-turtle-primary-light px-[6px] py-[3px] text-[11px] font-bold text-turtle-primary-dark text-opacity-80">
                     CONNECT
                   </span>
                 </Button>
@@ -189,11 +201,11 @@ export default function SubstrateWalletModal() {
 
 function Footer() {
   return (
-    <div className="mb-1 mt-4 text-center text-xs text-gray-500">
-      Haven&apos;t got a wallet?{' '}
+    <div className="text mb-1 mt-4 text-center text-[12px] text-gray-500">
+      Haven&apos;t got a wallet?
       <a
         href="https://support.polkadot.network/support/solutions/articles/65000098878-how-to-create-a-polkadot-account"
-        className="text-blue-500"
+        className="ml-2 font-bold text-blue-500"
       >
         Get started
       </a>
