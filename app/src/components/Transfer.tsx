@@ -146,7 +146,7 @@ export default function Transfer() {
   else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
   else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
 
-  let receiveAmountPlaceholder = 'Receive Token'
+  let receiveAmountPlaceholder = 'Receive Amount'
   if (isLoadingOutputAmount) receiveAmountPlaceholder = 'Loading...'
   else if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id)
     receiveAmountPlaceholder = ''
