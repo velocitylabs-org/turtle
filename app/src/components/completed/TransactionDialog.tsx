@@ -32,10 +32,10 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
         className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem]"
         hideCloseButton
       >
-        <div className="relative">
+        <div>
           <DialogHeader
             className={cn(
-              'relative flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border p-4',
+              'flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border p-4',
               getBg(tx.result),
               getBorder(tx.result),
             )}
@@ -87,25 +87,28 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
               className={cn(
                 'flex w-full items-center justify-center gap-2 rounded-lg text-xs',
                 getTextColor(tx.result),
-                getBg(tx.result),
                 getBorder(tx.result),
               )}
             >
-              {getStatusIcon(tx.result)}
+              <span className="relative bottom-[1px]">{getStatusIcon(tx.result)}</span>
               {tx.result === TxStatus.Undefined ? (
-                <p>We are not sure what happened to this transfer</p>
+                <p className="text-left">
+                  We are not sure what happened to this transfer
+                  <span className="ml-1">{formatHours(tx.date)}</span>
+                </p>
               ) : tx.result === TxStatus.Succeeded ? (
-                <p>
-                  <span className="mr-1 pe-0.5 font-semibold">Done!</span>
-                  This transfer is completed.
+                <p className="text-left">
+                  <span className="pe-0.5 font-semibold">Done!</span>
+                  This transfer is completed
+                  <span className="ml-1">{formatHours(tx.date)}</span>
                 </p>
               ) : (
-                <p>
-                  <span className="font-semibold">This transfer failed!</span>
+                <p className="text-left">
+                  <span className="font-semibold">This transfer failed! </span>
                   {tx.errors?.length && tx.errors[tx.errors?.length - 1]}
+                  <span className="ml-1">{formatHours(tx.date)}</span>
                 </p>
               )}
-              <span>{formatHours(tx.date)}</span>
             </div>
           </DialogHeader>
 
