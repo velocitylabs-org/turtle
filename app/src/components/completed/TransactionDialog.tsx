@@ -32,10 +32,10 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
         className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem]"
         hideCloseButton
       >
-        <div className="relative">
+        <div>
           <DialogHeader
             className={cn(
-              'relative flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border p-4',
+              'flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border p-4',
               getBg(tx.result),
               getBorder(tx.result),
             )}
