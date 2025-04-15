@@ -8,7 +8,7 @@ import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 import { track } from '@vercel/analytics'
 
-type AllowedPropertyValues = string | number | boolean | null;
+type AllowedPropertyValues = string | number | boolean | null
 
 export interface TransferMetric {
   environment: Environment
@@ -28,33 +28,33 @@ export interface TransferMetric {
 
 export async function trackTransferMetrics(data: TransferMetric) {
   const obj: Record<string, AllowedPropertyValues> = {
-    'tokenName': data.token.name,
-    'tokenSymbol': data.token.symbol,
-    'tokenAmount': toHuman(data.amount, data.token),
-    'tokenAmountUsd': toHuman(data.amount, data.token) * data.tokenUSDValue,
+    tokenName: data.token.name,
+    tokenSymbol: data.token.symbol,
+    tokenAmount: toHuman(data.amount, data.token),
+    tokenAmountUsd: toHuman(data.amount, data.token) * data.tokenUSDValue,
 
-    'feesTokenName': data.fees.token.name,
-    'feesTokenSymbol': data.fees.token.symbol,
-    'feesAmount': toHuman(data.fees.amount, data.fees.token),
-    'feesAmountUsd': data.fees.inDollars,
+    feesTokenName: data.fees.token.name,
+    feesTokenSymbol: data.fees.token.symbol,
+    feesAmount: toHuman(data.fees.amount, data.fees.token),
+    feesAmountUsd: data.fees.inDollars,
 
-    'senderAddress': data.sender,
-    'sourceChainName': data.sourceChain.name,
-    'sourceChainNetwork': data.sourceChain.network,
+    senderAddress: data.sender,
+    sourceChainName: data.sourceChain.name,
+    sourceChainNetwork: data.sourceChain.network,
 
-    'recipientAddress': data.recipient,
-    'destinationChainName': data.destinationChain.name,
-    'destinationChainNetwork': data.destinationChain.network,
+    recipientAddress: data.recipient,
+    destinationChainName: data.destinationChain.name,
+    destinationChainNetwork: data.destinationChain.network,
 
-    'date': data.date.toString(),
+    date: data.date.toString(),
 
     // Additional info for debugging.
-    'txId': data.id ?? '',
-    'appHostedOn': window.location.origin,
-    'amount': data.amount.toString(),
-    'currentTokenPriceUSD': data.tokenUSDValue,
-}
-track("Test Track Sent Tx", { ...obj });
+    txId: data.id ?? '',
+    appHostedOn: window.location.origin,
+    amount: data.amount.toString(),
+    currentTokenPriceUSD: data.tokenUSDValue,
+  }
+  track('Test Track Sent Tx', { ...obj })
 
   if (
     !process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||

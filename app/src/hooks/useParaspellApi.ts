@@ -139,23 +139,23 @@ const useParaspellApi = () => {
     }
 
     // if (params.environment === Environment.Mainnet && isProduction) {
-    console.log("Will track to vercel")
-      trackTransferMetrics({
-        id: event.txHash.toString(),
-        sender: senderAddress,
-        sourceChain: params.sourceChain,
-        token: params.token,
-        amount: params.amount,
-        destinationChain: params.destinationChain,
-        tokenUSDValue,
-        fees: params.fees,
-        recipient: params.recipient,
-        date,
-        environment: params.environment,
-      })
-      console.log("Done tracking with vercel")
+    console.log('Will track to vercel')
+    trackTransferMetrics({
+      id: event.txHash.toString(),
+      sender: senderAddress,
+      sourceChain: params.sourceChain,
+      token: params.token,
+      amount: params.amount,
+      destinationChain: params.destinationChain,
+      tokenUSDValue,
+      fees: params.fees,
+      recipient: params.recipient,
+      date,
+      environment: params.environment,
+    })
+    console.log('Done tracking with vercel')
 
-      setStatus('Idle')
+    setStatus('Idle')
     // }
   }
 
