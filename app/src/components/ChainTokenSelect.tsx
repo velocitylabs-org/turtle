@@ -253,6 +253,11 @@ const TokenAmountInput = ({
   triggerRef,
   inDollars,
 }: TokenAmountInputProps) => {
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.target.value === '' ? null : parseFloat(e.target.value)
+    amount?.onChange?.(newVal)
+  }
+
   const showVerticalDivider = !!amount?.value || !!amount?.placeholder
 
   return (
@@ -300,7 +305,7 @@ const TokenAmountInput = ({
               )}
               placeholder={amount?.placeholder ?? 'Amount'}
               value={amount?.value ?? ''}
-              onChange={e => amount?.onChange?.(Number(e.target.value) || null)}
+              onChange={handleAmountChange}
               onClick={e => e.stopPropagation()}
               onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
               autoFocus
