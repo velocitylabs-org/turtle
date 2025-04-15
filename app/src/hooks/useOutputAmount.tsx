@@ -46,21 +46,25 @@ export function useOutputAmount({
         return null
 
       try {
-        // Normal transfer
-        if (isSameToken(sourceToken, destinationToken)) {
-          if (fees && fees.token.id === sourceToken.id) return BigInt(amount) - BigInt(fees.amount)
-          return BigInt(amount)
+        if (!isSameToken(sourceToken, destinationToken)) {
+          // Swap
+          const output = await getExchangeOutputAmount(
+            sourceChain,
+            destinationChain,
+            sourceToken,
+            destinationToken,
+            amount,
+          )
+          return output
         }
 
-        // Swap
-        const output = await getExchangeOutputAmount(
-          sourceChain,
-          destinationChain,
-          sourceToken,
-          destinationToken,
-          amount,
-        )
-        return output
+        // Normal transfer
+        if (!fees || fees.token.id !== sourceToken.id) return BigInt(amount)
+
+        const amountBigInt = BigInt(amount)
+        const feesBigInt = BigInt(fees.amount)
+        if (feesBigInt > amountBigInt) return 0n
+        return amountBigInt - feesBigInt
       } catch (error) {
         captureException(error, {
           level: 'error',
