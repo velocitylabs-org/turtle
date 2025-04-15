@@ -10,7 +10,7 @@ import { cn } from '@/utils/cn'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import NumberFlow from '@number-flow/react'
 import Image from 'next/image'
-import { ReactNode, RefObject, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, ReactNode, RefObject, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
@@ -253,12 +253,11 @@ const TokenAmountInput = ({
   triggerRef,
   inDollars,
 }: TokenAmountInputProps) => {
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const showVerticalDivider = !!amount?.value || !!amount?.placeholder
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newVal = e.target.value === '' ? null : parseFloat(e.target.value)
     amount?.onChange?.(newVal)
   }
-
-  const showVerticalDivider = !!amount?.value || !!amount?.placeholder
 
   return (
     <Tooltip content={amount?.error}>
