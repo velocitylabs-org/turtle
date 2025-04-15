@@ -4,7 +4,6 @@ import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { describe, expect, it } from '@jest/globals'
-import '@testing-library/jest-dom'
 
 describe('Transfer', () => {
   it('direction ToEthereum', () => {
