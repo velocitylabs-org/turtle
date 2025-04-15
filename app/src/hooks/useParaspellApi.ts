@@ -138,7 +138,8 @@ const useParaspellApi = () => {
       handleSendError(params.sender, error, setStatus, event.txHash.toString())
     }
 
-    if (params.environment === Environment.Mainnet && isProduction) {
+    // if (params.environment === Environment.Mainnet && isProduction) {
+    console.log("Will track to vercel")
       trackTransferMetrics({
         id: event.txHash.toString(),
         sender: senderAddress,
@@ -152,9 +153,10 @@ const useParaspellApi = () => {
         date,
         environment: params.environment,
       })
+      console.log("Done tracking with vercel")
 
       setStatus('Idle')
-    }
+    // }
   }
 
   const validate = async (params: TransferParams): Promise<DryRunResult> => {
