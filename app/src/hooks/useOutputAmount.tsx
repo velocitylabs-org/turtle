@@ -38,12 +38,21 @@ export function useOutputAmount({
       sourceToken?.id,
       destinationToken?.id,
       amount,
+      fees?.token.id,
+      fees?.amount.toString(),
     ],
     queryFn: async () => {
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
         return null
 
       try {
+        console.log(
+          fees,
+          sourceToken.id,
+          destinationToken.id,
+          fees?.token.id === sourceToken.id,
+          fees?.amount,
+        )
         // Normal transfer
         if (isSameToken(sourceToken, destinationToken)) {
           if (fees && fees.token.id === sourceToken.id) return BigInt(amount) - BigInt(fees.amount)
