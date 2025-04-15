@@ -253,6 +253,8 @@ const TokenAmountInput = ({
   triggerRef,
   inDollars,
 }: TokenAmountInputProps) => {
+  const showVerticalDivider = !!amount?.value || !!amount?.placeholder
+
   return (
     <Tooltip content={amount?.error}>
       <div
@@ -285,7 +287,7 @@ const TokenAmountInput = ({
             )}
           </div>
           <ChevronDown strokeWidth={0.2} className="ml-1" />
-          {!amount?.disabled && <VerticalDivider />}
+          {showVerticalDivider && <VerticalDivider />}
           <div className="align-center ml-1 flex flex-col">
             <input
               data-cy="amount-input"
