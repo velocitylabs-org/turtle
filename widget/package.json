@@ -31,6 +31,7 @@
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
     "@paraspell/sdk": "8.9.9",
+    "@paraspell/xcm-router": "^8.9.9",
     "@polkadot/api": "^15.7.2",
     "@polkadot/extension-dapp": "^0.58.4",
     "@polkadot/react-identicon": "^3.12.2",
