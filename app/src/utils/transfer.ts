@@ -1,12 +1,13 @@
 import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
-import { Network } from '@/models/chain'
+import { Chain, Network } from '@/models/chain'
 import { TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { Environment } from '@/store/environmentStore'
 import { ethers, JsonRpcSigner } from 'ethers'
+import { isSameChain } from './routes'
 
 /**
  * Safe version of `convertAmount` that handles `null` and `undefined` params
@@ -297,4 +298,66 @@ export const startedTooLongAgo = (
       ? thresholdInHours.xcm * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
+}
+
+/**
+ * Checks if a transfer is a swap (has destination token and amount)
+ * @param transfer - The transfer to check
+ * @returns if the transfer is a swap
+ */
+export const isSwap = <T extends { destinationToken?: Token; destinationAmount?: string }>(
+  transfer: T,
+): transfer is T & {
+  destinationToken: Token
+  destinationAmount: string
+} => {
+  return !!transfer.destinationToken && !!transfer.destinationAmount
+}
+
+/**
+ * Checks if a transfer is a swap within the same chain:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSameChainSwap = <
+  T extends {
+    destinationToken?: Token
+    destinationAmount?: string
+    sourceChain: Chain
+    destChain: Chain
+  },
+>(
+  transfer: T,
+): transfer is T & {
+  destinationToken: Token
+  destinationAmount: string
+  sourceChain: Chain
+  destChain: Chain
+} => {
+  return isSwap(transfer) && isSameChain(transfer.sourceChain, transfer.destChain)
+}
+
+/**
+ * Checks if a transfer is a swap + XCM between two different chains:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSwapWithTransfer = <
+  T extends {
+    destinationToken?: Token
+    destinationAmount?: string
+    sourceChain: Chain
+    destChain: Chain
+  },
+>(
+  transfer: T,
+): transfer is T & {
+  destinationToken: Token
+  destinationAmount: string
+  sourceChain: Chain
+  destChain: Chain
+} => {
+  return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }

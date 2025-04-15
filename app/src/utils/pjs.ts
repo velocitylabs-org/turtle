@@ -1,3 +1,4 @@
+import { PjsEvents } from '@/models/transfer'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ISubmittableResult } from '@polkadot/types/types'
 
@@ -8,7 +9,7 @@ import { ISubmittableResult } from '@polkadot/types/types'
  * @param result - The blockchain result returned by the signAndSend() method.
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
-export const extractPjsEvents = (result: ISubmittableResult) => {
+export const extractPjsEvents = (result: ISubmittableResult): PjsEvents | undefined => {
   const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } =
     result
   // check for execution errors
@@ -39,7 +40,7 @@ export const extractPjsEvents = (result: ISubmittableResult) => {
 
     let messageHash: string | undefined
     let messageId: string | undefined
-
+    let isBatchCompleted: boolean | undefined
     // Filter the events to get the needed data
     events.forEach(({ event: { data, method, section } }) => {
       // Get messageHash from parachainSystem pallet (ex: DOT from Para to Para )
@@ -61,11 +62,15 @@ export const extractPjsEvents = (result: ISubmittableResult) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         messageId = (data.messageId as any).toString()
       }
+      // Get BatchCompleted from utility pallet for Non local swap
+      if (method === 'BatchCompleted' && section === 'utility') {
+        isBatchCompleted = true
+      }
     })
     if (!messageHash && !messageId && !extrinsicIndex)
       throw new Error('MessageHash, MessageId and ExtrinsicIndex are all missing')
 
-    return { messageHash, messageId, extrinsicIndex }
+    return { messageHash, messageId, extrinsicIndex, isBatchCompleted }
   }
 }
 
