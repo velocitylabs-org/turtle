@@ -1,4 +1,5 @@
 import { withSentryConfig } from '@sentry/nextjs'
+import path from 'path'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const vercelDomain = process.env.NEXT_PUBLIC_VERCEL_URL
@@ -10,6 +11,18 @@ const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
 const isProduction = process.env.NODE_ENV === 'production'
 const nextConfig = {
   webpack: config => {
+    // Export to another file to avoid mess in here
+    if (process.env.NEXT_PUBLIC_USE_MOCKS) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@original-paraspell/sdk': path.resolve(process.cwd(), 'node_modules/@paraspell/sdk'),
+        '@paraspell/sdk': path.resolve(
+          process.cwd(),
+          'cypress/support/__mocks__/paraspellSdkMock.ts',
+        ),
+      }
+    }
+
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     config.experiments = { asyncWebAssembly: true, topLevelAwait: true, layers: true }
 
@@ -17,7 +30,6 @@ const nextConfig = {
       test: /\.wasm$/,
       type: 'webassembly/async',
     })
-
     return config
   },
   async headers() {

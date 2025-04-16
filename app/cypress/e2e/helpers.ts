@@ -1,4 +1,4 @@
-import { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
+import { InjectedAccountWitMnem onic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
 
 const DAPP_NAME = 'turtle'
 

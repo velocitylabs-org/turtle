@@ -22,7 +22,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@original-paraspell/sdk": ["./node_modules/@paraspell/sdk"]
     },
     "types": ["jest"]
   },

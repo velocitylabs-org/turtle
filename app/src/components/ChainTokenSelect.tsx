@@ -197,7 +197,7 @@ export default function ChainTokenSelect({
           </div>
 
           {/* Token options (right side) */}
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-1 flex-col" data-cy={`token-list-${context}`}>
             <TokenList
               searchString={tokenSearch}
               setSearchString={setTokenSearch}

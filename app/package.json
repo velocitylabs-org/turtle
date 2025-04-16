@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
+    "dev:cypress": "NEXT_PUBLIC_USE_MOCKS=true next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -67,6 +68,7 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@cypress/webpack-preprocessor": "^6.0.4",
     "@galacticcouncil/api-augment": "^0.3.0",
     "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
