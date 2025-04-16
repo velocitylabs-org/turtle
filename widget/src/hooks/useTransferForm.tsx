@@ -249,6 +249,7 @@ const useTransferForm = () => {
     setManualRecipientError(
       isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address',
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
   // validate token amount

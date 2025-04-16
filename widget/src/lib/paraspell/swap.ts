@@ -105,7 +105,7 @@ export const isDexChain = (chain: Chain) =>
 
 /** returns the paraspell dex for a given chain */
 export const getDex = (chain: Chain): Dex | undefined => {
-  const entry = Object.entries(DEX_TO_CHAIN_MAP).find(([_, c]) => c.uid === chain.uid)
+  const entry = Object.entries(DEX_TO_CHAIN_MAP).find(([, c]) => c.uid === chain.uid)
   return entry?.[0] as Dex | undefined
 }
 
