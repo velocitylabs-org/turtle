@@ -134,6 +134,10 @@ export default function ChainTokenSelect({
   }
   const handleTokenClear = () => token.onChange(null)
 
+  const handleDropdownTriggerClick = () => {
+    if (!disabled) setIsOpen(!isOpen)
+  }
+
   return (
     <div className={twMerge('relative w-full', className)}>
       <div className="flex">
@@ -146,7 +150,7 @@ export default function ChainTokenSelect({
           <ChainTrigger
             value={chain.value}
             disabled={disabled}
-            onClick={() => setIsOpen(true)}
+            onClick={handleDropdownTriggerClick}
             error={wallet?.error}
             className={cn(
               'rounded-md rounded-bl-none rounded-br-none',
@@ -173,7 +177,7 @@ export default function ChainTokenSelect({
         token={token}
         amount={amount}
         disabled={disabled}
-        onTriggerClick={() => setIsOpen(true)}
+        onTriggerClick={handleDropdownTriggerClick}
         triggerRef={triggerRef}
         inDollars={inDollars}
       />
@@ -250,7 +254,6 @@ const TokenAmountInput = ({
     <Tooltip content={amount?.error}>
       <div
         ref={triggerRef}
-        onClick={disabled ? undefined : onTriggerClick}
         className={cn(
           'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
           !disabled && 'cursor-pointer',
@@ -259,7 +262,11 @@ const TokenAmountInput = ({
         )}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-          <div className="flex items-center gap-1" data-cy="token-select-trigger">
+          <div
+            className="flex items-center gap-1"
+            data-cy="token-select-trigger"
+            onClick={disabled ? undefined : onTriggerClick}
+          >
             {token.value ? (
               <>
                 <TokenLogo
@@ -276,9 +283,10 @@ const TokenAmountInput = ({
                 Token
               </>
             )}
+            <ChevronDown strokeWidth={0.2} className="ml-1" />
+            {showVerticalDivider && <VerticalDivider />}
           </div>
-          <ChevronDown strokeWidth={0.2} className="ml-1" />
-          {showVerticalDivider && <VerticalDivider />}
+
           <div className="align-center ml-1 flex flex-col">
             <input
               data-cy="amount-input"
