@@ -4,6 +4,7 @@ import { Token } from '@/models/token'
 import { TokenAmount } from '@/models/select'
 import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { Sender } from '@/hooks/useTransfer'
+import { isSameChain } from './routes'
 
 export type FormatLength = 'Short' | 'Long' | 'Longer'
 
@@ -21,7 +22,7 @@ function getMaxSignificantDigits(length: FormatLength): number {
 /**
  * Formats a numerical amount into a human-readable, compact string representation.
  * @param amount - The amount to be formatted. For example, `1234567`.
- * @param length - Determines how many significant fraction digits will be shown for amount < 1.
+ * @param length - Determines how many significant fraction digits will be shown for amount smaller than 1.
  * @returns The amount formatted as a human-readable string. For example, `"1.23M"`.
  */
 export const formatAmount = (amount: number, length: FormatLength = 'Short'): string => {
@@ -188,4 +189,66 @@ export const startedTooLongAgo = (
       ? thresholdInHours.xcm * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
+}
+
+/**
+ * Checks if a transfer is a swap (has destination token and amount)
+ * @param transfer - The transfer to check
+ * @returns if the transfer is a swap
+ */
+export const isSwap = <T extends { destinationToken?: Token; destinationAmount?: string }>(
+  transfer: T,
+): transfer is T & {
+  destinationToken: Token
+  destinationAmount: string
+} => {
+  return !!transfer.destinationToken && !!transfer.destinationAmount
+}
+
+/**
+ * Checks if a transfer is a swap within the same chain:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSameChainSwap = <
+  T extends {
+    destinationToken?: Token
+    destinationAmount?: string
+    sourceChain: Chain
+    destChain: Chain
+  },
+>(
+  transfer: T,
+): transfer is T & {
+  destinationToken: Token
+  destinationAmount: string
+  sourceChain: Chain
+  destChain: Chain
+} => {
+  return isSwap(transfer) && isSameChain(transfer.sourceChain, transfer.destChain)
+}
+
+/**
+ * Checks if a transfer is a swap + XCM between two different chains:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSwapWithTransfer = <
+  T extends {
+    destinationToken?: Token
+    destinationAmount?: string
+    sourceChain: Chain
+    destChain: Chain
+  },
+>(
+  transfer: T,
+): transfer is T & {
+  destinationToken: Token
+  destinationAmount: string
+  sourceChain: Chain
+  destChain: Chain
+} => {
+  return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }

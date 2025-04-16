@@ -14,14 +14,14 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useEnvironmentStore } from '@/stores/environmentStore'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import { getRoute } from '@/utils/routes'
+import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/lib/snowbridge'
 import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getBalance } from './useBalance'
 import { useQuery } from '@tanstack/react-query'
 import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
 
-// NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
+// NOTE: when bridging from Parachain to Ethereum, we have the local execution fees + the bridging fees.
 // When bridging from AssetHub, the basic fees already take the bridging fees into account.
 export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
@@ -78,8 +78,8 @@ const useFees = (
       return
     }
 
-    const route = getRoute(env, sourceChain, destinationChain)
-    if (!route) throw new Error('Route not supported')
+    const sdk = resolveSdk(sourceChain, destinationChain)
+    if (!sdk) throw new Error('Route not supported')
 
     // TODO: this should be the fee token, not necessarily the native token.
     const feeToken = getNativeToken(sourceChain)
@@ -87,7 +87,7 @@ const useFees = (
     try {
       setBridgingFees(null)
 
-      switch (route.sdk) {
+      switch (sdk) {
         case 'ParaSpellApi': {
           setLoading(true)
           const sourceChainNode = getParaSpellNode(sourceChain)

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { Chain } from '@/models/chain'
-import { ManualRecipient, TokenAmount } from '@/models/select'
+import { ManualAddressValue, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { TMultiLocation } from '@paraspell/sdk'
 
@@ -43,7 +43,7 @@ export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
     .refine(val => val !== null, { message: 'Required', path: ['amount'] }),
 })
 
-export const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
+export const manualRecipientSchema: z.ZodType<ManualAddressValue> = z.object({
   enabled: z.boolean(),
   address: z.string(),
 })
@@ -55,7 +55,11 @@ export const schema = z.object({
   destinationChain: chainSchema.refine(val => val !== null, {
     message: 'Destination chain is required',
   }),
-  tokenAmount: tokenAmountSchema,
+  sourceTokenAmount: tokenAmountSchema,
+  destinationTokenAmount: z.object({
+    token: tokenSchema.nullable().refine(val => val !== null, { message: 'Token is required' }),
+    amount: z.number().nullable(),
+  }),
   manualRecipient: manualRecipientSchema,
 })
 

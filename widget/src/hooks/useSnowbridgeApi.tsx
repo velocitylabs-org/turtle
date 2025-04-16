@@ -27,7 +27,7 @@ const useSnowbridgeApi = () => {
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    const { sender, sourceChain, token, destinationChain, recipient, amount } = params
+    const { sender, sourceChain, sourceToken, destinationChain, recipient, sourceAmount } = params
 
     try {
       if (snowbridgeContext === undefined) {
@@ -44,10 +44,10 @@ const useSnowbridgeApi = () => {
         direction,
         snowbridgeContext,
         sender,
-        token,
+        sourceToken,
         destinationChain,
         recipient,
-        amount,
+        sourceAmount,
         setStatus,
       )) as toPolkadotV2.Transfer
 
@@ -95,13 +95,14 @@ const useSnowbridgeApi = () => {
   ) => {
     const {
       sourceChain,
-      token,
+      sourceToken,
+      destinationToken,
       destinationChain,
       recipient,
-      amount,
+      sourceAmount,
       environment,
       fees,
-      bridgingFees,
+      bridgingFee,
       onComplete,
     } = params
     try {
@@ -139,56 +140,37 @@ const useSnowbridgeApi = () => {
       onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getTokenPrice(token))?.usd ?? 0
+      const tokenUSDValue = (await getTokenPrice(sourceToken))?.usd ?? 0
       const date = new Date()
-
-      // const getTxHash = (sendResult: toEthereum.SendResult | toPolkadot.SendResult) => {
-      //   if (sendResult.failure) return
-      //   switch (direction) {
-      //     case Direction.ToPolkadot: {
-      //       return sendResult.success?.assetHub && 'txHash' in sendResult.success.assetHub
-      //         ? sendResult.success?.assetHub.txHash
-      //         : undefined
-      //     }
-
-      //     case Direction.ToEthereum: {
-      //       return sendResult?.success?.ethereum && 'transactionHash' in sendResult.success.ethereum
-      //         ? sendResult.success?.ethereum.transactionHash
-      //         : undefined
-      //     }
-      //     default:
-      //       throw new Error('Snowbridge Tx Hash not found')
-      //   }
-      // }
 
       addOrUpdate({
         id: response.hash,
         sourceChain,
-        token,
-        tokenUSDValue,
+        sourceToken,
+        destinationToken,
+        sourceTokenUSDValue: tokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
-        amount: amount.toString(),
+        sourceAmount: sourceAmount.toString(),
         recipient,
         date,
         environment,
         fees,
-        bridgingFees,
-        // sendResult: getTxHash(sendResult),
+        bridgingFee,
       } satisfies StoredTransfer)
 
       // trackTransferMetrics({
-      //   id: sendResult.success?.messageId,
-      //   sender: senderAddress,
-      //   sourceChain,
-      //   token,
-      //   amount,
-      //   destinationChain,
-      //   tokenUSDValue,
-      //   fees,
-      //   recipient,
-      //   date,
-      //   environment,
+      // id: response.hash,
+      // sender: senderAddress,
+      // sourceChain,
+      // token: sourceToken,
+      // amount: sourceAmount,
+      // destinationChain,
+      // tokenUSDValue,
+      // fees,
+      // recipient,
+      // date,
+      // environment,
       // })
     } catch (e) {
       handleSendError(sender, e)
@@ -201,6 +183,7 @@ const useSnowbridgeApi = () => {
     direction: Direction,
     snowbridgeContext: SnowbridgeContext,
     sender: Sender,
+    // sourceChain: Chain,
     token: Token,
     destinationChain: Chain,
     recipient: string,
