@@ -5,9 +5,11 @@ import dts from 'vite-plugin-dts'
 import tailwindcss from 'tailwindcss'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import wasm from 'vite-plugin-wasm'
 
 export default defineConfig({
   plugins: [
+    wasm(),
     react(),
     nodePolyfills(),
     dts({
@@ -28,6 +30,7 @@ export default defineConfig({
     },
   },
   build: {
+    target: 'esnext',
     lib: {
       entry: resolve(__dirname, './src/index.ts'),
       formats: ['es'],
@@ -43,6 +46,11 @@ export default defineConfig({
       },
     },
     emptyOutDir: true,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext',
+    },
   },
 })
 
