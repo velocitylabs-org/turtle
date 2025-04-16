@@ -153,7 +153,9 @@ export default function SubstrateWalletModal() {
                   >
                     <div className="flex items-center space-x-2 text-sm">
                       <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
-                      <span>{getWalletName(extension.name, window)}</span>
+                      <span className="block max-w-[120px] truncate sm:max-w-[165px]">
+                        {getWalletName(extension.name, window)}
+                      </span>
                     </div>
                     <span className="rounded-[5px] bg-turtle-primary-light px-[6px] py-[3px] text-[11px] font-bold text-turtle-primary-dark text-opacity-80">
                       INSTALLED
@@ -181,7 +183,7 @@ export default function SubstrateWalletModal() {
                   onClick={() => handleAccountSelect(account)}
                 >
                   <div className="flex flex-col items-start space-y-1 text-sm">
-                    <span className="text-[13px] font-medium">
+                    <span className="block max-w-[180px] truncate text-[13px] font-medium sm:max-w-[220px]">
                       {account.name || 'Unnamed Account'}
                     </span>
                     <span className="text-xs text-turtle-level6">
