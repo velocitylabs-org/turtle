@@ -109,7 +109,7 @@ export default function SubstrateWalletModal() {
 
         {/* Animate Height Transition */}
         <motion.div
-          className="flex max-h-[15rem] min-h-[240px] flex-col items-center justify-start space-y-2 overflow-y-auto p-6 pt-3 text-base"
+          className="flex max-h-[15rem] min-h-[130px] flex-col items-center justify-start space-y-2 overflow-y-auto p-6 pt-3 text-base"
           layout
           {...heightAnimationProps}
         >
