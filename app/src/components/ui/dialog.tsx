@@ -39,6 +39,7 @@ type DialogContentProps = React.ComponentPropsWithoutRef<typeof DialogPrimitive.
   > & {
     className?: string
     iconClassName?: string
+    iconStrokeWidth?: number
   }
 }
 
@@ -50,6 +51,7 @@ const DialogContent = React.forwardRef<
   const {
     className: closeClassName,
     iconClassName,
+    iconStrokeWidth,
     ...restCloseButtonProps
   } = closeButtonProps || {}
 
@@ -73,7 +75,7 @@ const DialogContent = React.forwardRef<
             )}
             {...restCloseButtonProps}
           >
-            <X className={cn('h-4 w-4', iconClassName)} strokeWidth={3} />
+            <X className={cn('h-4 w-4', iconClassName)} strokeWidth={iconStrokeWidth} />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

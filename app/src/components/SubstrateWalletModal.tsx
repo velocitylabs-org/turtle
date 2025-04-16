@@ -97,6 +97,7 @@ export default function SubstrateWalletModal() {
           className:
             'top-[18px] right-[18px] focus:ring-0 hover:bg-gray-100 opacity-100 p-1 rounded-[10px]',
           iconClassName: 'h-[18px] w-[18px]',
+          iconStrokeWidth: 3,
         }}
       >
         {/* Header */}
