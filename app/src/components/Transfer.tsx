@@ -188,7 +188,7 @@ export default function Transfer() {
   const tokenAmountSelectError = useMemo(() => {
     if (errors.tokenAmount?.amount?.message) return errors.tokenAmount.amount.message
     if (tokenAmountError) return tokenAmountError
-    if (exceedsTransferableBalance) return 'Insufficient funds to cover the fees'
+    if (exceedsTransferableBalance) return 'We need some of that to pay fees'
     return undefined
   }, [errors.tokenAmount?.amount?.message, tokenAmountError, exceedsTransferableBalance])
 
