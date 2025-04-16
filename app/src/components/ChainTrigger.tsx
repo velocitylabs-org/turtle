@@ -60,11 +60,14 @@ export default function ChainTrigger({
       address: e.target.value,
     })
 
+  const handleClick = () => {
+    if (!disabled && onClick) onClick()
+  }
+
   return (
     <Tooltip content={error}>
       <div
         ref={triggerRef}
-        onClick={disabled ? undefined : onClick}
         className={cn(
           'flex items-center justify-between border-1 border-turtle-level3 bg-background px-3 text-sm',
           !disabled && 'cursor-pointer',
@@ -75,28 +78,30 @@ export default function ChainTrigger({
         data-cy="chain-select-trigger"
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-          {value ? (
-            <>
-              <Image
-                src={value.logoURI}
-                alt={value.name}
-                width={24}
-                height={24}
-                className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
-              />
-              {shouldShowChainName && (
-                <span className="text-nowrap" data-cy="chain-select-value">
-                  {value.name}
-                </span>
-              )}
-            </>
-          ) : (
-            <>
-              <ChainIcon />
-              <span>Chain</span>
-            </>
-          )}
-          <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+          <div className="flex items-center gap-1" onClick={handleClick}>
+            {value ? (
+              <>
+                <Image
+                  src={value.logoURI}
+                  alt={value.name}
+                  width={24}
+                  height={24}
+                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                />
+                {shouldShowChainName && (
+                  <span className="text-nowrap" data-cy="chain-select-value">
+                    {value.name}
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                <ChainIcon />
+                <span>Chain</span>
+              </>
+            )}
+            <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+          </div>
 
           {ensAvatar && (
             <Image
