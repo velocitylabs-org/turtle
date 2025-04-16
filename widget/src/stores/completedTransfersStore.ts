@@ -14,6 +14,8 @@ const serializeFeeAmount = (fees: AmountInfo): AmountInfo => {
   }
 }
 
+// const currentStoreVersion = 1
+
 export const useCompletedTransfersStore = create<CompletedTxState>()(
   persist(
     set => ({
@@ -26,8 +28,8 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
         const persistableTransfer = {
           ...newCompletedTransfer,
           fees: serializeFeeAmount(newCompletedTransfer.fees),
-          ...(newCompletedTransfer.bridgingFees && {
-            bridgingFee: serializeFeeAmount(newCompletedTransfer.bridgingFees),
+          ...(newCompletedTransfer.bridgingFee && {
+            bridgingFee: serializeFeeAmount(newCompletedTransfer.bridgingFee),
           }),
         }
 
@@ -49,6 +51,40 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
       name: 'turtle-completed-transactions',
       storage: createJSONStorage(() => localStorage),
       partialize: state => ({ completedTransfers: state.completedTransfers }),
+      // version: currentStoreVersion,
+      // migrate: (persistedState, version) => {
+      //   if (version === currentStoreVersion) return persistedState
+
+      //   if (version === 0) {
+      //     const oldTransfers = persistedState as { completedTransfers: CompletedTransferV0[] }
+
+      //     const migratedTransfers = oldTransfers.completedTransfers.map(transfer => ({
+      //       id: transfer.id,
+      //       result: transfer.result,
+      //       sourceChain: transfer.sourceChain,
+      //       destChain: transfer.destChain,
+      //       sender: transfer.sender,
+      //       recipient: transfer.recipient,
+      //       date: transfer.date,
+      //       fees: transfer.fees,
+      //       bridgingFee: transfer.bridgingFee,
+      //       minTokenRecieved: transfer.minTokenRecieved,
+      //       minTokenRecievedValue: transfer.minTokenRecievedValue,
+      //       explorerLink: transfer.explorerLink,
+      //       errors: transfer.errors,
+
+      //       // V0 Migrations
+      //       sourceToken: transfer.token,
+      //       sourceTokenUSDValue: transfer.tokenUSDValue,
+      //       sourceAmount: transfer.amount,
+      //     }))
+
+      //     return { completedTransfers: migratedTransfers }
+      //   }
+
+      //   console.warn(`Unknown completed transfers version ${version}, resetting to initial state`)
+      //   return { completedTransfers: [] }
+      // },
     },
   ),
 )
