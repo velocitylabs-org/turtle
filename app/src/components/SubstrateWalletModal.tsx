@@ -18,6 +18,13 @@ const footerAnimationProps = {
   transition: { duration: 0.3 },
 }
 
+const headerElementAnimationProps = {
+  initial: { opacity: 0, y: 5 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -5 },
+  transition: { duration: 0.3 },
+}
+
 export default function SubstrateWalletModal() {
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
   const {
@@ -96,14 +103,20 @@ export default function SubstrateWalletModal() {
           {currentView === 'accounts' && (
             <div className="absolute left-0">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
-                <span className="flex h-[18px] w-[18px] items-center justify-center rounded-[10px] p-[13px] text-[17px] opacity-100 hover:bg-gray-100">
+                <motion.span
+                  key={currentView}
+                  {...headerElementAnimationProps}
+                  className="flex h-[18px] w-[18px] items-center justify-center rounded-[10px] p-[13px] text-[18px] opacity-100 hover:bg-gray-100"
+                >
                   ←
-                </span>
+                </motion.span>
               </Button>
             </div>
           )}
           <DialogTitle className="mt-1 text-base font-bold">
-            {currentView === 'extensions' ? 'Connect Wallet' : 'Connect Account'}
+            <motion.span key={currentView} {...headerElementAnimationProps}>
+              {currentView === 'extensions' ? 'Connect Wallet' : 'Connect Account'}
+            </motion.span>
           </DialogTitle>
         </DialogHeader>
 
@@ -134,7 +147,7 @@ export default function SubstrateWalletModal() {
                 .map(extension => (
                   <Button
                     key={extension.name}
-                    className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover=true]:bg-[#f6f6f6] data-[hover=true]:opacity-100"
+                    className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover='true']:bg-[#f6f6f6] data-[hover='true']:opacity-100"
                     variant="outline"
                     onClick={() => handleExtensionSelect(extension)}
                   >
@@ -163,7 +176,7 @@ export default function SubstrateWalletModal() {
               filteredAccounts.map(account => (
                 <Button
                   key={account.address}
-                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover=true]:bg-[#f6f6f6] data-[hover=true]:opacity-100"
+                  className="flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover='true']:bg-[#f6f6f6] data-[hover='true']:opacity-100"
                   variant="outline"
                   onClick={() => handleAccountSelect(account)}
                 >
