@@ -1,19 +1,15 @@
 'use client'
-import useLookupName from '@/hooks/useLookupName'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
 import { ManualAddressInput } from '@/models/select'
 import { Token } from '@/models/token'
-import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import NumberFlow from '@number-flow/react'
 import Image from 'next/image'
 import { ChangeEvent, ReactNode, RefObject, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { normalize } from 'viem/ens'
-import { useEnsAvatar } from 'wagmi'
 import { colors } from '../../tailwind.config'
 import Button from './Button'
 import ChainTrigger from './ChainTrigger'
@@ -88,14 +84,6 @@ export default function ChainTokenSelect({
   const dropdownRef = useRef<HTMLDivElement>(null)
   useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
-  // Chain and wallet hooks
-  const addressLookup = useLookupName(chain.value?.network, wallet?.address?.toLowerCase())
-  const walletAddressShortened = wallet?.address ? truncateAddress(wallet.address, 4, 4) : ''
-  const accountName = addressLookup ? addressLookup : walletAddressShortened
-  const { data: ensAvatarUrl } = useEnsAvatar({
-    name: normalize(addressLookup || '') || undefined,
-  })
-
   // Token hooks
   const { price } = useTokenPrice(token.value)
   const inDollars = !!amount?.value && price ? price * amount.value : undefined
@@ -165,8 +153,7 @@ export default function ChainTokenSelect({
               amount?.error && 'border-b-0',
             )}
             triggerRef={triggerRef}
-            accountName={accountName}
-            ensAvatar={ensAvatarUrl}
+            walletAddress={wallet?.address}
             manualAddressInput={wallet?.manualAddressInput}
             trailingAction={wallet?.walletButton}
           />
