@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { getExchangeOutputAmount } from '@/lib/paraspellSwap'
+import { getExchangeOutputAmount } from '@/lib/paraspell/swap'
 import { isSameToken } from '@/utils/token'
 import { useQuery } from '@tanstack/react-query'
 

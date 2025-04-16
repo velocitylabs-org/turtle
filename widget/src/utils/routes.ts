@@ -8,7 +8,7 @@ import {
   getSwapsDestinationTokens,
   getSwapsSourceChains,
   getSwapsSourceTokens,
-} from '@/lib/paraspellSwap'
+} from '@/lib/paraspell/swap'
 import { isSameToken } from './token'
 
 /** Filters all chains by available routes. */

@@ -5,7 +5,7 @@ import { AmountInfo } from '@/models/transfer'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Direction, resolveDirection, toHuman } from '@/utils/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell'
+import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
 import {
   getOriginFeeDetails,
   getParaEthTransferFees,
