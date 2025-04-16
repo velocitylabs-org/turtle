@@ -117,7 +117,7 @@ export default function TxSummary({
                         className="mr-2"
                       />
                       <span>
-                        We need some of that to pay fees{' '}
+                        We need some of that {fees.token.symbol} to pay fees{' '}
                         <span
                           role="button"
                           onClick={setTransferableBalance}
