@@ -56,8 +56,8 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
         className="ongoing-transfer-dialog max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem]"
         hideCloseButton
       >
-        <div className="relative">
-          <DialogHeader className="relative flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border border-turtle-secondary-dark bg-turtle-secondary-light p-4">
+        <div>
+          <DialogHeader className="flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border border-turtle-secondary-dark bg-turtle-secondary-light p-4">
             <DialogTitle className="sr-only">Ongoing transfer</DialogTitle>
             <DialogDescription className="sr-only">
               Ongoing transfer status and details
