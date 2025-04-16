@@ -4,6 +4,7 @@ import { truncateAddress } from '@/utils/address'
 import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { motion } from 'framer-motion'
+import { ChevronLeft } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '../../tailwind.config'
 import Button, { spinnerSize } from './Button'
@@ -106,9 +107,9 @@ export default function SubstrateWalletModal() {
                 <motion.span
                   key={currentView}
                   {...headerElementAnimationProps}
-                  className="flex h-[18px] w-[18px] items-center justify-center rounded-[10px] p-[13px] text-[18px] opacity-100 hover:bg-gray-100"
+                  className="flex h-[29px] w-[29px] items-center justify-center rounded-[10px] p-[3px] opacity-100 hover:bg-gray-100"
                 >
-                  ←
+                  <ChevronLeft className="h-5 w-5" strokeWidth={3} />
                 </motion.span>
               </Button>
             </div>
