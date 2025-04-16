@@ -83,8 +83,8 @@ export const OngoingTransferDialog = ({
               'xxl-letter-spacing flex items-center space-x-3 text-3xl leading-none text-turtle-secondary-dark sm:text-5xl'
             }
           >
-            <span>{formatAmount(toHuman(transfer.amount, transfer.token))}</span>
-            <TokenLogo token={transfer.token} sourceChain={transfer.sourceChain} size={40} />
+            <span>{formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}</span>
+            <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={40} />
           </h3>
           <div className={'flex items-center space-x-4 text-sm text-turtle-secondary-dark'}>
             <div>{formatOngoingTransferDate(transfer.date)}</div>
@@ -141,32 +141,6 @@ export const OngoingTransferDialog = ({
           </div>
 
           {/* sender */}
-          {/* <div className="relative mt-2 w-full rounded-lg border border-turtle-level3">
-            <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
-              Sender
-            </div>
-            <div className="p-4 text-sm">
-              <Account
-                network={transfer.sourceChain.network}
-                addressType={transfer.sourceChain.supportedAddressTypes?.at(0)}
-                address={transfer.sender}
-                size={24}
-              />
-            </div>
-            <div className="relative border-t p-4 text-sm">
-              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
-                Receiver
-              </div>
-              <Account
-                network={transfer.destChain.network}
-                addressType={transfer.destChain.supportedAddressTypes?.at(0)}
-                address={transfer.recipient}
-                size={24}
-              />
-            </div>
-          </div> */}
-
-          {/* sender */}
           <div className="relative mt-2 grid w-full grid-cols-1 grid-rows-2 gap-2 sm:grid-cols-2 sm:grid-rows-1 sm:gap-1">
             <div className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-full border border-turtle-level3 bg-white p-2">
               <ArrowRight className="h-3 w-3 rotate-90 sm:rotate-0" />
@@ -206,14 +180,15 @@ export const OngoingTransferDialog = ({
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(transfer.amount, transfer.token), 'Long')}{' '}
-                    {transfer.token.symbol}
+                    {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken), 'Long')}{' '}
+                    {transfer.sourceToken.symbol}
                   </div>
-                  {typeof transfer.tokenUSDValue == 'number' && (
+                  {typeof transfer.sourceTokenUSDValue == 'number' && (
                     <div className="text-turtle-level4">
                       $
                       {formatAmount(
-                        toHuman(transfer.amount, transfer.token) * (transfer.tokenUSDValue ?? 0),
+                        toHuman(transfer.sourceAmount, transfer.sourceToken) *
+                          (transfer.sourceTokenUSDValue ?? 0),
                         'Long',
                       )}
                     </div>
@@ -230,7 +205,7 @@ export const OngoingTransferDialog = ({
                   {formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Long')}{' '}
                   {transfer.fees.token.symbol}
                 </div>
-                {typeof transfer.tokenUSDValue == 'number' && (
+                {typeof transfer.sourceTokenUSDValue == 'number' && (
                   <div className="text-turtle-level4">
                     ${formatAmount(transfer.fees.inDollars, 'Long')}
                   </div>

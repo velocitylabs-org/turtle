@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/utils/helper'
 import { formatCompletedTransferDate, formatHours } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
@@ -69,8 +69,15 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
               getTextColor(tx.result),
             )}
           >
-            <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-            <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={40} />
+            <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
+            <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={35} />
+            {isSwap(tx) && (
+              <>
+                <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
+                <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
+                <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={35} />
+              </>
+            )}
           </h3>
           <div className={cn('flex items-center space-x-4 text-sm', getTextColor(tx.result))}>
             <div>{formatCompletedTransferDate(tx.date)}</div>
@@ -108,35 +115,6 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
               </p>
             )}
           </div>
-
-          {/* sender */}
-          {/* <div className="relative mt-2 w-full rounded-lg border border-turtle-level3">
-            <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
-              Sender
-            </div>
-            <div className="p-4 text-sm">
-              <Account
-                network={tx.sourceChain.network}
-                addressType={tx.sourceChain.supportedAddressTypes?.at(0)}
-                address={tx.sender}
-                size={24}
-                className={getBorder(tx.result)}
-              />
-            </div>
-
-            <div className="relative border-t p-4 text-sm">
-              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
-                Receiver
-              </div>
-              <Account
-                network={tx.destChain.network}
-                addressType={tx.destChain.supportedAddressTypes?.at(0)}
-                address={tx.recipient}
-                size={24}
-                className={getBorder(tx.result)}
-              />
-            </div>
-          </div> */}
 
           {/* sender */}
           <div className="relative mt-2 grid w-full grid-cols-1 grid-rows-2 gap-2 sm:grid-cols-2 sm:grid-rows-1 sm:gap-1">
@@ -180,12 +158,16 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <div className="items-right flex flex-col space-x-1">
                 <div className="text-right">
                   <div className="text-lg">
-                    {formatAmount(toHuman(tx.amount, tx.token), 'Long')} {tx.token.symbol}
+                    {formatAmount(toHuman(tx.sourceAmount, tx.sourceToken), 'Long')}{' '}
+                    {tx.sourceToken.symbol}
                   </div>
-                  {typeof tx.tokenUSDValue == 'number' && (
+                  {typeof tx.sourceTokenUSDValue == 'number' && (
                     <div className="text-turtle-level4">
                       $
-                      {formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')}
+                      {formatAmount(
+                        toHuman(tx.sourceAmount, tx.sourceToken) * (tx.sourceTokenUSDValue ?? 0),
+                        'Long',
+                      )}
                     </div>
                   )}
                 </div>
@@ -200,7 +182,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
                   {formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}{' '}
                   {tx.fees.token.symbol}
                 </div>
-                {typeof tx.tokenUSDValue == 'number' && (
+                {typeof tx.sourceTokenUSDValue == 'number' && (
                   <div className="text-turtle-level4">
                     ${formatAmount(tx.fees.inDollars, 'Long')}
                   </div>

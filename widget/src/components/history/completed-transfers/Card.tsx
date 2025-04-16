@@ -1,7 +1,7 @@
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/helper'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
 import Account from '@/components/Account'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
@@ -45,8 +45,18 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
                 transferFailed ? 'text-turtle-error' : 'text-turtle-foreground',
               )}
             >
-              <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-              <span>{tx.token.symbol}</span>
+              <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
+              <span>{tx.sourceToken.symbol}</span>
+              {isSwap(tx) && (
+                <>
+                  <ArrowRight
+                    className="h-3 w-3"
+                    {...(transferFailed && { fill: colors['turtle-error'] })}
+                  />
+                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
+                  <span>{tx.destinationToken.symbol}</span>
+                </>
+              )}
             </div>
             <div
               className={cn(
