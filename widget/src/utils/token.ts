@@ -23,18 +23,8 @@ export const getTokenPrice = async (token: Token): Promise<TokenPrice | null> =>
 }
 
 export function getTokenByMultilocation(multilocation: TMultiLocation): Token | undefined {
-  const token = REGISTRY.tokens.find(token => deepEqual(token.multilocation, multilocation))
-
-  // Usually a token should be found, so log a warning if not
-  if (!token) {
-    // captureException(new Error('Token not found by multilocation'), {
-    //   level: 'warning',
-    //   extra: { multilocation },
-    // }) - Sentry
-    console.log('Token not found by multilocation', multilocation)
-  }
-
-  return token
+  // If turtle doesn't support the token it won't be found
+  return REGISTRY.tokens.find(token => deepEqual(token.multilocation, multilocation))
 }
 
 export function isSameToken(token1: Token, token2: Token): boolean {
