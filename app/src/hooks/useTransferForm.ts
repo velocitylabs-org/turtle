@@ -2,7 +2,7 @@
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
-import { useSwapOutputAmount } from '@/hooks/useSwapOutputAmount'
+import { useOutputAmount } from '@/hooks/useOutputAmount'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
@@ -100,7 +100,7 @@ const useTransferForm = () => {
     address: sourceWallet?.sender?.address,
   })
 
-  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
+  const { outputAmount, isLoading: isLoadingOutputAmount } = useOutputAmount({
     sourceChain,
     destinationChain,
     sourceToken,
@@ -109,6 +109,7 @@ const useTransferForm = () => {
       sourceAmount && sourceToken
         ? safeConvertAmount(sourceAmount, sourceToken)?.toString()
         : undefined,
+    fees,
   })
 
   // Update destination amount when output amount changes

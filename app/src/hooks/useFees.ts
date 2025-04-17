@@ -125,7 +125,7 @@ const useFees = (
         }
 
         case 'SnowbridgeApi': {
-          if (!sourceChain || !senderAddress || !destinationChain || !recipientAddress || !amount) {
+          if (!sourceChain || !senderAddress || !destinationChain || !amount) {
             setLoading(false)
             setFees(null)
             setBridgingFees(null)
@@ -153,7 +153,7 @@ const useFees = (
             direction,
             snowbridgeContext,
             senderAddress,
-            recipientAddress,
+            getPlaceholderAddress(destinationChain.supportedAddressTypes[0]),
             amount,
           )
           if (!fee) {

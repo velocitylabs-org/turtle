@@ -1,55 +1,70 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
+import { AmountInfo } from '@/models/transfer'
 import { getExchangeOutputAmount } from '@/utils/paraspellSwap'
 import { isSameToken } from '@/utils/token'
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 
-interface UseSwapOutputAmountParams {
+interface UseOutputAmountParams {
   sourceChain?: Chain | null
   destinationChain?: Chain | null
   sourceToken?: Token | null
   destinationToken?: Token | null
   /** Amount in the source token's decimal base */
   amount?: string | null
+  /** Fees are used to calculate the output amount for transfers */
+  fees?: AmountInfo | null
 }
 
-interface SwapOutputAmountResult {
+interface OutputAmountResult {
   outputAmount: bigint | null | undefined
   isLoading: boolean
 }
 
-export function useSwapOutputAmount({
+export function useOutputAmount({
   sourceChain,
   destinationChain,
   sourceToken,
   destinationToken,
   amount,
-}: UseSwapOutputAmountParams): SwapOutputAmountResult {
+  fees,
+}: UseOutputAmountParams): OutputAmountResult {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [
-      'swapOutputAmount',
+      'outputAmount',
       sourceChain?.uid,
       destinationChain?.uid,
       sourceToken?.id,
       destinationToken?.id,
       amount,
+      fees?.token.id,
+      fees?.amount.toString(),
     ],
     queryFn: async () => {
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
         return null
 
-      if (isSameToken(sourceToken, destinationToken)) return null
-
       try {
-        const output = await getExchangeOutputAmount(
-          sourceChain,
-          destinationChain,
-          sourceToken,
-          destinationToken,
-          amount,
-        )
-        return output
+        if (!isSameToken(sourceToken, destinationToken)) {
+          // Swap
+          const output = await getExchangeOutputAmount(
+            sourceChain,
+            destinationChain,
+            sourceToken,
+            destinationToken,
+            amount,
+          )
+          return output
+        }
+
+        // Normal transfer
+        if (!fees || fees.token.id !== sourceToken.id) return BigInt(amount)
+
+        const amountBigInt = BigInt(amount)
+        const feesBigInt = BigInt(fees.amount)
+        if (feesBigInt > amountBigInt) return 0n
+        return amountBigInt - feesBigInt
       } catch (error) {
         captureException(error, {
           level: 'error',
