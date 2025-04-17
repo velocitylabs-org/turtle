@@ -22,7 +22,7 @@
     "dev": "vite",
     "build": "rimraf dist && tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "start": "vite preview",
     "format": "prettier --write .",
     "prepare": "husky"
   },

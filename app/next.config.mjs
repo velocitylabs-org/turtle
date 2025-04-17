@@ -2,7 +2,10 @@ import { withSentryConfig } from '@sentry/nextjs'
 /** @type {import('next').NextConfig} */
 
 const isProduction = process.env.NODE_ENV === 'production'
+
 const nextConfig = {
+  // Related to this issue: https://github.com/vercel/next.js/issues/56887
+  ...(!isProduction && { outputFileTracingRoot: '/' }),
   async headers() {
     return [
       {
