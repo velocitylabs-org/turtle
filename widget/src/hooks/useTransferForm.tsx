@@ -19,7 +19,7 @@ import useFees from './useFees'
 import { NotificationSeverity } from '@/models/notification'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { Token } from '@/models/token'
-import { useSwapOutputAmount } from './useSwapOutputAmount'
+import { useOutputAmount } from './useOutputAmount'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -99,7 +99,7 @@ const useTransferForm = () => {
     address: sourceWallet?.sender?.address,
   })
 
-  const { outputAmount, isLoading: isLoadingOutputAmount } = useSwapOutputAmount({
+  const { outputAmount, isLoading: isLoadingOutputAmount } = useOutputAmount({
     sourceChain,
     destinationChain,
     sourceToken,
@@ -108,6 +108,7 @@ const useTransferForm = () => {
       sourceAmount && sourceToken
         ? safeConvertAmount(sourceAmount, sourceToken)?.toString()
         : undefined,
+    fees,
   })
 
   // Update destination amount when output amount changes

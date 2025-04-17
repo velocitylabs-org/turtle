@@ -1,17 +1,13 @@
-import useLookupName from '@/hooks/useLookupName'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
 import { ManualAddressInput } from '@/models/select'
 import { Token } from '@/models/token'
-import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/helper'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import NumberFlow from '@number-flow/react'
 import { ChangeEvent, ReactNode, RefObject, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { normalize } from 'viem/ens'
-import { useEnsAvatar } from 'wagmi'
 import { colors } from '../../tailwind.config'
 import Button from './Button'
 import ChainTrigger from './ChainTrigger'
@@ -86,14 +82,6 @@ export default function ChainTokenSelect({
   const dropdownRef = useRef<HTMLDivElement>(null)
   useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
-  // Chain and wallet hooks
-  const addressLookup = useLookupName(chain.value?.network, wallet?.address?.toLowerCase())
-  const walletAddressShortened = wallet?.address ? truncateAddress(wallet.address, 4, 4) : ''
-  const accountName = addressLookup ? addressLookup : walletAddressShortened
-  const { data: ensAvatarUrl } = useEnsAvatar({
-    name: normalize(addressLookup || '') || undefined,
-  })
-
   // Token hooks
   const { price } = useTokenPrice(token.value)
   const inDollars = !!amount?.value && price ? price * amount.value : undefined
@@ -144,6 +132,10 @@ export default function ChainTokenSelect({
   }
   const handleTokenClear = () => token.onChange(null)
 
+  const handleDropdownTriggerClick = () => {
+    if (!disabled) setIsOpen(!isOpen)
+  }
+
   return (
     <div className={twMerge('relative w-full', className)}>
       <div className="flex">
@@ -156,15 +148,14 @@ export default function ChainTokenSelect({
           <ChainTrigger
             value={chain.value}
             disabled={disabled}
-            onClick={() => setIsOpen(true)}
+            onClick={handleDropdownTriggerClick}
             error={wallet?.error}
             className={cn(
               'rounded-md rounded-bl-none rounded-br-none',
               amount?.error && 'border-b-0',
             )}
             triggerRef={triggerRef}
-            accountName={accountName}
-            ensAvatar={ensAvatarUrl}
+            walletAddress={wallet?.address}
             manualAddressInput={wallet?.manualAddressInput}
             trailingAction={wallet?.walletButton}
           />
@@ -184,7 +175,7 @@ export default function ChainTokenSelect({
         token={token}
         amount={amount}
         disabled={disabled}
-        onTriggerClick={() => setIsOpen(true)}
+        onTriggerClick={handleDropdownTriggerClick}
         triggerRef={triggerRef}
         inDollars={inDollars}
       />
@@ -261,7 +252,6 @@ const TokenAmountInput = ({
     <Tooltip content={amount?.error}>
       <div
         ref={triggerRef}
-        onClick={disabled ? undefined : onTriggerClick}
         className={cn(
           'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
           !disabled && 'cursor-pointer',
@@ -270,7 +260,11 @@ const TokenAmountInput = ({
         )}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-          <div className="flex items-center gap-1" data-cy="token-select-trigger">
+          <div
+            className="flex items-center gap-1"
+            data-cy="token-select-trigger"
+            onClick={disabled ? undefined : onTriggerClick}
+          >
             {token.value ? (
               <>
                 <TokenLogo
@@ -287,9 +281,9 @@ const TokenAmountInput = ({
                 Token
               </>
             )}
+            <ChevronDown strokeWidth={0.2} className="ml-1" />
+            {showVerticalDivider && <VerticalDivider />}
           </div>
-          <ChevronDown strokeWidth={0.2} className="ml-1" />
-          {showVerticalDivider && <VerticalDivider />}
           <div className="align-center ml-1 flex flex-col">
             <input
               data-cy="amount-input"

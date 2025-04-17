@@ -310,7 +310,7 @@ const Transfer: FC = () => {
                       error: errors.destinationTokenAmount?.token?.message,
                       clearable: true,
                       orderBySelected: true,
-                      sourceChainToDetermineOriginBanner: sourceChain,
+                      sourceChainToDetermineOriginBanner: destinationChain,
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amount={{

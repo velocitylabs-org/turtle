@@ -196,13 +196,20 @@ export const startedTooLongAgo = (
  * @param transfer - The transfer to check
  * @returns if the transfer is a swap
  */
-export const isSwap = <T extends { destinationToken?: Token; destinationAmount?: string }>(
+export const isSwap = <
+  T extends { sourceToken?: Token; destinationToken?: Token; destinationAmount?: string },
+>(
   transfer: T,
 ): transfer is T & {
+  sourceToken: Token
   destinationToken: Token
   destinationAmount: string
 } => {
-  return !!transfer.destinationToken && !!transfer.destinationAmount
+  return (
+    !!transfer.destinationToken &&
+    !!transfer.destinationAmount &&
+    transfer.sourceToken?.id !== transfer.destinationToken?.id
+  )
 }
 
 /**
@@ -213,6 +220,7 @@ export const isSwap = <T extends { destinationToken?: Token; destinationAmount?:
  */
 export const isSameChainSwap = <
   T extends {
+    sourceToken?: Token
     destinationToken?: Token
     destinationAmount?: string
     sourceChain: Chain
@@ -221,6 +229,7 @@ export const isSameChainSwap = <
 >(
   transfer: T,
 ): transfer is T & {
+  sourceToken: Token
   destinationToken: Token
   destinationAmount: string
   sourceChain: Chain
@@ -237,6 +246,7 @@ export const isSameChainSwap = <
  */
 export const isSwapWithTransfer = <
   T extends {
+    sourceToken?: Token
     destinationToken?: Token
     destinationAmount?: string
     sourceChain: Chain
@@ -245,6 +255,7 @@ export const isSwapWithTransfer = <
 >(
   transfer: T,
 ): transfer is T & {
+  sourceToken: Token
   destinationToken: Token
   destinationAmount: string
   sourceChain: Chain
