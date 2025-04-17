@@ -10,7 +10,7 @@ declare namespace Cypress {
       direction: 'source' | 'destination',
       chain: string,
       token: string,
-    ): void
+    ): Chainable<JQuery<HTMLElement>>
     connectWallet(): Chainable<JQuery<HTMLElement>>
   }
 }

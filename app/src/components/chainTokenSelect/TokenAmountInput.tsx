@@ -1,6 +1,6 @@
 import { Token } from '@/models/token'
 import { Chain } from '@/models/chain'
-import { ReactNode, RefObject } from 'react'
+import { ChangeEvent, ReactNode, RefObject } from 'react'
 import { cn } from '@/utils/cn'
 import Tooltip from '@/components/Tooltip'
 import TokenLogo from '@/components/TokenLogo'
@@ -45,11 +45,16 @@ const TokenAmountInput = ({
   inDollars,
   context,
 }: TokenAmountInputProps) => {
+  const showVerticalDivider = !!amount?.value || !!amount?.placeholder
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.target.value === '' ? null : parseFloat(e.target.value)
+    amount?.onChange?.(newVal)
+  }
+
   return (
     <Tooltip content={amount?.error}>
       <div
         ref={triggerRef}
-        onClick={disabled ? undefined : onTriggerClick}
         className={cn(
           'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
           !disabled && 'cursor-pointer',
@@ -59,7 +64,11 @@ const TokenAmountInput = ({
         data-cy={`amount-input-${context}`}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-          <div className="flex items-center gap-1" data-cy="token-select-trigger">
+          <div
+            className="flex items-center gap-1"
+            data-cy="token-select-trigger"
+            onClick={disabled ? undefined : onTriggerClick}
+          >
             {token.value ? (
               <>
                 <TokenLogo
@@ -76,9 +85,10 @@ const TokenAmountInput = ({
                 Token
               </>
             )}
+            <ChevronDown strokeWidth={0.2} className="ml-1" />
+            {showVerticalDivider && <VerticalDivider />}
           </div>
-          <ChevronDown strokeWidth={0.2} className="ml-1" />
-          <VerticalDivider />
+
           <div className="align-center ml-1 flex flex-col">
             <input
               data-cy="amount-input"
@@ -91,7 +101,7 @@ const TokenAmountInput = ({
               )}
               placeholder={amount?.placeholder ?? 'Amount'}
               value={amount?.value ?? ''}
-              onChange={e => amount?.onChange?.(Number(e.target.value) || null)}
+              onChange={handleAmountChange}
               onClick={e => e.stopPropagation()}
               onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
               autoFocus
@@ -115,5 +125,4 @@ const TokenAmountInput = ({
     </Tooltip>
   )
 }
-
 export default TokenAmountInput

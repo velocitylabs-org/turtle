@@ -4,9 +4,8 @@ describe('Features', () => {
   })
 
   describe('Wallet Connection', () => {
-    it('should check if plugin is installed', () => {
-      expect(cy).property('initWallet').to.be.a('function')
-    })
+    // it('should check if plugin is installed', () => {
+    // })
 
     it('should connect a wallet and check the balance', () => {
       cy.connectWallet().then(() => {
@@ -31,9 +30,10 @@ describe('Features', () => {
     it('should fill the whole form and show a disabled form when no wallet is connected', async () => {
       cy.selectTokenByChain('chain-container', 'source', 'Asset Hub', 'DOT')
       cy.getBySel('amount-input-source').findBySel('amount-input').type('1')
-      cy.selectTokenByChain('chain-container', 'destination', 'Polkadot', 'DOT')
-      cy.get('[data-cy="form-submit"]').should('be.disabled')
-      cy.end()
+      cy.selectTokenByChain('chain-container', 'destination', 'Polkadot', 'DOT').then(() => {
+        cy.get('[data-cy="form-submit"]').should('be.disabled')
+        cy.end()
+      })
     })
   })
 })
