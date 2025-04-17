@@ -27,6 +27,8 @@ const nextConfig = {
     webpackMemoryOptimizations: true,
     optimizePackageImports: ['@heroui/theme', 'lucide-react'],
   },
+  // Related to this issue: https://github.com/vercel/next.js/issues/56887
+  ...(!isProduction && { outputFileTracingRoot: '/' }),
   async headers() {
     return [
       {
