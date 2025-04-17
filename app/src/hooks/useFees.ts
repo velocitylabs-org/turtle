@@ -220,7 +220,7 @@ const useFees = (
 export default useFees
 
 /**
- * Fetches and caches the bridging fee of a transfer from AH -> Ethereum.
+ * Fetches and caches the bridging fee of a transfer from AH to Ethereum.
  * It serves as a cached layer.
  *
  * @returns - A Promise resolving to the current bridging fee value.

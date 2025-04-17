@@ -62,6 +62,7 @@ export const createTx = async (
  */
 export const moonbeamTransfer = async (
   params: TransferParams,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   viemClient: any,
 ): Promise<string> => {
   const { environment, sourceChain, destinationChain, token, amount, recipient } = params

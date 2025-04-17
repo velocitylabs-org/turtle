@@ -54,6 +54,27 @@ Don't forget to give the project a star. Thanks for your support!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- BUILDING -->
+
+Turtle is gradually changing its structure to a monorepo handled by (Turborepo)[https://turbo.build]
+
+### First things first
+
+In the root of the project run: 
+
+`pnpm install`
+
+### How do I build the project
+
+`pnpm run build` or `pnpm run build --filter=<package-name>`
+
+### How do I run dev?
+
+`pnpm run dev` or `pnpm run dev --filter=<package-name>`
+
+`package-name` is always the name that's used in the `name` field of a `package.json`
+
+
 <!-- LICENSE -->
 
 ## License

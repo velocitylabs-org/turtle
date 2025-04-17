@@ -72,7 +72,7 @@ function getMaxSignificantDigits(length: FormatLength): number {
 /**
  * Formats a numerical amount into a human-readable, compact string representation.
  * @param amount - The amount to be formatted. For example, `1234567`.
- * @param length - Determines how many significant fraction digits will be shown for amount < 1.
+ * @param length - Determines how many significant fraction digits will be shown for amount smaller than 1.
  * @returns The amount formatted as a human-readable string. For example, `"1.23M"`.
  */
 export const formatAmount = (amount: number, length: FormatLength = 'Short'): string => {
