@@ -80,6 +80,8 @@ export default function Transfer() {
     loadingBalance,
     balanceData,
     fetchBalance,
+    exceedsTransferableBalance,
+    setTransferableBalance,
   } = useTransferForm()
 
   const {
@@ -150,6 +152,7 @@ export default function Transfer() {
     !requiresErc20SpendApproval &&
     !loadingFees &&
     canPayFees &&
+    !exceedsTransferableBalance &&
     (bridgingFee ? canPayAdditionalFees : true)
 
   const shouldDisableMaxButton =
@@ -181,6 +184,13 @@ export default function Transfer() {
     }),
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
   )
+
+  const tokenAmountSelectError = useMemo(() => {
+    if (errors.tokenAmount?.amount?.message) return errors.tokenAmount.amount.message
+    if (tokenAmountError) return tokenAmountError
+    if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
+    return undefined
+  }, [errors.tokenAmount?.amount?.message, tokenAmountError, exceedsTransferableBalance, fees])
 
   return (
     <form
@@ -239,7 +249,7 @@ export default function Transfer() {
                 floatingLabel="Amount"
                 disabled={transferStatus !== 'Idle' || !sourceChain}
                 secondPlaceholder={amountPlaceholder}
-                error={errors.tokenAmount?.amount?.message || tokenAmountError}
+                error={tokenAmountSelectError}
                 trailing={
                   tokenAmount?.amount ? (
                     <></>
@@ -384,6 +394,8 @@ export default function Transfer() {
           canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+          exceedsTransferableBalance={exceedsTransferableBalance}
+          setTransferableBalance={setTransferableBalance}
         />
       )}
 
