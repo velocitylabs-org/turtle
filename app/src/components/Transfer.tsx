@@ -190,7 +190,7 @@ export default function Transfer() {
 
   const sourceTokenOptions = useMemo(
     () => getAllowedSourceTokens(sourceChain, destinationChain),
-    [sourceChain],
+    [sourceChain, destinationChain],
   )
 
   const destinationTokenOptions = useMemo(

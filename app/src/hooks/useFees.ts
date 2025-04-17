@@ -30,6 +30,7 @@ const useFees = (
   amount?: number | null,
   senderAddress?: string,
   recipientAddress?: string,
+  destToken?: Token | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFees] = useState<AmountInfo | null>(null)
@@ -54,7 +55,7 @@ const useFees = (
   })
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token) {
+    if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
       setBridgingFees(null)
       return
@@ -124,7 +125,7 @@ const useFees = (
         }
 
         case 'SnowbridgeApi': {
-          if (!sourceChain || !senderAddress || !destinationChain || !recipientAddress || !amount) {
+          if (!sourceChain || !senderAddress || !destinationChain || !amount) {
             setLoading(false)
             setFees(null)
             setBridgingFees(null)
@@ -152,7 +153,7 @@ const useFees = (
             direction,
             snowbridgeContext,
             senderAddress,
-            recipientAddress,
+            getPlaceholderAddress(destinationChain.supportedAddressTypes[0]),
             amount,
           )
           if (!fee) {
@@ -208,6 +209,7 @@ const useFees = (
     amount,
     dotBalance,
     feeBalance,
+    destToken,
   ])
 
   useEffect(() => {
