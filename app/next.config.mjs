@@ -30,7 +30,20 @@ const nextConfig = {
       test: /\.wasm$/,
       type: 'webassembly/async',
     })
+
+    console.log(config.resolve.alias)
+
     return config
+  },
+  experimental: {
+    turbo: {
+      resolveAlias: {
+        ...(process.env.NEXT_PUBLIC_USE_MOCKS && {
+          '@original-paraspell/sdk': './node_modules/@paraspell/sdk',
+          '@paraspell/sdk': './cypress/support/__mocks__/paraspellSdkMock.ts',
+        }),
+      },
+    },
   },
   async headers() {
     return [

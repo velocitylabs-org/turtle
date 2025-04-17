@@ -3,12 +3,12 @@ describe('Features', () => {
     cy.visit('/')
   })
 
-  describe.only('Wallet Connection', () => {
+  describe('Wallet Connection', () => {
     it('should check if plugin is installed', () => {
       expect(cy).property('initWallet').to.be.a('function')
     })
 
-    it.only('should connect a wallet and check the balance', () => {
+    it('should connect a wallet and check the balance', () => {
       cy.connectWallet().then(() => {
         cy.getBySel('amount-input-source')
           .findBySel('amount-input')

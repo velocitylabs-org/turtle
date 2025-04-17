@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "dev:cypress": "NEXT_PUBLIC_USE_MOCKS=true next dev",
+    "dev:cypress": "NEXT_PUBLIC_USE_MOCKS=true next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
