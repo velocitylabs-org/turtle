@@ -20,6 +20,7 @@ import { mainnet } from 'viem/chains'
 import { formatAmount } from '@/utils/transfer'
 import useFees from './useFees'
 import useNotification from './useNotification'
+import { track } from '@vercel/analytics'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -196,6 +197,18 @@ const useTransferForm = () => {
       const recipient = getRecipientAddress(manualRecipient, destinationWallet)
       const amount = tokenAmount ? safeConvertAmount(tokenAmount.amount, tokenAmount.token) : null
 
+      // const data
+
+      //   'environment': environment,
+      //   sender: sourceWallet.sender,
+      //   sourceChain,
+      //   destinationChain,
+      //   token: tokenAmount.token,
+      //   amount,
+      //   recipient: recipient,
+      //   fees,
+      //   bridgingFee: bridgingFee})
+
       if (
         !sourceChain ||
         !recipient ||
@@ -206,6 +219,12 @@ const useTransferForm = () => {
         !fees
       )
         return
+
+      track('Test-OnSubmit', {
+        sourceChain: sourceChain.name,
+        token: tokenAmount.token.id,
+        amount: tokenAmount.amount!.toString(),
+      })
 
       transfer({
         environment,
