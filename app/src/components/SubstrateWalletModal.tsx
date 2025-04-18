@@ -12,7 +12,13 @@ import Icon from './Icon'
 import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
-const animationDuration = 2
+const animationDuration = 0.35
+
+const noItemsFoundTransitions = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: animationDuration / 2 } },
+  exit: { opacity: 0, transition: { duration: animationDuration / 2 } },
+}
 
 const accountsViewTransitions = {
   initial: { x: 5, opacity: 0 },
@@ -27,9 +33,14 @@ const headerElementAnimationProps = {
   transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' },
 }
 
+const loadingTransitions = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: animationDuration / 3 } },
+  exit: { opacity: 0, transition: { duration: animationDuration / 3 } },
+}
+
 export default function SubstrateWalletModal() {
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
-  const [shouldInitialTransition, setShouldInitialTransition] = useState(false)
   const {
     isModalOpen,
     closeModal,
@@ -44,6 +55,8 @@ export default function SubstrateWalletModal() {
     accounts,
     loading,
   } = useSubstrateWallet()
+
+  const [shouldInitialTransition, setShouldInitialTransition] = useState(false)
 
   const handleExtensionSelect = async (extension: InjectedExtension) => {
     setSelectedExtension(extension)
@@ -164,14 +177,18 @@ export default function SubstrateWalletModal() {
           <AnimatePresence mode="wait">
             {/* Loading */}
             {loading && (
-              <div className="mb-3 flex h-full w-full items-center justify-center">
+              <motion.div
+                key="loading"
+                {...loadingTransitions}
+                className="mb-3 flex h-full w-full items-center justify-center"
+              >
                 <LoadingIcon
                   className="animate-spin"
                   width={spinnerSize['lg']}
                   height={spinnerSize['lg']}
                   color={colors['turtle-secondary']}
                 />
-              </div>
+              </motion.div>
             )}
 
             {currentView === 'extensions' && !loading && (
@@ -211,13 +228,16 @@ export default function SubstrateWalletModal() {
                       ))}
                   </div>
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center">
+                  <motion.div
+                    {...noItemsFoundTransitions}
+                    className="flex h-full w-full items-center justify-center"
+                  >
                     <p className="text-center text-sm text-turtle-level6">
                       <span className="font-bold">Oops! </span>No extensions detected. Please
                       install a compatible wallet extension, such as Talisman, Subwallet, or
                       Polkadot.js.
                     </p>
-                  </div>
+                  </motion.div>
                 )}
                 <Footer />
               </motion.div>
@@ -253,12 +273,15 @@ export default function SubstrateWalletModal() {
                     ))}
                   </div>
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center">
+                  <motion.div
+                    {...noItemsFoundTransitions}
+                    className="flex h-full w-full items-center justify-center"
+                  >
                     <p className="text-center text-sm text-turtle-level6">
                       <span className="font-bold">Oops! </span>No accounts available. Please connect
                       an account to Turtle inside your wallet extension.
                     </p>
-                  </div>
+                  </motion.div>
                 )}
               </motion.div>
             )}
@@ -284,8 +307,8 @@ function Footer() {
   )
 }
 
-// Small hack to prevent animations initiate in the first render
-// We want animations to take place after the modal is open
+// Prevent initial animation on component mount to avoid visual glitches.
+// Animations are only triggered after the modal opens for a smoother user experience.
 function TransitionControl({
   setShouldInitialTransition,
 }: {
