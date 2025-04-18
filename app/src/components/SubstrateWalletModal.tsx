@@ -25,10 +25,10 @@ const accountsViewTransitions = {
 }
 
 const headerElementAnimationProps = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.5, type: 'spring' },
+  initial: { opacity: 0, left: 5 },
+  animate: { opacity: 1, left: 0 },
+  exit: { opacity: 0, left: 5 },
+  transition: { delay: 0.15, duration: 0.1, type: 'tween' },
 }
 
 export default function SubstrateWalletModal() {
@@ -75,6 +75,8 @@ export default function SubstrateWalletModal() {
     }
 
     fetch()
+    // We just need to run this effect when isModalOpen
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen])
 
   const filteredAccounts = accounts.filter(account =>
