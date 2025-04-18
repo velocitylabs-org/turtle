@@ -58,7 +58,7 @@ Don't forget to give the project a star. Thanks for your support!
 
 ## Building
 
-Turtle is gradually changing its structure to a monorepo handled by Turborepo(https://turbo.build)
+Turtle is gradually changing its structure to a monorepo handled by [Turborepo](https://turbo.build)
 
 ### First things first
 
