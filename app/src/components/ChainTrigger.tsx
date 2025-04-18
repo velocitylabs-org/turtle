@@ -70,7 +70,6 @@ export default function ChainTrigger({
         ref={triggerRef}
         className={cn(
           'flex items-center justify-between border-1 border-turtle-level3 bg-background px-3 text-sm',
-          !disabled && 'cursor-pointer',
           disabled && 'opacity-30',
           error && 'border-turtle-error',
           className,
@@ -78,7 +77,10 @@ export default function ChainTrigger({
         data-cy="chain-select-trigger"
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-          <div className="flex items-center gap-1" onClick={handleClick}>
+          <div
+            className={cn('flex items-center gap-1', !disabled && 'cursor-pointer')}
+            onClick={handleClick}
+          >
             {value ? (
               <>
                 <Image
