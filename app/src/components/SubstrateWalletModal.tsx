@@ -12,27 +12,24 @@ import Icon from './Icon'
 import LoadingIcon from './svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
-const extensionsViewTransitions = {
-  initial: { x: -10, opacity: 0 },
-  animate: { x: 0, opacity: 1, transition: { duration: 0.15, type: 'spring' } },
-  exit: { x: -10, opacity: 0, transition: { duration: 0.15, type: 'spring' } },
-}
+const animationDuration = 2
 
 const accountsViewTransitions = {
   initial: { x: 5, opacity: 0 },
-  animate: { x: 0, opacity: 1, transition: { duration: 0.15, type: 'spring' } },
-  exit: { x: 5, opacity: 0, transition: { duration: 0.15, type: 'spring' } },
+  animate: { x: 0, opacity: 1, transition: { duration: animationDuration / 2, type: 'spring' } },
+  exit: { x: 5, opacity: 0, transition: { duration: animationDuration / 2, type: 'spring' } },
 }
 
 const headerElementAnimationProps = {
   initial: { opacity: 0, left: 5 },
   animate: { opacity: 1, left: 0 },
   exit: { opacity: 0, left: 5 },
-  transition: { delay: 0.15, duration: 0.1, type: 'tween' },
+  transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' },
 }
 
 export default function SubstrateWalletModal() {
   const [currentView, setCurrentView] = useState<'extensions' | 'accounts'>('extensions')
+  const [shouldInitialTransition, setShouldInitialTransition] = useState(false)
   const {
     isModalOpen,
     closeModal,
@@ -87,9 +84,29 @@ export default function SubstrateWalletModal() {
     () => ({
       initial: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
       animate: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
-      transition: { duration: 0.3, type: 'spring' },
+      transition: { duration: animationDuration, type: 'spring' },
     }),
     [currentView],
+  )
+
+  const extensionsViewTransitions = useMemo(
+    () =>
+      shouldInitialTransition
+        ? {
+            initial: { x: -10, opacity: 0 },
+            animate: {
+              x: 0,
+              opacity: 1,
+              transition: { duration: animationDuration / 2, type: 'spring' },
+            },
+            exit: {
+              x: -10,
+              opacity: 0,
+              transition: { duration: animationDuration / 2, type: 'spring' },
+            },
+          }
+        : {},
+    [shouldInitialTransition],
   )
 
   return (
@@ -248,6 +265,7 @@ export default function SubstrateWalletModal() {
           </AnimatePresence>
         </motion.div>
       </DialogContent>
+      {isModalOpen && <TransitionControl setShouldInitialTransition={setShouldInitialTransition} />}
     </Dialog>
   )
 }
@@ -264,4 +282,18 @@ function Footer() {
       </a>
     </div>
   )
+}
+
+// Small hack to prevent animations initiate in the first render
+// We want animations to take place after the modal is open
+function TransitionControl({
+  setShouldInitialTransition,
+}: {
+  setShouldInitialTransition: (v: boolean) => void
+}) {
+  useEffect(() => {
+    setTimeout(() => setShouldInitialTransition(true), 400)
+    return () => setShouldInitialTransition(false)
+  }, [])
+  return null
 }
