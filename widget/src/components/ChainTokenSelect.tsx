@@ -254,14 +254,13 @@ const TokenAmountInput = ({
         ref={triggerRef}
         className={cn(
           'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
-          !disabled && 'cursor-pointer',
           disabled && 'opacity-30',
           amount?.error && 'border-1 border-turtle-error',
         )}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
           <div
-            className="flex items-center gap-1"
+            className={cn('flex items-center gap-1', !disabled && 'cursor-pointer')}
             data-cy="token-select-trigger"
             onClick={disabled ? undefined : onTriggerClick}
           >
