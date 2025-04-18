@@ -45,16 +45,15 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
                 transferFailed ? 'text-turtle-error' : 'text-turtle-foreground',
               )}
             >
-              <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
-              <span>{tx.sourceToken.symbol}</span>
-              {isSwap(tx) && (
+              {isSwap(tx) ? (
                 <>
-                  <ArrowRight
-                    className="h-3 w-3"
-                    {...(transferFailed && { fill: colors['turtle-error'] })}
-                  />
                   <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
                   <span>{tx.destinationToken.symbol}</span>
+                </>
+              ) : (
+                <>
+                  <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
+                  <span>{tx.sourceToken.symbol}</span>
                 </>
               )}
             </div>

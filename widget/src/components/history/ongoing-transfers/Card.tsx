@@ -22,18 +22,17 @@ const OngoingTransfer: FC<{
             strokeWidth={5}
             color={colors['turtle-secondary']}
           />
-          <p className="text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
-          {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}{' '}
-          {transfer.sourceToken.symbol}
-          {isSwap(transfer) && (
+          <p className="flex items-center text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
+         
+          {isSwap(transfer) ? (
             <>
-              {' '}
-              <ArrowRight
-                className="mx-1 inline h-3 w-3"
-                fill={colors['turtle-secondary-dark']}
-              />{' '}
               {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}{' '}
               {transfer.destinationToken.symbol}
+            </>
+          ) : (
+            <>
+              {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}{' '}
+              {transfer.sourceToken.symbol}
             </>
           )}
         </p>
