@@ -56,7 +56,7 @@ export default function SubstrateWalletModal() {
     loading,
   } = useSubstrateWallet()
 
-  const [shouldInitialTransition, setShouldInitialTransition] = useState(false)
+  const [enableTranslateAnimation, setEnableTranslateAnimation] = useState(false)
 
   const handleExtensionSelect = async (extension: InjectedExtension) => {
     setSelectedExtension(extension)
@@ -104,7 +104,7 @@ export default function SubstrateWalletModal() {
 
   const extensionsViewTransitions = useMemo(
     () =>
-      shouldInitialTransition
+      enableTranslateAnimation
         ? {
             initial: { x: -10, opacity: 0 },
             animate: {
@@ -129,7 +129,7 @@ export default function SubstrateWalletModal() {
               transition: { duration: animationDuration / 2, type: 'spring' },
             },
           },
-    [shouldInitialTransition],
+    [enableTranslateAnimation],
   )
 
   return (
@@ -298,7 +298,9 @@ export default function SubstrateWalletModal() {
           </AnimatePresence>
         </motion.div>
       </DialogContent>
-      {isModalOpen && <TransitionControl setShouldInitialTransition={setShouldInitialTransition} />}
+      {isModalOpen && (
+        <TransitionControl setEnableTranslateAnimation={setEnableTranslateAnimation} />
+      )}
     </Dialog>
   )
 }
@@ -320,13 +322,13 @@ function Footer() {
 // Prevent initial animation on component mount to avoid visual glitches.
 // Animations are only triggered after the modal opens for a smoother user experience.
 function TransitionControl({
-  setShouldInitialTransition,
+  setEnableTranslateAnimation,
 }: {
-  setShouldInitialTransition: (v: boolean) => void
+  setEnableTranslateAnimation: (v: boolean) => void
 }) {
   useEffect(() => {
-    setTimeout(() => setShouldInitialTransition(true), 400)
-    return () => setShouldInitialTransition(false)
+    setTimeout(() => setEnableTranslateAnimation(true), 400)
+    return () => setEnableTranslateAnimation(false)
   }, [])
   return null
 }
