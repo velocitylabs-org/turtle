@@ -118,7 +118,17 @@ export default function SubstrateWalletModal() {
               transition: { duration: animationDuration / 2, type: 'spring' },
             },
           }
-        : {},
+        : {
+            initial: { opacity: 0 },
+            animate: {
+              opacity: 1,
+              transition: { duration: animationDuration / 2, type: 'spring' },
+            },
+            exit: {
+              opacity: 0,
+              transition: { duration: animationDuration / 2, type: 'spring' },
+            },
+          },
     [shouldInitialTransition],
   )
 
