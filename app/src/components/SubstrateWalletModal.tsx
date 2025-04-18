@@ -122,11 +122,11 @@ export default function SubstrateWalletModal() {
             initial: { opacity: 0 },
             animate: {
               opacity: 1,
-              transition: { duration: animationDuration / 2, type: 'spring' },
+              transition: { duration: animationDuration / 2 },
             },
             exit: {
               opacity: 0,
-              transition: { duration: animationDuration / 2, type: 'spring' },
+              transition: { duration: animationDuration / 2 },
             },
           },
     [enableTranslateAnimation],
