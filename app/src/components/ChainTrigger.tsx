@@ -4,7 +4,7 @@ import { ManualAddressInput } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import Image from 'next/image'
-import { ReactNode } from 'react'
+import { ChangeEvent, ReactNode, RefObject, useCallback } from 'react'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
 import CopyAddress from './ClipboardCopy'
@@ -22,7 +22,7 @@ interface ChainTriggerProps {
   /** The action to display on the right side of the trigger. Like a wallet connect button. */
   trailingAction?: ReactNode
   /** The ref can be used to close the dropdown when the user clicks outside of it */
-  triggerRef?: React.RefObject<HTMLDivElement | null>
+  triggerRef?: RefObject<HTMLDivElement | null>
   /** The input for manually entering an address. Used for specifying a recipient address. */
   manualAddressInput?: ManualAddressInput
   /** The connected account. */
@@ -54,15 +54,15 @@ export default function ChainTrigger({
 
   const shouldShowConnectedAccount = !manualAddressInput?.enabled && value
 
-  const handleManualAddressInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const handleManualAddressInputChange = (e: ChangeEvent<HTMLInputElement>) =>
     manualAddressInput?.onChange?.({
       enabled: manualAddressInput.enabled,
       address: e.target.value,
     })
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (!disabled && onClick) onClick()
-  }
+  }, [disabled, onClick])
 
   return (
     <Tooltip content={error}>

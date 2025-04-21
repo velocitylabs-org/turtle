@@ -16,7 +16,7 @@ import ChainTrigger from './ChainTrigger'
 import Dropdown from './Dropdown'
 import ChevronDown from './svg/ChevronDown'
 import Cross from './svg/Cross'
-import { SearchIcon } from './svg/SearchIcon'
+import SearchIcon from './svg/SearchIcon'
 import TokenIcon from './svg/TokenIcon'
 import TokenLogo from './TokenLogo'
 import Tooltip from './Tooltip'
@@ -93,17 +93,23 @@ export default function ChainTokenSelect({
   const [tokenSearch, setTokenSearch] = useState<string>('')
 
   // Filter the options based on search
-  const filteredChainOptions = chain.options.filter(option =>
-    option.name.toLowerCase().includes(chainSearch.toLowerCase()),
-  )
+  const filteredChainOptions = useMemo(() => {
+    return chain.options.filter(option =>
+      option.name.toLowerCase().includes(chainSearch.toLowerCase()),
+    )
+  }, [chain.options, chainSearch])
 
-  const sortedAndFilteredChainOptions = chain.orderBySelected
-    ? reorderOptionsBySelectedItem(filteredChainOptions, 'uid', chain.value?.uid)
-    : filteredChainOptions
+  const sortedAndFilteredChainOptions = useMemo(() => {
+    return chain.orderBySelected
+      ? reorderOptionsBySelectedItem(filteredChainOptions, 'uid', chain.value?.uid)
+      : filteredChainOptions
+  }, [filteredChainOptions, chain.orderBySelected, chain.value?.uid])
 
-  const filteredTokenOptions = token.options.filter(option =>
-    option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
-  )
+  const filteredTokenOptions = useMemo(() => {
+    return token.options.filter(option =>
+      option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
+    )
+  }, [token.options, tokenSearch])
 
   // Sort the options by priority token and then by selected token
   const sortedAndFilteredTokenOptions = useMemo(() => {

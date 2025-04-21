@@ -300,20 +300,31 @@ export const startedTooLongAgo = (
   return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
 }
 
+type SwapProperties = {
+  sourceToken?: Token
+  destinationToken?: Token
+  destinationAmount?: string
+}
+
+type SwapWithChains = SwapProperties & {
+  sourceChain: Chain
+  destChain: Chain
+}
+
+type CompleteSwap = SwapWithChains & {
+  sourceToken: Token
+  destinationToken: Token
+  destinationAmount: string
+}
+
 /**
  * Checks if a transfer is a swap (has destination token and amount)
  * @param transfer - The transfer to check
  * @returns if the transfer is a swap
  */
-export const isSwap = <
-  T extends { sourceToken?: Token; destinationToken?: Token; destinationAmount?: string },
->(
+export const isSwap = <T extends SwapProperties>(
   transfer: T,
-): transfer is T & {
-  sourceToken: Token
-  destinationToken: Token
-  destinationAmount: string
-} => {
+): transfer is T & Required<SwapProperties> => {
   return (
     !!transfer.destinationToken &&
     !!transfer.destinationAmount &&
@@ -327,23 +338,9 @@ export const isSwap = <
  * @param transfer - The transfer to check.
  * @returns A boolean.
  */
-export const isSameChainSwap = <
-  T extends {
-    sourceToken?: Token
-    destinationToken?: Token
-    destinationAmount?: string
-    sourceChain: Chain
-    destChain: Chain
-  },
->(
+export const isSameChainSwap = <T extends SwapWithChains>(
   transfer: T,
-): transfer is T & {
-  sourceToken: Token
-  destinationToken: Token
-  destinationAmount: string
-  sourceChain: Chain
-  destChain: Chain
-} => {
+): transfer is T & CompleteSwap => {
   return isSwap(transfer) && isSameChain(transfer.sourceChain, transfer.destChain)
 }
 
@@ -353,22 +350,8 @@ export const isSameChainSwap = <
  * @param transfer - The transfer to check.
  * @returns A boolean.
  */
-export const isSwapWithTransfer = <
-  T extends {
-    sourceToken?: Token
-    destinationToken?: Token
-    destinationAmount?: string
-    sourceChain: Chain
-    destChain: Chain
-  },
->(
+export const isSwapWithTransfer = <T extends SwapWithChains>(
   transfer: T,
-): transfer is T & {
-  sourceToken: Token
-  destinationToken: Token
-  destinationAmount: string
-  sourceChain: Chain
-  destChain: Chain
-} => {
+): transfer is T & CompleteSwap => {
   return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }
