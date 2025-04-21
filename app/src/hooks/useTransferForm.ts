@@ -16,7 +16,7 @@ import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { switchChain } from '@wagmi/core'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
 import useFees from './useFees'
@@ -336,6 +336,64 @@ const useTransferForm = () => {
     else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
 
+  const exceedsTransferableBalance = useMemo(() => {
+    const hasFees = Boolean(fees?.token?.id && fees?.amount)
+    const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
+    const hasBalance = Boolean(balanceData?.formatted)
+    const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+
+    if (!hasFees || !hasTokenAmount || !hasBalance) return false
+
+    // Add non-null assertions since we've verified these values exist
+    const feesToken = fees!.token!.id
+    const transferToken = sourceTokenAmount!.token!.id
+    if (feesToken !== transferToken) return false
+
+    const baseFees = toHuman(fees!.amount, fees!.token)
+    // Only add bridging fees if they exist AND their token ID matches the fees token ID
+    let bridgingFees = 0
+    if (hasBridgingFee && bridgingFee!.token!.id === feesToken) {
+      bridgingFees = toHuman(bridgingFee!.amount, bridgingFee!.token)
+    }
+
+    const totalFeesAmount = baseFees + bridgingFees
+    const transferAmount = sourceTokenAmount!.amount!
+    const balanceAmount = Number(balanceData!.formatted)
+    const insufficientFunds = transferAmount + totalFeesAmount > balanceAmount
+
+    return insufficientFunds
+  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
+
+  const applyTransferableBalance = useCallback(() => {
+    if (exceedsTransferableBalance && sourceTokenAmount?.token) {
+      // Only include bridging fee if denominated in same token as base fees
+      const hasBridgingFee = Boolean(
+        bridgingFee?.token?.id && bridgingFee?.amount && fees?.token?.id === bridgingFee?.token?.id,
+      )
+      const feesAmount =
+        toHuman(fees!.amount, fees!.token) +
+        (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
+      const balanceAmount = Number(balanceData!.formatted)
+      const newAmount = balanceAmount - feesAmount
+      setValue(
+        'sourceTokenAmount',
+        {
+          token: sourceTokenAmount.token,
+          // Parse as number, then format to our display standard, then parse again as number
+          amount: Number(formatAmount(newAmount, 'Longer')),
+        },
+        { shouldValidate: true },
+      )
+    }
+  }, [
+    exceedsTransferableBalance,
+    sourceTokenAmount?.token,
+    bridgingFee,
+    fees,
+    balanceData,
+    setValue,
+  ])
+
   // reset token amount
   useEffect(() => {
     if (tokenId)
@@ -382,6 +440,8 @@ const useTransferForm = () => {
     balanceData,
     fetchBalance,
     isLoadingOutputAmount,
+    exceedsTransferableBalance,
+    applyTransferableBalance,
   }
 }
 
