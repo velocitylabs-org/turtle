@@ -4,6 +4,7 @@ import { AmountInfo } from '@/models/transfer'
 import { getExchangeOutputAmount } from '@/lib/paraspell/swap'
 import { isSameToken } from '@/utils/token'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
@@ -80,8 +81,11 @@ export function useOutputAmount({
     retry: 2, // Retry failed requests twice
   })
 
-  return {
-    outputAmount: data,
-    isLoading: isLoading || isFetching,
-  }
+  return useMemo(
+    () => ({
+      outputAmount: data,
+      isLoading: isLoading || isFetching,
+    }),
+    [data, isLoading, isFetching],
+  )
 }
