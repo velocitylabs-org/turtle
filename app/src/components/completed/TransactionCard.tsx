@@ -9,6 +9,7 @@ import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
 import Info from '../svg/Info'
 import Success from '../svg/Success'
+import TokenLogo from '../TokenLogo'
 import { getSVGColor } from './TransactionDialog'
 
 export function getStatusIcon(status: TransferResult) {
@@ -47,16 +48,15 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
-              <span>{tx.sourceToken.symbol}</span>
-              {isSwap(tx) && (
+              {isSwap(tx) ? (
                 <>
-                  <ArrowRight
-                    className="h-3 w-3"
-                    {...(transferFailed && { fill: colors['turtle-error'] })}
-                  />
                   <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
-                  <span>{tx.destinationToken.symbol}</span>
+                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={25} />
+                </>
+              ) : (
+                <>
+                  <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
+                  <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={25} />
                 </>
               )}
             </div>
