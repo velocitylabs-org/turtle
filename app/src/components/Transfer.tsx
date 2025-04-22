@@ -345,7 +345,7 @@ export default function Transfer() {
                       walletButton: shouldDisplayRecipientWalletButton ? (
                         <WalletButton walletType={destinationChain?.walletType} />
                       ) : undefined,
-                      manualAddressInput: {
+                      manualRecipientInput: {
                         enabled: manualRecipient.enabled,
                         address: manualRecipient.address,
                         onChange: handleManualRecipientChange,

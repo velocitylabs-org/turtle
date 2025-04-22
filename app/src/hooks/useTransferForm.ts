@@ -8,7 +8,7 @@ import useWallet from '@/hooks/useWallet'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
-import { ManualAddressValue, TokenAmount } from '@/models/select'
+import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
 import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
@@ -27,7 +27,7 @@ interface FormInputs {
   destinationChain: Chain | null
   sourceTokenAmount: TokenAmount | null
   destinationTokenAmount: TokenAmount | null
-  manualRecipient: ManualAddressValue
+  manualRecipient: ManualRecipient
 }
 
 const initValues: FormInputs = {
@@ -221,7 +221,7 @@ const useTransferForm = () => {
   }, [sourceChain, destinationChain, setValue, allowFromToSwap])
 
   const handleManualRecipientChange = useCallback(
-    (newValue: ManualAddressValue) => setValue('manualRecipient', newValue),
+    (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
     [setValue],
   )
 
@@ -445,7 +445,7 @@ const useTransferForm = () => {
   }
 }
 
-function isValidRecipient(manualRecipient: ManualAddressValue, destinationChain: Chain | null) {
+function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
   return (
     !manualRecipient.enabled ||
     !destinationChain ||
