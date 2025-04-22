@@ -248,7 +248,7 @@ export default function Transfer() {
                 render={({ field: tokenField }) => {
                   return (
                     <ChainTokenSelect
-                      chain={{
+                      chainProps={{
                         ...chainField,
                         onChange: handleSourceChainChange,
                         options: sourceChainOptions,
@@ -256,7 +256,7 @@ export default function Transfer() {
                         clearable: true,
                         orderBySelected: true,
                       }}
-                      token={{
+                      tokenProps={{
                         value: tokenField.value?.token ?? null,
                         onChange: handleSourceTokenChange,
                         options: sourceTokenOptions,
@@ -265,7 +265,7 @@ export default function Transfer() {
                         clearable: true,
                         orderBySelected: true,
                       }}
-                      amount={{
+                      amountProps={{
                         value: tokenField.value?.amount ?? null,
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
@@ -284,7 +284,7 @@ export default function Transfer() {
                           />
                         ),
                       }}
-                      wallet={{
+                      walletProps={{
                         address: sourceWallet?.sender?.address,
                         walletButton: <WalletButton walletType={sourceChain?.walletType} />,
                       }}
@@ -312,7 +312,7 @@ export default function Transfer() {
                 control={control}
                 render={({ field: tokenField }) => (
                   <ChainTokenSelect
-                    chain={{
+                    chainProps={{
                       ...chainField,
                       onChange: handleDestinationChainChange,
                       options: destinationChainOptions,
@@ -320,7 +320,7 @@ export default function Transfer() {
                       clearable: true,
                       orderBySelected: true,
                     }}
-                    token={{
+                    tokenProps={{
                       value: tokenField.value?.token ?? null,
                       onChange: token =>
                         tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
@@ -331,7 +331,7 @@ export default function Transfer() {
                       sourceChainToDetermineOriginBanner: destinationChain,
                       priorityToken: sourceTokenAmount?.token,
                     }}
-                    amount={{
+                    amountProps={{
                       value: destinationTokenAmount?.amount ?? null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
@@ -339,7 +339,7 @@ export default function Transfer() {
                       placeholder: receiveAmountPlaceholder,
                       disabled: true,
                     }}
-                    wallet={{
+                    walletProps={{
                       address: destinationWallet?.sender?.address,
                       error: manualRecipient.enabled ? manualRecipientError : '',
                       walletButton: shouldDisplayRecipientWalletButton ? (

@@ -30,7 +30,7 @@ const numberFlowFormat = {
 }
 
 interface ChainTokenSelectProps {
-  chain: {
+  chainProps: {
     value: Chain | null
     onChange: (chain: Chain | null) => void
     options: Chain[]
@@ -38,7 +38,7 @@ interface ChainTokenSelectProps {
     clearable?: boolean
     orderBySelected?: boolean
   }
-  token: {
+  tokenProps: {
     value: Token | null
     onChange: (token: Token | null) => void
     options: Token[]
@@ -49,7 +49,7 @@ interface ChainTokenSelectProps {
     /** The token displayed at the top or below the selected token in the dropdown. Can be used to make it easier to select the source token again. */
     priorityToken?: Token | null
   }
-  amount?: {
+  amountProps?: {
     value: number | null
     onChange: (amount: number | null) => void
     error?: string
@@ -58,7 +58,7 @@ interface ChainTokenSelectProps {
     placeholder?: string
     disabled?: boolean
   }
-  wallet?: {
+  walletProps?: {
     address?: string
     walletButton?: ReactNode
     manualAddressInput?: ManualAddressInput
@@ -71,10 +71,10 @@ interface ChainTokenSelectProps {
 }
 
 export default function ChainTokenSelect({
-  chain,
-  token,
-  amount,
-  wallet,
+  chainProps,
+  tokenProps,
+  amountProps,
+  walletProps,
   floatingLabel = 'From',
   disabled,
   className,
@@ -85,8 +85,8 @@ export default function ChainTokenSelect({
   useOutsideClick(triggerRef, dropdownRef, () => setIsOpen(false))
 
   // Token hooks
-  const { price } = useTokenPrice(token.value)
-  const inDollars = !!amount?.value && price ? price * amount.value : undefined
+  const { price } = useTokenPrice(tokenProps.value)
+  const inDollars = !!amountProps?.value && price ? price * amountProps.value : undefined
 
   // Search state
   const [chainSearch, setChainSearch] = useState<string>('')
@@ -94,51 +94,57 @@ export default function ChainTokenSelect({
 
   // Filter the options based on search
   const filteredChainOptions = useMemo(() => {
-    return chain.options.filter(option =>
+    return chainProps.options.filter(option =>
       option.name.toLowerCase().includes(chainSearch.toLowerCase()),
     )
-  }, [chain.options, chainSearch])
+  }, [chainProps.options, chainSearch])
 
   const sortedAndFilteredChainOptions = useMemo(() => {
-    return chain.orderBySelected
-      ? reorderOptionsBySelectedItem(filteredChainOptions, 'uid', chain.value?.uid)
+    return chainProps.orderBySelected
+      ? reorderOptionsBySelectedItem(filteredChainOptions, 'uid', chainProps.value?.uid)
       : filteredChainOptions
-  }, [filteredChainOptions, chain.orderBySelected, chain.value?.uid])
+  }, [filteredChainOptions, chainProps.orderBySelected, chainProps.value?.uid])
 
   const filteredTokenOptions = useMemo(() => {
-    return token.options.filter(option =>
+    return tokenProps.options.filter(option =>
       option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
     )
-  }, [token.options, tokenSearch])
+  }, [tokenProps.options, tokenSearch])
 
   // Sort the options by priority token and then by selected token
   const sortedAndFilteredTokenOptions = useMemo(() => {
     let sorted = filteredTokenOptions
     // move priority token to the top if it exists
-    if (token.priorityToken)
-      sorted = reorderOptionsBySelectedItem(filteredTokenOptions, 'id', token.priorityToken.id)
+    if (tokenProps.priorityToken)
+      sorted = reorderOptionsBySelectedItem(filteredTokenOptions, 'id', tokenProps.priorityToken.id)
 
     // move selected token to the top if it exists
-    if (token.orderBySelected) sorted = reorderOptionsBySelectedItem(sorted, 'id', token.value?.id)
+    if (tokenProps.orderBySelected)
+      sorted = reorderOptionsBySelectedItem(sorted, 'id', tokenProps.value?.id)
 
     return sorted
-  }, [filteredTokenOptions, token.orderBySelected, token.value?.id, token.priorityToken])
+  }, [
+    filteredTokenOptions,
+    tokenProps.orderBySelected,
+    tokenProps.value?.id,
+    tokenProps.priorityToken,
+  ])
 
   const handleChainSelect = (selectedChain: Chain) => {
-    chain.onChange(selectedChain)
-    token.onChange(null)
+    chainProps.onChange(selectedChain)
+    tokenProps.onChange(null)
   }
 
   const handleTokenSelect = (selectedToken: Token) => {
-    token.onChange(selectedToken)
+    tokenProps.onChange(selectedToken)
     setIsOpen(false)
   }
 
   const handleChainClear = () => {
-    chain.onChange(null)
-    token.onChange(null)
+    chainProps.onChange(null)
+    tokenProps.onChange(null)
   }
-  const handleTokenClear = () => token.onChange(null)
+  const handleTokenClear = () => tokenProps.onChange(null)
 
   const handleDropdownTriggerClick = () => {
     if (!disabled) setIsOpen(!isOpen)
@@ -154,18 +160,18 @@ export default function ChainTokenSelect({
           </label>
 
           <ChainTrigger
-            value={chain.value}
+            value={chainProps.value}
             disabled={disabled}
             onClick={handleDropdownTriggerClick}
-            error={wallet?.error}
+            error={walletProps?.error}
             className={cn(
               'rounded-md rounded-bl-none rounded-br-none',
-              amount?.error && 'border-b-0',
+              amountProps?.error && 'border-b-0',
             )}
             triggerRef={triggerRef}
-            walletAddress={wallet?.address}
-            manualAddressInput={wallet?.manualAddressInput}
-            trailingAction={wallet?.walletButton}
+            walletAddress={walletProps?.address}
+            manualAddressInput={walletProps?.manualAddressInput}
+            trailingAction={walletProps?.walletButton}
           />
         </div>
 
@@ -180,8 +186,8 @@ export default function ChainTokenSelect({
       </div>
 
       <TokenAmountInput
-        token={token}
-        amount={amount}
+        tokenProps={tokenProps}
+        amountProps={amountProps}
         disabled={disabled}
         onTriggerClick={handleDropdownTriggerClick}
         triggerRef={triggerRef}
@@ -197,8 +203,8 @@ export default function ChainTokenSelect({
               searchString={chainSearch}
               setSearchString={setChainSearch}
               options={sortedAndFilteredChainOptions}
-              selectedChain={chain.value}
-              clearable={chain.clearable}
+              selectedChain={chainProps.value}
+              clearable={chainProps.clearable}
               onSelect={handleChainSelect}
               onClear={handleChainClear}
             />
@@ -210,9 +216,9 @@ export default function ChainTokenSelect({
               searchString={tokenSearch}
               setSearchString={setTokenSearch}
               options={sortedAndFilteredTokenOptions}
-              selectedToken={token.value}
-              clearable={token.clearable}
-              sourceChainToDetermineOriginBanner={token.sourceChainToDetermineOriginBanner}
+              selectedToken={tokenProps.value}
+              clearable={tokenProps.clearable}
+              sourceChainToDetermineOriginBanner={tokenProps.sourceChainToDetermineOriginBanner}
               onSelect={handleTokenSelect}
               onClear={handleTokenClear}
             />
@@ -224,11 +230,11 @@ export default function ChainTokenSelect({
 }
 
 interface TokenAmountInputProps {
-  token: {
+  tokenProps: {
     value: Token | null
     sourceChainToDetermineOriginBanner: Chain | null
   }
-  amount?: {
+  amountProps?: {
     value: number | null
     onChange: (amount: number | null) => void
     error?: string
@@ -243,27 +249,27 @@ interface TokenAmountInputProps {
 }
 
 const TokenAmountInput = ({
-  token,
-  amount,
+  tokenProps,
+  amountProps,
   disabled,
   onTriggerClick,
   triggerRef,
   inDollars,
 }: TokenAmountInputProps) => {
-  const showVerticalDivider = !!amount?.value || !!amount?.placeholder
+  const showVerticalDivider = !!amountProps?.value || !!amountProps?.placeholder
   const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newVal = e.target.value === '' ? null : parseFloat(e.target.value)
-    amount?.onChange?.(newVal)
+    amountProps?.onChange?.(newVal)
   }
 
   return (
-    <Tooltip content={amount?.error}>
+    <Tooltip content={amountProps?.error}>
       <div
         ref={triggerRef}
         className={cn(
           'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
           disabled && 'opacity-30',
-          amount?.error && 'border-1 border-turtle-error',
+          amountProps?.error && 'border-1 border-turtle-error',
         )}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
@@ -272,14 +278,14 @@ const TokenAmountInput = ({
             data-cy="token-select-trigger"
             onClick={disabled ? undefined : onTriggerClick}
           >
-            {token.value ? (
+            {tokenProps.value ? (
               <>
                 <TokenLogo
-                  token={token.value}
-                  sourceChain={token.sourceChainToDetermineOriginBanner}
+                  token={tokenProps.value}
+                  sourceChain={tokenProps.sourceChainToDetermineOriginBanner}
                 />
                 <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
-                  {token.value.symbol}
+                  {tokenProps.value.symbol}
                 </span>
               </>
             ) : (
@@ -295,15 +301,15 @@ const TokenAmountInput = ({
           <div className="align-center ml-1 flex flex-col">
             <input
               data-cy="amount-input"
-              disabled={disabled || amount?.disabled}
+              disabled={disabled || amountProps?.disabled}
               type="number"
               className={cn(
                 'bg-transparent text-sm focus:border-0 focus:outline-none min-[350px]:text-base sm:text-xl',
                 inDollars && 'animate-slide-up-slight',
-                amount?.error && 'text-turtle-error',
+                amountProps?.error && 'text-turtle-error',
               )}
-              placeholder={amount?.placeholder ?? 'Amount'}
-              value={amount?.value ?? ''}
+              placeholder={amountProps?.placeholder ?? 'Amount'}
+              value={amountProps?.value ?? ''}
               onChange={handleAmountChange}
               onClick={e => e.stopPropagation()}
               onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
@@ -321,8 +327,8 @@ const TokenAmountInput = ({
           </div>
         </div>
 
-        {amount?.trailingAction && (
-          <div className="absolute right-0 ml-2 mr-3 bg-white">{amount.trailingAction}</div>
+        {amountProps?.trailingAction && (
+          <div className="absolute right-0 ml-2 mr-3 bg-white">{amountProps.trailingAction}</div>
         )}
       </div>
     </Tooltip>
