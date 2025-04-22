@@ -1,6 +1,6 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Erc20Balance } from '@/services/balance'
+import { Balance } from '@/services/balance'
 import { Environment } from '@/store/environmentStore'
 import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
@@ -18,7 +18,7 @@ interface UseBalanceParams {
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
 const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
-  const [balance, setBalance] = useState<Erc20Balance | undefined>()
+  const [balance, setBalance] = useState<Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
   const { refetch: fetchErc20Balance, isLoading: loadingErc20Balance } = useBalanceWagmi({
@@ -45,7 +45,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
 
     try {
       setLoading(true)
-      let fetchedBalance: Erc20Balance | undefined
+      let fetchedBalance: Balance | undefined
 
       switch (chain.network) {
         case 'Ethereum': {
@@ -93,7 +93,7 @@ export async function getBalance(
   chain: Chain,
   token: Token,
   address: string,
-): Promise<Erc20Balance | undefined> {
+): Promise<Balance | undefined> {
   const node = getParaSpellNode(chain)
   if (!node) throw new Error('Node not found')
   const currency = getParaspellToken(token, node)
