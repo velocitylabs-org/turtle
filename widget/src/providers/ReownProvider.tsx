@@ -1,11 +1,10 @@
 import { ReactNode } from 'react'
 import { createAppKit } from '@reown/appkit/react'
 import { WagmiProvider } from 'wagmi'
-import { mainnet as ethereum, sepolia } from '@reown/appkit/networks'
+import { mainnet as ethereum } from '@reown/appkit/networks'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { environment, isDevelopment, projectId, vercelDomain } from '@/utils/consts'
-import { Environment } from '@/stores/environmentStore'
-import { mainnet_networks, testnet_networks, wagmiAdapter, wagmiConfig } from './config'
+import { isDevelopment, projectId, vercelDomain } from '@/utils/consts'
+import { mainnet_networks, wagmiAdapter, wagmiConfig } from './config'
 
 if (!projectId) throw new Error('Project ID is not defined')
 
@@ -21,8 +20,8 @@ const metadata = {
 }
 
 const generalConfig = {
-  networks: environment === Environment.Testnet ? testnet_networks : mainnet_networks,
-  defaultNetwork: environment === Environment.Testnet ? sepolia : ethereum,
+  networks: mainnet_networks,
+  defaultNetwork: ethereum,
   allowUnsupportedChain: false,
   metadata: metadata,
   projectId,

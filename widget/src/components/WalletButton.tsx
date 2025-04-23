@@ -1,7 +1,7 @@
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { WalletType } from '@/models/chain'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/helper'
 import { motion } from 'framer-motion'
 import Button from './Button'
 
