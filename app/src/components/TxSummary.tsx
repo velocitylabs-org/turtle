@@ -97,7 +97,7 @@ export default function TxSummary({
                   <div className="pt-[3px] text-sm font-bold">
                     {bridgingFees ? 'Execution fee' : 'Fee'}{' '}
                   </div>
-                  {!canPayFees && !exceedsTransferableBalance && (
+                  {!canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
@@ -108,7 +108,7 @@ export default function TxSummary({
                       <span>You don&apos;t have enough {fees.token.symbol} </span>
                     </div>
                   )}
-                  {exceedsTransferableBalance && (
+                  {exceedsTransferableBalance && canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
