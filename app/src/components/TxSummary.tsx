@@ -89,7 +89,7 @@ export default function TxSummary({
       fees?.token?.id &&
       transferAmount.token.id === fees.token.id
 
-    const exceedsTransferableBalanceInBridging =
+    const exceedsTransferableBalanceInBridgingFee =
       exceedsTransferableBalance &&
       !exceedsTransferableBalanceInFees &&
       transferAmount?.token?.id &&
@@ -174,7 +174,7 @@ export default function TxSummary({
                       <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
                     </div>
                   )}
-                  {exceedsTransferableBalanceInBridging && canPayAdditionalFees && (
+                  {exceedsTransferableBalanceInBridgingFee && canPayAdditionalFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
