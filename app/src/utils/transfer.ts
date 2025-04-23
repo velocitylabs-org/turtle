@@ -311,11 +311,7 @@ type SwapWithChains = SwapProperties & {
   destChain: Chain
 }
 
-type CompleteSwap = SwapWithChains & {
-  sourceToken: Token
-  destinationToken: Token
-  destinationAmount: string
-}
+type CompleteSwap = SwapWithChains & Required<SwapProperties>
 
 /**
  * Checks if a transfer is a swap (has destination token and amount)
