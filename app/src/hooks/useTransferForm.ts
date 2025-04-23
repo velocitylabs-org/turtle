@@ -340,13 +340,13 @@ const useTransferForm = () => {
   // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
   const exceedsTransferableBalance = useMemo(() => {
     const hasFees = Boolean(fees?.token?.id && fees?.amount)
-    const hasTokenAmount = Boolean(tokenAmount?.token?.id && tokenAmount?.amount)
+    const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
     const hasBalance = Boolean(balanceData?.formatted)
     const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
     if (!hasTokenAmount || !hasBalance) return false
 
-    const transferToken = tokenAmount!.token!.id
-    const transferAmount = tokenAmount!.amount!
+    const transferToken = sourceTokenAmount!.token!.id
+    const transferAmount = sourceTokenAmount!.amount!
     const balanceAmount = Number(balanceData!.formatted)
     let totalFeesAmount = 0
 
@@ -363,7 +363,7 @@ const useTransferForm = () => {
 
     // Check if transfer amount plus all applicable fees exceeds the available balance
     return transferAmount + totalFeesAmount > balanceAmount
-  }, [fees, bridgingFee, balanceData, tokenAmount])
+  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
 
   const applyTransferableBalance = useCallback(() => {
     if (exceedsTransferableBalance && sourceTokenAmount?.token) {
