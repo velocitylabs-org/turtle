@@ -1,5 +1,5 @@
 import TooltipIcon from '@/assets/svg/tooltip-icon.svg'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/helper'
 import { Tooltip as HeroTooltip } from '@heroui/react'
 // import Image from 'next/image'
 import React, { FC } from 'react'

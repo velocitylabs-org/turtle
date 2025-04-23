@@ -1,10 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import Widget from '@/components/Widget'
 import './index.css'
-import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <div className="flex h-screen w-screen items-center justify-center">
+      <Widget />
+    </div>
   </StrictMode>,
 )

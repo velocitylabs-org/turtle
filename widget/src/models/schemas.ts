@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { Chain } from '@/models/chain'
 import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Token } from '@/models/token'
+import { TMultiLocation } from '@paraspell/sdk'
 
 const originSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('Ethereum'), bridge: z.enum(['Snowbridge']) }),
@@ -16,7 +17,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),
-  multilocation: z.string(),
+  multilocation: z.custom<TMultiLocation>(),
   coingeckoId: z.string().optional(),
   origin: originSchema,
 })
@@ -56,4 +57,25 @@ export const schema = z.object({
   }),
   tokenAmount: tokenAmountSchema,
   manualRecipient: manualRecipientSchema,
+})
+
+export const ethMultilocationSchema = z.object({
+  parents: z.string(),
+  interior: z.object({
+    X2: z.tuple([
+      z.object({
+        GlobalConsensus: z.object({
+          Ethereum: z.object({
+            chainId: z.string(),
+          }),
+        }),
+      }),
+      z.object({
+        AccountKey20: z.object({
+          network: z.nullable(z.string()),
+          key: z.string(),
+        }),
+      }),
+    ]),
+  }),
 })
