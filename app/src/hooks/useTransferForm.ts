@@ -351,12 +351,12 @@ const useTransferForm = () => {
 
     const baseFees = toHuman(fees!.amount, fees!.token)
     // Only add bridging fees if they exist AND their token ID matches the fees token ID
-    let bridgingFees = 0
+    let applicableBridgingFee = 0
     if (hasBridgingFee && bridgingFee!.token!.id === feesToken) {
-      bridgingFees = toHuman(bridgingFee!.amount, bridgingFee!.token)
+      applicableBridgingFee = toHuman(bridgingFee!.amount, bridgingFee!.token)
     }
 
-    const totalFeesAmount = baseFees + bridgingFees
+    const totalFeesAmount = baseFees + applicableBridgingFee
     const transferAmount = sourceTokenAmount!.amount!
     const balanceAmount = Number(balanceData!.formatted)
     const insufficientFunds = transferAmount + totalFeesAmount > balanceAmount

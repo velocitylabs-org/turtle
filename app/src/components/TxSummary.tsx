@@ -16,7 +16,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
-  bridgingFees?: AmountInfo | null
+  bridgingFee?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
@@ -40,7 +40,7 @@ export default function TxSummary({
   loading,
   tokenAmount,
   fees,
-  bridgingFees,
+  bridgingFee,
   durationEstimate,
   direction,
   canPayFees,
@@ -52,7 +52,7 @@ export default function TxSummary({
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
-  if (!loading && !fees && !bridgingFees) return null
+  if (!loading && !fees && !bridgingFee) return null
 
   const renderContent = () => {
     if (loading) {
@@ -94,7 +94,7 @@ export default function TxSummary({
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="pt-[3px] text-sm font-bold">
-                    {bridgingFees ? 'Execution fee' : 'Fee'}{' '}
+                    {bridgingFee ? 'Execution fee' : 'Fee'}{' '}
                   </div>
                   {!canPayFees && !exceedsTransferableBalance && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
@@ -145,7 +145,7 @@ export default function TxSummary({
             )}
 
             {/* Bridging fees */}
-            {isBridgeTransfer && bridgingFees && (
+            {isBridgeTransfer && bridgingFee && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="pt-[3px] text-sm font-bold">Bridging fee</div>
@@ -157,20 +157,20 @@ export default function TxSummary({
                         fill={colors['turtle-foreground']}
                         className="mr-2"
                       />
-                      <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
+                      <span>You don&apos;t have enough {bridgingFee.token.symbol}</span>
                     </div>
                   )}
                 </div>
                 <div className="items-right flex">
                   <div>
                     <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {formatAmount(toHuman(bridgingFees.amount, bridgingFees.token))}{' '}
-                      {bridgingFees.token.symbol}
+                      {formatAmount(toHuman(bridgingFee.amount, bridgingFee.token))}{' '}
+                      {bridgingFee.token.symbol}
                     </div>
 
-                    {bridgingFees.inDollars > 0 && (
+                    {bridgingFee.inDollars > 0 && (
                       <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(bridgingFees.inDollars)}
+                        ${formatAmount(bridgingFee.inDollars)}
                       </div>
                     )}
                   </div>

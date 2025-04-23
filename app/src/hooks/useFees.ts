@@ -33,7 +33,7 @@ const useFees = (
   destToken?: Token | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [bridgingFee, setBridgingFees] = useState<AmountInfo | null>(null)
+  const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -57,7 +57,7 @@ const useFees = (
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
-      setBridgingFees(null)
+      setBridgingFee(null)
       return
     }
 
@@ -69,7 +69,7 @@ const useFees = (
 
     try {
       // reset
-      setBridgingFees(null)
+      setBridgingFee(null)
       setCanPayAdditionalFees(true)
 
       switch (sdk) {
@@ -106,7 +106,7 @@ const useFees = (
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
             const bridgeFee = await getCachedBridgingFee()
 
-            setBridgingFees({
+            setBridgingFee({
               amount: bridgeFee,
               token: bridgeFeeToken,
               inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
@@ -128,7 +128,7 @@ const useFees = (
           if (!sourceChain || !senderAddress || !destinationChain || !amount || !recipientAddress) {
             setLoading(false)
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
@@ -139,7 +139,7 @@ const useFees = (
             isSnowbridgeContextLoading
           ) {
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
@@ -158,14 +158,14 @@ const useFees = (
           )
           if (!fee) {
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
           switch (fee.origin) {
             case 'Ethereum': {
               setFees(fee.execution)
-              setBridgingFees(fee.bridging)
+              setBridgingFee(fee.bridging)
 
               const totalCost = BigInt(fee.execution?.amount ?? 0n) + BigInt(fee.bridging.amount)
               setCanPayAdditionalFees(totalCost < BigInt(feeBalance?.value ?? 0n))
@@ -184,7 +184,7 @@ const useFees = (
       }
     } catch (error) {
       setFees(null)
-      setBridgingFees(null)
+      setBridgingFee(null)
       captureException(error)
       console.error('useFees > error is', error)
       // addNotification({

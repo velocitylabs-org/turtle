@@ -475,7 +475,7 @@ export default function Transfer() {
           loading={loadingFees}
           tokenAmount={sourceTokenAmount}
           fees={fees}
-          bridgingFees={bridgingFee}
+          bridgingFee={bridgingFee}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
           canPayAdditionalFees={canPayAdditionalFees}
