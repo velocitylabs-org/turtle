@@ -270,9 +270,6 @@ const useTransferForm = () => {
   // Unlike canPayFees and canPayAdditionalFees which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
   // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
   const exceedsTransferableBalance = useMemo(() => {
-    // If user doesn't have enough balance to pay fees or bridging fees, we don't care about exceedsTransferableBalance
-    if (!canPayFees || !canPayAdditionalFees) return false
-
     const hasFees = Boolean(fees?.token?.id && fees?.amount)
     const hasTokenAmount = Boolean(tokenAmount?.token?.id && tokenAmount?.amount)
     const hasBalance = Boolean(balanceData?.formatted)
@@ -297,7 +294,7 @@ const useTransferForm = () => {
 
     // Check if transfer amount plus all applicable fees exceeds the available balance
     return transferAmount + totalFeesAmount > balanceAmount
-  }, [fees, bridgingFee, balanceData, tokenAmount, canPayFees, canPayAdditionalFees])
+  }, [fees, bridgingFee, balanceData, tokenAmount])
 
   const setTransferableBalance = useCallback(() => {
     if (exceedsTransferableBalance && tokenAmount?.token) {

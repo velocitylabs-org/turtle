@@ -83,6 +83,19 @@ export default function TxSummary({
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
+    const exceedsTransferableBalanceInFees =
+      exceedsTransferableBalance &&
+      transferAmount?.token?.id &&
+      fees?.token?.id &&
+      transferAmount.token.id === fees.token.id
+
+    const exceedsTransferableBalanceInBridging =
+      exceedsTransferableBalance &&
+      !exceedsTransferableBalanceInFees &&
+      transferAmount?.token?.id &&
+      bridgingFees?.token?.id &&
+      transferAmount.token.id === bridgingFees.token.id
+
     return (
       <div className={cn('tx-summary p-0 pt-0', className)}>
         <div className="pt-3">
@@ -108,7 +121,7 @@ export default function TxSummary({
                       <span>You don&apos;t have enough {fees.token.symbol} </span>
                     </div>
                   )}
-                  {exceedsTransferableBalance && canPayFees && (
+                  {exceedsTransferableBalanceInFees && canPayFees && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
@@ -159,6 +172,26 @@ export default function TxSummary({
                         className="mr-2"
                       />
                       <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
+                    </div>
+                  )}
+                  {exceedsTransferableBalanceInBridging && canPayAdditionalFees && (
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                      <ExclamationMark
+                        width={16}
+                        height={16}
+                        fill={colors['turtle-foreground']}
+                        className="mr-2"
+                      />
+                      <span>
+                        We need some of that {bridgingFees.token.symbol} to pay fees{' '}
+                        <span
+                          role="button"
+                          onClick={setTransferableBalance}
+                          className="ml-1 cursor-pointer underline"
+                        >
+                          Ok
+                        </span>
+                      </span>
                     </div>
                   )}
                 </div>
