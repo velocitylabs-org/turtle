@@ -2,9 +2,9 @@
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 import { TabOptions } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-import { colors } from '../../tailwind.config'
+import { colors } from '../../../tailwind.config'
 import OngoingTransferDialog from './OngoingTransferDialog'
-import ArrowRight from './svg/ArrowRight'
+import ArrowRight from '../svg/ArrowRight'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 import { Dispatch, SetStateAction } from 'react'
@@ -24,6 +24,7 @@ export default function OngoingTransfers({
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
   const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
+
   useOngoingTransfersCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
 

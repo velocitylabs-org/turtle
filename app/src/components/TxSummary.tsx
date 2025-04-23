@@ -23,6 +23,8 @@ interface TxSummaryProps {
   canPayFees: boolean
   canPayAdditionalFees: boolean
   className?: string
+  exceedsTransferableBalance: boolean
+  setTransferableBalance: () => void
 }
 
 const animationConfig = {
@@ -45,6 +47,8 @@ export default function TxSummary({
   canPayFees,
   canPayAdditionalFees,
   className,
+  exceedsTransferableBalance,
+  setTransferableBalance,
 }: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
@@ -93,7 +97,7 @@ export default function TxSummary({
                   <div className="pt-[3px] text-sm font-bold">
                     {bridgingFees ? 'Execution fee' : 'Fee'}{' '}
                   </div>
-                  {!canPayFees && (
+                  {!canPayFees && !exceedsTransferableBalance && (
                     <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
@@ -101,7 +105,27 @@ export default function TxSummary({
                         fill={colors['turtle-foreground']}
                         className="mr-2"
                       />
-                      <span>You don&apos;t have enough {fees.token.symbol}</span>
+                      <span>You don&apos;t have enough {fees.token.symbol} </span>
+                    </div>
+                  )}
+                  {exceedsTransferableBalance && (
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                      <ExclamationMark
+                        width={16}
+                        height={16}
+                        fill={colors['turtle-foreground']}
+                        className="mr-2"
+                      />
+                      <span>
+                        We need some of that {fees.token.symbol} to pay fees{' '}
+                        <span
+                          role="button"
+                          onClick={setTransferableBalance}
+                          className="ml-1 cursor-pointer underline"
+                        >
+                          Ok
+                        </span>
+                      </span>
                     </div>
                   )}
                 </div>
@@ -167,7 +191,7 @@ export default function TxSummary({
             </li>
           </ul>
 
-          {canPayFees && isAmountTooLow && (
+          {canPayFees && !exceedsTransferableBalance && isAmountTooLow && (
             <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}

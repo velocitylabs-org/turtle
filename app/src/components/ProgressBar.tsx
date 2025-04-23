@@ -21,10 +21,15 @@ export default function ProgressBar({ progress, outlinedProgressBar }: ProgressB
           />
         </div>
       ) : (
-        <div className="mb-4 h-2 rounded-full border border-turtle-secondary bg-white">
+        <div
+          className={cn(
+            'mb-4 h-2 rounded-full border border-turtle-secondary bg-white',
+            progress <= 0 && 'animate-pulse',
+          )}
+        >
           {progress > 0 && (
             <div
-              className="-ml-[1px] -mt-[1px] h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary"
+              className="-ml-[1px] -mt-[1px] h-2 rounded-full border border-turtle-secondary-dark bg-turtle-secondary transition-all duration-1000 ease-in-out"
               style={{ width: `${progress}%` }}
             />
           )}
