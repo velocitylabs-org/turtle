@@ -311,9 +311,7 @@ export default function Transfer() {
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: sourceTokenAmountErrorMessage,
                         placeholder: amountPlaceholder,
-                        trailingAction: sourceTokenAmount?.amount ? (
-                          <></>
-                        ) : (
+                        trailingAction: !sourceTokenAmount?.amount && (
                           <Button
                             label="Max"
                             size="sm"
