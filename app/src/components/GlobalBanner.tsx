@@ -21,7 +21,7 @@ export default function GlobalBanner({
 
   return (
     <div className="fixed left-1/2 top-2 z-50 -translate-x-1/2">
-      <div className="mx-auto flex w-[90vw] flex-col items-center justify-center rounded-2xl bg-black/70 px-6 py-3 text-center backdrop-blur-sm sm:w-auto sm:max-w-2xl">
+      <div className="mx-auto flex w-[90vw] flex-col items-center justify-center rounded-2xl bg-black/70 px-6 py-3 text-center backdrop-blur-sm sm:w-auto sm:max-w-[26rem]">
         <div className="flex flex-col gap-1">
           {title && <span className="text-sm font-semibold text-white">{title}</span>}
           {description && <span className="text-sm font-medium text-white">{description}</span>}

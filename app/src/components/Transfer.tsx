@@ -279,9 +279,9 @@ export default function Transfer() {
       <GlobalBanner
         isVisible={isBannerVisible}
         onClose={() => setIsBannerVisible(false)}
-        title="Turtle now supports swaps on Hydration 🎉"
-        description="Swap and transfer in one go."
-        actionText="Try it out"
+        title="Turtle v3 out 🎉"
+        description="Swap any token on Hydration and move it to any parachain in one go."
+        actionText="Try now"
         onAction={() => {
           setIsBannerVisible(false)
           handleSourceChainChange(Hydration)
