@@ -1,5 +1,4 @@
 'use client'
-import Cross from '@/components/svg/Cross'
 
 interface GlobalBannerProps {
   isVisible: boolean
@@ -21,24 +20,27 @@ export default function GlobalBanner({
   if (!isVisible) return null
 
   return (
-    <div className="fixed left-0 right-0 top-0 z-50 w-full bg-black/70 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2.5 text-center">
-        <div className="flex flex-col items-center gap-1 sm:flex-row sm:gap-3">
-          <span className="text-sm font-medium text-white">
-            {title && <span className="font-semibold">{title} </span>}
-            {description}
-          </span>
+    <div className="fixed left-1/2 top-2 z-50 -translate-x-1/2">
+      <div className="mx-auto flex w-[90vw] flex-col items-center justify-center rounded-2xl bg-black/70 px-6 py-3 text-center backdrop-blur-sm sm:w-auto sm:max-w-2xl">
+        <div className="flex flex-col gap-1">
+          {title && <span className="text-sm font-semibold text-white">{title}</span>}
+          {description && <span className="text-sm font-medium text-white">{description}</span>}
+        </div>
+        <div className="mt-1 flex items-center gap-3">
           {actionText && onAction && (
-            <button onClick={onAction} className="text-sm text-white underline sm:ml-2">
-              {actionText}
-            </button>
+            <>
+              <button onClick={onAction} className="text-sm text-white underline">
+                {actionText}
+              </button>
+              <span className="text-sm text-white/50">/</span>
+            </>
           )}
           <button
             onClick={onClose}
-            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-colors hover:bg-white/10"
+            className="text-sm text-white underline"
             aria-label="Close banner"
           >
-            <Cross className="h-4 w-4" stroke="white" />
+            Close
           </button>
         </div>
       </div>
