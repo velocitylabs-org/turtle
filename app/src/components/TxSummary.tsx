@@ -92,8 +92,8 @@ export default function TxSummary({
       exceedsTransferableBalance &&
       !exceedsTransferableBalanceInFees &&
       transferAmount?.token?.id &&
-      bridgingFees?.token?.id &&
-      transferAmount.token.id === bridgingFees.token.id
+      bridgingFee?.token?.id &&
+      transferAmount.token.id === bridgingFee.token.id
 
     return (
       <div className={cn('tx-summary p-0 pt-0', className)}>
@@ -182,10 +182,10 @@ export default function TxSummary({
                         className="mr-2"
                       />
                       <span>
-                        We need some of that {bridgingFees.token.symbol} to pay fees{' '}
+                        We need some of that {bridgingFee.token.symbol} to pay fees{' '}
                         <span
                           role="button"
-                          onClick={setTransferableBalance}
+                          onClick={applyTransferableBalance}
                           className="ml-1 cursor-pointer underline"
                         >
                           Ok
