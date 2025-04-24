@@ -5,6 +5,7 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 import { TokenAmount } from '@/models/select'
+import { Hydration } from '@/registry/mainnet/chains'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Balance } from '@/services/balance'
 import { resolveDirection } from '@/services/transfer'
@@ -19,12 +20,13 @@ import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import ActionBanner from './ActionBanner'
 import Button from './Button'
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
+import GlobalBanner from './GlobalBanner'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import AlertIcon from './svg/AlertIcon'
@@ -88,6 +90,7 @@ const getReceiveAmountPlaceholder = ({
 }
 
 export default function Transfer() {
+  const [isBannerVisible, setIsBannerVisible] = useState(true)
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
@@ -272,235 +275,248 @@ export default function Transfer() {
   ])
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="z-20 flex flex-col gap-1 rounded-3xl border-1 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
-    >
-      <div className="flex flex-col gap-5">
-        <Controller
-          name="sourceChain"
-          control={control}
-          render={({ field: chainField }) => {
-            return (
-              <Controller
-                name="sourceTokenAmount"
-                control={control}
-                render={({ field: tokenField }) => {
-                  return (
+    <>
+      <GlobalBanner
+        isVisible={isBannerVisible}
+        onClose={() => setIsBannerVisible(false)}
+        title="Turtle now supports swaps on Hydration"
+        description=""
+        actionText="Try it out"
+        onAction={() => {
+          setIsBannerVisible(false)
+          handleSourceChainChange(Hydration)
+        }}
+      />
+      <form
+        onSubmit={handleSubmit}
+        className="z-20 flex flex-col gap-1 rounded-3xl border-1 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+      >
+        <div className="flex flex-col gap-5">
+          <Controller
+            name="sourceChain"
+            control={control}
+            render={({ field: chainField }) => {
+              return (
+                <Controller
+                  name="sourceTokenAmount"
+                  control={control}
+                  render={({ field: tokenField }) => {
+                    return (
+                      <ChainTokenSelect
+                        chainProps={{
+                          ...chainField,
+                          onChange: handleSourceChainChange,
+                          options: sourceChainOptions,
+                          error: errors.sourceChain?.message,
+                          clearable: true,
+                          orderBySelected: true,
+                        }}
+                        tokenProps={{
+                          value: tokenField.value?.token ?? null,
+                          onChange: handleSourceTokenChange,
+                          options: sourceTokenOptions,
+                          sourceChainToDetermineOriginBanner: sourceChain,
+                          error: errors.sourceTokenAmount?.token?.message,
+                          clearable: true,
+                          orderBySelected: true,
+                        }}
+                        amountProps={{
+                          value: tokenField.value?.amount ?? null,
+                          onChange: amount =>
+                            tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                          error: sourceTokenAmountErrorMessage,
+                          placeholder: amountPlaceholder,
+                          trailingAction: !sourceTokenAmount?.amount && (
+                            <Button
+                              label="Max"
+                              size="sm"
+                              variant="outline"
+                              className="min-w-[40px]"
+                              onClick={handleMaxButtonClick}
+                              disabled={shouldDisableMaxButton}
+                            />
+                          ),
+                        }}
+                        walletProps={{
+                          address: sourceWallet?.sender?.address,
+                          walletButton: <WalletButton walletType={sourceChain?.walletType} />,
+                        }}
+                        disabled={transferStatus !== 'Idle'}
+                        className="z-40"
+                      />
+                    )
+                  }}
+                />
+              )
+            }}
+          />
+
+          {/* Swap source and destination chains */}
+          <SwapFromToChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
+
+          {/* Destination Chain */}
+          <Controller
+            name="destinationChain"
+            control={control}
+            render={({ field: chainField }) => {
+              return (
+                <Controller
+                  name="destinationTokenAmount"
+                  control={control}
+                  render={({ field: tokenField }) => (
                     <ChainTokenSelect
                       chainProps={{
                         ...chainField,
-                        onChange: handleSourceChainChange,
-                        options: sourceChainOptions,
-                        error: errors.sourceChain?.message,
+                        onChange: handleDestinationChainChange,
+                        options: destinationChainOptions,
+                        error: errors.destinationChain?.message,
                         clearable: true,
                         orderBySelected: true,
                       }}
                       tokenProps={{
                         value: tokenField.value?.token ?? null,
-                        onChange: handleSourceTokenChange,
-                        options: sourceTokenOptions,
-                        sourceChainToDetermineOriginBanner: sourceChain,
-                        error: errors.sourceTokenAmount?.token?.message,
+                        onChange: token =>
+                          tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                        options: destinationTokenOptions,
+                        error: errors.destinationTokenAmount?.token?.message,
                         clearable: true,
                         orderBySelected: true,
+                        sourceChainToDetermineOriginBanner: destinationChain,
+                        priorityToken: sourceTokenAmount?.token,
                       }}
                       amountProps={{
-                        value: tokenField.value?.amount ?? null,
+                        value: destinationTokenAmount?.amount ?? null,
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                        error: sourceTokenAmountErrorMessage,
-                        placeholder: amountPlaceholder,
-                        trailingAction: !sourceTokenAmount?.amount && (
-                          <Button
-                            label="Max"
-                            size="sm"
-                            variant="outline"
-                            className="min-w-[40px]"
-                            onClick={handleMaxButtonClick}
-                            disabled={shouldDisableMaxButton}
-                          />
-                        ),
+                        error: errors.destinationTokenAmount?.amount?.message,
+                        placeholder: receiveAmountPlaceholder,
+                        disabled: true,
                       }}
                       walletProps={{
-                        address: sourceWallet?.sender?.address,
-                        walletButton: <WalletButton walletType={sourceChain?.walletType} />,
+                        address: destinationWallet?.sender?.address,
+                        error: manualRecipient.enabled ? manualRecipientError : '',
+                        walletButton: shouldDisplayRecipientWalletButton ? (
+                          <WalletButton walletType={destinationChain?.walletType} />
+                        ) : undefined,
+                        manualRecipientInput: {
+                          enabled: manualRecipient.enabled,
+                          address: manualRecipient.address,
+                          onChange: handleManualRecipientChange,
+                        },
                       }}
-                      disabled={transferStatus !== 'Idle'}
-                      className="z-40"
+                      disabled={
+                        transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token
+                      }
+                      className="z-30"
+                      floatingLabel="To"
                     />
-                  )
-                }}
-              />
-            )
-          }}
-        />
-
-        {/* Swap source and destination chains */}
-        <SwapFromToChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
-
-        {/* Destination Chain */}
-        <Controller
-          name="destinationChain"
-          control={control}
-          render={({ field: chainField }) => {
-            return (
-              <Controller
-                name="destinationTokenAmount"
-                control={control}
-                render={({ field: tokenField }) => (
-                  <ChainTokenSelect
-                    chainProps={{
-                      ...chainField,
-                      onChange: handleDestinationChainChange,
-                      options: destinationChainOptions,
-                      error: errors.destinationChain?.message,
-                      clearable: true,
-                      orderBySelected: true,
-                    }}
-                    tokenProps={{
-                      value: tokenField.value?.token ?? null,
-                      onChange: token =>
-                        tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
-                      options: destinationTokenOptions,
-                      error: errors.destinationTokenAmount?.token?.message,
-                      clearable: true,
-                      orderBySelected: true,
-                      sourceChainToDetermineOriginBanner: destinationChain,
-                      priorityToken: sourceTokenAmount?.token,
-                    }}
-                    amountProps={{
-                      value: destinationTokenAmount?.amount ?? null,
-                      onChange: amount =>
-                        tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                      error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: receiveAmountPlaceholder,
-                      disabled: true,
-                    }}
-                    walletProps={{
-                      address: destinationWallet?.sender?.address,
-                      error: manualRecipient.enabled ? manualRecipientError : '',
-                      walletButton: shouldDisplayRecipientWalletButton ? (
-                        <WalletButton walletType={destinationChain?.walletType} />
-                      ) : undefined,
-                      manualRecipientInput: {
-                        enabled: manualRecipient.enabled,
-                        address: manualRecipient.address,
-                        onChange: handleManualRecipientChange,
-                      },
-                    }}
-                    disabled={
-                      transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token
-                    }
-                    className="z-30"
-                    floatingLabel="To"
-                  />
-                )}
-              />
-            )
-          }}
-        />
-      </div>
-
-      {destinationChain && (
-        <div className="flex flex-col gap-1">
-          {/* Switch between Wallet and Manual Input */}
-          <Controller
-            name="manualRecipient.enabled"
-            control={control}
-            render={({ field }) => (
-              <Switch
-                {...field}
-                checked={field.value}
-                className="items-start pt-1"
-                label="Send to a different address"
-                disabled={transferStatus !== 'Idle'}
-              />
-            )}
+                  )}
+                />
+              )
+            }}
           />
-
-          {/* Manual input warning */}
-          <AnimatePresence>
-            {manualRecipient.enabled && (
-              <motion.div
-                className="flex items-center gap-1 self-center pt-1"
-                {...manualInputAnimationProps}
-              >
-                <AlertIcon />
-                <span className="text-xs">Double check the address to avoid losing funds</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
-      )}
 
-      {/* ERC-20 Spend Approval */}
-      <AnimatePresence>
-        {requiresErc20SpendApproval && (
-          <motion.div
-            className="flex items-center gap-1 self-center pt-1"
-            {...approvalAnimationProps}
-          >
-            <ActionBanner
-              disabled={isApprovingErc20Spend}
-              header="Approve ERC-20 token spend"
-              text={`We need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
-              image={<Image src="/wallet.svg" alt="Wallet illustration" width={64} height={64} />}
-              btn={approveAllowanceButton}
+        {destinationChain && (
+          <div className="flex flex-col gap-1">
+            {/* Switch between Wallet and Manual Input */}
+            <Controller
+              name="manualRecipient.enabled"
+              control={control}
+              render={({ field }) => (
+                <Switch
+                  {...field}
+                  checked={field.value}
+                  className="items-start pt-1"
+                  label="Send to a different address"
+                  disabled={transferStatus !== 'Idle'}
+                />
+              )}
             />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* ETH to wETH Conversion */}
-      <AnimatePresence>
-        {shouldDisplayEthToWEthSwap && (
-          <motion.div
-            className="flex items-center gap-1 self-center pt-1"
-            {...approvalAnimationProps}
-          >
-            <ActionBanner
-              disabled={isSwappingEthForWEth}
-              header="Swap ETH for wETH"
-              text="Your wETH balance is insufficient but you got enough ETH."
-              image={<Image src="/wallet.svg" alt="Wallet" width={64} height={64} />}
-              btn={swapEthToWEthButton}
-            />
-          </motion.div>
+            {/* Manual input warning */}
+            <AnimatePresence>
+              {manualRecipient.enabled && (
+                <motion.div
+                  className="flex items-center gap-1 self-center pt-1"
+                  {...manualInputAnimationProps}
+                >
+                  <AlertIcon />
+                  <span className="text-xs">Double check the address to avoid losing funds</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         )}
-      </AnimatePresence>
 
-      {shouldDisplayTxSummary && (
-        <TxSummary
-          loading={loadingFees}
-          tokenAmount={sourceTokenAmount}
-          fees={fees}
-          bridgingFee={bridgingFee}
-          durationEstimate={durationEstimate}
-          canPayFees={canPayFees}
-          canPayAdditionalFees={canPayAdditionalFees}
-          direction={direction}
-          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-          exceedsTransferableBalance={exceedsTransferableBalance}
-          applyTransferableBalance={applyTransferableBalance}
+        {/* ERC-20 Spend Approval */}
+        <AnimatePresence>
+          {requiresErc20SpendApproval && (
+            <motion.div
+              className="flex items-center gap-1 self-center pt-1"
+              {...approvalAnimationProps}
+            >
+              <ActionBanner
+                disabled={isApprovingErc20Spend}
+                header="Approve ERC-20 token spend"
+                text={`We need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
+                image={<Image src="/wallet.svg" alt="Wallet illustration" width={64} height={64} />}
+                btn={approveAllowanceButton}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ETH to wETH Conversion */}
+        <AnimatePresence>
+          {shouldDisplayEthToWEthSwap && (
+            <motion.div
+              className="flex items-center gap-1 self-center pt-1"
+              {...approvalAnimationProps}
+            >
+              <ActionBanner
+                disabled={isSwappingEthForWEth}
+                header="Swap ETH for wETH"
+                text="Your wETH balance is insufficient but you got enough ETH."
+                image={<Image src="/wallet.svg" alt="Wallet" width={64} height={64} />}
+                btn={swapEthToWEthButton}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {shouldDisplayTxSummary && (
+          <TxSummary
+            loading={loadingFees}
+            tokenAmount={sourceTokenAmount}
+            fees={fees}
+            bridgingFee={bridgingFee}
+            durationEstimate={durationEstimate}
+            canPayFees={canPayFees}
+            canPayAdditionalFees={canPayAdditionalFees}
+            direction={direction}
+            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+            exceedsTransferableBalance={exceedsTransferableBalance}
+            applyTransferableBalance={applyTransferableBalance}
+          />
+        )}
+
+        {/* Transfer Button */}
+        <SendButton
+          className="my-5 w-full"
+          label="Send"
+          size="lg"
+          variant="primary"
+          type="submit"
+          loading={transferStatus !== 'Idle'}
+          disabled={!isTransferAllowed}
+          cypressID="form-submit"
+          status={transferStatus}
         />
-      )}
 
-      {/* Transfer Button */}
-      <SendButton
-        className="my-5 w-full"
-        label="Send"
-        size="lg"
-        variant="primary"
-        type="submit"
-        loading={transferStatus !== 'Idle'}
-        disabled={!isTransferAllowed}
-        cypressID="form-submit"
-        status={transferStatus}
-      />
-
-      <Credits />
-      <SubstrateWalletModal />
-    </form>
+        <Credits />
+        <SubstrateWalletModal />
+      </form>
+    </>
   )
 }
