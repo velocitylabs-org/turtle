@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { mainnet } from 'viem/chains'
 import { switchChain } from '@wagmi/core'
 import { schema } from '@/models/schemas'
@@ -12,6 +12,12 @@ import useWallet from './useWallet'
 import { wagmiConfig } from '@/providers/config'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { Ethereum } from '@/registry/mainnet/chains'
+import useBalance from './useBalance'
+import { formatAmount, safeConvertAmount } from '@/utils/transfer'
+import { getRecipientAddress, isValidRecipient } from '@/utils/address'
+import useFees from './useFees'
+import { NotificationSeverity } from '@/models/notification'
+import { useNotificationStore } from '@/stores/notificationStore'
 
 interface FormInputs {
   sourceChain: Chain | null
@@ -29,16 +35,17 @@ const initValues: FormInputs = {
 
 const useTransferForm = () => {
   const environment = useEnvironmentStore(state => state.current)
+  const { addNotification } = useNotificationStore()
   const {
     control,
     handleSubmit,
     setValue,
-    // reset,
-    // trigger,
-    formState: { errors }, // isValid: isValidZodSchema, isValidating
+    reset,
+    trigger,
+    formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(schema as any), // ?????
+    resolver: zodResolver(schema as any),
     mode: 'onChange',
     delayError: 3000,
     defaultValues: initValues,
@@ -48,8 +55,74 @@ const useTransferForm = () => {
   const destinationChain = useWatch({ control, name: 'destinationChain' })
   const manualRecipient = useWatch({ control, name: 'manualRecipient' })
   const tokenAmount = useWatch({ control, name: 'tokenAmount' })
+  const [tokenAmountError, setTokenAmountError] = useState<string>('')
+  const [manualRecipientError, setManualRecipientError] = useState<string>('')
+  // const tokenId = tokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
-  const { transferStatus } = useTransfer()
+  const destinationWallet = useWallet(destinationChain?.walletType)
+  const { transfer, transferStatus } = useTransfer()
+
+  const {
+    fees,
+    loading: loadingFees,
+    canPayFees,
+    bridgingFees,
+    canPayAdditionalFees,
+    refetch: refetchFees,
+  } = useFees(
+    sourceChain,
+    destinationChain,
+    tokenAmountError == '' ? tokenAmount?.token : null,
+    tokenAmount?.amount,
+    sourceWallet?.sender?.address,
+    getRecipientAddress(manualRecipient, destinationWallet),
+  )
+
+  const {
+    balance: balanceData,
+    loading: loadingBalance,
+    fetchBalance,
+  } = useBalance({
+    env: environment,
+    chain: sourceChain,
+    token: tokenAmount?.token ?? undefined,
+    address: sourceWallet?.sender?.address,
+  })
+
+  const isFormValid =
+    isValidZodSchema &&
+    !tokenAmountError &&
+    !manualRecipientError &&
+    sourceWallet?.isConnected &&
+    !loadingBalance &&
+    !!balanceData &&
+    (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
+    (manualRecipient.enabled || destinationWallet?.isConnected)
+
+  const allowFromToSwap = useCallback(() => {
+    return (
+      !isValidating &&
+      transferStatus === 'Idle' &&
+      !!sourceChain &&
+      !!destinationChain &&
+      !!tokenAmount &&
+      isRouteAllowed(environment, sourceChain, destinationChain) &&
+      isRouteAllowed(environment, destinationChain, sourceChain, tokenAmount)
+    )
+  }, [environment, destinationChain, sourceChain, tokenAmount, isValidating, transferStatus])
+
+  const swapFromTo = useCallback(() => {
+    if (allowFromToSwap()) {
+      // Swap chains values
+      setValue('sourceChain', destinationChain)
+      setValue('destinationChain', sourceChain)
+    }
+  }, [sourceChain, destinationChain, setValue, allowFromToSwap])
+
+  const handleManualRecipientChange = useCallback(
+    (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
+    [setValue],
+  )
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -87,21 +160,160 @@ const useTransferForm = () => {
     [setValue, sourceChain, destinationChain, tokenAmount, environment],
   )
 
-  const onSubmit: SubmitHandler<FormInputs> = useCallback(data => {
-    console.log(data)
-  }, [])
+  const handleDestinationChainChange = useCallback(
+    (newValue: Chain | null) => {
+      setValue('destinationChain', newValue)
+      trigger()
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [setValue],
+  )
+
+  const handleMaxButtonClick = useCallback(() => {
+    if (
+      !sourceWallet?.isConnected ||
+      !tokenAmount?.token ||
+      balanceData === undefined ||
+      balanceData === null
+    )
+      return
+
+    setValue(
+      'tokenAmount',
+      {
+        token: tokenAmount.token,
+        // Parse as number, then format to our display standard, then parse again as number
+        amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
+      },
+      { shouldValidate: true },
+    )
+  }, [sourceWallet?.isConnected, tokenAmount?.token, balanceData, setValue])
+
+  useEffect(() => {
+    if (!tokenAmount?.amount || !sourceWallet?.isConnected) setTokenAmountError('')
+    else if (balanceData && balanceData.value === BigInt(0))
+      setTokenAmountError("That's more than you have in your wallet")
+    else if (
+      tokenAmount?.amount &&
+      balanceData?.value &&
+      tokenAmount.amount > Number(balanceData.formatted)
+    )
+      setTokenAmountError("That's more than you have in your wallet")
+    else setTokenAmountError('')
+  }, [tokenAmount?.amount, balanceData, sourceWallet])
+
+  // validate recipient address
+  useEffect(() => {
+    setManualRecipientError(
+      isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address',
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
+
+  const onSubmit: SubmitHandler<FormInputs> = useCallback(
+    data => {
+      const { sourceChain, destinationChain, tokenAmount, manualRecipient } = data
+      const recipient = getRecipientAddress(manualRecipient, destinationWallet)
+      const amount = tokenAmount ? safeConvertAmount(tokenAmount.amount, tokenAmount.token) : null
+
+      if (
+        !sourceChain ||
+        !recipient ||
+        !sourceWallet?.sender ||
+        !destinationChain ||
+        !tokenAmount?.token ||
+        !amount ||
+        !fees
+      )
+        return
+
+      transfer({
+        environment,
+        sender: sourceWallet.sender,
+        sourceChain,
+        destinationChain,
+        token: tokenAmount.token,
+        amount,
+        recipient: recipient,
+        fees,
+        bridgingFees,
+        onComplete: () => {
+          // reset form on success
+          reset()
+
+          addNotification({
+            message: `Transfer added to the queue`,
+            severity: NotificationSeverity.Success,
+          })
+
+          setTimeout(() => {
+            document
+              .getElementById('ongoing-txs')
+              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }, 500)
+        },
+      })
+    },
+    [
+      destinationWallet,
+      fees,
+      bridgingFees,
+      reset,
+      sourceWallet?.sender,
+      transfer,
+      environment,
+      addNotification,
+    ],
+  )
 
   return {
+    // Form control and validation
     control,
     errors,
-    environment,
+    isValid: isFormValid,
+    isValidating,
     handleSubmit: handleSubmit(onSubmit),
+
+    // Environment
+    environment,
+
+    // Chain selection and related handlers
     sourceChain,
-    handleSourceChainChange,
     destinationChain,
+    handleSourceChainChange,
+    handleDestinationChainChange,
+    swapFromTo,
+    allowFromToSwap,
+
+    // Wallet states
     sourceWallet,
+    destinationWallet,
+
+    // Manual recipient handling
     manualRecipient,
+    manualRecipientError,
+    handleManualRecipientChange,
+
+    // Token and amount handling
     tokenAmount,
+    tokenAmountError,
+    handleMaxButtonClick,
+
+    // Balance related
+    isBalanceAvailable: balanceData?.value != undefined,
+    balanceData,
+    loadingBalance,
+    fetchBalance,
+
+    // Fees related
+    fees,
+    bridgingFees,
+    loadingFees,
+    canPayFees,
+    canPayAdditionalFees,
+    refetchFees,
+
+    // Transfer status
     transferStatus,
   }
 }

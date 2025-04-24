@@ -18,9 +18,72 @@
   }
 
   :root {
+    /* Theme fonts */
     --font-dazzed: 'Dazzed', sans-serif;
     --font-dazzed-bold: 'Dazzed-Bold', sans-serif;
+  }
 
+  :root {
+    /* Theme text */
+    --letter-spacing-xxl: -0.04em;
+    --letter-spacing-xl: -0.03em;
+    --letter-spacing-default: 0.03em;
+  }
+
+  :root {
+    /* Theme dialog */
+    --turtle-dialog-overlay-rgb: 161, 132, 220;
+    --turtle-dialog-overlay-opacity: 0.7;
+  }
+
+  :root {
+    /* Theme Colors */
+    --turtle-primary: #00ff29;
+    --turtle-primary-dark: #008115;
+    --turtle-primary-light: #d9ffdf;
+
+    --turtle-secondary: #a184dc;
+    --turtle-secondary-50: #a184dc50;
+    --turtle-secondary-transparent: #a184dc26;
+    --turtle-secondary-dark: #513589;
+    --turtle-secondary-dark-40: #51358940;
+    --turtle-secondary-light: #f1edfa;
+    --turtle-secondary-light-50: #f1edfa50;
+
+    --turtle-tertiary: #bfdadc;
+    --turtle-tertiary-70: #bfdadc70;
+    --turtle-tertiary-dark: #196065;
+    --turtle-tertiary-dark-60: #19606560;
+    --turtle-tertiary-light: #e1fdff;
+
+    --turtle-background: #ffffff;
+    --turtle-foreground: #001b04;
+
+    --turtle-level1: #f6f8fa;
+    --turtle-level2: #ebeff3;
+    --turtle-level3: #c5d1db;
+    --turtle-level4: #a9b8c8;
+    --turtle-level5: #90a1ae;
+    --turtle-level6: #546573;
+
+    --turtle-success: #00ff29;
+    --turtle-success-dark: #008115;
+    --turtle-success-light: #d9ffdf;
+
+    --turtle-warning: #ffff00;
+    --turtle-warning-dark: #7a7c00;
+    --turtle-warning-light: #ffffd9;
+
+    --turtle-error: #ff35c2;
+    --turtle-error-10: #ff35c31a;
+    --turtle-error-dark: #8d1269;
+    --turtle-error-light: #ffe1f6;
+
+    --turtle-note-warn: #ffff0026;
+  }
+
+  :root {
+    /* base-theme */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -56,83 +119,6 @@
     --chart-5: 27 87% 67%;
 
     --radius: 0.5rem;
-
-    --letter-spacing-xxl: -0.04em;
-    --letter-spacing-xl: -0.03em;
-    --letter-spacing-default: 0.03em;
-
-    --turtle-primary: #00ff29;
-    --turtle-primary-dark: #008115;
-    --turtle-primary-light: #d9ffdf;
-
-    --turtle-secondary: #a184dc;
-    --turtle-secondary-transparent: #a184dc26;
-    --turtle-secondary-dark: #513589;
-    --turtle-secondary-light: #f1edfa;
-
-    --turtle-tertiary: #bfdadc;
-    --turtle-tertiary-dark: #196065;
-    --turtle-tertiary-light: #e1fdff;
-
-    --turtle-background: #ffffff;
-    --turtle-foreground: #001b04;
-
-    --turtle-level1: #f6f8fa;
-    --turtle-level2: #ebeff3;
-    --turtle-level3: #c5d1db;
-    --turtle-level4: #a9b8c8;
-    --turtle-level5: #90a1ae;
-    --turtle-level6: #546573;
-
-    --turtle-success: #00ff29;
-    --turtle-success-dark: #008115;
-    --turtle-success-light: #d9ffdf;
-
-    --turtle-warning: #ffff00;
-    --turtle-warning-dark: #7a7c00;
-    --turtle-warning-light: #ffffd9;
-
-    --turtle-error: #ff35c3;
-    --turtle-error-10: #ff35c31a;
-    --turtle-error-dark: #8d1269;
-    --turtle-error-light: #ffe1f6;
-
-    --turtle-note-warn: #ffff0026;
-  }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
   }
 }
 
@@ -153,14 +139,38 @@
     letter-spacing: var(--letter-spacing-default);
   }
 
-  h1.turtle-text-shadow {
-    text-shadow: #000000cc 0px 4px 44px;
-  }
-
   /* removes scrollbar */
   ::-webkit-scrollbar {
     display: none;
     scrollbar-width: none;
+  }
+
+  /* Remove arrows from number input */
+  input[type='number'] {
+    appearance: none; /* Standard */
+    -webkit-appearance: none; /* Chrome, Safari */
+    -moz-appearance: textfield; /* Firefox */
+  }
+
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input {
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  input::placeholder {
+    color: var(--turtle-level4);
+    opacity: 1; /* Firefox */
+  }
+
+  input::-ms-input-placeholder {
+    /* Edge 12 -18 */
+    color: var(--turtle-level4);
   }
 }
 
@@ -171,35 +181,5 @@
 
   .xl-letter-spacing {
     letter-spacing: var(--letter-spacing-xl);
-  }
-
-  .default-letter-spacing {
-    letter-spacing: var(--letter-spacing-default);
-  }
-
-  .no-letter-spacing {
-    letter-spacing: 0;
-  }
-
-  .turtle-text-shadow {
-    text-shadow: #00000040 0px 1px 2px;
-  }
-
-  .box-shadow {
-    box-shadow: 0px 2px 4px 0px #000000cc;
-  }
-
-  .turtle-dark-overlay {
-    background-color: rgba(0, 0, 0, 0.3);
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    z-index: 1;
-  }
-
-  .text-balance {
-    text-wrap: balance;
   }
 }

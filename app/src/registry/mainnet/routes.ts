@@ -274,6 +274,12 @@ export const routes: Route[] = [
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
   },
+  {
+    from: Polimec.uid,
+    to: Hydration.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
+  },
 
   // Para To Para Routes
   {
@@ -388,6 +394,12 @@ export const routes: Route[] = [
     to: Phala.uid,
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.PHA.id],
+  },
+  {
+    from: Hydration.uid,
+    to: Polimec.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
   },
   /* {
     from: Interlay.uid,

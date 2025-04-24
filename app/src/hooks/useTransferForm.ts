@@ -267,32 +267,33 @@ const useTransferForm = () => {
     else setTokenAmountError('')
   }, [tokenAmount?.amount, balanceData, sourceWallet])
 
+  // Unlike canPayFees and canPayAdditionalFees which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
+  // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
   const exceedsTransferableBalance = useMemo(() => {
     const hasFees = Boolean(fees?.token?.id && fees?.amount)
     const hasTokenAmount = Boolean(tokenAmount?.token?.id && tokenAmount?.amount)
     const hasBalance = Boolean(balanceData?.formatted)
     const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+    if (!hasTokenAmount || !hasBalance) return false
 
-    if (!hasFees || !hasTokenAmount || !hasBalance) return false
-
-    // Add non-null assertions since we've verified these values exist
-    const feesToken = fees!.token!.id
     const transferToken = tokenAmount!.token!.id
-    if (feesToken !== transferToken) return false
-
-    const baseFees = toHuman(fees!.amount, fees!.token)
-    // Only add bridging fees if they exist AND their token ID matches the fees token ID
-    let bridgingFees = 0
-    if (hasBridgingFee && bridgingFee!.token!.id === feesToken) {
-      bridgingFees = toHuman(bridgingFee!.amount, bridgingFee!.token)
-    }
-
-    const totalFeesAmount = baseFees + bridgingFees
     const transferAmount = tokenAmount!.amount!
     const balanceAmount = Number(balanceData!.formatted)
-    const insufficientFunds = transferAmount + totalFeesAmount > balanceAmount
+    let totalFeesAmount = 0
 
-    return insufficientFunds
+    // We have regular fees in the same token as the transfer
+    if (hasFees && fees!.token!.id === transferToken) {
+      totalFeesAmount += toHuman(fees!.amount, fees!.token)
+    }
+    // We have bridging fees in the same token as the transfer, This applies whether we have regular fees
+    if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
+      totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
+    }
+    // If we have no fees at all, there's no risk of exceeding transferable balance
+    if (totalFeesAmount === 0) return false
+
+    // Check if transfer amount plus all applicable fees exceeds the available balance
+    return transferAmount + totalFeesAmount > balanceAmount
   }, [fees, bridgingFee, balanceData, tokenAmount])
 
   const setTransferableBalance = useCallback(() => {
@@ -305,7 +306,9 @@ const useTransferForm = () => {
         toHuman(fees!.amount, fees!.token) +
         (hasBridgingFee ? toHuman(bridgingFee!.amount, bridgingFee!.token) : 0)
       const balanceAmount = Number(balanceData!.formatted)
-      const newAmount = balanceAmount - feesAmount
+      let newAmount = balanceAmount - feesAmount
+      if (newAmount < 0) newAmount = 0 // Prevent negative values
+
       setValue(
         'tokenAmount',
         {

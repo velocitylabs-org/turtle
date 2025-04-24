@@ -1,17 +1,53 @@
 import { Token } from '@/models/token'
 import { parachain, snowbridgeWrapped } from '../helpers'
 
+import AcalaLogo from '@/assets/logos/acala.svg'
+import AstarLogo from '@/assets/logos/astar.svg'
+import BifrostLogo from '@/assets/logos/bifrost.svg'
+import CentrifugeLogo from '@/assets/logos/cfg.svg'
+import DaiLogo from '@/assets/logos/dai.svg'
+import DotLogo from '@/assets/logos/polkadot.svg'
+import EthereumLogo from '@/assets/logos/ethereum.svg'
+import GlmrLogo from '@/assets/logos/moonbeam.svg'
+import HydraLogo from '@/assets/logos/hydra.svg'
+import IbtcLogo from '@/assets/logos/ibtc.svg'
+import InterlayLogo from '@/assets/logos/interlay.svg'
+import MythLogo from '@/assets/logos/myth.svg'
+import PepeLogo from '@/assets/logos/pepe.svg'
+import PhalaLogo from '@/assets/logos/phala.svg'
+import PolimecLogo from '@/assets/logos/polimec.svg'
+import ShibLogo from '@/assets/logos/shib.svg'
+import TbtcLogo from '@/assets/logos/tbtc.svg'
+import TonLogo from '@/assets/logos/ton.svg'
+import UsdcLogo from '@/assets/logos/usdc.svg'
+import UsdtLogo from '@/assets/logos/usdt.svg'
+import VdotLogo from '@/assets/logos/vdot.svg'
+import VethLogo from '@/assets/logos/veth.svg'
+import WbtcLogo from '@/assets/logos/wbtc.svg'
+import WethLogo from '@/assets/logos/weth.svg'
+import WstethLogo from '@/assets/logos/wsteth.svg'
+
 // Tokens
 export const EthereumTokens = {
   ETH: {
     id: 'eth',
     name: 'Ethereum',
     symbol: 'ETH',
-    logoURI: './src/assets/logos/ethereum.svg',
+    logoURI: EthereumLogo,
     decimals: 18,
     address: '',
-    // We won't need a multilocation for Ethereum-native tokens since we can't bridge them to Polkadot.
-    multilocation: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          GlobalConsensus: {
+            Ethereum: {
+              chainId: 1,
+            },
+          },
+        },
+      },
+    },
     coingeckoId: 'ethereum',
     origin: snowbridgeWrapped(),
   },
@@ -21,11 +57,29 @@ export const EthereumTokens = {
     id: 'usdc.e',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: './src/assets/logos/usdc.svg',
+    logoURI: UsdcLogo,
     decimals: 6,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
     coingeckoId: 'usd-coin',
   },
@@ -34,11 +88,29 @@ export const EthereumTokens = {
     id: 'dai.e',
     name: 'DAI',
     symbol: 'DAI',
-    logoURI: './src/assets/logos/dai.svg',
+    logoURI: DaiLogo,
     decimals: 18,
     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6b175474e89094c44da98b954eedeac495271d0f"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x6b175474e89094c44da98b954eedeac495271d0f',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -46,11 +118,30 @@ export const EthereumTokens = {
     id: 'usdt.e',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: './src/assets/logos/usdt.svg',
+    logoURI: UsdtLogo,
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xdac17f958d2ee523a2206206994597c13d831ec7"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+            },
+          },
+        ],
+      },
+    },
+
     origin: snowbridgeWrapped(),
   },
 
@@ -58,11 +149,29 @@ export const EthereumTokens = {
     id: 'weth.e',
     name: 'Wrapped Ether',
     symbol: 'wETH',
-    logoURI: './src/assets/logos/weth.svg',
+    logoURI: WethLogo,
     decimals: 18,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'weth',
     origin: snowbridgeWrapped(),
   },
@@ -71,11 +180,29 @@ export const EthereumTokens = {
     id: 'veth.e',
     name: 'Venus ETH',
     symbol: 'vETH',
-    logoURI: './src/assets/logos/veth.svg',
+    logoURI: VethLogo,
     decimals: 18,
     address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xc3d088842dcf02c13699f936bb83dfbbc6f721ab"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -83,11 +210,29 @@ export const EthereumTokens = {
     id: 'wbtc.e',
     name: 'Wrapped Bitcoin',
     symbol: 'WBTC',
-    logoURI: './src/assets/logos/wbtc.svg',
+    logoURI: WbtcLogo,
     decimals: 8,
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -95,11 +240,29 @@ export const EthereumTokens = {
     id: 'myth.e',
     name: 'Mythos',
     symbol: 'MYTH',
-    logoURI: './src/assets/logos/myth.svg',
+    logoURI: MythLogo,
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'mythos',
     origin: snowbridgeWrapped(),
   },
@@ -108,11 +271,29 @@ export const EthereumTokens = {
     id: 'shib.e',
     name: 'Shiba Inu',
     symbol: 'SHIB',
-    logoURI: './src/assets/logos/shib.svg',
+    logoURI: ShibLogo,
     decimals: 18,
     address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -120,11 +301,29 @@ export const EthereumTokens = {
     id: 'pepe.e',
     name: 'Pepe',
     symbol: 'PEPE',
-    logoURI: './src/assets/logos/pepe.svg',
+    logoURI: PepeLogo,
     decimals: 18,
     address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x6982508145454Ce325dDbE47a25d4ec3d2311933"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x6982508145454ce325ddbe47a25d4ec3d2311933',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 
@@ -132,11 +331,29 @@ export const EthereumTokens = {
     id: 'ton.e',
     name: 'Toncoin',
     symbol: 'TON',
-    logoURI: './src/assets/logos/ton.svg',
+    logoURI: TonLogo,
     decimals: 9,
     address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x582d872a1b094fc48f5de31d3b73f2d9be47def1"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'the-open-network',
     origin: snowbridgeWrapped(),
   },
@@ -145,11 +362,29 @@ export const EthereumTokens = {
     id: 'wsteth.e',
     name: 'Lido wstETH',
     symbol: 'WSTETH',
-    logoURI: './src/assets/logos/wsteth.svg',
+    logoURI: WstethLogo,
     decimals: 18,
     address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'bridged-wrapped-lido-staked-ether-scroll',
     origin: snowbridgeWrapped(),
   },
@@ -158,11 +393,29 @@ export const EthereumTokens = {
     id: 'tbtc.e',
     name: 'tBTC',
     symbol: 'TBTC',
-    logoURI: './src/assets/logos/tbtc.svg',
+    logoURI: TbtcLogo,
     decimals: 18,
     address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
-    multilocation:
-      '{"parents":"2","interior":{"X2":[{"GlobalConsensus":{"Ethereum":{"chainId":"1"}}},{"AccountKey20":{"network":null,"key":"0x18084fbA666a33d37592fA2633fD49a74DD93a88"}}]}}',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x18084fba666a33d37592fa2633fd49a74dd93a88',
+            },
+          },
+        ],
+      },
+    },
     origin: snowbridgeWrapped(),
   },
 } as const satisfies Record<string, Token>
@@ -172,11 +425,25 @@ export const PolkadotTokens = {
     id: 'aca',
     name: 'Acala Token',
     symbol: 'ACA',
-    logoURI: './src/assets/logos/acala.svg',
+    logoURI: AcalaLogo,
     decimals: 12,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2000"},{"GeneralKey":"0x0000"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2000,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0000000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'acala',
     origin: parachain(2000),
   },
@@ -185,10 +452,17 @@ export const PolkadotTokens = {
     id: 'astr',
     name: 'ASTR',
     symbol: 'ASTR',
-    logoURI: './src/assets/logos/astar.svg',
+    logoURI: AstarLogo,
     decimals: 18,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X1":{"Parachain":"2006"}}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 2006,
+        },
+      },
+    },
     coingeckoId: 'astar',
     origin: parachain(2006),
   },
@@ -197,11 +471,25 @@ export const PolkadotTokens = {
     id: 'bnc',
     name: 'Bifrost Native Coin',
     symbol: 'BNC',
-    logoURI: './src/assets/logos/bifrost.svg',
+    logoURI: BifrostLogo,
     decimals: 12,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0001000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2030,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'bifrost-native-coin',
     origin: parachain(2030),
   },
@@ -210,11 +498,25 @@ export const PolkadotTokens = {
     id: 'cfg',
     name: 'Centrifuge',
     symbol: 'CFG',
-    logoURI: './src/assets/logos/cfg.svg',
+    logoURI: CentrifugeLogo,
     decimals: 18,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2031"},{"GeneralKey":"0x0001"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2031,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'centrifuge',
     origin: parachain(2031),
   },
@@ -223,10 +525,22 @@ export const PolkadotTokens = {
     id: 'hdx',
     name: 'Hydration',
     symbol: 'HDX',
-    logoURI: './src/assets/logos/hydra.svg',
+    logoURI: HydraLogo,
     decimals: 12,
     address: '',
-    multilocation: '{"parents":"1","interior":{"X2":[{"Parachain":"2034"},{"GeneralIndex":"0"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2034,
+          },
+          {
+            GeneralIndex: 0,
+          },
+        ],
+      },
+    },
     coingeckoId: 'hydradx',
     origin: parachain(2034),
   },
@@ -236,10 +550,25 @@ export const PolkadotTokens = {
     id: 'usdc',
     name: 'USDC',
     symbol: 'USDC',
-    logoURI: './src/assets/logos/usdc.svg',
+    logoURI: UsdcLogo,
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X3: [
+          {
+            Parachain: 1000,
+          },
+          {
+            PalletInstance: 50,
+          },
+          {
+            GeneralIndex: 1337,
+          },
+        ],
+      },
+    },
     origin: parachain(1000),
     coingeckoId: 'usd-coin',
   },
@@ -249,10 +578,25 @@ export const PolkadotTokens = {
     id: 'usdt',
     name: 'Tether',
     symbol: 'USDT',
-    logoURI: './src/assets/logos/usdt.svg',
+    logoURI: UsdtLogo,
     decimals: 6,
     address: '',
-    multilocation: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X3: [
+          {
+            Parachain: 1000,
+          },
+          {
+            PalletInstance: 50,
+          },
+          {
+            GeneralIndex: 1984,
+          },
+        ],
+      },
+    },
     origin: parachain(1000),
   },
 
@@ -260,11 +604,22 @@ export const PolkadotTokens = {
     id: 'glmr',
     name: 'GLMR',
     symbol: 'GLMR',
-    logoURI: './src/assets/logos/moonbeam.svg',
+    logoURI: GlmrLogo,
     decimals: 18,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2004"},{"PalletInstance":"10"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2004,
+          },
+          {
+            PalletInstance: 10,
+          },
+        ],
+      },
+    },
     coingeckoId: 'moonbeam',
     origin: parachain(2004),
   },
@@ -273,10 +628,17 @@ export const PolkadotTokens = {
     id: 'pha',
     name: 'PHA',
     symbol: 'PHA',
-    logoURI: './src/assets/logos/phala.svg',
+    logoURI: PhalaLogo,
     decimals: 12,
     address: '',
-    multilocation: '"{"parents":1,"interior":{"x1":{"parachain":2035}}}"',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 2035,
+        },
+      },
+    },
     coingeckoId: 'pha',
     origin: parachain(2035),
   },
@@ -285,11 +647,25 @@ export const PolkadotTokens = {
     id: 'intr',
     name: 'Interlay',
     symbol: 'INTR',
-    logoURI: './src/assets/logos/interlay.svg',
+    logoURI: InterlayLogo,
     decimals: 10,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2032,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0002000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'interlay',
     origin: parachain(2032),
   },
@@ -297,11 +673,16 @@ export const PolkadotTokens = {
   DOT: {
     id: 'dot',
     name: 'Polkadot',
-    logoURI: './src/assets/logos/polkadot.svg',
+    logoURI: DotLogo,
     symbol: 'DOT',
     decimals: 10,
     address: '',
-    multilocation: '{"V2":{"parents":"1","interior":"Here"}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        Here: null,
+      },
+    },
     coingeckoId: 'polkadot',
     origin: parachain(0),
   },
@@ -310,11 +691,25 @@ export const PolkadotTokens = {
     id: 'vdot',
     name: 'Voucher DOT',
     symbol: 'VDOT',
-    logoURI: './src/assets/logos/vdot.svg',
+    logoURI: VdotLogo,
     decimals: 10,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2030"},{"GeneralKey":{"length":"2","data":"0x0900000000000000000000000000000000000000000000000000000000000000"}}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2030,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0900000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'voucher-dot',
     origin: parachain(2030),
   },
@@ -323,11 +718,25 @@ export const PolkadotTokens = {
     id: 'ibtc',
     name: 'IBTC',
     symbol: 'IBTC',
-    logoURI: './src/assets/logos/ibtc.svg',
+    logoURI: IbtcLogo,
     decimals: 8,
     address: '',
-    multilocation:
-      '{"parents":"1","interior":{"X2":[{"Parachain":"2032"},{"GeneralKey":"0x0001"}]}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2032,
+          },
+          {
+            GeneralKey: {
+              length: 2,
+              data: '0x0001000000000000000000000000000000000000000000000000000000000000',
+            },
+          },
+        ],
+      },
+    },
     coingeckoId: 'interbtc',
     origin: parachain(2032),
   },
@@ -336,11 +745,18 @@ export const PolkadotTokens = {
     id: 'plmc',
     name: 'PLMC',
     symbol: 'PLMC',
-    logoURI: './src/assets/logos/polimec.svg',
+    logoURI: PolimecLogo,
     decimals: 10,
     address: '',
-    multilocation: '{"parents":1,"interior":{"x1":{"parachain":3344}}}',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 3344,
+        },
+      },
+    },
     coingeckoId: 'polimec',
     origin: parachain(3344),
   },
-}
+} as const satisfies Record<string, Token>

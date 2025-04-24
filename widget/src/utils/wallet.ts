@@ -1,3 +1,10 @@
+import DefaultWalletLogo from '@/assets/svg/wallet.svg'
+import FearlessLogo from '@/assets/wallets-logo/fearless.svg'
+import NovaWalletLogo from '@/assets/wallets-logo/novawallet.svg'
+import PolkadotLogo from '@/assets/wallets-logo/polkadotjs.svg'
+import SubwalletLogo from '@/assets/wallets-logo/subwallet.svg'
+import TalismanLogo from '@/assets/wallets-logo/talisman.svg'
+
 export const capitalizeFirstLetter = (text: string): string =>
   text.charAt(0).toUpperCase() + text.slice(1)
 
@@ -30,20 +37,20 @@ export const getWalletName = (name: string, window?: Window): string => {
 export const getWalletLogo = (name: string, window?: Window): string => {
   switch (name) {
     case 'talisman':
-      return './src/assets/wallets-logo/talisman.svg'
+      return TalismanLogo
 
     case 'subwallet-js':
-      return './src/assets/wallets-logo/subwallet.svg'
+      return SubwalletLogo
 
     case 'polkadot-js': {
-      if (isNovaWallet(window)) return './src/assets/wallets-logo/novawallet.svg'
-      return './src/assets/wallets-logo/polkadotjs.svg'
+      if (isNovaWallet(window)) return NovaWalletLogo
+      return PolkadotLogo
     }
 
     case 'fearless-wallet':
-      return './src/assets/wallets-logo/fearless.svg'
+      return FearlessLogo
 
     default:
-      return './src/assets/svg/wallet.svg'
+      return DefaultWalletLogo
   }
 }
