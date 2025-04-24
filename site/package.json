@@ -1,5 +1,5 @@
 {
-  "name": "site",
+  "name": "@velocitylabs-org/turtle-site",
   "version": "0.1.0",
   "private": true,
   "scripts": {

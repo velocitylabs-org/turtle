@@ -1,5 +1,5 @@
 {
-  "extends": "@turtle/typescript-config/base.json",
+  "extends": "@velocitylabs-org/turtle-typescript-config/base.json",
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
