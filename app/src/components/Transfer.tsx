@@ -289,7 +289,7 @@ export default function Transfer() {
       />
       <form
         onSubmit={handleSubmit}
-        className="z-20 flex flex-col gap-1 rounded-3xl border-1 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+        className="z-20 flex w-[100vw] max-w-[90vw] flex-col gap-1 rounded-3xl border-1 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
       >
         <div className="flex flex-col gap-5">
           <Controller
