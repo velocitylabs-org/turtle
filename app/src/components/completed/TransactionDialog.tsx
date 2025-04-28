@@ -1,7 +1,13 @@
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
-import { formatAmount, toHuman } from '@/utils/transfer'
-import TransactionCard, { getStatusIcon } from './TransactionCard'
+import { formatHours } from '@/utils/datetime'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import { colors } from '../../../tailwind.config'
+import Account from '../Account'
+import Icon from '../Icon'
+import ArrowRight from '../svg/ArrowRight'
+import ArrowUpRight from '../svg/ArrowUpRight'
+import TokenLogo from '../TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -10,13 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import Account from '../Account'
-import ArrowRight from '../svg/ArrowRight'
-import { colors } from '../../../tailwind.config'
-import Icon from '../Icon'
-import TokenLogo from '../TokenLogo'
-import { formatHours } from '@/utils/datetime'
-import ArrowUpRight from '../svg/ArrowUpRight'
+import TransactionCard, { getStatusIcon } from './TransactionCard'
 
 interface TransactionDialogProps {
   tx: CompletedTransfer
@@ -78,8 +78,15 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                 getTextColor(tx.result),
               )}
             >
-              <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-              <TokenLogo token={tx.token} sourceChain={tx.sourceChain} size={35} />
+              <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
+              <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={35} />
+              {isSwap(tx) && (
+                <>
+                  <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
+                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
+                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={35} />
+                </>
+              )}
             </h3>
 
             {/* Status bar */}
@@ -151,25 +158,46 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             {/*Summary*/}
             <div className="summary mb-2 w-full space-y-1 px-3">
               <SummaryRow
-                label="Amount"
-                amount={formatAmount(toHuman(tx.amount, tx.token), 'Long')}
-                symbol={tx.token.symbol}
+                label="Amount Sent"
+                amount={formatAmount(toHuman(tx.sourceAmount, tx.sourceToken), 'Long')}
+                symbol={tx.sourceToken.symbol}
                 usdValue={
-                  typeof tx.tokenUSDValue === 'number'
-                    ? formatAmount(toHuman(tx.amount, tx.token) * (tx.tokenUSDValue ?? 0), 'Long')
+                  typeof tx.sourceTokenUSDValue === 'number'
+                    ? formatAmount(
+                        toHuman(tx.sourceAmount, tx.sourceToken) * (tx.sourceTokenUSDValue ?? 0),
+                        'Long',
+                      )
                     : undefined
                 }
               />
+
+              {isSwap(tx) && (
+                <SummaryRow
+                  label="Amount Received"
+                  amount={formatAmount(toHuman(tx.destinationAmount, tx.destinationToken), 'Long')}
+                  symbol={tx.destinationToken.symbol}
+                  usdValue={
+                    typeof tx.destinationTokenUSDValue === 'number'
+                      ? formatAmount(
+                          toHuman(tx.destinationAmount, tx.destinationToken) *
+                            (tx.destinationTokenUSDValue ?? 0),
+                          'Long',
+                        )
+                      : undefined
+                  }
+                />
+              )}
               <SummaryRow
                 label={tx.bridgingFee ? 'Execution fee' : 'Fee'}
                 amount={formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}
                 symbol={tx.fees.token.symbol}
                 usdValue={
-                  typeof tx.tokenUSDValue === 'number'
+                  typeof tx.sourceTokenUSDValue === 'number'
                     ? formatAmount(tx.fees.inDollars, 'Long')
                     : undefined
                 }
               />
+
               {tx.bridgingFee && (
                 <SummaryRow
                   label="Bridging fee"
@@ -179,12 +207,13 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                   )}
                   symbol={tx.bridgingFee.token.symbol}
                   usdValue={
-                    typeof tx.tokenUSDValue === 'number'
+                    typeof tx.sourceTokenUSDValue === 'number'
                       ? formatAmount(tx.bridgingFee.inDollars, 'Long')
                       : undefined
                   }
                 />
               )}
+
               {tx.explorerLink && (
                 <a
                   href={tx.explorerLink}

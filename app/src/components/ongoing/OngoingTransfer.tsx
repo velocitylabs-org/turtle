@@ -1,12 +1,13 @@
 import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import Image from 'next/image'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import LoadingIcon from '../svg/LoadingIcon'
+import TokenLogo from '../TokenLogo'
 import TransferEstimate from '../TransferEstimate'
 
 interface OngoingTransferProps {
@@ -33,9 +34,28 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
           strokeWidth={5}
           color={colors['turtle-secondary']}
         />
-        <p className="text-turtle-foreground)] no-letter-spacing text-xl font-normal">
-          {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
-        </p>
+        <div className="no-letter-spacing text-xl font-normal text-turtle-foreground">
+          {isSwap(transfer) ? (
+            <span className="flex items-center gap-1">
+              {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}{' '}
+              <TokenLogo
+                token={transfer.destinationToken}
+                sourceChain={transfer.destChain}
+                size={25}
+              />
+            </span>
+          ) : (
+            <span className="flex items-center gap-1">
+              {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}{' '}
+              <TokenLogo
+                token={transfer.sourceToken}
+                sourceChain={transfer.sourceChain}
+                size={25}
+              />
+            </span>
+          )}
+        </div>
+
         {/* From and to Chains */}
         <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">
           <Image

@@ -1,4 +1,10 @@
 import { withSentryConfig } from '@sentry/nextjs'
+
+const isDevelopment = process.env.NODE_ENV === 'development'
+const vercelDomain = process.env.NEXT_PUBLIC_VERCEL_URL
+const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
+const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
+
 /** @type {import('next').NextConfig} */
 
 const isProduction = process.env.NODE_ENV === 'production'
@@ -6,6 +12,17 @@ const isProduction = process.env.NODE_ENV === 'production'
 const nextConfig = {
   // Related to this issue: https://github.com/vercel/next.js/issues/56887
   ...(!isProduction && { outputFileTracingRoot: '/' }),
+  webpack: config => {
+    config.externals.push('pino-pretty', 'lokijs', 'encoding')
+    config.experiments = { asyncWebAssembly: true, topLevelAwait: true, layers: true }
+
+    config.module.rules.push({
+      test: /\.wasm$/,
+      type: 'webassembly/async',
+    })
+
+    return config
+  },
   async headers() {
     return [
       {
@@ -13,7 +30,7 @@ const nextConfig = {
         source: '/api/:path*',
         headers: [
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: '*' }, //TODO: replace this your actual origin
+          { key: 'Access-Control-Allow-Origin', value: url },
           { key: 'Access-Control-Allow-Methods', value: 'GET,DELETE,PATCH,POST,PUT' },
           {
             key: 'Access-Control-Allow-Headers',

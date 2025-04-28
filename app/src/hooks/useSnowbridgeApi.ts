@@ -1,12 +1,15 @@
 import { config } from '@/config'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
+import { SnowbridgeContext } from '@/models/snowbridge'
 import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
+import { isAssetHub } from '@/registry/helpers'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { findValidationError } from '@/utils/snowbridge'
 import { txWasCancelled } from '@/utils/transfer'
 import { captureException } from '@sentry/nextjs'
 import { toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
@@ -17,9 +20,6 @@ import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
 import { Sender, Status, TransferParams } from './useTransfer'
-import { isAssetHub } from '@/registry/helpers'
-import { SnowbridgeContext } from '@/models/snowbridge'
-import { findValidationError } from '@/utils/snowbridge'
 
 type TransferType = toPolkadotV2.Transfer | toEthereumV2.Transfer
 
@@ -30,7 +30,7 @@ const useSnowbridgeApi = () => {
 
   // main transfer function which is exposed to the components.
   const transfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    const { sender, sourceChain, token, destinationChain, recipient, amount } = params
+    const { sender, sourceChain, sourceToken, destinationChain, recipient, sourceAmount } = params
 
     try {
       if (snowbridgeContext === undefined) {
@@ -47,10 +47,10 @@ const useSnowbridgeApi = () => {
         direction,
         snowbridgeContext,
         sender,
-        token,
+        sourceToken,
         destinationChain,
         recipient,
-        amount,
+        sourceAmount,
         setStatus,
       )) as toPolkadotV2.Transfer
 
@@ -99,10 +99,11 @@ const useSnowbridgeApi = () => {
   ) => {
     const {
       sourceChain,
-      token,
+      sourceToken,
+      destinationToken,
       destinationChain,
       recipient,
-      amount,
+      sourceAmount,
       environment,
       fees,
       bridgingFee,
@@ -143,17 +144,18 @@ const useSnowbridgeApi = () => {
       onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getCachedTokenPrice(token))?.usd ?? 0
+      const tokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
       const date = new Date()
 
       addOrUpdate({
         id: response.hash,
         sourceChain,
-        token,
-        tokenUSDValue,
+        sourceToken,
+        destinationToken,
+        sourceTokenUSDValue: tokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
-        amount: amount.toString(),
+        sourceAmount: sourceAmount.toString(),
         recipient,
         date,
         environment,
@@ -165,8 +167,8 @@ const useSnowbridgeApi = () => {
         id: response.hash,
         sender: senderAddress,
         sourceChain,
-        token,
-        amount,
+        token: sourceToken,
+        amount: sourceAmount,
         destinationChain,
         tokenUSDValue,
         fees,

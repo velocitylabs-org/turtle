@@ -6,7 +6,7 @@ export interface TokenPrice {
   usd: number
 }
 
-export interface Erc20Balance {
+export interface Balance {
   value: bigint
   decimals: number
   symbol: string

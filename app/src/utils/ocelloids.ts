@@ -1,10 +1,10 @@
-import { captureException } from '@sentry/nextjs'
+import { Notification, NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { getExplorerLink } from './transfer'
-import { NotificationSeverity, Notification } from '@/models/notification'
-import { Direction, resolveDirection } from '@/services/transfer'
 import { Moonbeam } from '@/registry/mainnet/chains'
+import { Direction, resolveDirection } from '@/services/transfer'
+import { captureException } from '@sentry/nextjs'
+import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
+import { getExplorerLink, isSameChainSwap } from './transfer'
 
 type ResultNotification = {
   message: string
@@ -24,8 +24,13 @@ enum xcmNotificationType {
 export const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
 
 // Helper to filter the subscribable transfers only
+// It prevents opening socket for local swaps
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
-  transfers.filter(t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot)
+  transfers.filter(
+    t =>
+      resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot &&
+      !isSameChainSwap(t),
+  )
 
 export const initOcelloidsClient = (API_KEY: string) => {
   if (!API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
@@ -203,11 +208,14 @@ const updateTransferStatus = (
   addCompletedTransfer({
     id: transfer.id,
     result: status,
-    token: transfer.token,
+    sourceToken: transfer.sourceToken,
+    destinationToken: transfer.destinationToken,
     sourceChain: transfer.sourceChain,
     destChain: transfer.destChain,
-    amount: transfer.amount,
-    tokenUSDValue: transfer.tokenUSDValue ?? 0,
+    sourceAmount: transfer.sourceAmount,
+    destinationAmount: transfer.destinationAmount,
+    sourceTokenUSDValue: transfer.sourceTokenUSDValue ?? 0,
+    destinationTokenUSDValue: transfer.destinationTokenUSDValue,
     fees: transfer.fees,
     bridgingFee: transfer.bridgingFee,
     sender: transfer.sender,

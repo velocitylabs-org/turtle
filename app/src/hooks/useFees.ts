@@ -6,8 +6,8 @@ import { PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspell'
-import { getRoute } from '@/utils/routes'
+import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
@@ -30,9 +30,10 @@ const useFees = (
   amount?: number | null,
   senderAddress?: string,
   recipientAddress?: string,
+  destToken?: Token | null,
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [bridgingFee, setBridgingFees] = useState<AmountInfo | null>(null)
+  const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -54,24 +55,24 @@ const useFees = (
   })
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token) {
+    if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
-      setBridgingFees(null)
+      setBridgingFee(null)
       return
     }
 
-    const route = getRoute(env, sourceChain, destinationChain)
-    if (!route) throw new Error('Route not supported')
+    const sdk = resolveSdk(sourceChain, destinationChain)
+    if (!sdk) throw new Error('Route not supported')
 
     // TODO: this should be the fee token, not necessarily the native token.
     const feeToken = getNativeToken(sourceChain)
 
     try {
       // reset
-      setBridgingFees(null)
+      setBridgingFee(null)
       setCanPayAdditionalFees(true)
 
-      switch (route.sdk) {
+      switch (sdk) {
         case 'ParaSpellApi': {
           setLoading(true)
           const sourceChainNode = getParaSpellNode(sourceChain)
@@ -105,7 +106,7 @@ const useFees = (
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
             const bridgeFee = await getCachedBridgingFee()
 
-            setBridgingFees({
+            setBridgingFee({
               amount: bridgeFee,
               token: bridgeFeeToken,
               inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
@@ -124,10 +125,10 @@ const useFees = (
         }
 
         case 'SnowbridgeApi': {
-          if (!sourceChain || !senderAddress || !destinationChain || !recipientAddress || !amount) {
+          if (!sourceChain || !senderAddress || !destinationChain || !amount || !recipientAddress) {
             setLoading(false)
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
@@ -138,7 +139,7 @@ const useFees = (
             isSnowbridgeContextLoading
           ) {
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
@@ -157,14 +158,14 @@ const useFees = (
           )
           if (!fee) {
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
           switch (fee.origin) {
             case 'Ethereum': {
               setFees(fee.execution)
-              setBridgingFees(fee.bridging)
+              setBridgingFee(fee.bridging)
 
               const totalCost = BigInt(fee.execution?.amount ?? 0n) + BigInt(fee.bridging.amount)
               setCanPayAdditionalFees(totalCost < BigInt(feeBalance?.value ?? 0n))
@@ -183,7 +184,7 @@ const useFees = (
       }
     } catch (error) {
       setFees(null)
-      setBridgingFees(null)
+      setBridgingFee(null)
       captureException(error)
       console.error('useFees > error is', error)
       // addNotification({
@@ -208,6 +209,7 @@ const useFees = (
     amount,
     dotBalance,
     feeBalance,
+    destToken,
   ])
 
   useEffect(() => {
