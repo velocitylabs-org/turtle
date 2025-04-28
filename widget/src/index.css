@@ -124,7 +124,6 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
     letter-spacing: var(--letter-spacing-default);
     font-family: var(--font-dazzed);
 

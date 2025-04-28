@@ -1,6 +1,6 @@
 import { Button as HeroButton } from '@heroui/react'
 import { FC, ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
+
 import LoadingIcon from '@/assets/svg/LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
