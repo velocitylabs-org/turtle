@@ -281,17 +281,6 @@ const getBorder = (result: TransferResult) => {
   }
 }
 
-const getBorderTop = (result: TransferResult) => {
-  switch (result) {
-    case TxStatus.Undefined:
-      return 'border-t-turtle-tertiary-dark'
-    case TxStatus.Failed:
-      return 'border-t-turtle-error-dark'
-    default:
-      return 'border-t-turtle-success-dark'
-  }
-}
-
 /* eslint-disable react-refresh/only-export-components */
 export const getSVGColor = (result: TransferResult) => {
   switch (result) {
