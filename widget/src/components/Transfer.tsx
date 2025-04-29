@@ -230,7 +230,7 @@ const Transfer: FC = () => {
                 render={({ field: tokenField }) => {
                   return (
                     <ChainTokenSelect
-                      chain={{
+                      chainProps={{
                         ...chainField,
                         onChange: handleSourceChainChange,
                         options: sourceChainOptions,
@@ -238,7 +238,7 @@ const Transfer: FC = () => {
                         clearable: true,
                         orderBySelected: true,
                       }}
-                      token={{
+                      tokenProps={{
                         value: tokenField.value?.token ?? null,
                         onChange: handleSourceTokenChange,
                         options: sourceTokenOptions,
@@ -247,7 +247,7 @@ const Transfer: FC = () => {
                         clearable: true,
                         orderBySelected: true,
                       }}
-                      amount={{
+                      amountProps={{
                         value: tokenField.value?.amount ?? null,
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
@@ -266,7 +266,7 @@ const Transfer: FC = () => {
                           />
                         ),
                       }}
-                      wallet={{
+                      walletProps={{
                         address: sourceWallet?.sender?.address,
                         walletButton: <WalletButton walletType={sourceChain?.walletType} />,
                       }}
@@ -294,7 +294,7 @@ const Transfer: FC = () => {
                 control={control}
                 render={({ field: tokenField }) => (
                   <ChainTokenSelect
-                    chain={{
+                    chainProps={{
                       ...chainField,
                       onChange: handleDestinationChainChange,
                       options: destinationChainOptions,
@@ -302,7 +302,7 @@ const Transfer: FC = () => {
                       clearable: true,
                       orderBySelected: true,
                     }}
-                    token={{
+                    tokenProps={{
                       value: tokenField.value?.token ?? null,
                       onChange: token =>
                         tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
@@ -313,7 +313,7 @@ const Transfer: FC = () => {
                       sourceChainToDetermineOriginBanner: destinationChain,
                       priorityToken: sourceTokenAmount?.token,
                     }}
-                    amount={{
+                    amountProps={{
                       value: destinationTokenAmount?.amount ?? null,
                       onChange: amount =>
                         tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
@@ -321,7 +321,7 @@ const Transfer: FC = () => {
                       placeholder: receiveAmountPlaceholder,
                       disabled: true,
                     }}
-                    wallet={{
+                    walletProps={{
                       address: destinationWallet?.sender?.address,
                       error: manualRecipient.enabled ? manualRecipientError : '',
                       walletButton: shouldDisplayRecipientWalletButton ? (
