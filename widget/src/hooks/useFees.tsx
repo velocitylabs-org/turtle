@@ -57,11 +57,11 @@ const useFees = (
 
   const { price: tokenPrice } = useTokenPrice(feeToken)
   const { price: bridgeFeeTokenPrice } = useTokenPrice(bridgeFeeToken)
-  const { data: cachedBridgingFees, isLoading: isCachedBridgingFeesLoading } =
+  const { data: cachedBridgingFee, isLoading: isCachedBridgingFeeLoading } =
     useCachedBridgingFee(bridgeFeeToken)
 
   const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [bridgingFees, setBridgingFees] = useState<AmountInfo | null>(null)
+  const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
 
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
@@ -74,7 +74,7 @@ const useFees = (
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
       setFees(null)
-      setBridgingFees(null)
+      setBridgingFee(null)
       return
     }
 
@@ -85,7 +85,7 @@ const useFees = (
     const feeToken = getNativeToken(sourceChain)
 
     try {
-      setBridgingFees(null)
+      setBridgingFee(null)
 
       switch (sdk) {
         case 'ParaSpellApi': {
@@ -115,21 +115,21 @@ const useFees = (
           })
           setCanPayFees(info.sufficientForXCM)
 
-          if (destinationChain.network === 'Ethereum' && !isCachedBridgingFeesLoading) {
+          if (destinationChain.network === 'Ethereum' && !isCachedBridgingFeeLoading) {
             const bridgeFeeToken = getBridgeFeeToken(destinationChain) ?? PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = bridgeFeeTokenPrice ?? 0
-            const bridgingFees = cachedBridgingFees ?? 0n
+            const bridgingFee = cachedBridgingFee ?? 0n
 
-            setBridgingFees({
-              amount: bridgingFees.toString(),
+            setBridgingFee({
+              amount: bridgingFee.toString(),
               token: bridgeFeeToken,
-              inDollars: Number(toHuman(bridgingFees, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+              inDollars: Number(toHuman(bridgingFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
             })
 
             if (senderAddress) {
               const balance =
                 (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
-              setCanPayAdditionalFees(bridgingFees < balance)
+              setCanPayAdditionalFees(bridgingFee < balance)
             }
           }
 
@@ -140,7 +140,7 @@ const useFees = (
           if (!sourceChain || !senderAddress || !destinationChain || !amount || !recipientAddress) {
             setLoading(false)
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
@@ -151,7 +151,7 @@ const useFees = (
             isSnowbridgeContextLoading
           ) {
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
@@ -170,14 +170,14 @@ const useFees = (
           )
           if (!fee) {
             setFees(null)
-            setBridgingFees(null)
+            setBridgingFee(null)
             return
           }
 
           switch (fee.origin) {
             case 'Ethereum': {
               setFees(fee.execution)
-              setBridgingFees(fee.bridging)
+              setBridgingFee(fee.bridging)
               break
             }
             case 'Polkadot': {
@@ -193,7 +193,7 @@ const useFees = (
       }
     } catch (error) {
       setFees(null)
-      setBridgingFees(null)
+      setBridgingFee(null)
       // captureException(error) - Sentry
       console.error('useFees > error is', error)
       // addNotification({
@@ -216,14 +216,14 @@ const useFees = (
     senderAddress,
     recipientAddress,
     amount,
-    isCachedBridgingFeesLoading,
+    isCachedBridgingFeeLoading,
   ])
 
   useEffect(() => {
     fetchFees()
   }, [fetchFees])
 
-  return { fees, bridgingFees, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
+  return { fees, bridgingFee, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
 }
 
 export default useFees

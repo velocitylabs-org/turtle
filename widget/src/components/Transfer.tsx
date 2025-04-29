@@ -112,7 +112,7 @@ const Transfer: FC = () => {
     loadingBalance,
     fetchBalance,
     fees,
-    bridgingFees,
+    bridgingFee,
     loadingFees,
     canPayFees,
     canPayAdditionalFees,
@@ -204,7 +204,7 @@ const Transfer: FC = () => {
 
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
-  const canPayBridgingFee = bridgingFees ? canPayAdditionalFees : true
+  const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
 
   const isTransferAllowed =
     isValid &&
@@ -477,7 +477,7 @@ const Transfer: FC = () => {
           loading={loadingFees}
           tokenAmount={sourceTokenAmount}
           fees={fees}
-          bridgingFees={bridgingFees}
+          bridgingFee={bridgingFee}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
           canPayAdditionalFees={canPayAdditionalFees}

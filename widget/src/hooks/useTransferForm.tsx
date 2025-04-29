@@ -76,7 +76,7 @@ const useTransferForm = () => {
     fees,
     loading: loadingFees,
     canPayFees,
-    bridgingFees,
+    bridgingFee,
     canPayAdditionalFees,
     refetch: refetchFees,
   } = useFees(
@@ -318,7 +318,7 @@ const useTransferForm = () => {
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
         fees,
-        bridgingFee: bridgingFees,
+        bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success
           reset()
@@ -339,7 +339,7 @@ const useTransferForm = () => {
     [
       destinationWallet,
       fees,
-      bridgingFees,
+      bridgingFee,
       reset,
       sourceWallet?.sender,
       transfer,
@@ -392,7 +392,7 @@ const useTransferForm = () => {
 
     // Fees related
     fees,
-    bridgingFees,
+    bridgingFee,
     loadingFees,
     canPayFees,
     canPayAdditionalFees,

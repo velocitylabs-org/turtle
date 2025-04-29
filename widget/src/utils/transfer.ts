@@ -154,9 +154,9 @@ export function toAmountInfo(
   }
 }
 
-export const getTotalFees = (fees: AmountInfo, bridgingFees?: AmountInfo | null) => {
-  const additionalAmount = bridgingFees ? Number(bridgingFees.amount) : 0
-  const additionalValue = bridgingFees?.inDollars || 0
+export const getTotalFees = (fees: AmountInfo, bridgingFee?: AmountInfo | null) => {
+  const additionalAmount = bridgingFee ? Number(bridgingFee.amount) : 0
+  const additionalValue = bridgingFee?.inDollars || 0
   const totalFeesAmount = formatAmount(toHuman(fees.amount, fees.token) + additionalAmount)
   const totalFeesValue = formatAmount(fees.inDollars + additionalValue)
 

@@ -17,7 +17,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
-  bridgingFees?: AmountInfo | null
+  bridgingFee?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   canPayFees: boolean
@@ -39,7 +39,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   loading,
   tokenAmount,
   fees,
-  bridgingFees,
+  bridgingFee,
   durationEstimate,
   direction,
   canPayFees,
@@ -49,7 +49,7 @@ const TxSummary: FC<TxSummaryProps> = ({
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
-  if (!loading && !fees && !bridgingFees) return null
+  if (!loading && !fees && !bridgingFee) return null
 
   const renderContent = () => {
     if (loading) {
@@ -93,9 +93,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                     <Zap className="h-4 w-4 text-amber-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">
-                      {bridgingFees ? 'Execution fee' : 'Fee'}
-                    </p>
+                    <p className="text-xs text-gray-500">{bridgingFee ? 'Execution fee' : 'Fee'}</p>
                     <div className="flex flex-col items-baseline gap-0.5">
                       <span className="text-sm font-medium">
                         {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
@@ -123,7 +121,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                   </div>
                 </div>
               ) : (
-                bridgingFees && (
+                bridgingFee && (
                   <div className="flex items-center gap-2">
                     <div className="rounded-md bg-blue-50 p-1.5">
                       <ArrowRightLeft className="h-4 w-4 text-blue-600" />
@@ -132,12 +130,12 @@ const TxSummary: FC<TxSummaryProps> = ({
                       <p className="text-xs text-gray-500">Bridging fee</p>
                       <div className="flex flex-col items-baseline gap-0.5">
                         <span className="text-sm font-medium">
-                          {formatAmount(toHuman(bridgingFees.amount, bridgingFees.token))}{' '}
-                          {bridgingFees.token.symbol}
+                          {formatAmount(toHuman(bridgingFee.amount, bridgingFee.token))}{' '}
+                          {bridgingFee.token.symbol}
                         </span>
-                        {bridgingFees.inDollars > 0 && (
+                        {bridgingFee.inDollars > 0 && (
                           <span className="text-xs text-gray-400">
-                            ${formatAmount(bridgingFees.inDollars)}
+                            ${formatAmount(bridgingFee.inDollars)}
                           </span>
                         )}
                       </div>
@@ -175,7 +173,7 @@ const TxSummary: FC<TxSummaryProps> = ({
               />
               <span>You don&apos;t have enough {fees.token.symbol}</span>
             </div>
-          ) : !canPayAdditionalFees && bridgingFees ? (
+          ) : !canPayAdditionalFees && bridgingFee ? (
             <div className="mx-auto flex w-fit items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
               <ExclamationMark
                 width={16}
@@ -183,7 +181,7 @@ const TxSummary: FC<TxSummaryProps> = ({
                 fill={colors['turtle-foreground']}
                 className="mr-2"
               />
-              <span>You don&apos;t have enough {bridgingFees.token.symbol}</span>
+              <span>You don&apos;t have enough {bridgingFee.token.symbol}</span>
             </div>
           ) : canPayFees && isAmountTooLow ? (
             <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
