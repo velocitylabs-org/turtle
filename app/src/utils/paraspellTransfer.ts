@@ -123,6 +123,8 @@ export const isExistentialDepositMetAfterTransfer = async (
   const currencyId = getParaspellToken(params.sourceToken, destinationChainFromId)
 
   console.log('works')
+  console.log(params.recipient, currencyId, params.sourceAmount, destinationChainFromId)
+
   const res = await verifyEdOnDestination({
     address: params.recipient,
     currency: { ...currencyId, amount: params.sourceAmount },
