@@ -3,7 +3,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
 import { AddressType, Chain } from '@/models/chain'
-import { ManualAddressValue } from '@/models/select'
+import { ManualRecipient } from '@/models/select'
 import { WalletInfo } from '@/hooks/useWallet'
 import { Sender } from '@/hooks/useTransfer'
 import { JsonRpcSigner } from 'ethers'
@@ -80,10 +80,7 @@ export const isValidAddressType = (address: string, types: AddressType[]): boole
   return false
 }
 
-export function isValidRecipient(
-  manualRecipient: ManualAddressValue,
-  destinationChain: Chain | null,
-) {
+export function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
   return (
     !manualRecipient.enabled ||
     !destinationChain ||
@@ -96,7 +93,7 @@ export function isValidRecipient(
  * Get the recipient address based on the enabled manual input and the connected destination wallet.
  * @remarks It doesn't check whether the address is valid or not
  * */
-export const getRecipientAddress = (manualRecipient: ManualAddressValue, wallet?: WalletInfo) => {
+export const getRecipientAddress = (manualRecipient: ManualRecipient, wallet?: WalletInfo) => {
   return manualRecipient.enabled ? manualRecipient.address : wallet?.sender?.address
 }
 

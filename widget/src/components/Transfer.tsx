@@ -327,7 +327,7 @@ const Transfer: FC = () => {
                       walletButton: shouldDisplayRecipientWalletButton ? (
                         <WalletButton walletType={destinationChain?.walletType} />
                       ) : undefined,
-                      manualAddressInput: {
+                      manualRecipientInput: {
                         enabled: manualRecipient.enabled,
                         address: manualRecipient.address,
                         onChange: handleManualRecipientChange,

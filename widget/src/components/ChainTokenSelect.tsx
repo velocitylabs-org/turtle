@@ -1,7 +1,7 @@
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
-import { ManualAddressInput } from '@/models/select'
+import { ManualRecipientInput } from '@/models/select'
 import { Token } from '@/models/token'
 import { cn } from '@/utils/helper'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
@@ -59,7 +59,7 @@ interface ChainTokenSelectProps {
   walletProps?: {
     address?: string
     walletButton?: ReactNode
-    manualAddressInput?: ManualAddressInput
+    manualRecipientInput?: ManualRecipientInput
     error?: string
   }
   /** The label to display above the whole component when dropdown is not open */
@@ -167,7 +167,7 @@ export default function ChainTokenSelect({
             )}
             triggerRef={triggerRef}
             walletAddress={walletProps?.address}
-            manualAddressInput={walletProps?.manualAddressInput}
+            manualRecipientInput={walletProps?.manualRecipientInput}
             trailingAction={walletProps?.walletButton}
           />
         </div>

@@ -1,6 +1,6 @@
 import useLookupName from '@/hooks/useLookupName'
 import { Chain } from '@/models/chain'
-import { ManualAddressInput } from '@/models/select'
+import { ManualRecipientInput } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/helper'
 import { ChangeEvent, ReactNode, RefObject, useCallback } from 'react'
@@ -26,7 +26,7 @@ interface ChainTriggerProps {
   /** The avatar of the connected account. */
   ensAvatar?: GetEnsAvatarReturnType
   /** The input for manually entering an address. Used for specifying a recipient address. */
-  manualAddressInput?: ManualAddressInput
+  manualRecipientInput?: ManualRecipientInput
   /** The connected account. */
   walletAddress?: string
 }
@@ -39,7 +39,7 @@ export default function ChainTrigger({
   trailingAction,
   className,
   triggerRef,
-  manualAddressInput,
+  manualRecipientInput,
   walletAddress,
 }: ChainTriggerProps) {
   // wallet and ens
@@ -51,14 +51,14 @@ export default function ChainTrigger({
   })
 
   const shouldShowChainName =
-    (!walletAddress && (!manualAddressInput?.enabled || !manualAddressInput?.address)) ||
-    (manualAddressInput?.enabled && !manualAddressInput.address)
+    (!walletAddress && (!manualRecipientInput?.enabled || !manualRecipientInput?.address)) ||
+    (manualRecipientInput?.enabled && !manualRecipientInput.address)
 
-  const shouldShowConnectedAccount = !manualAddressInput?.enabled && value
+  const shouldShowConnectedAccount = !manualRecipientInput?.enabled && value
 
-  const handleManualAddressInputChange = (e: ChangeEvent<HTMLInputElement>) =>
-    manualAddressInput?.onChange?.({
-      enabled: manualAddressInput.enabled,
+  const handleManualRecipientChange = (e: ChangeEvent<HTMLInputElement>) =>
+    manualRecipientInput?.onChange?.({
+      enabled: manualRecipientInput.enabled,
       address: e.target.value,
     })
 
@@ -122,9 +122,9 @@ export default function ChainTrigger({
           )}
 
           {/* Manual Address Input */}
-          {manualAddressInput?.enabled && (
+          {manualRecipientInput?.enabled && (
             <>
-              <VerticalDivider className={manualAddressInput.address ? 'invisible' : 'visible'} />
+              <VerticalDivider className={manualRecipientInput.address ? 'invisible' : 'visible'} />
               <input
                 type="text"
                 className={cn(
@@ -133,8 +133,8 @@ export default function ChainTrigger({
                 )}
                 placeholder="Address"
                 autoFocus
-                value={manualAddressInput.address}
-                onChange={handleManualAddressInputChange}
+                value={manualRecipientInput.address}
+                onChange={handleManualRecipientChange}
                 onClick={e => e.stopPropagation()}
                 data-cy="manual-address-input"
               />

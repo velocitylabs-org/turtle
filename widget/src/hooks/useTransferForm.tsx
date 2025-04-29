@@ -5,7 +5,7 @@ import { switchChain } from '@wagmi/core'
 import { schema } from '@/models/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEnvironmentStore } from '@/stores/environmentStore'
-import { ManualAddressValue, TokenAmount } from '@/models/select'
+import { ManualRecipient, TokenAmount } from '@/models/select'
 import { Chain } from '@/models/chain'
 import useTransfer from './useTransfer'
 import useWallet from './useWallet'
@@ -26,7 +26,7 @@ interface FormInputs {
   destinationChain: Chain | null
   sourceTokenAmount: TokenAmount | null
   destinationTokenAmount: TokenAmount | null
-  manualRecipient: ManualAddressValue
+  manualRecipient: ManualRecipient
 }
 
 const initValues: FormInputs = {
@@ -221,7 +221,7 @@ const useTransferForm = () => {
   }, [sourceChain, destinationChain, setValue, allowFromToSwap])
 
   const handleManualRecipientChange = useCallback(
-    (newValue: ManualAddressValue) => setValue('manualRecipient', newValue),
+    (newValue: ManualRecipient) => setValue('manualRecipient', newValue),
     [setValue],
   )
 
