@@ -122,14 +122,12 @@ export const isExistentialDepositMetAfterTransfer = async (
 
   const currencyId = getParaspellToken(params.sourceToken, destinationChainFromId)
 
-  const res = await verifyEdOnDestination({
+  return await verifyEdOnDestination({
     address: params.recipient,
     currency: { ...currencyId, amount: params.sourceAmount },
     node: destinationChainFromId as TNodeDotKsmWithRelayChains,
     api: params.destinationChain.rpcConnection,
   })
-
-  return res
 }
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
