@@ -293,9 +293,7 @@ const Transfer: FC = () => {
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: errors.sourceTokenAmount?.amount?.message || sourceTokenAmountError,
                         placeholder: amountPlaceholder,
-                        trailingAction: sourceTokenAmount?.amount ? (
-                          <></>
-                        ) : (
+                        trailingAction: !sourceTokenAmount?.amount && (
                           <Button
                             label="Max"
                             size="sm"
