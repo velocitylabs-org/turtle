@@ -3,26 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  @font-face {
-    font-family: 'Dazzed';
-    src: url('./assets/fonts/dazzed.woff2') format('woff2');
-    font-weight: 400;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: 'Dazzed';
-    src: url('./assets/fonts/dazzed-bold.woff2') format('woff2');
-    font-weight: 700;
-    font-display: swap;
-  }
-
-  :root {
-    /* Theme fonts */
-    --font-dazzed: 'Dazzed', sans-serif;
-    --font-dazzed-bold: 'Dazzed-Bold', sans-serif;
-  }
-
   :root {
     /* Theme text */
     --letter-spacing-xxl: -0.04em;
@@ -125,7 +105,6 @@
 @layer base {
   body {
     letter-spacing: var(--letter-spacing-default);
-    font-family: var(--font-dazzed);
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

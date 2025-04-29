@@ -5,7 +5,7 @@ import { FC } from 'react'
 import { colors } from '../../../../tailwind.config'
 import Account from '@/components/Account'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
+import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
@@ -17,8 +17,7 @@ const OngoingTransfer: FC<{
         <div className="flex items-center">
           <LoadingIcon
             className="mr-2 animate-spin"
-            width={24}
-            height={24}
+            size="md"
             strokeWidth={5}
             color={colors['turtle-secondary']}
           />

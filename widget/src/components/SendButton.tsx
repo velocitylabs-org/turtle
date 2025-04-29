@@ -1,8 +1,7 @@
 import { Status } from '@/hooks/useTransfer'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import { colors } from '../../tailwind.config'
-import Button, { ButtonProps, ButtonVariant } from './Button'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
+import { ButtonVariant, LoadingIcon, ButtonProps, Button } from '@velocitylabs-org/turtle-ui'
 
 type SendButtonProps = ButtonProps & { status: Status }
 
@@ -43,12 +42,7 @@ function getOverwrittenProps(status: Status, defaultLabel?: string): OverwritenP
       return {
         label: status,
         icon: (
-          <LoadingIcon
-            className="animate-spin"
-            width={40}
-            height={40}
-            color={colors['turtle-secondary-dark']}
-          />
+          <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary-dark']} />
         ),
         variant: 'update',
       }

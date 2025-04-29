@@ -7,10 +7,9 @@ import { toAmountInfo, Direction, formatAmount, toHuman } from '@/utils/transfer
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC } from 'react'
 import { colors } from '../../tailwind.config'
-import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import { ExclamationMark } from '@/assets/svg/ExclamationMark'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
+import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
 
 interface TxSummaryProps {
@@ -55,12 +54,7 @@ const TxSummary: FC<TxSummaryProps> = ({
     if (loading) {
       return (
         <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
-          <LoadingIcon
-            className="animate-spin"
-            width={spinnerSize['lg']}
-            height={spinnerSize['lg']}
-            color={colors['turtle-secondary']}
-          />
+          <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary']} />
           <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">
             Loading fees
           </div>

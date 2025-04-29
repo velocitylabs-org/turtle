@@ -1,20 +1,35 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import clsx from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { LoadingIcon } from './LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 export type ButtonType = 'button' | 'submit' | 'reset'
 
-interface ButtonProps {
-  children: React.ReactNode
-  onClick: () => void
+export interface ButtonProps {
+  /** Text shown inside the button. */
+  label?: string
+  /** Function to call when the button is clicked. */
+  onClick?: () => void
+  /** Additional classes to apply to the button. */
   className?: string
+  /** Whether the button is disabled (non-interactive). */
   disabled?: boolean
+  /** Whether the button is in a loading state. */
   loading?: boolean
-  size?: ButtonSize
+  /** The variant determines the preset color and style of the button. */
   variant?: ButtonVariant
+  /** The size of the button. */
+  size?: ButtonSize
+  /** A custom icon to be displayed instead of the spinner */
+  icon?: ReactNode
+  /** Content to be rendered inside the button. It will replace the label. */
+  children?: ReactNode
+  /** The type of the button. */
   type?: ButtonType
+  /** Cypress ID for testing. */
+  cypressID?: string
 }
 
 const styles = {
@@ -47,6 +62,9 @@ export const Button = ({
   disabled,
   onClick,
   size,
+  loading,
+  label,
+  icon = <LoadingIcon className="mr-3 animate-spin" size={size} />,
   ...rest
 }: ButtonProps) => {
   const classNames = twMerge(
@@ -59,23 +77,23 @@ export const Button = ({
     ),
   )
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-
-    onClick()
-  }
-
   return (
     <button
       type={type === 'submit' ? 'submit' : type === 'reset' ? 'reset' : 'button'}
       tabIndex={0}
       className={classNames}
-      onClick={handleClick}
+      onClick={onClick}
       disabled={disabled}
       {...rest}
     >
-      {children}
+      {loading && (
+        <div className="flex items-center">
+          {icon && <span className="mr-3">{icon}</span>}
+          <span className="mr-3">{label}</span>
+        </div>
+      )}
+
+      {!loading && (children || label)}
     </button>
   )
 }
