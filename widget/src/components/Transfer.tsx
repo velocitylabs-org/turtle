@@ -24,6 +24,9 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import { cn } from '@/utils/helper'
 import TxSummary from './TxSummary'
 import SendButton from './SendButton'
+import { WalletInfo } from '@/hooks/useWallet'
+import { TokenAmount } from '@/models/select'
+import { Balance } from '@/models/balance'
 
 const manualInputAnimationProps = {
   initial: { opacity: 0, height: 0 },
@@ -37,6 +40,46 @@ const approvalAnimationProps = {
   animate: { opacity: 1, height: 'auto' },
   exit: { opacity: 0, height: 0 },
   transition: { duration: 0.3 },
+}
+
+const getSourceAmountPlaceholder = ({
+  loadingBalance,
+  sourceWallet,
+  sourceTokenAmount,
+  isBalanceAvailable,
+  balanceData,
+}: {
+  loadingBalance: boolean
+  sourceWallet: WalletInfo | undefined
+  sourceTokenAmount: TokenAmount | null
+  isBalanceAvailable: boolean
+  balanceData: Balance | undefined
+}): string => {
+  if (loadingBalance) return 'Loading...'
+  if (
+    !sourceWallet ||
+    !sourceTokenAmount?.token ||
+    !sourceWallet.isConnected ||
+    !isBalanceAvailable
+  ) {
+    return 'Amount'
+  }
+  if (balanceData?.value === 0n) return 'No balance'
+  return formatAmount(Number(balanceData?.formatted), 'Longer')
+}
+
+const getReceiveAmountPlaceholder = ({
+  isLoadingOutputAmount,
+  sourceTokenAmount,
+  destinationTokenAmount,
+}: {
+  isLoadingOutputAmount: boolean
+  sourceTokenAmount: TokenAmount | null
+  destinationTokenAmount: TokenAmount | null
+}): string => {
+  if (isLoadingOutputAmount) return 'Loading...'
+  if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id) return ''
+  return 'Receive Amount'
 }
 
 const Transfer: FC = () => {
@@ -103,22 +146,19 @@ const Transfer: FC = () => {
     owner: sourceWallet?.sender?.address,
   })
 
-  let amountPlaceholder: string
-  if (loadingBalance) amountPlaceholder = 'Loading...'
-  else if (
-    !sourceWallet ||
-    !sourceTokenAmount?.token ||
-    !sourceWallet.isConnected ||
-    !isBalanceAvailable
-  )
-    amountPlaceholder = 'Amount'
-  else if (balanceData?.value === 0n) amountPlaceholder = 'No balance'
-  else amountPlaceholder = formatAmount(Number(balanceData?.formatted), 'Longer')
+  const amountPlaceholder = getSourceAmountPlaceholder({
+    loadingBalance,
+    sourceWallet,
+    sourceTokenAmount,
+    isBalanceAvailable,
+    balanceData,
+  })
 
-  let receiveAmountPlaceholder = 'Receive Amount'
-  if (isLoadingOutputAmount) receiveAmountPlaceholder = 'Loading...'
-  else if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id)
-    receiveAmountPlaceholder = ''
+  const receiveAmountPlaceholder = getReceiveAmountPlaceholder({
+    isLoadingOutputAmount,
+    sourceTokenAmount,
+    destinationTokenAmount,
+  })
 
   const shouldDisplayRecipientWalletButton =
     !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType

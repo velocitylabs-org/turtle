@@ -113,7 +113,7 @@ export default function ChainTokenSelect({
     let sorted = filteredTokenOptions
     // move priority token to the top if it exists
     if (tokenProps.priorityToken)
-      sorted = reorderOptionsBySelectedItem(filteredTokenOptions, 'id', tokenProps.priorityToken.id)
+      sorted = reorderOptionsBySelectedItem(sorted, 'id', tokenProps.priorityToken.id)
 
     // move selected token to the top if it exists
     if (tokenProps.orderBySelected)
