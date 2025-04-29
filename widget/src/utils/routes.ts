@@ -11,6 +11,12 @@ import {
 } from '@/lib/paraspell/swap'
 import { isSameToken } from './token'
 
+/** Deduplicates a list of items based on their uid/id property. Used for chains and tokens. */
+const deduplicate = <T extends { uid?: string; id?: string }>(items: T[]): T[] => {
+  const itemMap = new Map(items.map(item => [item.uid || item.id, item]))
+  return Array.from(itemMap.values())
+}
+
 /** Filters all chains by available routes. */
 export const getTransferSourceChains = (): Chain[] => {
   return REGISTRY.chains.filter(chain => REGISTRY.routes.some(route => route.from === chain.uid))
@@ -75,12 +81,7 @@ export const getAllowedSourceChains = (): Chain[] => {
   const transferSourceChains = getTransferSourceChains()
   const swapSourceChains = getSwapsSourceChains()
 
-  // deduplicate
-  const chainMap = new Map(
-    [...transferSourceChains, ...swapSourceChains].map(chain => [chain.uid, chain]),
-  )
-
-  return Array.from(chainMap.values())
+  return deduplicate([...transferSourceChains, ...swapSourceChains])
 }
 
 export const getAllowedSourceTokens = (
@@ -92,10 +93,7 @@ export const getAllowedSourceTokens = (
   const transferTokens = getTransferTokens(sourceChain, destinationChain)
   const swapTokens = getSwapsSourceTokens(sourceChain)
 
-  // deduplicate
-  const tokenMap = new Map([...transferTokens, ...swapTokens].map(token => [token.id, token]))
-
-  return Array.from(tokenMap.values())
+  return deduplicate([...transferTokens, ...swapTokens])
 }
 
 export const getAllowedDestinationChains = (
@@ -107,12 +105,7 @@ export const getAllowedDestinationChains = (
   const transferDestinationChains = getTransferDestinationChains(sourceChain, sourceToken)
   const swapDestinationChains = getSwapsDestinationChains(sourceChain, sourceToken)
 
-  // deduplicate
-  const chainMap = new Map(
-    [...transferDestinationChains, ...swapDestinationChains].map(chain => [chain.uid, chain]),
-  )
-
-  return Array.from(chainMap.values())
+  return deduplicate([...transferDestinationChains, ...swapDestinationChains])
 }
 
 export const getAllowedDestinationTokens = (
@@ -130,10 +123,7 @@ export const getAllowedDestinationTokens = (
 
   const allowedTokens = [...(includeSourceTokenForTransfer ? [sourceToken] : []), ...swapTokens]
 
-  // deduplicate
-  const tokenMap = new Map(allowedTokens.map(token => [token.id, token]))
-
-  return Array.from(tokenMap.values())
+  return deduplicate(allowedTokens)
 }
 
 export const getRoute = (from: Chain, to: Chain): Route | undefined => {
