@@ -1,0 +1,4 @@
+export const STORE_VERSIONS = {
+  ONGOING_TRANSFERS: 1,
+  COMPLETED_TRANSFERS: 1,
+} as const
