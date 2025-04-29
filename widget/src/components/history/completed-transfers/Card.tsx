@@ -11,6 +11,7 @@ import { Success } from '@/assets/svg/Success'
 
 import { colors } from '../../../../tailwind.config'
 import { getSVGColor } from './Dialog'
+import { TokenLogo } from '@/components/TokenLogo'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const getStatusIcon = (status: TransferResult) => {
@@ -46,15 +47,15 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
               )}
             >
               {isSwap(tx) ? (
-                <>
-                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
-                  <span>{tx.destinationToken.symbol}</span>
-                </>
+                <span className="flex items-center gap-1">
+                  {formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}{' '}
+                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={25} />
+                </span>
               ) : (
-                <>
-                  <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
-                  <span>{tx.sourceToken.symbol}</span>
-                </>
+                <span className="flex items-center gap-1">
+                  {formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}{' '}
+                  <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={25} />
+                </span>
               )}
             </div>
             <div

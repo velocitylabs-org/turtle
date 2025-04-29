@@ -6,6 +6,7 @@ import { colors } from '../../../../tailwind.config'
 import Account from '@/components/Account'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import LoadingIcon from '@/assets/svg/LoadingIcon'
+import { TokenLogo } from '@/components/TokenLogo'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer
@@ -22,20 +23,19 @@ const OngoingTransfer: FC<{
             strokeWidth={5}
             color={colors['turtle-secondary']}
           />
-          <p className="flex items-center text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
-         
-          {isSwap(transfer) ? (
-            <>
-              {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}{' '}
-              {transfer.destinationToken.symbol}
-            </>
-          ) : (
-            <>
-              {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}{' '}
-              {transfer.sourceToken.symbol}
-            </>
-          )}
-        </p>
+          <div className="flex items-center text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
+            {isSwap(transfer) ? (
+              <span className="flex items-center gap-1">
+                <span>{formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}</span>
+                <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={25} />
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <span>{formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}</span>
+                <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={25} />
+              </span>
+            )}
+          </div>
           {/* From and to Chains */}
           <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">
             <img
