@@ -63,7 +63,7 @@ const SubstrateWalletModal: FC = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl border-1 border-black pb-4 focus:outline-none min-[460px]:max-w-[25rem]"
+        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl border border-black pb-4 focus:outline-none min-[460px]:max-w-[25rem]"
         hideCloseButton={true}
       >
         {/* Header */}

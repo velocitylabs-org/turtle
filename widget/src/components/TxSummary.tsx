@@ -160,7 +160,7 @@ const TxSummary: FC<TxSummaryProps> = ({
           </div>
 
           {!canPayFees && fees ? (
-            <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+            <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
               <ExclamationMark
                 width={16}
                 height={16}
@@ -170,7 +170,7 @@ const TxSummary: FC<TxSummaryProps> = ({
               <span>You don&apos;t have enough {fees.token.symbol}</span>
             </div>
           ) : !canPayAdditionalFees && bridgingFees ? (
-            <div className="mx-auto flex w-fit items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+            <div className="mx-auto flex w-fit items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
               <ExclamationMark
                 width={16}
                 height={16}

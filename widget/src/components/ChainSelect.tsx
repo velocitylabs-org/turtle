@@ -82,7 +82,7 @@ const ChainSelect = ({
         <div
           ref={triggerRef}
           className={cn(
-            'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-turtle-background px-3 text-sm',
+            'flex items-center justify-between rounded-md border border-turtle-level3 bg-turtle-background px-3 text-sm',
             !disabled && 'cursor-pointer',
             disabled && 'opacity-30',
             error && 'border-turtle-error',
@@ -98,7 +98,7 @@ const ChainSelect = ({
                   alt={value.name}
                   width={24}
                   height={24}
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-turtle-background"
+                  className="h-[2rem] w-[2rem] rounded-full border border-turtle-foreground bg-turtle-background"
                 />
                 {shouldShowChainName && (
                   <span className="text-nowrap" data-cy="chain-select-value">
@@ -119,7 +119,7 @@ const ChainSelect = ({
                 alt="ENS Avatar"
                 width={24}
                 height={24}
-                className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-turtle-background"
+                className="h-[1.5rem] w-[1.5rem] rounded-full border border-turtle-foreground bg-turtle-background"
               />
             )}
             {!manualRecipient?.enabled && !!value && accountName}
@@ -166,7 +166,7 @@ const ChainSelect = ({
                   alt={option.name}
                   width={24}
                   height={24}
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-turtle-background"
+                  className="h-[2rem] w-[2rem] rounded-full border border-turtle-foreground bg-turtle-background"
                 />
                 <span className="text-sm">{option.name}</span>
               </div>

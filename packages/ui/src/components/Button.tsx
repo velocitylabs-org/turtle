@@ -1,10 +1,10 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import clsx from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { LoadingIcon } from './LoadingIcon'
+import { Sizes } from '@/types/global'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
-export type ButtonSize = 'sm' | 'md' | 'lg'
 export type ButtonType = 'button' | 'submit' | 'reset'
 
 export interface ButtonProps {
@@ -21,7 +21,7 @@ export interface ButtonProps {
   /** The variant determines the preset color and style of the button. */
   variant?: ButtonVariant
   /** The size of the button. */
-  size?: ButtonSize
+  size?: Sizes
   /** A custom icon to be displayed instead of the spinner */
   icon?: ReactNode
   /** Content to be rendered inside the button. It will replace the label. */
@@ -42,13 +42,13 @@ const styles = {
     'border-1 bg-turtle-secondary border border-turtle-secondary-dark text-turtle-secondary-dark disabled:opacity-100 disabled:bg-turtle-secondary-50 disabled:border-turtle-secondary-dark-40',
 }
 
-const sizeHeights: Record<ButtonSize, string> = {
+const sizeHeights: Record<Sizes, string> = {
   sm: 'h-[1.625rem]',
   md: 'h-[2.5rem]',
   lg: 'h-[3.5rem]',
 }
 
-const paddingX: Record<ButtonSize, string> = {
+const paddingX: Record<Sizes, string> = {
   sm: 'px-2',
   md: 'px-3',
   lg: 'px-5',

@@ -79,7 +79,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             ref={triggerRef}
             onClick={handleTriggerClick}
             className={cn(
-              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-turtle-background px-3 text-sm',
+              'flex items-center justify-between rounded-md border border-turtle-level3 bg-turtle-background px-3 text-sm',
               !disabled && 'cursor-pointer',
               disabled && 'opacity-30',
               error && 'border-turtle-error',
