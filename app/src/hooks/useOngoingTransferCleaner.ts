@@ -72,33 +72,37 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
   const { addNotification } = useNotification()
 
   useEffect(() => {
-    let cancelCleaning = false
+    let cancelStaleTransfersFinalization = false
 
-    const processCleaning = async () => {
-      for (const ongoing of ongoingTransfers) {
-        if (cancelCleaning) break
+    /**
+     * Checks all ongoing transfers and force-finalizes those that have been pending for too long.
+     * Marks them as completed with fallback status and notifies the user.
+     */
+    const finalizeStaleTransfers = async () => {
+      for (const transfer of ongoingTransfers) {
+        if (cancelStaleTransfersFinalization) break
 
-        if (startedTooLongAgo(ongoing)) {
-          const retriedStatus = await retryStatusVerification(ongoing)
-          const explorerLink = getExplorerLink(ongoing)
+        if (startedTooLongAgo(transfer)) {
+          const retriedStatus = await retryStatusVerification(transfer)
+          const explorerLink = getExplorerLink(transfer)
 
-          remove(ongoing.id)
+          remove(transfer.id)
           addCompletedTransfer({
-            id: ongoing.id,
+            id: transfer.id,
             result: TxStatus.Undefined,
-            sourceToken: ongoing.sourceToken,
-            destinationToken: ongoing.destinationToken,
-            sourceChain: ongoing.sourceChain,
-            destChain: ongoing.destChain,
-            sourceAmount: ongoing.sourceAmount,
-            destinationAmount: ongoing.destinationAmount,
-            sourceTokenUSDValue: ongoing.sourceTokenUSDValue ?? 0,
-            destinationTokenUSDValue: ongoing.destinationTokenUSDValue ?? 0,
-            fees: ongoing.fees,
-            bridgingFee: ongoing.bridgingFee,
-            sender: ongoing.sender,
-            recipient: ongoing.recipient,
-            date: ongoing.date,
+            sourceToken: transfer.sourceToken,
+            destinationToken: transfer.destinationToken,
+            sourceChain: transfer.sourceChain,
+            destChain: transfer.destChain,
+            sourceAmount: transfer.sourceAmount,
+            destinationAmount: transfer.destinationAmount,
+            sourceTokenUSDValue: transfer.sourceTokenUSDValue ?? 0,
+            destinationTokenUSDValue: transfer.destinationTokenUSDValue ?? 0,
+            fees: transfer.fees,
+            bridgingFee: transfer.bridgingFee,
+            sender: transfer.sender,
+            recipient: transfer.recipient,
+            date: transfer.date,
             ...(explorerLink && { explorerLink }),
           } satisfies CompletedTransfer)
 
@@ -116,16 +120,16 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
               captureException(new Error(message), {
                 level: 'warning',
                 tags: { hook: 'useOngoingTransferCleaner' },
-                extra: { transfer: ongoing },
+                extra: { transfer: transfer },
               })
           }
         }
       }
     }
-    processCleaning()
+    finalizeStaleTransfers()
 
     return () => {
-      cancelCleaning = true
+      cancelStaleTransfersFinalization = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ongoingTransfers])
