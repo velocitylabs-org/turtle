@@ -1,11 +1,11 @@
+/** @type {import('next').NextConfig} */
 import { withSentryConfig } from '@sentry/nextjs'
+import withBundleAnalyzer from '@next/bundle-analyzer'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const vercelDomain = process.env.NEXT_PUBLIC_VERCEL_URL
 const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
 const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
-
-/** @type {import('next').NextConfig} */
 
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -22,6 +22,10 @@ const nextConfig = {
     })
 
     return config
+  },
+  experimental: {
+    webpackMemoryOptimizations: true,
+    optimizePackageImports: ['@heroui/theme', 'lucide-react'],
   },
   async headers() {
     return [
@@ -98,4 +102,4 @@ export default isProduction
         automaticVercelMonitors: true,
       },
     )
-  : nextConfig
+  : withBundleAnalyzer({ enabled: true, openAnalyzer: true })(nextConfig)
