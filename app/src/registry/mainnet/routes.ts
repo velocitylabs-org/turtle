@@ -23,6 +23,7 @@ export const routes: Route[] = [
     to: AssetHub.uid,
     sdk: 'SnowbridgeApi',
     tokens: [
+      EthereumTokens.ETH.id,
       EthereumTokens.WETH.id,
       EthereumTokens.WBTC.id,
       EthereumTokens.USDC.id,
@@ -51,19 +52,20 @@ export const routes: Route[] = [
     from: Ethereum.uid,
     to: Bifrost.uid,
     sdk: 'SnowbridgeApi',
-    tokens: [EthereumTokens.WETH.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
   },
   {
     from: Ethereum.uid,
     to: Hydration.uid,
     sdk: 'SnowbridgeApi',
-    tokens: [EthereumTokens.WETH.id, EthereumTokens.USDC.id, EthereumTokens.WBTC.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.USDC.id, EthereumTokens.WBTC.id],
   },
   {
     from: AssetHub.uid,
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
     tokens: [
+      EthereumTokens.ETH.id,
       EthereumTokens.WETH.id,
       EthereumTokens.WBTC.id,
       EthereumTokens.USDC.id,
@@ -182,7 +184,7 @@ export const routes: Route[] = [
     from: AssetHub.uid,
     to: Bifrost.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.WETH.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
+    tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
   },
   {
     from: AssetHub.uid,
@@ -232,13 +234,13 @@ export const routes: Route[] = [
     from: Bifrost.uid,
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.WETH.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
   },
   {
     from: Hydration.uid,
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.WETH.id],
+    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
   },
 
   // Para To System
@@ -252,12 +254,7 @@ export const routes: Route[] = [
     from: Bifrost.uid,
     to: AssetHub.uid,
     sdk: 'ParaSpellApi',
-    tokens: [
-      PolkadotTokens.DOT.id,
-      EthereumTokens.WETH.id,
-      PolkadotTokens.USDC.id,
-      PolkadotTokens.USDT.id,
-    ],
+    tokens: [PolkadotTokens.DOT.id, PolkadotTokens.USDC.id, PolkadotTokens.USDT.id],
   },
   {
     from: Centrifuge.uid,
@@ -274,6 +271,12 @@ export const routes: Route[] = [
   {
     from: Polimec.uid,
     to: AssetHub.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
+  },
+  {
+    from: Polimec.uid,
+    to: Hydration.uid,
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
   },
@@ -391,6 +394,12 @@ export const routes: Route[] = [
     to: Phala.uid,
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.PHA.id],
+  },
+  {
+    from: Hydration.uid,
+    to: Polimec.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.USDC.id, PolkadotTokens.USDT.id, PolkadotTokens.DOT.id],
   },
   /* {
     from: Interlay.uid,

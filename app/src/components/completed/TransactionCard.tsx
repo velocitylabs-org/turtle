@@ -1,14 +1,15 @@
-import Image from 'next/image'
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import Image from 'next/image'
+import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
 import Info from '../svg/Info'
 import Success from '../svg/Success'
-import { colors } from '../../../tailwind.config'
+import TokenLogo from '../TokenLogo'
 import { getSVGColor } from './TransactionDialog'
 
 export function getStatusIcon(status: TransferResult) {
@@ -47,8 +48,17 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-              <span>{tx.token.symbol}</span>
+              {isSwap(tx) ? (
+                <>
+                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
+                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={25} />
+                </>
+              ) : (
+                <>
+                  <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
+                  <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={25} />
+                </>
+              )}
             </div>
             <div
               className={cn(
@@ -135,7 +145,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
             <div>
               <span className="mr-1 font-semibold">Sorry!</span>We are not sure what happened{' '}
             </div>
-            <span className="text-xs font-normal leading-3 underline hover:text-turtle-background">
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-foreground">
               See more
             </span>
           </div>

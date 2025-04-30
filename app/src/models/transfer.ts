@@ -1,10 +1,10 @@
 import { Direction } from '@/services/transfer'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Environment } from '@/store/environmentStore'
-
+import { TRouterPlan } from '@paraspell/xcm-router'
+import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Chain } from './chain'
+import { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
 import { FromParachainTrackingResult } from './subscan'
-import { FromEthTrackingResult, FromAhToEthTrackingResult } from './snowbridge'
 import { Token } from './token'
 
 export interface RawTransfer {
@@ -14,7 +14,8 @@ export interface RawTransfer {
   destChain: Chain
   sender: string
   recipient: string
-  token: Token
+  sourceToken: Token
+  destinationToken?: Token
   date: Date
   crossChainMessageHash?: string
   parachainMessageId?: string
@@ -22,8 +23,10 @@ export interface RawTransfer {
 }
 export interface StoredTransfer extends RawTransfer {
   // Params
-  tokenUSDValue?: number
-  amount: string
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
   // Contextual
@@ -36,6 +39,39 @@ export interface StoredTransfer extends RawTransfer {
   status?: string
   // WithinPolkadot transfer is considered as finalized
   finalizedAt?: Date
+  swapInformation?: {
+    currentStep?: number
+    plan?: TRouterPlan
+  }
+}
+
+/** Version 0 of a stored transfer. It was used before introducing swaps. */
+export interface StoredTransferV0 extends RawTransferV0 {
+  tokenUSDValue?: number
+  amount: string
+  fees: AmountInfo
+  bridgingFee: AmountInfo | null
+  environment: Environment // to access context
+  sendResult?: toEthereum.SendResult | toPolkadot.SendResult
+  // A subscan unique Id shared accross chains to track ongoing transfers
+  uniqueTrackingId?: string
+  status?: string
+  // WithinPolkadot transfer is considered as finalized
+  finalizedAt?: Date
+}
+
+export interface RawTransferV0 {
+  /** Substrate extrinsic hash or Ethereum transaction hash */
+  id: string
+  sourceChain: Chain
+  destChain: Chain
+  sender: string
+  recipient: string
+  token: Token
+  date: Date
+  crossChainMessageHash?: string
+  parachainMessageId?: string
+  sourceChainExtrinsicIndex?: string
 }
 
 export interface OngoingTransferWithDirection extends RawTransfer {
@@ -59,6 +95,29 @@ export type TransferResult = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Und
 export type CompletedTransfer = {
   id: string
   result: TransferResult
+  sourceToken: Token
+  destinationToken?: Token
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
+  sourceChain: Chain
+  destChain: Chain
+  fees: AmountInfo
+  bridgingFee: AmountInfo | null
+  minTokenRecieved?: string
+  minTokenRecievedValue?: number
+  sender: string
+  recipient: string
+  date: Date
+  explorerLink?: string
+  errors?: string[]
+}
+
+/** Version 0 of a completed transfer. It was used before introducing swaps. */
+export type CompletedTransferV0 = {
+  id: string
+  result: TransferResult
   token: Token
   tokenUSDValue?: number
   sourceChain: Chain
@@ -74,6 +133,7 @@ export type CompletedTransfer = {
   explorerLink?: string
   errors?: string[]
 }
+
 export type TransfersByDate = Record<string, CompletedTransfer[]>
 
 export interface AmountInfo {
@@ -90,3 +150,15 @@ export type TabOptions = 'New' | 'Done'
 export type TxTrackingResult =
   // Snowbridge API | Snowbridge API | Subscan API
   FromEthTrackingResult | FromAhToEthTrackingResult | FromParachainTrackingResult
+
+type onChainBaseEvents = {
+  messageHash?: string
+  messageId?: string
+  extrinsicIndex?: string
+}
+
+export type PapiEvents = onChainBaseEvents
+
+export type PjsEvents = onChainBaseEvents & {
+  isBatchCompleted?: boolean
+}

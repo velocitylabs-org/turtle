@@ -85,12 +85,15 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
           remove(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,
-            result: retriedStatus,
-            token: ongoing.token,
+            result: TxStatus.Undefined,
+            sourceToken: ongoing.sourceToken,
+            destinationToken: ongoing.destinationToken,
             sourceChain: ongoing.sourceChain,
             destChain: ongoing.destChain,
-            amount: ongoing.amount,
-            tokenUSDValue: ongoing.tokenUSDValue ?? 0,
+            sourceAmount: ongoing.sourceAmount,
+            destinationAmount: ongoing.destinationAmount,
+            sourceTokenUSDValue: ongoing.sourceTokenUSDValue ?? 0,
+            destinationTokenUSDValue: ongoing.destinationTokenUSDValue ?? 0,
             fees: ongoing.fees,
             bridgingFee: ongoing.bridgingFee,
             sender: ongoing.sender,
@@ -112,7 +115,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
             shouldCaptureException &&
               captureException(new Error(message), {
                 level: 'warning',
-                tags: { hook: 'useOngoingTransfersCleaner' },
+                tags: { hook: 'useOngoingTransferCleaner' },
                 extra: { transfer: ongoing },
               })
           }

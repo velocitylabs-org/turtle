@@ -29,10 +29,10 @@ export default function Dropdown({ isOpen, dropdownRef, children }: DropdownProp
       {isOpen && (
         <motion.div
           ref={dropdownRef}
-          className="absolute left-0 right-0 top-0 z-20 max-h-[16.5rem] overflow-y-auto rounded-md border-1 border-turtle-level3 bg-white shadow-2xl"
+          className="absolute left-0 right-0 top-0 z-20 overflow-y-auto rounded-md border-1 border-turtle-level3 bg-white shadow-2xl"
           {...animationProps}
         >
-          <ul className="flex flex-col pt-2">{children}</ul>
+          {children}
         </motion.div>
       )}
     </AnimatePresence>

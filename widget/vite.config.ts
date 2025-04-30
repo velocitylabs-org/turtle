@@ -1,16 +1,27 @@
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import dts from 'vite-plugin-dts'
+import tailwindcss from 'tailwindcss'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
   plugins: [
     react(),
+    nodePolyfills(),
     dts({
       tsconfigPath: 'tsconfig.app.json',
-      rollupTypes: true,
+      outDir: 'dist',
+      insertTypesEntry: true,
     }),
+    cssInjectedByJsPlugin(),
   ],
+  css: {
+    postcss: {
+      plugins: [tailwindcss],
+    },
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
@@ -19,18 +30,70 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, './src/index.ts'),
-      name: 'turtle-widget',
-      formats: ['es', 'cjs'],
-      fileName: format => `turtle-widget.${format}.js`,
+      formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'react/jsx-runtime',
         },
       },
     },
+    emptyOutDir: true,
   },
 })
+
+// import { resolve } from 'node:path'
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react-swc'
+// import dts from 'vite-plugin-dts'
+// import tailwindcss from 'tailwindcss'
+// import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
+
+// export default defineConfig({
+//   plugins: [
+//     react(),
+//     dts({
+//       tsconfigPath: 'tsconfig.app.json',
+//       outDir: 'dist',
+//       insertTypesEntry: true,
+//       rollupTypes: true, // Add this to consolidate .d.ts files
+//     }),
+//     cssInjectedByJsPlugin(),
+//   ],
+//   css: {
+//     postcss: {
+//       plugins: [tailwindcss],
+//     },
+//   },
+//   resolve: {
+//     alias: {
+//       '@': resolve(__dirname, './src'),
+//     },
+//   },
+//   build: {
+//     lib: {
+//       entry: resolve(__dirname, './src/index.ts'),
+//       formats: ['es'],
+//       // fileName: () => 'turtle-widget.js',
+//     },
+//     rollupOptions: {
+//       external: ['react', 'react-dom', 'react/jsx-runtime'],
+//       output: {
+//         globals: {
+//           react: 'React',
+//           'react-dom': 'ReactDOM',
+//           'react/jsx-runtime': 'react/jsx-runtime',
+//         },
+//         manualChunks: undefined, // Disable code splitting
+//         inlineDynamicImports: true, // Inline dynamic imports
+//       },
+//     },
+//     emptyOutDir: true,
+//     sourcemap: true,
+//     minify: 'esbuild',
+//   },
+// })

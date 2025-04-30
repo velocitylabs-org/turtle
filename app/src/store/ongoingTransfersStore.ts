@@ -1,7 +1,8 @@
-import { StoredTransfer } from '@/models/transfer'
-import { parse, stringify } from 'flatted'
+import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { create } from 'zustand'
-import { persist, PersistStorage, StorageValue } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { STORE_VERSIONS } from './migrations/constants'
+import { migrateOngoingTransfers } from './migrations/ongoingTransfersMigration'
 
 interface State {
   // State
@@ -14,34 +15,10 @@ interface State {
   remove: (id: string) => void
 }
 
-// Serialization - Stringify function for BigInt
-function stringifyWithBigInt(value: StorageValue<StoredTransfer[]>) {
-  return stringify(value, (_key, val) => (typeof val === 'bigint' ? `${val}n` : val))
-}
-
-// Serialization - Parse function for BigInt
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function parseWithBigInt(value: any) {
-  return parse(value, (_key, val) => {
-    if (typeof val === 'string' && /^\d+n$/.test(val)) {
-      return BigInt(val.slice(0, -1))
-    }
-    return val
-  })
-}
-
-const storage: PersistStorage<StoredTransfer[]> = {
-  getItem: name => {
-    const storedValue = localStorage.getItem(name)
-    return storedValue ? parseWithBigInt(storedValue) : null
-  },
-  setItem: (name, value) => {
-    localStorage.setItem(name, stringifyWithBigInt(value))
-  },
-  removeItem: name => {
-    localStorage.removeItem(name)
-  },
-}
+const serializeFeeAmount = (fees: AmountInfo): AmountInfo => ({
+  ...fees,
+  amount: fees.amount.toString(),
+})
 
 export const useOngoingTransfersStore = create<State>()(
   persist(
@@ -52,61 +29,72 @@ export const useOngoingTransfersStore = create<State>()(
       // Actions
       addOrUpdate: newOngoingTransfer => {
         if (!newOngoingTransfer) return
+
+        const persistableTransfer = {
+          ...newOngoingTransfer,
+          fees: serializeFeeAmount(newOngoingTransfer.fees),
+          ...(newOngoingTransfer.bridgingFee && {
+            bridgingFee: serializeFeeAmount(newOngoingTransfer.bridgingFee),
+          }),
+          swapInformation: undefined, // set to undefined for now to avoid circular references. It's not used at the moment for 1 click swaps.
+        }
+
+        console.log('Adding or updating transfer', persistableTransfer)
         set(state => {
-          // Update it if it's already present
-          if (state.transfers.some(transfer => transfer.id === newOngoingTransfer.id)) {
+          const transferExists = state.transfers.some(
+            transfer => transfer.id === persistableTransfer.id,
+          )
+
+          if (transferExists) {
             return {
-              transfers: state.transfers.map(tx =>
-                tx.id === newOngoingTransfer.id ? newOngoingTransfer : tx,
+              transfers: state.transfers.map(transfer =>
+                transfer.id === persistableTransfer.id ? persistableTransfer : transfer,
               ),
             }
           }
 
-          // Add it
           return {
-            transfers: [...state.transfers, newOngoingTransfer],
+            transfers: [...state.transfers, persistableTransfer],
           }
         })
       },
 
       updateUniqueId: (id: string, uniqueTrackingId: string) => {
         if (!id || !uniqueTrackingId) return
-        set(state => {
-          return {
-            transfers: state.transfers.map(transfer => {
-              if (transfer.id == id) {
-                transfer.uniqueTrackingId = uniqueTrackingId
-              }
-              return transfer
-            }),
-          }
-        })
+        set(state => ({
+          transfers: state.transfers.map(transfer =>
+            transfer.id === id ? { ...transfer, uniqueTrackingId } : transfer,
+          ),
+        }))
       },
+
       updateStatus: (id: string) => {
         if (!id) return
-        set(state => {
-          return {
-            transfers: state.transfers.map(transfer => {
-              if (transfer.id == id) {
-                transfer.status = `Arriving at ${transfer.destChain.name}`
-                transfer.finalizedAt = new Date()
-              }
-              return transfer
-            }),
-          }
-        })
+        set(state => ({
+          transfers: state.transfers.map(transfer =>
+            transfer.id === id
+              ? {
+                  ...transfer,
+                  status: `Arriving at ${transfer.destChain.name}`,
+                  finalizedAt: new Date(),
+                }
+              : transfer,
+          ),
+        }))
       },
 
       remove: id => {
         if (!id) return
-        return set(state => ({
+        set(state => ({
           transfers: state.transfers.filter(transfer => transfer.id !== id),
         }))
       },
     }),
     {
       name: 'turtle-ongoing-transactions',
-      storage,
+      storage: createJSONStorage(() => localStorage),
+      version: STORE_VERSIONS.ONGOING_TRANSFERS,
+      migrate: migrateOngoingTransfers,
     },
   ),
 )
