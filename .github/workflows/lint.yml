@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./app
+        working-directory: .
 
     steps:
       - name: Check out Git repository
@@ -39,7 +39,7 @@ jobs:
         run: pnpm i
 
       - name: Running linter
-        run: pnpm lint
+        run: pnpm run lint
 
       - name: Running Prettier check
-        run: pnpm format-check
+        run: pnpm run format-check

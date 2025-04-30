@@ -13,6 +13,15 @@
     "dev": {
       "persistent": true,
       "cache": false
+    },
+    "lint": {
+      "cache": false
+    },
+    "format-check": {
+      "cache": false
+    },
+    "test": {
+      "cache": false
     }
   }
 }
