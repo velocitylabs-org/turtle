@@ -46,7 +46,13 @@ export const routes: Route[] = [
     from: Ethereum.uid,
     to: Moonbeam.uid,
     sdk: 'SnowbridgeApi',
-    tokens: [EthereumTokens.WETH.id, EthereumTokens.WBTC.id],
+    tokens: [
+      EthereumTokens.ETH.id,
+      EthereumTokens.USDC.id,
+      EthereumTokens.USDT.id,
+      EthereumTokens.WETH.id,
+      EthereumTokens.WBTC.id,
+    ],
   },
   {
     from: Ethereum.uid,
@@ -241,6 +247,18 @@ export const routes: Route[] = [
     to: Ethereum.uid,
     sdk: 'ParaSpellApi',
     tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
+  },
+  {
+    from: Moonbeam.uid,
+    to: Ethereum.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [
+      EthereumTokens.ETH.id,
+      EthereumTokens.USDC.id,
+      EthereumTokens.USDT.id,
+      EthereumTokens.WETH.id,
+      EthereumTokens.WBTC.id,
+    ],
   },
 
   // Para To System
