@@ -5,7 +5,6 @@ import { AmountInfo } from '@/models/transfer'
 import { cn } from '@/utils/helper'
 import { toAmountInfo, Direction, formatAmount, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
-import { FC } from 'react'
 import { colors } from '../../tailwind.config'
 import { spinnerSize } from './Button'
 import Delayed from './Delayed'
@@ -23,6 +22,8 @@ interface TxSummaryProps {
   canPayFees: boolean
   canPayAdditionalFees: boolean
   className?: string
+  exceedsTransferableBalance: boolean
+  applyTransferableBalance: () => void
 }
 
 const animationConfig = {
@@ -35,7 +36,7 @@ const animationConfig = {
   exit: { opacity: 0, height: 0, transition: { duration: 0.2 } },
 }
 
-const TxSummary: FC<TxSummaryProps> = ({
+const TxSummary = ({
   loading,
   tokenAmount,
   fees,
@@ -45,7 +46,9 @@ const TxSummary: FC<TxSummaryProps> = ({
   canPayFees,
   canPayAdditionalFees,
   className,
-}) => {
+  exceedsTransferableBalance,
+  applyTransferableBalance,
+}: TxSummaryProps) => {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
@@ -78,6 +81,21 @@ const TxSummary: FC<TxSummaryProps> = ({
 
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
+
+    const exceedsTransferableBalanceInFees = !!(
+      exceedsTransferableBalance &&
+      transferAmount?.token?.id &&
+      fees?.token?.id &&
+      transferAmount.token.id === fees.token.id
+    )
+
+    const exceedsTransferableBalanceInBridgingFee = !!(
+      exceedsTransferableBalance &&
+      !exceedsTransferableBalanceInFees &&
+      transferAmount?.token?.id &&
+      bridgingFee?.token?.id &&
+      transferAmount.token.id === bridgingFee.token.id
+    )
 
     return (
       <div className={cn('tx-summary p-0 pt-0', className)}>
@@ -163,37 +181,17 @@ const TxSummary: FC<TxSummaryProps> = ({
             )}
           </div>
 
-          {!canPayFees && fees ? (
-            <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
-              <ExclamationMark
-                width={16}
-                height={16}
-                fill={colors['turtle-foreground']}
-                className="mr-2"
-              />
-              <span>You don&apos;t have enough {fees.token.symbol}</span>
-            </div>
-          ) : !canPayAdditionalFees && bridgingFee ? (
-            <div className="mx-auto flex w-fit items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
-              <ExclamationMark
-                width={16}
-                height={16}
-                fill={colors['turtle-foreground']}
-                className="mr-2"
-              />
-              <span>You don&apos;t have enough {bridgingFee.token.symbol}</span>
-            </div>
-          ) : canPayFees && isAmountTooLow ? (
-            <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
-              <ExclamationMark
-                width={20}
-                height={20}
-                fill={colors['turtle-foreground']}
-                className="mr-3"
-              />
-              <div className="text-small">The amount is a bit too low to justify the fees</div>
-            </div>
-          ) : null}
+          {/* Display warning messages if needed */}
+          {displayWarningMessage({
+            fees,
+            bridgingFee,
+            canPayFees,
+            canPayAdditionalFees,
+            exceedsTransferableBalanceInFees,
+            exceedsTransferableBalanceInBridgingFee,
+            isAmountTooLow,
+            applyTransferableBalance,
+          })}
         </div>
       </div>
     )
@@ -207,3 +205,115 @@ const TxSummary: FC<TxSummaryProps> = ({
 }
 
 export default TxSummary
+
+function displayWarningMessage(params: {
+  fees?: AmountInfo | null
+  bridgingFee?: AmountInfo | null
+  canPayFees: boolean
+  canPayAdditionalFees: boolean
+  exceedsTransferableBalanceInFees: boolean
+  exceedsTransferableBalanceInBridgingFee: boolean
+  isAmountTooLow: boolean | null
+  applyTransferableBalance: () => void
+}) {
+  const {
+    fees,
+    bridgingFee,
+    canPayFees,
+    canPayAdditionalFees,
+    exceedsTransferableBalanceInFees,
+    exceedsTransferableBalanceInBridgingFee,
+    isAmountTooLow,
+    applyTransferableBalance,
+  } = params
+
+  if (fees) {
+    if (!canPayFees) {
+      return (
+        <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+          <ExclamationMark
+            width={16}
+            height={16}
+            fill={colors['turtle-foreground']}
+            className="mr-2"
+          />
+          <span>You don&apos;t have enough {fees.token.symbol}</span>
+        </div>
+      )
+    }
+
+    if (exceedsTransferableBalanceInFees && canPayFees) {
+      return (
+        <div
+          role="button"
+          onClick={applyTransferableBalance}
+          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs"
+        >
+          <ExclamationMark
+            width={16}
+            height={16}
+            fill={colors['turtle-foreground']}
+            className="mr-2"
+          />
+          <span>
+            We need some of that {fees.token.symbol} to pay fees
+            <span className="ml-1 underline"> Ok</span>
+          </span>
+        </div>
+      )
+    }
+  }
+
+  if (bridgingFee) {
+    if (!canPayAdditionalFees) {
+      return (
+        <div className="mx-auto flex w-fit items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+          <ExclamationMark
+            width={16}
+            height={16}
+            fill={colors['turtle-foreground']}
+            className="mr-2"
+          />
+          <span>You don&apos;t have enough {bridgingFee.token.symbol}</span>
+        </div>
+      )
+    }
+
+    if (exceedsTransferableBalanceInBridgingFee && canPayAdditionalFees) {
+      return (
+        <div
+          role="button"
+          onClick={applyTransferableBalance}
+          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs"
+        >
+          <ExclamationMark
+            width={16}
+            height={16}
+            fill={colors['turtle-foreground']}
+            className="mr-2"
+          />
+          <span>
+            We need some of that {bridgingFee.token.symbol} to pay fees
+            <span className="ml-1 underline"> Ok</span>
+          </span>
+        </div>
+      )
+    }
+  }
+
+  if (canPayFees && !exceedsTransferableBalanceInFees && isAmountTooLow) {
+    return (
+      <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
+        <ExclamationMark
+          width={16}
+          height={16}
+          fill={colors['turtle-foreground']}
+          className="mr-2"
+        />
+        <div className="text-small">The amount is a bit too low to justify the fees</div>
+      </div>
+    )
+  }
+
+  return
+}

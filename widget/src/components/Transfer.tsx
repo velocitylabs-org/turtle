@@ -119,6 +119,8 @@ const Transfer: FC = () => {
     refetchFees,
     transferStatus,
     isLoadingOutputAmount,
+    exceedsTransferableBalance,
+    applyTransferableBalance,
   } = useTransferForm()
 
   const {
@@ -215,7 +217,8 @@ const Transfer: FC = () => {
     !loadingFees &&
     canPayFees &&
     canPayBridgingFee &&
-    !isLoadingOutputAmount
+    !isLoadingOutputAmount &&
+    !exceedsTransferableBalance
 
   const sourceChainOptions = getAllowedSourceChains()
 
@@ -251,6 +254,18 @@ const Transfer: FC = () => {
     }),
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
   )
+
+  const sourceTokenAmountErrorMessage = useMemo(() => {
+    if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
+    if (sourceTokenAmountError) return sourceTokenAmountError
+    if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
+    return undefined
+  }, [
+    errors.sourceTokenAmount?.amount?.message,
+    sourceTokenAmountError,
+    exceedsTransferableBalance,
+    fees,
+  ])
 
   return (
     <form
@@ -291,7 +306,7 @@ const Transfer: FC = () => {
                         value: tokenField.value?.amount ?? null,
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                        error: errors.sourceTokenAmount?.amount?.message || sourceTokenAmountError,
+                        error: sourceTokenAmountErrorMessage,
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
                           <Button
@@ -483,6 +498,8 @@ const Transfer: FC = () => {
           canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+          exceedsTransferableBalance={exceedsTransferableBalance}
+          applyTransferableBalance={applyTransferableBalance}
         />
       )}
 

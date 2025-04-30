@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { mainnet } from 'viem/chains'
 import { switchChain } from '@wagmi/core'
 import { schema } from '@/models/schemas'
@@ -267,6 +267,74 @@ const useTransferForm = () => {
     else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
 
+  // Unlike canPayFees and canPayAdditionalFees, which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
+  // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
+  const exceedsTransferableBalance = useMemo(() => {
+    const hasFees = Boolean(fees?.token?.id && fees?.amount)
+    const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
+    const hasBalance = Boolean(balanceData?.formatted)
+    const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+    if (!hasTokenAmount || !hasBalance) return false
+
+    const transferToken = sourceTokenAmount!.token!.id
+    const transferAmount = sourceTokenAmount!.amount!
+    const balanceAmount = Number(balanceData!.formatted)
+    let totalFeesAmount = 0
+
+    // We have regular fees in the same token as the transfer
+    if (hasFees && fees!.token!.id === transferToken) {
+      totalFeesAmount += toHuman(fees!.amount, fees!.token)
+    }
+    // We have bridging fees in the same token as the transfer, This applies whether we have regular fees
+    if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
+      totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
+    }
+    // If we have no fees at all, there's no risk of exceeding transferable balance
+    if (totalFeesAmount === 0) return false
+
+    // Check if the transfer amount plus all applicable fees exceeds the available balance
+    return transferAmount + totalFeesAmount > balanceAmount
+  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
+
+  const applyTransferableBalance = useCallback(() => {
+    if (exceedsTransferableBalance && sourceTokenAmount?.token) {
+      const transferToken = sourceTokenAmount.token.id
+      const hasFees = Boolean(fees?.token?.id && fees?.amount)
+      const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+      let totalFeesAmount = 0
+
+      // We have regular fees in the same token as the transfer
+      if (hasFees && fees!.token!.id === transferToken) {
+        totalFeesAmount += toHuman(fees!.amount, fees!.token)
+      }
+      // We have bridging fees in the same token as the transfer
+      if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
+        totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
+      }
+
+      const balanceAmount = Number(balanceData!.formatted)
+      let newAmount = balanceAmount - totalFeesAmount
+      if (newAmount < 0) newAmount = 0 // Prevent negative values
+
+      setValue(
+        'sourceTokenAmount',
+        {
+          token: sourceTokenAmount.token,
+          // Parse as number, then format to our display standard, then parse again as number
+          amount: Number(formatAmount(newAmount, 'Longer')),
+        },
+        { shouldValidate: true },
+      )
+    }
+  }, [
+    exceedsTransferableBalance,
+    sourceTokenAmount?.token,
+    bridgingFee,
+    fees,
+    balanceData,
+    setValue,
+  ])
+
   // reset token amount
   useEffect(() => {
     if (tokenId)
@@ -400,6 +468,9 @@ const useTransferForm = () => {
 
     // Transfer status
     transferStatus,
+
+    exceedsTransferableBalance,
+    applyTransferableBalance,
   }
 }
 

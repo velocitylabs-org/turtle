@@ -1,5 +1,5 @@
 import SearchIcon from '@/assets/svg/SearchIcon'
-import { colors } from 'tailwind.config'
+import { colors } from '../../tailwind.config'
 
 interface SearchBarProps {
   placeholder: string
