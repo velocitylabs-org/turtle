@@ -489,6 +489,12 @@ export const routes: Route[] = [
   },
   {
     from: Mythos.uid,
+    to: AssetHub.uid,
+    sdk: 'ParaSpellApi',
+    tokens: [PolkadotTokens.MYTH.id],
+  },
+  {
+    from: Mythos.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
     tokens: [EthereumTokens.MYTH.id],
