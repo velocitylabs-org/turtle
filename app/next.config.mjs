@@ -61,7 +61,7 @@ const nextConfig = {
 // Therefore, to avoid these issues during development, Sentry initialization is skipped when running locally.
 // In production, builds should be done without the `--turbo` flag, so that Sentry functions correctly.
 // For more details, see: https://github.com/getsentry/sentry-javascript/issues/8105
-export default isProduction
+const config = isProduction
   ? withSentryConfig(
       nextConfig,
       {
@@ -102,4 +102,8 @@ export default isProduction
         automaticVercelMonitors: true,
       },
     )
-  : withBundleAnalyzer({ enabled: true, openAnalyzer: true })(nextConfig)
+  : nextConfig
+
+export default withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true', openAnalyzer: true })(
+  config,
+)
