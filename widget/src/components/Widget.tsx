@@ -35,7 +35,7 @@ const Widget = ({ theme }: { theme?: WidgetTheme }) => {
             >
               <div className="animation-bounce relative m-1 cursor-pointer rounded-lg border p-3">
                 {ongoingTransfers.length > 0 && !isHistoryTabSelected && (
-                  <div className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-turtle-secondary bg-turtle-background text-foreground">
+                  <div className="text-foreground absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-turtle-secondary bg-turtle-background">
                     <span className="text-xs">{ongoingTransfers.length}</span>
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turtle-secondary-dark opacity-25" />
                   </div>
