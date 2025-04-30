@@ -12,10 +12,17 @@ import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
+import { wait } from '@/utils/datetime'
 import { isProduction } from '@/utils/env'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
-import { createTransferTx, dryRun, DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
+import {
+  createTransferTx,
+  dryRun,
+  DryRunResult,
+  isExistentialDepositMetAfterTransfer,
+  moonbeamTransfer,
+} from '@/utils/paraspellTransfer'
 import { extractPjsEvents } from '@/utils/pjs'
 import { isSameToken } from '@/utils/token'
 import {
@@ -31,11 +38,10 @@ import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
+import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-import useCompletedTransfers from './useCompletedTransfers'
-import { wait } from '@/utils/datetime'
 type TransferEvent =
   | { type: 'pjs'; eventData: ISubmittableResult }
   | { type: 'papi'; eventData: TxEvent }
@@ -129,6 +135,10 @@ const useParaspellApi = () => {
     const validationResult = await validateTransfer(params)
     if (validationResult.type === 'Supported' && !validationResult.success)
       throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
+
+    const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+    if (!isExistentialDepositMet)
+      throw new Error('Transfer failed: existential deposit will not be met.')
 
     const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
