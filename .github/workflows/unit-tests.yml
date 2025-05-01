@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./app
+        working-directory: .
 
     steps:
       - name: Check out Git repository
@@ -37,4 +37,4 @@ jobs:
         run: pnpm i
 
       - name: Run Jest tests
-        run: pnpm test
+        run: pnpm run test --filter=app

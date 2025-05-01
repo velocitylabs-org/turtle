@@ -1,0 +1,28 @@
+{
+  "name": "turle-monorepo",
+  "description": "Turtle Widget – Seamless, trustless cross-chain transfers made easy.",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format-check": "turbo run format-check",
+    "start": "turbo run start",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.0",
+    "typescript": "5.8.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.0.10",
+      "@types/react-dom": "19.0.4"
+    }
+  }
+}

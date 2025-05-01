@@ -1,14 +1,17 @@
+/** @type {import('next').NextConfig} */
 import { withSentryConfig } from '@sentry/nextjs'
+import withBundleAnalyzer from '@next/bundle-analyzer'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const vercelDomain = process.env.NEXT_PUBLIC_VERCEL_URL
 const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
 const url = isDevelopment ? 'http://localhost:3000' : vercelUrl
 
-/** @type {import('next').NextConfig} */
-
 const isProduction = process.env.NODE_ENV === 'production'
+
 const nextConfig = {
+  // Related to this issue: https://github.com/vercel/next.js/issues/56887
+  ...(!isProduction && { outputFileTracingRoot: '/' }),
   webpack: config => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     config.experiments = { asyncWebAssembly: true, topLevelAwait: true, layers: true }
@@ -19,6 +22,10 @@ const nextConfig = {
     })
 
     return config
+  },
+  experimental: {
+    webpackMemoryOptimizations: true,
+    optimizePackageImports: ['@heroui/theme', 'lucide-react'],
   },
   async headers() {
     return [
@@ -54,7 +61,7 @@ const nextConfig = {
 // Therefore, to avoid these issues during development, Sentry initialization is skipped when running locally.
 // In production, builds should be done without the `--turbo` flag, so that Sentry functions correctly.
 // For more details, see: https://github.com/getsentry/sentry-javascript/issues/8105
-export default isProduction
+const config = isProduction
   ? withSentryConfig(
       nextConfig,
       {
@@ -96,3 +103,7 @@ export default isProduction
       },
     )
   : nextConfig
+
+export default withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true', openAnalyzer: true })(
+  config,
+)
