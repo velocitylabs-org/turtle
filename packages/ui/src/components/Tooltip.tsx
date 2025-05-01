@@ -7,7 +7,7 @@ import {
   Trigger as TooltipTrigger,
 } from '@radix-ui/react-tooltip'
 import clsx from 'clsx'
-import TooltipIcon from '../assets/svg/tooltip-icon.svg'
+import TooltipIcon from '@/assets/svg/tooltip-icon.svg'
 
 interface TooltipProps {
   showIcon?: boolean

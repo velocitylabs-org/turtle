@@ -47,10 +47,7 @@ export const createTransferTx = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(
-      recipient,
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
-    )
+    .address(recipient, destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : '')
     .build()
 }
 
@@ -107,10 +104,7 @@ export const dryRun = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(
-      recipient,
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
-    )
+    .address(recipient, destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : '')
     .dryRun(sender.address)
 }
 

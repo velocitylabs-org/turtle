@@ -51,7 +51,7 @@ const useTransferForm = () => {
     trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any),
     mode: 'onChange',
     delayError: 3000,
     defaultValues: initValues,

@@ -8,7 +8,6 @@ import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
 import { generateWidgetTheme, WidgetTheme } from '@/utils/theme'
-import { Tooltip as UITooltip } from '@velocitylabs-org/turtle-ui'
 
 export type TransferTab = 'New' | 'History'
 export type TransferTabOptions = TransferTab
@@ -26,7 +25,6 @@ const Widget = ({ theme }: { theme?: WidgetTheme }) => {
 
   return (
     <Providers>
-      <UITooltip></UITooltip>
       <div className="m-4 flex flex-col items-center justify-center p-6">
         <div className="relative">
           {(ongoingTransfers.length > 0 ||

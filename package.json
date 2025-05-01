@@ -8,7 +8,8 @@
     "lint": "turbo run lint",
     "format-check": "turbo run format-check",
     "start": "turbo run start",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "watch": "turbo run watch"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
