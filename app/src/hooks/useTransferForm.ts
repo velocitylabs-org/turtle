@@ -190,7 +190,7 @@ const useTransferForm = () => {
       // Reset destination and token only if the conditions above are not met
       setValue('sourceChain', newValue)
       setValue('destinationChain', null)
-      setValue('manualRecipient', { enabled: false, address: ''})
+      setValue('manualRecipient', { enabled: false, address: '' })
       setValue('sourceTokenAmount', { token: null, amount: null })
     },
     [setValue, sourceChain, destinationChain, sourceTokenAmount],
@@ -200,7 +200,7 @@ const useTransferForm = () => {
     async (newValue: Token | null) => {
       setValue('sourceTokenAmount', { token: newValue, amount: null })
       setValue('destinationChain', null)
-      setValue('manualRecipient', { enabled: false, address: ''})
+      setValue('manualRecipient', { enabled: false, address: '' })
       setValue('destinationTokenAmount', { token: null, amount: null })
     },
     [setValue],
