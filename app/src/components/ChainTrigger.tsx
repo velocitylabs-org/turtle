@@ -78,7 +78,7 @@ export default function ChainTrigger({
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
           <div
-            className={cn('flex items-center gap-1', !disabled && 'cursor-pointer')}
+            className={cn('flex shrink-0 items-center gap-1', !disabled && 'cursor-pointer')}
             onClick={handleClick}
           >
             {value ? (
@@ -91,7 +91,7 @@ export default function ChainTrigger({
                   className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
                 />
                 {shouldShowChainName && (
-                  <span className="text-nowrap" data-cy="chain-select-value">
+                  <span className="ml-1 text-nowrap" data-cy="chain-select-value">
                     {value.name}
                   </span>
                 )}
@@ -102,7 +102,14 @@ export default function ChainTrigger({
                 <span>Chain</span>
               </>
             )}
-            <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+            {(!manualRecipientInput?.enabled || manualRecipientInput?.address) && (
+              <ChevronDown
+                strokeWidth={0.2}
+                height={6}
+                width={14}
+                className="ml-1.5 mr-1 shrink-0"
+              />
+            )}
           </div>
 
           {ensAvatar && (
@@ -122,11 +129,11 @@ export default function ChainTrigger({
           {/* Manual Address Input */}
           {manualRecipientInput?.enabled && (
             <>
-              <VerticalDivider className={manualRecipientInput.address ? 'invisible' : 'visible'} />
+              {!manualRecipientInput.address && <VerticalDivider className="ml-1.5 mr-1" />}
               <input
                 type="text"
                 className={cn(
-                  'ml-1 h-[70%] w-full bg-transparent focus:border-0 focus:outline-none',
+                  'ml-0 h-[70%] w-full bg-transparent focus:border-0 focus:outline-none',
                   error && 'text-turtle-error',
                 )}
                 placeholder="Address"
