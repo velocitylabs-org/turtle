@@ -36,10 +36,10 @@ const styles = {
   primary: 'bg-turtle-primary border border-black disabled:opacity-30',
   secondary: 'bg-turtle-secondary border border-black disabled:opacity-30',
   outline:
-    'border-1 border-turtle-level3 bg-transparent disabled:border-turtle-level3 disabled:opacity-30',
+    'border border-turtle-level3 bg-transparent disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
   update:
-    'border-1 bg-turtle-secondary border border-turtle-secondary-dark text-turtle-secondary-dark disabled:opacity-100 disabled:bg-turtle-secondary-50 disabled:border-turtle-secondary-dark-40',
+    'border bg-turtle-secondary border border-turtle-secondary-dark text-turtle-secondary-dark disabled:opacity-100 disabled:bg-turtle-secondary-50 disabled:border-turtle-secondary-dark-40',
 }
 
 const sizeHeights: Record<Sizes, string> = {

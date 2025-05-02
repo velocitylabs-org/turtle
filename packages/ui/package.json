@@ -32,12 +32,12 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
+    "clsx": ">=2.1.1",
     "react": ">=18.3.1",
     "react-dom": ">=18.3.1",
-    "clsx": ">=2.1.1",
     "tailwind-merge": "^3.2.0"
   },
   "dependencies": {
-    "@radix-ui/react-tooltip": "^1.1.6"
+    "@radix-ui/react-tooltip": "^1.2.4"
   }
 }
