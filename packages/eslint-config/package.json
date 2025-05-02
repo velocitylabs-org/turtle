@@ -8,6 +8,7 @@
     "@types/react-dom": "19.0.4",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "eslint": "^9.25.1",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",

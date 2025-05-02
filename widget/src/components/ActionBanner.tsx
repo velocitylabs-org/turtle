@@ -25,15 +25,15 @@ const ActionBanner: FC<Props> = ({ disabled, header, text, image, btn }) => {
       <div className="justify-items flex flex-row items-center">
         {image}
         <div className="justify-left ml-3 flex flex-col">
-          <div className="text-left text-small font-bold text-turtle-foreground">{header}</div>
-          <div className="pb-2 text-left text-small text-turtle-foreground">
+          <div className="text-small text-left font-bold text-turtle-foreground">{header}</div>
+          <div className="text-small pb-2 text-left text-turtle-foreground">
             {text}
 
             {btn && (
               <button
                 type="button"
                 className={cn(
-                  'ml-1 text-left text-small text-turtle-foreground underline',
+                  'text-small ml-1 text-left text-turtle-foreground underline',
                   disabled ? 'cursor-not-allowed' : '',
                 )}
                 onClick={btn.onClick}
