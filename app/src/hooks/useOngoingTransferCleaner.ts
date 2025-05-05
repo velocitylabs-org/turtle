@@ -9,6 +9,8 @@ import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { TransferStatus } from '@snowbridge/api/dist/history_v2'
+import { getOcelloidsAgentApi, getSubscribableTransfers } from '@/utils/ocelloids'
+import { OcelloidsAgentApi, xcm } from '@sodazone/ocelloids-client'
 
 type ResultNotification = {
   message: string
@@ -41,7 +43,10 @@ const getNotification = (status: TxStatus): ResultNotification | undefined => {
   }
 }
 
-const retryStatusVerification = async (transfer: StoredTransfer): Promise<TxStatus> => {
+const retryStatusVerification = async (
+  transfer: StoredTransfer,
+  xcmAgent?: OcelloidsAgentApi<xcm.XcmInputs>,
+): Promise<TxStatus> => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
 
   switch (direction) {
@@ -58,7 +63,7 @@ const retryStatusVerification = async (transfer: StoredTransfer): Promise<TxStat
       return TxStatus.Undefined
     }
     case Direction.WithinPolkadot: {
-      // WIP
+      console.log('TO DO: implement Ocelloids subscribtion with history', xcmAgent)
       return TxStatus.Undefined
     }
     default:
@@ -79,11 +84,19 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
      * Marks them as completed with fallback status and notifies the user.
      */
     const finalizeStaleTransfers = async () => {
+      // make an helper from the following
+      let xcmAgent: OcelloidsAgentApi<xcm.XcmInputs> | undefined
+      const xcmTransfers = getSubscribableTransfers(ongoingTransfers)
+      if (xcmTransfers.length) {
+        xcmAgent = await getOcelloidsAgentApi()
+        if (!xcmAgent) throw new Error('Failed to initialize Ocelloids Agent')
+      }
+
       for (const transfer of ongoingTransfers) {
         if (cancelStaleTransfersFinalization) break
 
         if (startedTooLongAgo(transfer)) {
-          const retriedStatus = await retryStatusVerification(transfer)
+          const verifiedStatus = await retryStatusVerification(transfer, xcmAgent)
           const explorerLink = getExplorerLink(transfer)
 
           remove(transfer.id)
@@ -106,7 +119,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
             ...(explorerLink && { explorerLink }),
           } satisfies CompletedTransfer)
 
-          const notificationPayload = getNotification(retriedStatus)
+          const notificationPayload = getNotification(verifiedStatus)
           if (notificationPayload) {
             const { message, severity, shouldCaptureException } = notificationPayload
 
