@@ -40,3 +40,4 @@ next-env.d.ts
 
 # SWC Plugins directory
 .swc/
+.env

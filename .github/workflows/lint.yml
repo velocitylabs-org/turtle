@@ -51,6 +51,8 @@ jobs:
         run: pnpm i
 
       - name: Building packages
+        env:
+          DISABLE_SENTRY: true
         run: pnpm run build
       - name: Running linter
         run: pnpm run lint
