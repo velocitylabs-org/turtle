@@ -8,7 +8,6 @@ import {
 } from '@radix-ui/react-tooltip'
 import clsx from 'clsx'
 import TooltipIcon from '@/assets/svg/tooltip-icon.svg'
-import { useEffect, useRef } from 'react'
 
 interface TooltipProps {
   showIcon?: boolean
@@ -19,23 +18,24 @@ interface TooltipProps {
 }
 
 export const Tooltip = ({
-  showIcon = true,
   content,
   className,
+  showIcon = true,
   showArrow = true,
   children,
 }: TooltipProps) => {
   return (
-    <>
-      <TooltipProvider>
-        <TooltipRoot delayDuration={350}>
-          <TooltipTrigger>{children}</TooltipTrigger>
+    <TooltipProvider>
+      <TooltipRoot delayDuration={350}>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        {content && (
           <TooltipPortal>
             <TooltipContent
+              sideOffset={5}
               className={clsx(
-                'z-100 flex gap-1 rounded-[8px] bg-black text-white px-[9px] py-[4px] font-semibold',
-                'animate-in data-[state=closed]:animate-out data-[state=closed]:delay-100',
-                'data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 origin-[--radix-tooltip-content-transform-origin]',
+                'z-50 flex gap-1 rounded-[8px] bg-black text-white px-[9px] py-[2px]',
+                'animate-in data-[state=delayed-open]:duration-350 data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:delay-100',
+                'data-[state=closed]:fade-out-0 data-[state=closed]:duration-300 data-[state=closed]:zoom-out-95 origin-[--radix-tooltip-content-transform-origin]',
                 className,
               )}
             >
@@ -44,8 +44,8 @@ export const Tooltip = ({
               {showArrow && <TooltipArrow />}
             </TooltipContent>
           </TooltipPortal>
-        </TooltipRoot>
-      </TooltipProvider>
-    </>
+        )}
+      </TooltipRoot>
+    </TooltipProvider>
   )
 }

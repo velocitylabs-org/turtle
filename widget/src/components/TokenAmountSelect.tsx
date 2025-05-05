@@ -1,3 +1,4 @@
+import { Tooltip } from '@velocitylabs-org/turtle-ui'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
@@ -10,7 +11,6 @@ import Dropdown from './Dropdown'
 import ChevronDown from '@/assets/svg/ChevronDown'
 import TokenIcon from '@/assets/svg/TokenIcon'
 import { TokenLogo } from './TokenLogo'
-import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 const maxDollars = 100000000000 // 100B
