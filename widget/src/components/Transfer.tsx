@@ -10,7 +10,7 @@ import {
 } from '@/utils/routes'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import TokenAmountSelect from './TokenAmountSelect'
-import Button from './Button'
+import { Button } from '@velocitylabs-org/turtle-ui'
 import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
 import { SwapChains } from './SwapFromToChains'
 import { Chain } from '@/models/chain'
@@ -407,7 +407,6 @@ const Transfer: FC = () => {
         type="submit"
         loading={transferStatus !== 'Idle'}
         disabled={!isTransferAllowed}
-        cypressID="form-submit"
         status={transferStatus}
       />
     </form>

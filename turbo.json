@@ -14,7 +14,13 @@
       "persistent": true,
       "cache": false
     },
+    "watch": {
+      "dependsOn": ["^watch"],
+      "cache": false,
+      "persistent": true
+    },
     "lint": {
+      "dependsOn": ["^lint"],
       "cache": false
     },
     "format-check": {

@@ -1,3 +1,4 @@
+import { Tooltip } from '@velocitylabs-org/turtle-ui'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { Chain } from '@/models/chain'
@@ -10,7 +11,6 @@ import Dropdown from './Dropdown'
 import ChevronDown from '@/assets/svg/ChevronDown'
 import TokenIcon from '@/assets/svg/TokenIcon'
 import { TokenLogo } from './TokenLogo'
-import { Tooltip } from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 const maxDollars = 100000000000 // 100B
@@ -79,7 +79,7 @@ const TokenAmountSelect = forwardRef<HTMLDivElement, TokenAmountSelectProps>(
             ref={triggerRef}
             onClick={handleTriggerClick}
             className={cn(
-              'flex items-center justify-between rounded-md border-1 border-turtle-level3 bg-turtle-background px-3 text-sm',
+              'flex items-center justify-between rounded-md border border-turtle-level3 bg-turtle-background px-3 text-sm',
               !disabled && 'cursor-pointer',
               disabled && 'opacity-30',
               error && 'border-turtle-error',

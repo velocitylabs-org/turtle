@@ -1,4 +1,5 @@
 import { ComponentPropsWithoutRef } from 'react'
+import { Sizes } from '@/types/global'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
@@ -8,16 +9,24 @@ type LoadingIconProps = {
   strokeWidth?: number
   color?: string
   className?: string
+  size?: Sizes
 } & SvgProps
 
-const LoadingIcon: React.FC<LoadingIconProps> = ({
-  width = 34,
-  height = 24,
+const spinnerSize: Record<Sizes, number> = {
+  sm: 24,
+  md: 24,
+  lg: 40,
+}
+
+export const LoadingIcon = ({
+  size = 'md',
+  width = spinnerSize[size],
+  height = spinnerSize[size],
   color = '#001B04',
   strokeWidth = 1,
   className,
   ...props
-}) => (
+}: LoadingIconProps) => (
   <svg
     width={width}
     height={height}

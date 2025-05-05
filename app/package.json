@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "@velocitylabs-org/turtle-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -75,7 +75,7 @@
     "@galacticcouncil/api-augment": "^0.3.0",
     "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
-    "@turtle/typescript-config": "workspace:*",
+    "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.16.15",
     "@types/react": "19.0.10",

@@ -1,5 +1,5 @@
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-// eslint-disable-next-line import/named
+
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink } from '@/utils/explorer'
 import { NotificationSeverity, Notification } from '@/models/notification'

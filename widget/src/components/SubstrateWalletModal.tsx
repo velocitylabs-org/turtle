@@ -5,9 +5,8 @@ import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inj
 import { motion } from 'framer-motion'
 import { FC, useEffect, useState } from 'react'
 import { colors } from '../../tailwind.config'
-import Button, { spinnerSize } from './Button'
+import { Button, LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { Icon } from './Icon'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 const SubstrateWalletModal: FC = () => {
@@ -64,7 +63,7 @@ const SubstrateWalletModal: FC = () => {
   return (
     <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
-        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl border-1 border-black pb-4 focus:outline-none min-[460px]:max-w-[25rem]"
+        className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl border border-black pb-4 focus:outline-none min-[460px]:max-w-[25rem]"
         hideCloseButton={true}
       >
         {/* Header */}
@@ -92,12 +91,7 @@ const SubstrateWalletModal: FC = () => {
           {/* Loading */}
           {loading && (
             <div className="flex h-full w-full items-center justify-center">
-              <LoadingIcon
-                className="animate-spin"
-                width={spinnerSize['lg']}
-                height={spinnerSize['lg']}
-                color={colors['turtle-secondary']}
-              />
+              <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary']} />
             </div>
           )}
 

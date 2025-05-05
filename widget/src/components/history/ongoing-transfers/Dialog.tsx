@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Icon } from '@/components/Icon'
 import { colors } from '../../../../tailwind.config'
@@ -18,7 +19,6 @@ import { formatOngoingTransferDate } from '@/utils/datetime'
 import TransferEstimate from './OngoingTransferEstimate'
 import { getExplorerLink } from '@/utils/explorer'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
 
 export const OngoingTransferDialog = ({
   transfer,
@@ -118,8 +118,7 @@ export const OngoingTransferDialog = ({
                   {!isFinalTransferStep && (
                     <LoadingIcon
                       className="mr-2 animate-spin"
-                      width={24}
-                      height={24}
+                      size="md"
                       strokeWidth={5}
                       color={colors['turtle-secondary']}
                     />

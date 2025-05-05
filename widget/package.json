@@ -24,7 +24,6 @@
     "lint": "eslint .",
     "start": "vite preview",
     "format": "prettier --write .",
-    "format-check": "prettier --check .",
     "prepare": "husky"
   },
   "dependencies": {
@@ -51,6 +50,7 @@
     "ethers": "^6.13.5",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
+    "postcss-nesting": "^13.0.1",
     "polkadot-api": "^1.9.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -71,6 +71,8 @@
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
     "@vitejs/plugin-react-swc": "^3.8.0",
+    "@velocitylabs-org/turtle-eslint-config": "workspace:*",
+    "@velocitylabs-org/turtle-ui": "workspace:*",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.1",
@@ -98,7 +100,7 @@
   "peerDependencies": {
     "react": ">=18.3.1",
     "react-dom": ">=18.3.1",
-    "@polkadot/util": "^13.3.1",
-    "@polkadot/keyring": "^13.2.1"
+    "@polkadot/keyring": "^13.2.1",
+    "@polkadot/util": "^13.3.1"
   }
 }
