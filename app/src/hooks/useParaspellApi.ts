@@ -135,6 +135,12 @@ const useParaspellApi = () => {
     const validationResult = await validateTransfer(params)
     if (validationResult.type === 'Supported' && !validationResult.origin.success)
       throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
+    if (
+      validationResult.type === 'Supported' &&
+      validationResult.destination &&
+      !validationResult.destination.success
+    )
+      throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
 
     const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
     if (!isExistentialDepositMet)
