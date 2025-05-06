@@ -18,7 +18,6 @@ import {
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { getAccountId32 } from './address'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -33,7 +32,7 @@ export const createTransferTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
 
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
@@ -47,7 +46,7 @@ export const createTransferTx = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(recipient, destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : '')
+    .address(recipient)
     .build()
 }
 
@@ -104,8 +103,9 @@ export const dryRun = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(recipient, destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : '')
-    .dryRun(sender.address)
+    .address(recipient)
+    .senderAddress(sender.address)
+    .dryRun()
 }
 
 export const isExistentialDepositMetAfterTransfer = async (

@@ -133,8 +133,8 @@ const useParaspellApi = () => {
     setStatus('Validating')
 
     const validationResult = await validateTransfer(params)
-    if (validationResult.type === 'Supported' && !validationResult.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.failureReason}`)
+    if (validationResult.type === 'Supported' && !validationResult.origin.success)
+      throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
 
     const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
     if (!isExistentialDepositMet)
@@ -342,12 +342,14 @@ const useParaspellApi = () => {
       }
     } catch (e: unknown) {
       if (e instanceof Error && e.message.includes('DryRunApi is not available'))
-        return { type: 'Unsupported', success: false, failureReason: e.message }
+        return { type: 'Unsupported', origin: { success: false, failureReason: e.message } }
 
       return {
         type: 'Supported',
-        success: false,
-        failureReason: (e as Error).message,
+        origin: {
+          success: false,
+          failureReason: (e as Error).message,
+        },
       }
     }
   }
