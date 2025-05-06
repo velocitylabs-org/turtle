@@ -6,10 +6,9 @@ import { cn } from '@/utils/helper'
 import { toAmountInfo, Direction, formatAmount, toHuman } from '@/utils/transfer'
 import { AnimatePresence, motion } from 'framer-motion'
 import { colors } from '../../tailwind.config'
-import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import { ExclamationMark } from '@/assets/svg/ExclamationMark'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
+import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
 
 interface TxSummaryProps {
@@ -58,12 +57,7 @@ const TxSummary = ({
     if (loading) {
       return (
         <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
-          <LoadingIcon
-            className="animate-spin"
-            width={spinnerSize['lg']}
-            height={spinnerSize['lg']}
-            color={colors['turtle-secondary']}
-          />
+          <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary']} />
           <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">
             Loading fees
           </div>
@@ -230,7 +224,7 @@ function displayWarningMessage(params: {
   if (fees) {
     if (!canPayFees) {
       return (
-        <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+        <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
           <ExclamationMark
             width={16}
             height={16}
@@ -247,7 +241,7 @@ function displayWarningMessage(params: {
         <div
           role="button"
           onClick={applyTransferableBalance}
-          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs"
+          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs"
         >
           <ExclamationMark
             width={16}
@@ -267,7 +261,7 @@ function displayWarningMessage(params: {
   if (bridgingFee) {
     if (!canPayAdditionalFees) {
       return (
-        <div className="mx-auto flex w-fit items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+        <div className="mx-auto flex w-fit items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
           <ExclamationMark
             width={16}
             height={16}
@@ -284,7 +278,7 @@ function displayWarningMessage(params: {
         <div
           role="button"
           onClick={applyTransferableBalance}
-          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs"
+          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs"
         >
           <ExclamationMark
             width={16}
@@ -303,14 +297,16 @@ function displayWarningMessage(params: {
 
   if (canPayFees && !exceedsTransferableBalanceInFees && isAmountTooLow) {
     return (
-      <div className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
+      <div 
+      // className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] border border-turtle-secondary-dark-40 bg-turtle-secondary-transparent p-2"
+      className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-turtle-secondary-dark bg-turtle-secondary-transparent px-2 py-1 text-xs">
         <ExclamationMark
           width={16}
           height={16}
-          fill={colors['turtle-foreground']}
+          fill={colors['turtle-secondary-dark']}
           className="mr-2"
         />
-        <div className="text-small">The amount is a bit too low to justify the fees</div>
+        <div className="text-xs">The amount is a bit too low to justify the fees</div>
       </div>
     )
   }

@@ -14,6 +14,7 @@ import {
   TDryRunResult,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
+  verifyEdOnDestination,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -46,10 +47,7 @@ export const createTransferTx = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(
-      recipient,
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
-    )
+    .address(recipient, destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : '')
     .build()
 }
 
@@ -106,11 +104,24 @@ export const dryRun = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(
-      recipient,
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
-    )
+    .address(recipient, destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : '')
     .dryRun(sender.address)
+}
+
+export const isExistentialDepositMetAfterTransfer = async (
+  params: TransferParams,
+): Promise<boolean> => {
+  const destinationChainFromId = getParaSpellNode(params.destinationChain)
+  if (!destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
+
+  const currencyId = getParaspellToken(params.sourceToken, destinationChainFromId)
+
+  return await verifyEdOnDestination({
+    address: params.recipient,
+    currency: { ...currencyId, amount: params.sourceAmount },
+    node: destinationChainFromId as TNodeDotKsmWithRelayChains,
+    api: params.destinationChain.rpcConnection,
+  })
 }
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {

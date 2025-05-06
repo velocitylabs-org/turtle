@@ -1,7 +1,7 @@
 import { Chain } from '@/models/chain'
+import { Tooltip } from '@velocitylabs-org/turtle-ui'
 import { Token } from '@/models/token'
 import { FC } from 'react'
-import { Tooltip } from './Tooltip'
 import { cn } from '@/utils/helper'
 import { Icon } from './Icon'
 

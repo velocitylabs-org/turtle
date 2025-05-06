@@ -5,9 +5,8 @@ import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inj
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '../../tailwind.config'
-import Button, { spinnerSize } from './Button'
+import { Button, LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { Icon } from './Icon'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { ChevronLeft } from 'lucide-react'
 
@@ -147,7 +146,7 @@ export default function SubstrateWalletModal() {
         }}
       >
         {/* Header */}
-        <DialogHeader className="flex items-center justify-center rounded-t-4xl p-4">
+        <DialogHeader className="relative flex items-center justify-center rounded-t-4xl p-4">
           {currentView === 'accounts' && (
             <motion.div
               key={currentView}
@@ -193,8 +192,7 @@ export default function SubstrateWalletModal() {
               >
                 <LoadingIcon
                   className="animate-spin"
-                  width={spinnerSize['lg']}
-                  height={spinnerSize['lg']}
+                  size="lg"
                   color={colors['turtle-secondary']}
                 />
               </motion.div>

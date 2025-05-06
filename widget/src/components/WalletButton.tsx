@@ -1,9 +1,9 @@
+import { motion } from 'framer-motion'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { WalletType } from '@/models/chain'
 import { cn } from '@/utils/helper'
-import { motion } from 'framer-motion'
-import Button from './Button'
+import { Button } from '@velocitylabs-org/turtle-ui'
 
 interface WalletButtonProps {
   /** The wallet type of the chain. */

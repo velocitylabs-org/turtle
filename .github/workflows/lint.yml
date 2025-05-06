@@ -5,12 +5,12 @@ on:
     branches:
       - "**"
     paths:
-      - "app/**"
+      - "**"
   pull_request:
     branches:
       - "**"
     paths:
-      - "app/**"
+      - "**"
 
 jobs:
   run-lint-prettier:
@@ -18,9 +18,21 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./app
+        working-directory: .
 
     steps:
+
+      - name: Cache Node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm
+            ${{ github.workspace }}/.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Check out Git repository
         uses: actions/checkout@v4
 
@@ -38,8 +50,12 @@ jobs:
           CYPRESS_INSTALL_BINARY: 0 # This disables Cypress binary installation during pnpm install
         run: pnpm i
 
+      - name: Building packages
+        env:
+          DISABLE_SENTRY: true
+        run: pnpm run build
       - name: Running linter
-        run: pnpm lint
+        run: pnpm run lint
 
       - name: Running Prettier check
-        run: pnpm format-check
+        run: pnpm run format-check

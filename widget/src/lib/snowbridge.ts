@@ -135,6 +135,7 @@ export const getFeeEstimate = async (
           },
           sourceChain.chainId,
           context.registry,
+          token.address,
         )
         .then(x => x.totalFeeInDot)
       const feeTokenInDollars = (await getTokenPrice(PolkadotTokens.DOT))?.usd ?? 0

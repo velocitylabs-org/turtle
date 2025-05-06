@@ -9,7 +9,7 @@ import {
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import Button from './Button'
+import { Button } from '@velocitylabs-org/turtle-ui'
 import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
 import { SwapChains as SwapFromToChains } from './SwapFromToChains'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -512,7 +512,6 @@ const Transfer: FC = () => {
         type="submit"
         loading={transferStatus !== 'Idle'}
         disabled={!isTransferAllowed}
-        cypressID="form-submit"
         status={transferStatus}
       />
     </form>

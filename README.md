@@ -54,6 +54,41 @@ Don't forget to give the project a star. Thanks for your support!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- BUILDING -->
+
+## Building
+
+Turtle is gradually changing its structure to a monorepo handled by [Turborepo](https://turbo.build)
+
+### First things first
+
+`.env` files are local to the packages
+
+In the root of the project run: 
+
+`pnpm install`
+
+### How do I build and start the project
+
+`pnpm run build` or `pnpm run build --filter=<package-name>`
+
+then running the following command will serve what you've just built.
+
+`pnpm run start` or `pnpm run start --filter=<package-name>`
+
+### How do I run dev?
+
+`pnpm run dev` or `pnpm run dev --filter=<package-name>`
+
+`package-name` is always the name that's used in the `name` field of a `package.json`
+
+### How do I add a package?
+
+Packages can be added from the root directory but it's very important that a `filter` is specified, 
+as we do not want to add anything to the main `package.json` unless necessary for monorepo purposes.
+
+`pnpm add <package> --filter=<package-name>` 
+
 <!-- LICENSE -->
 
 ## License

@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Icon } from '@/components/Icon'
 import { colors } from '../../../../tailwind.config'
@@ -18,7 +19,6 @@ import { formatOngoingTransferDate } from '@/utils/datetime'
 import TransferEstimate from './OngoingTransferEstimate'
 import { getExplorerLink } from '@/utils/explorer'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
-import LoadingIcon from '@/assets/svg/LoadingIcon'
 import { SummaryRow } from '../completed-transfers/Dialog'
 
 export const OngoingTransferDialog = ({
@@ -66,7 +66,7 @@ export const OngoingTransferDialog = ({
                 src={transfer.sourceChain.logoURI}
                 width={22}
                 height={22}
-                className="rounded-full border border-turtle-secondary-dark bg-background"
+                className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
               />
               <div className="text-xs sm:text-sm">{transfer.sourceChain.name}</div>
             </div>
@@ -76,7 +76,7 @@ export const OngoingTransferDialog = ({
                 src={transfer.destChain.logoURI}
                 width={22}
                 height={22}
-                className="rounded-full border border-turtle-secondary-dark bg-background"
+                className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
               />
               <div className="text-xs sm:text-sm">{transfer.destChain.name}</div>
             </div>
@@ -132,8 +132,7 @@ export const OngoingTransferDialog = ({
                   {!isFinalTransferStep && (
                     <LoadingIcon
                       className="mr-2 animate-spin"
-                      width={24}
-                      height={24}
+                      size="md"
                       strokeWidth={5}
                       color={colors['turtle-secondary']}
                     />

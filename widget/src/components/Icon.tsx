@@ -19,7 +19,7 @@ export const Icon: FC<IconProps> = ({ width, height, src, className }) => {
       src={src}
       width={width}
       height={height}
-      className={cn('rounded-full border-1 bg-cover bg-center', className)}
+      className={cn('rounded-full border bg-cover bg-center', className)}
     />
   )
 }
