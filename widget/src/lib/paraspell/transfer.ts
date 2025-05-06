@@ -45,9 +45,9 @@ export const createTransferTx = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(
-      recipient,
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+    .address(recipient)
+    .senderAddress(
+      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : sender.address,
     )
     .build()
 }
@@ -103,11 +103,11 @@ export const dryRun = async (
     .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
     .to(destinationChainFromId)
     .currency({ ...currencyId, amount: sourceAmount })
-    .address(
-      recipient,
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
+    .address(recipient)
+    .senderAddress(
+      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : sender.address,
     )
-    .dryRun(sender.address)
+    .dryRun()
 }
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
