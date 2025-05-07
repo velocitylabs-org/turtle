@@ -88,7 +88,9 @@ export default function SubstrateWalletModal() {
   }, [isModalOpen])
 
   const filteredAccounts = accounts.filter(account =>
-    type === 'SubstrateEVM' ? account.type === 'ethereum' : account.type === 'sr25519',
+    type === 'SubstrateEVM'
+      ? account.type === 'ethereum'
+      : ['sr25519', 'ed25519'].includes(account.type ?? ''),
   )
 
   const heightAnimationProps = useMemo(
