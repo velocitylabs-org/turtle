@@ -160,7 +160,7 @@ function renderImage(logoURI?: string, originLogoURI?: string) {
   if (!logoURI) return null
 
   return (
-    <div className="mr-1 flex-shrink-0 relative" style={{ top: originLogoURI ? 1: 2 }}>
+    <div className="relative mr-1 flex-shrink-0" style={{ top: originLogoURI ? 1 : 2 }}>
       <TokenAndOriginLogos tokenURI={logoURI} originURI={originLogoURI} size={20} />
     </div>
   )

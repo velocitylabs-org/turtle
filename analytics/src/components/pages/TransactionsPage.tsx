@@ -33,25 +33,23 @@ export default function TransactionsPage() {
     logoURI: chain.logoURI,
   }))
 
-  const tokenSourceOptions = tokens
-    .map((token: Token) => {
-      const logoData = getLogoAndOriginURI(token.id, sourceChainUid[0])
-      return {
-        value: token.id,
-        label: token.symbol,
-        ...logoData,
-      }
-    })
+  const tokenSourceOptions = tokens.map((token: Token) => {
+    const logoData = getLogoAndOriginURI(token.id, sourceChainUid[0])
+    return {
+      value: token.id,
+      label: token.symbol,
+      ...logoData,
+    }
+  })
 
-  const tokenDestinationOptions = tokens
-    .map((token: Token) => {
-      const logoData = getLogoAndOriginURI(token.id, destinationChainUid[0])
-      return {
-        value: token.id,
-        label: token.symbol,
-        ...logoData,
-      }
-    })
+  const tokenDestinationOptions = tokens.map((token: Token) => {
+    const logoData = getLogoAndOriginURI(token.id, destinationChainUid[0])
+    return {
+      value: token.id,
+      label: token.symbol,
+      ...logoData,
+    }
+  })
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -274,12 +272,12 @@ export default function TransactionsPage() {
 
 function getLogoAndOriginURI(tokenId: string, chainUid?: string) {
   const token = tokensById[tokenId]
-  const chain = chainsByUid[chainUid|| '']
+  const chain = chainsByUid[chainUid || '']
 
   if (chain) {
     return {
       logoURI: token.logoURI,
-      originLogoURI: getOriginBadge(token, chain)?.logoURI
+      originLogoURI: getOriginBadge(token, chain)?.logoURI,
     }
   }
 

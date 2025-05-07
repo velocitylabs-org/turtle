@@ -3,7 +3,16 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import cn from '@/utils/cn'
 import { differenceInCalendarDays } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import * as React from 'react'
+import {
+  Dispatch,
+  HTMLAttributes,
+  ReactNode,
+  SetStateAction,
+  TableHTMLAttributes,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import {
   DayPicker,
   labelNext,
@@ -49,12 +58,12 @@ function Calendar({
   numberOfMonths,
   ...props
 }: CalendarProps) {
-  const [navView, setNavView] = React.useState<NavView>('days')
-  const [displayYears, setDisplayYears] = React.useState<{
+  const [navView, setNavView] = useState<NavView>('days')
+  const [displayYears, setDisplayYears] = useState<{
     from: number
     to: number
   }>(
-    React.useMemo(() => {
+    useMemo(() => {
       const currentYear = new Date().getFullYear()
       return {
         from: currentYear - Math.floor(yearRange / 2 - 1),
@@ -189,7 +198,6 @@ function Calendar({
         ),
         MonthGrid: ({ className, children, ...props }) => (
           <MonthGrid
-            children={children}
             className={className}
             displayYears={displayYears}
             startMonth={startMonth}
@@ -197,7 +205,9 @@ function Calendar({
             navView={navView}
             setNavView={setNavView}
             {...props}
-          />
+          >
+            {children}
+          </MonthGrid>
         ),
       }}
       numberOfMonths={columnsDisplayed}
@@ -223,7 +233,7 @@ function Nav({
   startMonth?: Date
   endMonth?: Date
   displayYears: { from: number; to: number }
-  setDisplayYears: React.Dispatch<React.SetStateAction<{ from: number; to: number }>>
+  setDisplayYears: Dispatch<SetStateAction<{ from: number; to: number }>>
   onPrevClick?: (date: Date) => void
   onNextClick?: (date: Date) => void
 }) {
@@ -251,7 +261,7 @@ function Nav({
     return !nextMonth
   })()
 
-  const handlePreviousClick = React.useCallback(() => {
+  const handlePreviousClick = useCallback(() => {
     if (!previousMonth) return
     if (navView === 'years') {
       setDisplayYears(prev => ({
@@ -265,7 +275,7 @@ function Nav({
     onPrevClick?.(previousMonth)
   }, [previousMonth, goToMonth])
 
-  const handleNextClick = React.useCallback(() => {
+  const handleNextClick = useCallback(() => {
     if (!nextMonth) return
     if (navView === 'years') {
       setDisplayYears(prev => ({
@@ -326,9 +336,9 @@ function CaptionLabel({
 }: {
   showYearSwitcher?: boolean
   navView: NavView
-  setNavView: React.Dispatch<React.SetStateAction<NavView>>
+  setNavView: Dispatch<SetStateAction<NavView>>
   displayYears: { from: number; to: number }
-} & React.HTMLAttributes<HTMLSpanElement>) {
+} & HTMLAttributes<HTMLSpanElement>) {
   if (!showYearSwitcher) return <span {...props}>{children}</span>
   return (
     <Button
@@ -353,13 +363,13 @@ function MonthGrid({
   ...props
 }: {
   className?: string
-  children: React.ReactNode
+  children: ReactNode
   displayYears: { from: number; to: number }
   startMonth?: Date
   endMonth?: Date
   navView: NavView
-  setNavView: React.Dispatch<React.SetStateAction<NavView>>
-} & React.TableHTMLAttributes<HTMLTableElement>) {
+  setNavView: Dispatch<SetStateAction<NavView>>
+} & TableHTMLAttributes<HTMLTableElement>) {
   if (navView === 'years') {
     return (
       <YearGrid
@@ -394,9 +404,9 @@ function YearGrid({
   displayYears: { from: number; to: number }
   startMonth?: Date
   endMonth?: Date
-  setNavView: React.Dispatch<React.SetStateAction<NavView>>
+  setNavView: Dispatch<SetStateAction<NavView>>
   navView: NavView
-} & React.HTMLAttributes<HTMLDivElement>) {
+} & HTMLAttributes<HTMLDivElement>) {
   const { goToMonth, selected } = useDayPicker()
 
   return (

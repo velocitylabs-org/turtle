@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import Transaction from '@/models/Transaction'
 
 declare global {
+  // eslint-disable-next-line no-var
   var mongoose: any // This must be a var and not a let/const
 }
 
