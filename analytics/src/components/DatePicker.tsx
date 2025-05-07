@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, X } from 'lucide-react'
 import { format } from 'date-fns'
 import cn from '@/utils/cn'
 import { Button } from '@/components/ui/button'
@@ -32,7 +32,23 @@ export default function DatePicker({
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, 'LLL dd, y') : <span>{placeholder}</span>}
+            {date ? (
+              <div className="flex items-center justify-between w-full">
+                <span>{format(date, 'LLL dd, y')}</span>
+                <button
+                  className="ml-2 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  onClick={e => {
+                    e.stopPropagation()
+                    setDate(undefined)
+                  }}
+                >
+                  <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  <span className="sr-only">Clear date</span>
+                </button>
+              </div>
+            ) : (
+              <span>{placeholder}</span>
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="center">
