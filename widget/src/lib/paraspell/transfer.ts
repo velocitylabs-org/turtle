@@ -33,22 +33,20 @@ export const createTransferTx = async (
 ): Promise<TPapiTransaction> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
 
-  const sourceChainFromId = getParaSpellNode(sourceChain)
-  const destinationChainFromId = getParaSpellNode(destinationChain)
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
 
-  if (!sourceChainFromId || !destinationChainFromId)
+  if (!sourceChainNode || !destinationChainNode)
     throw new Error('Transfer failed: chain id not found.')
 
-  const currencyId = getParaspellToken(sourceToken, sourceChainFromId)
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
   return await Builder(wssEndpoint)
-    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
-    .to(destinationChainFromId)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
     .currency({ ...currencyId, amount: sourceAmount })
     .address(recipient)
-    .senderAddress(
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : sender.address,
-    )
+    .senderAddress(sender.address)
     .build()
 }
 
@@ -92,21 +90,19 @@ export const dryRun = async (
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
-  const sourceChainFromId = getParaSpellNode(sourceChain)
-  const destinationChainFromId = getParaSpellNode(destinationChain)
-  if (!sourceChainFromId || !destinationChainFromId)
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+  if (!sourceChainNode || !destinationChainNode)
     throw new Error('Dry Run failed: chain id not found.')
 
-  const currencyId = getParaspellToken(sourceToken, sourceChainFromId)
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
   return await Builder(wssEndpoint)
-    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
-    .to(destinationChainFromId)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
     .currency({ ...currencyId, amount: sourceAmount })
     .address(recipient)
-    .senderAddress(
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : sender.address,
-    )
+    .senderAddress(sender.address)
     .dryRun()
 }
 
