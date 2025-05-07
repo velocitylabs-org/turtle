@@ -4,7 +4,6 @@ import { Token } from '@/models/token'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
-import { getAccountId32 } from '@/utils/address'
 import {
   Builder,
   EvmBuilder,
