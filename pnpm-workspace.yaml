@@ -2,4 +2,5 @@ packages:
   - "app"
   - "site"
   - "widget"
+  - "analytics"
   - "packages/*"

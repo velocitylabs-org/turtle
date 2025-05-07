@@ -5,6 +5,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev-analytics": "turbo run dev --filter=@velocitylabs-org/turtle-analytics",
+    "dev-app": "turbo run dev --filter=@velocitylabs-org/turtle-app",
     "lint": "turbo run lint",
     "format-check": "turbo run format-check",
     "start": "turbo run start",
