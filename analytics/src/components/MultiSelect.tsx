@@ -68,7 +68,7 @@ export default function StandardMultiSelect({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              'h-auto min-h-10 w-full justify-between',
+              'h-auto min-h-10 w-full justify-between py-1',
               disabled && 'cursor-not-allowed opacity-50',
             )}
             disabled={disabled}
@@ -160,7 +160,7 @@ function renderImage(logoURI?: string, originLogoURI?: string) {
   if (!logoURI) return null
 
   return (
-    <div className="mr-2 flex-shrink-0">
+    <div className="mr-1 flex-shrink-0 relative" style={{ top: originLogoURI ? 1: 2 }}>
       <TokenAndOriginLogos tokenURI={logoURI} originURI={originLogoURI} size={20} />
     </div>
   )
