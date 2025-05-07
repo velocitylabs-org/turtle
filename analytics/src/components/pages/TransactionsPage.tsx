@@ -7,7 +7,7 @@ import SmallStatBox from '@/components/SmallStatBox'
 import DatePicker from '@/components/DatePicker'
 import MultiSelect from '@/components/MultiSelect'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
-import { chains, chainsByUid } from '@/registry/chains'
+import { chains } from '@/registry/chains'
 import { tokens } from '@/registry/tokens'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { useQuery } from '@tanstack/react-query'
@@ -15,7 +15,7 @@ import ErrorPanel from '@/components/ErrorPanel'
 import { txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { Token } from '@/models/Token'
-import getOriginBadge from '@/utils/get-origin-badge'
+import getTypeBadge from '@/utils/get-type-badge'
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useState<string[]>([])
@@ -32,20 +32,18 @@ export default function TransactionsPage() {
     logoURI: chain.logoURI,
   }))
 
-  const selectedSourceChain = chainsByUid[sourceChainUid[0]]
   const tokenSourceOptions = tokens.map((token: Token) => ({
     value: token.id,
     label: token.symbol,
     logoURI: token.logoURI,
-    originLogoURI: getOriginBadge(token, selectedSourceChain)?.logoURI
+    originLogoURI: getTypeBadge(token.id)?.typeURI
   }))
 
-  const selectedDestinationChain = chainsByUid[destinationChainUid[0]]
   const tokenDestinationOptions = tokens.map((token: Token) => ({
     value: token.id,
     label: token.symbol,
     logoURI: token.logoURI,
-    originLogoURI: getOriginBadge(token, selectedDestinationChain)?.logoURI
+    originLogoURI: getTypeBadge(token.id)?.typeURI
   }))
 
   const { data, isLoading, error } = useQuery({

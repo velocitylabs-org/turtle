@@ -45,7 +45,7 @@ export async function GET(request: Request) {
         .limit(5)
         .select('txDate sourceTokenId sourceTokenSymbol sourceTokenAmount sourceTokenAmountUsd sourceChainUid sourceChainName destinationTokenId destinationTokenSymbol destinationChainUid destinationChainName status'),
 
-      // Top 5 tokens by volume
+      // Top 2 tokens by volume
       Transaction.aggregate([
         {
           $match: {

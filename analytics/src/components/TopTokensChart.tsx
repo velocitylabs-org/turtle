@@ -4,7 +4,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, TooltipProps } from 
 import formatUSD from '@/utils/format-USD'
 import { tokensById } from "@/registry/tokens";
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
-import { Ethereum, RelayChain } from '@/registry/chains'
+import getTypeBadge from '@/utils/get-type-badge'
 
 const colors = [
   '#0077da',
@@ -45,13 +45,11 @@ function PieLabel({ id, x, y }: PieLabelProps) {
     )
   }
 
-  const token = tokensById[id]
-  const originURI = (token.origin.type === 'Ethereum' && Ethereum.logoURI) || (token.origin.type === 'Polkadot' && RelayChain.logoURI)
-
+  const { logoURI, typeURI } = getTypeBadge(id)
   return (
     <g transform={`translate(${x - 20},${y - 13})`}>
       <foreignObject width="32" height="32">
-        <TokenAndOriginLogos tokenURI={token.logoURI} originURI={originURI || undefined} size={28}/>
+        <TokenAndOriginLogos tokenURI={logoURI} originURI={typeURI || undefined} size={28}/>
       </foreignObject>
     </g>
   )

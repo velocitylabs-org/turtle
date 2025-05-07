@@ -95,7 +95,7 @@ export default function DashboardPage() {
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Top Tokens</CardTitle>
-            <CardDescription>With highest successful transactions (USD)</CardDescription>
+            <CardDescription>With highest successful transaction volume (USD)</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
