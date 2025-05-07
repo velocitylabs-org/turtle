@@ -297,9 +297,10 @@ function displayWarningMessage(params: {
 
   if (canPayFees && !exceedsTransferableBalanceInFees && isAmountTooLow) {
     return (
-      <div 
-      // className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] border border-turtle-secondary-dark-40 bg-turtle-secondary-transparent p-2"
-      className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-turtle-secondary-dark bg-turtle-secondary-transparent px-2 py-1 text-xs">
+      <div
+        // className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] border border-turtle-secondary-dark-40 bg-turtle-secondary-transparent p-2"
+        className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-turtle-secondary-dark bg-turtle-secondary-transparent px-2 py-1 text-xs"
+      >
         <ExclamationMark
           width={16}
           height={16}
