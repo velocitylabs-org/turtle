@@ -7,8 +7,8 @@ import SmallStatBox from '@/components/SmallStatBox'
 import DatePicker from '@/components/DatePicker'
 import MultiSelect from '@/components/MultiSelect'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
-import { chains } from '@/registry/chains'
-import { tokens } from '@/registry/tokens'
+import { chains, chainsByUid } from '@/registry/chains'
+import { tokens, tokensById } from '@/registry/tokens'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { useQuery } from '@tanstack/react-query'
 import ErrorPanel from '@/components/ErrorPanel'
@@ -16,6 +16,7 @@ import { txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { Token } from '@/models/Token'
 import getTypeBadge from '@/utils/get-type-badge'
+import getOriginBadge from '@/utils/get-origin-badge'
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useState<string[]>([])
@@ -32,19 +33,25 @@ export default function TransactionsPage() {
     logoURI: chain.logoURI,
   }))
 
-  const tokenSourceOptions = tokens.map((token: Token) => ({
-    value: token.id,
-    label: token.symbol,
-    logoURI: token.logoURI,
-    originLogoURI: getTypeBadge(token.id)?.typeURI,
-  }))
+  const tokenSourceOptions = tokens
+    .map((token: Token) => {
+      const logoData = getLogoAndOriginURI(token.id, sourceChainUid[0])
+      return {
+        value: token.id,
+        label: token.symbol,
+        ...logoData,
+      }
+    })
 
-  const tokenDestinationOptions = tokens.map((token: Token) => ({
-    value: token.id,
-    label: token.symbol,
-    logoURI: token.logoURI,
-    originLogoURI: getTypeBadge(token.id)?.typeURI,
-  }))
+  const tokenDestinationOptions = tokens
+    .map((token: Token) => {
+      const logoData = getLogoAndOriginURI(token.id, destinationChainUid[0])
+      return {
+        value: token.id,
+        label: token.symbol,
+        ...logoData,
+      }
+    })
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -224,6 +231,7 @@ export default function TransactionsPage() {
                     selected={sourceTokenId}
                     onChange={setSourceTokenId}
                     placeholder="Source Token"
+                    disabled={sourceChainUid.length === 0}
                     singleSelect
                   />
                 </div>
@@ -243,6 +251,7 @@ export default function TransactionsPage() {
                     onChange={setDestinationTokenId}
                     placeholder="Destination Token"
                     singleSelect
+                    disabled={destinationChainUid.length === 0}
                   />
                 </div>
               </div>
@@ -261,4 +270,21 @@ export default function TransactionsPage() {
       </div>
     </div>
   )
+}
+
+function getLogoAndOriginURI(tokenId: string, chainUid?: string) {
+  const token = tokensById[tokenId]
+  const chain = chainsByUid[chainUid|| '']
+
+  if (chain) {
+    return {
+      logoURI: token.logoURI,
+      originLogoURI: getOriginBadge(token, chain)?.logoURI
+    }
+  }
+
+  return {
+    logoURI: token.logoURI,
+    originLogoURI: getTypeBadge(token.id)?.typeURI,
+  }
 }

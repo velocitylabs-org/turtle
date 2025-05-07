@@ -31,5 +31,13 @@ export default function getOriginBadge(
     }
   }
 
+  // Just specific for analytics
+  if (sourceChain.network === 'Ethereum' && token.origin.type === 'Polkadot') {
+    return {
+      logoURI: '/logos/polkadot.svg',
+      text: `Polkadot ${token.symbol}`,
+    }
+  }
+
   return
 }
