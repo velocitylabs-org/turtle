@@ -78,7 +78,9 @@ export async function GET(request: Request) {
       Transaction.find(query)
         .sort({ txDate: -1 })
         .limit(5)
-        .select('txDate sourceTokenId sourceTokenSymbol sourceTokenAmount sourceTokenAmountUsd sourceChainUid sourceChainName destinationTokenId destinationTokenSymbol destinationChainUid destinationChainName status'),
+        .select(
+          'txDate sourceTokenId sourceTokenSymbol sourceTokenAmount sourceTokenAmountUsd sourceChainUid sourceChainName destinationTokenId destinationTokenSymbol destinationChainUid destinationChainName status',
+        ),
 
       // Calculate total volume
       Transaction.aggregate([

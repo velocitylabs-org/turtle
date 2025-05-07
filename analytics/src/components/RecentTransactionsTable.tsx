@@ -59,11 +59,8 @@ export default function RecentTransactionsTable({
               <TableRow key={`${tx.txDate}${i}`}>
                 <TableCell>
                   <div className="flex items-center">
-                    <TokenChainDisplay
-                      tokenId={tx.sourceTokenId}
-                      chainUid={tx.sourceChainUid}
-                    />
-                    <div className="flex flex-col ml-2">
+                    <TokenChainDisplay tokenId={tx.sourceTokenId} chainUid={tx.sourceChainUid} />
+                    <div className="ml-2 flex flex-col">
                       <span className="font-medium">{tx.sourceTokenSymbol}</span>
                       <span className="text-xs text-muted-foreground">{tx.sourceChainName}</span>
                     </div>
@@ -83,9 +80,11 @@ export default function RecentTransactionsTable({
                       tokenId={tx.destinationTokenId}
                       chainUid={tx.destinationChainUid}
                     />
-                    <div className="flex flex-col ml-2">
+                    <div className="ml-2 flex flex-col">
                       <span className="font-medium">{tx.destinationTokenSymbol}</span>
-                      <span className="text-xs text-muted-foreground">{tx.destinationChainName}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {tx.destinationChainName}
+                      </span>
                     </div>
                   </div>
                 </TableCell>
@@ -153,5 +152,7 @@ export function TokenChainDisplay({ tokenId, chainUid, size = 28 }: TokenChainDi
   const sourceChain = chainUid && chainsByUid[chainUid]
   const originBadge = getOriginBadge(token, sourceChain || null)
 
-  return <TokenAndOriginLogos tokenURI={token.logoURI} originURI={originBadge?.logoURI} size={size} />
+  return (
+    <TokenAndOriginLogos tokenURI={token.logoURI} originURI={originBadge?.logoURI} size={size} />
+  )
 }

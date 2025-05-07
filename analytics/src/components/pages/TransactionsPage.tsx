@@ -36,14 +36,14 @@ export default function TransactionsPage() {
     value: token.id,
     label: token.symbol,
     logoURI: token.logoURI,
-    originLogoURI: getTypeBadge(token.id)?.typeURI
+    originLogoURI: getTypeBadge(token.id)?.typeURI,
   }))
 
   const tokenDestinationOptions = tokens.map((token: Token) => ({
     value: token.id,
     label: token.symbol,
     logoURI: token.logoURI,
-    originLogoURI: getTypeBadge(token.id)?.typeURI
+    originLogoURI: getTypeBadge(token.id)?.typeURI,
   }))
 
   const { data, isLoading, error } = useQuery({

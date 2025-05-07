@@ -1,12 +1,15 @@
-import { Token } from "@/models/Token";
-import { Chain } from "@/models/Chain";
+import { Token } from '@/models/Token'
+import { Chain } from '@/models/Chain'
 
 interface OriginBadge {
   logoURI: string
   text: string
 }
 
-export default function getOriginBadge(token: Token, sourceChain: Chain | null): OriginBadge | undefined {
+export default function getOriginBadge(
+  token: Token,
+  sourceChain: Chain | null,
+): OriginBadge | undefined {
   if (!sourceChain || !token.origin) return
 
   if (sourceChain.network === 'Ethereum' && token.origin.type === 'Ethereum')

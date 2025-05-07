@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import Transaction from "@/models/Transaction";
+import Transaction from '@/models/Transaction'
 
 declare global {
   var mongoose: any // This must be a var and not a let/const
@@ -31,7 +31,7 @@ export default async function dbConnect() {
   }
   try {
     cached.conn = await cached.promise
-    await Transaction.createIndexes();
+    await Transaction.createIndexes()
   } catch (e) {
     cached.promise = null
     throw e

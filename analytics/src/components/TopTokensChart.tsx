@@ -2,7 +2,7 @@
 import React from 'react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, TooltipProps } from 'recharts'
 import formatUSD from '@/utils/format-USD'
-import { tokensById } from "@/registry/tokens";
+import { tokensById } from '@/registry/tokens'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import getTypeBadge from '@/utils/get-type-badge'
 
@@ -13,7 +13,7 @@ const colors = [
 ]
 
 interface TopTokensChartProps {
-  data: { symbol: string; volumeUsd: number, id: string }[]
+  data: { symbol: string; volumeUsd: number; id: string }[]
   totalVolume: number
 }
 
@@ -49,7 +49,7 @@ function PieLabel({ id, x, y }: PieLabelProps) {
   return (
     <g transform={`translate(${x - 20},${y - 13})`}>
       <foreignObject width="32" height="32">
-        <TokenAndOriginLogos tokenURI={logoURI} originURI={typeURI || undefined} size={28}/>
+        <TokenAndOriginLogos tokenURI={logoURI} originURI={typeURI || undefined} size={28} />
       </foreignObject>
     </g>
   )
@@ -78,7 +78,7 @@ export default function TopTokensChart({ data, totalVolume }: TopTokensChartProp
     name: item.symbol,
     value: item.volumeUsd,
     percentage: (item.volumeUsd / totalVolume) * 100,
-    id: item.id
+    id: item.id,
   }))
 
   // Calculate the sum of the displayed tokens' volumes
@@ -93,7 +93,7 @@ export default function TopTokensChart({ data, totalVolume }: TopTokensChartProp
       name: 'Rest tokens',
       value: remainingVolume,
       percentage: remainingPercentage,
-      id: 'rest-tokens'
+      id: 'rest-tokens',
     })
   }
 

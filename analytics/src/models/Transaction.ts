@@ -79,7 +79,7 @@ const transactionSchema = new mongoose.Schema<TransactionModel>(
     feesTokenSymbol: { type: String, required: true },
     feesTokenAmount: { type: Number, required: true },
     feesTokenAmountUsd: { type: Number, required: true },
-    feesTokenAmountRaw: { type: String, required: true},
+    feesTokenAmountRaw: { type: String, required: true },
 
     bridgingFeeTokenId: { type: String },
     bridgingFeeTokenName: { type: String },
@@ -109,7 +109,7 @@ const transactionSchema = new mongoose.Schema<TransactionModel>(
       required: true,
       default: 'succeeded',
     },
-    migrated: { type: Boolean, required: true, default: false }
+    migrated: { type: Boolean, required: true, default: false },
   },
   { timestamps: true },
 )

@@ -43,7 +43,9 @@ export async function GET(request: Request) {
       Transaction.find()
         .sort({ txDate: -1 })
         .limit(5)
-        .select('txDate sourceTokenId sourceTokenSymbol sourceTokenAmount sourceTokenAmountUsd sourceChainUid sourceChainName destinationTokenId destinationTokenSymbol destinationChainUid destinationChainName status'),
+        .select(
+          'txDate sourceTokenId sourceTokenSymbol sourceTokenAmount sourceTokenAmountUsd sourceChainUid sourceChainName destinationTokenId destinationTokenSymbol destinationChainUid destinationChainName status',
+        ),
 
       // Top 2 tokens by volume
       Transaction.aggregate([
@@ -54,7 +56,7 @@ export async function GET(request: Request) {
         },
         {
           $group: {
-            _id: '$sourceTokenId',  // Group only by sourceTokenId
+            _id: '$sourceTokenId', // Group only by sourceTokenId
             symbol: { $first: '$sourceTokenSymbol' },
             name: { $first: '$sourceTokenName' },
             volumeUsd: { $sum: '$sourceTokenAmountUsd' },

@@ -33,7 +33,7 @@ export default function DatePicker({
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date ? (
-              <div className="flex items-center justify-between w-full">
+              <div className="flex w-full items-center justify-between">
                 <span>{format(date, 'LLL dd, y')}</span>
                 <button
                   className="ml-2 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"

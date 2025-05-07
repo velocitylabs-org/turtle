@@ -33,13 +33,13 @@ export default function StandardMultiSelect({
   className,
   singleSelect = false,
   showImagesInBadges = true,
-  disabled = false
+  disabled = false,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
 
   const handleSelect = (value: string) => {
-    if (disabled) return;
+    if (disabled) return
 
     if (selected.includes(value)) {
       onChange(selected.filter(item => item !== value))
@@ -51,7 +51,7 @@ export default function StandardMultiSelect({
   }
 
   const handleRemove = (value: string) => {
-    if (disabled) return;
+    if (disabled) return
     onChange(selected.filter(item => item !== value))
   }
 
@@ -68,8 +68,8 @@ export default function StandardMultiSelect({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "h-auto min-h-10 w-full justify-between",
-              disabled && "opacity-50 cursor-not-allowed"
+              'h-auto min-h-10 w-full justify-between',
+              disabled && 'cursor-not-allowed opacity-50',
             )}
             disabled={disabled}
           >
@@ -129,8 +129,9 @@ export default function StandardMultiSelect({
                         className={cn(
                           'relative flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none',
                           selected.includes(option.value) ? 'bg-accent text-accent-foreground' : '',
-                          !disabled && 'cursor-pointer hover:bg-accent hover:text-accent-foreground',
-                          disabled && 'cursor-not-allowed opacity-50'
+                          !disabled &&
+                            'cursor-pointer hover:bg-accent hover:text-accent-foreground',
+                          disabled && 'cursor-not-allowed opacity-50',
                         )}
                         onClick={() => !disabled && handleSelect(option.value)}
                       >
