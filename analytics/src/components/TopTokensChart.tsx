@@ -2,8 +2,9 @@
 import React from 'react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, TooltipProps } from 'recharts'
 import formatUSD from '@/utils/format-USD'
-import TokenChainDisplay from "@/components/TokenChainDisplay";
 import { tokensById } from "@/registry/tokens";
+import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
+import { Ethereum, RelayChain } from '@/registry/chains'
 
 const colors = [
   '#0077da',
@@ -44,10 +45,13 @@ function PieLabel({ id, x, y }: PieLabelProps) {
     )
   }
 
+  const token = tokensById[id]
+  const originURI = (token.origin.type === 'Ethereum' && Ethereum.logoURI) || (token.origin.type === 'Polkadot' && RelayChain.logoURI)
+
   return (
-    <g transform={`translate(${x - 10},${y - 16})`}>
-      <foreignObject width="28" height="28">
-        <TokenChainDisplay tokenId={id} />
+    <g transform={`translate(${x - 20},${y - 13})`}>
+      <foreignObject width="32" height="32">
+        <TokenAndOriginLogos tokenURI={token.logoURI} originURI={originURI || undefined} size={28}/>
       </foreignObject>
     </g>
   )

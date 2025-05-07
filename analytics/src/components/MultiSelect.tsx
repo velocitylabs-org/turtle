@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import cn from '@/utils/cn'
-import RenderTokenChainImg from '@/components/RenderTokenChainImg'
+import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 
 type Option = {
   value: string
@@ -160,16 +160,7 @@ function renderImage(logoURI?: string, originLogoURI?: string) {
 
   return (
     <div className="mr-2 flex-shrink-0">
-      <div className="flex items-center">
-        <div className="relative">
-          <RenderTokenChainImg logoURI={logoURI} size={20} className="border border-black" />
-          {originLogoURI && (
-            <div className="absolute -bottom-1 -right-1">
-              <RenderTokenChainImg logoURI={originLogoURI} size={15} className="border border-white" />
-            </div>
-          )}
-        </div>
-      </div>
+      <TokenAndOriginLogos tokenURI={logoURI} originURI={originLogoURI} size={20} />
     </div>
   )
 }

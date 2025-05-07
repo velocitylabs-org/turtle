@@ -11,7 +11,10 @@ import {
 import { TransactionModel, txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import React from 'react'
-import TokenChainDisplay from '@/components/TokenChainDisplay'
+import { tokensById } from '@/registry/tokens'
+import { chainsByUid } from '@/registry/chains'
+import getOriginBadge from '@/utils/get-origin-badge'
+import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 
 interface RecentTransactionsTableProps {
   transactions: TransactionModel[]
@@ -137,4 +140,18 @@ function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps)
     default:
       return null
   }
+}
+
+interface TokenChainDisplayProps {
+  tokenId: string
+  chainUid?: string
+  size?: number
+}
+
+export function TokenChainDisplay({ tokenId, chainUid, size = 28 }: TokenChainDisplayProps) {
+  const token = tokensById[tokenId]
+  const sourceChain = chainUid && chainsByUid[chainUid]
+  const originBadge = getOriginBadge(token, sourceChain || null)
+
+  return <TokenAndOriginLogos tokenURI={token.logoURI} originURI={originBadge?.logoURI} size={size} />
 }
