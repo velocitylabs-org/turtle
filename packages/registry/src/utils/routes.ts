@@ -1,8 +1,6 @@
-import { Chain } from '@/models/chain'
-import { TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
-import { Route, TransferSDK } from '@/registry'
-import { REGISTRY } from '@/registry/mainnet/mainnet'
+import { Route, TransferSDK } from '../types'
+import { REGISTRY } from '../mainnet'
+import { TokenAmount } from './select'
 import {
   getSwapsDestinationChains,
   getSwapsDestinationTokens,
@@ -10,6 +8,7 @@ import {
   getSwapsSourceTokens,
 } from './paraspellSwap'
 import { isSameToken } from './token'
+import { Chain, Token } from '../types'
 
 /** Deduplicates a list of items based on their uid/id property. Used for chains and tokens. */
 const deduplicate = <T extends { uid?: string; id?: string }>(items: T[]): T[] => {

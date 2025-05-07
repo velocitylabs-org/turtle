@@ -1,0 +1,25 @@
+{
+  "name": "@velocitylabs-org/turtle-registry",
+  "version": "0.0.1",
+  "description": "Turtle Registry takes care of handling everything registry-related from mapping to utils",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "author": "Stefano Imparato <stefano@velocitylabs.org>",
+  "scripts": {
+    "build": "tsc -b",
+    "watch": "tsc --watch",
+    "lint": "eslint ."
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@types/react": "^19.0.8",
+    "@paraspell/sdk": "^8.11.1",
+    "@types/node": ">=20.16.15"
+  }
+}

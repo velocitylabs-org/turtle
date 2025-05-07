@@ -15,21 +15,19 @@
     "cypress:open": "cypress open"
   },
   "dependencies": {
+    "@velocitylabs-org/turtle-registry": "workspace:*",
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@heroui/react": "2.7.2",
     "@hookform/resolvers": "3.9.0",
     "@number-flow/react": "^0.4.1",
-    "@paraspell/sdk": "^8.11.1",
     "@paraspell/xcm-router": "^8.11.1",
     "@polkadot/api": "^15.9.2",
     "@polkadot/api-base": "^15.9.2",
     "@polkadot/apps-config": "^0.145.1",
     "@polkadot/extension-dapp": "^0.56.2",
     "@polkadot/extension-inject": "^0.58.8",
-    "@polkadot/keyring": "^13.2.1",
     "@polkadot/react-identicon": "^3.10.1",
     "@polkadot/types": "^15.9.2",
-    "@polkadot/util": "^13.3.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-separator": "^1.1.0",
@@ -71,13 +69,12 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "@next/bundle-analyzer": "^15.3.1",
     "@galacticcouncil/api-augment": "^0.3.0",
     "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
-    "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20.16.15",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
@@ -102,5 +99,11 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
+  },
+  "peerDependencies": {
+    "@polkadot/keyring": "^13.2.1",
+    "@polkadot/util": "^13.3.1",
+    "@paraspell/sdk": "^8.11.1",
+    "@types/node": ">=20.16.15"
   }
 }
