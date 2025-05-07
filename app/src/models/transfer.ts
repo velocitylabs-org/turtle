@@ -1,5 +1,6 @@
 import { Direction } from '@/services/transfer'
-import { Environment } from '@/store/environmentStore'
+import { Environment } from '@velocitylabs-org/turtle-registry'
+
 import { TRouterPlan } from '@paraspell/xcm-router'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
 import { Chain } from './chain'

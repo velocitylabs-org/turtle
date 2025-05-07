@@ -1,8 +1,10 @@
 'use client'
 import * as React from 'react'
-import { Token, Chain } from '@velocitylabs-org/turtle-registry'
-import Tooltip from '@/components/Tooltip'
-import { cn } from '@/utils/cn'
+
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { Tooltip } from '@/components/Tooltip'
+import { cn } from '@/helpers'
+
 import Icon from './Icon'
 import { getOriginBadge } from '../helpers/chains'
 

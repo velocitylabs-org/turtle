@@ -1,5 +1,4 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { AmountInfo } from '@/models/transfer'
 import { getExchangeOutputAmount } from '@/utils/paraspellSwap'
 import { isSameToken } from '@/utils/token'

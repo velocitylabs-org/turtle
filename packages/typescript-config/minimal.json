@@ -1,18 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "skipLibCheck": true,
     "noEmit": false,
-    "outDir": "./dist",
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "moduleResolution": "bundler",
     "module": "esnext",
     "declaration": true,
-    "lib": ["ES2020", "DOM"]
-  },
-  "include": ["src/**/*", "index.tsx"],
-  "exclude": ["node_modules", "dist"]
+    "lib": ["ES2021", "DOM"]
+  }
 }

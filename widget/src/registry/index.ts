@@ -1,5 +1,4 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { Environment } from '@/stores/environmentStore'
 import { TCurrencyCore } from '@paraspell/sdk'
 import { rpcConnectionAsHttps } from './helpers'

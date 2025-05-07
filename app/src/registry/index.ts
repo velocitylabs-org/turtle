@@ -1,6 +1,5 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
-import { Environment } from '@/store/environmentStore'
+import { Environment, Chain, Token } from '@velocitylabs-org/turtle-registry'
+
 import { TCurrencyCore } from '@paraspell/sdk'
 import { rpcConnectionAsHttps } from './helpers'
 import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from './mainnet/chains'

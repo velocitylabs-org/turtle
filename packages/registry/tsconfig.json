@@ -1,5 +1,12 @@
 {
   "extends": "@velocitylabs-org/turtle-typescript-config/minimal.json",
-  "include": ["src/**/*", "index.tsx"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "index.ts"],
   "exclude": ["node_modules", "dist"]
 }

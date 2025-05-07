@@ -1,6 +1,5 @@
 import { TransferParams } from '@/hooks/useTransfer'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'

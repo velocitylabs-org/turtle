@@ -1,7 +1,6 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Environment, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { Balance } from '@/services/balance'
-import { Environment } from '@/store/environmentStore'
+
 import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 import { getTransferableAmount, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'

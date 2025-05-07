@@ -1,9 +1,8 @@
 import { TransferParams } from '@/hooks/useTransfer'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
 import { REGISTRY } from '@/registry'
 import { Hydration } from '@/registry/mainnet/chains'
-import { Environment } from '@/store/environmentStore'
+
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import { getSenderAddress } from './address'

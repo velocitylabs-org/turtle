@@ -17,9 +17,12 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "devDependencies": {
+    "@velocitylabs-org/turtle-typescript-config": "workspace:*"
+  },
   "peerDependencies": {
     "@types/react": "^19.0.8",
-    "@paraspell/sdk": "^8.11.1",
-    "@types/node": ">=20.16.15"
+    "@types/node": ">=20.16.15",
+    "@paraspell/sdk": "^8.11.1"
   }
 }
