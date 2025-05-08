@@ -7,7 +7,7 @@ export type TokenPriceResult = {
   loading: boolean
 }
 
-export interface Erc20Balance {
+export interface Balance {
   value: bigint
   decimals: number
   symbol: string

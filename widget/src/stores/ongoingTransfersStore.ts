@@ -1,6 +1,8 @@
 import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { create } from 'zustand'
-import { persist, PersistStorage } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { STORE_VERSIONS } from './migrations/constants'
+import { migrateOngoingTransfers } from './migrations/ongoingTransfersMigration'
 
 interface State {
   // State
@@ -12,19 +14,6 @@ interface State {
   updateStatus: (id: string) => void
   updateProgress: (id: string) => void
   remove: (id: string) => void
-}
-
-const storage: PersistStorage<StoredTransfer[]> = {
-  getItem: name => {
-    const storedValue = localStorage.getItem(name)
-    return storedValue ? JSON.parse(storedValue) : null
-  },
-  setItem: (name, value) => {
-    localStorage.setItem(name, JSON.stringify(value))
-  },
-  removeItem: name => {
-    localStorage.removeItem(name)
-  },
 }
 
 const serializeFeeAmount = (fees: AmountInfo): AmountInfo => {
@@ -47,22 +36,25 @@ export const useOngoingTransfersStore = create<State>()(
         const persistableTransfer = {
           ...newOngoingTransfer,
           fees: serializeFeeAmount(newOngoingTransfer.fees),
-          ...(newOngoingTransfer.bridgingFees && {
-            bridgingFee: serializeFeeAmount(newOngoingTransfer.bridgingFees),
+          ...(newOngoingTransfer.bridgingFee && {
+            bridgingFee: serializeFeeAmount(newOngoingTransfer.bridgingFee),
           }),
+          swapInformation: undefined, // set to undefined for now to avoid circular references. It's not used at the moment for 1 click swaps.
         }
 
         set(state => {
-          // Update it if it's already present
-          if (state.transfers.some(transfer => transfer.id === persistableTransfer.id)) {
+          const transferExists = state.transfers.some(
+            transfer => transfer.id === persistableTransfer.id,
+          )
+
+          if (transferExists) {
             return {
-              transfers: state.transfers.map(tx =>
-                tx.id === persistableTransfer.id ? persistableTransfer : tx,
+              transfers: state.transfers.map(transfer =>
+                transfer.id === persistableTransfer.id ? persistableTransfer : transfer,
               ),
             }
           }
 
-          // Add it
           return {
             transfers: [...state.transfers, persistableTransfer],
           }
@@ -71,31 +63,26 @@ export const useOngoingTransfersStore = create<State>()(
 
       updateUniqueId: (id: string, uniqueTrackingId: string) => {
         if (!id || !uniqueTrackingId) return
-        set(state => {
-          return {
-            transfers: state.transfers.map(transfer => {
-              if (transfer.id == id) {
-                transfer.uniqueTrackingId = uniqueTrackingId
-              }
-              return transfer
-            }),
-          }
-        })
+        set(state => ({
+          transfers: state.transfers.map(transfer =>
+            transfer.id === id ? { ...transfer, uniqueTrackingId } : transfer,
+          ),
+        }))
       },
 
       updateStatus: (id: string) => {
         if (!id) return
-        set(state => {
-          return {
-            transfers: state.transfers.map(transfer => {
-              if (transfer.id == id) {
-                transfer.status = `Arriving at ${transfer.destChain.name}`
-                transfer.finalizedAt = new Date()
-              }
-              return transfer
-            }),
-          }
-        })
+        set(state => ({
+          transfers: state.transfers.map(transfer =>
+            transfer.id === id
+              ? {
+                  ...transfer,
+                  status: `Arriving at ${transfer.destChain.name}`,
+                  finalizedAt: new Date(),
+                }
+              : transfer,
+          ),
+        }))
       },
 
       updateProgress: (id: string) => {
@@ -114,14 +101,16 @@ export const useOngoingTransfersStore = create<State>()(
 
       remove: id => {
         if (!id) return
-        return set(state => ({
+        set(state => ({
           transfers: state.transfers.filter(transfer => transfer.id !== id),
         }))
       },
     }),
     {
       name: 'turtle-ongoing-transactions',
-      storage,
+      storage: createJSONStorage(() => localStorage),
+      version: STORE_VERSIONS.ONGOING_TRANSFERS,
+      migrate: migrateOngoingTransfers,
     },
   ),
 )
