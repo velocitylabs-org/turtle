@@ -101,7 +101,7 @@ importers:
         version: 0.1.50(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@sodazone/ocelloids-client':
         specifier: ^2.4.4
-        version: 2.5.0(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        version: 2.5.0(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@talismn/connect-components':
         specifier: ^1.1.8
         version: 1.1.9(@polkadot/api@15.9.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.58.9(@polkadot/api@15.9.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util@13.4.4)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -284,6 +284,8 @@ importers:
         specifier: ^5.6.3
         version: 5.8.3
 
+  packages/assets: {}
+
   packages/eslint-config:
     devDependencies:
       '@eslint/js':
@@ -340,7 +342,9 @@ importers:
       '@types/react':
         specifier: 19.0.10
         version: 19.0.10
-    devDependencies:
+      '@velocitylabs-org/turtle-assets':
+        specifier: workspace:*
+        version: link:../assets
       '@velocitylabs-org/turtle-typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
@@ -557,7 +561,7 @@ importers:
         version: 0.1.50(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@sodazone/ocelloids-client':
         specifier: ^2.4.5
-        version: 2.5.0(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        version: 2.5.0(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@tanstack/react-query':
         specifier: ^5.66.9
         version: 5.75.5(react@19.0.0)
@@ -22373,11 +22377,11 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@sodazone/ocelloids-client@2.5.0(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+  '@sodazone/ocelloids-client@2.5.0(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
-      isows: 1.0.6(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ky: 1.8.1
-      ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       zod: 3.24.4
 
   '@sora-substrate/type-definitions@1.27.7':

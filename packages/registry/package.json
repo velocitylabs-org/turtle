@@ -17,7 +17,8 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "devDependencies": {
+  "dependencies": {
+    "@velocitylabs-org/turtle-assets": "workspace:*",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*"
   },
   "peerDependencies": {

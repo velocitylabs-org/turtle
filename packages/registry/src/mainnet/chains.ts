@@ -1,10 +1,27 @@
 import { DWELLIR_KEY } from '../constants'
 import { Chain } from '../types'
 
+import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
+import assetHubLogo from '@velocitylabs-org/turtle-assets/logos/assethub.svg'
+import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
+import bridgehubLogo from '@velocitylabs-org/turtle-assets/logos/bridgehub.svg'
+import bifrostLogo from '@velocitylabs-org/turtle-assets/logos/bifrost.svg'
+import hydraLogo from '@velocitylabs-org/turtle-assets/logos/hydra.svg'
+import phalaLogo from '@velocitylabs-org/turtle-assets/logos/phala.svg'
+import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
+import interlayLogo from '@velocitylabs-org/turtle-assets/logos/interlay.svg'
+import acalaLogo from '@velocitylabs-org/turtle-assets/logos/acala.svg'
+import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
+import centrifugeLogo from '@velocitylabs-org/turtle-assets/logos/cfg.svg'
+import astarLogo from '@velocitylabs-org/turtle-assets/logos/astar.svg'
+import mythosLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
+
+
+
 export const Ethereum: Chain = {
   uid: 'ethereum',
   name: 'Ethereum',
-  logoURI: '/logos/ethereum.svg',
+  logoURI: ethereumLogo,
   chainId: 1,
   network: 'Ethereum',
   walletType: 'EVM',
@@ -14,7 +31,7 @@ export const Ethereum: Chain = {
 export const AssetHub: Chain = {
   uid: 'polkadot-assethub',
   name: 'Asset Hub',
-  logoURI: '/logos/assethub.svg',
+  logoURI: assetHubLogo,
   chainId: 1000,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -25,7 +42,7 @@ export const AssetHub: Chain = {
 export const RelayChain: Chain = {
   uid: 'polkadot',
   name: 'Polkadot',
-  logoURI: '/logos/polkadot.svg',
+  logoURI: polkadotLogo,
   chainId: 0,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -36,7 +53,7 @@ export const RelayChain: Chain = {
 export const BridgeHub: Chain = {
   uid: 'polkadot-bridgehub',
   name: 'Bridge Hub',
-  logoURI: '/logos/bridgehub.svg',
+  logoURI: bridgehubLogo,
   chainId: 1002,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -47,7 +64,7 @@ export const BridgeHub: Chain = {
 export const Bifrost: Chain = {
   uid: 'bifrost',
   name: 'Bifrost',
-  logoURI: '/logos/bifrost.svg',
+  logoURI: bifrostLogo,
   chainId: 2030,
   destinationFeeDOT: '385000000',
   network: 'Polkadot',
@@ -59,7 +76,7 @@ export const Bifrost: Chain = {
 export const Hydration: Chain = {
   uid: 'hydration',
   name: 'Hydration',
-  logoURI: '/logos/hydra.svg',
+  logoURI: hydraLogo,
   chainId: 2034,
   destinationFeeDOT: '3774400',
   network: 'Polkadot',
@@ -71,7 +88,7 @@ export const Hydration: Chain = {
 export const Phala: Chain = {
   uid: 'phala',
   name: 'Phala',
-  logoURI: '/logos/phala.svg',
+  logoURI: phalaLogo,
   chainId: 2035,
   network: 'Polkadot',
   supportedAddressTypes: ['ss58'],
@@ -82,7 +99,7 @@ export const Phala: Chain = {
 export const Moonbeam: Chain = {
   uid: 'moonbeam',
   name: 'Moonbeam',
-  logoURI: '/logos/moonbeam.svg',
+  logoURI: moonbeamLogo,
   chainId: 2004,
   destinationFeeDOT: '313592650',
   network: 'Polkadot',
@@ -94,7 +111,7 @@ export const Moonbeam: Chain = {
 export const Interlay: Chain = {
   uid: 'interlay',
   name: 'Interlay',
-  logoURI: '/logos/interlay.svg',
+  logoURI: interlayLogo,
   chainId: 2032,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -106,7 +123,7 @@ export const Interlay: Chain = {
 export const Acala: Chain = {
   uid: 'acala',
   name: 'Acala',
-  logoURI: '/logos/acala.svg',
+  logoURI: acalaLogo,
   chainId: 2000,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -118,7 +135,7 @@ export const Acala: Chain = {
 export const Polimec: Chain = {
   uid: 'polimec',
   name: 'Polimec',
-  logoURI: '/logos/polimec.svg',
+  logoURI: polimecLogo,
   chainId: 3344,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -130,7 +147,7 @@ export const Polimec: Chain = {
 export const Centrifuge: Chain = {
   uid: 'centrifuge',
   name: 'Centrifuge',
-  logoURI: '/logos/cfg.svg',
+  logoURI: centrifugeLogo,
   chainId: 2031,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -142,7 +159,7 @@ export const Centrifuge: Chain = {
 export const Astar: Chain = {
   uid: 'astar',
   name: 'Astar',
-  logoURI: '/logos/astar.svg',
+  logoURI: astarLogo,
   chainId: 2006,
   destinationFeeDOT: '', // TODO
   network: 'Polkadot',
@@ -154,7 +171,7 @@ export const Astar: Chain = {
 export const Mythos: Chain = {
   uid: 'mythos',
   name: 'Mythos',
-  logoURI: '/logos/myth.svg',
+  logoURI: mythosLogo,
   chainId: 3369,
   destinationFeeDOT: '500000000',
   network: 'Polkadot',

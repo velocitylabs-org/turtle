@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "moduleResolution": "bundler",
     "module": "esnext",
+    "composite": true,
     "declaration": true,
     "lib": ["ES2021", "DOM"]
   }
