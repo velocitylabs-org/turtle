@@ -5,6 +5,7 @@ import formatUSD from '@/utils/format-USD'
 import { tokensById } from '@/registry/tokens'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import getTypeBadge from '@/utils/get-type-badge'
+import useIsMobile from '@/hooks/useMobile'
 
 const colors = [
   '#0077da',
@@ -74,6 +75,7 @@ const CustomTooltip = ({ active, payload, totalVolume }: CustomTooltip) => {
 }
 
 export default function TopTokensChart({ data, totalVolume }: TopTokensChartProps) {
+  const isMobile = useIsMobile()
   const formattedData = data.map(item => ({
     name: item.symbol,
     value: item.volumeUsd,
@@ -109,7 +111,7 @@ export default function TopTokensChart({ data, totalVolume }: TopTokensChartProp
             outerRadius={100}
             dataKey="value"
             nameKey="name"
-            label={props => <PieLabel {...props} />}
+            label={props => isMobile ? props.name : <PieLabel {...props} />}
           >
             {formattedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />

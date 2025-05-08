@@ -4,11 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import SmallStatBox from '@/components/SmallStatBox'
 import TransactionVolumeChart from '@/components/TransactionVolumeChart'
 import TopTokensChart from '@/components/TopTokensChart'
-import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { useQuery } from '@tanstack/react-query'
 import ErrorPanel from '@/components/ErrorPanel'
 import formatUSD from '@/utils/format-USD'
+import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery({
@@ -76,8 +76,8 @@ export default function DashboardPage() {
           description="Successful transactions only"
         />
       </div>
-      <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="mt-4 grid gap-4 lg:grid-cols-7">
+        <Card className="col-span-full lg:col-span-4">
           <CardHeader>
             <CardTitle>Transaction Volume</CardTitle>
             <CardDescription>Over the last 6 months (USD)</CardDescription>
@@ -92,7 +92,7 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
-        <Card className="col-span-3">
+        <Card className="col-span-full lg:col-span-3">
           <CardHeader>
             <CardTitle>Top Tokens</CardTitle>
             <CardDescription>With highest successful transaction volume (USD)</CardDescription>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-      <div className="mt-4 grid gap-4">
+      <div className="mt-4">
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
