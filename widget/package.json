@@ -32,11 +32,13 @@
     "@heroui/react": "^2.7.2",
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
-    "@polkadot/api": "^15.7.2",
+    "@paraspell/sdk": "^8.13.2",
+    "@paraspell/xcm-router": "^8.13.2",
+    "@polkadot/api": "^15.9.2",
     "@polkadot/extension-dapp": "^0.58.4",
-    "@polkadot/react-identicon": "^3.12.2",
     "@polkadot/extension-inject": "^0.58.8",
-    "@polkadot/types": "^15.9.2",
+    "@polkadot/react-identicon": "^3.12.2",
+    "@polkadot/types": "^15.9.3",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@reown/appkit": "^1.6.8",
@@ -51,8 +53,8 @@
     "ethers": "^6.13.5",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
-    "postcss-nesting": "^13.0.1",
     "polkadot-api": "^1.9.2",
+    "postcss-nesting": "^13.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
@@ -66,12 +68,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@galacticcouncil/api-augment": "^0.3.1",
+    "@types/node": "^22.13.4",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
-    "@vitejs/plugin-react-swc": "^3.8.0",
     "@velocitylabs-org/turtle-eslint-config": "workspace:*",
+    "@velocitylabs-org/turtle-ui": "workspace:*",
+    "@vitejs/plugin-react-swc": "^3.8.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.1",
@@ -94,14 +99,15 @@
     "vite": "^6.1.0",
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-plugin-dts": "^4.5.0",
-    "vite-plugin-node-polyfills": "^0.23.0"
+    "vite-plugin-node-polyfills": "^0.23.0",
+    "vite-plugin-wasm": "^3.4.1"
   },
   "peerDependencies": {
-    "react": ">=18.3.1",
-    "react-dom": ">=18.3.1",
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/util": "^13.3.1",
     "@paraspell/sdk": "^8.11.1",
-    "@types/node": ">=20.16.15"
+    "@types/node": ">=20.16.15",
+    "react": ">=18.3.1",
+    "react-dom": ">=18.3.1"
   }
 }

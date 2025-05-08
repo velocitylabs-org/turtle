@@ -1,6 +1,8 @@
 import { AmountInfo, CompletedTransfer } from '@/models/transfer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { migrateCompletedTransfers } from './migrations/completedTransfersMigration'
+import { STORE_VERSIONS } from './migrations/constants'
 
 interface CompletedTxState {
   completedTransfers: CompletedTransfer[]
@@ -26,8 +28,8 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
         const persistableTransfer = {
           ...newCompletedTransfer,
           fees: serializeFeeAmount(newCompletedTransfer.fees),
-          ...(newCompletedTransfer.bridgingFees && {
-            bridgingFee: serializeFeeAmount(newCompletedTransfer.bridgingFees),
+          ...(newCompletedTransfer.bridgingFee && {
+            bridgingFee: serializeFeeAmount(newCompletedTransfer.bridgingFee),
           }),
         }
 
@@ -49,6 +51,8 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
       name: 'turtle-completed-transactions',
       storage: createJSONStorage(() => localStorage),
       partialize: state => ({ completedTransfers: state.completedTransfers }),
+      version: STORE_VERSIONS.COMPLETED_TRANSFERS,
+      migrate: migrateCompletedTransfers,
     },
   ),
 )

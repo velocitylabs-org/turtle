@@ -3,7 +3,13 @@ import { NotificationSeverity } from '@/models/notification'
 import { Copy, CopyCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-function CopyAddress({ content, address }: { content: string; address: string }) {
+interface CopyAddressProps {
+  content: string
+  address: string
+  showIcon?: boolean
+}
+
+export default function CopyAddress({ content, address, showIcon = true }: CopyAddressProps) {
   const { addNotification } = useNotification()
   const [showCopyIndicator, setShowCopyIndicator] = useState(false)
 
@@ -38,12 +44,13 @@ function CopyAddress({ content, address }: { content: string; address: string })
       className="flex cursor-pointer items-center space-x-2 text-sm"
     >
       <p>{content}</p>
-      {showCopyIndicator ? (
-        <CopyCheck className="h-3 w-3 text-turtle-secondary-dark" />
-      ) : (
-        <Copy className="h-3 w-3 text-turtle-level4" />
-      )}
+
+      {showIcon &&
+        (showCopyIndicator ? (
+          <CopyCheck className="h-3 w-3 text-turtle-secondary-dark" />
+        ) : (
+          <Copy className="h-3 w-3 text-turtle-level4" />
+        ))}
     </div>
   )
 }
-export default CopyAddress

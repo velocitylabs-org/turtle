@@ -4,6 +4,7 @@ import { Token } from '@/models/token'
 import { TokenAmount } from '@/models/select'
 import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { Sender } from '@/hooks/useTransfer'
+import { isSameChain } from './routes'
 
 export type FormatLength = 'Short' | 'Long' | 'Longer'
 
@@ -21,7 +22,7 @@ function getMaxSignificantDigits(length: FormatLength): number {
 /**
  * Formats a numerical amount into a human-readable, compact string representation.
  * @param amount - The amount to be formatted. For example, `1234567`.
- * @param length - Determines how many significant fraction digits will be shown for amount < 1.
+ * @param length - Determines how many significant fraction digits will be shown for amount smaller than 1.
  * @returns The amount formatted as a human-readable string. For example, `"1.23M"`.
  */
 export const formatAmount = (amount: number, length: FormatLength = 'Short'): string => {
@@ -153,9 +154,9 @@ export function toAmountInfo(
   }
 }
 
-export const getTotalFees = (fees: AmountInfo, bridgingFees?: AmountInfo | null) => {
-  const additionalAmount = bridgingFees ? Number(bridgingFees.amount) : 0
-  const additionalValue = bridgingFees?.inDollars || 0
+export const getTotalFees = (fees: AmountInfo, bridgingFee?: AmountInfo | null) => {
+  const additionalAmount = bridgingFee ? Number(bridgingFee.amount) : 0
+  const additionalValue = bridgingFee?.inDollars || 0
   const totalFeesAmount = formatAmount(toHuman(fees.amount, fees.token) + additionalAmount)
   const totalFeesValue = formatAmount(fees.inDollars + additionalValue)
 
@@ -188,4 +189,56 @@ export const startedTooLongAgo = (
       ? thresholdInHours.xcm * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
+}
+
+type SwapProperties = {
+  sourceToken?: Token
+  destinationToken?: Token
+  destinationAmount?: string
+}
+
+type SwapWithChains = SwapProperties & {
+  sourceChain: Chain
+  destChain: Chain
+}
+
+type CompleteSwap = SwapWithChains & Required<SwapProperties>
+
+/**
+ * Checks if a transfer is a swap (has destination token and amount)
+ * @param transfer - The transfer to check
+ * @returns if the transfer is a swap
+ */
+export const isSwap = <T extends SwapProperties>(
+  transfer: T,
+): transfer is T & Required<SwapProperties> => {
+  return (
+    !!transfer.destinationToken &&
+    !!transfer.destinationAmount &&
+    transfer.sourceToken?.id !== transfer.destinationToken?.id
+  )
+}
+
+/**
+ * Checks if a transfer is a swap within the same chain:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSameChainSwap = <T extends SwapWithChains>(
+  transfer: T,
+): transfer is T & CompleteSwap => {
+  return isSwap(transfer) && isSameChain(transfer.sourceChain, transfer.destChain)
+}
+
+/**
+ * Checks if a transfer is a swap + XCM between two different chains:
+ *
+ * @param transfer - The transfer to check.
+ * @returns A boolean.
+ */
+export const isSwapWithTransfer = <T extends SwapWithChains>(
+  transfer: T,
+): transfer is T & CompleteSwap => {
+  return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }
