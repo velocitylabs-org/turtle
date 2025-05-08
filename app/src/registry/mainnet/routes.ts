@@ -14,7 +14,7 @@ import {
   Polimec,
   RelayChain,
 } from './chains'
-import { EthereumTokens, PolkadotTokens } from './tokens'
+import { EthereumTokens, PolkadotTokens } from './tokens';
 
 export const routes: Route[] = [
   // Ethereum -> Polkadot
@@ -214,7 +214,7 @@ export const routes: Route[] = [
     from: AssetHub.uid,
     to: Mythos.uid,
     sdk: 'ParaSpellApi',
-    tokens: [EthereumTokens.MYTH.id],
+    tokens: [EthereumTokens.MYTH.id, PolkadotTokens.MYTH.id],
   },
   {
     from: AssetHub.uid,
