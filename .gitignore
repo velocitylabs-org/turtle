@@ -10,3 +10,5 @@ turtle.code-workspace
 dist
 packages/**/node_modules
 packages/**/dist
+
+tsconfig.tsbuildinfo
