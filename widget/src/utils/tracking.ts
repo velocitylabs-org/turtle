@@ -170,7 +170,8 @@ const formatTransfersWithDirection = (
         destChain: t.destChain,
         sender: t.sender,
         recipient: t.recipient,
-        token: t.token,
+        sourceToken: t.sourceToken,
+        destinationToken: t.destinationToken,
         date: t.date,
         direction,
         ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
@@ -179,6 +180,10 @@ const formatTransfersWithDirection = (
           sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
         }),
       }
+      // return {
+      //   ...t,
+      //   direction
+      // }
     })
     .filter(t => t.direction !== Direction.WithinPolkadot)
 }

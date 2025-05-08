@@ -1,8 +1,8 @@
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
-import { Erc20Balance } from '@/models/balance'
+import { Balance } from '@/models/balance'
 import { Environment } from '@/stores/environmentStore'
-import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell'
+import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
 import { toHuman } from '@/utils/transfer'
 import { getTransferableAmount, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { useCallback, useEffect, useState } from 'react'
@@ -20,7 +20,7 @@ export async function getBalance(
   chain: Chain,
   token: Token,
   address: string,
-): Promise<Erc20Balance | undefined> {
+): Promise<Balance | undefined> {
   const node = getParaSpellNode(chain)
   if (!node) throw new Error('Node not found')
   const currency = getCurrencyId(env, node, chain.uid, token)
@@ -43,7 +43,7 @@ export async function getBalance(
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
 const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
-  const [balance, setBalance] = useState<Erc20Balance | undefined>()
+  const [balance, setBalance] = useState<Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
   const { refetch: fetchErc20Balance, isLoading: loadingErc20Balance } = useBalanceWagmi({
@@ -70,7 +70,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
 
     try {
       setLoading(true)
-      let fetchedBalance: Erc20Balance | undefined
+      let fetchedBalance: Balance | undefined
 
       switch (chain.network) {
         case 'Ethereum': {
@@ -100,8 +100,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [env, chain, address, token?.id, fetchErc20Balance, fetchEthBalance])
+  }, [env, chain, address, fetchErc20Balance, fetchEthBalance, token])
 
   useEffect(() => {
     fetchBalance()

@@ -4,7 +4,6 @@ import { Token } from '@/models/token'
 import { getAssetUid, REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
-import { getAccountId32 } from '@/utils/address'
 import {
   Builder,
   EvmBuilder,
@@ -27,30 +26,27 @@ export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
  * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
  * @returns - A Promise that resolves a submittable extrinsic transaction.
  */
-export const createTx = async (
+export const createTransferTx = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TPapiTransaction> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
 
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
-  if (!sourceChainFromId || !destinationChainFromId)
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+
+  if (!sourceChainNode || !destinationChainNode)
     throw new Error('Transfer failed: chain id not found.')
-  else {
-    const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
 
-    return await Builder(wssEndpoint)
-      .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
-      .to(destinationChainFromId)
-      .currency({ ...currencyId, amount })
-      .address(
-        recipient,
-        destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
-      )
-      .build()
-  }
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
+    .currency({ ...currencyId, amount: sourceAmount })
+    .address(recipient)
+    .senderAddress(sender.address)
+    .build()
 }
 
 /**
@@ -64,18 +60,17 @@ export const moonbeamTransfer = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   viemClient: any,
 ): Promise<string> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient } = params
-  const relay = getRelayNode(environment)
-  const sourceChainFromId = getTNode(sourceChain.chainId, relay)
-  const destinationChainFromId = getTNode(destinationChain.chainId, relay)
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
   if (!sourceChainFromId || !destinationChainFromId)
     throw new Error('Transfer failed: chain id not found.')
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getParaspellToken(sourceToken, sourceChainFromId)
 
   return EvmBuilder()
     .from('Moonbeam')
-    .to(destinationChainFromId as TNodeDotKsmWithRelayChains)
-    .currency({ ...currencyId, amount })
+    .to(destinationChainFromId)
+    .currency({ ...currencyId, amount: sourceAmount })
     .address(recipient)
     .signer(viemClient)
     .build()
@@ -93,23 +88,21 @@ export const dryRun = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<TDryRunResult> => {
-  const { environment, sourceChain, destinationChain, token, amount, recipient, sender } = params
-  const sourceChainFromId = getParaSpellNode(sourceChain)
-  const destinationChainFromId = getParaSpellNode(destinationChain)
-  if (!sourceChainFromId || !destinationChainFromId)
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+  if (!sourceChainNode || !destinationChainNode)
     throw new Error('Dry Run failed: chain id not found.')
 
-  const currencyId = getCurrencyId(environment, sourceChainFromId, sourceChain.uid, token)
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
   return await Builder(wssEndpoint)
-    .from(sourceChainFromId as TNodeDotKsmWithRelayChains)
-    .to(destinationChainFromId)
-    .currency({ ...currencyId, amount })
-    .address(
-      recipient,
-      destinationChainFromId === 'Ethereum' ? getAccountId32(sender.address) : undefined,
-    )
-    .dryRun(sender.address)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
+    .currency({ ...currencyId, amount: sourceAmount })
+    .address(recipient)
+    .senderAddress(sender.address)
+    .dryRun()
 }
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
@@ -175,4 +168,18 @@ export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
     : getTNode(chain.chainId, 'polkadot')
+}
+
+/**
+ * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
+ */
+export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TCurrencyCore {
+  // Edge Cases. Myth multilocation is not supported by Paraspell.
+  if (token.id === EthereumTokens.MYTH.id)
+    return node ? { symbol: getTokenSymbol(node, token) } : { symbol: token.symbol }
+
+  if (token.multilocation) return { multilocation: token.multilocation }
+  if (node) return { symbol: getTokenSymbol(node, token) }
+
+  return { symbol: token.symbol }
 }

@@ -1,10 +1,11 @@
 import { StoredTransfer } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import { FC } from 'react'
 import { colors } from '../../../../tailwind.config'
 import Account from '@/components/Account'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
+import { TokenLogo } from '@/components/TokenLogo'
 import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
 
 const OngoingTransfer: FC<{
@@ -21,9 +22,19 @@ const OngoingTransfer: FC<{
             strokeWidth={5}
             color={colors['turtle-secondary']}
           />
-          <p className="text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
-            {formatAmount(toHuman(transfer.amount, transfer.token))} {transfer.token.symbol}
-          </p>
+          <div className="flex items-center text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
+            {isSwap(transfer) ? (
+              <span className="flex items-center gap-1">
+                <span>{formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}</span>
+                <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={25} />
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <span>{formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}</span>
+                <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={25} />
+              </span>
+            )}
+          </div>
           {/* From and to Chains */}
           <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">
             <img

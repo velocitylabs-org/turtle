@@ -55,7 +55,11 @@ export const schema = z.object({
   destinationChain: chainSchema.refine(val => val !== null, {
     message: 'Destination chain is required',
   }),
-  tokenAmount: tokenAmountSchema,
+  sourceTokenAmount: tokenAmountSchema,
+  destinationTokenAmount: z.object({
+    token: tokenSchema.nullable().refine(val => val !== null, { message: 'Token is required' }),
+    amount: z.number().nullable(),
+  }),
   manualRecipient: manualRecipientSchema,
 })
 
