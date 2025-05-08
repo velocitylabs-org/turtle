@@ -561,6 +561,12 @@ importers:
       '@types/node':
         specifier: '>=20.16.15'
         version: 22.15.3
+      '@velocitylabs-org/turtle-registry':
+        specifier: workspace:*
+        version: link:../packages/registry
+      '@velocitylabs-org/turtle-ui':
+        specifier: workspace:*
+        version: link:../packages/ui
       '@wagmi/core':
         specifier: ^2.16.7
         version: 2.17.1(@tanstack/query-core@5.75.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.5.0(react@19.0.0))(viem@2.28.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.24.4))
@@ -634,9 +640,6 @@ importers:
       '@velocitylabs-org/turtle-eslint-config':
         specifier: workspace:*
         version: link:../packages/eslint-config
-      '@velocitylabs-org/turtle-ui':
-        specifier: workspace:*
-        version: link:../packages/ui
       '@vitejs/plugin-react-swc':
         specifier: ^3.8.0
         version: 3.9.0(@swc/helpers@0.5.17)(vite@6.3.4(@types/node@22.15.3)(jiti@1.21.7)(terser@5.39.0)(yaml@2.7.1))
