@@ -99,6 +99,8 @@ export default Home
 The Turtle widget supports full theme customization.
 You can pass a theme prop to `<Widget />` to override default styles like colors, background, overlay opacity, and more.
 
+> ⚠️ Note: The Turtle Widget bundles its own Tailwind CSS, but it's not sandboxed. Global styles from your app (e.g., `.your-wrapper p { ... }`) may still affect it. This allows for advanced customization, but be cautious with _aggressive_ global CSS.
+
 🧩 Types
 
 ```tsx
