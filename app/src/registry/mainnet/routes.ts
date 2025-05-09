@@ -14,7 +14,7 @@ import {
   Polimec,
   RelayChain,
 } from './chains'
-import { EthereumTokens, PolkadotTokens } from './tokens';
+import { EthereumTokens, PolkadotTokens } from './tokens'
 
 export const routes: Route[] = [
   // Ethereum -> Polkadot
