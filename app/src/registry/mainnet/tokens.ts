@@ -733,4 +733,23 @@ export const PolkadotTokens = {
     coingeckoId: 'polimec',
     origin: parachain(3344),
   },
+
+  MYTH: {
+    id: 'myth.p',
+    name: 'Mythos',
+    symbol: 'MYTH',
+    logoURI: '/logos/myth.svg',
+    decimals: 18,
+    address: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 3369,
+        },
+      },
+    },
+    coingeckoId: 'mythos',
+    origin: parachain(3369),
+  },
 } as const satisfies Record<string, Token>
