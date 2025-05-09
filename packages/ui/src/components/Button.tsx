@@ -69,7 +69,7 @@ export const Button = ({
 }: ButtonProps) => {
   const classNames = twMerge(
     clsx(
-      'w-full flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0 cursor-pointer',
+      'relative w-full flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0 cursor-pointer',
       sizeHeights[size],
       paddingX[size],
       styles[variant],

@@ -5,6 +5,8 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "author": "Stefano Imparato <stefano@velocitylabs.org>",
+  "version": "0.0.2",
+  "private": true,
   "scripts": {
     "clean": "rimraf dist",
     "copy-assets": "copyfiles -u 1 assets/**/* dist/assets",

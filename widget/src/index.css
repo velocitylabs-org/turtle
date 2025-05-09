@@ -103,52 +103,53 @@
 }
 
 @layer base {
-  body {
+  .turtle-wrapper {
+    all: initial;
+
+    font-family: system-ui, sans-serif;
     letter-spacing: var(--letter-spacing-default);
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-smooth: never;
 
-    min-height: 110vh !important;
-  }
+    p {
+      letter-spacing: var(--letter-spacing-default);
+    }
 
-  p {
-    letter-spacing: var(--letter-spacing-default);
-  }
+    /* removes scrollbar */
+    ::-webkit-scrollbar {
+      display: none;
+      scrollbar-width: none;
+    }
 
-  /* removes scrollbar */
-  ::-webkit-scrollbar {
-    display: none;
-    scrollbar-width: none;
-  }
+    /* Remove arrows from number input */
+    input[type='number'] {
+      appearance: none; /* Standard */
+      -webkit-appearance: none; /* Chrome, Safari */
+      -moz-appearance: textfield; /* Firefox */
+    }
 
-  /* Remove arrows from number input */
-  input[type='number'] {
-    appearance: none; /* Standard */
-    -webkit-appearance: none; /* Chrome, Safari */
-    -moz-appearance: textfield; /* Firefox */
-  }
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
 
-  input[type='number']::-webkit-outer-spin-button,
-  input[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+    input {
+      font-size: 18px;
+      font-weight: 400;
+    }
 
-  input {
-    font-size: 18px;
-    font-weight: 400;
-  }
+    input::placeholder {
+      color: var(--turtle-level4);
+      opacity: 1; /* Firefox */
+    }
 
-  input::placeholder {
-    color: var(--turtle-level4);
-    opacity: 1; /* Firefox */
-  }
-
-  input::-ms-input-placeholder {
-    /* Edge 12 -18 */
-    color: var(--turtle-level4);
+    input::-ms-input-placeholder {
+      /* Edge 12 -18 */
+      color: var(--turtle-level4);
+    }
   }
 }
 

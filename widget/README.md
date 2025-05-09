@@ -47,6 +47,30 @@ function Home() {
 export default Home
 ```
 
+> #### 🐛 Troubleshooting (Vite/React)
+>
+> The Turtle widget internally uses **WebAssembly (WASM)**, which may require additional configuration in your Vite project. If you're seeing errors related to WebAssembly (e.g., "Top-level await is not available"), make sure to:
+>
+> 1. **Install the [`vite-plugin-wasm`](https://www.npmjs.com/package/vite-plugin-wasm)**
+>
+> ```
+> pnpm add -D vite-plugin-wasm
+> ```
+>
+> 2. **Update your `vite.config.ts` to include the plugin**
+>
+> ```tsx
+> import { defineConfig } from 'vite'
+> import react from '@vitejs/plugin-react'
+> import wasm from 'vite-plugin-wasm'
+>
+> export default defineConfig({
+>   plugins: [wasm(), react()],
+> })
+> ```
+>
+> Optional; You may also need to set your `target` in `tsconfig.json` or `vite.config.ts` to `esnext`, to allow top-level await and modern JS features.
+
 ### Next.js (With SSR Handling)
 
 ```tsx
@@ -73,7 +97,9 @@ export default Home
 ## 🎨 Theme configuration
 
 The Turtle widget supports full theme customization.
-You can pass a theme prop to <Widget /> to override default styles like colors, background, overlay opacity, and more.
+You can pass a theme prop to `<Widget />` to override default styles like colors, background, overlay opacity, and more.
+
+> ⚠️ Note: The Turtle Widget bundles its own Tailwind CSS, but it's not sandboxed. Global styles from your app (e.g., `.your-wrapper p { ... }`) may still affect it. This allows for advanced customization, but be cautious with _aggressive_ global CSS.
 
 🧩 Types
 
