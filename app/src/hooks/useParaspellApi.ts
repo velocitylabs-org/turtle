@@ -8,12 +8,10 @@ import {
   TxStatus,
 } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
-import { Environment } from '@/store/environmentStore'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
 import { wait } from '@/utils/datetime'
-import { isProduction } from '@/utils/env'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import {
@@ -75,7 +73,8 @@ const useParaspellApi = () => {
     const hash = await moonbeamTransfer(params, viemClient)
 
     const senderAddress = await getSenderAddress(params.sender)
-    const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     const transferToStore = {
@@ -83,7 +82,7 @@ const useParaspellApi = () => {
       sourceChain: params.sourceChain,
       sourceToken: params.sourceToken,
       destinationToken: params.destinationToken,
-      sourceTokenUSDValue: tokenUSDValue,
+      sourceTokenUSDValue,
       sender: senderAddress,
       destChain: params.destinationChain,
       sourceAmount: params.sourceAmount.toString(),
@@ -100,24 +99,8 @@ const useParaspellApi = () => {
       params.onComplete?.()
     })
 
-    // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
-    if (params.environment === Environment.Mainnet && isProduction) {
-      trackTransferMetrics({
-        id: hash,
-        sender: senderAddress,
-        sourceChain: params.sourceChain,
-        token: params.sourceToken,
-        amount: params.sourceAmount,
-        destinationChain: params.destinationChain,
-        tokenUSDValue,
-        fees: params.fees,
-        recipient: params.recipient,
-        date,
-        environment: params.environment,
-      })
-
-      setStatus('Idle')
-    }
+    sendMetrics({ params, txId: hash, senderAddress, sourceTokenUSDValue, destinationTokenUSDValue, date})
+    setStatus('Idle')
   }
 
   const handlePolkadotTransfer = async (
@@ -156,7 +139,8 @@ const useParaspellApi = () => {
     )
 
     const senderAddress = await getSenderAddress(params.sender)
-    const tokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
@@ -166,7 +150,7 @@ const useParaspellApi = () => {
           sourceChain: params.sourceChain,
           sourceToken: params.sourceToken,
           destinationToken: params.destinationToken,
-          sourceTokenUSDValue: tokenUSDValue,
+          sourceTokenUSDValue,
           sender: senderAddress,
           destChain: params.destinationChain,
           sourceAmount: params.sourceAmount.toString(),
@@ -186,6 +170,8 @@ const useParaspellApi = () => {
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
+
+        sendMetrics({ params, txId: event.txHash?.toString() ?? '', senderAddress, sourceTokenUSDValue, destinationTokenUSDValue, date })
       },
       error: callbackError => {
         if (callbackError instanceof InvalidTxError) {
@@ -245,6 +231,8 @@ const useParaspellApi = () => {
             setStatus('Idle')
             params.onComplete?.()
           })
+
+          sendMetrics({ params, txId: result.txHash?.toString() ?? '', senderAddress: account.address, sourceTokenUSDValue, destinationTokenUSDValue, date })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, result.txHash?.toString())
         }
@@ -399,3 +387,39 @@ const useParaspellApi = () => {
 }
 
 export default useParaspellApi
+
+interface SendMetricsParams {
+  params: TransferParams,
+  txId: string,
+  senderAddress: string,
+  sourceTokenUSDValue: number,
+  destinationTokenUSDValue: number,
+  date: Date
+}
+
+function sendMetrics({
+   params,
+   txId,
+   senderAddress,
+   sourceTokenUSDValue,
+   destinationTokenUSDValue,
+   date
+}: SendMetricsParams) {
+  trackTransferMetrics({
+    id: txId,
+    sender: senderAddress,
+    sourceChain: params.sourceChain,
+    token: params.sourceToken,
+    amount: params.sourceAmount,
+    destinationChain: params.destinationChain,
+    tokenUSDValue: sourceTokenUSDValue,
+    fees: params.fees,
+    recipient: params.recipient,
+    date,
+    environment: params.environment,
+    destinationToken: params.destinationToken,
+    destinationAmount: params.destinationAmount,
+    destinationTokenUSDValue,
+    bridgingFee: params.bridgingFee,
+  })
+}
