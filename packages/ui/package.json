@@ -4,6 +4,8 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "author": "Stefano Imparato <stefano@velocitylabs.org>",
+  "version": "0.0.2",
+  "private": true,
   "scripts": {
     "build": "tsc -b",
     "watch": "tsc --watch",
