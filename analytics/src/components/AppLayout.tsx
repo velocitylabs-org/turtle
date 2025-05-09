@@ -99,7 +99,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
           <span className="text-sm text-muted-foreground hidden md:block">{nowFormatted}</span>
         </header>
         {/* Pages */}
-        <div className="h-full p-4 pt-0 md:p-8 md:pt-0">{children}</div>
+        <div className="h-full p-4 pt-0 pb-10 md:pb-6 md:p-8 md:pt-0 ">{children}</div>
       </main>
     </div>
   )

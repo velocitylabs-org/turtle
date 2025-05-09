@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -164,57 +164,65 @@ export default function TransactionsPage() {
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="flex flex-1 gap-4">
-                  <div className="flex-1">
-                    <DatePicker date={fromDate} setDate={setFromDate} placeholder="From date" />
+              {/* Date pickers section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex-shrink-0 p-2 flex items-center">
+                    <button
+                      className="rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      onClick={resetFilters}
+                    >
+                      <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                      <span className="sr-only">Clear filters</span>
+                    </button>
                   </div>
-                  <div className="flex-1">
-                    <DatePicker date={toDate} setDate={setToDate} placeholder="To date" />
-                  </div>
-                </div>
-                <div className="flex flex-1 gap-4">
                   <div className="flex flex-1 gap-4">
                     <Button
                       variant="outline"
                       size="sm"
-                      className={statusFilter === 'succeeded' ? 'flex-1 bg-green-100' : 'flex-1'}
+                      className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
                       onClick={() =>
                         setStatusFilter(statusFilter === 'succeeded' ? null : 'succeeded')
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
-                      Succeeded
+                      <span className="hidden lg:inline">Succeeded</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      className={statusFilter === 'failed' ? 'flex-1 bg-red-100' : 'flex-1'}
+                      className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
                       onClick={() => setStatusFilter(statusFilter === 'failed' ? null : 'failed')}
                     >
                       <Ban className="mr-1 h-4 w-4" />
-                      Failed
+                      <span className="hidden lg:inline">Failed</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      className={statusFilter === 'undefined' ? 'flex-1 bg-yellow-100' : 'flex-1'}
+                      className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
                         setStatusFilter(statusFilter === 'undefined' ? null : 'undefined')
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
-                      Undefined
+                      <span className="hidden lg:inline">Undefined</span>
                     </Button>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={resetFilters}>
-                    <X className="mr-1 h-4 w-4" />
-                    Reset
-                  </Button>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-1">
+                    <DatePicker date={fromDate} setDate={setFromDate} placeholder="From date" />
+                  </div>
+                  <div className="col-span-1">
+                    <DatePicker date={toDate} setDate={setToDate} placeholder="To date" />
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-4">
-                <div className="min-w-[200px] flex-1">
+              
+              {/* Chain and token selectors */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
                   <MultiSelect
                     options={chainOptions}
                     selected={sourceChainUid}
@@ -223,7 +231,7 @@ export default function TransactionsPage() {
                     singleSelect
                   />
                 </div>
-                <div className="min-w-[200px] flex-1">
+                <div>
                   <MultiSelect
                     options={tokenSourceOptions}
                     selected={sourceTokenId}
@@ -233,7 +241,7 @@ export default function TransactionsPage() {
                     singleSelect
                   />
                 </div>
-                <div className="min-w-[200px] flex-1">
+                <div>
                   <MultiSelect
                     options={chainOptions}
                     selected={destinationChainUid}
@@ -242,7 +250,7 @@ export default function TransactionsPage() {
                     singleSelect
                   />
                 </div>
-                <div className="min-w-[200px] flex-1">
+                <div>
                   <MultiSelect
                     options={tokenDestinationOptions}
                     selected={destinationTokenId}
