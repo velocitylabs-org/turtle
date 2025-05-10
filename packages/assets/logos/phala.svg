@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="isolation:isolate" viewBox="0 0 350 350" width="350pt" height="350pt">
+  <defs>
+    <clipPath id="_clipPath_uGzqaBxRtmb9wO23m10DpfHhkWBgG8Sz">
+      <rect width="350" height="350" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#_clipPath_uGzqaBxRtmb9wO23m10DpfHhkWBgG8Sz)">
+    <rect width="350" height="350" style="fill:rgb(0,1,1)" />
+    <g>
+      <rect x="126" y="181.895" width="120.05" height="40.019" transform="matrix(1,0,0,1,0,0)" fill="rgb(209,255,82)" />
+      <rect x="246.057" y="121.87" width="40.019" height="60.032" transform="matrix(1,0,0,1,0,0)" fill="rgb(209,255,82)" />
+      <path d=" M 126 221.921 L 85.974 221.921 L 85.974 231.924 L 85.974 241.934 L 85.974 281.946 L 125.993 281.946 L 125.993 241.934 L 126 241.934 L 126 221.921 L 126 221.921 Z " fill="rgb(209,255,82)" />
+      <path d=" M 246.057 81.851 L 126 81.851 L 120.246 81.851 L 85.974 81.851 L 85.974 161.889 L 85.974 174.664 L 85.974 181.902 L 126 181.902 L 126 174.664 L 126 161.889 L 126 121.87 L 246.057 121.87 L 246.057 81.851 L 246.057 81.851 Z " fill="rgb(209,255,82)" />
+      <rect x="126" y="181.895" width="120.05" height="40.019" transform="matrix(1,0,0,1,0,0)" fill="rgb(209,255,82)" />
+    </g>
+  </g>
+</svg>

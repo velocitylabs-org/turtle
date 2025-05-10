@@ -8,7 +8,8 @@ import {
   TxStatus,
 } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
-import { Environment } from '@/store/environmentStore'
+import { Environment } from '@velocitylabs-org/turtle-registry'
+
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'

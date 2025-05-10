@@ -63,9 +63,9 @@ export const isRouteAllowed = (fromChain: Chain, toChain: Chain, tokenAmount?: T
     return routes.some(
       r => r.from === fromChain.uid && r.to === toChain.uid && r.tokens.includes(id),
     )
-  } else {
-    return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid)
   }
+
+  return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid)
 }
 
 export const isTokenAvailableForSourceChain = (
@@ -134,25 +134,16 @@ export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
   return chain1.uid === chain2.uid
 }
 
-export const isSamePolkadotChain = (
-  sourceChain?: Chain | null,
-  destinationChain?: Chain | null,
-): boolean => {
-  return Boolean(
-    sourceChain &&
-      destinationChain &&
-      isSameChain(sourceChain, destinationChain) &&
-      sourceChain.network === 'Polkadot',
-  )
-}
-
 export const resolveSdk = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
 ): TransferSDK | undefined => {
-  if (!sourceChain || !destinationChain) return
+  if (!sourceChain || !destinationChain) {
+    return
+  }
 
-  return isSamePolkadotChain(sourceChain, destinationChain)
-    ? 'ParaSpellApi'
-    : getRoute(sourceChain, destinationChain)?.sdk
+  const isSamePolkadotChain =
+    isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
+
+  return isSamePolkadotChain ? 'ParaSpellApi' : getRoute(sourceChain, destinationChain)?.sdk
 }

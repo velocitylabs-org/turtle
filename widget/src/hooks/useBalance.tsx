@@ -1,5 +1,4 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { Balance } from '@/models/balance'
 import { Environment } from '@/stores/environmentStore'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'

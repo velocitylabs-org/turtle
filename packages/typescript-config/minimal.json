@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "noEmit": false,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "module": "esnext",
+    "composite": true,
+    "declaration": true,
+    "lib": ["ES2021", "DOM"]
+  }
+}
