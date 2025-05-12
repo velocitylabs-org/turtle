@@ -4,6 +4,7 @@ module.exports = {
     'prettier',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
   ],
   plugins: ['tsdoc', 'unused-imports', '@typescript-eslint'],
   parser: '@typescript-eslint/parser',
@@ -20,6 +21,18 @@ module.exports = {
     'unused-imports/no-unused-imports': 'warn',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-namespace': 'off',
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
+    'import/named': 'off',
+    'import/no-named-as-default': 'off',
     'import/no-namespace': 'warn',
     'unused-imports/no-unused-vars': [
       'warn',

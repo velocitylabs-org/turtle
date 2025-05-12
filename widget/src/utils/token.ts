@@ -1,7 +1,7 @@
+import { deepEqual, TMultiLocation } from '@paraspell/sdk'
 import { TokenPrice } from '@/models/balance'
 import { Token } from '@/models/token'
 import { REGISTRY } from '@/registry/mainnet/mainnet'
-import { deepEqual, TMultiLocation } from '@paraspell/sdk'
 
 export const getCoingekoId = (token: Token): string =>
   token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')

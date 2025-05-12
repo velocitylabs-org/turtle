@@ -1,3 +1,5 @@
+import { Context, environment, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { AbstractProvider, AlchemyProvider } from 'ethers'
 import { Fee } from '@/hooks/useFees'
 import { Chain } from '@/models/chain'
 import { SnowbridgeContext } from '@/models/snowbridge'
@@ -11,8 +13,6 @@ import { Environment } from '@/stores/environmentStore'
 import { ALCHEMY_API_KEY } from '@/utils/consts'
 import { getTokenPrice } from '@/utils/token'
 import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
-import { Context, environment, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
-import { AbstractProvider, AlchemyProvider } from 'ethers'
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.

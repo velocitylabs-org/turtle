@@ -6,7 +6,10 @@ node_modules
 .env.*
 
 turtle.code-workspace
+tsconfig.tsbuildinfo
 
 dist
 packages/**/node_modules
 packages/**/dist
+packages/**/tsconfig.tsbuildinfo
+

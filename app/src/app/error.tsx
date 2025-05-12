@@ -1,8 +1,8 @@
 'use client'
-import { useEffect } from 'react'
+import { captureException } from '@sentry/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import { captureException } from '@sentry/nextjs'
+import { useEffect } from 'react'
 
 const imageStyles = { objectFit: 'cover' as const }
 

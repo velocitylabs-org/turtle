@@ -13,6 +13,7 @@ const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@paraspell/xcm-router$': '<rootDir>/node_modules/@paraspell/xcm-router/dist/index.d.ts',
+    '^@velocitylabs-org/turtle-registry(.*)$': '<rootDir>/../packages/registry/src$1',
   },
 }
 

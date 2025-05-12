@@ -1,7 +1,7 @@
 import { FC } from 'react'
+import ProgressBar from '@/components/ProgressBar'
 import useTransferProgress from '@/hooks/useTransferProgress'
 import { StoredTransfer } from '@/models/transfer'
-import ProgressBar from '@/components/ProgressBar'
 import { Direction } from '@/utils/transfer'
 
 interface TransferEstimateProps {

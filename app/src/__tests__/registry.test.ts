@@ -1,6 +1,6 @@
+import { describe, expect, it } from '@jest/globals'
 import { Mainnet } from '@/registry/mainnet/mainnet'
 import { routes } from '@/registry/mainnet/routes'
-import { describe, expect, it } from '@jest/globals'
 
 describe('Routes', () => {
   it('should have correctly structured routes', () => {

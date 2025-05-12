@@ -1,0 +1,8 @@
+{
+  "name": "@velocitylabs-org/turtle-assets",
+  "version": "0.0.1",
+  "files": ["logos"],
+  "exports": {
+    "./logos/*": "./logos/*"
+  }
+}

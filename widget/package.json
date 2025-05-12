@@ -27,6 +27,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@velocitylabs-org/turtle-registry": "workspace:*",
+    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@heroui/react": "^2.7.2",
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
@@ -103,6 +105,8 @@
   "peerDependencies": {
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/util": "^13.3.1",
+    "@paraspell/sdk": "^8.11.1",
+    "@types/node": ">=20.16.15",
     "react": "^18.3.1 || ^19.0.0",
     "react-dom": "^18.3.1 || ^19.0.0"
   }

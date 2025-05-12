@@ -1,6 +1,6 @@
-import { PjsEvents } from '@/models/transfer'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ISubmittableResult } from '@polkadot/types/types'
+import { PjsEvents } from '@/models/transfer'
 
 /**
  * Processes blockchain events and handles extrinsic success or failure.

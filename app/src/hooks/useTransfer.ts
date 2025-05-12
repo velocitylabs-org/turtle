@@ -1,11 +1,10 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
-import { AmountInfo } from '@/models/transfer'
-import { Environment } from '@/store/environmentStore'
-import { SubstrateAccount } from '@/store/substrateWalletStore'
-import { resolveSdk } from '@/utils/routes'
+import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
 import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
+import { AmountInfo } from '@/models/transfer'
+
+import { SubstrateAccount } from '@/store/substrateWalletStore'
+import { resolveSdk } from '@/utils/routes'
 import useParaspellApi from './useParaspellApi'
 import useSnowbridgeApi from './useSnowbridgeApi'
 

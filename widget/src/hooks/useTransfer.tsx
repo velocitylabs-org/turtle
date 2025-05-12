@@ -1,13 +1,12 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { JsonRpcSigner } from 'ethers'
+import { useState } from 'react'
 import { AmountInfo } from '@/models/transfer'
 import { Environment } from '@/stores/environmentStore'
 import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { resolveSdk } from '@/utils/routes'
-import { JsonRpcSigner } from 'ethers'
-import { useState } from 'react'
-import useSnowbridgeApi from './useSnowbridgeApi'
 import useParaspellApi from './useParaspellApi'
+import useSnowbridgeApi from './useSnowbridgeApi'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
 

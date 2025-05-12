@@ -1,3 +1,11 @@
+import { ISubmittableResult } from '@polkadot/types/types'
+import { captureException } from '@sentry/nextjs'
+import { Environment } from '@velocitylabs-org/turtle-registry'
+import { switchChain } from '@wagmi/core'
+import { InvalidTxError, TxEvent } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
+import { Config, useConnectorClient } from 'wagmi'
+import { moonbeam } from 'wagmi/chains'
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
 import {
@@ -29,13 +37,6 @@ import {
   isSwapWithTransfer,
   txWasCancelled,
 } from '@/utils/transfer'
-import { ISubmittableResult } from '@polkadot/types/types'
-import { captureException } from '@sentry/nextjs'
-import { switchChain } from '@wagmi/core'
-import { InvalidTxError, TxEvent } from 'polkadot-api'
-import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
-import { Config, useConnectorClient } from 'wagmi'
-import { moonbeam } from 'wagmi/chains'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'

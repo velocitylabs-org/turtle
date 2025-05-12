@@ -1,7 +1,7 @@
-import { Token } from '@/models/token'
-import { CACHE_REVALIDATE_IN_SECONDS, getCachedTokenPrice } from '@/services/balance'
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
+import { Token } from '@/models/token'
+import { CACHE_REVALIDATE_IN_SECONDS, getCachedTokenPrice } from '@/services/balance'
 
 type TokenPriceResult = {
   price?: number
