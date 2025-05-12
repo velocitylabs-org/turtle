@@ -6,7 +6,6 @@ import { SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
 import { rpcConnectionAsHttps } from '@/registry/helpers'
 import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 
-
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
 /**

@@ -1,4 +1,4 @@
-import { environment , historyV2 as history } from '@snowbridge/api'
+import { environment, historyV2 as history } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 import { FromParachainTrackingResult } from '@/models/subscan'

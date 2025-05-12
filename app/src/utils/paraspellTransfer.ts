@@ -17,7 +17,6 @@ import { TransferParams } from '@/hooks/useTransfer'
 import { REGISTRY } from '@/registry'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 
-
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
 /**
