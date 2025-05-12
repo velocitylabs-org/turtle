@@ -1,5 +1,6 @@
-import { TransferStatus } from '@snowbridge/api/dist/history'
 import { historyV2 as history } from '@snowbridge/api'
+import { TransferStatus } from '@snowbridge/api/dist/history'
+import { FromParaToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 import {
   TxTrackingResult,
   StoredTransfer,
@@ -7,7 +8,6 @@ import {
   OngoingTransferWithDirection,
 } from '@/models/transfer'
 import { Direction, resolveDirection } from './transfer'
-import { FromParaToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (ongoingTransfers: OngoingTransfers) => {
   const transfers: TxTrackingResult[] = []

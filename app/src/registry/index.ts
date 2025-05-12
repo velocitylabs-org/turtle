@@ -1,6 +1,6 @@
+import { TCurrencyCore } from '@paraspell/sdk'
 import { Environment, Chain, Token } from '@velocitylabs-org/turtle-registry'
 
-import { TCurrencyCore } from '@paraspell/sdk'
 import { rpcConnectionAsHttps } from './helpers'
 import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from './mainnet/chains'
 import { Mainnet } from './mainnet/mainnet'

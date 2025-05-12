@@ -1,13 +1,13 @@
-import { Network } from '@/models/chain'
-import { NotificationSeverity } from '@/models/notification'
-import { TokenAmount } from '@/models/select'
 import { Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
 import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
+import { Network } from '@/models/chain'
+import { NotificationSeverity } from '@/models/notification'
+import { TokenAmount } from '@/models/select'
+import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { convertAmount, toHuman } from '@/utils/transfer'
 import useNotification from './useNotification'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
 
 interface Params {
   context?: Context

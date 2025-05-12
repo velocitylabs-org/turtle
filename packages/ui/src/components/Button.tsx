@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
 import clsx from 'clsx'
+import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { Sizes } from '@/types/global'
 import { LoadingIcon } from './LoadingIcon'

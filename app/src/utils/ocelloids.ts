@@ -1,9 +1,9 @@
+import { captureException } from '@sentry/nextjs'
+import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Moonbeam } from '@/registry/mainnet/chains'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { captureException } from '@sentry/nextjs'
-import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
 import { getExplorerLink, isSameChainSwap } from './transfer'
 
 type ResultNotification = {

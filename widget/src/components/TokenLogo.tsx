@@ -1,13 +1,13 @@
-import { Chain } from '@/models/chain'
 import { Tooltip } from '@velocitylabs-org/turtle-ui'
-import { Token } from '@/models/token'
 import { FC } from 'react'
-import { cn } from '@/utils/helper'
-import { Icon } from './Icon'
 
 import EthereumLogo from '@/assets/logos/ethereum.svg'
 import PolkadotLogo from '@/assets/logos/polkadot.svg'
 import SnowbridgeLogo from '@/assets/logos/snowbridge-badge.svg'
+import { Chain } from '@/models/chain'
+import { Token } from '@/models/token'
+import { cn } from '@/utils/helper'
+import { Icon } from './Icon'
 
 interface TokenLogoProps {
   token: Token

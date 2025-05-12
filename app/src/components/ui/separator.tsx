@@ -1,8 +1,8 @@
 'use client'
 // eslint-disable-next-line import/no-namespace
+import * as SeparatorPrimitive from '@radix-ui/react-separator'
 import * as React from 'react'
 // eslint-disable-next-line import/no-namespace
-import * as SeparatorPrimitive from '@radix-ui/react-separator'
 
 import { cn } from '@/utils/cn'
 

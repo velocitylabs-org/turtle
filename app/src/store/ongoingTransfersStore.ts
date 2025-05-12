@@ -1,6 +1,6 @@
-import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { STORE_VERSIONS } from './migrations/constants'
 import { migrateOngoingTransfers } from './migrations/ongoingTransfersMigration'
 

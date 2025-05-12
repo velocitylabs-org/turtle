@@ -1,7 +1,7 @@
-import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { captureException } from '@sentry/nextjs'
 import { useEffect, useState } from 'react'
+import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
 
 const useSubstrateWallet = () => {
   const substrateAccount = useSubstrateWalletStore(state => state.account)

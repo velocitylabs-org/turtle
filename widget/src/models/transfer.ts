@@ -1,9 +1,9 @@
-import { Environment } from '@/stores/environmentStore'
-import { Chain } from './chain'
-import { Token } from './token'
-import { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
-import { Direction } from '@/utils/transfer'
 import { TRouterPlan } from '@paraspell/xcm-router'
+import { Environment } from '@/stores/environmentStore'
+import { Direction } from '@/utils/transfer'
+import { Chain } from './chain'
+import { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
+import { Token } from './token'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */

@@ -1,6 +1,9 @@
-import { StoredTransfer } from '@/models/transfer'
-import { Direction, formatAmount, isSwap, resolveDirection, toHuman } from '@/utils/transfer'
-import OngoingTransfer from './Card'
+import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
+import { ArrowRight } from '@/assets/svg/ArrowRight'
+import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
+import Account from '@/components/Account'
+import { Icon } from '@/components/Icon'
+import { TokenLogo } from '@/components/TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -9,17 +12,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
-import { ArrowRight } from '@/assets/svg/ArrowRight'
-import { Icon } from '@/components/Icon'
-import { colors } from '../../../../tailwind.config'
-import Account from '@/components/Account'
-import { TokenLogo } from '@/components/TokenLogo'
+import { StoredTransfer } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import TransferEstimate from './OngoingTransferEstimate'
 import { getExplorerLink } from '@/utils/explorer'
-import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
+import { Direction, formatAmount, isSwap, resolveDirection, toHuman } from '@/utils/transfer'
+import { colors } from '../../../../tailwind.config'
 import { SummaryRow } from '../completed-transfers/Dialog'
+import OngoingTransfer from './Card'
+import TransferEstimate from './OngoingTransferEstimate'
 
 export const OngoingTransferDialog = ({
   transfer,

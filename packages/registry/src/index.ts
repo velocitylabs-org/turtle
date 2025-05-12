@@ -1,4 +1,3 @@
-import { Environment, LocalAssetUid } from "./types";
 import { rpcConnectionAsHttps } from "./helpers";
 import {
   AssetHub,
@@ -9,6 +8,7 @@ import {
   Mythos,
 } from "./mainnet/chains";
 import { Mainnet } from "./mainnet/mainnet";
+import { Environment, LocalAssetUid } from "./types";
 
 const SNOWBRIDGE_MAINNET_PARACHAINS = [
   AssetHub,

@@ -1,9 +1,9 @@
 import { ethers, JsonRpcSigner } from 'ethers'
-import { Chain, Network } from '@/models/chain'
-import { Token } from '@/models/token'
-import { TokenAmount } from '@/models/select'
-import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { Sender } from '@/hooks/useTransfer'
+import { Chain, Network } from '@/models/chain'
+import { TokenAmount } from '@/models/select'
+import { Token } from '@/models/token'
+import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { isSameChain } from './routes'
 
 export type FormatLength = 'Short' | 'Long' | 'Longer'

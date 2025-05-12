@@ -1,20 +1,19 @@
-import { DWELLIR_KEY } from '@/utils/consts'
-import { Chain } from '@/models/chain'
-
 import AcalaLogo from '@/assets/logos/acala.svg'
-import AstarLogo from '@/assets/logos/astar.svg'
 import AssetHubLogo from '@/assets/logos/assethub.svg'
-import BridgeHubLogo from '@/assets/logos/bridgehub.svg'
+import AstarLogo from '@/assets/logos/astar.svg'
 import BifrostLogo from '@/assets/logos/bifrost.svg'
+import BridgeHubLogo from '@/assets/logos/bridgehub.svg'
 import CentrifugeLogo from '@/assets/logos/cfg.svg'
 import EthereumLogo from '@/assets/logos/ethereum.svg'
 import HydrationLogo from '@/assets/logos/hydra.svg'
 import InterlayLogo from '@/assets/logos/interlay.svg'
-import PhalaLogo from '@/assets/logos/phala.svg'
-import PolimecLogo from '@/assets/logos/polimec.svg'
 import MoonbeamLogo from '@/assets/logos/moonbeam.svg'
 import MythosLogo from '@/assets/logos/myth.svg'
+import PhalaLogo from '@/assets/logos/phala.svg'
+import PolimecLogo from '@/assets/logos/polimec.svg'
 import RelayChainLogo from '@/assets/logos/polkadot.svg'
+import { Chain } from '@/models/chain'
+import { DWELLIR_KEY } from '@/utils/consts'
 
 export const Acala: Chain = {
   uid: 'acala',

@@ -1,8 +1,8 @@
+import Identicon from '@polkadot/react-identicon'
 import useLookupName from '@/hooks/useLookupName'
 import { AddressType, Network } from '@/models/chain'
 import { truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/helper'
-import Identicon from '@polkadot/react-identicon'
 import CopyAddress from './ClipboardCopy'
 
 function Account({

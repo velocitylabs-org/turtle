@@ -1,9 +1,9 @@
+import { describe, expect, it } from '@jest/globals'
 import { getDestChainId } from '@/models/chain'
 import { AssetHub, Ethereum, Mythos } from '@/registry/mainnet/chains'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
-import { describe, expect, it } from '@jest/globals'
 
 describe('Transfer', () => {
   it('direction ToEthereum', () => {

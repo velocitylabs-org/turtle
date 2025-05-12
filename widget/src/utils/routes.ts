@@ -1,14 +1,14 @@
-import { Chain } from '@/models/chain'
-import { TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
-import { Route, TransferSDK } from '@/registry'
-import { REGISTRY } from '@/registry/mainnet/mainnet'
 import {
   getSwapsDestinationChains,
   getSwapsDestinationTokens,
   getSwapsSourceChains,
   getSwapsSourceTokens,
 } from '@/lib/paraspell/swap'
+import { Chain } from '@/models/chain'
+import { TokenAmount } from '@/models/select'
+import { Token } from '@/models/token'
+import { Route, TransferSDK } from '@/registry'
+import { REGISTRY } from '@/registry/mainnet/mainnet'
 import { isSameToken } from './token'
 
 /** Deduplicates a list of items based on their uid/id property. Used for chains and tokens. */

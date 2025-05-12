@@ -1,15 +1,15 @@
-import { AMOUNT_VS_FEE_RATIO } from '@/utils/consts'
+import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
+import { ExclamationMark } from '@/assets/svg/ExclamationMark'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { TokenAmount } from '@/models/select'
 import { AmountInfo } from '@/models/transfer'
+import { AMOUNT_VS_FEE_RATIO } from '@/utils/consts'
 import { cn } from '@/utils/helper'
 import { toAmountInfo, Direction, formatAmount, toHuman } from '@/utils/transfer'
-import { AnimatePresence, motion } from 'framer-motion'
 import { colors } from '../../tailwind.config'
 import Delayed from './Delayed'
-import { ExclamationMark } from '@/assets/svg/ExclamationMark'
-import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
-import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
