@@ -1,7 +1,6 @@
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
 import { AmountInfo } from '@/models/transfer'
-import { Environment } from '@/store/environmentStore'
+
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { resolveSdk } from '@/utils/routes'
 import { JsonRpcSigner } from 'ethers'

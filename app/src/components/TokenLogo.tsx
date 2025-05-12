@@ -1,7 +1,6 @@
 'use client'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
 import React from 'react'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import Tooltip from './Tooltip'
 import { cn } from '@/utils/cn'
 import Icon from './Icon'
