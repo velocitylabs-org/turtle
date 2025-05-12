@@ -1,17 +1,16 @@
-import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
-import { cn } from '@/utils/helper'
-import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
-
-import Account from '@/components/Account'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Fail } from '@/assets/svg/Fail'
 import { Info } from '@/assets/svg/Info'
 import { Success } from '@/assets/svg/Success'
+import Account from '@/components/Account'
+import { TokenLogo } from '@/components/TokenLogo'
+import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
+import { formatOngoingTransferDate } from '@/utils/datetime'
+import { cn } from '@/utils/helper'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
 import { colors } from '../../../../tailwind.config'
 import { getSVGColor } from './Dialog'
-import { TokenLogo } from '@/components/TokenLogo'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const getStatusIcon = (status: TransferResult) => {

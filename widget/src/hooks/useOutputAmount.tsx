@@ -1,10 +1,10 @@
+import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { getExchangeOutputAmount } from '@/lib/paraspell/swap'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
-import { getExchangeOutputAmount } from '@/lib/paraspell/swap'
 import { isSameToken } from '@/utils/token'
-import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null

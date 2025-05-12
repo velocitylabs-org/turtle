@@ -1,7 +1,7 @@
-import { Status } from '@/hooks/useTransfer'
-import { FC, ReactNode, useEffect, useState } from 'react'
-import { colors } from '../../tailwind.config'
 import { ButtonVariant, LoadingIcon, ButtonProps, Button } from '@velocitylabs-org/turtle-ui'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import { Status } from '@/hooks/useTransfer'
+import { colors } from '../../tailwind.config'
 
 type SendButtonProps = ButtonProps & { status: Status }
 

@@ -1,5 +1,5 @@
-import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
-import { CompletedTransferCard, getStatusIcon } from './Card'
+import { ArrowRight } from '@/assets/svg/ArrowRight'
+import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import Account from '@/components/Account'
 import { Icon } from '@/components/Icon'
 import { TokenLogo } from '@/components/TokenLogo'
@@ -11,13 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { cn } from '@/utils/helper'
+import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
+import { cn } from '@/utils/helper'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
-import { ArrowRight } from '@/assets/svg/ArrowRight'
-import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import { colors } from '../../../../tailwind.config'
+import { CompletedTransferCard, getStatusIcon } from './Card'
 
 export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
   return (

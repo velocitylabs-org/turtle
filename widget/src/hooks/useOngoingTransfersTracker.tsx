@@ -1,3 +1,6 @@
+import { TransferStatus } from '@snowbridge/api/dist/history'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getExplorerLink } from '@/utils/explorer'
@@ -8,9 +11,6 @@ import {
   isCompletedTransfer,
   trackTransfers,
 } from '@/utils/tracking'
-import { TransferStatus } from '@snowbridge/api/dist/history'
-import { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'

@@ -1,11 +1,10 @@
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { getExplorerLink } from '@/utils/explorer'
 import { NotificationSeverity, Notification } from '@/models/notification'
-import { Direction, isSameChainSwap, resolveDirection } from '@/utils/transfer'
+import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Moonbeam } from '@/registry/mainnet/chains'
 import { OCELLOIDS_API_Key } from '@/utils/consts'
+import { getExplorerLink } from '@/utils/explorer'
+import { Direction, isSameChainSwap, resolveDirection } from '@/utils/transfer'
 
 type ResultNotification = {
   message: string

@@ -1,13 +1,13 @@
+import { ArrowLeft, History } from 'lucide-react'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import NotificationSystem from '@/components/NotificationSystem'
 import SubstrateWalletModal from '@/components/SubstrateWalletModal'
 import TransferForm from '@/components/Transfer'
-import { Providers } from '@/providers'
-import { ArrowLeft, History } from 'lucide-react'
-import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
+import { Providers } from '@/providers'
+import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import { generateWidgetTheme, WidgetTheme } from '@/utils/theme'
+import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
 
 export type TransferTab = 'New' | 'History'
 export type TransferTabOptions = TransferTab

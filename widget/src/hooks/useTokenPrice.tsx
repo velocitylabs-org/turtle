@@ -1,7 +1,7 @@
-import { Token } from '@/models/token'
-import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
 import { useQuery } from '@tanstack/react-query'
 import { TokenPriceResult } from '@/models/balance'
+import { Token } from '@/models/token'
+import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
 import { getTokenPrice } from '@/utils/token'
 
 const useTokenPrice = (token?: Token | null): TokenPriceResult => {

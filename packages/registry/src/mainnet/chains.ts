@@ -1,20 +1,19 @@
+import acalaLogo from "@velocitylabs-org/turtle-assets/logos/acala.svg";
+import assetHubLogo from "@velocitylabs-org/turtle-assets/logos/assethub.svg";
+import astarLogo from "@velocitylabs-org/turtle-assets/logos/astar.svg";
+import bifrostLogo from "@velocitylabs-org/turtle-assets/logos/bifrost.svg";
+import bridgehubLogo from "@velocitylabs-org/turtle-assets/logos/bridgehub.svg";
+import centrifugeLogo from "@velocitylabs-org/turtle-assets/logos/cfg.svg";
+import ethereumLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
+import hydraLogo from "@velocitylabs-org/turtle-assets/logos/hydra.svg";
+import interlayLogo from "@velocitylabs-org/turtle-assets/logos/interlay.svg";
+import moonbeamLogo from "@velocitylabs-org/turtle-assets/logos/moonbeam.svg";
+import mythosLogo from "@velocitylabs-org/turtle-assets/logos/myth.svg";
+import phalaLogo from "@velocitylabs-org/turtle-assets/logos/phala.svg";
+import polimecLogo from "@velocitylabs-org/turtle-assets/logos/polimec.svg";
+import polkadotLogo from "@velocitylabs-org/turtle-assets/logos/polkadot.svg";
 import { DWELLIR_KEY } from "../constants";
 import { Chain } from "../types";
-
-import ethereumLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
-import assetHubLogo from "@velocitylabs-org/turtle-assets/logos/assethub.svg";
-import polkadotLogo from "@velocitylabs-org/turtle-assets/logos/polkadot.svg";
-import bridgehubLogo from "@velocitylabs-org/turtle-assets/logos/bridgehub.svg";
-import bifrostLogo from "@velocitylabs-org/turtle-assets/logos/bifrost.svg";
-import hydraLogo from "@velocitylabs-org/turtle-assets/logos/hydra.svg";
-import phalaLogo from "@velocitylabs-org/turtle-assets/logos/phala.svg";
-import moonbeamLogo from "@velocitylabs-org/turtle-assets/logos/moonbeam.svg";
-import interlayLogo from "@velocitylabs-org/turtle-assets/logos/interlay.svg";
-import acalaLogo from "@velocitylabs-org/turtle-assets/logos/acala.svg";
-import polimecLogo from "@velocitylabs-org/turtle-assets/logos/polimec.svg";
-import centrifugeLogo from "@velocitylabs-org/turtle-assets/logos/cfg.svg";
-import astarLogo from "@velocitylabs-org/turtle-assets/logos/astar.svg";
-import mythosLogo from "@velocitylabs-org/turtle-assets/logos/myth.svg";
 
 export const Ethereum: Chain = {
   uid: "ethereum",

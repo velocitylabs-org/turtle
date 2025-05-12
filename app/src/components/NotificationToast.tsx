@@ -1,14 +1,14 @@
 'use client'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
+import { useEffect } from 'react'
+import { twMerge } from 'tailwind-merge'
 import DefaultIcon from '@/../public/severity-default-icon.svg'
 import ErrorIcon from '@/../public/severity-error-icon.svg'
 import InfoIcon from '@/../public/severity-info-icon.svg'
 import SuccessIcon from '@/../public/severity-success-icon.svg'
 import WarningIcon from '@/../public/severity-warning-icon.svg'
 import { Notification, NotificationSeverity } from '@/models/notification'
-import { motion } from 'framer-motion'
-import Image from 'next/image'
-import { useEffect } from 'react'
-import { twMerge } from 'tailwind-merge'
 
 const NOTIFICATION_TTL_MS = 5000
 

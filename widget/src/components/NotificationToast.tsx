@@ -1,13 +1,13 @@
-import { Notification, NotificationSeverity } from '@/models/notification'
 import { motion } from 'framer-motion'
 import { useEffect } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-import InfoIcon from '@/assets/svg/severity-info-icon.svg'
-import ErrorIcon from '@/assets/svg/severity-error-icon.svg'
-import WarningIcon from '@/assets/svg/severity-warning-icon.svg'
-import SuccessIcon from '@/assets/svg/severity-success-icon.svg'
 import DefaultIcon from '@/assets/svg/severity-default-icon.svg'
+import ErrorIcon from '@/assets/svg/severity-error-icon.svg'
+import InfoIcon from '@/assets/svg/severity-info-icon.svg'
+import SuccessIcon from '@/assets/svg/severity-success-icon.svg'
+import WarningIcon from '@/assets/svg/severity-warning-icon.svg'
+import { Notification, NotificationSeverity } from '@/models/notification'
 
 const NOTIFICATION_TTL_MS = 5000
 

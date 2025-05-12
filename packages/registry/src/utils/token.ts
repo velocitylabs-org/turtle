@@ -1,6 +1,6 @@
 import { deepEqual, TMultiLocation } from "@paraspell/sdk";
-import { Token } from "../types";
 import { REGISTRY } from "../mainnet";
+import { Token } from "../types";
 
 export function getCoingekoId(token: Token): string {
   return (

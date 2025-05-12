@@ -43,6 +43,18 @@ export default tseslint.config(
       'react/react-in-jsx-scope': ['off'],
       'react/button-has-type': 'error',
       'react/prop-types': 'off',
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+        },
+      ],
+      'import/named': 'off',
+      'import/no-named-as-default': 'off',
     },
   },
 )

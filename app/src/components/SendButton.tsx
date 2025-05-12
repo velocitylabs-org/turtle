@@ -1,5 +1,5 @@
-import { Status } from '@/hooks/useTransfer'
 import { ReactNode, useEffect, useState } from 'react'
+import { Status } from '@/hooks/useTransfer'
 import { colors } from '../../tailwind.config'
 import Button, { ButtonProps, ButtonVariant } from './Button'
 import LoadingIcon from './svg/LoadingIcon'

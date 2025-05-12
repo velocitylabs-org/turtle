@@ -1,5 +1,5 @@
-import { Token } from "../types";
 import { parachain, snowbridgeWrapped } from "../helpers";
+import { Token } from "../types";
 
 // Tokens
 export const EthereumTokens = {

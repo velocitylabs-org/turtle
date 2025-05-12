@@ -1,6 +1,6 @@
 'use client'
-import useNotification from '@/hooks/useNotification'
 import { AnimatePresence } from 'framer-motion'
+import useNotification from '@/hooks/useNotification'
 import NotificationToast from './NotificationToast'
 
 export default function NotificationSystem() {
