@@ -1,8 +1,8 @@
+import { Environment } from '@velocitylabs-org/turtle-registry'
 import { SnowbridgeStatus } from '@/models/snowbridge'
 import { SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
 import { rpcConnectionAsHttps } from '@/registry/helpers'
 import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
-import { Environment } from '@velocitylabs-org/turtle-registry'
 
 import { Context, environment, status } from '@snowbridge/api'
 import { AbstractProvider, AlchemyProvider } from 'ethers'
