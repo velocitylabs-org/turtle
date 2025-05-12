@@ -44,6 +44,7 @@ export const REGISTRY: Registry = {
     PolkadotTokens.USDC,
     EthereumTokens.USDT,
     PolkadotTokens.USDT,
+    PolkadotTokens.MYTH,
     EthereumTokens.WSTETH,
     EthereumTokens.TBTC,
     PolkadotTokens.DOT,
