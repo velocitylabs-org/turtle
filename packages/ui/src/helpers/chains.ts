@@ -1,7 +1,7 @@
 import { Token, Chain } from '@velocitylabs-org/turtle-registry'
-import Ethereum from '@/assets/svg/logos/ethereum.svg'
-import Polkadot from '@/assets/svg/logos/polkadot.svg'
-import Snowbridge from '@/assets/svg/logos/snowbridge.svg'
+import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
+import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
+import snowbridgeLogo from '@velocitylabs-org/turtle-assets/logos/snowbridge.svg'
 
 interface OriginBadge {
   logoURI: string
@@ -22,14 +22,14 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
 
   if (sourceChain.network == 'Ethereum' && token.origin.type === 'Ethereum') {
     return {
-      logoURI: Ethereum,
+      logoURI: ethereumLogo,
       text: `Ethereum ${token.symbol}`,
     }
   }
 
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Polkadot') {
     return {
-      logoURI: Polkadot,
+      logoURI: polkadotLogo,
       text: `Polkadot ${token.symbol}`,
     }
   }
@@ -37,7 +37,7 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
     if (token.origin.bridge === 'Snowbridge') {
       return {
-        logoURI: Snowbridge,
+        logoURI: snowbridgeLogo,
         text: `Snowbridge ${token.symbol}`,
       }
     }

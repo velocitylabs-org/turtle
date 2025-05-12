@@ -25,7 +25,8 @@
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.4",
-    "@velocitylabs-org/turtle-registry": "workspace:*"
+    "@velocitylabs-org/turtle-registry": "workspace:*",
+    "@velocitylabs-org/turtle-assets": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

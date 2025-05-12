@@ -1,5 +1,4 @@
-
-import { Registry } from '../types'
+import { Registry } from "../types";
 import {
   Acala,
   AssetHub,
@@ -14,9 +13,9 @@ import {
   Phala,
   Polimec,
   RelayChain,
-} from './chains'
-import { routes } from './routes'
-import { EthereumTokens, PolkadotTokens } from './tokens'
+} from "./chains";
+import { routes } from "./routes";
+import { EthereumTokens, PolkadotTokens } from "./tokens";
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -70,25 +69,25 @@ export const REGISTRY: Registry = {
     [
       AssetHub.uid,
       new Map([
-        [EthereumTokens.USDC.id, { symbol: 'USDC.e' }],
-        [PolkadotTokens.USDC.id, { id: '1337' }],
-        [EthereumTokens.USDT.id, { symbol: 'USDT.e' }],
-        [PolkadotTokens.USDT.id, { id: '1984' }],
-        [EthereumTokens.WETH.id, { symbol: 'WETH.e' }],
-        [EthereumTokens.WBTC.id, { symbol: 'WBTC.e' }],
+        [EthereumTokens.USDC.id, { symbol: "USDC.e" }],
+        [PolkadotTokens.USDC.id, { id: "1337" }],
+        [EthereumTokens.USDT.id, { symbol: "USDT.e" }],
+        [PolkadotTokens.USDT.id, { id: "1984" }],
+        [EthereumTokens.WETH.id, { symbol: "WETH.e" }],
+        [EthereumTokens.WBTC.id, { symbol: "WBTC.e" }],
       ]),
     ],
     [
       Hydration.uid,
       new Map([
-        [EthereumTokens.WETH.id, { id: '1000189' }],
-        [EthereumTokens.USDC.id, { id: '1000766' }],
+        [EthereumTokens.WETH.id, { id: "1000189" }],
+        [EthereumTokens.USDC.id, { id: "1000766" }],
 
-        [PolkadotTokens.USDC.id, { id: '22' }],
-        [PolkadotTokens.USDT.id, { id: '10' }],
+        [PolkadotTokens.USDC.id, { id: "22" }],
+        [PolkadotTokens.USDT.id, { id: "10" }],
       ]),
     ],
   ]),
-}
+};
 
-export * as Mainnet from './mainnet'
+export * as Mainnet from "./mainnet";
