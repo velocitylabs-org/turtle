@@ -2,7 +2,7 @@ import { TransferParams } from '@/hooks/useTransfer'
 import { REGISTRY } from '@/registry'
 import { Hydration } from '@/registry/mainnet/chains'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
-import { getExchangeAssets, RouterBuilder, TRouterEvent } from '@paraspell/xcm-router'
+import { getExchangeAssets, RouterBuilder, TRouterEvent, TRouterPlan } from '@paraspell/xcm-router'
 import { Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
@@ -79,6 +79,17 @@ export const executeRouterPlan = async (
 ) => {
   const router = (await setupRouter(params, slippagePct)).onStatusChange(onStatusChangeCallback)
   await router.build()
+}
+
+/** returns true if the router plan contains more than one transaction */
+export const isMultiStepSwapByRouterPlan = (plan: TRouterPlan) => plan.length > 1
+
+/** returns true if the swap needs multiple transactions according to the selected chains and tokens. Assumes valid params. */
+export const isMultiStepSwapByParams = (params: TransferParams) => {
+  // TODO
+  // No need to check for validity of params because invalid ones should not be able to be selected in the first place
+  // check it is not itself a dex chain supporting the pair.
+  return true
 }
 
 export const getExchangeOutputAmount = async (
