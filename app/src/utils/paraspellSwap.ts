@@ -1,10 +1,9 @@
-import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
-import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { REGISTRY } from '@/registry'
 import { Hydration } from '@/registry/mainnet/chains'
-
 import { SubstrateAccount } from '@/store/substrateWalletStore'
+import { getExchangeAssets, RouterBuilder, TRouterEvent } from '@paraspell/xcm-router'
+import { Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
 import { isSameChain } from './routes'
@@ -21,7 +20,14 @@ export const DEX_TO_CHAIN_MAP = {
 
 export type Dex = keyof typeof DEX_TO_CHAIN_MAP
 
-export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
+/** returns all supported dex paraspell nodes */
+export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
+
+/** returns all supported dex chains */
+export const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
+
+/** Helper function to setup router with common parameters */
+const setupRouter = async (params: TransferParams, slippagePct: string) => {
   const {
     sourceChain,
     destinationChain,
@@ -45,21 +51,34 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
   const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
-  const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId)
-    .to(destinationChainFromId)
-    .exchange('HydrationDex') // only Hydration is supported for now
-    .currencyFrom(currencyIdFrom)
-    .currencyTo(currencyTo)
-    .amount(sourceAmount)
-    .slippagePct(slippagePct)
-    .senderAddress(senderAddress)
-    .recipientAddress(recipient)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .signer(account.pjsSigner as any)
-    .buildTransactions()
+  return (
+    RouterBuilder()
+      .from(sourceChainFromId)
+      .to(destinationChainFromId)
+      .exchange('HydrationDex') // only Hydration is supported for now
+      .currencyFrom(currencyIdFrom)
+      .currencyTo(currencyTo)
+      .amount(sourceAmount)
+      .slippagePct(slippagePct)
+      .senderAddress(senderAddress)
+      .recipientAddress(recipient)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .signer(account.pjsSigner as any)
+  )
+}
 
-  return routerPlan
+export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
+  const router = await setupRouter(params, slippagePct)
+  return router.buildTransactions()
+}
+
+export const executeRouterPlan = async (
+  params: TransferParams,
+  slippagePct: string = '1',
+  onStatusChangeCallback: (status: TRouterEvent) => void = (_status: TRouterEvent) => {},
+) => {
+  const router = (await setupRouter(params, slippagePct)).onStatusChange(onStatusChangeCallback)
+  await router.build()
 }
 
 export const getExchangeOutputAmount = async (
@@ -91,12 +110,6 @@ export const getExchangeOutputAmount = async (
 
   return amountOut.amountOut
 }
-
-/** returns all supported dex paraspell nodes */
-export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
-
-/** returns all supported dex chains */
-export const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
 
 /** returns true if the chain is a dex chain */
 export const isDexChain = (chain: Chain) =>
