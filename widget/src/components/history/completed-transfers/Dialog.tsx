@@ -1,8 +1,7 @@
+import { TokenLogo, Icon } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import Account from '@/components/Account'
-import { Icon } from '@/components/Icon'
-import { TokenLogo } from '@/components/TokenLogo'
 import {
   Dialog,
   DialogContent,

@@ -11,7 +11,7 @@ export interface IconProps {
  * Alternative to the default `Image` component that renders the image at the given `url` as a background image of a div,
  * making it a lot easier to handle images with different ratios while forcing a fixed width and height.
  */
-export default function Icon({ width, height, src, className }: IconProps) {
+export const Icon = ({ width, height, src, className }: IconProps) => {
   return (
     <div
       className={cn('rounded-full border-1 bg-cover bg-center', className)}

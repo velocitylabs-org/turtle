@@ -1,8 +1,6 @@
+import { Chain, Network, TokenAmount, Token } from '@velocitylabs-org/turtle-registry'
 import { ethers, JsonRpcSigner } from 'ethers'
 import { Sender } from '@/hooks/useTransfer'
-import { Chain, Network } from '@/models/chain'
-import { TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
 import { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { isSameChain } from './routes'
 

@@ -1,13 +1,13 @@
 'use client'
 import NumberFlow from '@number-flow/react'
+import { Chain, Token, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
+import { TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
+
 import Image from 'next/image'
 import { ChangeEvent, ReactNode, RefObject, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { Chain } from '@/models/chain'
-import { ManualRecipientInput } from '@/models/select'
-import { Token } from '@/models/token'
 import { cn } from '@/utils/cn'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import { colors } from '../../tailwind.config'
@@ -18,8 +18,6 @@ import SearchBar from './SearchBar'
 import ChevronDown from './svg/ChevronDown'
 import Cross from './svg/Cross'
 import TokenIcon from './svg/TokenIcon'
-import TokenLogo from './TokenLogo'
-import Tooltip from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 const maxDollars = 100000000000 // 100B
@@ -371,7 +369,7 @@ const ChainList = ({
             >
               <div className="flex items-center gap-2">
                 <Image
-                  src={option.logoURI}
+                  src={(option.logoURI as Record<string, string>).src}
                   alt={option.name}
                   width={24}
                   height={24}

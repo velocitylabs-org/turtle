@@ -1,4 +1,4 @@
-import { Registry } from "../types";
+import { Registry } from "..";
 import {
   Acala,
   AssetHub,
@@ -20,7 +20,7 @@ import { EthereumTokens, PolkadotTokens } from "./tokens";
 /* Mainnet :: Polkadot - Ethereum */
 
 // Assembling the Mainnet registry
-export const REGISTRY: Registry = {
+export const MainnetRegistry: Registry = {
   chains: [
     Ethereum,
     AssetHub,
@@ -44,7 +44,6 @@ export const REGISTRY: Registry = {
     PolkadotTokens.USDC,
     EthereumTokens.USDT,
     PolkadotTokens.USDT,
-    PolkadotTokens.MYTH,
     EthereumTokens.WSTETH,
     EthereumTokens.TBTC,
     PolkadotTokens.DOT,
@@ -60,6 +59,7 @@ export const REGISTRY: Registry = {
     PolkadotTokens.VDOT,
     PolkadotTokens.IBTC,
     EthereumTokens.MYTH,
+    PolkadotTokens.MYTH,
     PolkadotTokens.HDX,
     EthereumTokens.TON,
     EthereumTokens.SHIB,
@@ -90,5 +90,3 @@ export const REGISTRY: Registry = {
     ],
   ]),
 };
-
-export * as Mainnet from "./mainnet";

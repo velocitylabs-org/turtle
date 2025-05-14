@@ -9,9 +9,9 @@
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "copy-assets": "cp -r ./src/assets ./dist/assets",
-    "compile": "tsc -b",
+    "compile": "tsc -b && tsc-alias",
     "build": "npm run clean && npm run compile && npm run copy-assets",
-    "watch": "tsc --watch",
+    "watch": "tsc --watch && tsc-alias",
     "lint": "eslint ."
   },
   "files": [
@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.4",
-    "@velocitylabs-org/turtle-registry": "workspace:*",
-    "@velocitylabs-org/turtle-assets": "workspace:*"
+    "@velocitylabs-org/turtle-assets": "workspace:*",
+    "@velocitylabs-org/turtle-registry": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -42,6 +42,7 @@
     "globals": "^15.14.0",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.22.0"
   },

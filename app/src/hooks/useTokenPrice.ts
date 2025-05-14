@@ -1,12 +1,7 @@
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { Token } from '@/models/token'
+import { Token, TokenPriceResult } from '@velocitylabs-org/turtle-registry'
 import { CACHE_REVALIDATE_IN_SECONDS, getCachedTokenPrice } from '@/services/balance'
-
-type TokenPriceResult = {
-  price?: number
-  loading: boolean
-}
 
 const useTokenPrice = (token?: Token | null): TokenPriceResult => {
   const {

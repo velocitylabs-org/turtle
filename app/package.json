@@ -15,6 +15,7 @@
     "cypress:open": "cypress open"
   },
   "dependencies": {
+    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@heroui/react": "2.7.2",
     "@hookform/resolvers": "3.9.0",

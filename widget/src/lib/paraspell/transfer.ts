@@ -10,11 +10,14 @@ import {
   TNodeWithRelayChains,
   TPapiTransaction,
 } from '@paraspell/sdk'
+import {
+  Chain,
+  Token,
+  getAssetUid,
+  REGISTRY,
+  EthereumTokens,
+} from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
-import { getAssetUid, REGISTRY } from '@/registry'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult

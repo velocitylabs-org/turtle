@@ -1,17 +1,23 @@
 import { Context, environment, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import {
+  Chain,
+  Token,
+  isAssetHub,
+  rpcConnectionAsHttps,
+  AssetHub,
+  BridgeHub,
+  RelayChain,
+  EthereumTokens,
+  PolkadotTokens,
+  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
+  getTokenPrice,
+} from '@velocitylabs-org/turtle-registry'
 import { AbstractProvider, AlchemyProvider } from 'ethers'
 import { Fee } from '@/hooks/useFees'
-import { Chain } from '@/models/chain'
 import { SnowbridgeContext } from '@/models/snowbridge'
-import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
-import { SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
-import { isAssetHub, rpcConnectionAsHttps } from '@/registry/helpers'
-import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
-import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/stores/environmentStore'
 import { ALCHEMY_API_KEY } from '@/utils/consts'
-import { getTokenPrice } from '@/utils/token'
 import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
 
 /**

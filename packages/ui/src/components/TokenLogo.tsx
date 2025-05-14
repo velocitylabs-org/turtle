@@ -15,14 +15,19 @@ interface TokenLogoProps {
   className?: string
 }
 
-export default function TokenLogo({ token, sourceChain, size = 32, className }: TokenLogoProps) {
+export const TokenLogo = ({ token, sourceChain, size = 32, className }: TokenLogoProps) => {
   const originBadge = getOriginBadge(token, sourceChain)
 
   return (
     <Tooltip content={originBadge?.text ?? token.symbol} showIcon={false}>
       <div className={cn('relative flex items-center', className)}>
         {/* The token logo */}
-        <Icon width={size} height={size} src={token.logoURI} className="border-turtle-foreground" />
+        <Icon
+          width={size}
+          height={size}
+          src={(token.logoURI as Record<string, string>).src}
+          className="border-turtle-foreground"
+        />
 
         {/* The origin badge */}
         {originBadge && (

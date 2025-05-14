@@ -1,14 +1,19 @@
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
-import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
+import {
+  Chain,
+  Token,
+  Environment,
+  Hydration,
+  REGISTRY,
+  getTokenByMultilocation,
+  isSameToken,
+} from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { REGISTRY } from '@/registry'
-import { Hydration } from '@/registry/mainnet/chains'
 
 import { SubstrateAccount } from '@/store/substrateWalletStore'
+import { isSameChain } from '@/utils/routes'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
-import { isSameChain } from './routes'
-import { getTokenByMultilocation, isSameToken } from './token'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
 /** contains all supported paraspell dexes mapped to the chain they run on */

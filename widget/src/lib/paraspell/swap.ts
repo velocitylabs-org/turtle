@@ -1,14 +1,17 @@
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
+import {
+  Chain,
+  Token,
+  isSameToken,
+  getTokenByMultilocation,
+  Hydration,
+  REGISTRY,
+} from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
-import { REGISTRY } from '@/registry'
-import { Hydration } from '@/registry/mainnet/chains'
 import { Environment } from '@/stores/environmentStore'
 import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { isSameChain } from '@/utils/routes'
-import { isSameToken, getTokenByMultilocation } from '@/utils/token'
 import { getParaSpellNode, getParaspellToken } from './transfer'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
