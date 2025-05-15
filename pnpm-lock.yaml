@@ -40,6 +40,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.75.0
         version: 5.75.2(react@19.0.0)
+      '@velocitylabs-org/turtle-registry':
+        specifier: workspace:*
+        version: link:../packages/registry
       babel-plugin-react-compiler:
         specifier: 19.1.0-rc.1
         version: 19.1.0-rc.1

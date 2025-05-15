@@ -11,8 +11,7 @@ import {
 import { TransactionModel, txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import React from 'react'
-import { tokensById } from '@/registry/tokens'
-import { chainsByUid } from '@/registry/chains'
+import { chainsByUid, tokensById } from '@/constants'
 import getOriginBadge from '@/utils/get-origin-badge'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 
