@@ -1,15 +1,14 @@
 import { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
+import { Tooltip, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { ChangeEvent, ReactNode, RefObject, useCallback } from 'react'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
 import useLookupName from '@/hooks/useLookupName'
 import { truncateAddress } from '@/utils/address'
-import { cn } from '@/utils/cn'
 import CopyAddress from './ClipboardCopy'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
-import Tooltip from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 interface ChainTriggerProps {

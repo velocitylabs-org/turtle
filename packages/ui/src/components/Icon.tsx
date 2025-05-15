@@ -1,6 +1,6 @@
 import { cn } from '@/helpers'
 
-export interface IconProps {
+interface IconProps {
   width: number
   height: number
   src: string

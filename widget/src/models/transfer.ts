@@ -1,6 +1,5 @@
 import { TRouterPlan } from '@paraspell/xcm-router'
-import { Chain, Token } from '@velocitylabs-org/turtle-registry'
-import { Environment } from '@/stores/environmentStore'
+import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
 import { Direction } from '@/utils/transfer'
 import { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
 

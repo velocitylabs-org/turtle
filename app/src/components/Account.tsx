@@ -1,8 +1,8 @@
 import Identicon from '@polkadot/react-identicon'
 import { AddressType, Network } from '@velocitylabs-org/turtle-registry'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import useLookupName from '@/hooks/useLookupName'
 import { truncateAddress } from '@/utils/address'
-import { cn } from '@/utils/cn'
 import CopyAddress from './ClipboardCopy'
 
 interface AccountProps {

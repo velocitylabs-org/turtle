@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import Image, { StaticImageData } from 'next/image'
 
 export type Feature = {

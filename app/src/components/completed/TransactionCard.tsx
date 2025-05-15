@@ -1,6 +1,6 @@
+import { TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
-import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import { colors } from '../../../tailwind.config'
@@ -9,7 +9,6 @@ import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
 import Info from '../svg/Info'
 import Success from '../svg/Success'
-import TokenLogo from '../TokenLogo'
 import { getSVGColor } from './TransactionDialog'
 
 export function getStatusIcon(status: TransferResult) {
@@ -69,7 +68,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
               <div className="relative h-4 w-4 rounded-full">
                 <Image
                   fill
-                  src={tx.sourceChain.logoURI}
+                  src={(tx.sourceChain.logoURI as Record<string, string>).src}
                   alt={`${tx.sourceChain.name}`}
                   className={cn(
                     'rounded-full border bg-background',
@@ -84,7 +83,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
               <div className="relative h-4 w-4 rounded-full">
                 <Image
                   fill
-                  src={tx.destChain.logoURI}
+                  src={(tx.destChain.logoURI as Record<string, string>).src}
                   alt={`${tx.destChain.name}`}
                   className={cn(
                     'rounded-full border bg-background',

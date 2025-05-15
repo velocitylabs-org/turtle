@@ -1,5 +1,5 @@
 import { Balance, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
-import { Button } from '@velocitylabs-org/turtle-ui'
+import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FC, useMemo } from 'react'
@@ -11,7 +11,6 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 
-import { cn } from '@/utils/helper'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,

@@ -1,4 +1,4 @@
-import { TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Fail } from '@/assets/svg/Fail'
 import { Info } from '@/assets/svg/Info'
@@ -6,7 +6,6 @@ import { Success } from '@/assets/svg/Success'
 import Account from '@/components/Account'
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { cn } from '@/utils/helper'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
 import { colors } from '../../../../tailwind.config'
@@ -65,7 +64,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             >
               <div className="relative h-4 w-4 rounded-full">
                 <img
-                  src={tx.sourceChain.logoURI}
+                  src={(tx.sourceChain.logoURI as Record<string, string>).src}
                   alt={`${tx.sourceChain.name}`}
                   width={16}
                   height={16}
@@ -81,7 +80,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
               />
               <div className="relative h-4 w-4 rounded-full">
                 <img
-                  src={tx.destChain.logoURI}
+                  src={(tx.destChain.logoURI as Record<string, string>).src}
                   alt={`${tx.destChain.name}`}
                   width={16}
                   height={16}

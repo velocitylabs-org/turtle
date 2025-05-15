@@ -11,12 +11,12 @@ import {
   PolkadotTokens,
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
   getTokenPrice,
+  Environment,
 } from '@velocitylabs-org/turtle-registry'
 import { AbstractProvider, AlchemyProvider } from 'ethers'
 import { Fee } from '@/hooks/useFees'
 import { SnowbridgeContext } from '@/models/snowbridge'
 import { AmountInfo } from '@/models/transfer'
-import { Environment } from '@/stores/environmentStore'
 import { ALCHEMY_API_KEY } from '@/utils/consts'
 import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
 

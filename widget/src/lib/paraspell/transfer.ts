@@ -16,9 +16,9 @@ import {
   getAssetUid,
   REGISTRY,
   EthereumTokens,
+  Environment,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { Environment } from '@/stores/environmentStore'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 

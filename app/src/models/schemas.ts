@@ -10,7 +10,7 @@ const originSchema = z.discriminatedUnion('type', [
 export const tokenSchema: z.ZodType<Token> = z.object({
   id: z.string(),
   name: z.string(),
-  logoURI: z.string(),
+  logoURI: z.union([z.string(), z.object({})]),
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),

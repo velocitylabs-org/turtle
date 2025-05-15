@@ -1,5 +1,5 @@
+import { cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
-import { cn } from '@/utils/cn'
 
 export function WalletNotAccessible() {
   return (

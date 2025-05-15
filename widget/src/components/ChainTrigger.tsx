@@ -1,5 +1,5 @@
 import { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
-import { Tooltip } from '@velocitylabs-org/turtle-ui'
+import { Tooltip, cn } from '@velocitylabs-org/turtle-ui'
 import { ChangeEvent, ReactNode, RefObject, useCallback } from 'react'
 import { GetEnsAvatarReturnType } from 'viem'
 import { normalize } from 'viem/ens'
@@ -8,7 +8,6 @@ import ChainIcon from '@/assets/svg/ChainIcon'
 import ChevronDown from '@/assets/svg/ChevronDown'
 import useLookupName from '@/hooks/useLookupName'
 import { truncateAddress } from '@/utils/address'
-import { cn } from '@/utils/helper'
 import CopyAddress from './ClipboardCopy'
 import VerticalDivider from './VerticalDivider'
 
@@ -104,7 +103,14 @@ export default function ChainTrigger({
                 <span>Chain</span>
               </>
             )}
-            <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1" />
+            {(!manualRecipientInput?.enabled || manualRecipientInput?.address) && (
+              <ChevronDown
+                strokeWidth={0.2}
+                height={6}
+                width={14}
+                className="ml-1.5 mr-1 shrink-0"
+              />
+            )}
           </div>
           {ensAvatar && (
             <img

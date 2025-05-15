@@ -1,12 +1,9 @@
 'use client'
 import { Chain, Token } from '@velocitylabs-org/turtle-registry'
-import * as React from 'react'
-
 import { Tooltip } from '@/components/Tooltip'
 import { cn } from '@/helpers'
-
-import { getOriginBadge } from '../helpers/chains'
-import Icon from './Icon'
+import { getOriginBadge } from '@/helpers/chains'
+import { Icon } from './Icon'
 
 interface TokenLogoProps {
   token: Token
@@ -34,7 +31,7 @@ export const TokenLogo = ({ token, sourceChain, size = 32, className }: TokenLog
           <Icon
             width={size / 2}
             height={size / 2}
-            src={originBadge.logoURI}
+            src={(originBadge.logoURI as Record<string, string>).src as string}
             className="absolute bottom-[-5%] right-[-10%] border-white"
           />
         )}

@@ -1,3 +1,4 @@
+import { TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
@@ -7,7 +8,6 @@ import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import LoadingIcon from '../svg/LoadingIcon'
-import TokenLogo from '../TokenLogo'
 import TransferEstimate from '../TransferEstimate'
 
 interface OngoingTransferProps {
@@ -59,7 +59,7 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
         {/* From and to Chains */}
         <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">
           <Image
-            src={transfer.sourceChain.logoURI}
+            src={(transfer.sourceChain.logoURI as Record<string, string>).src}
             alt="Source Chain"
             width={16}
             height={16}
@@ -67,7 +67,7 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
           />
           <ArrowRight className="h-[0.45rem] w-[0.45rem]" fill={colors['turtle-secondary-dark']} />
           <Image
-            src={transfer.destChain.logoURI}
+            src={(transfer.destChain.logoURI as Record<string, string>).src}
             alt="Destination Chain"
             width={16}
             height={16}

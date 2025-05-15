@@ -1,5 +1,6 @@
 'use client'
-import { EthereumTokens, Hydration, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { Balance, EthereumTokens, Hydration, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -10,9 +11,8 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
-import { Balance } from '@/services/balance'
+
 import { resolveDirection } from '@/services/transfer'
-import { cn } from '@/utils/cn'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
@@ -271,8 +271,6 @@ export default function Transfer() {
     exceedsTransferableBalance,
     fees,
   ])
-
-  console.log(errors)
 
   return (
     <>

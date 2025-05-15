@@ -6,9 +6,10 @@ import {
   getTokenByMultilocation,
   Hydration,
   REGISTRY,
+  Environment,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { Environment } from '@/stores/environmentStore'
+
 import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { isSameChain } from '@/utils/routes'
@@ -102,12 +103,8 @@ export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
 /** returns all supported dex chains */
 export const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
 
-/** returns true if the chain is a dex chain */
-export const isDexChain = (chain: Chain) =>
-  getSupportedDexChains().some(dex => dex.uid === chain.uid)
-
 /** returns the paraspell dex for a given chain */
-export const getDex = (chain: Chain): Dex | undefined => {
+const getDex = (chain: Chain): Dex | undefined => {
   const entry = Object.entries(DEX_TO_CHAIN_MAP).find(([, c]) => c.uid === chain.uid)
   return entry?.[0] as Dex | undefined
 }

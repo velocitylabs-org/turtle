@@ -1,10 +1,9 @@
 'use client'
 import { WalletType } from '@velocitylabs-org/turtle-registry'
-import { Button } from '@velocitylabs-org/turtle-ui'
+import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import { motion } from 'framer-motion'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import { cn } from '@/utils/cn'
 import { colors } from '../../tailwind.config'
 import Cross from './svg/Cross'
 

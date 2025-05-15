@@ -103,10 +103,6 @@ export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
 /** returns all supported dex chains */
 export const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
 
-/** returns true if the chain is a dex chain */
-export const isDexChain = (chain: Chain) =>
-  getSupportedDexChains().some(dex => dex.uid === chain.uid)
-
 /** returns the paraspell dex for a given chain */
 export const getDex = (chain: Chain): Dex | undefined => {
   const entry = Object.entries(DEX_TO_CHAIN_MAP).find(([_, c]) => c.uid === chain.uid)

@@ -11,7 +11,7 @@
     "copy-assets": "cp -r ./src/assets ./dist/assets",
     "compile": "tsc -b && tsc-alias",
     "build": "npm run clean && npm run compile && npm run copy-assets",
-    "watch": "tsc --watch && tsc-alias",
+    "watch": "tsc --watch & tsc-alias -w",
     "lint": "eslint ."
   },
   "files": [

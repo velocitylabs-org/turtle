@@ -1,9 +1,8 @@
 import { getTransferableAmount, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
-import { Chain, Token, Balance } from '@velocitylabs-org/turtle-registry'
+import { Chain, Token, Balance, Environment } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
-import { Environment } from '@/stores/environmentStore'
 import { toHuman } from '@/utils/transfer'
 
 interface UseBalanceParams {

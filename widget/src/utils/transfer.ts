@@ -2,7 +2,7 @@ import { Chain, Network, TokenAmount, Token } from '@velocitylabs-org/turtle-reg
 import { ethers, JsonRpcSigner } from 'ethers'
 import { Sender } from '@/hooks/useTransfer'
 import { AmountInfo, StoredTransfer } from '@/models/transfer'
-import { isSameChain } from './routes'
+import { isSameChain } from '@/utils/routes'
 
 export type FormatLength = 'Short' | 'Long' | 'Longer'
 

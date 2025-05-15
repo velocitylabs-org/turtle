@@ -1,11 +1,10 @@
 import { Context, environment, toPolkadot } from '@snowbridge/api'
-import { Chain, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
+import { Chain, Environment, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
 import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { NotificationSeverity } from '@/models/notification'
-import { Environment } from '@/stores/environmentStore'
 import { convertAmount, toHuman } from '@/utils/transfer'
 
 interface Params {

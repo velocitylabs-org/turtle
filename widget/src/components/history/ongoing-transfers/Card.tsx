@@ -37,7 +37,7 @@ const OngoingTransfer: FC<{
           {/* From and to Chains */}
           <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">
             <img
-              src={transfer.sourceChain.logoURI}
+              src={(transfer.sourceChain.logoURI as Record<string, string>).src}
               alt="Source Chain"
               width={16}
               height={16}
@@ -48,7 +48,7 @@ const OngoingTransfer: FC<{
               fill={colors['turtle-secondary-dark']}
             />
             <img
-              src={transfer.destChain.logoURI}
+              src={(transfer.destChain.logoURI as Record<string, string>).src}
               alt="Destination Chain"
               width={16}
               height={16}

@@ -1,6 +1,5 @@
+import { Network } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
-
-import { Network } from '@/models/chain'
 import { lookupName } from '@/utils/transfer'
 
 const useLookupName = (network?: Network, address?: string) => {
