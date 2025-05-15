@@ -99,7 +99,14 @@ const useParaspellApi = () => {
       params.onComplete?.()
     })
 
-    sendMetrics({ params, txId: hash, senderAddress, sourceTokenUSDValue, destinationTokenUSDValue, date})
+    sendMetrics({
+      params,
+      txId: hash,
+      senderAddress,
+      sourceTokenUSDValue,
+      destinationTokenUSDValue,
+      date,
+    })
     setStatus('Idle')
   }
 
@@ -171,7 +178,14 @@ const useParaspellApi = () => {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
 
-        sendMetrics({ params, txId: event.txHash?.toString() ?? '', senderAddress, sourceTokenUSDValue, destinationTokenUSDValue, date })
+        sendMetrics({
+          params,
+          txId: event.txHash?.toString() ?? '',
+          senderAddress,
+          sourceTokenUSDValue,
+          destinationTokenUSDValue,
+          date,
+        })
       },
       error: callbackError => {
         if (callbackError instanceof InvalidTxError) {
@@ -232,7 +246,14 @@ const useParaspellApi = () => {
             params.onComplete?.()
           })
 
-          sendMetrics({ params, txId: result.txHash?.toString() ?? '', senderAddress: account.address, sourceTokenUSDValue, destinationTokenUSDValue, date })
+          sendMetrics({
+            params,
+            txId: result.txHash?.toString() ?? '',
+            senderAddress: account.address,
+            sourceTokenUSDValue,
+            destinationTokenUSDValue,
+            date,
+          })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, result.txHash?.toString())
         }
@@ -389,24 +410,24 @@ const useParaspellApi = () => {
 export default useParaspellApi
 
 interface SendMetricsParams {
-  params: TransferParams,
-  txId: string,
-  senderAddress: string,
-  sourceTokenUSDValue: number,
-  destinationTokenUSDValue: number,
+  params: TransferParams
+  txId: string
+  senderAddress: string
+  sourceTokenUSDValue: number
+  destinationTokenUSDValue: number
   date: Date
 }
 
 function sendMetrics({
-   params,
-   txId,
-   senderAddress,
-   sourceTokenUSDValue,
-   destinationTokenUSDValue,
-   date
+  params,
+  txId,
+  senderAddress,
+  sourceTokenUSDValue,
+  destinationTokenUSDValue,
+  date,
 }: SendMetricsParams) {
   // Use the provided txId, or fall back to a random alphanumeric ID
-  const id = txId || `generated-${Math.random().toString(36).slice(2, 15)}`;
+  const id = txId || `generated-${Math.random().toString(36).slice(2, 15)}`
   trackTransferMetrics({
     id,
     sender: senderAddress,

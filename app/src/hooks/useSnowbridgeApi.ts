@@ -145,7 +145,8 @@ const useSnowbridgeApi = () => {
 
       const senderAddress = await getSenderAddress(sender)
       const tokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
-      const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
+      const destinationTokenUSDValue =
+        (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
       const date = new Date()
 
       addOrUpdate({
