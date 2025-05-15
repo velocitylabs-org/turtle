@@ -1,15 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Chain,
+  ManualRecipient,
+  TokenAmount,
+  Token,
+  Ethereum,
+} from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
-import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
-import { ManualRecipient, TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
 import { wagmiConfig } from '@/providers/config'
-import { Ethereum } from '@/registry/mainnet/chains'
 import { useEnvironmentStore } from '@/stores/environmentStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { getRecipientAddress, isValidRecipient } from '@/utils/address'

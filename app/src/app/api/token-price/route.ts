@@ -1,8 +1,8 @@
+import { getTokenPrice } from '@velocitylabs-org/turtle-registry'
 import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { tokenPriceSchema } from '@/models/api-schemas'
-import { CACHE_REVALIDATE_IN_SECONDS, getTokenPrice } from '@/services/balance'
-import { getCoingekoId } from '@/utils/token'
+import { CACHE_REVALIDATE_IN_SECONDS } from '@/services/balance'
 import { getErrorMessage } from '@/utils/transferTracking'
 
 export async function POST(request: Request) {
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     const fetchTokenPrice = unstable_cache(
       async () => {
-        return await getTokenPrice(getCoingekoId(token))
+        return await getTokenPrice(token)
       },
       [`tokenPrice-${token.id}`],
       {

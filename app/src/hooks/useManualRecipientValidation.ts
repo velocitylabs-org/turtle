@@ -1,6 +1,5 @@
+import { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
-import { Chain } from '@/models/chain'
-import { ManualRecipientInput } from '@/models/select'
 import { isValidAddressType } from '@/utils/address'
 
 const useManualRecipientValidation = (

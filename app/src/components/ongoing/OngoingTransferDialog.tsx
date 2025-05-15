@@ -1,3 +1,4 @@
+import { TokenLogo, Icon } from '@velocitylabs-org/turtle-ui'
 import { useCallback } from 'react'
 import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
@@ -6,10 +7,8 @@ import { formatAmount, getExplorerLink, isSwap, toHuman } from '@/utils/transfer
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import { SummaryRow } from '../completed/TransactionDialog'
-import Icon from '../Icon'
 import ArrowRight from '../svg/ArrowRight'
 import ArrowUpRight from '../svg/ArrowUpRight'
-import TokenLogo from '../TokenLogo'
 import TransferEstimate from '../TransferEstimate'
 import {
   Dialog,
@@ -65,7 +64,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
             <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border border-turtle-secondary-dark bg-turtle-secondary-light px-2 py-1 text-turtle-secondary-dark">
               <div className="turtle-success-dark flex items-center justify-center space-x-1">
                 <Icon
-                  src={transfer.sourceChain.logoURI}
+                  src={(transfer.sourceChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
                   className="rounded-full border border-turtle-secondary-dark bg-background"
@@ -75,7 +74,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
               <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
               <div className="turtle-success-dark flex items-center justify-center space-x-1">
                 <Icon
-                  src={transfer.destChain.logoURI}
+                  src={(transfer.destChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
                   className="rounded-full border border-turtle-secondary-dark bg-background"

@@ -1,12 +1,12 @@
 {
   "extends": "@velocitylabs-org/turtle-typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
     "types": ["jest"]
   },
-  "include": ["next-env.d.ts", "src/**/*", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "src", ".next/types/**/*.ts", ".eslintrc.js"],
   "exclude": ["node_modules"]
 }

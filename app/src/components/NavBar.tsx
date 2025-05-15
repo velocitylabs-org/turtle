@@ -1,7 +1,7 @@
 'use client'
+import { Tooltip } from '@velocitylabs-org/turtle-ui'
 import Link from 'next/link'
 import TurtleIcon from './svg/TurtleIcon'
-import Tooltip from './Tooltip'
 
 export default function NavBar() {
   return (

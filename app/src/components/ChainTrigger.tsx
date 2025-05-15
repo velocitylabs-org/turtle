@@ -1,16 +1,14 @@
+import { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
+import { Tooltip, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { ChangeEvent, ReactNode, RefObject, useCallback } from 'react'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
 import useLookupName from '@/hooks/useLookupName'
-import { Chain } from '@/models/chain'
-import { ManualRecipientInput } from '@/models/select'
 import { truncateAddress } from '@/utils/address'
-import { cn } from '@/utils/cn'
 import CopyAddress from './ClipboardCopy'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
-import Tooltip from './Tooltip'
 import VerticalDivider from './VerticalDivider'
 
 interface ChainTriggerProps {
@@ -84,7 +82,7 @@ export default function ChainTrigger({
             {value ? (
               <>
                 <Image
-                  src={value.logoURI}
+                  src={(value.logoURI as Record<string, string>).src}
                   alt={value.name}
                   width={24}
                   height={24}

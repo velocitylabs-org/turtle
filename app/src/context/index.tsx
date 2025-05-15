@@ -14,7 +14,6 @@ export const queryClient = new QueryClient()
 if (!projectId) throw new Error('Project ID is not defined')
 
 const vercelUrl = vercelDomain ? `https://${vercelDomain}` : ''
-export const DWELLIR_KEY = process.env.NEXT_PUBLIC_DWELLIR_KEY
 
 const metadata = {
   name: 'turtle-app',

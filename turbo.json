@@ -15,7 +15,6 @@
       "cache": false
     },
     "watch": {
-      "dependsOn": ["^watch"],
       "cache": false,
       "persistent": true
     },

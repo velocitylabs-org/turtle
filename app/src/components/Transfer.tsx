@@ -1,4 +1,6 @@
 'use client'
+import { Balance, EthereumTokens, Hydration, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
@@ -9,12 +11,8 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
-import { TokenAmount } from '@/models/select'
-import { Hydration } from '@/registry/mainnet/chains'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
-import { Balance } from '@/services/balance'
+
 import { resolveDirection } from '@/services/transfer'
-import { cn } from '@/utils/cn'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,

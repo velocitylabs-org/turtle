@@ -1,9 +1,7 @@
 import { TRouterPlan } from '@paraspell/xcm-router'
-import { Environment } from '@/stores/environmentStore'
+import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
 import { Direction } from '@/utils/transfer'
-import { Chain } from './chain'
 import { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
-import { Token } from './token'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */

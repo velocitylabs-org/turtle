@@ -1,7 +1,7 @@
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
+import { Moonbeam } from '@velocitylabs-org/turtle-registry'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-import { Moonbeam } from '@/registry/mainnet/chains'
 import { OCELLOIDS_API_Key } from '@/utils/consts'
 import { getExplorerLink } from '@/utils/explorer'
 import { Direction, isSameChainSwap, resolveDirection } from '@/utils/transfer'

@@ -1,4 +1,7 @@
 export * from './components/LoadingIcon'
 export * from './components/Button'
 export * from './components/Tooltip'
+export * from './components/TokenLogo'
+export * from './components/Icon'
 export * from './types/global'
+export * from './helpers'

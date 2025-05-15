@@ -1,5 +1,5 @@
+import { WalletType } from '@velocitylabs-org/turtle-registry'
 import useEvmWallet from '@/hooks/useEvmWallet'
-import { WalletType } from '@/models/chain'
 import useSubstrateWallet from './useSubstrateWallet'
 import { Sender } from './useTransfer'
 

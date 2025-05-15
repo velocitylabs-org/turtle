@@ -1,5 +1,5 @@
 import { toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
-import { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { Chain, Token, isAssetHub, getTokenPrice } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { Signer, TransactionResponse } from 'ethers'
 import { mainnet } from 'wagmi/chains'
@@ -8,9 +8,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { SnowbridgeContext } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
 import { wagmiConfig } from '@/providers/config'
-import { isAssetHub } from '@/registry/helpers'
 import { getSenderAddress } from '@/utils/address'
-import { getTokenPrice } from '@/utils/token'
 import { Direction, resolveDirection, txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -213,8 +211,6 @@ const useSnowbridgeApi = () => {
           amount,
           fee,
         )
-
-        break
       }
       case Direction.ToEthereum:
         {

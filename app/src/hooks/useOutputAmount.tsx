@@ -1,10 +1,9 @@
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { AmountInfo } from '@/models/transfer'
 import { getExchangeOutputAmount } from '@/utils/paraspellSwap'
-import { isSameToken } from '@/utils/token'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null

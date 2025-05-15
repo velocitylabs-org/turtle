@@ -1,5 +1,5 @@
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { ReactNode } from 'react'
-import { cn } from '@/utils/cn'
 
 interface ActionBannerProps {
   disabled: boolean

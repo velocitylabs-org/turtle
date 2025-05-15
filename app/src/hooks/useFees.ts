@@ -1,10 +1,10 @@
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
 import { AmountInfo } from '@/models/transfer'
-import { PolkadotTokens } from '@/registry/mainnet/tokens'
+
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
@@ -23,7 +23,7 @@ export type Fee =
   | { origin: 'Polkadot'; fee: AmountInfo }
 
 const useFees = (
-  sourceChain?: Chain | null,
+  sourceChain: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
   amount?: number | null,

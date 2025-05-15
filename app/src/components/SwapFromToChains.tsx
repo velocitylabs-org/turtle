@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import Swap from './svg/Swap'
 
 interface SwapChainsProps {

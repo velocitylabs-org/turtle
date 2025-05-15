@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { cn } from '@/utils/cn'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from './assets/arrow-right'
 
 const bridgeTx = [

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { cn } from '@/utils/cn'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import { dazzed } from '@/components/fonts/fonts'

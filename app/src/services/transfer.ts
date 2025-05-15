@@ -1,4 +1,4 @@
-import { Chain } from '../models/chain'
+import { Chain } from '@velocitylabs-org/turtle-registry'
 
 /**
  * The direction of a transfer, i.e, from and to which network the tokens

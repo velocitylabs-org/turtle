@@ -1,10 +1,14 @@
 import { Context, environment, status } from '@snowbridge/api'
-import { Environment } from '@velocitylabs-org/turtle-registry'
+import {
+  Environment,
+  rpcConnectionAsHttps,
+  AssetHub,
+  BridgeHub,
+  RelayChain,
+  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
+} from '@velocitylabs-org/turtle-registry'
 import { AbstractProvider, AlchemyProvider } from 'ethers'
 import { SnowbridgeStatus } from '@/models/snowbridge'
-import { SNOWBRIDGE_MAINNET_PARACHAIN_URLS } from '@/registry'
-import { rpcConnectionAsHttps } from '@/registry/helpers'
-import { AssetHub, BridgeHub, RelayChain } from '@/registry/mainnet/chains'
 
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 

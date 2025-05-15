@@ -1,9 +1,6 @@
+import { Environment } from '@velocitylabs-org/turtle-registry'
 import { create } from 'zustand'
 
-export enum Environment {
-  /* Polkadot - Ethereum */
-  Mainnet = 'mainnet',
-}
 interface State {
   // State
   current: Environment

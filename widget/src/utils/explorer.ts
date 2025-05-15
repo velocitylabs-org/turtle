@@ -1,7 +1,5 @@
+import { AssetHub, Environment } from '@velocitylabs-org/turtle-registry'
 import { StoredTransfer } from '@/models/transfer'
-import { AssetHub } from '@/registry/mainnet/chains'
-import { Environment } from '@/stores/environmentStore'
-
 const EXPLORERS: { [environment in Environment]: { [explorerName: string]: string } } = {
   [Environment.Mainnet]: {
     etherscan: 'https://etherscan.io/',

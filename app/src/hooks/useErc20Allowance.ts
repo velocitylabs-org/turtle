@@ -1,12 +1,10 @@
 import { captureException } from '@sentry/nextjs'
 import { Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
+import { Network, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
-import { Network } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
-import { TokenAmount } from '@/models/select'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { convertAmount, toHuman } from '../utils/transfer'
 import useNotification from './useNotification'
 

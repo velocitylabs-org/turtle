@@ -222,7 +222,7 @@ export const routes: Route[] = [
     from: AssetHub.uid,
     to: Mythos.uid,
     sdk: "ParaSpellApi",
-    tokens: [EthereumTokens.MYTH.id],
+    tokens: [EthereumTokens.MYTH.id, PolkadotTokens.MYTH.id],
   },
   {
     from: AssetHub.uid,
@@ -550,6 +550,12 @@ export const routes: Route[] = [
     to: Centrifuge.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
+  },
+  {
+    from: Mythos.uid,
+    to: AssetHub.uid,
+    sdk: "ParaSpellApi",
+    tokens: [PolkadotTokens.MYTH.id],
   },
   {
     from: Mythos.uid,

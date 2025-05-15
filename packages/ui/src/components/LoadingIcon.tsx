@@ -12,7 +12,7 @@ type LoadingIconProps = {
   size?: Sizes
 } & SvgProps
 
-const spinnerSize: Record<Sizes, number> = {
+export const spinnerSize: Record<Sizes, number> = {
   sm: 24,
   md: 24,
   lg: 40,
@@ -45,5 +45,3 @@ export const LoadingIcon = ({
     />
   </svg>
 )
-
-export default LoadingIcon

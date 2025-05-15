@@ -2,10 +2,9 @@
 // eslint-disable-next-line import/no-namespace
 // eslint-disable-next-line import/no-namespace
 import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { X } from 'lucide-react'
 import * as React from 'react'
-
-import { cn } from '@/utils/cn'
 
 const Dialog = DialogPrimitive.Root
 

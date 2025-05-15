@@ -1,10 +1,9 @@
 'use client'
 // eslint-disable-next-line import/no-namespace
 import * as SeparatorPrimitive from '@radix-ui/react-separator'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import * as React from 'react'
 // eslint-disable-next-line import/no-namespace
-
-import { cn } from '@/utils/cn'
 
 const Separator = React.forwardRef<
   React.ElementRef<typeof SeparatorPrimitive.Root>,
