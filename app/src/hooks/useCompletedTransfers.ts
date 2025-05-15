@@ -1,6 +1,5 @@
-import useStore from './useStore'
-
 import { useCompletedTransfersStore } from '@/store/completedTransfersStore'
+import useStore from './useStore'
 
 const useCompletedTransfers = () => {
   const completedTransfers = useStore(useCompletedTransfersStore, state => state.completedTransfers)

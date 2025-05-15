@@ -1,10 +1,9 @@
 'use client'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import React from 'react'
-import Tooltip from './Tooltip'
 import { cn } from '@/utils/cn'
 import Icon from './Icon'
+import Tooltip from './Tooltip'
 
 interface TokenLogoProps {
   token: Token

@@ -1,3 +1,6 @@
+import { TransferStatus } from '@snowbridge/api/dist/history'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getExplorerLink } from '@/utils/explorer'
@@ -8,9 +11,6 @@ import {
   isCompletedTransfer,
   trackTransfers,
 } from '@/utils/tracking'
-import { TransferStatus } from '@snowbridge/api/dist/history'
-import { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -69,13 +69,16 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             id: ongoing.id,
             result:
               foundTransfer.status === TransferStatus.Failed ? TxStatus.Failed : TxStatus.Succeeded,
-            token: ongoing.token,
+            sourceToken: ongoing.sourceToken,
+            destinationToken: ongoing.destinationToken,
             sourceChain: ongoing.sourceChain,
             destChain: ongoing.destChain,
-            amount: ongoing.amount,
-            tokenUSDValue: ongoing.tokenUSDValue ?? 0,
+            sourceAmount: ongoing.sourceAmount,
+            destinationAmount: ongoing.destinationAmount,
+            sourceTokenUSDValue: ongoing.sourceTokenUSDValue ?? 0,
+            destinationTokenUSDValue: ongoing.destinationTokenUSDValue,
             fees: ongoing.fees,
-            bridgingFees: ongoing.bridgingFees,
+            bridgingFee: ongoing.bridgingFee,
             sender: ongoing.sender,
             recipient: ongoing.recipient,
             date: ongoing.date,

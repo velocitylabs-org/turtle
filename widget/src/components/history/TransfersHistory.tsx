@@ -1,9 +1,9 @@
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
-import { OngoingTransferDialog } from './ongoing-transfers/Dialog'
-import { CompletedTransfer, StoredTransfer } from '@/models/transfer'
-import { CompletedTransferDialog } from './completed-transfers/Dialog'
 import useOngoingTransferCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
+import { CompletedTransfer, StoredTransfer } from '@/models/transfer'
+import { CompletedTransferDialog } from './completed-transfers/Dialog'
+import { OngoingTransferDialog } from './ongoing-transfers/Dialog'
 
 const TransfersHistory = ({
   ongoingTransfers,

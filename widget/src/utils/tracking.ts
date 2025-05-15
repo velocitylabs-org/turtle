@@ -1,5 +1,6 @@
-import { TransferStatus } from '@snowbridge/api/dist/history'
 import { historyV2 as history } from '@snowbridge/api'
+import { TransferStatus } from '@snowbridge/api/dist/history'
+import { FromParaToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 import {
   TxTrackingResult,
   StoredTransfer,
@@ -7,7 +8,6 @@ import {
   OngoingTransferWithDirection,
 } from '@/models/transfer'
 import { Direction, resolveDirection } from './transfer'
-import { FromParaToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 
 export const trackTransfers = async (ongoingTransfers: OngoingTransfers) => {
   const transfers: TxTrackingResult[] = []
@@ -170,7 +170,8 @@ const formatTransfersWithDirection = (
         destChain: t.destChain,
         sender: t.sender,
         recipient: t.recipient,
-        token: t.token,
+        sourceToken: t.sourceToken,
+        destinationToken: t.destinationToken,
         date: t.date,
         direction,
         ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
@@ -179,6 +180,10 @@ const formatTransfersWithDirection = (
           sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
         }),
       }
+      // return {
+      //   ...t,
+      //   direction
+      // }
     })
     .filter(t => t.direction !== Direction.WithinPolkadot)
 }

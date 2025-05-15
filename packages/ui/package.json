@@ -1,19 +1,32 @@
 {
   "name": "@velocitylabs-org/turtle-ui",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "author": "Stefano Imparato <stefano@velocitylabs.org>",
+  "private": true,
   "scripts": {
-    "build": "tsc -b",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "copy-assets": "cp -r ./src/assets ./dist/assets",
+    "compile": "tsc -b",
+    "build": "npm run clean && npm run compile && npm run copy-assets",
     "watch": "tsc --watch",
     "lint": "eslint ."
   },
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
+  },
+  "dependencies": {
+    "@radix-ui/react-tooltip": "^1.2.4",
+    "@velocitylabs-org/turtle-registry": "workspace:*",
+    "@velocitylabs-org/turtle-assets": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -28,6 +41,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.14.0",
     "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.22.0"
   },
@@ -36,8 +50,5 @@
     "react": ">=18.3.1",
     "react-dom": ">=18.3.1",
     "tailwind-merge": "^3.2.0"
-  },
-  "dependencies": {
-    "@radix-ui/react-tooltip": "^1.2.4"
   }
 }

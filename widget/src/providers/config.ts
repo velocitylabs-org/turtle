@@ -1,6 +1,6 @@
-import { projectId } from '@/utils/consts'
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { AppKitNetwork, mainnet as ethereum, moonbeam } from '@reown/appkit/networks'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+import { projectId } from '@/utils/consts'
 
 if (!projectId) throw new Error('Project ID is not defined')
 

@@ -1,8 +1,8 @@
+import { useEffect } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getExplorerLink } from '@/utils/explorer'
 import { startedTooLongAgo } from '@/utils/transfer'
-import { useEffect } from 'react'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -21,13 +21,16 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
         addCompletedTransfer({
           id: ongoing.id,
           result: TxStatus.Undefined,
-          token: ongoing.token,
+          sourceToken: ongoing.sourceToken,
+          destinationToken: ongoing.destinationToken,
           sourceChain: ongoing.sourceChain,
           destChain: ongoing.destChain,
-          amount: ongoing.amount,
-          tokenUSDValue: ongoing.tokenUSDValue ?? 0,
+          sourceAmount: ongoing.sourceAmount,
+          destinationAmount: ongoing.destinationAmount,
+          sourceTokenUSDValue: ongoing.sourceTokenUSDValue ?? 0,
+          destinationTokenUSDValue: ongoing.destinationTokenUSDValue ?? 0,
           fees: ongoing.fees,
-          bridgingFees: ongoing.bridgingFees,
+          bridgingFee: ongoing.bridgingFee,
           sender: ongoing.sender,
           recipient: ongoing.recipient,
           date: ongoing.date,

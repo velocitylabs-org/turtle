@@ -1,11 +1,10 @@
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { getExplorerLink } from '@/utils/explorer'
 import { NotificationSeverity, Notification } from '@/models/notification'
-import { Direction, resolveDirection } from '@/utils/transfer'
+import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Moonbeam } from '@/registry/mainnet/chains'
 import { OCELLOIDS_API_Key } from '@/utils/consts'
+import { getExplorerLink } from '@/utils/explorer'
+import { Direction, isSameChainSwap, resolveDirection } from '@/utils/transfer'
 
 type ResultNotification = {
   message: string
@@ -25,8 +24,13 @@ enum xcmNotificationType {
 export const OCELLOIDS_API_KEY = OCELLOIDS_API_Key || ''
 
 // Helper to filter the subscribable transfers only
+// It prevents opening socket for local swaps
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
-  transfers.filter(t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot)
+  transfers.filter(
+    t =>
+      resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot &&
+      !isSameChainSwap(t),
+  )
 
 export const initOcelloidsClient = (API_KEY: string) => {
   if (!API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
@@ -212,13 +216,16 @@ const updateTransferStatus = (
     addCompletedTransfer({
       id: transfer.id,
       result: status,
-      token: transfer.token,
+      sourceToken: transfer.sourceToken,
+      destinationToken: transfer.destinationToken,
       sourceChain: transfer.sourceChain,
       destChain: transfer.destChain,
-      amount: transfer.amount,
-      tokenUSDValue: transfer.tokenUSDValue ?? 0,
+      sourceAmount: transfer.sourceAmount,
+      destinationAmount: transfer.destinationAmount,
+      sourceTokenUSDValue: transfer.sourceTokenUSDValue ?? 0,
+      destinationTokenUSDValue: transfer.destinationTokenUSDValue,
       fees: transfer.fees,
-      bridgingFees: transfer.bridgingFees,
+      bridgingFee: transfer.bridgingFee,
       sender: transfer.sender,
       recipient: transfer.recipient,
       date: transfer.date,

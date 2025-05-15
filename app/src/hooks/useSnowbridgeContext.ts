@@ -1,8 +1,8 @@
+import { assetsV2 } from '@snowbridge/api'
+import { useQuery } from '@tanstack/react-query'
 import { getSnowBridgeContext } from '@/context/snowbridge'
 import useEnvironment from '@/hooks/useEnvironment'
 import { SnowbridgeContext } from '@/models/snowbridge'
-import { assetsV2 } from '@snowbridge/api'
-import { useQuery } from '@tanstack/react-query'
 
 const useSnowbridgeContext = () => {
   const environment = useEnvironment()

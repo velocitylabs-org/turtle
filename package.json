@@ -11,7 +11,8 @@
     "format-check": "turbo run format-check",
     "start": "turbo run start",
     "test": "turbo run test",
-    "watch": "turbo run watch"
+    "watch": "turbo run watch",
+    "changeset": "changeset"
   },
   "devDependencies": {
     "prettier": "^3.5.3",
@@ -27,5 +28,8 @@
       "@types/react": "19.0.10",
       "@types/react-dom": "19.0.4"
     }
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.29.3"
   }
 }

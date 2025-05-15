@@ -1,7 +1,7 @@
+import { useCallback, useEffect, useState } from 'react'
 import { Chain } from '@/models/chain'
 import { ManualRecipientInput } from '@/models/select'
 import { isValidAddressType } from '@/utils/address'
-import { useCallback, useEffect, useState } from 'react'
 
 const useManualRecipientValidation = (
   manualRecipient: ManualRecipientInput,

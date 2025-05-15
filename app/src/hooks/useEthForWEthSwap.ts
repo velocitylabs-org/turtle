@@ -1,14 +1,15 @@
+import { captureException } from '@sentry/nextjs'
+import { Context, environment, toPolkadot } from '@snowbridge/api'
+import { Environment } from '@velocitylabs-org/turtle-registry'
+import { Signer } from 'ethers'
+import { useCallback, useEffect, useState } from 'react'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { TokenAmount } from '@/models/select'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
-import { Environment } from '@/store/environmentStore'
-import { captureException } from '@sentry/nextjs'
-import { Context, environment, toPolkadot } from '@snowbridge/api'
-import { Signer } from 'ethers'
-import { useCallback, useEffect, useState } from 'react'
+
 import { convertAmount, toHuman } from '../utils/transfer'
 
 interface Params {

@@ -1,5 +1,5 @@
-import { cn } from '@/utils/helper'
 import { FC } from 'react'
+import { cn } from '@/utils/helper'
 
 export interface IconProps {
   width: number

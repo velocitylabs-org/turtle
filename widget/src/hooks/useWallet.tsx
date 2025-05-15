@@ -1,7 +1,7 @@
 import useEvmWallet from '@/hooks/useEvmWallet'
-import { WalletType } from '@/models/chain'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { Sender } from '@/hooks/useTransfer'
+import { WalletType } from '@/models/chain'
 
 export interface WalletInfo {
   sender?: Sender

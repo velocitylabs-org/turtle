@@ -1,5 +1,7 @@
+import { deepEqual, TMultiLocation } from '@paraspell/sdk'
 import { TokenPrice } from '@/models/balance'
 import { Token } from '@/models/token'
+import { REGISTRY } from '@/registry/mainnet/mainnet'
 
 export const getCoingekoId = (token: Token): string =>
   token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(' ', '-')
@@ -18,4 +20,13 @@ export const getTokenPrice = async (token: Token): Promise<TokenPrice | null> =>
     console.log('getTokenPrice error:', error)
     return null
   }
+}
+
+export function getTokenByMultilocation(multilocation: TMultiLocation): Token | undefined {
+  // If turtle doesn't support the token it won't be found
+  return REGISTRY.tokens.find(token => deepEqual(token.multilocation, multilocation))
+}
+
+export function isSameToken(token1: Token, token2: Token): boolean {
+  return token1.id === token2.id
 }

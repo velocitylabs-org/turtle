@@ -1,13 +1,13 @@
-import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
-import { cn } from '@/utils/helper'
-import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, toHuman } from '@/utils/transfer'
-
-import Account from '@/components/Account'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Fail } from '@/assets/svg/Fail'
 import { Info } from '@/assets/svg/Info'
 import { Success } from '@/assets/svg/Success'
+import Account from '@/components/Account'
+import { TokenLogo } from '@/components/TokenLogo'
+import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
+import { formatOngoingTransferDate } from '@/utils/datetime'
+import { cn } from '@/utils/helper'
+import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
 import { colors } from '../../../../tailwind.config'
 import { getSVGColor } from './Dialog'
@@ -45,8 +45,17 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
                 transferFailed ? 'text-turtle-error' : 'text-turtle-foreground',
               )}
             >
-              <span>{formatAmount(toHuman(tx.amount, tx.token))}</span>
-              <span>{tx.token.symbol}</span>
+              {isSwap(tx) ? (
+                <span className="flex items-center gap-1">
+                  {formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}{' '}
+                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={25} />
+                </span>
+              ) : (
+                <span className="flex items-center gap-1">
+                  {formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}{' '}
+                  <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={25} />
+                </span>
+              )}
             </div>
             <div
               className={cn(

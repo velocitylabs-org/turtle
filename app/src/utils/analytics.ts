@@ -1,9 +1,10 @@
 import { captureException } from '@sentry/nextjs'
 
-import { AmountInfo } from '@/models/transfer'
+import { Environment } from '@velocitylabs-org/turtle-registry'
 import { Chain } from '@/models/chain'
-import { Environment } from '@/store/environmentStore'
+
 import { Token } from '@/models/token'
+import { AmountInfo } from '@/models/transfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 

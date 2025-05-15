@@ -1,8 +1,8 @@
-import { ReactNode } from 'react'
 import clsx from 'clsx'
+import { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { LoadingIcon } from './LoadingIcon'
 import { Sizes } from '@/types/global'
+import { LoadingIcon } from './LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 export type ButtonType = 'button' | 'submit' | 'reset'
@@ -69,7 +69,7 @@ export const Button = ({
 }: ButtonProps) => {
   const classNames = twMerge(
     clsx(
-      'w-full flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0 cursor-pointer',
+      'relative w-full flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0 cursor-pointer',
       sizeHeights[size],
       paddingX[size],
       styles[variant],
