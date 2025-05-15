@@ -165,9 +165,9 @@ export default function TransactionsPage() {
           <CardContent className="p-6">
             <div className="flex flex-col gap-4">
               {/* Date pickers section */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="flex items-center gap-2">
-                  <div className="flex-shrink-0 p-2 flex items-center">
+                  <div className="flex flex-shrink-0 items-center p-2">
                     <button
                       className="rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                       onClick={resetFilters}
@@ -219,9 +219,9 @@ export default function TransactionsPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Chain and token selectors */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <MultiSelect
                     options={chainOptions}

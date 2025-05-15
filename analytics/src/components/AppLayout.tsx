@@ -48,14 +48,14 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
 
   const onNavItemClicked = () => {
     if (isMobile) {
-      setIsSidebarOpen((prev) => !prev)
+      setIsSidebarOpen(prev => !prev)
     }
   }
 
   return (
     <div className="relative h-full bg-muted/40">
       {/* Mobile Navigation */}
-      <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={(open) => setIsSidebarOpen(open)}>
+      <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={open => setIsSidebarOpen(open)}>
         <SheetContent side="left" className="w-72 bg-background/95 p-0 backdrop-blur-sm">
           <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} />
         </SheetContent>
@@ -68,7 +68,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
           isSidebarOpen ? 'left-0' : '-left-64',
         )}
       >
-        <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked}/>
+        <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} />
       </div>
 
       {/* Main Content */}
@@ -79,7 +79,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
         )}
       >
         <header
-          className="sticky top-0 z-40 flex items-center justify-between border-b-[1px] border-muted px-4 md:px-8 backdrop-blur backdrop-filter"
+          className="sticky top-0 z-40 flex items-center justify-between border-b-[1px] border-muted px-4 backdrop-blur backdrop-filter md:px-8"
           style={{ height: headerHeight }}
         >
           <div className="flex items-center">
@@ -87,19 +87,21 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
               variant="outline"
               size="icon"
               className="mr-4 flex"
-              onClick={() => setIsSidebarOpen((prev) => !prev)}
+              onClick={() => setIsSidebarOpen(prev => !prev)}
             >
               <Menu className="h-4 w-4" />
             </Button>
             <div className="flex flex-col">
               <h1 className="text-3xl font-bold tracking-tight">{activeRoute?.label}</h1>
-              <span className="text-[12px] relative -top-[2px] block md:hidden">{nowFormatted}</span>
+              <span className="relative -top-[2px] block text-[12px] md:hidden">
+                {nowFormatted}
+              </span>
             </div>
           </div>
-          <span className="text-sm text-muted-foreground hidden md:block">{nowFormatted}</span>
+          <span className="hidden text-sm text-muted-foreground md:block">{nowFormatted}</span>
         </header>
         {/* Pages */}
-        <div className="h-full p-4 pt-0 pb-10 md:pb-6 md:p-8 md:pt-0 ">{children}</div>
+        <div className="h-full p-4 pb-10 pt-0 md:p-8 md:pb-6 md:pt-0">{children}</div>
       </main>
     </div>
   )
@@ -118,7 +120,7 @@ interface NavigationMenuProps {
   onNavItemClicked: () => void
 }
 
-function NavigationMenu({ routes, onNavItemClicked, title = "Overview" }: NavigationMenuProps) {
+function NavigationMenu({ routes, onNavItemClicked, title = 'Overview' }: NavigationMenuProps) {
   return (
     <div className="flex h-full flex-col space-y-4">
       <div className="mb-2 flex items-center border-b" style={{ height: headerHeight }}>
@@ -127,34 +129,34 @@ function NavigationMenu({ routes, onNavItemClicked, title = "Overview" }: Naviga
           Turtle Analytics
         </h2>
       </div>
-    <div className="px-3 py-2">
-      <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">{title}</h2>
-      <div className="space-y-1">
-        {routes.map(route => (
-          <Link
-            key={route.href}
-            href={route.href}
-            prefetch={true}
-            className={cn(
-              'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
-              route.active ? 'bg-muted text-primary' : 'text-muted-foreground',
-            )}
-            onClick={onNavItemClicked}
-          >
-            <div className="flex flex-1 items-center">
-              <route.icon
-                className={cn(
-                  'mr-3 h-4 w-4',
-                  route.active ? 'text-primary' : 'text-muted-foreground',
-                )}
-              />
-              {route.label}
-            </div>
-            {route.active && <ChevronRight className="relative top-[2px] h-4 w-4" />}
-          </Link>
-        ))}
+      <div className="px-3 py-2">
+        <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">{title}</h2>
+        <div className="space-y-1">
+          {routes.map(route => (
+            <Link
+              key={route.href}
+              href={route.href}
+              prefetch={true}
+              className={cn(
+                'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
+                route.active ? 'bg-muted text-primary' : 'text-muted-foreground',
+              )}
+              onClick={onNavItemClicked}
+            >
+              <div className="flex flex-1 items-center">
+                <route.icon
+                  className={cn(
+                    'mr-3 h-4 w-4',
+                    route.active ? 'text-primary' : 'text-muted-foreground',
+                  )}
+                />
+                {route.label}
+              </div>
+              {route.active && <ChevronRight className="relative top-[2px] h-4 w-4" />}
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   )
 }
