@@ -1,6 +1,5 @@
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
-import { Environment } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
@@ -406,8 +405,10 @@ function sendMetrics({
    destinationTokenUSDValue,
    date
 }: SendMetricsParams) {
+  // Use the provided txId, or fall back to a random alphanumeric ID
+  const id = txId || `generated-${Math.random().toString(36).slice(2, 15)}`;
   trackTransferMetrics({
-    id: txId,
+    id,
     sender: senderAddress,
     sourceChain: params.sourceChain,
     token: params.sourceToken,
