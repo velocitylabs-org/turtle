@@ -22,12 +22,10 @@ export default function getOriginBadge(
       text: `Polkadot ${token.symbol}`,
     }
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
-    switch (token.origin.bridge) {
-      case 'Snowbridge':
-        return { logoURI: '/logos/snowbridge-badge.svg', text: `Snowbridge ${token.symbol}` }
-      default:
-        return
+    if (token.origin.bridge === 'Snowbridge') {
+      return { logoURI: '/logos/snowbridge-badge.svg', text: `Snowbridge ${token.symbol}` }
     }
+    return
   }
 
   // Just specific for analytics
