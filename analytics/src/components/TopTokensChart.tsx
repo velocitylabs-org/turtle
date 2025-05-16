@@ -92,7 +92,7 @@ export default function TopTokensChart({ data, totalVolume }: TopTokensChartProp
 
   if (remainingPercentage > 0) {
     formattedData.push({
-      name: 'Rest tokens',
+      name: 'Rest',
       value: remainingVolume,
       percentage: remainingPercentage,
       id: 'rest-tokens',
