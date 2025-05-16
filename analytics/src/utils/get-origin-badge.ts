@@ -1,0 +1,40 @@
+import { Token, Chain } from '@velocitylabs-org/turtle-registry'
+
+interface OriginBadge {
+  logoURI: string
+  text: string
+}
+
+export default function getOriginBadge(
+  token: Token,
+  sourceChain: Chain | null,
+): OriginBadge | undefined {
+  if (!sourceChain || !token.origin) return
+
+  if (sourceChain.network === 'Ethereum' && token.origin.type === 'Ethereum')
+    return {
+      logoURI: '/logos/ethereum.svg',
+      text: `Ethereum ${token.symbol}`,
+    }
+  if (sourceChain.network === 'Polkadot' && token.origin.type === 'Polkadot')
+    return {
+      logoURI: '/logos/polkadot.svg',
+      text: `Polkadot ${token.symbol}`,
+    }
+  if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
+    if (token.origin.bridge === 'Snowbridge') {
+      return { logoURI: '/logos/snowbridge-badge.svg', text: `Snowbridge ${token.symbol}` }
+    }
+    return
+  }
+
+  // Just specific for analytics
+  if (sourceChain.network === 'Ethereum' && token.origin.type === 'Polkadot') {
+    return {
+      logoURI: '/logos/polkadot.svg',
+      text: `Polkadot ${token.symbol}`,
+    }
+  }
+
+  return
+}
