@@ -8,7 +8,7 @@ import { AmountInfo } from '@/models/transfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 
-export interface TransferMetric {
+interface TransferMetric {
   environment: Environment
 
   token: Token
@@ -22,6 +22,11 @@ export interface TransferMetric {
   id?: string
   amount: bigint
   tokenUSDValue: number
+
+  destinationToken?: Token
+  destinationTokenUSDValue?: number
+  destinationAmount?: bigint
+  bridgingFee?: AmountInfo | null | undefined
 }
 
 export async function trackTransferMetrics(data: TransferMetric) {
