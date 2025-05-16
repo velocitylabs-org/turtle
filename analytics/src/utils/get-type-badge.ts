@@ -10,6 +10,6 @@ export default function getTypeBadge(tokenId: string) {
 
   return {
     logoURI: token.logoURI,
-    typeURI: typeURI.src || '',
+    typeURI: typeURI || '',
   }
 }
