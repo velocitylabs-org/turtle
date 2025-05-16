@@ -426,10 +426,10 @@ function sendMetrics({
   destinationTokenUSDValue,
   date,
 }: SendMetricsParams) {
-  // Use the provided txId, or fall back to a random alphanumeric ID
-  const id = txId || `generated-${Math.random().toString(36).slice(2, 15)}`
+  if (!txId) return
+
   trackTransferMetrics({
-    id,
+    id: txId,
     sender: senderAddress,
     sourceChain: params.sourceChain,
     token: params.sourceToken,
