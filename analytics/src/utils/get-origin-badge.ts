@@ -1,5 +1,4 @@
-import { Token } from '@/models/Token'
-import { Chain } from '@/models/Chain'
+import { Token, Chain } from '@velocitylabs-org/turtle-registry'
 
 interface OriginBadge {
   logoURI: string

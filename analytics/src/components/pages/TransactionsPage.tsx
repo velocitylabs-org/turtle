@@ -218,7 +218,6 @@ export default function TransactionsPage() {
                   </div>
                 </div>
               </div>
-
               {/* Chain and token selectors */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
@@ -281,15 +280,12 @@ function getLogoAndOriginURI(tokenId: string, chainUid?: string) {
   const token = tokensById[tokenId]
   const chain = chainsByUid[chainUid || '']
 
-  if (chain) {
-    return {
-      logoURI: token.logoURI,
-      originLogoURI: getOriginBadge(token, chain)?.logoURI,
-    }
-  }
+  const originBadge = chain
+    ? getOriginBadge(token, chain)?.logoURI
+    : getTypeBadge(token.id)?.typeURI
 
   return {
     logoURI: token.logoURI,
-    originLogoURI: getTypeBadge(token.id)?.typeURI,
+    originLogoURI: originBadge ?? '',
   }
 }

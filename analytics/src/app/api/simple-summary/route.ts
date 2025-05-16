@@ -14,7 +14,6 @@ export async function GET(request: Request) {
 
     await dbConnect()
 
-    // Execute queries in parallel for better performance
     const [volumeResult, totalTransactions] = await Promise.all([
       // Total volume in USD
       Transaction.aggregate([

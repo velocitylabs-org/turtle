@@ -13,7 +13,6 @@ export async function GET(request: Request) {
 
     await dbConnect()
 
-    // Execute all queries in parallel for better performance
     const [
       volumeResult,
       totalTransactions,

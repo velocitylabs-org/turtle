@@ -83,7 +83,7 @@ export default function TopTokensChart({ data, totalVolume }: TopTokensChartProp
     id: item.id,
   }))
 
-  // Calculate the sum of the displayed tokens' volumes
+  // Calculate the sum of the displayed tokens volumes
   const displayedVolume = formattedData.reduce((sum, item) => sum + item.value, 0)
 
   // Calculate the remaining volume for all other tokens

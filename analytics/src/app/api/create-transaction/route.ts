@@ -14,7 +14,6 @@ export async function POST(request: Request) {
     await dbConnect()
     const data = await request.json()
 
-    // Validate required fields
     const requiredFields = [
       'txHashId',
       'sourceTokenId',
@@ -61,7 +60,6 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create a new transaction
     const transaction = new Transaction(data)
     await transaction.save()
 

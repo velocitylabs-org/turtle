@@ -35,7 +35,6 @@ export async function GET(request: Request) {
       }
     }
 
-    // Build MongoDB query
     const query: MongoQuery = {}
 
     if (sourceChainUid) {
@@ -72,7 +71,6 @@ export async function GET(request: Request) {
       }
     }
 
-    // Execute queries in parallel for better performance
     const [filteredTransactions, totalVolumeUsd, statusCounts] = await Promise.all([
       // Get latest 5 transactions
       Transaction.find(query)
