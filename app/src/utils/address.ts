@@ -1,3 +1,4 @@
+import { convertSs58, getTNode, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
@@ -5,7 +6,7 @@ import { JsonRpcSigner } from 'ethers'
 import { isAddress } from 'viem/utils'
 import { Sender } from '@/hooks/useTransfer'
 import { WalletInfo } from '@/hooks/useWallet'
-import { AddressType } from '@/models/chain'
+import { AddressType, Chain } from '@/models/chain'
 import { ManualRecipient } from '@/models/select'
 
 /**
@@ -110,4 +111,16 @@ export const getPlaceholderAddress = (type: AddressType): string => {
  */
 export function getAccountId32(address: string): string {
   return u8aToHex(decodeAddress(address))
+}
+
+/**
+ * In Polkadot, a wallet address gets a chain-specific representation, unlike what happens on Ethereum or EVM-based chains.
+ * This function returns a given address converted to its specific representation at the given chain 
+ * if it's an ss58 address (substrate) or the input address if it's an ethereum address.
+ */
+export function getChainConvertedAddress(address: string, chain: Chain): string {
+  if (address.length === 20)
+    return address
+
+  return convertSs58(address, getTNode(chain.chainId, 'polkadot') as TNodeDotKsmWithRelayChains)
 }
