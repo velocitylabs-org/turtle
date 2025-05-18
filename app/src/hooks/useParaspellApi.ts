@@ -8,15 +8,6 @@ import {
   TxStatus,
 } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
-import { ISubmittableResult } from '@polkadot/types/types'
-import { captureException } from '@sentry/nextjs'
-import { Environment } from '@velocitylabs-org/turtle-registry'
-import { switchChain } from '@wagmi/core'
-import { InvalidTxError, TxEvent } from 'polkadot-api'
-import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
-import { Config, useConnectorClient } from 'wagmi'
-import { moonbeam } from 'wagmi/chains'
-
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
@@ -31,7 +22,6 @@ import {
   isExistentialDepositMetAfterTransfer,
   moonbeamTransfer,
 } from '@/utils/paraspellTransfer'
-import { extractPjsEvents } from '@/utils/pjs'
 import { isSameToken } from '@/utils/token'
 import {
   getExplorerLink,
@@ -39,13 +29,17 @@ import {
   isSwapWithTransfer,
   txWasCancelled,
 } from '@/utils/transfer'
+import { captureException } from '@sentry/nextjs'
+import { Environment } from '@velocitylabs-org/turtle-registry'
+import { switchChain } from '@wagmi/core'
+import { InvalidTxError, TxEvent } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
+import { Config, useConnectorClient } from 'wagmi'
+import { moonbeam } from 'wagmi/chains'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-type TransferEvent =
-  | { type: 'pjs'; eventData: ISubmittableResult }
-  | { type: 'papi'; eventData: TxEvent }
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -180,7 +174,7 @@ const useParaspellApi = () => {
         }
 
         try {
-          await handleTxEvent({ type: 'papi', eventData: event }, transferToStore, () => {
+          await handleTxEvent(event, transferToStore, () => {
             setStatus('Idle')
             params.onComplete?.()
           })
@@ -248,7 +242,7 @@ const useParaspellApi = () => {
         }
 
         try {
-          await handleTxEvent({ type: 'papi', eventData: event }, transferToStore, () => {
+          await handleTxEvent(event, transferToStore, () => {
             setStatus('Idle')
             params.onComplete?.()
           })
@@ -265,35 +259,30 @@ const useParaspellApi = () => {
     setStatus('Sending')
   }
 
-  /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */
+  /** Handle the incoming transaction events and update the ongoing transfers accordingly. */
   const handleTxEvent = async (
-    event: TransferEvent,
+    event: TxEvent,
     transferToStore: StoredTransfer,
     onComplete?: () => void,
   ) => {
-    if (
-      (event.type === 'papi' && event.eventData.type === 'signed') ||
-      (event.type === 'pjs' && event.eventData.status.isBroadcast)
-    ) {
+    if (event.type === 'signed') {
       await addToOngoingTransfers(
         {
           ...transferToStore,
-          id: event.eventData.txHash.toString(),
+          id: event.txHash.toString(),
         },
         onComplete,
       )
     }
 
-    let onchainEvents: PjsEvents | PapiEvents | undefined
-    if (event.type === 'papi') onchainEvents = extractPapiEvent(event.eventData)
-    else if (event.type === 'pjs') onchainEvents = extractPjsEvents(event.eventData)
+    const onchainEvents = extractPapiEvent(event)
     if (!onchainEvents) return
 
     const { messageHash, messageId, extrinsicIndex } = onchainEvents
 
     addOrUpdate({
       ...transferToStore,
-      id: event.eventData.txHash.toString(),
+      id: event.txHash.toString(),
       crossChainMessageHash: messageHash,
       parachainMessageId: messageId,
       sourceChainExtrinsicIndex: extrinsicIndex,
@@ -309,10 +298,7 @@ const useParaspellApi = () => {
     return !!('isBatchCompleted' in onchainEvents && onchainEvents.isBatchCompleted)
   }
 
-  const monitorSwapWithTransfer = (
-    transfer: StoredTransfer,
-    eventsData: PjsEvents | PapiEvents,
-  ) => {
+  const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: PapiEvents) => {
     // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
     if (isSwapWithTransfer(transfer) && !isBatchCompleted(eventsData))
       throw new Error('Swap transfer did not completed - Batch failed')
