@@ -2,6 +2,7 @@ import { TransferParams } from '@/hooks/useTransfer'
 import { Chain } from '@/models/chain'
 import { Token } from '@/models/token'
 import { REGISTRY } from '@/registry'
+import { getHopAhAddress } from '@/registry/helpers'
 import { EthereumTokens } from '@/registry/mainnet/tokens'
 import { Environment } from '@/store/environmentStore'
 import {
@@ -48,6 +49,7 @@ export const createTransferTx = async (
     .currency({ ...currencyId, amount: sourceAmount })
     .address(recipient)
     .senderAddress(sender.address)
+    .ahAddress(getHopAhAddress(sourceChain, destinationChain))
     .build()
 }
 
@@ -77,6 +79,7 @@ export const moonbeamTransfer = async (
     .currency({ ...currencyId, amount: sourceAmount })
     .address(recipient)
     .signer(viemClient)
+    .ahAddress(getHopAhAddress(sourceChain, destinationChain))
     .build()
 }
 

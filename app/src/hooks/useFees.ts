@@ -16,6 +16,7 @@ import { useCallback, useEffect, useState } from 'react'
 import useBalance from './useBalance'
 import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
+import { getHopAhAddress } from '@/registry/helpers'
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
 // When bridging from AssetHub, the basic fees already take the bridging fees into account.
@@ -89,6 +90,7 @@ const useFees = (
             account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
             accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
             api: sourceChain.rpcConnection,
+            ahAddress: getHopAhAddress(sourceChain, destinationChain),
           })
 
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
@@ -187,11 +189,6 @@ const useFees = (
       setBridgingFee(null)
       captureException(error)
       console.error('useFees > error is', error)
-      // addNotification({
-      //   severity: NotificationSeverity.Error,
-      //   message: 'Failed to fetch the fees. Please try again later.',
-      //   dismissible: true,
-      // })
     } finally {
       setLoading(false)
     }
