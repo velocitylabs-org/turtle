@@ -75,7 +75,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
 export const executeRouterPlan = async (
   params: TransferParams,
   slippagePct: string = '1',
-  onStatusChangeCallback: (status: TRouterEvent) => void = (_status: TRouterEvent) => {},
+  onStatusChangeCallback: (status: TRouterEvent) => void = (_: TRouterEvent) => {},
 ) => {
   const router = (await setupRouter(params, slippagePct)).onStatusChange(onStatusChangeCallback)
   await router.build()
