@@ -1,12 +1,6 @@
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import {
-  CompletedTransfer,
-  PapiEvents,
-  PjsEvents,
-  StoredTransfer,
-  TxStatus,
-} from '@/models/transfer'
+import { CompletedTransfer, PapiEvents, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
@@ -294,7 +288,7 @@ const useParaspellApi = () => {
     handleSameChainSwapStorage(transferToStore)
   }
 
-  const isBatchCompleted = (onchainEvents: PjsEvents | PapiEvents) => {
+  const isBatchCompleted = (onchainEvents: PapiEvents) => {
     return !!('isBatchCompleted' in onchainEvents && onchainEvents.isBatchCompleted)
   }
 
