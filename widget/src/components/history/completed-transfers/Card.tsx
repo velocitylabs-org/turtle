@@ -64,7 +64,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             >
               <div className="relative h-4 w-4 rounded-full">
                 <img
-                  src={(tx.sourceChain.logoURI as Record<string, string>).src}
+                  src={tx.sourceChain.logoURI as string}
                   alt={`${tx.sourceChain.name}`}
                   width={16}
                   height={16}
@@ -80,7 +80,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
               />
               <div className="relative h-4 w-4 rounded-full">
                 <img
-                  src={(tx.destChain.logoURI as Record<string, string>).src}
+                  src={tx.destChain.logoURI as string}
                   alt={`${tx.destChain.name}`}
                   width={16}
                   height={16}

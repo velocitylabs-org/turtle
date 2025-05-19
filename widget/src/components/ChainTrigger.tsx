@@ -85,7 +85,7 @@ export default function ChainTrigger({
             {value ? (
               <>
                 <img
-                  src={(value.logoURI as Record<string, string>).src}
+                  src={value.logoURI as string}
                   alt={value.name}
                   width={24}
                   height={24}

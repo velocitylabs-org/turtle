@@ -362,7 +362,7 @@ const ChainList = ({
             >
               <div className="flex items-center gap-2">
                 <img
-                  src={(option.logoURI as Record<string, string>).src}
+                  src={option.logoURI as string}
                   alt={option.name}
                   width={24}
                   height={24}

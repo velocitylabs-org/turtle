@@ -48,7 +48,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
           >
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={(tx.sourceChain.logoURI as Record<string, string>).src}
+                src={tx.sourceChain.logoURI as string}
                 width={22}
                 height={22}
                 className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}
@@ -58,7 +58,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={(tx.destChain.logoURI as Record<string, string>).src}
+                src={tx.destChain.logoURI as string}
                 width={22}
                 height={22}
                 className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}

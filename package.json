@@ -25,12 +25,6 @@
   "engines": {
     "node": ">=18"
   },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.0.10",
-      "@types/react-dom": "19.0.4"
-    }
-  },
   "dependencies": {
     "@changesets/cli": "^2.29.3"
   }
