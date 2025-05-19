@@ -12,6 +12,10 @@ interface IconProps {
  * making it a lot easier to handle images with different ratios while forcing a fixed width and height.
  */
 export const Icon = ({ width, height, src, className }: IconProps) => {
+  if (!src) {
+    return null
+  }
+
   const isInlineSvg = src.startsWith('data:image/svg+xml')
   const backgroundImage = isInlineSvg ? `url("${src}")` : `url("${src}")`
 

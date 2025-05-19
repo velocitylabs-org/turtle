@@ -8,6 +8,7 @@
     "module": "esnext",
     "composite": true,
     "declaration": true,
-    "lib": ["ES2021", "DOM"]
+    "lib": ["ES2021", "DOM"],
+    "sourceMap": true
   }
 }
