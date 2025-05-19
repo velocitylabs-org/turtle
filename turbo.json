@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["SENTRY_ORG", "SENTRY_PROJECT", "SENTRY_AUTH_TOKEN", "DWELLIR_KEY"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
