@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/utils/db-connect'
 import Transaction from '@/models/Transaction'
 import validateRequest from '@/utils/validate-request'
+import createTransaction from '@/models/create-transaction'
 
 export async function POST(request: Request) {
   try {
@@ -12,44 +13,21 @@ export async function POST(request: Request) {
     }
 
     await dbConnect()
-    const data = await request.json()
+    const rawData = await request.json()
 
-    const requiredFields = [
-      'txHashId',
-      'sourceTokenId',
-      'sourceTokenName',
-      'sourceTokenSymbol',
-      'sourceTokenAmount',
-      'sourceTokenAmountUsd',
-      'destinationTokenId',
-      'destinationTokenName',
-      'destinationTokenSymbol',
-      'feesTokenId',
-      'feesTokenName',
-      'feesTokenSymbol',
-      'feesTokenAmount',
-      'feesTokenAmountUsd',
-      'senderAddress',
-      'recipientAddress',
-      'sourceChainUid',
-      'sourceChainId',
-      'sourceChainName',
-      'sourceChainNetwork',
-      'destinationChainUid',
-      'destinationChainId',
-      'destinationChainName',
-      'destinationChainNetwork',
-      'txDate',
-      'hostedOn',
-    ]
-
-    const missingFields = requiredFields.filter(field => !data[field])
-    if (missingFields.length > 0) {
+    const result = createTransaction.safeParse(rawData)
+    if (!result.success) {
+      // Return validation errors
       return NextResponse.json(
-        { error: `Missing required fields: ${missingFields.join(', ')}` },
+        { 
+          error: 'Validation failed', 
+          details: result.error.format() 
+        },
         { status: 400 },
       )
     }
+    
+    const data = result.data
 
     // Check if a transaction with the same txHashId already exists
     const existingTransaction = await Transaction.findOne({ txHashId: data.txHashId })
@@ -65,7 +43,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: 'Transaction created successfully',
+        message: 'Transaction stored successfully',
         transaction,
       },
       { status: 201 },
