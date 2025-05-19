@@ -34,6 +34,7 @@
     "@types/react-dom": "19.0.4",
     "@velocitylabs-org/turtle-eslint-config": "workspace:*",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
+    "dotenv": "^16.4.5",
     "eslint": "^9.25.1",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
@@ -47,9 +48,9 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
-    "clsx": ">=2.1.1",
-    "react": ">=18.3.1",
-    "react-dom": ">=18.3.1",
+    "clsx": "^2.1.1",
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0",
     "tailwind-merge": "^3.2.0"
   }
 }

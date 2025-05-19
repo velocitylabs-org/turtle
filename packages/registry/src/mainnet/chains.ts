@@ -15,8 +15,6 @@ import polkadotLogo from "@velocitylabs-org/turtle-assets/logos/polkadot.svg";
 import { DWELLIR_KEY } from "../constants";
 import { Chain } from "../types";
 
-console.log("*** DWELLIR_KEY ***", DWELLIR_KEY);
-
 export const Ethereum: Chain = {
   uid: "ethereum",
   name: "Ethereum",
