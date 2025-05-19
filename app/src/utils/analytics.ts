@@ -1,38 +1,28 @@
 import { captureException } from '@sentry/nextjs'
-
 import { Environment } from '@velocitylabs-org/turtle-registry'
-import { Chain } from '@/models/chain'
-
-import { Token } from '@/models/token'
-import { AmountInfo } from '@/models/transfer'
+import { TransferParams } from '@/hooks/useTransfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 
 interface TransferMetric {
-  environment: Environment
-
-  token: Token
-  fees: AmountInfo
-  sender: string
-  sourceChain: Chain
-  recipient: string
-  destinationChain: Chain
+  transferParams: TransferParams
+  senderAddress: string
+  sourceTokenUSDValue: number
+  destinationTokenUSDValue: number
+  txId?: string
   date: Date
-
-  id?: string
-  amount: bigint
-  tokenUSDValue: number
-
-  destinationToken?: Token
-  destinationTokenUSDValue?: number
-  destinationAmount?: bigint
-  bridgingFee?: AmountInfo | null | undefined
 }
 
-export async function trackTransferMetrics(data: TransferMetric) {
+export async function trackTransferMetrics({
+  transferParams,
+  txId,
+  senderAddress,
+  sourceTokenUSDValue,
+  date,
+}: TransferMetric) {
   if (
     !process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
-    data.environment !== Environment.Mainnet ||
+    transferParams.environment !== Environment.Mainnet ||
     !isProduction
   ) {
     return
@@ -45,33 +35,33 @@ export async function trackTransferMetrics(data: TransferMetric) {
 
   const userData = {
     fields: {
-      tokenName: { stringValue: data.token.name },
-      tokenSymbol: { stringValue: data.token.symbol },
-      tokenAmount: { doubleValue: toHuman(data.amount, data.token) },
+      tokenName: { stringValue: transferParams.sourceToken.name },
+      tokenSymbol: { stringValue: transferParams.sourceToken.symbol },
+      tokenAmount: { doubleValue: toHuman(transferParams.sourceAmount, transferParams.sourceToken) },
       tokenAmountUsd: {
-        doubleValue: toHuman(data.amount, data.token) * data.tokenUSDValue,
+        doubleValue: toHuman(transferParams.sourceAmount, transferParams.sourceToken) * sourceTokenUSDValue,
       },
-
-      feesTokenName: { stringValue: data.fees.token.name },
-      feesTokenSymbol: { stringValue: data.fees.token.symbol },
-      feesAmount: { doubleValue: toHuman(data.fees.amount, data.fees.token) },
-      feesAmountUsd: { doubleValue: data.fees.inDollars },
-
-      senderAddress: { stringValue: data.sender },
-      sourceChainName: { stringValue: data.sourceChain.name },
-      sourceChainNetwork: { stringValue: data.sourceChain.network },
-
-      recipientAddress: { stringValue: data.recipient },
-      destinationChainName: { stringValue: data.destinationChain.name },
-      destinationChainNetwork: { stringValue: data.destinationChain.network },
-
-      date: { timestampValue: { seconds: Math.floor(data.date.getTime() / 1000) } },
-
+  
+      feesTokenName: { stringValue: transferParams.fees.token.name },
+      feesTokenSymbol: { stringValue: transferParams.fees.token.symbol },
+      feesAmount: { doubleValue: toHuman(transferParams.fees.amount, transferParams.fees.token) },
+      feesAmountUsd: { doubleValue: transferParams.fees.inDollars },
+  
+      senderAddress: { stringValue: senderAddress },
+      sourceChainName: { stringValue: transferParams.sourceChain.name },
+      sourceChainNetwork: { stringValue: transferParams.sourceChain.network },
+  
+      recipientAddress: { stringValue: transferParams.recipient },
+      destinationChainName: { stringValue: transferParams.destinationChain.name },
+      destinationChainNetwork: { stringValue: transferParams.destinationChain.network },
+  
+      date: { timestampValue: { seconds: Math.floor(date.getTime() / 1000) } },
+  
       // Additional info for debugging.
-      txId: { stringValue: data.id ?? '' },
+      txId: { stringValue: txId ?? '' },
       appHostedOn: { stringValue: window.location.origin },
-      amount: { stringValue: data.amount.toString() },
-      currentTokenPriceUSD: { doubleValue: data.tokenUSDValue },
+      amount: { stringValue: transferParams.sourceAmount.toString() },
+      currentTokenPriceUSD: { doubleValue: sourceTokenUSDValue },
     },
   }
 

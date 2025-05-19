@@ -144,7 +144,7 @@ const useSnowbridgeApi = () => {
       onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+      const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
       const destinationTokenUSDValue =
         (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
       const date = new Date()
@@ -154,7 +154,7 @@ const useSnowbridgeApi = () => {
         sourceChain,
         sourceToken,
         destinationToken,
-        sourceTokenUSDValue: tokenUSDValue,
+        sourceTokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
         sourceAmount: sourceAmount.toString(),
@@ -166,21 +166,12 @@ const useSnowbridgeApi = () => {
       } satisfies StoredTransfer)
 
       trackTransferMetrics({
-        id: response.hash,
-        sender: senderAddress,
-        sourceChain,
-        token: sourceToken,
-        amount: sourceAmount,
-        destinationChain,
-        tokenUSDValue,
-        fees,
-        recipient,
-        date,
-        environment,
-        destinationToken: params.destinationToken,
-        destinationAmount: params.destinationAmount,
+        transferParams: params,
+        txId: response.hash,
+        senderAddress,
+        sourceTokenUSDValue,
         destinationTokenUSDValue,
-        bridgingFee: params.bridgingFee,
+        date,
       })
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)

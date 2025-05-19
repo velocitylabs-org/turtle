@@ -99,8 +99,8 @@ const useParaspellApi = () => {
       params.onComplete?.()
     })
 
-    sendMetrics({
-      params,
+    trackTransferMetrics({
+      transferParams: params,
       txId: hash,
       senderAddress,
       sourceTokenUSDValue,
@@ -178,9 +178,9 @@ const useParaspellApi = () => {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
 
-        sendMetrics({
-          params,
-          txId: event.txHash?.toString() ?? '',
+        trackTransferMetrics({
+          transferParams: params,
+          txId: event.txHash?.toString(),
           senderAddress,
           sourceTokenUSDValue,
           destinationTokenUSDValue,
@@ -246,9 +246,9 @@ const useParaspellApi = () => {
             params.onComplete?.()
           })
 
-          sendMetrics({
-            params,
-            txId: result.txHash?.toString() ?? '',
+          trackTransferMetrics({
+            transferParams: params,
+            txId: result.txHash?.toString(),
             senderAddress: account.address,
             sourceTokenUSDValue,
             destinationTokenUSDValue,
@@ -408,41 +408,3 @@ const useParaspellApi = () => {
 }
 
 export default useParaspellApi
-
-interface SendMetricsParams {
-  params: TransferParams
-  txId: string
-  senderAddress: string
-  sourceTokenUSDValue: number
-  destinationTokenUSDValue: number
-  date: Date
-}
-
-function sendMetrics({
-  params,
-  txId,
-  senderAddress,
-  sourceTokenUSDValue,
-  destinationTokenUSDValue,
-  date,
-}: SendMetricsParams) {
-  if (!txId) return
-
-  trackTransferMetrics({
-    id: txId,
-    sender: senderAddress,
-    sourceChain: params.sourceChain,
-    token: params.sourceToken,
-    amount: params.sourceAmount,
-    destinationChain: params.destinationChain,
-    tokenUSDValue: sourceTokenUSDValue,
-    fees: params.fees,
-    recipient: params.recipient,
-    date,
-    environment: params.environment,
-    destinationToken: params.destinationToken,
-    destinationAmount: params.destinationAmount,
-    destinationTokenUSDValue,
-    bridgingFee: params.bridgingFee,
-  })
-}
