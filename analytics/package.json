@@ -41,6 +41,7 @@
     "@types/react-dom": "^19",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
+    "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "eslint-config-prettier": "^9.1.0",

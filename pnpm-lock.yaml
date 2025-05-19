@@ -113,6 +113,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.18.0
         version: 7.18.0(eslint@9.26.0(jiti@2.4.2))(typescript@5.8.3)
+      '@velocitylabs-org/turtle-typescript-config':
+        specifier: workspace:*
+        version: link:../packages/typescript-config
       eslint:
         specifier: ^9
         version: 9.26.0(jiti@2.4.2)
@@ -463,7 +466,7 @@ importers:
     dependencies:
       '@paraspell/sdk':
         specifier: ^8.11.1
-        version: 8.16.0(bufferutil@4.0.9)(polkadot-api@1.11.0(@microsoft/api-extractor@7.52.8(@types/node@22.15.18))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
+        version: 8.16.0(bufferutil@4.0.9)(polkadot-api@1.11.0(@microsoft/api-extractor@7.52.8(@types/node@22.15.18))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.3)
       '@types/node':
         specifier: '>=20.16.15'
         version: 22.15.18
@@ -18208,7 +18211,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk-core@8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)':
+  '@paraspell/sdk-core@8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.3)':
     dependencies:
       '@noble/hashes': 1.8.0
       '@paraspell/assets': 8.16.0
@@ -18216,7 +18219,7 @@ snapshots:
       '@paraspell/sdk-common': 8.16.0
       '@scure/base': 1.2.5
       ethers: 6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      viem: 2.29.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
+      viem: 2.29.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.3)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -18291,14 +18294,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk@8.16.0(bufferutil@4.0.9)(polkadot-api@1.11.0(@microsoft/api-extractor@7.52.8(@types/node@22.15.18))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)':
+  '@paraspell/sdk@8.16.0(bufferutil@4.0.9)(polkadot-api@1.11.0(@microsoft/api-extractor@7.52.8(@types/node@22.15.18))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.3)':
     dependencies:
       '@noble/hashes': 1.8.0
-      '@paraspell/sdk-core': 8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
+      '@paraspell/sdk-core': 8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.3)
       ethers: 6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       polkadot-api: 1.11.0(@microsoft/api-extractor@7.52.8(@types/node@22.15.18))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0)
       quick-lru: 7.0.1
-      viem: 2.29.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4)
+      viem: 2.29.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.3)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -26540,10 +26543,10 @@ snapshots:
       typescript: 5.8.3
       zod: 3.23.8
 
-  abitype@1.0.8(typescript@5.8.3)(zod@3.24.4):
+  abitype@1.0.8(typescript@5.8.3)(zod@3.25.3):
     optionalDependencies:
       typescript: 5.8.3
-      zod: 3.24.4
+      zod: 3.25.3
 
   accepts@1.3.8:
     dependencies:
@@ -28268,7 +28271,7 @@ snapshots:
       tinyglobby: 0.2.13
       unrs-resolver: 1.7.2
     optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -28306,17 +28309,6 @@ snapshots:
       eslint: 9.26.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.31.0)(eslint@9.26.0(jiti@2.4.2))
-    transitivePeerDependencies:
-      - supports-color
-
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1):
-    dependencies:
-      debug: 3.2.7(supports-color@8.1.1)
-    optionalDependencies:
-      '@typescript-eslint/parser': 7.2.0(eslint@8.57.1)(typescript@5.8.3)
-      eslint: 8.57.1
-      eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -28410,7 +28402,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -31368,14 +31360,14 @@ snapshots:
     transitivePeerDependencies:
       - zod
 
-  ox@0.6.9(typescript@5.8.3)(zod@3.24.4):
+  ox@0.6.9(typescript@5.8.3)(zod@3.25.3):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.2
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
+      abitype: 1.0.8(typescript@5.8.3)(zod@3.25.3)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
@@ -33827,15 +33819,15 @@ snapshots:
       - utf-8-validate
       - zod
 
-  viem@2.29.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.24.4):
+  viem@2.29.3(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.3):
     dependencies:
       '@noble/curves': 1.8.2
       '@noble/hashes': 1.7.2
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.24.4)
+      abitype: 1.0.8(typescript@5.8.3)(zod@3.25.3)
       isows: 1.0.6(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      ox: 0.6.9(typescript@5.8.3)(zod@3.24.4)
+      ox: 0.6.9(typescript@5.8.3)(zod@3.25.3)
       ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
       typescript: 5.8.3
