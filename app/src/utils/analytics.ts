@@ -37,26 +37,29 @@ export async function trackTransferMetrics({
     fields: {
       tokenName: { stringValue: transferParams.sourceToken.name },
       tokenSymbol: { stringValue: transferParams.sourceToken.symbol },
-      tokenAmount: { doubleValue: toHuman(transferParams.sourceAmount, transferParams.sourceToken) },
-      tokenAmountUsd: {
-        doubleValue: toHuman(transferParams.sourceAmount, transferParams.sourceToken) * sourceTokenUSDValue,
+      tokenAmount: {
+        doubleValue: toHuman(transferParams.sourceAmount, transferParams.sourceToken),
       },
-  
+      tokenAmountUsd: {
+        doubleValue:
+          toHuman(transferParams.sourceAmount, transferParams.sourceToken) * sourceTokenUSDValue,
+      },
+
       feesTokenName: { stringValue: transferParams.fees.token.name },
       feesTokenSymbol: { stringValue: transferParams.fees.token.symbol },
       feesAmount: { doubleValue: toHuman(transferParams.fees.amount, transferParams.fees.token) },
       feesAmountUsd: { doubleValue: transferParams.fees.inDollars },
-  
+
       senderAddress: { stringValue: senderAddress },
       sourceChainName: { stringValue: transferParams.sourceChain.name },
       sourceChainNetwork: { stringValue: transferParams.sourceChain.network },
-  
+
       recipientAddress: { stringValue: transferParams.recipient },
       destinationChainName: { stringValue: transferParams.destinationChain.name },
       destinationChainNetwork: { stringValue: transferParams.destinationChain.network },
-  
+
       date: { timestampValue: { seconds: Math.floor(date.getTime() / 1000) } },
-  
+
       // Additional info for debugging.
       txId: { stringValue: txId ?? '' },
       appHostedOn: { stringValue: window.location.origin },
