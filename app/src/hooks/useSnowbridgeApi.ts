@@ -143,7 +143,9 @@ const useSnowbridgeApi = () => {
       onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+      const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+      const destinationTokenUSDValue =
+        (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
       const date = new Date()
 
       addOrUpdate({
@@ -151,7 +153,7 @@ const useSnowbridgeApi = () => {
         sourceChain,
         sourceToken,
         destinationToken,
-        sourceTokenUSDValue: tokenUSDValue,
+        sourceTokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
         sourceAmount: sourceAmount.toString(),
@@ -163,17 +165,12 @@ const useSnowbridgeApi = () => {
       } satisfies StoredTransfer)
 
       trackTransferMetrics({
-        id: response.hash,
-        sender: senderAddress,
-        sourceChain,
-        token: sourceToken,
-        amount: sourceAmount,
-        destinationChain,
-        tokenUSDValue,
-        fees,
-        recipient,
+        transferParams: params,
+        txId: response.hash,
+        senderAddress,
+        sourceTokenUSDValue,
+        destinationTokenUSDValue,
         date,
-        environment,
       })
     } catch (e) {
       if (!txWasCancelled(sender, e)) captureException(e)
