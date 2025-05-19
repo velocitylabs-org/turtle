@@ -12,10 +12,13 @@ interface IconProps {
  * making it a lot easier to handle images with different ratios while forcing a fixed width and height.
  */
 export const Icon = ({ width, height, src, className }: IconProps) => {
+  const isInlineSvg = src.startsWith('data:image/svg+xml')
+  const backgroundImage = isInlineSvg ? `url("${src}")` : `url("${src}")`
+
   return (
     <div
       className={cn('rounded-full border-1 bg-cover bg-center', className)}
-      style={{ backgroundImage: `url(${src})`, width: `${width}px`, height: `${height}px` }}
+      style={{ backgroundImage, width: `${width}px`, height: `${height}px` }}
     />
   )
 }
