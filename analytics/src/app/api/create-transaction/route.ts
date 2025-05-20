@@ -20,14 +20,14 @@ export async function POST(request: Request) {
     if (!result.success) {
       // Return validation errors
       return NextResponse.json(
-        { 
-          error: 'Validation failed', 
-          details: result.error.format() 
+        {
+          error: 'Validation failed',
+          details: result.error.format(),
         },
         { status: 400 },
       )
     }
-    
+
     const data = result.data
 
     // Check if a transaction with the same txHashId already exists
