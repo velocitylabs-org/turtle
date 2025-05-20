@@ -113,7 +113,7 @@ export default function TopTokensChart({ data, totalVolume }: TopTokensChartProp
             nameKey="name"
             label={props => (isMobile ? props.name : <PieLabel {...props} />)}
           >
-            {formattedData.map((entry, index) => (
+            {formattedData.map((_, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
           </Pie>
