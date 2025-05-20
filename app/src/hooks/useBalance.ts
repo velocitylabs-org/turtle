@@ -1,9 +1,8 @@
 import { getTransferableAmount, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Environment, Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { Environment, Chain, Token, Balance } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
-import { Balance } from '@/services/balance'
 
 import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'

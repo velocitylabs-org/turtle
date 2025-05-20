@@ -1,4 +1,5 @@
 import { rpcConnectionAsHttps } from "./helpers";
+import { MainnetRegistry } from "./mainnet";
 import {
   AssetHub,
   Bifrost,
@@ -7,7 +8,6 @@ import {
   Moonbeam,
   Mythos,
 } from "./mainnet/chains";
-import { Mainnet } from "./mainnet/mainnet";
 import { Environment, LocalAssetUid } from "./types";
 
 const SNOWBRIDGE_MAINNET_PARACHAINS = [
@@ -20,7 +20,7 @@ const SNOWBRIDGE_MAINNET_PARACHAINS = [
 ];
 
 export const REGISTRY = {
-  mainnet: Mainnet.REGISTRY,
+  mainnet: MainnetRegistry,
 };
 
 export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = Object.fromEntries(
@@ -41,4 +41,5 @@ export function getAssetUid(
 export * from "./helpers";
 export * from "./utils";
 export * from "./types";
+export * from "./constants";
 export * from "./mainnet";

@@ -1,5 +1,5 @@
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { forwardRef } from 'react'
-import { cn } from '@/utils/helper'
 
 interface SwitchProps {
   /** The current state of the switch, true for on and false for off. */

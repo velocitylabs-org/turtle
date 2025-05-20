@@ -1,5 +1,5 @@
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { CompletedTransfer } from '@/models/transfer'
-import { cn } from '@/utils/cn'
 import { formatCompletedTransferDate } from '@/utils/datetime'
 import { formatTransfersByDate } from '@/utils/transfer'
 import TransactionDialog from './TransactionDialog'

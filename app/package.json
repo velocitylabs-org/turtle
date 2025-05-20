@@ -15,6 +15,7 @@
     "cypress:open": "cypress open"
   },
   "dependencies": {
+    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@heroui/react": "2.7.2",
     "@hookform/resolvers": "3.9.0",
@@ -23,6 +24,8 @@
     "@paraspell/sdk": "^8.13.1",
     "@paraspell/xcm-router": "^8.13.1",
     "@polkadot/api": "^15.9.2",
+    "@polkadot/keyring": "^13.2.1",
+    "@polkadot/util": "^13.3.1",
     "@polkadot/api-base": "^15.9.2",
     "@polkadot/apps-config": "^0.145.1",
     "@polkadot/extension-dapp": "^0.56.2",
@@ -76,6 +79,7 @@
     "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
     "@types/jest": "^29.5.14",
+    "@types/node": ">=20.16.15",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
@@ -101,11 +105,5 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
-  },
-  "peerDependencies": {
-    "@paraspell/sdk": "^8.11.1",
-    "@polkadot/keyring": "^13.2.1",
-    "@polkadot/util": "^13.3.1",
-    "@types/node": ">=20.16.15"
   }
 }

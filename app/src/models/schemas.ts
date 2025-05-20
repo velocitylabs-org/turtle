@@ -1,9 +1,6 @@
 import { TMultiLocation } from '@paraspell/sdk'
+import { Chain, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { z } from 'zod'
-
-import { Chain } from '@/models/chain'
-import { ManualRecipient, TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
 
 const originSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('Ethereum'), bridge: z.enum(['Snowbridge']) }),
@@ -13,7 +10,7 @@ const originSchema = z.discriminatedUnion('type', [
 export const tokenSchema: z.ZodType<Token> = z.object({
   id: z.string(),
   name: z.string(),
-  logoURI: z.string(),
+  logoURI: z.union([z.string(), z.object({})]),
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),
@@ -25,7 +22,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
 export const chainSchema: z.ZodType<Chain> = z.object({
   uid: z.string(),
   name: z.string(),
-  logoURI: z.string(),
+  logoURI: z.union([z.string(), z.object({})]),
   chainId: z.number(),
   network: z.enum(['Ethereum', 'Polkadot']),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),

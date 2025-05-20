@@ -3,7 +3,7 @@ import { TMultiLocation } from "@paraspell/sdk";
 export interface Token {
   id: string;
   name: string;
-  logoURI: string;
+  logoURI: string | Record<string, string>;
   symbol: string;
   decimals: number;
   address: string;

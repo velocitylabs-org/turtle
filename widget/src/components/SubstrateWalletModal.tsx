@@ -1,5 +1,5 @@
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
-import { Button, LoadingIcon } from '@velocitylabs-org/turtle-ui'
+import { Button, Icon, LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -7,7 +7,6 @@ import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
 import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
 import { colors } from '../../tailwind.config'
-import { Icon } from './Icon'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 const animationDuration = 0.35

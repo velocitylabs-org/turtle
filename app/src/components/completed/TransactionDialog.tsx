@@ -1,13 +1,11 @@
+import { TokenLogo, Icon, cn } from '@velocitylabs-org/turtle-ui'
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
-import { cn } from '@/utils/cn'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import { colors } from '../../../tailwind.config'
 import Account from '../Account'
-import Icon from '../Icon'
 import ArrowRight from '../svg/ArrowRight'
 import ArrowUpRight from '../svg/ArrowUpRight'
-import TokenLogo from '../TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -54,7 +52,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             >
               <div className="turtle-success-dark flex items-center justify-center space-x-1">
                 <Icon
-                  src={tx.sourceChain.logoURI}
+                  src={(tx.sourceChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
                   className={cn('rounded-full border bg-background', getBorder(tx.result))}
@@ -64,7 +62,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
               <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
               <div className="turtle-success-dark flex items-center justify-center space-x-1">
                 <Icon
-                  src={tx.destChain.logoURI}
+                  src={(tx.destChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
                   className={cn('rounded-full border bg-background', getBorder(tx.result))}
