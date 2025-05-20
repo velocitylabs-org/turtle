@@ -24,9 +24,8 @@ import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
 
-import { parachain, snowbridgeWrapped } from "@/helpers";
-import { Token } from "@/types";
-
+import { parachain, snowbridgeWrapped } from "../helpers";
+import { Token } from "../types";
 // Tokens
 export const EthereumTokens = {
   ETH: {

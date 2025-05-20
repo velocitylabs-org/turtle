@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import { Mainnet, routes } from '@velocitylabs-org/turtle-registry'
+import { MainnetRegistry, routes } from '@velocitylabs-org/turtle-registry'
 
 describe('Routes', () => {
   it('should have correctly structured routes', () => {
@@ -18,7 +18,7 @@ describe('Routes', () => {
   })
 
   it('should have valid routes with existing chains', () => {
-    const chainUids = new Set(Mainnet.REGISTRY.chains.map(chain => chain.uid))
+    const chainUids = new Set(MainnetRegistry.chains.map(chain => chain.uid))
     routes.forEach(route => {
       expect(chainUids.has(route.from)).toBe(true)
       expect(chainUids.has(route.to)).toBe(true)
@@ -26,7 +26,7 @@ describe('Routes', () => {
   })
 
   it('should only include registered tokens in routes', () => {
-    const tokenIds = new Set(Mainnet.REGISTRY.tokens.map(t => t.id))
+    const tokenIds = new Set(MainnetRegistry.tokens.map(t => t.id))
     routes.forEach(route => {
       route.tokens.forEach(token => {
         expect(tokenIds.has(token)).toBe(true)
@@ -45,7 +45,7 @@ describe('Routes', () => {
 
 describe('Chains', () => {
   it('should have valid chain properties', () => {
-    Mainnet.REGISTRY.chains.forEach(chain => {
+    MainnetRegistry.chains.forEach(chain => {
       expect(chain).toHaveProperty('uid')
       expect(chain).toHaveProperty('name')
       expect(chain).toHaveProperty('chainId')
@@ -56,14 +56,14 @@ describe('Chains', () => {
   })
 
   it('should not have duplicate chains', () => {
-    const chainIds = new Set(Mainnet.REGISTRY.chains.map(c => c.uid))
-    expect(chainIds.size).toBe(Mainnet.REGISTRY.chains.length)
+    const chainIds = new Set(MainnetRegistry.chains.map(c => c.uid))
+    expect(chainIds.size).toBe(MainnetRegistry.chains.length)
   })
 })
 
 describe('Tokens', () => {
   it('should have valid token properties', () => {
-    Mainnet.REGISTRY.tokens.forEach(token => {
+    MainnetRegistry.tokens.forEach(token => {
       expect(token).toHaveProperty('id')
       expect(token).toHaveProperty('name')
       expect(token).toHaveProperty('symbol')
@@ -72,18 +72,18 @@ describe('Tokens', () => {
   })
 
   it('should not have duplicate tokens', () => {
-    const tokenIds = new Set(Mainnet.REGISTRY.tokens.map(t => t.id))
-    expect(tokenIds.size).toBe(Mainnet.REGISTRY.tokens.length)
+    const tokenIds = new Set(MainnetRegistry.tokens.map(t => t.id))
+    expect(tokenIds.size).toBe(MainnetRegistry.tokens.length)
   })
 
   it('should have valid assetUid mappings', () => {
-    Mainnet.REGISTRY.assetUid.forEach((tokenMap, chainUid) => {
+    MainnetRegistry.assetUid.forEach((tokenMap, chainUid) => {
       // Ensure the chain exists in the registry
-      expect(Mainnet.REGISTRY.chains.some(c => c.uid === chainUid)).toBe(true)
+      expect(MainnetRegistry.chains.some(c => c.uid === chainUid)).toBe(true)
 
       tokenMap.forEach((assetUid, tokenId) => {
         // Ensure the token ID (key) exists in the registry tokens
-        expect(Mainnet.REGISTRY.tokens.some(t => t.id === tokenId)).toBe(true)
+        expect(MainnetRegistry.tokens.some(t => t.id === tokenId)).toBe(true)
 
         // Ensure assetUid has either 'symbol' or 'id' property
         expect('symbol' in assetUid || 'id' in assetUid).toBe(true)

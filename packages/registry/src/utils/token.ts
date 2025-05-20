@@ -1,6 +1,6 @@
 import { deepEqual, TMultiLocation } from "@paraspell/sdk";
-import { MainnetRegistry } from "@/mainnet";
-import { Token, TokenPrice } from "@/types";
+import { MainnetRegistry } from "../mainnet";
+import { Token, TokenPrice } from "../types";
 
 export const getCoingekoId = (token: Token): string =>
   token.coingeckoId ?? token.name.toLocaleLowerCase().replaceAll(" ", "-");
