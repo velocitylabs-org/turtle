@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import cn from '@/utils/cn'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
+import { Token } from '@velocitylabs-org/turtle-registry'
 
 type Option = {
   value: string
   label: string
-  logoURI?: string
-  originLogoURI?: string
+  logoURI: Token['logoURI']
+  originLogoURI?: Token['logoURI']
 }
 
 interface MultiSelectProps {
@@ -82,7 +83,8 @@ export default function StandardMultiSelect({
                   return (
                     <Badge key={value} variant="secondary" className="mr-1 px-1 py-0">
                       <div className="flex items-center">
-                        {showImagesInBadges && renderImage(option?.logoURI, option?.originLogoURI)}
+                        {showImagesInBadges &&
+                          renderImage(option?.logoURI as string, option?.originLogoURI as string)}
                         <span>{option?.label || value}</span>
                         {!disabled && (
                           <button
@@ -141,7 +143,7 @@ export default function StandardMultiSelect({
                             selected.includes(option.value) ? 'opacity-100' : 'opacity-0',
                           )}
                         />
-                        {renderImage(option.logoURI, option?.originLogoURI)}
+                        {renderImage(option.logoURI as string, option?.originLogoURI as string)}
                         {option.label}
                       </div>
                     ))}

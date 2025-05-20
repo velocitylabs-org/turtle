@@ -1,5 +1,6 @@
 import { ISubmittableResult } from '@polkadot/types/types'
 import { captureException } from '@sentry/nextjs'
+import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
@@ -29,7 +30,6 @@ import {
   moonbeamTransfer,
 } from '@/utils/paraspellTransfer'
 import { extractPjsEvents } from '@/utils/pjs'
-import { isSameToken } from '@/utils/token'
 import {
   getExplorerLink,
   isSameChainSwap,

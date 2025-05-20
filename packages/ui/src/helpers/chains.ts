@@ -4,7 +4,7 @@ import snowbridgeLogo from '@velocitylabs-org/turtle-assets/logos/snowbridge.svg
 import { Token, Chain } from '@velocitylabs-org/turtle-registry'
 
 interface OriginBadge {
-  logoURI: string
+  logoURI: string | Record<string, string>
   text: string
 }
 

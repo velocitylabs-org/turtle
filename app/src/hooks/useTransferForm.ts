@@ -1,5 +1,12 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Chain,
+  Ethereum,
+  ManualRecipient,
+  Token,
+  TokenAmount,
+} from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
@@ -10,12 +17,8 @@ import useEnvironment from '@/hooks/useEnvironment'
 import { useOutputAmount } from '@/hooks/useOutputAmount'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
-import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
-import { ManualRecipient, TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
-import { Ethereum } from '@/registry/mainnet/chains'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'

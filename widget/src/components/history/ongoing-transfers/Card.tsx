@@ -1,8 +1,7 @@
-import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
+import { LoadingIcon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { FC } from 'react'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import Account from '@/components/Account'
-import { TokenLogo } from '@/components/TokenLogo'
 import { StoredTransfer } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
@@ -38,7 +37,7 @@ const OngoingTransfer: FC<{
           {/* From and to Chains */}
           <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">
             <img
-              src={transfer.sourceChain.logoURI}
+              src={transfer.sourceChain.logoURI as string}
               alt="Source Chain"
               width={16}
               height={16}
@@ -49,7 +48,7 @@ const OngoingTransfer: FC<{
               fill={colors['turtle-secondary-dark']}
             />
             <img
-              src={transfer.destChain.logoURI}
+              src={transfer.destChain.logoURI as string}
               alt="Destination Chain"
               width={16}
               height={16}

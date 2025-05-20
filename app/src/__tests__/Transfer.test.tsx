@@ -1,7 +1,12 @@
 import { describe, expect, it } from '@jest/globals'
-import { getDestChainId } from '@/models/chain'
-import { AssetHub, Ethereum, Mythos } from '@/registry/mainnet/chains'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
+import {
+  AssetHub,
+  Ethereum,
+  Mythos,
+  EthereumTokens,
+  getDestChainId,
+} from '@velocitylabs-org/turtle-registry'
+
 import { Direction, resolveDirection } from '@/services/transfer'
 import { convertAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 

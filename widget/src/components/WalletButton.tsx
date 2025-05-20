@@ -1,9 +1,8 @@
-import { Button } from '@velocitylabs-org/turtle-ui'
+import { WalletType } from '@velocitylabs-org/turtle-registry'
+import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import { motion } from 'framer-motion'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import { WalletType } from '@/models/chain'
-import { cn } from '@/utils/helper'
 
 interface WalletButtonProps {
   /** The wallet type of the chain. */
