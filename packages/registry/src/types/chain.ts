@@ -4,7 +4,7 @@ export interface Chain {
   /** Full name of the chain. */
   name: string;
   /** image URL of the chain logo. */
-  logoURI: string | { [key: string]: string };
+  logoURI: string | Record<string, string>;
   /**
    * The actual chain ID number relative to the network. For example,
    * AssetHub chain ID is 1000, Ethereum is 1, and Centrifuge is 2031 on Polkadot.

@@ -14,4 +14,5 @@ packages/**/node_modules
 packages/**/dist
 packages/**/tsconfig.tsbuildinfo
 packages/**/.env
+packages/registry/src/generated-env.ts
 
