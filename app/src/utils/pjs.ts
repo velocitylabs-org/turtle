@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { ISubmittableResult } from '@polkadot/types/types'
-import { PjsEvents } from '@/models/transfer'
+import { OnChainBaseEvents } from '@/models/transfer'
 
 /**
  * Processes blockchain events and handles extrinsic success or failure.
@@ -9,7 +9,7 @@ import { PjsEvents } from '@/models/transfer'
  * @param result - The blockchain result returned by the signAndSend() method.
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
-export const extractPjsEvents = (result: ISubmittableResult): PjsEvents | undefined => {
+export const extractPjsEvents = (result: ISubmittableResult): OnChainBaseEvents | undefined => {
   const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } =
     result
   // check for execution errors

@@ -6,7 +6,7 @@ import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, PapiEvents, StoredTransfer, TxStatus } from '@/models/transfer'
+import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
@@ -297,13 +297,9 @@ const useParaspellApi = () => {
     handleSameChainSwapStorage(transferToStore)
   }
 
-  const isBatchCompleted = (onchainEvents: PapiEvents) => {
-    return !!('isBatchCompleted' in onchainEvents && onchainEvents.isBatchCompleted)
-  }
-
-  const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: PapiEvents) => {
+  const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
     // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
-    if (isSwapWithTransfer(transfer) && !isBatchCompleted(eventsData))
+    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
       throw new Error('Swap transfer did not completed - Batch failed')
 
     return
