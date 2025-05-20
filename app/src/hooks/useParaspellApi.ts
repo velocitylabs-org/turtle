@@ -1,3 +1,9 @@
+import { captureException } from '@sentry/nextjs'
+import { switchChain } from '@wagmi/core'
+import { InvalidTxError, TxEvent } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
+import { Config, useConnectorClient } from 'wagmi'
+import { moonbeam } from 'wagmi/chains'
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, PapiEvents, StoredTransfer, TxStatus } from '@/models/transfer'
@@ -22,12 +28,6 @@ import {
   isSwapWithTransfer,
   txWasCancelled,
 } from '@/utils/transfer'
-import { captureException } from '@sentry/nextjs'
-import { switchChain } from '@wagmi/core'
-import { InvalidTxError, TxEvent } from 'polkadot-api'
-import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
-import { Config, useConnectorClient } from 'wagmi'
-import { moonbeam } from 'wagmi/chains'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
