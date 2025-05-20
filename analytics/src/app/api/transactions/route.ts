@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/utils/db-connect'
 import Transaction from '@/models/Transaction'
 import validateRequest from '@/utils/validate-request'
+import captureServerError from '@/utils/capture-server-error'
 
 export async function GET(request: Request) {
   try {
@@ -134,7 +135,7 @@ export async function GET(request: Request) {
       },
     })
   } catch (error) {
-    console.error('Database error:', error)
+    captureServerError(error as Error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

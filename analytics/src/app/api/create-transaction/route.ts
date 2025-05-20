@@ -3,6 +3,7 @@ import dbConnect from '@/utils/db-connect'
 import Transaction from '@/models/Transaction'
 import validateRequest from '@/utils/validate-request'
 import createTransaction from '@/models/create-transaction'
+import captureServerError from '@/utils/capture-server-error'
 
 export async function POST(request: Request) {
   try {
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
       { status: 201 },
     )
   } catch (error) {
-    console.error('Database error:', error)
+    captureServerError(error as Error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
