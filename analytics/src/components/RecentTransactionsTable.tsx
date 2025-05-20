@@ -12,7 +12,7 @@ import { TransactionModel, txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import React from 'react'
 import { chainsByUid, tokensById } from '@/constants'
-import getOriginBadge from '@/utils/get-origin-badge'
+import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 
 interface RecentTransactionsTableProps {
@@ -142,19 +142,21 @@ function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps)
 
 interface TokenChainDisplayProps {
   tokenId: string
-  chainUid?: string
+  chainUid: string
   size?: number
 }
 
 export function TokenChainDisplay({ tokenId, chainUid, size = 28 }: TokenChainDisplayProps) {
   const token = tokensById[tokenId]
-  const sourceChain = chainUid && chainsByUid[chainUid]
-  const originBadge = getOriginBadge(token, sourceChain || null)
+  const sourceChain = chainsByUid[chainUid]
+  const originBadge = getOriginBadge(token, sourceChain)
+  const originBadgeURI = (originBadge?.logoURI as Record<string, string>).src
+  const tokenURI = (token.logoURI as Record<string, string>).src
 
   return (
     <TokenAndOriginLogos
-      tokenURI={token.logoURI as string}
-      originURI={originBadge?.logoURI}
+      tokenURI={tokenURI}
+      originURI={originBadgeURI}
       size={size}
     />
   )

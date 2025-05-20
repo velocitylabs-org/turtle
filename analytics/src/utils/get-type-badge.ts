@@ -4,12 +4,12 @@ import { ethereumChain, relayChain } from '@/constants'
 // This helper function returns the type badge for a given token (e.g., Ethereum or Polkadot)
 export default function getTypeBadge(tokenId: string) {
   const token = tokensById[tokenId]
-  const typeURI =
-    (token.origin.type === 'Ethereum' && ethereumChain.logoURI) ||
-    (token.origin.type === 'Polkadot' && relayChain.logoURI)
+  let type
+  if (token.origin.type === 'Ethereum') type = ethereumChain
+  if (token.origin.type === 'Polkadot') type = relayChain
 
   return {
-    logoURI: token.logoURI,
-    typeURI: typeURI.src || '',
+    logoURI: (token.logoURI as Record<string, string>).src,
+    typeURI: (type?.logoURI as Record<string, string>).src || '',
   }
 }

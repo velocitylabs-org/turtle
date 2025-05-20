@@ -14,8 +14,7 @@ import ErrorPanel from '@/components/ErrorPanel'
 import { txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { Token } from '@velocitylabs-org/turtle-registry'
-import getTypeBadge from '@/utils/get-type-badge'
-import getOriginBadge from '@/utils/get-origin-badge'
+import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useState<string[]>([])
@@ -29,26 +28,28 @@ export default function TransactionsPage() {
   const chainOptions = chains.map(chain => ({
     value: chain.uid,
     label: chain.name,
-    logoURI: chain.logoURI,
+    logoURI: (chain.logoURI as Record<string, string>).src,
   }))
 
   const tokenSourceOptions = tokens.map((token: Token) => {
-    const logoData = getLogoAndOriginURI(token.id, sourceChainUid[0])
+    const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid[0])
     return {
       value: token.id,
       label: token.symbol,
-      ...logoData,
+      logoURI,
+      originLogoURI
     }
-  })
+  }).filter(token => !!token.originLogoURI)
 
   const tokenDestinationOptions = tokens.map((token: Token) => {
-    const logoData = getLogoAndOriginURI(token.id, destinationChainUid[0])
+    const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, destinationChainUid[0])
     return {
       value: token.id,
       label: token.symbol,
-      ...logoData,
+      logoURI,
+      originLogoURI
     }
-  })
+  }).filter(token => !!token.originLogoURI)
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -276,16 +277,15 @@ export default function TransactionsPage() {
   )
 }
 
-function getLogoAndOriginURI(tokenId: string, chainUid?: string) {
+function getLogoAndOriginURI(tokenId: string, chainUid: string) {
   const token = tokensById[tokenId]
-  const chain = chainsByUid[chainUid || '']
-
-  const originBadge = chain
-    ? getOriginBadge(token, chain)?.logoURI
-    : getTypeBadge(token.id)?.typeURI
+  const chain = chainsByUid[chainUid]
+  const tokenURI = (token.logoURI as Record<string, string>).src
+  const originBadge = getOriginBadge(token, chain)
+  const originBadgeURI = (originBadge?.logoURI as Record<string, string>)?.src
 
   return {
-    logoURI: token.logoURI,
-    originLogoURI: originBadge ?? '',
+    logoURI: tokenURI,
+    originLogoURI: originBadgeURI || '',
   }
 }
