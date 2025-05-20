@@ -1,15 +1,14 @@
 import { captureException } from '@sentry/nextjs'
 import { toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { isAssetHub, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { Signer } from 'ethers'
 import { mainnet } from 'wagmi/chains'
 import { config } from '@/config'
-import { Chain } from '@/models/chain'
 import { NotificationSeverity } from '@/models/notification'
 import { SnowbridgeContext } from '@/models/snowbridge'
-import { Token } from '@/models/token'
 import { StoredTransfer } from '@/models/transfer'
-import { isAssetHub } from '@/registry/helpers'
+
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getSenderAddress } from '@/utils/address'
@@ -216,8 +215,6 @@ const useSnowbridgeApi = () => {
           amount,
           fee,
         )
-
-        break
       }
       case Direction.ToEthereum:
         {

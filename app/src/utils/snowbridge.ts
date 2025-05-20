@@ -1,12 +1,15 @@
 import { captureException } from '@sentry/nextjs'
 import { Context, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import {
+  EthereumTokens,
+  PolkadotTokens,
+  Chain,
+  Token,
+  isAssetHub,
+} from '@velocitylabs-org/turtle-registry'
 import { Fee } from '@/hooks/useFees'
-import { Chain } from '@/models/chain'
 import { SnowbridgeContext } from '@/models/snowbridge'
-import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
-import { isAssetHub } from '@/registry/helpers'
-import { EthereumTokens, PolkadotTokens } from '@/registry/mainnet/tokens'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction } from '@/services/transfer'
 import { safeConvertAmount, toHuman } from './transfer'

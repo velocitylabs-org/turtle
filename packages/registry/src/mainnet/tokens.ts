@@ -1,13 +1,38 @@
+import acalaLogo from "@velocitylabs-org/turtle-assets/logos/acala.svg";
+import astarLogo from "@velocitylabs-org/turtle-assets/logos/astar.svg";
+import bifrostLogo from "@velocitylabs-org/turtle-assets/logos/bifrost.svg";
+import cfgLogo from "@velocitylabs-org/turtle-assets/logos/cfg.svg";
+import daiLogo from "@velocitylabs-org/turtle-assets/logos/dai.svg";
+import ethereumLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
+import hydraLogo from "@velocitylabs-org/turtle-assets/logos/hydra.svg";
+import ibtcLogo from "@velocitylabs-org/turtle-assets/logos/ibtc.svg";
+import interlayLogo from "@velocitylabs-org/turtle-assets/logos/interlay.svg";
+import moonbeamLogo from "@velocitylabs-org/turtle-assets/logos/moonbeam.svg";
+import mythLogo from "@velocitylabs-org/turtle-assets/logos/myth.svg";
+import pepeLogo from "@velocitylabs-org/turtle-assets/logos/pepe.svg";
+import phalaLogo from "@velocitylabs-org/turtle-assets/logos/phala.svg";
+import polimecLogo from "@velocitylabs-org/turtle-assets/logos/polimec.svg";
+import polkadotLogo from "@velocitylabs-org/turtle-assets/logos/polkadot.svg";
+import shibLogo from "@velocitylabs-org/turtle-assets/logos/shib.svg";
+import tbtcLogo from "@velocitylabs-org/turtle-assets/logos/tbtc.svg";
+import tonLogo from "@velocitylabs-org/turtle-assets/logos/ton.svg";
+import usdcLogo from "@velocitylabs-org/turtle-assets/logos/usdc.svg";
+import usdtLogo from "@velocitylabs-org/turtle-assets/logos/usdt.svg";
+import vdotLogo from "@velocitylabs-org/turtle-assets/logos/vdot.svg";
+import vethLogo from "@velocitylabs-org/turtle-assets/logos/veth.svg";
+import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
+import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
+import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
+
 import { parachain, snowbridgeWrapped } from "../helpers";
 import { Token } from "../types";
-
 // Tokens
 export const EthereumTokens = {
   ETH: {
     id: "eth",
     name: "Ethereum",
     symbol: "ETH",
-    logoURI: "/logos/ethereum.svg",
+    logoURI: ethereumLogo,
     decimals: 18,
     address: "0x0000000000000000000000000000000000000000",
     multilocation: {
@@ -31,7 +56,7 @@ export const EthereumTokens = {
     id: "usdc.e",
     name: "USDC",
     symbol: "USDC",
-    logoURI: "/logos/usdc.svg",
+    logoURI: usdcLogo,
     decimals: 6,
     address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     multilocation: {
@@ -62,7 +87,7 @@ export const EthereumTokens = {
     id: "dai.e",
     name: "DAI",
     symbol: "DAI",
-    logoURI: "/logos/dai.svg",
+    logoURI: daiLogo,
     decimals: 18,
     address: "0x6b175474e89094c44da98b954eedeac495271d0f",
     multilocation: {
@@ -92,7 +117,7 @@ export const EthereumTokens = {
     id: "usdt.e",
     name: "Tether",
     symbol: "USDT",
-    logoURI: "/logos/usdt.svg",
+    logoURI: usdtLogo,
     decimals: 6,
     address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
     multilocation: {
@@ -123,7 +148,7 @@ export const EthereumTokens = {
     id: "weth.e",
     name: "Wrapped Ether",
     symbol: "wETH",
-    logoURI: "/logos/weth.svg",
+    logoURI: wethLogo,
     decimals: 18,
     address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     multilocation: {
@@ -154,7 +179,7 @@ export const EthereumTokens = {
     id: "veth.e",
     name: "Venus ETH",
     symbol: "vETH",
-    logoURI: "/logos/veth.svg",
+    logoURI: vethLogo,
     decimals: 18,
     address: "0xc3d088842dcf02c13699f936bb83dfbbc6f721ab",
     multilocation: {
@@ -184,7 +209,7 @@ export const EthereumTokens = {
     id: "wbtc.e",
     name: "Wrapped Bitcoin",
     symbol: "WBTC",
-    logoURI: "/logos/wbtc.svg",
+    logoURI: wbtcLogo,
     decimals: 8,
     address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
     multilocation: {
@@ -214,7 +239,7 @@ export const EthereumTokens = {
     id: "myth.e",
     name: "Mythos",
     symbol: "MYTH",
-    logoURI: "/logos/myth.svg",
+    logoURI: mythLogo,
     decimals: 18,
     address: "0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003",
     multilocation: {
@@ -245,7 +270,7 @@ export const EthereumTokens = {
     id: "shib.e",
     name: "Shiba Inu",
     symbol: "SHIB",
-    logoURI: "/logos/shib.svg",
+    logoURI: shibLogo,
     decimals: 18,
     address: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
     multilocation: {
@@ -275,7 +300,7 @@ export const EthereumTokens = {
     id: "pepe.e",
     name: "Pepe",
     symbol: "PEPE",
-    logoURI: "/logos/pepe.svg",
+    logoURI: pepeLogo,
     decimals: 18,
     address: "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
     multilocation: {
@@ -305,7 +330,7 @@ export const EthereumTokens = {
     id: "ton.e",
     name: "Toncoin",
     symbol: "TON",
-    logoURI: "/logos/ton.svg",
+    logoURI: tonLogo,
     decimals: 9,
     address: "0x582d872a1b094fc48f5de31d3b73f2d9be47def1",
     multilocation: {
@@ -336,7 +361,7 @@ export const EthereumTokens = {
     id: "wsteth.e",
     name: "Lido wstETH",
     symbol: "WSTETH",
-    logoURI: "logos/wsteth.svg",
+    logoURI: wstethLogo,
     decimals: 18,
     address: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
     multilocation: {
@@ -367,7 +392,7 @@ export const EthereumTokens = {
     id: "tbtc.e",
     name: "tBTC",
     symbol: "TBTC",
-    logoURI: "/logos/tbtc.svg",
+    logoURI: tbtcLogo,
     decimals: 18,
     address: "0x18084fbA666a33d37592fA2633fD49a74DD93a88",
     multilocation: {
@@ -399,7 +424,7 @@ export const PolkadotTokens = {
     id: "aca",
     name: "Acala Token",
     symbol: "ACA",
-    logoURI: "/logos/acala.svg",
+    logoURI: acalaLogo,
     decimals: 12,
     address: "",
     multilocation: {
@@ -426,7 +451,7 @@ export const PolkadotTokens = {
     id: "astr",
     name: "ASTR",
     symbol: "ASTR",
-    logoURI: "/logos/astar.svg",
+    logoURI: astarLogo,
     decimals: 18,
     address: "",
     multilocation: {
@@ -445,7 +470,7 @@ export const PolkadotTokens = {
     id: "bnc",
     name: "Bifrost Native Coin",
     symbol: "BNC",
-    logoURI: "/logos/bifrost.svg",
+    logoURI: bifrostLogo,
     decimals: 12,
     address: "",
     multilocation: {
@@ -472,7 +497,7 @@ export const PolkadotTokens = {
     id: "cfg",
     name: "Centrifuge",
     symbol: "CFG",
-    logoURI: "/logos/cfg.svg",
+    logoURI: cfgLogo,
     decimals: 18,
     address: "",
     multilocation: {
@@ -499,7 +524,7 @@ export const PolkadotTokens = {
     id: "hdx",
     name: "Hydration",
     symbol: "HDX",
-    logoURI: "/logos/hydra.svg",
+    logoURI: hydraLogo,
     decimals: 12,
     address: "",
     multilocation: {
@@ -524,7 +549,7 @@ export const PolkadotTokens = {
     id: "usdc",
     name: "USDC",
     symbol: "USDC",
-    logoURI: "/logos/usdc.svg",
+    logoURI: usdcLogo,
     decimals: 6,
     address: "",
     multilocation: {
@@ -552,7 +577,7 @@ export const PolkadotTokens = {
     id: "usdt",
     name: "Tether",
     symbol: "USDT",
-    logoURI: "/logos/usdt.svg",
+    logoURI: usdtLogo,
     decimals: 6,
     address: "",
     multilocation: {
@@ -578,7 +603,7 @@ export const PolkadotTokens = {
     id: "glmr",
     name: "GLMR",
     symbol: "GLMR",
-    logoURI: "/logos/moonbeam.svg",
+    logoURI: moonbeamLogo,
     decimals: 18,
     address: "",
     multilocation: {
@@ -602,7 +627,7 @@ export const PolkadotTokens = {
     id: "pha",
     name: "PHA",
     symbol: "PHA",
-    logoURI: "/logos/phala.svg",
+    logoURI: phalaLogo,
     decimals: 12,
     address: "",
     multilocation: {
@@ -621,7 +646,7 @@ export const PolkadotTokens = {
     id: "intr",
     name: "Interlay",
     symbol: "INTR",
-    logoURI: "/logos/interlay.svg",
+    logoURI: interlayLogo,
     decimals: 10,
     address: "",
     multilocation: {
@@ -647,7 +672,7 @@ export const PolkadotTokens = {
   DOT: {
     id: "dot",
     name: "Polkadot",
-    logoURI: "/logos/polkadot.svg",
+    logoURI: polkadotLogo,
     symbol: "DOT",
     decimals: 10,
     address: "",
@@ -665,7 +690,7 @@ export const PolkadotTokens = {
     id: "vdot",
     name: "Voucher DOT",
     symbol: "VDOT",
-    logoURI: "/logos/vdot.svg",
+    logoURI: vdotLogo,
     decimals: 10,
     address: "",
     multilocation: {
@@ -692,7 +717,7 @@ export const PolkadotTokens = {
     id: "ibtc",
     name: "IBTC",
     symbol: "IBTC",
-    logoURI: "/logos/ibtc.svg",
+    logoURI: ibtcLogo,
     decimals: 8,
     address: "",
     multilocation: {
@@ -719,7 +744,7 @@ export const PolkadotTokens = {
     id: "plmc",
     name: "PLMC",
     symbol: "PLMC",
-    logoURI: "/logos/polimec.svg",
+    logoURI: polimecLogo,
     decimals: 10,
     address: "",
     multilocation: {
@@ -732,5 +757,24 @@ export const PolkadotTokens = {
     },
     coingeckoId: "polimec",
     origin: parachain(3344),
+  },
+
+  MYTH: {
+    id: "myth.p",
+    name: "Mythos",
+    symbol: "MYTH",
+    logoURI: mythLogo,
+    decimals: 18,
+    address: "",
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 3369,
+        },
+      },
+    },
+    coingeckoId: "mythos",
+    origin: parachain(3369),
   },
 } as const satisfies Record<string, Token>;

@@ -1,4 +1,5 @@
 import { captureException } from '@sentry/nextjs'
+import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
@@ -21,7 +22,6 @@ import {
   isExistentialDepositMetAfterTransfer,
   moonbeamTransfer,
 } from '@/utils/paraspellTransfer'
-import { isSameToken } from '@/utils/token'
 import {
   getExplorerLink,
   isSameChainSwap,

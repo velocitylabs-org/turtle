@@ -1,9 +1,7 @@
-import { LoadingIcon } from '@velocitylabs-org/turtle-ui'
+import { LoadingIcon, Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import Account from '@/components/Account'
-import { Icon } from '@/components/Icon'
-import { TokenLogo } from '@/components/TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -63,7 +61,7 @@ export const OngoingTransferDialog = ({
           <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border border-turtle-secondary-dark bg-turtle-secondary-light px-2 py-1 text-turtle-secondary-dark">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={transfer.sourceChain.logoURI}
+                src={transfer.sourceChain.logoURI as string}
                 width={22}
                 height={22}
                 className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
@@ -73,7 +71,7 @@ export const OngoingTransferDialog = ({
             <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={transfer.destChain.logoURI}
+                src={transfer.destChain.logoURI as string}
                 width={22}
                 height={22}
                 className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
@@ -239,5 +237,3 @@ export const OngoingTransferDialog = ({
     </Dialog>
   )
 }
-
-export default OngoingTransferDialog

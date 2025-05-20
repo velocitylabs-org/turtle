@@ -1,10 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { getExchangeOutputAmount } from '@/lib/paraspell/swap'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
 import { AmountInfo } from '@/models/transfer'
-import { isSameToken } from '@/utils/token'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null

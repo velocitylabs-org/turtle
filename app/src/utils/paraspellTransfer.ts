@@ -12,10 +12,14 @@ import {
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
+import {
+  Chain,
+  Token,
+  Environment,
+  EthereumTokens,
+  REGISTRY,
+} from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { REGISTRY } from '@/registry'
-import { EthereumTokens } from '@/registry/mainnet/tokens'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 

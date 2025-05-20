@@ -5,14 +5,21 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev-app": "turbo run dev --filter=@velocitylabs-org/turtle-app",
+    "dev-analytics": "turbo run dev --filter=@velocitylabs-org/turtle-analytics",
+    "dev-widget": "turbo run dev --filter=@velocitylabs-org/turtle-widget",
     "lint": "turbo run lint",
     "format-check": "turbo run format-check",
     "start": "turbo run start",
     "test": "turbo run test",
     "watch": "turbo run watch",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "prebuild": "turbo run prebuild",
+    "knip": "knip"
   },
   "devDependencies": {
+    "@types/node": "^22.13.4",
+    "knip": "^5.55.1",
     "prettier": "^3.5.3",
     "turbo": "^2.5.0",
     "typescript": "5.8.2"
@@ -20,12 +27,6 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.0.10",
-      "@types/react-dom": "19.0.4"
-    }
   },
   "dependencies": {
     "@changesets/cli": "^2.29.3"
