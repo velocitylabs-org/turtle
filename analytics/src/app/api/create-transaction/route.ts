@@ -8,10 +8,7 @@ function corsHeaders(response: NextResponse) {
   response.headers.set('Access-Control-Allow-Credentials', 'true')
   response.headers.set('Access-Control-Allow-Origin', '*')
   response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
-  response.headers.set(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization'
-  )
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   return response
 }
 
@@ -20,16 +17,14 @@ export async function OPTIONS() {
   return corsHeaders(
     new NextResponse(null, {
       status: 204,
-    })
+    }),
   )
 }
 
 export async function POST(request: Request) {
   try {
     if (!validateRequest(request)) {
-      return corsHeaders(
-        NextResponse.json({ message: 'Forbidden' }, { status: 403 })
-      )
+      return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
 
     await dbConnect()
@@ -42,7 +37,7 @@ export async function POST(request: Request) {
         NextResponse.json(
           { error: 'A transaction with this hash ID already exists' },
           { status: 409 },
-        )
+        ),
       )
     }
 
@@ -55,13 +50,13 @@ export async function POST(request: Request) {
           message: 'Transaction stored successfully',
         },
         { status: 201 },
-      )
+      ),
     )
   } catch (e) {
     const error = e as Error
     captureServerError(error as Error)
     return corsHeaders(
-      NextResponse.json({ error: `Internal Server Error ${error.message}` }, { status: 500 })
+      NextResponse.json({ error: `Internal Server Error ${error.message}` }, { status: 500 }),
     )
   }
 }

@@ -31,25 +31,29 @@ export default function TransactionsPage() {
     logoURI: (chain.logoURI as Record<string, string>).src,
   }))
 
-  const tokenSourceOptions = tokens.map((token: Token) => {
-    const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid[0])
-    return {
-      value: token.id,
-      label: token.symbol,
-      logoURI,
-      originLogoURI
-    }
-  }).filter(token => !!token.originLogoURI)
+  const tokenSourceOptions = tokens
+    .map((token: Token) => {
+      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid[0])
+      return {
+        value: token.id,
+        label: token.symbol,
+        logoURI,
+        originLogoURI,
+      }
+    })
+    .filter(token => !!token.originLogoURI)
 
-  const tokenDestinationOptions = tokens.map((token: Token) => {
-    const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, destinationChainUid[0])
-    return {
-      value: token.id,
-      label: token.symbol,
-      logoURI,
-      originLogoURI
-    }
-  }).filter(token => !!token.originLogoURI)
+  const tokenDestinationOptions = tokens
+    .map((token: Token) => {
+      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, destinationChainUid[0])
+      return {
+        value: token.id,
+        label: token.symbol,
+        logoURI,
+        originLogoURI,
+      }
+    })
+    .filter(token => !!token.originLogoURI)
 
   const { data, isLoading, error } = useQuery({
     queryKey: [

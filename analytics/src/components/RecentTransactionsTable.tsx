@@ -153,11 +153,5 @@ export function TokenChainDisplay({ tokenId, chainUid, size = 28 }: TokenChainDi
   const originBadgeURI = (originBadge?.logoURI as Record<string, string>).src
   const tokenURI = (token.logoURI as Record<string, string>).src
 
-  return (
-    <TokenAndOriginLogos
-      tokenURI={tokenURI}
-      originURI={originBadgeURI}
-      size={size}
-    />
-  )
+  return <TokenAndOriginLogos tokenURI={tokenURI} originURI={originBadgeURI} size={size} />
 }
