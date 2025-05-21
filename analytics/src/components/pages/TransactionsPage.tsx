@@ -291,6 +291,6 @@ function getLogoAndOriginURI(tokenId: string, chainUid: string) {
 
   return {
     logoURI: tokenURI,
-    originLogoURI: originBadgeURI || '',
+    originLogoURI: originBadgeURI,
   }
 }

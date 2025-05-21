@@ -1,17 +1,10 @@
 // Safely extracts the src property from a logoURI object
-export function getSrcFromLogo(logoObject: { logoURI?: unknown } | unknown): string {
-  if (!logoObject) return ''
+export function getSrcFromLogo(logoObject: { logoURI?: string | { src: string } }): string {
+  if (!logoObject?.logoURI) return ''
 
-  if (typeof logoObject === 'object') {
-    if ('logoURI' in logoObject && logoObject.logoURI) {
-      const logoURI = logoObject.logoURI
-      if (typeof logoURI === 'object' && logoURI !== null && 'src' in logoURI) {
-        return logoURI.src as string
-      }
-    } else if ('src' in logoObject) {
-      return logoObject.src as string
-    }
+  if (typeof logoObject.logoURI === 'string') {
+    return logoObject.logoURI
   }
 
-  return ''
+  return (logoObject.logoURI as Record<string, string>).src
 }
