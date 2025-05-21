@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.6
+
+### Patch Changes
+
+- 371f52e: update dependencies
+
 ## 0.0.5
 
 ### Patch Changes
