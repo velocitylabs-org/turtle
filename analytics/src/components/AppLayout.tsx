@@ -9,6 +9,8 @@ import cn from '@/utils/cn'
 import TurtleLogo from '@/components/TurtleLogo'
 import Link from 'next/link'
 import useIsMobile from '@/hooks/useMobile'
+import { useLoadingBar } from 'react-top-loading-bar'
+import { loadingBarOpt } from '@/constants'
 
 const now = new Date()
 const nowFormatted = `Updated ${now.toLocaleString('en-GB', {
@@ -26,6 +28,7 @@ interface DashboardLayoutProps {
 }
 
 export default function AppLayout({ children }: DashboardLayoutProps) {
+  const { start } = useLoadingBar(loadingBarOpt)
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile)
@@ -47,6 +50,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   const activeRoute = routes.find(route => route.href === pathname)
 
   const onNavItemClicked = () => {
+    start() // Show loading bar
     if (isMobile) {
       setIsSidebarOpen(prev => !prev)
     }
