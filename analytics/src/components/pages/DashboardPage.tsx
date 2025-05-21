@@ -16,7 +16,7 @@ export default function DashboardPage() {
     queryFn: async () => {
       const response = await fetch('/api/summary', {
         headers: {
-          Authorization: process.env.NEXT_PUBLIC_AUTH_KEY || '',
+          Authorization: process.env.NEXT_PUBLIC_AUTH_TOKEN || '',
         },
       })
       if (!response.ok) {

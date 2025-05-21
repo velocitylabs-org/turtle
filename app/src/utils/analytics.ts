@@ -24,7 +24,7 @@ export async function trackTransferMetrics({
   date,
 }: TransferMetric) {
   if (
-    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_KEY ||
+    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN ||
     !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL ||
     transferParams.environment !== Environment.Mainnet ||
     !isProduction ||
@@ -101,7 +101,7 @@ export async function trackTransferMetrics({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_KEY,
+      Authorization: process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN,
     },
     body: JSON.stringify(transactionData),
   }).catch(error => {

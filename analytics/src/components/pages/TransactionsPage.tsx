@@ -94,7 +94,7 @@ export default function TransactionsPage() {
       const url = `/api/transactions?${params.toString()}`
       const response = await fetch(url, {
         headers: {
-          Authorization: process.env.NEXT_PUBLIC_AUTH_KEY || '',
+          Authorization: process.env.NEXT_PUBLIC_AUTH_TOKEN || '',
         },
       })
       if (!response.ok) {
