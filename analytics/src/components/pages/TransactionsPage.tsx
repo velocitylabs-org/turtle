@@ -1,21 +1,21 @@
 'use client'
-import React, { useState } from 'react'
-import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import SmallStatBox from '@/components/SmallStatBox'
-import DatePicker from '@/components/DatePicker'
-import MultiSelect from '@/components/MultiSelect'
-import RecentTransactionsTable from '@/components/RecentTransactionsTable'
-import { chains, chainsByUid, tokens, tokensById } from '@/constants'
-import { getSrcFromLogo } from '@/utils/get-src-from-logo'
-import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { useQuery } from '@tanstack/react-query'
-import ErrorPanel from '@/components/ErrorPanel'
-import { txStatus } from '@/models/Transaction'
-import formatUSD from '@/utils/format-USD'
 import { Token } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
+import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
+import React, { useState } from 'react'
+import DatePicker from '@/components/DatePicker'
+import ErrorPanel from '@/components/ErrorPanel'
+import MultiSelect from '@/components/MultiSelect'
+import RecentTransactionsTable from '@/components/RecentTransactionsTable'
+import SmallStatBox from '@/components/SmallStatBox'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { chains, chainsByUid, tokens, tokensById } from '@/constants'
+import useShowLoadingBar from '@/hooks/useShowLoadingBar'
+import { txStatus } from '@/models/Transaction'
+import formatUSD from '@/utils/format-USD'
+import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useState<string[]>([])
@@ -287,7 +287,7 @@ function getLogoAndOriginURI(tokenId: string, chainUid: string) {
   const chain = chainsByUid[chainUid]
   const tokenURI = getSrcFromLogo(token)
   const originBadge = getOriginBadge(token, chain)
-  const originBadgeURI = getSrcFromLogo(originBadge)
+  const originBadgeURI = originBadge && getSrcFromLogo(originBadge)
 
   return {
     logoURI: tokenURI,
