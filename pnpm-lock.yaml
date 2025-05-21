@@ -753,9 +753,6 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.66.9
         version: 5.76.1(react@19.0.0)
-      '@velocitylabs-org/turtle-registry':
-        specifier: workspace:*
-        version: link:../packages/registry
       '@velocitylabs-org/turtle-ui':
         specifier: workspace:*
         version: link:../packages/ui
@@ -838,6 +835,9 @@ importers:
       '@velocitylabs-org/turtle-eslint-config':
         specifier: workspace:*
         version: link:../packages/eslint-config
+      '@velocitylabs-org/turtle-registry':
+        specifier: workspace:*
+        version: link:../packages/registry
       '@vitejs/plugin-react-swc':
         specifier: ^3.8.0
         version: 3.9.0(@swc/helpers@0.5.17)(vite@6.3.5(@types/node@22.15.20)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(yaml@2.8.0))
@@ -14366,7 +14366,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)':
+  '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)':
     dependencies:
       '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0)
       '@crypto-dex-sdk/format': 0.1.4
@@ -18832,7 +18832,7 @@ snapshots:
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
       '@crypto-dex-sdk/parachains-bifrost': 0.1.4(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.1.0)(utf-8-validate@5.0.10)
-      '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
+      '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
       '@galacticcouncil/sdk': 6.2.0(@polkadot/api-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.1(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1))(@polkadot/rpc-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.0.1)(@polkadot/types-codec@15.10.2)(@polkadot/types-create@16.0.1)(@polkadot/types-known@16.0.1)(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))
       '@paraspell/sdk': 9.2.2(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24)(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@paraspell/sdk-pjs': 9.2.2(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -18899,7 +18899,7 @@ snapshots:
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
       '@crypto-dex-sdk/parachains-bifrost': 0.1.4(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.1.0)(utf-8-validate@5.0.10)
-      '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
+      '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
       '@galacticcouncil/sdk': 6.2.0(@polkadot/api-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.1(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1))(@polkadot/rpc-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.0.1)(@polkadot/types-codec@15.10.2)(@polkadot/types-create@16.0.1)(@polkadot/types-known@16.0.1)(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))
       '@paraspell/sdk': 9.2.2(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)
       '@paraspell/sdk-pjs': 9.2.2(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.7.3))(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)
