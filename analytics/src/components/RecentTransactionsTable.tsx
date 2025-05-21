@@ -12,6 +12,7 @@ import { TransactionModel, txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import React from 'react'
 import { chainsByUid, tokensById } from '@/constants'
+import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 
@@ -150,8 +151,8 @@ export function TokenChainDisplay({ tokenId, chainUid, size = 28 }: TokenChainDi
   const token = tokensById[tokenId]
   const sourceChain = chainsByUid[chainUid]
   const originBadge = getOriginBadge(token, sourceChain)
-  const originBadgeURI = (originBadge?.logoURI as Record<string, string>).src
-  const tokenURI = (token.logoURI as Record<string, string>).src
+  const originBadgeURI = getSrcFromLogo(originBadge)
+  const tokenURI = getSrcFromLogo(token)
 
   return <TokenAndOriginLogos tokenURI={tokenURI} originURI={originBadgeURI} size={size} />
 }

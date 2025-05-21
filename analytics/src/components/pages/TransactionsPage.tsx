@@ -8,6 +8,7 @@ import DatePicker from '@/components/DatePicker'
 import MultiSelect from '@/components/MultiSelect'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import { chains, chainsByUid, tokens, tokensById } from '@/constants'
+import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { useQuery } from '@tanstack/react-query'
 import ErrorPanel from '@/components/ErrorPanel'
@@ -28,7 +29,7 @@ export default function TransactionsPage() {
   const chainOptions = chains.map(chain => ({
     value: chain.uid,
     label: chain.name,
-    logoURI: (chain.logoURI as Record<string, string>).src,
+    logoURI: getSrcFromLogo(chain),
   }))
 
   const tokenSourceOptions = tokens
@@ -284,9 +285,9 @@ export default function TransactionsPage() {
 function getLogoAndOriginURI(tokenId: string, chainUid: string) {
   const token = tokensById[tokenId]
   const chain = chainsByUid[chainUid]
-  const tokenURI = (token.logoURI as Record<string, string>).src
+  const tokenURI = getSrcFromLogo(token)
   const originBadge = getOriginBadge(token, chain)
-  const originBadgeURI = (originBadge?.logoURI as Record<string, string>)?.src
+  const originBadgeURI = getSrcFromLogo(originBadge)
 
   return {
     logoURI: tokenURI,

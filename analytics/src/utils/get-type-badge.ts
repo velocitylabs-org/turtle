@@ -1,5 +1,6 @@
 import { tokensById } from '@/constants'
 import { ethereumChain, relayChain } from '@/constants'
+import { getSrcFromLogo } from './get-src-from-logo'
 
 // This helper function returns the type badge for a given token (e.g., Ethereum or Polkadot)
 export default function getTypeBadge(tokenId: string) {
@@ -9,7 +10,7 @@ export default function getTypeBadge(tokenId: string) {
   if (token.origin.type === 'Polkadot') type = relayChain
 
   return {
-    logoURI: (token.logoURI as Record<string, string>).src,
-    typeURI: (type?.logoURI as Record<string, string>).src || '',
+    logoURI: getSrcFromLogo(token),
+    typeURI: getSrcFromLogo(type),
   }
 }
