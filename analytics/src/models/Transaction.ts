@@ -10,7 +10,7 @@ export interface TransactionModel extends mongoose.Document {
   sourceTokenSymbol: string
   sourceTokenAmount: number // Amount of tokens sent from a source chain
   sourceTokenAmountUsd: number // Transaction amount converted to USD at the time of transaction
-  sourceTokenUSDValue: number // USD value per token at transaction time
+  sourceTokenUSDValue?: number // USD value per token at transaction time
   sourceTokenAmountRaw: string // For debugging, without using to human helper
 
   destinationTokenId: string
@@ -64,7 +64,7 @@ const transactionSchema = new mongoose.Schema<TransactionModel>(
     sourceTokenSymbol: { type: String, required: true },
     sourceTokenAmount: { type: Number, required: true }, // Amount of tokens sent from a source chain
     sourceTokenAmountUsd: { type: Number, required: true }, // Transaction amount converted to USD at the time of transaction
-    sourceTokenUSDValue: { type: Number, required: true }, // USD value per token at transaction time
+    sourceTokenUSDValue: { type: Number }, // USD value per token at transaction time
     sourceTokenAmountRaw: { type: String, required: true }, // For debugging, without using to human helper
 
     destinationTokenId: { type: String, required: true },
