@@ -1,7 +1,7 @@
 import { TxEvent } from 'polkadot-api'
-import { PapiEvents } from '@/models/transfer'
+import { OnChainBaseEvents } from '@/models/transfer'
 
-export const extractPapiEvent = (event: TxEvent): PapiEvents | undefined => {
+export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined => {
   // Wait until block is finalized or in a best block state
   if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
     // Verify transaction hash
@@ -26,6 +26,7 @@ export const extractPapiEvent = (event: TxEvent): PapiEvents | undefined => {
     const extrinsicIndex = `${blockNumber}-${txIndex}`
     let messageHash: string | undefined
     let messageId: string | undefined
+    let isBatchCompleted: boolean | undefined
 
     events.forEach(({ type: section, value: { type: method, value: data } }) => {
       // Get messageHash from parachainSystem pallet (ex: DOT from Hydra to Bifrost )
@@ -48,11 +49,15 @@ export const extractPapiEvent = (event: TxEvent): PapiEvents | undefined => {
       if (section === 'PolkadotXcm' && method === 'Sent' && 'message_id' in data) {
         messageId = data.message_id.asHex()
       }
+
+      if (section === 'Utility' && method === 'BatchCompleted') {
+        isBatchCompleted = true
+      }
     })
 
     if (!messageHash && !messageId && !extrinsicIndex)
       throw new Error('MessageHash, MessageId and ExtrinsicIndex are all missing')
 
-    return { messageHash, messageId, extrinsicIndex }
+    return { messageHash, messageId, extrinsicIndex, isBatchCompleted }
   }
 }
