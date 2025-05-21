@@ -1,3 +1,4 @@
+import { Chain, MainnetRegistry, Token } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { CompletedTransfer } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
@@ -19,9 +20,22 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
             <p className={cn('tx-group-date mb-[-1] text-sm', idx !== 0 && 'mt-5')}>
               {formatCompletedTransferDate(date)}
             </p>
-            {transfers.reverse().map((tx, idx) => (
-              <TransactionDialog key={idx + tx.id + tx.sender} tx={tx} />
-            ))}
+            {transfers.reverse().map((tx, idx) => {
+              tx.sourceToken = MainnetRegistry.tokens.find(
+                token => token.id === tx.sourceToken.id,
+              ) as Token
+              tx.destinationToken = MainnetRegistry.tokens.find(
+                token => token.id === tx.destinationToken?.id,
+              ) as Token
+              tx.sourceChain = MainnetRegistry.chains.find(
+                chain => chain.uid === tx.sourceChain.uid,
+              ) as Chain
+              tx.destChain = MainnetRegistry.chains.find(
+                chain => chain.uid === tx.destChain.uid,
+              ) as Chain
+
+              return <TransactionDialog key={idx + tx.id + tx.sender} tx={tx} />
+            })}
           </div>
         </div>
       ))}
