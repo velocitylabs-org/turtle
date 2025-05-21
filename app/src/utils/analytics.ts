@@ -36,7 +36,9 @@ export async function trackTransferMetrics({
   const apiUrl = `${process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL}/api/create-transaction`
   const sourceTokenAmount = toHuman(transferParams.sourceAmount, transferParams.sourceToken)
   const feesAmount = toHuman(transferParams.fees.amount, transferParams.fees.token)
-  const destinationTokenAmount = transferParams.destinationAmount ? toHuman(transferParams.destinationAmount, transferParams.destinationToken) : undefined
+  const destinationTokenAmount = transferParams.destinationAmount
+    ? toHuman(transferParams.destinationAmount, transferParams.destinationToken)
+    : undefined
   const bridgingFeeAmount = transferParams.bridgingFee
     ? toHuman(transferParams.bridgingFee.amount, transferParams.bridgingFee.token)
     : undefined
@@ -57,7 +59,9 @@ export async function trackTransferMetrics({
     destinationTokenSymbol: transferParams.destinationToken.symbol,
 
     destinationTokenAmount,
-    destinationTokenAmountUsd: destinationTokenAmount ? destinationTokenAmount * destinationTokenUSDValue : undefined,
+    destinationTokenAmountUsd: destinationTokenAmount
+      ? destinationTokenAmount * destinationTokenUSDValue
+      : undefined,
     destinationTokenUSDValue: destinationTokenUSDValue,
     destinationTokenAmountRaw: transferParams.destinationAmount?.toString(),
 
@@ -97,7 +101,7 @@ export async function trackTransferMetrics({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_KEY
+      Authorization: process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_KEY,
     },
     body: JSON.stringify(transactionData),
   }).catch(error => {
