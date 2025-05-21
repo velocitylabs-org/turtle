@@ -48,9 +48,6 @@ importers:
       '@velocitylabs-org/turtle-registry':
         specifier: workspace:*
         version: link:../packages/registry
-      '@velocitylabs-org/turtle-ui':
-        specifier: workspace:*
-        version: link:../packages/ui
       babel-plugin-react-compiler:
         specifier: 19.1.0-rc.1
         version: 19.1.0-rc.1
@@ -176,11 +173,11 @@ importers:
         specifier: ^0.4.1
         version: 0.4.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@paraspell/sdk':
-        specifier: ^8.13.1
-        version: 8.16.0(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+        specifier: ^9.2.2
+        version: 9.2.2(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@paraspell/xcm-router':
-        specifier: ^8.13.1
-        version: 8.16.0(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.1(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1))(@polkadot/rpc-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.0.1)(@polkadot/types-create@16.0.1)(@polkadot/types-known@16.0.1)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(typechain@8.3.2(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+        specifier: ^9.2.2
+        version: 9.2.2(ulwgj4tal4e54dyvyj72gw7ltm)
       '@polkadot/api':
         specifier: ^15.9.2
         version: 15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -228,7 +225,7 @@ importers:
         version: 1.7.6(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(wagmi@2.15.4(@tanstack/query-core@5.76.0)(@tanstack/react-query@5.76.1(react@19.0.0))(@types/react@19.0.10)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8))(zod@3.23.8)
       '@sentry/nextjs':
         specifier: ^8.35.0
-        version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4))
+        version: 8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))
       '@sentry/profiling-node':
         specifier: ^8.35.0
         version: 8.55.0
@@ -240,7 +237,7 @@ importers:
         version: 0.1.54(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@sodazone/ocelloids-client':
         specifier: ^2.4.4
-        version: 2.5.0(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        version: 2.5.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@talismn/connect-components':
         specifier: ^1.1.8
         version: 1.1.9(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.58.10(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -255,7 +252,7 @@ importers:
         version: link:../packages/ui
       '@vercel/analytics':
         specifier: ^1.3.1
-        version: 1.5.0(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
+        version: 1.5.0(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
       '@wagmi/core':
         specifier: ^2.16.7
         version: 2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))
@@ -291,7 +288,7 @@ importers:
         version: 0.446.0(react@19.0.0)
       next:
         specifier: 15.2.3
-        version: 15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       polkadot-api:
         specifier: ^1.8.4
         version: 1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0)
@@ -418,7 +415,7 @@ importers:
         version: 3.4.17(ts-node@10.9.2(@swc/core@1.11.24(@swc/helpers@0.5.17))(@types/node@22.15.20)(typescript@5.8.3))
       ts-jest:
         specifier: ^29.2.5
-        version: 29.3.4(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.4)(jest@29.7.0(@types/node@22.15.20)(ts-node@10.9.2(@swc/core@1.11.24(@swc/helpers@0.5.17))(@types/node@22.15.20)(typescript@5.8.3)))(typescript@5.8.3)
+        version: 29.3.4(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.27.1))(jest@29.7.0(@types/node@22.15.20)(ts-node@10.9.2(@swc/core@1.11.24(@swc/helpers@0.5.17))(@types/node@22.15.20)(typescript@5.8.3)))(typescript@5.8.3)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.11.24(@swc/helpers@0.5.17))(@types/node@22.15.20)(typescript@5.8.3)
@@ -607,7 +604,7 @@ importers:
     dependencies:
       '@sentry/nextjs':
         specifier: ^7.114.0
-        version: 7.120.3(next@14.2.15(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 7.120.3(next@14.2.15(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))
       '@types/node':
         specifier: '>=20.16.15'
         version: 22.15.20
@@ -3454,8 +3451,8 @@ packages:
     resolution: {integrity: sha512-lp4qAiMTD4sNWW4DbKLBkfiMZ4jbAboJIGOQr5DvciMRI494OapieI9qiODpOt0XBr1LjIDy1xAGAnVs5supTA==}
     engines: {node: '>=14'}
 
-  '@opentelemetry/semantic-conventions@1.33.1':
-    resolution: {integrity: sha512-tBco+nVMoGqJ0LHPKOWlN9o1PX2AA9zxDMgvL210YYXlG9UkMXpiXhsWvvQriZrjOzTXXEpH6jleCgAuVGg3EQ==}
+  '@opentelemetry/semantic-conventions@1.33.0':
+    resolution: {integrity: sha512-TIpZvE8fiEILFfTlfPnltpBaD3d9/+uQHVCyC3vfdh6WfCXKhNFzoP5RyDDIndfvZC5GrA4pyEDNyjPloJud+w==}
     engines: {node: '>=14'}
 
   '@opentelemetry/sql-common@0.40.1':
@@ -3535,17 +3532,38 @@ packages:
   '@paraspell/assets@8.16.0':
     resolution: {integrity: sha512-quwgBDn0LN3iH06MgWgtu7h5DGLc+u6asZoFK36N5UmRf/6+v3Gw/XzlFTlzBNSQlUozNnEeynKMrn0ZkElEsg==}
 
+  '@paraspell/assets@9.2.2':
+    resolution: {integrity: sha512-gP3FxdR+zrmHF/PAUSNNSyxL71A5Znn6Z6eWiJeFFMUJfi0B7lGLwiXPsfWHhCRGpKt7o/9Jtt7gY55mX75wWg==}
+
   '@paraspell/pallets@8.16.0':
     resolution: {integrity: sha512-hf7RYmJeKrSp+2X60+EjNqST+PU5fbKnRkoTSUSPvyzHjtqfTgII8FP8Xfi7853d18pG7v6n9pgoamPkWPRvbA==}
+
+  '@paraspell/pallets@9.2.2':
+    resolution: {integrity: sha512-AGel162d810Jlz2cCh5Y7fLygUiE7oI6FVCNmOfQbvk0bwTa6aeCfkOjicfT1s+tpYQpg8VwSJlGJYVY5oz7bA==}
 
   '@paraspell/sdk-common@8.16.0':
     resolution: {integrity: sha512-iHH83mDH4SQDJtCq2w53tipQFW89z0PHXxUPocwzsB6PGuIBX0TyX9H75WAbAqDo1A3FKSf5xu34BykqcHU3XA==}
 
+  '@paraspell/sdk-common@9.2.2':
+    resolution: {integrity: sha512-bvJhSjSwCSMXDyAO9EotYPJKeX/WYk0+abwVhq6ZKMjyeXCo8wzpI9CkJwYP6d2EBeLgD0fmFlOSRDwS7mBKuQ==}
+
   '@paraspell/sdk-core@8.16.0':
     resolution: {integrity: sha512-PP8l0ihQ4RCBDkjw9FMJSDLpmjGiU8puK0GD2j5FH7J3sEfBhr1J5U6YDw9Z6h5HEHCyNdNd8gCOafI/DkyuQA==}
 
+  '@paraspell/sdk-core@9.2.2':
+    resolution: {integrity: sha512-c4+rMYZb/rHbuTVWuucAPhgcfpoyp9oeGDoC3ZquGvVS4rcgLn+fvNps/B3arn1hRKYOlLooDfS+82IqP03e9A==}
+
   '@paraspell/sdk-pjs@8.16.0':
     resolution: {integrity: sha512-+OGGKqaNfPRpuk+uXddxDbJ/QasUw3uzYRomMZIQtBlX3fha29Kka3P88rv5/AVPGBVwh49ZAhRZTxCmzHxqeA==}
+    peerDependencies:
+      '@polkadot/api': '>= 15.0 < 16'
+      '@polkadot/api-base': '>= 15.0 < 16'
+      '@polkadot/types': '>= 15.0 < 16'
+      '@polkadot/util': '>= 13'
+      '@polkadot/util-crypto': '>= 13'
+
+  '@paraspell/sdk-pjs@9.2.2':
+    resolution: {integrity: sha512-dZtTPwZ8MB2r6YpVBr7/iNh4M1CFss7qWeZcSfcO5i17OG5xisa9vErTyROOYWstIkDkRPI8cykvyBt1e2q/Kg==}
     peerDependencies:
       '@polkadot/api': '>= 15.0 < 16'
       '@polkadot/api-base': '>= 15.0 < 16'
@@ -3558,8 +3576,16 @@ packages:
     peerDependencies:
       polkadot-api: '>= 1.10.2 < 2'
 
+  '@paraspell/sdk@9.2.2':
+    resolution: {integrity: sha512-BY+oGEYPR0rtoBXH7oJxqilINGTeWRUpPbEwmmQ7ZDO837MBl5++jO4CuKu22QvgcwgggGfMuQbMQblVJroJZg==}
+    peerDependencies:
+      polkadot-api: '>= 1.10.2 < 2'
+
   '@paraspell/xcm-router@8.16.0':
     resolution: {integrity: sha512-SMHEbHZpJ96wLUVIDD+mo62vCbK4DPqFTJ29ZjMNPL+OC4xHnAwrO6vN5xhWbHjVLR8nDm1VXNbm+wtAqQ3lIg==}
+
+  '@paraspell/xcm-router@9.2.2':
+    resolution: {integrity: sha512-k6DloOnujNOfPoBX2buuxqDMVqi6CPXi96glkUKGVOL6pFOIhKAy6HHiUhTEhXHdYR2kkTT91xqnegBf0mEXUQ==}
 
   '@paulmillr/qr@0.2.1':
     resolution: {integrity: sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==}
@@ -4738,8 +4764,8 @@ packages:
   '@radix-ui/react-dismissable-layer@1.1.3':
     resolution: {integrity: sha512-onrWn/72lQoEucDmJnr8uczSNTujT0vJnA/X5+3AkChVPowr8n1yvIKIabhWyMQeMvvmdpsvcyDqx3X1LEXCPg==}
     peerDependencies:
-      '@types/react': 19.0.10
-      '@types/react-dom': 19.0.4
+      '@types/react': '*'
+      '@types/react-dom': '*'
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
       react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:
@@ -4852,8 +4878,8 @@ packages:
   '@radix-ui/react-portal@1.1.3':
     resolution: {integrity: sha512-NciRqhXnGojhT93RPyDaMPfLH3ZSl4jjIFbZQ1b/vxvZEdHsBZ49wP9w8L3HzUQwep01LcWtkUvm0OVB5JAHTw==}
     peerDependencies:
-      '@types/react': 19.0.10
-      '@types/react-dom': 19.0.4
+      '@types/react': '*'
+      '@types/react-dom': '*'
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
       react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:
@@ -4987,7 +5013,7 @@ packages:
   '@radix-ui/react-use-callback-ref@1.1.0':
     resolution: {integrity: sha512-CasTfvsy+frcFkbXtSJ2Zu9JHpN8TYKxkgJGWbjiZhFivxaeW7rMeZt7QELGVLaYVfFMsKHjb7Ak0nMEe+2Vfw==}
     peerDependencies:
-      '@types/react': 19.0.10
+      '@types/react': '*'
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
@@ -5005,7 +5031,7 @@ packages:
   '@radix-ui/react-use-controllable-state@1.1.0':
     resolution: {integrity: sha512-MtfMVJiSr2NjzS0Aa90NPTnvTSg6C/JLCV7ma0W6+OMV78vd8OyRpID+Ng9LxzsPbLeuBnWBA1Nq30AtBIDChw==}
     peerDependencies:
-      '@types/react': 19.0.10
+      '@types/react': '*'
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
@@ -5050,7 +5076,7 @@ packages:
   '@radix-ui/react-use-layout-effect@1.1.0':
     resolution: {integrity: sha512-+FPE0rOdziWSrH9athwI1R0HDVbWlEhd+FR+aSDk4uWGmSJ9Z54sdZVDQPZAinJhJXwfT+qnj969mCsT2gfm5w==}
     peerDependencies:
-      '@types/react': 19.0.10
+      '@types/react': '*'
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:
       '@types/react':
@@ -14436,18 +14462,6 @@ snapshots:
 
   '@crypto-dex-sdk/chain@0.1.4': {}
 
-  '@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
-    dependencies:
-      '@crypto-dex-sdk/chain': 0.1.4
-      '@crypto-dex-sdk/format': 0.1.4
-      '@crypto-dex-sdk/math': 0.1.4
-      '@ethersproject/address': 5.8.0
-      '@ethersproject/units': 5.8.0
-      lodash.flatmap: 4.5.0
-      react: 19.0.0
-      react-dom: 19.0.0(react@19.0.0)
-      tiny-invariant: 1.3.3
-
   '@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0)':
     dependencies:
       '@crypto-dex-sdk/chain': 0.1.4
@@ -14502,7 +14516,7 @@ snapshots:
 
   '@crypto-dex-sdk/token-lists@0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)':
     dependencies:
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0)
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
       '@ethersproject/address': 5.8.0
@@ -18324,7 +18338,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18333,7 +18347,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@types/connect': 3.4.36
     transitivePeerDependencies:
       - supports-color
@@ -18343,7 +18357,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@types/connect': 3.4.38
     transitivePeerDependencies:
       - supports-color
@@ -18367,7 +18381,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18376,7 +18390,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18385,7 +18399,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18438,7 +18452,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18447,7 +18461,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18478,7 +18492,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
       '@opentelemetry/redis-common': 0.36.2
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18487,7 +18501,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
       '@opentelemetry/redis-common': 0.36.2
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18495,7 +18509,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18503,7 +18517,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18511,7 +18525,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18519,7 +18533,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18528,7 +18542,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18537,7 +18551,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18559,7 +18573,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18567,7 +18581,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18576,7 +18590,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18585,7 +18599,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18593,7 +18607,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@opentelemetry/sql-common': 0.40.1(@opentelemetry/api@1.9.0)
     transitivePeerDependencies:
       - supports-color
@@ -18602,7 +18616,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@opentelemetry/sql-common': 0.40.1(@opentelemetry/api@1.9.0)
     transitivePeerDependencies:
       - supports-color
@@ -18611,7 +18625,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@types/mysql': 2.15.26
     transitivePeerDependencies:
       - supports-color
@@ -18620,7 +18634,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@types/mysql': 2.15.26
     transitivePeerDependencies:
       - supports-color
@@ -18629,7 +18643,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18650,7 +18664,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@opentelemetry/sql-common': 0.40.1(@opentelemetry/api@1.9.0)
       '@types/pg': 8.6.1
       '@types/pg-pool': 2.0.6
@@ -18662,7 +18676,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
       '@opentelemetry/redis-common': 0.36.2
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18671,7 +18685,7 @@ snapshots:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
       '@opentelemetry/redis-common': 0.36.2
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
     transitivePeerDependencies:
       - supports-color
 
@@ -18679,7 +18693,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@types/tedious': 4.0.14
     transitivePeerDependencies:
       - supports-color
@@ -18688,7 +18702,7 @@ snapshots:
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@types/tedious': 4.0.14
     transitivePeerDependencies:
       - supports-color
@@ -18764,7 +18778,7 @@ snapshots:
 
   '@opentelemetry/semantic-conventions@1.28.0': {}
 
-  '@opentelemetry/semantic-conventions@1.33.1': {}
+  '@opentelemetry/semantic-conventions@1.33.0': {}
 
   '@opentelemetry/sql-common@0.40.1(@opentelemetry/api@1.9.0)':
     dependencies:
@@ -18820,11 +18834,21 @@ snapshots:
     dependencies:
       '@paraspell/sdk-common': 8.16.0
 
+  '@paraspell/assets@9.2.2':
+    dependencies:
+      '@paraspell/sdk-common': 9.2.2
+
   '@paraspell/pallets@8.16.0':
     dependencies:
       '@paraspell/sdk-common': 8.16.0
 
+  '@paraspell/pallets@9.2.2':
+    dependencies:
+      '@paraspell/sdk-common': 9.2.2
+
   '@paraspell/sdk-common@8.16.0': {}
+
+  '@paraspell/sdk-common@9.2.2': {}
 
   '@paraspell/sdk-core@8.16.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)':
     dependencies:
@@ -18841,21 +18865,6 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk-core@8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
-    dependencies:
-      '@noble/hashes': 1.8.0
-      '@paraspell/assets': 8.16.0
-      '@paraspell/pallets': 8.16.0
-      '@paraspell/sdk-common': 8.16.0
-      '@scure/base': 1.2.5
-      ethers: 6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      viem: 2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@paraspell/sdk-core@8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.7)':
     dependencies:
       '@noble/hashes': 1.8.0
@@ -18865,6 +18874,21 @@ snapshots:
       '@scure/base': 1.2.5
       ethers: 6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       viem: 2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.7)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@paraspell/sdk-core@9.2.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+    dependencies:
+      '@noble/hashes': 1.8.0
+      '@paraspell/assets': 9.2.2
+      '@paraspell/pallets': 9.2.2
+      '@paraspell/sdk-common': 9.2.2
+      '@scure/base': 1.2.5
+      ethers: 6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      viem: 2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -18891,9 +18915,9 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk-pjs@8.16.0(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+  '@paraspell/sdk-pjs@9.2.2(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
     dependencies:
-      '@paraspell/sdk-core': 8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      '@paraspell/sdk-core': 9.2.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@polkadot/api': 15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 15.10.2
@@ -18925,20 +18949,6 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk@8.16.0(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
-    dependencies:
-      '@noble/hashes': 1.8.0
-      '@paraspell/sdk-core': 8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
-      ethers: 6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      polkadot-api: 1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0)
-      quick-lru: 7.0.1
-      viem: 2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-
   '@paraspell/sdk@8.16.0(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.7)':
     dependencies:
       '@noble/hashes': 1.8.0
@@ -18947,6 +18957,20 @@ snapshots:
       polkadot-api: 1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0)
       quick-lru: 7.0.1
       viem: 2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.7)
+    transitivePeerDependencies:
+      - bufferutil
+      - typescript
+      - utf-8-validate
+      - zod
+
+  '@paraspell/sdk@9.2.2(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)':
+    dependencies:
+      '@noble/hashes': 1.8.0
+      '@paraspell/sdk-core': 9.2.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      ethers: 6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      polkadot-api: 1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0)
+      quick-lru: 7.0.1
+      viem: 2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -18964,7 +18988,7 @@ snapshots:
       '@acala-network/sdk-wallet': 4.1.8-14(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/amm': 0.1.4(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.1.0)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain': 0.1.4
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0)
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
       '@crypto-dex-sdk/parachains-bifrost': 0.1.4(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.1.0)(utf-8-validate@5.0.10)
@@ -19014,7 +19038,7 @@ snapshots:
       - viem
       - zod
 
-  '@paraspell/xcm-router@8.16.0(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@ethersproject/address@5.8.0)(@polkadot/api-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.1(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1))(@polkadot/rpc-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.0.1)(@polkadot/types-create@16.0.1)(@polkadot/types-known@16.0.1)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(typechain@8.3.2(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
+  '@paraspell/xcm-router@9.2.2(ulwgj4tal4e54dyvyj72gw7ltm)':
     dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/app-util': 4.1.8-14
@@ -19025,13 +19049,14 @@ snapshots:
       '@acala-network/sdk-wallet': 4.1.8-14(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/amm': 0.1.4(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.1.0)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/chain': 0.1.4
-      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@crypto-dex-sdk/currency': 0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0)
       '@crypto-dex-sdk/format': 0.1.4
       '@crypto-dex-sdk/math': 0.1.4
       '@crypto-dex-sdk/parachains-bifrost': 0.1.4(bufferutil@4.0.9)(react-dom@19.0.0(react@19.0.0))(react@19.1.0)(utf-8-validate@5.0.10)
       '@crypto-dex-sdk/token-lists': 0.1.4(@crypto-dex-sdk/currency@0.1.4(react-dom@19.0.0(react@19.0.0))(react@19.1.0))(@crypto-dex-sdk/format@0.1.4)(@crypto-dex-sdk/math@0.1.4)(@ethersproject/address@5.8.0)
       '@galacticcouncil/sdk': 6.2.0(@polkadot/api-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api-derive@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/keyring@13.5.1(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1))(@polkadot/rpc-augment@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-core@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/rpc-provider@16.0.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types-augment@16.0.1)(@polkadot/types-codec@15.10.2)(@polkadot/types-create@16.0.1)(@polkadot/types-known@16.0.1)(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))
-      '@paraspell/sdk-pjs': 8.16.0(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      '@paraspell/sdk': 9.2.2(bufferutil@4.0.9)(polkadot-api@1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      '@paraspell/sdk-pjs': 9.2.2(@polkadot/api-base@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/types@15.10.2)(@polkadot/util-crypto@13.5.1(@polkadot/util@13.5.1))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(typechain@8.3.2(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
       '@polkadot/api': 15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/api-base': 15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@polkadot/types': 15.10.2
@@ -19042,9 +19067,9 @@ snapshots:
       bignumber.js: 9.3.0
       ethers: 5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       ethers-v6: ethers@6.14.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      inter-exchange: 2.0.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       jsbi: 4.3.2
       lodash-es: 4.17.21
+      polkadot-api: 1.11.2(@microsoft/api-extractor@7.52.8(@types/node@22.15.20))(@swc/core@1.11.24(@swc/helpers@0.5.17))(bufferutil@4.0.9)(jiti@2.4.2)(postcss@8.5.3)(rxjs@7.8.2)(utf-8-validate@5.0.10)(yaml@2.8.0)
       postcss: 8.5.3
       postinstall-postinstall: 2.1.0
       react: 19.1.0
@@ -19053,6 +19078,7 @@ snapshots:
       - '@acala-network/types'
       - '@ethersproject/address'
       - '@lingui/babel-plugin-lingui-macro'
+      - '@microsoft/api-extractor'
       - '@polkadot/api-augment'
       - '@polkadot/api-derive'
       - '@polkadot/keyring'
@@ -19063,16 +19089,20 @@ snapshots:
       - '@polkadot/types-create'
       - '@polkadot/types-known'
       - '@polkadot/util-crypto'
+      - '@swc/core'
       - babel-plugin-macros
       - bufferutil
       - debug
       - encoding
+      - jiti
       - react-dom
       - supports-color
+      - tsx
       - typechain
       - typescript
       - utf-8-validate
       - viem
+      - yaml
       - zod
 
   '@paulmillr/qr@0.2.1': {}
@@ -20911,10 +20941,10 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@polkadot/networks': 12.6.2
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-crypto': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-crypto': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@12.6.2)
       '@polkadot/x-bigint': 12.6.2
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1))
       '@scure/base': 1.2.5
       tslib: 2.8.1
 
@@ -21021,11 +21051,11 @@ snapshots:
       '@polkadot/util': 10.4.2
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-bridge@7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2)))':
+  '@polkadot/wasm-bridge@7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))':
     dependencies:
       '@polkadot/util': 12.6.2
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1))
       tslib: 2.8.1
 
   '@polkadot/wasm-bridge@7.4.1(@polkadot/util@13.5.1)(@polkadot/x-randomvalues@13.5.1(@polkadot/util@13.5.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))':
@@ -21069,14 +21099,14 @@ snapshots:
       '@polkadot/wasm-crypto-wasm': 6.4.1(@polkadot/util@10.4.2)
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-crypto-init@7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2)))':
+  '@polkadot/wasm-crypto-init@7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))
       '@polkadot/wasm-crypto-asmjs': 7.4.1(@polkadot/util@12.6.2)
       '@polkadot/wasm-crypto-wasm': 7.4.1(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto-init@7.4.1(@polkadot/util@13.5.1)(@polkadot/x-randomvalues@13.5.1(@polkadot/util@13.5.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))':
@@ -21144,15 +21174,15 @@ snapshots:
       '@polkadot/wasm-util': 6.4.1(@polkadot/util@10.4.2)
       '@polkadot/x-randomvalues': 10.4.2
 
-  '@polkadot/wasm-crypto@7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2)))':
+  '@polkadot/wasm-crypto@7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-bridge': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))
       '@polkadot/wasm-crypto-asmjs': 7.4.1(@polkadot/util@12.6.2)
-      '@polkadot/wasm-crypto-init': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2)))
+      '@polkadot/wasm-crypto-init': 7.4.1(@polkadot/util@12.6.2)(@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))
       '@polkadot/wasm-crypto-wasm': 7.4.1(@polkadot/util@12.6.2)
       '@polkadot/wasm-util': 7.4.1(@polkadot/util@12.6.2)
-      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2))
+      '@polkadot/x-randomvalues': 12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1))
       tslib: 2.8.1
 
   '@polkadot/wasm-crypto@7.4.1(@polkadot/util@13.5.1)(@polkadot/x-randomvalues@13.5.1(@polkadot/util@13.5.1)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1)))':
@@ -21254,10 +21284,10 @@ snapshots:
       '@babel/runtime': 7.27.1
       '@polkadot/x-global': 10.4.2
 
-  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@12.6.2))':
+  '@polkadot/x-randomvalues@12.6.2(@polkadot/util@12.6.2)(@polkadot/wasm-util@7.4.1(@polkadot/util@13.5.1))':
     dependencies:
       '@polkadot/util': 12.6.2
-      '@polkadot/wasm-util': 7.4.1(@polkadot/util@12.6.2)
+      '@polkadot/wasm-util': 7.4.1(@polkadot/util@13.5.1)
       '@polkadot/x-global': 12.6.2
       tslib: 2.8.1
 
@@ -24529,7 +24559,7 @@ snapshots:
       '@sentry/utils': 7.120.3
       localforage: 1.10.0
 
-  '@sentry/nextjs@7.120.3(next@14.2.15(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@sentry/nextjs@7.120.3(next@14.2.15(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))':
     dependencies:
       '@rollup/plugin-commonjs': 24.0.0(rollup@2.79.2)
       '@sentry/core': 7.120.3
@@ -24546,24 +24576,26 @@ snapshots:
       resolve: 1.22.8
       rollup: 2.79.2
       stacktrace-parser: 0.1.11
+    optionalDependencies:
+      webpack: 5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  '@sentry/nextjs@8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4))':
+  '@sentry/nextjs@8.55.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))':
     dependencies:
       '@opentelemetry/api': 1.9.0
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@rollup/plugin-commonjs': 28.0.1(rollup@3.29.5)
       '@sentry-internal/browser-utils': 8.55.0
       '@sentry/core': 8.55.0
       '@sentry/node': 8.55.0
-      '@sentry/opentelemetry': 8.55.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.1)
+      '@sentry/opentelemetry': 8.55.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.0)
       '@sentry/react': 8.55.0(react@19.0.0)
       '@sentry/vercel-edge': 8.55.0
-      '@sentry/webpack-plugin': 2.22.7(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4))
+      '@sentry/webpack-plugin': 2.22.7(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))
       chalk: 3.0.0
-      next: 15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       resolve: 1.22.8
       rollup: 3.29.5
       stacktrace-parser: 0.1.11
@@ -24580,12 +24612,12 @@ snapshots:
   '@sentry/nextjs@9.22.0(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(next@15.2.4(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))':
     dependencies:
       '@opentelemetry/api': 1.9.0
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@rollup/plugin-commonjs': 28.0.1(rollup@4.35.0)
       '@sentry-internal/browser-utils': 9.22.0
       '@sentry/core': 9.22.0
       '@sentry/node': 9.22.0
-      '@sentry/opentelemetry': 9.22.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.1)
+      '@sentry/opentelemetry': 9.22.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.0)
       '@sentry/react': 9.22.0(react@19.0.0)
       '@sentry/vercel-edge': 9.22.0
       '@sentry/webpack-plugin': 3.3.1(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))
@@ -24644,10 +24676,10 @@ snapshots:
       '@opentelemetry/instrumentation-undici': 0.10.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/resources': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@prisma/instrumentation': 5.22.0
       '@sentry/core': 8.55.0
-      '@sentry/opentelemetry': 8.55.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.1)
+      '@sentry/opentelemetry': 8.55.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.0)
       import-in-the-middle: 1.13.2
     transitivePeerDependencies:
       - supports-color
@@ -24682,33 +24714,33 @@ snapshots:
       '@opentelemetry/instrumentation-undici': 0.10.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/resources': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@prisma/instrumentation': 6.7.0(@opentelemetry/api@1.9.0)
       '@sentry/core': 9.22.0
-      '@sentry/opentelemetry': 9.22.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.1)
+      '@sentry/opentelemetry': 9.22.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.0)
       import-in-the-middle: 1.13.2
       minimatch: 9.0.5
     transitivePeerDependencies:
       - supports-color
 
-  '@sentry/opentelemetry@8.55.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.1)':
+  '@sentry/opentelemetry@8.55.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.0)':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/context-async-hooks': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
       '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@sentry/core': 8.55.0
 
-  '@sentry/opentelemetry@9.22.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.1)':
+  '@sentry/opentelemetry@9.22.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.57.2(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.33.0)':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/context-async-hooks': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/core': 1.30.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.0)
       '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.0)
-      '@opentelemetry/semantic-conventions': 1.33.1
+      '@opentelemetry/semantic-conventions': 1.33.0
       '@sentry/core': 9.22.0
 
   '@sentry/profiling-node@8.55.0':
@@ -24782,12 +24814,12 @@ snapshots:
       - encoding
       - supports-color
 
-  '@sentry/webpack-plugin@2.22.7(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4))':
+  '@sentry/webpack-plugin@2.22.7(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))':
     dependencies:
       '@sentry/bundler-plugin-core': 2.22.7
       unplugin: 1.0.1
       uuid: 9.0.1
-      webpack: 5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4)
+      webpack: 5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -24924,6 +24956,13 @@ snapshots:
       isows: 1.0.7(ws@8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ky: 1.8.1
       ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      zod: 3.25.7
+
+  '@sodazone/ocelloids-client@2.5.0(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+    dependencies:
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      ky: 1.8.1
+      ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       zod: 3.25.7
 
   '@sora-substrate/type-definitions@1.27.7':
@@ -25984,9 +26023,9 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.7.2':
     optional: true
 
-  '@vercel/analytics@1.5.0(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)':
+  '@vercel/analytics@1.5.0(next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)':
     optionalDependencies:
-      next: 15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
 
   '@vitejs/plugin-react-swc@3.9.0(@swc/helpers@0.5.17)(vite@6.3.5(@types/node@22.15.20)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.39.2)(yaml@2.8.0))':
@@ -26041,45 +26080,6 @@ snapshots:
 
   '@vue/shared@3.5.14': {}
 
-  '@wagmi/connectors@5.8.3(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))(zod@3.25.7)':
-    dependencies:
-      '@coinbase/wallet-sdk': 4.3.0
-      '@metamask/sdk': 0.32.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@safe-global/safe-apps-provider': 0.18.6(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)
-      '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)
-      '@wagmi/core': 2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))
-      '@walletconnect/ethereum-provider': 2.20.2(@types/react@19.0.10)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)
-      cbw-sdk: '@coinbase/wallet-sdk@3.9.3'
-      viem: 2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)
-    optionalDependencies:
-      typescript: 5.7.3
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@deno/kv'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@types/react'
-      - '@upstash/redis'
-      - '@vercel/blob'
-      - '@vercel/kv'
-      - aws4fetch
-      - bufferutil
-      - db0
-      - encoding
-      - ioredis
-      - react
-      - supports-color
-      - uploadthing
-      - utf-8-validate
-      - zod
-
   '@wagmi/connectors@5.8.3(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.5.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))(zod@3.25.7)':
     dependencies:
       '@coinbase/wallet-sdk': 4.3.0
@@ -26092,46 +26092,6 @@ snapshots:
       viem: 2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)
     optionalDependencies:
       typescript: 5.7.3
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@deno/kv'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@react-native-async-storage/async-storage'
-      - '@types/react'
-      - '@upstash/redis'
-      - '@vercel/blob'
-      - '@vercel/kv'
-      - aws4fetch
-      - bufferutil
-      - db0
-      - encoding
-      - ioredis
-      - react
-      - supports-color
-      - uploadthing
-      - utf-8-validate
-      - zod
-    optional: true
-
-  '@wagmi/connectors@5.8.3(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
-    dependencies:
-      '@coinbase/wallet-sdk': 4.3.0
-      '@metamask/sdk': 0.32.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      '@safe-global/safe-apps-provider': 0.18.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
-      '@safe-global/safe-apps-sdk': 9.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
-      '@wagmi/core': 2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))
-      '@walletconnect/ethereum-provider': 2.20.2(@types/react@19.0.10)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
-      cbw-sdk: '@coinbase/wallet-sdk@3.9.3'
-      viem: 2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)
-    optionalDependencies:
-      typescript: 5.8.3
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -26197,7 +26157,6 @@ snapshots:
       - uploadthing
       - utf-8-validate
       - zod
-    optional: true
 
   '@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))':
     dependencies:
@@ -28893,7 +28852,7 @@ snapshots:
       '@typescript-eslint/parser': 7.2.0(eslint@8.57.1)(typescript@5.8.3)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.5(eslint@8.57.1)
@@ -28965,7 +28924,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.1(supports-color@8.1.1)
@@ -28977,6 +28936,21 @@ snapshots:
       unrs-resolver: 1.7.2
     optionalDependencies:
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1):
+    dependencies:
+      '@nolyfill/is-core-module': 1.0.39
+      debug: 4.4.1(supports-color@8.1.1)
+      eslint: 8.57.1
+      get-tsconfig: 4.10.1
+      is-bun-module: 2.0.0
+      stable-hash: 0.0.5
+      tinyglobby: 0.2.13
+      unrs-resolver: 1.7.2
+    optionalDependencies:
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -28995,7 +28969,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
     dependencies:
       debug: 3.2.7(supports-color@8.1.1)
     optionalDependencies:
@@ -29006,7 +28980,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@9.27.0(jiti@2.4.2)))(eslint@9.27.0(jiti@2.4.2)):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.27.0(jiti@2.4.2)):
     dependencies:
       debug: 3.2.7(supports-color@8.1.1)
     optionalDependencies:
@@ -29017,7 +28991,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@9.27.0(jiti@2.4.2)))(eslint@9.27.0(jiti@2.4.2)):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+    dependencies:
+      debug: 3.2.7(supports-color@8.1.1)
+    optionalDependencies:
+      '@typescript-eslint/parser': 7.2.0(eslint@8.57.1)(typescript@5.8.3)
+      eslint: 8.57.1
+      eslint-import-resolver-node: 0.3.9
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.27.0(jiti@2.4.2)):
     dependencies:
       debug: 3.2.7(supports-color@8.1.1)
     optionalDependencies:
@@ -29049,7 +29034,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -29078,7 +29063,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.27.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@9.27.0(jiti@2.4.2)))(eslint@9.27.0(jiti@2.4.2))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@9.27.0(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.27.0(jiti@2.4.2))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -29107,7 +29092,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -29136,7 +29121,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.27.0(jiti@2.4.2)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@9.27.0(jiti@2.4.2)))(eslint@9.27.0(jiti@2.4.2))
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.32.1(eslint@9.27.0(jiti@2.4.2))(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.27.0(jiti@2.4.2))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -30597,6 +30582,10 @@ snapshots:
     dependencies:
       ws: 8.18.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
+  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+    dependencies:
+      ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+
   isstream@0.1.2: {}
 
   istanbul-lib-coverage@3.2.2: {}
@@ -31661,7 +31650,7 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@19.1.0-rc.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  next@15.2.3(@babel/core@7.27.1)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@next/env': 15.2.3
       '@swc/counter': 0.1.3
@@ -31682,7 +31671,6 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 15.2.3
       '@next/swc-win32-x64-msvc': 15.2.3
       '@opentelemetry/api': 1.9.0
-      babel-plugin-react-compiler: 19.1.0-rc.1
       sharp: 0.33.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -31972,7 +31960,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.2
-      '@noble/hashes': 1.8.0
+      '@noble/hashes': 1.7.2
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.7.3)(zod@3.22.4)
@@ -31986,7 +31974,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.2
-      '@noble/hashes': 1.8.0
+      '@noble/hashes': 1.7.2
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.7.3)(zod@3.25.7)
@@ -32000,7 +31988,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.2
-      '@noble/hashes': 1.8.0
+      '@noble/hashes': 1.7.2
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
@@ -32014,7 +32002,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.2
-      '@noble/hashes': 1.8.0
+      '@noble/hashes': 1.7.2
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.8.3)(zod@3.23.8)
@@ -32028,7 +32016,7 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/curves': 1.8.2
-      '@noble/hashes': 1.8.0
+      '@noble/hashes': 1.7.2
       '@scure/bip32': 1.6.2
       '@scure/bip39': 1.5.4
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.7)
@@ -33731,18 +33719,6 @@ snapshots:
 
   term-size@2.2.1: {}
 
-  terser-webpack-plugin@5.3.14(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.25
-      jest-worker: 27.5.1
-      schema-utils: 4.3.2
-      serialize-javascript: 6.0.2
-      terser: 5.39.2
-      webpack: 5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4)
-    optionalDependencies:
-      '@swc/core': 1.11.24(@swc/helpers@0.5.17)
-      esbuild: 0.25.4
-
   terser-webpack-plugin@5.3.14(@swc/core@1.11.24(@swc/helpers@0.5.17))(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
@@ -33890,7 +33866,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@29.3.4(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.4)(jest@29.7.0(@types/node@22.15.20)(ts-node@10.9.2(@swc/core@1.11.24(@swc/helpers@0.5.17))(@types/node@22.15.20)(typescript@5.8.3)))(typescript@5.8.3):
+  ts-jest@29.3.4(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.27.1))(jest@29.7.0(@types/node@22.15.20)(ts-node@10.9.2(@swc/core@1.11.24(@swc/helpers@0.5.17))(@types/node@22.15.20)(typescript@5.8.3)))(typescript@5.8.3):
     dependencies:
       bs-logger: 0.2.6
       ejs: 3.1.10
@@ -33909,7 +33885,6 @@ snapshots:
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
       babel-jest: 29.7.0(@babel/core@7.27.1)
-      esbuild: 0.25.4
 
   ts-node@10.9.2(@swc/core@1.11.24(@swc/helpers@0.5.17))(@types/node@22.15.20)(typescript@5.7.3):
     dependencies:
@@ -34570,7 +34545,7 @@ snapshots:
   wagmi@2.15.4(@tanstack/query-core@5.76.0)(@tanstack/react-query@5.76.1(react@19.0.0))(@types/react@19.0.10)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))(zod@3.25.7):
     dependencies:
       '@tanstack/react-query': 5.76.1(react@19.0.0)
-      '@wagmi/connectors': 5.8.3(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))(zod@3.25.7)
+      '@wagmi/connectors': 5.8.3(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.5.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))(zod@3.25.7)
       '@wagmi/core': 2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.7))
       react: 19.0.0
       use-sync-external-store: 1.4.0(react@19.0.0)
@@ -34608,7 +34583,7 @@ snapshots:
   wagmi@2.15.4(@tanstack/query-core@5.76.0)(@tanstack/react-query@5.76.1(react@19.0.0))(@types/react@19.0.10)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8):
     dependencies:
       '@tanstack/react-query': 5.76.1(react@19.0.0)
-      '@wagmi/connectors': 5.8.3(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+      '@wagmi/connectors': 5.8.3(@types/react@19.0.10)(@wagmi/core@2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8)))(bufferutil@4.0.9)(react@19.0.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       '@wagmi/core': 2.17.2(@tanstack/query-core@5.76.0)(@types/react@19.0.10)(react@19.0.0)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.30.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.23.8))
       react: 19.0.0
       use-sync-external-store: 1.4.0(react@19.0.0)
@@ -34711,37 +34686,6 @@ snapshots:
       schema-utils: 4.3.2
       tapable: 2.2.2
       terser-webpack-plugin: 5.3.14(@swc/core@1.11.24(@swc/helpers@0.5.17))(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17)))
-      watchpack: 2.4.3
-      webpack-sources: 3.2.3
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
-
-  webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4):
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.7
-      '@types/json-schema': 7.0.15
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.14.1
-      browserslist: 4.24.5
-      chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.18.1
-      es-module-lexer: 1.7.0
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      json-parse-even-better-errors: 2.3.1
-      loader-runner: 4.3.0
-      mime-types: 2.1.35
-      neo-async: 2.6.2
-      schema-utils: 4.3.2
-      tapable: 2.2.2
-      terser-webpack-plugin: 5.3.14(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4)(webpack@5.99.9(@swc/core@1.11.24(@swc/helpers@0.5.17))(esbuild@0.25.4))
       watchpack: 2.4.3
       webpack-sources: 3.2.3
     transitivePeerDependencies:

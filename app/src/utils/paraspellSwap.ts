@@ -9,7 +9,6 @@ import {
   isSameToken,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { isSameChain } from '@/utils/routes'
 import { getSenderAddress } from './address'
