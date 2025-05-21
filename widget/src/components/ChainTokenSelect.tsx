@@ -417,7 +417,11 @@ const TokenList = ({
               onClick={() => onSelect(option)}
             >
               <div className="flex items-center gap-2">
-                <TokenLogo token={option} sourceChain={sourceChainToDetermineOriginBanner} />
+                <TokenLogo
+                  token={option}
+                  sourceChain={sourceChainToDetermineOriginBanner}
+                  className="border border-turtle-foreground rounded-full"
+                />
                 <span className="text-sm">{option.symbol}</span>
               </div>
 

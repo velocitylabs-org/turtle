@@ -1,5 +1,17 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.5
+
+### Patch Changes
+
+- f0a8028: Include private version of packages
+
+## 0.0.4
+
+### Patch Changes
+
+- d53e12f: Update PS SDK and fix Polimec transfers
+
 ## 0.0.3
 
 ### Patch Changes

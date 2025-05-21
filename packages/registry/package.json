@@ -1,6 +1,7 @@
 {
   "name": "@velocitylabs-org/turtle-registry",
   "version": "0.0.1",
+  "private": true,
   "description": "Turtle Registry takes care of handling everything registry-related from mapping to utils",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
