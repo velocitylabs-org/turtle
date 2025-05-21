@@ -7,6 +7,7 @@ const nextConfig = {
   experimental: {
     reactCompiler: true,
   },
+  transpilePackages: ['@velocitylabs-org/turtle-ui', '@velocitylabs-org/turtle-registry'],
 }
 
 const config =

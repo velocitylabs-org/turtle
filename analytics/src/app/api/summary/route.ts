@@ -45,6 +45,7 @@ export async function GET(request: Request) {
         .limit(5)
         .select(
           [
+            '_id',
             Transaction.schema.paths.txDate.path,
             Transaction.schema.paths.sourceTokenId.path,
             Transaction.schema.paths.sourceTokenSymbol.path,
