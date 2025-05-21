@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.5
+
+### Patch Changes
+
+- f0a8028: Include private version of packages
+
 ## 0.0.4
 
 ### Patch Changes
