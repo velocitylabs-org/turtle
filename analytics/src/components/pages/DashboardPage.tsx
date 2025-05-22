@@ -1,14 +1,14 @@
 'use client'
-import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import SmallStatBox from '@/components/SmallStatBox'
-import TransactionVolumeChart from '@/components/TransactionVolumeChart'
-import TopTokensChart from '@/components/TopTokensChart'
-import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { useQuery } from '@tanstack/react-query'
+import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
 import ErrorPanel from '@/components/ErrorPanel'
-import formatUSD from '@/utils/format-USD'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
+import SmallStatBox from '@/components/SmallStatBox'
+import TopTokensChart from '@/components/TopTokensChart'
+import TransactionVolumeChart from '@/components/TransactionVolumeChart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import useShowLoadingBar from '@/hooks/useShowLoadingBar'
+import formatUSD from '@/utils/format-USD'
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery({
@@ -16,7 +16,7 @@ export default function DashboardPage() {
     queryFn: async () => {
       const response = await fetch('/api/summary', {
         headers: {
-          Authorization: process.env.NEXT_PUBLIC_AUTH_KEY || '',
+          Authorization: process.env.NEXT_PUBLIC_AUTH_TOKEN || '',
         },
       })
       if (!response.ok) {

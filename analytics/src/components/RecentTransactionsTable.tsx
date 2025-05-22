@@ -1,5 +1,9 @@
 'use client'
+import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import { Ban, CheckCircle, CircleHelp } from 'lucide-react'
+import React from 'react'
+import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import {
   Table,
   TableBody,
@@ -10,10 +14,7 @@ import {
 } from '@/components/ui/table'
 import { TransactionModel, txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
-import React from 'react'
-import { chainsByUid, tokensById } from '@/constants'
-import getOriginBadge from '@/utils/get-origin-badge'
-import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
+import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 interface RecentTransactionsTableProps {
   transactions: TransactionModel[]
@@ -142,20 +143,16 @@ function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps)
 
 interface TokenChainDisplayProps {
   tokenId: string
-  chainUid?: string
+  chainUid: string
   size?: number
 }
 
 export function TokenChainDisplay({ tokenId, chainUid, size = 28 }: TokenChainDisplayProps) {
   const token = tokensById[tokenId]
-  const sourceChain = chainUid && chainsByUid[chainUid]
-  const originBadge = getOriginBadge(token, sourceChain || null)
+  const sourceChain = chainsByUid[chainUid]
+  const originBadge = getOriginBadge(token, sourceChain)
+  const originBadgeURI = originBadge && getSrcFromLogo(originBadge)
+  const tokenURI = getSrcFromLogo(token)
 
-  return (
-    <TokenAndOriginLogos
-      tokenURI={token.logoURI as string}
-      originURI={originBadge?.logoURI}
-      size={size}
-    />
-  )
+  return <TokenAndOriginLogos tokenURI={tokenURI} originURI={originBadgeURI} size={size} />
 }

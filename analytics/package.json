@@ -17,6 +17,7 @@
     "@sentry/nextjs": "^9.20.0",
     "@tanstack/react-query": "^5.75.0",
     "@velocitylabs-org/turtle-registry": "workspace:*",
+    "@velocitylabs-org/turtle-ui": "workspace:*",
     "babel-plugin-react-compiler": "19.1.0-rc.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

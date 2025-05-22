@@ -10,7 +10,7 @@ export interface TransactionModel extends mongoose.Document {
   sourceTokenSymbol: string
   sourceTokenAmount: number // Amount of tokens sent from a source chain
   sourceTokenAmountUsd: number // Transaction amount converted to USD at the time of transaction
-  sourceTokenUSDValue?: string // USD value per token at transaction time
+  sourceTokenUSDValue?: number // USD value per token at transaction time
   sourceTokenAmountRaw: string // For debugging, without using to human helper
 
   destinationTokenId: string
@@ -18,7 +18,7 @@ export interface TransactionModel extends mongoose.Document {
   destinationTokenSymbol: string
   destinationTokenAmount?: number
   destinationTokenAmountUsd?: number
-  destinationTokenUSDValue?: string
+  destinationTokenUSDValue?: number
   destinationTokenAmountRaw?: string
 
   feesTokenId: string
@@ -51,7 +51,8 @@ export interface TransactionModel extends mongoose.Document {
   txDate: Date
   hostedOn: string
   status: txStatus
-  migrated: boolean
+  migrated: boolean // For transactions migrated from an old analytics source
+  oldFormat: boolean // For transactions migrated from an old analytics source with an old format
 }
 
 const transactionSchema = new mongoose.Schema<TransactionModel>(
@@ -109,7 +110,8 @@ const transactionSchema = new mongoose.Schema<TransactionModel>(
       required: true,
       default: 'succeeded',
     },
-    migrated: { type: Boolean, required: true, default: false },
+    migrated: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source
+    oldFormat: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source with an old format
   },
   { timestamps: true },
 )

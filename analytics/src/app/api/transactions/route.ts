@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import dbConnect from '@/utils/db-connect'
 import Transaction from '@/models/Transaction'
-import validateRequest from '@/utils/validate-request'
 import captureServerError from '@/utils/capture-server-error'
+import dbConnect from '@/utils/db-connect'
+import validateRequest from '@/utils/validate-request'
 
 export async function GET(request: Request) {
   try {
@@ -79,6 +79,7 @@ export async function GET(request: Request) {
         .limit(5)
         .select(
           [
+            '_id',
             Transaction.schema.paths.txDate.path,
             Transaction.schema.paths.sourceTokenId.path,
             Transaction.schema.paths.sourceTokenSymbol.path,
