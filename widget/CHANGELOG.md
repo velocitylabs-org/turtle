@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.7
+
+### Patch Changes
+
+- d252592: Update packages
+
 ## 0.0.6
 
 ### Patch Changes
