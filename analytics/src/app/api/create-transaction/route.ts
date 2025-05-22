@@ -8,7 +8,6 @@ function corsHeaders(response: NextResponse, origin?: string | null) {
   const allowedOrigins =
     process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
 
-  // Check if the origin is allowed
   if (origin && allowedOrigins.includes(origin)) {
     response.headers.set('Access-Control-Allow-Origin', origin)
   }
@@ -41,7 +40,6 @@ export async function POST(request: Request) {
     await dbConnect()
     const data = await request.json()
 
-    // Check if a transaction with the same txHashId already exists
     const existingTransaction = await Transaction.findOne({ txHashId: data.txHashId })
     if (existingTransaction) {
       return corsHeaders(
