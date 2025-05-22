@@ -1,4 +1,5 @@
 'use client'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { ChevronRight, LayoutDashboard, Menu, Repeat } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -10,7 +11,6 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { loadingBarOpt } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
-import cn from '@/utils/cn'
 
 const now = new Date()
 const nowFormatted = `Updated ${now.toLocaleString('en-GB', {

@@ -1,12 +1,12 @@
 'use client'
 import { Token } from '@velocitylabs-org/turtle-registry'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { Check, ChevronsUpDown, Search, X } from 'lucide-react'
 import React from 'react'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import cn from '@/utils/cn'
 
 type Option = {
   value: string
