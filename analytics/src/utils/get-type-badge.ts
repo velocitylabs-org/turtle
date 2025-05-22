@@ -1,4 +1,4 @@
-import { tokensById } from '@/constants'
+import { tokensById } from '@velocitylabs-org/turtle-registry'
 import { ethereumChain, relayChain } from '@/constants'
 import { getSrcFromLogo } from './get-src-from-logo'
 
