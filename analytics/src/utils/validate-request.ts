@@ -14,7 +14,8 @@ export default function validateRequest(req: Request): boolean {
     return false
   }
 
-  const allowedOrigins = process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
+  const allowedOrigins =
+    process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
   if (!allowedOrigins.length) {
     return false
   }

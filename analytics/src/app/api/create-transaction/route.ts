@@ -5,7 +5,8 @@ import dbConnect from '@/utils/db-connect'
 import validateRequest from '@/utils/validate-request'
 
 function corsHeaders(response: NextResponse, origin?: string | null) {
-  const allowedOrigins = process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
+  const allowedOrigins =
+    process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
 
   // Check if the origin is allowed
   if (origin && allowedOrigins.includes(origin)) {
@@ -26,7 +27,7 @@ export async function OPTIONS(request: Request) {
     new NextResponse(null, {
       status: 204,
     }),
-    origin
+    origin,
   )
 }
 
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
           { error: 'A transaction with this hash ID already exists' },
           { status: 409 },
         ),
-        origin
+        origin,
       )
     }
 
@@ -62,14 +63,14 @@ export async function POST(request: Request) {
         },
         { status: 201 },
       ),
-      origin
+      origin,
     )
   } catch (e) {
     const error = e as Error
     captureServerError(error as Error)
     return corsHeaders(
       NextResponse.json({ error: `Internal Server Error ${error.message}` }, { status: 500 }),
-      origin
+      origin,
     )
   }
 }
