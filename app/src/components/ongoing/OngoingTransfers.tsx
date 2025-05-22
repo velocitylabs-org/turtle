@@ -1,4 +1,5 @@
 'use client'
+import { Token, Chain, tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { Dispatch, SetStateAction } from 'react'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
@@ -36,9 +37,23 @@ export default function OngoingTransfers({
             Ongoing
           </div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border-1 border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
-            {ongoingTransfers.map(tx => (
-              <OngoingTransferDialog key={tx.id} transfer={tx} status={statusMessages[tx.id]} />
-            ))}
+            {ongoingTransfers.map(tx => {
+              const transfer = {
+                ...tx,
+                sourceToken: tokensById[tx.sourceToken.id] as Token,
+                destinationToken: tokensById[tx.destinationToken?.id as string] as Token,
+                sourceChain: chainsByUid[tx.sourceChain.uid] as Chain,
+                destChain: chainsByUid[tx.destChain.uid] as Chain,
+              }
+
+              return (
+                <OngoingTransferDialog
+                  key={tx.id}
+                  transfer={transfer}
+                  status={statusMessages[tx.id]}
+                />
+              )
+            })}
 
             {hasCompletedTransfers && (
               <button
@@ -46,7 +61,7 @@ export default function OngoingTransfers({
                 disabled={!hasCompletedTransfers}
                 className="flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-turtle-foreground"
               >
-                <span>View completed transactions</span>{' '}
+                <span>View completed transactions </span>
                 <ArrowRight
                   className="mx-2 h-[1.3rem] w-[1.3rem]"
                   fill={colors['turtle-foreground']}
