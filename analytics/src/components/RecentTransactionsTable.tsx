@@ -1,4 +1,5 @@
 'use client'
+import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import { Ban, CheckCircle, CircleHelp } from 'lucide-react'
 import React from 'react'
@@ -11,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { chainsByUid, tokensById } from '@/constants'
 import { TransactionModel, txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
