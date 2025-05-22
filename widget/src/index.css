@@ -123,6 +123,8 @@
       scrollbar-width: none;
     }
 
+    scrollbar-width: none; /* Firefox */
+
     /* Remove arrows from number input */
     input[type='number'] {
       appearance: none; /* Standard */
@@ -150,6 +152,10 @@
       /* Edge 12 -18 */
       color: var(--turtle-level4);
     }
+  }
+
+  .turtle-wrapper::-webkit-scrollbar {
+    display: none;
   }
 }
 
