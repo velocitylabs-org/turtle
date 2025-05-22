@@ -54,7 +54,6 @@ const nextConfig = {
       },
     ],
   },
-  transpilePackages: ['@velocitylabs-org/turtle-ui', '@velocitylabs-org/turtle-registry'],
 }
 
 // Sentry is enabled only in production builds to ensure error tracking in the live environment.
