@@ -1,7 +1,10 @@
+'use client'
+
 import { captureException } from '@sentry/nextjs'
 
 import { Environment } from '@velocitylabs-org/turtle-registry'
 
+import storeAnalyticsTransaction from '@/app/actions/store-transactions'
 import { TransferParams } from '@/hooks/useTransfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
@@ -90,17 +93,14 @@ export async function trackTransferMetrics({
     destinationChainNetwork: transferParams.destinationChain.network,
 
     txDate: date,
-    hostedOn: window.location.origin,
+    hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
     status: 'succeeded',
   }
 
-  fetch('/api/store-transaction', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(transactionData),
-  }).catch(error => {
+  try {
+    await storeAnalyticsTransaction(transactionData)
+  } catch (error) {
     captureException(error)
-  })
+    console.error('Failed to store transaction:', error)
+  }
 }
