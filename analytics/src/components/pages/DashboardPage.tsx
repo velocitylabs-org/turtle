@@ -14,7 +14,7 @@ import formatUSD from '@/utils/format-USD'
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
-    queryFn: getSummaryData
+    queryFn: getSummaryData,
   })
 
   useShowLoadingBar(isLoading)

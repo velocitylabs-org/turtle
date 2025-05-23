@@ -6,10 +6,7 @@
  */
 export default async function storeAnalyticsTransaction(data: any) {
   try {
-    if (
-      !process.env.ANALYTICS_DASHBOARD_AUTH_TOKEN ||
-      !process.env.ANALYTICS_DASHBOARD_BASE_URL
-    ) {
+    if (!process.env.ANALYTICS_DASHBOARD_AUTH_TOKEN || !process.env.ANALYTICS_DASHBOARD_BASE_URL) {
       throw new Error('Analytics configuration missing')
     }
 

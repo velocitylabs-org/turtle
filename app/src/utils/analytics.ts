@@ -26,11 +26,7 @@ export async function trackTransferMetrics({
   destinationTokenUSDValue,
   date,
 }: TransferMetric) {
-  if (
-    transferParams.environment !== Environment.Mainnet ||
-    !isProduction ||
-    !txId
-  ) {
+  if (transferParams.environment !== Environment.Mainnet || !isProduction || !txId) {
     return
   }
 

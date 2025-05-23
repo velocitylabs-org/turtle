@@ -15,14 +15,14 @@ type TransactionFilters = {
 }
 
 export async function getTransactionsData({
-                                            sourceChainUid,
-                                            destinationChainUid,
-                                            sourceTokenId,
-                                            destinationTokenId,
-                                            status,
-                                            startDate,
-                                            endDate,
-                                          }: TransactionFilters) {
+  sourceChainUid,
+  destinationChainUid,
+  sourceTokenId,
+  destinationTokenId,
+  status,
+  startDate,
+  endDate,
+}: TransactionFilters) {
   try {
     await dbConnect()
 

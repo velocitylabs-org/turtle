@@ -69,15 +69,16 @@ export default function TransactionsPage() {
       fromDate,
       toDate,
     ],
-    queryFn: () => getTransactionsData({
-      sourceChainUid: sourceChainUid.length > 0 ? sourceChainUid : undefined,
-      destinationChainUid: destinationChainUid.length > 0 ? destinationChainUid : undefined,
-      sourceTokenId: sourceTokenId.length > 0 ? sourceTokenId : undefined,
-      destinationTokenId: destinationTokenId.length > 0 ? destinationTokenId : undefined,
-      status: statusFilter,
-      startDate: fromDate,
-      endDate: toDate,
-    })
+    queryFn: () =>
+      getTransactionsData({
+        sourceChainUid: sourceChainUid.length > 0 ? sourceChainUid : undefined,
+        destinationChainUid: destinationChainUid.length > 0 ? destinationChainUid : undefined,
+        sourceTokenId: sourceTokenId.length > 0 ? sourceTokenId : undefined,
+        destinationTokenId: destinationTokenId.length > 0 ? destinationTokenId : undefined,
+        status: statusFilter,
+        startDate: fromDate,
+        endDate: toDate,
+      }),
   })
   useShowLoadingBar(isLoading)
   const transactions = data?.transactions || []
