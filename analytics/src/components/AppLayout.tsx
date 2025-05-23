@@ -1,13 +1,15 @@
 'use client'
+import { cn } from '@velocitylabs-org/turtle-ui'
+import { ChevronRight, LayoutDashboard, Menu, Repeat } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useState } from 'react'
-import { usePathname } from 'next/navigation'
-import { ChevronRight, LayoutDashboard, Menu, Repeat } from 'lucide-react'
+import { useLoadingBar } from 'react-top-loading-bar'
+import TurtleLogo from '@/components/TurtleLogo'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
-import cn from '@/utils/cn'
-import TurtleLogo from '@/components/TurtleLogo'
-import Link from 'next/link'
+import { loadingBarOpt } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
 
 const now = new Date()
@@ -26,6 +28,7 @@ interface DashboardLayoutProps {
 }
 
 export default function AppLayout({ children }: DashboardLayoutProps) {
+  const { start } = useLoadingBar(loadingBarOpt)
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile)
@@ -47,6 +50,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   const activeRoute = routes.find(route => route.href === pathname)
 
   const onNavItemClicked = () => {
+    start() // Show loading bar
     if (isMobile) {
       setIsSidebarOpen(prev => !prev)
     }

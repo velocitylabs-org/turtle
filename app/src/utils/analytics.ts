@@ -11,8 +11,8 @@ interface TransferMetric {
   senderAddress: string
   sourceTokenUSDValue: number
   destinationTokenUSDValue: number
-  txId?: string
   date: Date
+  txId?: string
 }
 
 export async function trackTransferMetrics({
@@ -20,64 +20,91 @@ export async function trackTransferMetrics({
   txId,
   senderAddress,
   sourceTokenUSDValue,
+  destinationTokenUSDValue,
   date,
 }: TransferMetric) {
   if (
-    !process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
+    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN ||
+    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL ||
     transferParams.environment !== Environment.Mainnet ||
-    !isProduction
+    !isProduction ||
+    !txId
   ) {
     return
   }
 
-  const databaseUrl =
-    'https://firestore.googleapis.com/v1/projects/' +
-    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID +
-    '/databases/(default)/documents/turtle-txs'
+  const apiUrl = `${process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL}/api/create-transaction`
+  const sourceTokenAmount = toHuman(transferParams.sourceAmount, transferParams.sourceToken)
+  const feesAmount = toHuman(transferParams.fees.amount, transferParams.fees.token)
+  const destinationTokenAmount = transferParams.destinationAmount
+    ? toHuman(transferParams.destinationAmount, transferParams.destinationToken)
+    : undefined
+  const bridgingFeeAmount = transferParams.bridgingFee
+    ? toHuman(transferParams.bridgingFee.amount, transferParams.bridgingFee.token)
+    : undefined
 
-  const userData = {
-    fields: {
-      tokenName: { stringValue: transferParams.sourceToken.name },
-      tokenSymbol: { stringValue: transferParams.sourceToken.symbol },
-      tokenAmount: {
-        doubleValue: toHuman(transferParams.sourceAmount, transferParams.sourceToken),
-      },
-      tokenAmountUsd: {
-        doubleValue:
-          toHuman(transferParams.sourceAmount, transferParams.sourceToken) * sourceTokenUSDValue,
-      },
+  const transactionData = {
+    txHashId: txId,
 
-      feesTokenName: { stringValue: transferParams.fees.token.name },
-      feesTokenSymbol: { stringValue: transferParams.fees.token.symbol },
-      feesAmount: { doubleValue: toHuman(transferParams.fees.amount, transferParams.fees.token) },
-      feesAmountUsd: { doubleValue: transferParams.fees.inDollars },
+    sourceTokenId: transferParams.sourceToken.id,
+    sourceTokenName: transferParams.sourceToken.name,
+    sourceTokenSymbol: transferParams.sourceToken.symbol,
+    sourceTokenAmount,
+    sourceTokenAmountUsd: sourceTokenAmount * sourceTokenUSDValue,
+    sourceTokenUSDValue: sourceTokenUSDValue,
+    sourceTokenAmountRaw: transferParams.sourceAmount.toString(),
 
-      senderAddress: { stringValue: senderAddress },
-      sourceChainName: { stringValue: transferParams.sourceChain.name },
-      sourceChainNetwork: { stringValue: transferParams.sourceChain.network },
+    destinationTokenId: transferParams.destinationToken.id,
+    destinationTokenName: transferParams.destinationToken.name,
+    destinationTokenSymbol: transferParams.destinationToken.symbol,
 
-      recipientAddress: { stringValue: transferParams.recipient },
-      destinationChainName: { stringValue: transferParams.destinationChain.name },
-      destinationChainNetwork: { stringValue: transferParams.destinationChain.network },
+    destinationTokenAmount,
+    destinationTokenAmountUsd: destinationTokenAmount
+      ? destinationTokenAmount * destinationTokenUSDValue
+      : undefined,
+    destinationTokenUSDValue: destinationTokenUSDValue,
+    destinationTokenAmountRaw: transferParams.destinationAmount?.toString(),
 
-      date: { timestampValue: { seconds: Math.floor(date.getTime() / 1000) } },
+    feesTokenId: transferParams.fees.token.id,
+    feesTokenName: transferParams.fees.token.name,
+    feesTokenSymbol: transferParams.fees.token.symbol,
+    feesTokenAmount: feesAmount,
+    feesTokenAmountUsd: transferParams.fees.inDollars,
+    feesTokenAmountRaw: transferParams.fees.amount.toString(),
 
-      // Additional info for debugging.
-      txId: { stringValue: txId ?? '' },
-      appHostedOn: { stringValue: window.location.origin },
-      amount: { stringValue: transferParams.sourceAmount.toString() },
-      currentTokenPriceUSD: { doubleValue: sourceTokenUSDValue },
-    },
+    bridgingFeeTokenId: transferParams.bridgingFee?.token.id,
+    bridgingFeeTokenName: transferParams.bridgingFee?.token.name,
+    bridgingFeeTokenSymbol: transferParams.bridgingFee?.token.symbol,
+    bridgingFeeTokenAmount: bridgingFeeAmount,
+    bridgingFeeTokenAmountUsd: transferParams.bridgingFee?.inDollars,
+    bridgingFeeAmountRaw: transferParams.bridgingFee?.amount.toString(),
+
+    senderAddress,
+    recipientAddress: transferParams.recipient,
+
+    sourceChainUid: transferParams.sourceChain.uid,
+    sourceChainId: transferParams.sourceChain.chainId,
+    sourceChainName: transferParams.sourceChain.name,
+    sourceChainNetwork: transferParams.sourceChain.network,
+
+    destinationChainUid: transferParams.destinationChain.uid,
+    destinationChainId: transferParams.destinationChain.chainId,
+    destinationChainName: transferParams.destinationChain.name,
+    destinationChainNetwork: transferParams.destinationChain.network,
+
+    txDate: date,
+    hostedOn: window.location.origin,
+    status: 'succeeded',
   }
 
-  fetch(databaseUrl, {
+  fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN,
     },
-    body: JSON.stringify(userData),
+    body: JSON.stringify(transactionData),
   }).catch(error => {
-    console.error('Error, was not able to log transaction to Firestore: ', error)
     captureException(error)
   })
 }

@@ -29,6 +29,16 @@
         "args": "after-used",
         "argsIgnorePattern": "^_"
       }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
     ]
   }
 }

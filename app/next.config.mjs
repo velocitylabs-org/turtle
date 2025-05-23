@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
-import { withSentryConfig } from '@sentry/nextjs'
 import withBundleAnalyzer from '@next/bundle-analyzer'
+import { withSentryConfig } from '@sentry/nextjs'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 const vercelDomain = process.env.NEXT_PUBLIC_VERCEL_URL

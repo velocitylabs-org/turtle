@@ -48,6 +48,9 @@ importers:
       '@velocitylabs-org/turtle-registry':
         specifier: workspace:*
         version: link:../packages/registry
+      '@velocitylabs-org/turtle-ui':
+        specifier: workspace:*
+        version: link:../packages/ui
       babel-plugin-react-compiler:
         specifier: 19.1.0-rc.1
         version: 19.1.0-rc.1

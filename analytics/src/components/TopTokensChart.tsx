@@ -1,11 +1,11 @@
 'use client'
+import { tokensById } from '@velocitylabs-org/turtle-registry'
 import React from 'react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, TooltipProps } from 'recharts'
-import formatUSD from '@/utils/format-USD'
-import { tokensById } from '@/constants'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
-import getTypeBadge from '@/utils/get-type-badge'
 import useIsMobile from '@/hooks/useMobile'
+import formatUSD from '@/utils/format-USD'
+import getTypeBadge from '@/utils/get-type-badge'
 
 const colors = [
   '#0077da',

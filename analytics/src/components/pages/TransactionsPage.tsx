@@ -1,21 +1,22 @@
 'use client'
-import React, { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Token } from '@velocitylabs-org/turtle-registry'
+import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import SmallStatBox from '@/components/SmallStatBox'
+import React, { useState } from 'react'
 import DatePicker from '@/components/DatePicker'
+import ErrorPanel from '@/components/ErrorPanel'
 import MultiSelect from '@/components/MultiSelect'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
-import { chains, chainsByUid, tokens, tokensById } from '@/constants'
+import SmallStatBox from '@/components/SmallStatBox'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { chains, tokens } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import { useQuery } from '@tanstack/react-query'
-import ErrorPanel from '@/components/ErrorPanel'
 import { txStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
-import { Token } from '@velocitylabs-org/turtle-registry'
-import getTypeBadge from '@/utils/get-type-badge'
-import getOriginBadge from '@/utils/get-origin-badge'
+import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useState<string[]>([])
@@ -29,26 +30,32 @@ export default function TransactionsPage() {
   const chainOptions = chains.map(chain => ({
     value: chain.uid,
     label: chain.name,
-    logoURI: chain.logoURI,
+    logoURI: getSrcFromLogo(chain),
   }))
 
-  const tokenSourceOptions = tokens.map((token: Token) => {
-    const logoData = getLogoAndOriginURI(token.id, sourceChainUid[0])
-    return {
-      value: token.id,
-      label: token.symbol,
-      ...logoData,
-    }
-  })
+  const tokenSourceOptions = tokens
+    .map((token: Token) => {
+      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid[0])
+      return {
+        value: token.id,
+        label: token.symbol,
+        logoURI,
+        originLogoURI,
+      }
+    })
+    .filter(token => !!token.originLogoURI)
 
-  const tokenDestinationOptions = tokens.map((token: Token) => {
-    const logoData = getLogoAndOriginURI(token.id, destinationChainUid[0])
-    return {
-      value: token.id,
-      label: token.symbol,
-      ...logoData,
-    }
-  })
+  const tokenDestinationOptions = tokens
+    .map((token: Token) => {
+      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, destinationChainUid[0])
+      return {
+        value: token.id,
+        label: token.symbol,
+        logoURI,
+        originLogoURI,
+      }
+    })
+    .filter(token => !!token.originLogoURI)
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -88,7 +95,7 @@ export default function TransactionsPage() {
       const url = `/api/transactions?${params.toString()}`
       const response = await fetch(url, {
         headers: {
-          Authorization: process.env.NEXT_PUBLIC_AUTH_KEY || '',
+          Authorization: process.env.NEXT_PUBLIC_AUTH_TOKEN || '',
         },
       })
       if (!response.ok) {
@@ -276,16 +283,15 @@ export default function TransactionsPage() {
   )
 }
 
-function getLogoAndOriginURI(tokenId: string, chainUid?: string) {
+function getLogoAndOriginURI(tokenId: string, chainUid: string) {
   const token = tokensById[tokenId]
-  const chain = chainsByUid[chainUid || '']
-
-  const originBadge = chain
-    ? getOriginBadge(token, chain)?.logoURI
-    : getTypeBadge(token.id)?.typeURI
+  const chain = chainsByUid[chainUid]
+  const tokenURI = getSrcFromLogo(token)
+  const originBadge = getOriginBadge(token, chain)
+  const originBadgeURI = originBadge && getSrcFromLogo(originBadge)
 
   return {
-    logoURI: token.logoURI,
-    originLogoURI: originBadge ?? '',
+    logoURI: tokenURI,
+    originLogoURI: originBadgeURI,
   }
 }

@@ -22,7 +22,9 @@ export const TokenLogo = ({ token, sourceChain, size = 32, className }: TokenLog
   return (
     <Tooltip content={originBadge?.text ?? token.symbol} showIcon={false}>
       <div className={cn('relative flex items-center', className)}>
-        <Icon width={size} height={size} src={logoURI} className="border-turtle-foreground" />
+        {logoURI && (
+          <Icon width={size} height={size} src={logoURI} className="border-turtle-foreground" />
+        )}
         {originBadge && (
           <Icon
             width={size / 2}
