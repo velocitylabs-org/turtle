@@ -24,8 +24,6 @@ export async function trackTransferMetrics({
   date,
 }: TransferMetric) {
   if (
-    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN ||
-    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL ||
     transferParams.environment !== Environment.Mainnet ||
     !isProduction ||
     !txId
@@ -33,7 +31,6 @@ export async function trackTransferMetrics({
     return
   }
 
-  const apiUrl = `${process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL}/api/create-transaction`
   const sourceTokenAmount = toHuman(transferParams.sourceAmount, transferParams.sourceToken)
   const feesAmount = toHuman(transferParams.fees.amount, transferParams.fees.token)
   const destinationTokenAmount = transferParams.destinationAmount
@@ -97,11 +94,10 @@ export async function trackTransferMetrics({
     status: 'succeeded',
   }
 
-  fetch(apiUrl, {
+  fetch('/api/store-transaction', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN,
     },
     body: JSON.stringify(transactionData),
   }).catch(error => {
