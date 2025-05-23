@@ -52,7 +52,8 @@ export async function getSummaryData() {
             Transaction.schema.paths.destinationChainName.path,
             Transaction.schema.paths.status.path,
           ].join(' '),
-        ),
+        )
+        .lean(),
 
       // Top 2 tokens by volume
       Transaction.aggregate([

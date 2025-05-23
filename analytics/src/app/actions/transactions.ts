@@ -15,14 +15,14 @@ type TransactionFilters = {
 }
 
 export async function getTransactionsData({
-  sourceChainUid,
-  destinationChainUid,
-  sourceTokenId,
-  destinationTokenId,
-  status,
-  startDate,
-  endDate,
-}: TransactionFilters) {
+                                            sourceChainUid,
+                                            destinationChainUid,
+                                            sourceTokenId,
+                                            destinationTokenId,
+                                            status,
+                                            startDate,
+                                            endDate,
+                                          }: TransactionFilters) {
   try {
     await dbConnect()
 
@@ -93,7 +93,8 @@ export async function getTransactionsData({
             Transaction.schema.paths.destinationChainName.path,
             Transaction.schema.paths.status.path,
           ].join(' '),
-        ),
+        )
+        .lean(),
 
       // Calculate total volume
       Transaction.aggregate([
