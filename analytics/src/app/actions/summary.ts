@@ -1,17 +1,10 @@
-import { NextResponse } from 'next/server'
+'use server'
 import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
-import validateRequest from '@/utils/validate-request'
 
-export async function GET(request: Request) {
+export async function getSummaryData() {
   try {
-    if (!validateRequest(request)) {
-      return new Response(JSON.stringify({ message: 'Forbidden' }), {
-        status: 403,
-      })
-    }
-
     await dbConnect()
 
     const [
@@ -131,7 +124,7 @@ export async function GET(request: Request) {
     const avgTransactionValue =
       successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
-    const summary = {
+    return {
       totalVolumeUsd,
       totalTransactions,
       avgTransactionValue,
@@ -140,10 +133,8 @@ export async function GET(request: Request) {
       topTokens: topTokensResult,
       dailyVolume: dailyVolumeResult,
     }
-
-    return NextResponse.json(summary)
   } catch (error) {
     captureServerError(error as Error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    throw error
   }
 }

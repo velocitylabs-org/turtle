@@ -1,6 +1,7 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
+import { getSummaryData } from '@/app/actions/summary'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import SmallStatBox from '@/components/SmallStatBox'
@@ -13,17 +14,7 @@ import formatUSD from '@/utils/format-USD'
 export default function DashboardPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
-    queryFn: async () => {
-      const response = await fetch('/api/summary', {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_AUTH_TOKEN || '',
-        },
-      })
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`)
-      }
-      return await response.json()
-    },
+    queryFn: getSummaryData
   })
 
   useShowLoadingBar(isLoading)

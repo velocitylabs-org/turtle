@@ -1,28 +1,30 @@
-import { NextResponse } from 'next/server'
+'use server'
 import Transaction from '@/models/Transaction'
+import { txStatus } from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
-import validateRequest from '@/utils/validate-request'
 
-export async function GET(request: Request) {
+type TransactionFilters = {
+  sourceChainUid?: string[]
+  destinationChainUid?: string[]
+  sourceTokenId?: string[]
+  destinationTokenId?: string[]
+  status?: txStatus | null
+  startDate?: Date
+  endDate?: Date
+}
+
+export async function getTransactionsData({
+                                            sourceChainUid,
+                                            destinationChainUid,
+                                            sourceTokenId,
+                                            destinationTokenId,
+                                            status,
+                                            startDate,
+                                            endDate,
+                                          }: TransactionFilters) {
   try {
-    if (!validateRequest(request)) {
-      return new Response(JSON.stringify({ message: 'Forbidden' }), {
-        status: 403,
-      })
-    }
-
     await dbConnect()
-    const { searchParams } = new URL(request.url)
-
-    // Parse query parameters
-    const sourceChainUid = searchParams.get('sourceChainUid')
-    const destinationChainUid = searchParams.get('destinationChainUid')
-    const sourceTokenId = searchParams.get('sourceTokenId')
-    const destinationTokenId = searchParams.get('destinationTokenId')
-    const status = searchParams.get('status')
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
 
     interface MongoQuery {
       sourceChainUid?: { $regex: RegExp }
@@ -38,27 +40,25 @@ export async function GET(request: Request) {
 
     const query: MongoQuery = {}
 
-    if (sourceChainUid) {
-      query.sourceChainUid = { $regex: new RegExp(sourceChainUid, 'i') }
+    if (sourceChainUid?.length) {
+      query.sourceChainUid = { $regex: new RegExp(sourceChainUid.join('|'), 'i') }
     }
 
-    if (destinationChainUid) {
-      query.destinationChainUid = { $regex: new RegExp(destinationChainUid, 'i') }
+    if (destinationChainUid?.length) {
+      query.destinationChainUid = { $regex: new RegExp(destinationChainUid.join('|'), 'i') }
     }
 
-    if (sourceTokenId) {
-      query.sourceTokenId = { $regex: new RegExp(sourceTokenId, 'i') }
+    if (sourceTokenId?.length) {
+      query.sourceTokenId = { $regex: new RegExp(sourceTokenId.join('|'), 'i') }
     }
 
-    if (destinationTokenId) {
-      query.destinationTokenId = { $regex: new RegExp(destinationTokenId, 'i') }
+    if (destinationTokenId?.length) {
+      query.destinationTokenId = { $regex: new RegExp(destinationTokenId.join('|'), 'i') }
     }
 
-    type ValidStatus = 'succeeded' | 'failed' | 'undefined'
     if (status) {
-      const validStatus = status as ValidStatus
-      if (['succeeded', 'failed', 'undefined'].includes(validStatus)) {
-        query.status = validStatus
+      if (['succeeded', 'failed', 'undefined'].includes(status)) {
+        query.status = status as 'succeeded' | 'failed' | 'undefined'
       }
     }
 
@@ -138,7 +138,7 @@ export async function GET(request: Request) {
       },
     )
 
-    return NextResponse.json({
+    return {
       transactions: filteredTransactions,
       summary: {
         totalVolumeUsd: totalVolumeUsd[0]?.total || 0,
@@ -147,9 +147,9 @@ export async function GET(request: Request) {
         failedCount: statusMap.failed,
         undefinedCount: statusMap.undefined,
       },
-    })
+    }
   } catch (error) {
     captureServerError(error as Error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    throw error
   }
 }
