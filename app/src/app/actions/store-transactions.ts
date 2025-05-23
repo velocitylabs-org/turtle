@@ -1,6 +1,10 @@
 'use server'
 
-export default async function storeAnalyticsTransaction(transactionData: any) {
+/**
+ * Transaction data type is defined in utils/analytics.ts
+ * Contains transfer metrics including token details, amounts, chains, and transaction status
+ */
+export default async function storeAnalyticsTransaction(data: any) {
   try {
     if (
       !process.env.ANALYTICS_DASHBOARD_AUTH_TOKEN ||
@@ -16,7 +20,7 @@ export default async function storeAnalyticsTransaction(transactionData: any) {
         'Content-Type': 'application/json',
         Authorization: process.env.ANALYTICS_DASHBOARD_AUTH_TOKEN,
       },
-      body: JSON.stringify(transactionData),
+      body: JSON.stringify(data),
     })
 
     if (!response.ok) {
