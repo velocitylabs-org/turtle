@@ -2,7 +2,7 @@
   "name": "@velocitylabs-org/turtle-widget",
   "description": "Turtle Widget – Seamless, trustless cross-chain transfers made easy.",
   "private": false,
-  "version": "0.0.5",
+  "version": "0.0.8",
   "type": "module",
   "module": "./dist/turtle-widget.js",
   "exports": {
@@ -27,8 +27,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@velocitylabs-org/turtle-registry": "workspace:*",
-    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@heroui/react": "^2.7.2",
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
@@ -72,6 +70,7 @@
     "@types/react-dom": "^19.0.3",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
+    "@velocitylabs-org/turtle-registry": "workspace:*",
     "@velocitylabs-org/turtle-eslint-config": "workspace:*",
     "@velocitylabs-org/turtle-ui": "workspace:*",
     "@vitejs/plugin-react-swc": "^3.8.0",
