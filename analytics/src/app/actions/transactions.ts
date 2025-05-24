@@ -31,7 +31,7 @@ export async function getTransactionsData({
       destinationChainUid?: { $regex: RegExp }
       sourceTokenId?: { $regex: RegExp }
       destinationTokenId?: { $regex: RegExp }
-      status?: 'succeeded' | 'failed' | 'undefined'
+      status?: txStatus
       txDate?: {
         $gte?: Date
         $lte?: Date
@@ -58,7 +58,7 @@ export async function getTransactionsData({
 
     if (status) {
       if (['succeeded', 'failed', 'undefined'].includes(status)) {
-        query.status = status as 'succeeded' | 'failed' | 'undefined'
+        query.status = status as txStatus
       }
     }
 
@@ -118,6 +118,7 @@ export async function getTransactionsData({
       succeeded: number
       failed: number
       undefined: number
+      total: number
       [key: string]: number
     }
 
@@ -126,24 +127,32 @@ export async function getTransactionsData({
       count: number
     }
 
-    // Process status counts
     const statusMap = statusCounts.reduce<StatusMap>(
       (acc, curr: StatusCount) => {
         acc[curr._id] = curr.count
+        acc.total += curr.count
         return acc
       },
       {
         succeeded: 0,
         failed: 0,
         undefined: 0,
+        total: 0,
       },
     )
 
+    // Ensure all values are serializable because actions can only return plain objects
+    const serializedTransactions = filteredTransactions.map(transaction => ({
+      ...transaction,
+      _id: transaction._id?.toString(),
+      txDate: transaction.txDate?.toISOString(),
+    }))
+
     return {
-      transactions: filteredTransactions,
+      transactions: serializedTransactions,
       summary: {
         totalVolumeUsd: totalVolumeUsd[0]?.total || 0,
-        totalTransactions: Object.values(statusMap).reduce((a: number, b: number) => a + b, 0),
+        totalTransactions: statusMap.total,
         succeededCount: statusMap.succeeded,
         failedCount: statusMap.failed,
         undefinedCount: statusMap.undefined,

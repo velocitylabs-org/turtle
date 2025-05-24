@@ -125,12 +125,19 @@ export async function getSummaryData() {
     const avgTransactionValue =
       successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
+    // Ensure all values are serializable because actions can only return plain objects
+    const serializedRecentTransactions = recentTransactions.map(transaction => ({
+      ...transaction,
+      _id: transaction._id?.toString(),
+      txDate: transaction.txDate?.toISOString(),
+    }))
+
     return {
       totalVolumeUsd,
       totalTransactions,
       avgTransactionValue,
       successRate,
-      recentTransactions,
+      recentTransactions: serializedRecentTransactions,
       topTokens: topTokensResult,
       dailyVolume: dailyVolumeResult,
     }
