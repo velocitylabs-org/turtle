@@ -118,8 +118,8 @@ export function getAccountId32(address: string): string {
  * This function returns a given address converted to its specific representation at the given chain 
  * if it's an ss58 address (substrate) or the input address if it's an ethereum address.
  */
-export function getChainConvertedAddress(address: string, chain: Chain): string {
-  if (address.length === 20)
+export function getChainSpecificAddress(address: string, chain: Chain): string {
+  if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address))
     return address
 
   return convertSs58(address, getTNode(chain.chainId, 'polkadot') as TNodeDotKsmWithRelayChains)

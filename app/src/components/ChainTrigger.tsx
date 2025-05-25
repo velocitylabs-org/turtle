@@ -5,7 +5,7 @@ import { useEnsAvatar } from 'wagmi'
 import useLookupName from '@/hooks/useLookupName'
 import { Chain } from '@/models/chain'
 import { ManualRecipientInput } from '@/models/select'
-import { getChainConvertedAddress, truncateAddress } from '@/utils/address'
+import { getChainSpecificAddress, truncateAddress } from '@/utils/address'
 import { cn } from '@/utils/cn'
 import CopyAddress from './ClipboardCopy'
 import ChainIcon from './svg/ChainIcon'
@@ -42,7 +42,7 @@ export default function ChainTrigger({
 }: ChainTriggerProps) {
   // wallet and ens
   const addressLookup = useLookupName(value?.network, walletAddress?.toLowerCase())
-  const convertedAddress = walletAddress && value ? getChainConvertedAddress(walletAddress, value) : ''
+  const convertedAddress = walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
   const  displayableAddress = truncateAddress(convertedAddress)
   const accountName = addressLookup ?? displayableAddress
 
