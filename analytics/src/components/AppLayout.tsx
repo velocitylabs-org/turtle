@@ -24,20 +24,22 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   const isMobile = useIsMobile()
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile)
   const [nowFormatted, setNowFormatted] = useState('')
-  
+
   useEffect(() => {
     // Only run on client-side after hydration
     const now = new Date()
-    setNowFormatted(`Updated ${now.toLocaleString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    })}`);
-  }, []);
-  
+    setNowFormatted(
+      `Updated ${now.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })}`,
+    )
+  }, [])
+
   const routes = [
     {
       label: 'Dashboard',
