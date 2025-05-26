@@ -4,7 +4,7 @@ import { ChevronRight, LayoutDashboard, Menu, Repeat } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
 import TurtleLogo from '@/components/TurtleLogo'
 import { Button } from '@/components/ui/button'
@@ -12,15 +12,6 @@ import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { loadingBarOpt } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
 
-const now = new Date()
-const nowFormatted = `Updated ${now.toLocaleString('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false,
-})}`
 const headerHeight = 75
 
 interface DashboardLayoutProps {
@@ -32,6 +23,21 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile)
+  const [nowFormatted, setNowFormatted] = useState('')
+  
+  useEffect(() => {
+    // Only run on client-side after hydration
+    const now = new Date()
+    setNowFormatted(`Updated ${now.toLocaleString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    })}`);
+  }, []);
+  
   const routes = [
     {
       label: 'Dashboard',
