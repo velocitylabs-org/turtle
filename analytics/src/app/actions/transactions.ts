@@ -170,7 +170,7 @@ export async function getTransactionsData({
       },
     }
   } catch (error) {
-    captureServerError(error as Error)
+    await captureServerError(error as Error)
     throw error
   }
 }

@@ -35,7 +35,7 @@ export async function GET(request: Request) {
   const origin = request.headers.get('origin')
   try {
     if (!validateRequest(request)) {
-      captureServerError(new Error('Forbidden 403'))
+      await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
 
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       origin,
     )
   } catch (error) {
-    captureServerError(error as Error)
+    await captureServerError(error as Error)
     return corsHeaders(
       NextResponse.json({ error: 'Internal Server Error' }, { status: 500 }),
       origin,

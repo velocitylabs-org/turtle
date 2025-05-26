@@ -153,7 +153,7 @@ export async function getSummaryData() {
       dailyVolume: dailyVolumeResult,
     }
   } catch (error) {
-    captureServerError(error as Error)
+    await captureServerError(error as Error)
     throw error
   }
 }
