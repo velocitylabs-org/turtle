@@ -111,7 +111,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
       enum: ['succeeded', 'failed', 'undefined'],
       required: true,
       default: 'succeeded',
-      validate: nonEmptyString
+      validate: nonEmptyString,
     },
     migrated: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source
     oldFormat: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source with an old format

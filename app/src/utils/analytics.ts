@@ -98,7 +98,7 @@ export async function trackTransferMetrics({
   } catch (error) {
     captureException(error, {
       tags: { section: 'analytics' },
-      extra: transactionData
+      extra: transactionData,
     })
     console.error('Failed to store transaction:', error)
   }
