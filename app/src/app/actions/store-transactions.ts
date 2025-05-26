@@ -34,8 +34,8 @@ export default async function storeAnalyticsTransaction(data: any) {
 
     return { success: true }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    throw new Error(`Failed to track analytics: ${errorMessage}`)
+    const errorMessage = error instanceof Error ? error.message : 'Analytics unknown error'
+    throw new Error(errorMessage)
   }
 }
 

@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     )
   } catch (e) {
     const error = e as Error
-    captureServerError(error as Error)
+    await captureServerError(error as Error)
     return corsHeaders(
       NextResponse.json({ error: `Internal Server Error ${error.message}` }, { status: 500 }),
       origin,

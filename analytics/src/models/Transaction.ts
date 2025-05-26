@@ -59,30 +59,30 @@ export interface TransactionMongooseModel extends mongoose.Document, Transaction
 
 const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
   {
-    txHashId: { type: String, unique: true, required: true, index: true },
+    txHashId: { type: String, unique: true, required: true, validate: nonEmptyString },
 
-    sourceTokenId: { type: String, required: true },
-    sourceTokenName: { type: String, required: true },
-    sourceTokenSymbol: { type: String, required: true },
+    sourceTokenId: { type: String, required: true, validate: nonEmptyString },
+    sourceTokenName: { type: String, required: true, validate: nonEmptyString },
+    sourceTokenSymbol: { type: String, required: true, validate: nonEmptyString },
     sourceTokenAmount: { type: Number, required: true }, // Amount of tokens sent from a source chain
     sourceTokenAmountUsd: { type: Number, required: true }, // Transaction amount converted to USD at the time of transaction
     sourceTokenUSDValue: { type: Number }, // USD value per token at transaction time
-    sourceTokenAmountRaw: { type: String, required: true }, // For debugging, without using to human helper
+    sourceTokenAmountRaw: { type: String, required: true, validate: nonEmptyString }, // For debugging, without using to human helper
 
-    destinationTokenId: { type: String, required: true },
-    destinationTokenName: { type: String, required: true },
-    destinationTokenSymbol: { type: String, required: true },
+    destinationTokenId: { type: String, required: true, validate: nonEmptyString },
+    destinationTokenName: { type: String, required: true, validate: nonEmptyString },
+    destinationTokenSymbol: { type: String, required: true, validate: nonEmptyString },
     destinationTokenAmount: { type: Number },
     destinationTokenAmountUsd: { type: Number },
     destinationTokenUSDValue: { type: Number },
     destinationTokenAmountRaw: { type: String },
 
-    feesTokenId: { type: String, required: true },
-    feesTokenName: { type: String, required: true },
-    feesTokenSymbol: { type: String, required: true },
+    feesTokenId: { type: String, required: true, validate: nonEmptyString },
+    feesTokenName: { type: String, required: true, validate: nonEmptyString },
+    feesTokenSymbol: { type: String, required: true, validate: nonEmptyString },
     feesTokenAmount: { type: Number, required: true },
     feesTokenAmountUsd: { type: Number, required: true },
-    feesTokenAmountRaw: { type: String, required: true },
+    feesTokenAmountRaw: { type: String, required: true, validate: nonEmptyString },
 
     bridgingFeeTokenId: { type: String },
     bridgingFeeTokenName: { type: String },
@@ -91,26 +91,27 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     bridgingFeeTokenAmountUsd: { type: Number },
     bridgingFeeAmountRaw: { type: String },
 
-    senderAddress: { type: String, required: true },
-    recipientAddress: { type: String, required: true },
+    senderAddress: { type: String, required: true, validate: nonEmptyString },
+    recipientAddress: { type: String, required: true, validate: nonEmptyString },
 
-    sourceChainUid: { type: String, required: true },
-    sourceChainId: { type: String, required: true },
-    sourceChainName: { type: String, required: true },
-    sourceChainNetwork: { type: String, required: true },
+    sourceChainUid: { type: String, required: true, validate: nonEmptyString },
+    sourceChainId: { type: String, required: true, validate: nonEmptyString },
+    sourceChainName: { type: String, required: true, validate: nonEmptyString },
+    sourceChainNetwork: { type: String, required: true, validate: nonEmptyString },
 
-    destinationChainUid: { type: String, required: true },
-    destinationChainId: { type: String, required: true },
-    destinationChainName: { type: String, required: true },
-    destinationChainNetwork: { type: String, required: true },
+    destinationChainUid: { type: String, required: true, validate: nonEmptyString },
+    destinationChainId: { type: String, required: true, validate: nonEmptyString },
+    destinationChainName: { type: String, required: true, validate: nonEmptyString },
+    destinationChainNetwork: { type: String, required: true, validate: nonEmptyString },
 
     txDate: { type: Date, required: true },
-    hostedOn: { type: String, required: true },
+    hostedOn: { type: String, required: true, validate: nonEmptyString },
     status: {
       type: String,
       enum: ['succeeded', 'failed', 'undefined'],
       required: true,
       default: 'succeeded',
+      validate: nonEmptyString
     },
     migrated: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source
     oldFormat: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source with an old format
@@ -118,6 +119,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
   { timestamps: true },
 )
 
+transactionSchema.index({ txHashId: -1 })
 transactionSchema.index({ txDate: -1 }) // For sorting by date in descending order
 transactionSchema.index({ status: 1 }) // For filtering by status
 transactionSchema.index({ sourceChainUid: 1 }) // For filtering by source chain
@@ -130,3 +132,7 @@ transactionSchema.index({ status: 1, sourceTokenId: 1 }) // For token volume by 
 
 export default mongoose.models.Transaction ||
   mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)
+
+function nonEmptyString(v: string) {
+  return v && v.length > 0
+}
