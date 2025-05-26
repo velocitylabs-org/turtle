@@ -142,9 +142,10 @@ export async function getTransactionsData({
     )
 
     // Ensure all values are serializable because actions can only return plain objects
-    const serializedTransactions = filteredTransactions.map((transaction) => ({
+    const serializedTransactions = filteredTransactions.map(transaction => ({
       _id: transaction._id?.toString() || '',
-      txDate: transaction.txDate instanceof Date ? transaction.txDate.toISOString() : transaction.txDate,
+      txDate:
+        transaction.txDate instanceof Date ? transaction.txDate.toISOString() : transaction.txDate,
       sourceTokenId: transaction.sourceTokenId,
       sourceTokenSymbol: transaction.sourceTokenSymbol,
       sourceTokenAmount: transaction.sourceTokenAmount,
