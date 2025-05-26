@@ -1,6 +1,6 @@
 {
   "name": "@velocitylabs-org/turtle-site",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,6 +14,7 @@
     "prepare": "cd .. && husky install site/.husky"
   },
   "dependencies": {
+    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@sentry/nextjs": "^7.114.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.1.9",

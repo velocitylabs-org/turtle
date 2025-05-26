@@ -1,15 +1,18 @@
 import {
+  Chain,
+  Token,
+  isSameToken,
+  TokenAmount,
+  Route,
+  TransferSDK,
+  MainnetRegistry,
+} from '@velocitylabs-org/turtle-registry'
+import {
   getSwapsDestinationChains,
   getSwapsDestinationTokens,
   getSwapsSourceChains,
   getSwapsSourceTokens,
 } from '@/lib/paraspell/swap'
-import { Chain } from '@/models/chain'
-import { TokenAmount } from '@/models/select'
-import { Token } from '@/models/token'
-import { Route, TransferSDK } from '@/registry'
-import { REGISTRY } from '@/registry/mainnet/mainnet'
-import { isSameToken } from './token'
 
 /** Deduplicates a list of items based on their uid/id property. Used for chains and tokens. */
 const deduplicate = <T extends { uid?: string; id?: string }>(items: T[]): T[] => {
@@ -19,7 +22,9 @@ const deduplicate = <T extends { uid?: string; id?: string }>(items: T[]): T[] =
 
 /** Filters all chains by available routes. */
 export const getTransferSourceChains = (): Chain[] => {
-  return REGISTRY.chains.filter(chain => REGISTRY.routes.some(route => route.from === chain.uid))
+  return MainnetRegistry.chains.filter(chain =>
+    MainnetRegistry.routes.some(route => route.from === chain.uid),
+  )
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
@@ -29,8 +34,8 @@ export const getTransferDestinationChains = (
 ): Chain[] => {
   if (!sourceChain || !token) return []
 
-  return REGISTRY.chains.filter(c =>
-    REGISTRY.routes.some(
+  return MainnetRegistry.chains.filter(c =>
+    MainnetRegistry.routes.some(
       route =>
         route.from === sourceChain.uid && route.tokens.includes(token.id) && route.to === c.uid,
     ),
@@ -44,8 +49,8 @@ export const getTransferTokens = (
 ): Token[] => {
   if (!sourceChain) return []
 
-  return REGISTRY.tokens.filter(token =>
-    REGISTRY.routes.some(
+  return MainnetRegistry.tokens.filter(token =>
+    MainnetRegistry.routes.some(
       route =>
         route.from === sourceChain.uid &&
         route.tokens.includes(token.id) &&
@@ -56,7 +61,7 @@ export const getTransferTokens = (
 
 /** It checks if a route between two chains exists */
 export const isRouteAllowed = (fromChain: Chain, toChain: Chain, tokenAmount?: TokenAmount) => {
-  const routes = REGISTRY.routes
+  const routes = MainnetRegistry.routes
 
   if (tokenAmount && tokenAmount.token) {
     const { id } = tokenAmount.token
@@ -127,7 +132,7 @@ export const getAllowedDestinationTokens = (
 }
 
 export const getRoute = (from: Chain, to: Chain): Route | undefined => {
-  return REGISTRY.routes.find(route => route.from === from.uid && route.to === to.uid)
+  return MainnetRegistry.routes.find(route => route.from === from.uid && route.to === to.uid)
 }
 
 export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {

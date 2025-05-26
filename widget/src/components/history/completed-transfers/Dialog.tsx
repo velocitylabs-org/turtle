@@ -1,8 +1,7 @@
+import { TokenLogo, Icon, cn } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import Account from '@/components/Account'
-import { Icon } from '@/components/Icon'
-import { TokenLogo } from '@/components/TokenLogo'
 import {
   Dialog,
   DialogContent,
@@ -13,7 +12,6 @@ import {
 } from '@/components/ui/dialog'
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
-import { cn } from '@/utils/helper'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
 import { colors } from '../../../../tailwind.config'
@@ -50,7 +48,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
           >
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={tx.sourceChain.logoURI}
+                src={tx.sourceChain.logoURI as string}
                 width={22}
                 height={22}
                 className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}
@@ -60,7 +58,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
             <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={tx.destChain.logoURI}
+                src={tx.destChain.logoURI as string}
                 width={22}
                 height={22}
                 className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}

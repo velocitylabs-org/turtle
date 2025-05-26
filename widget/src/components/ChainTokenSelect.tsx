@@ -1,5 +1,6 @@
 import NumberFlow from '@number-flow/react'
-import { Button, Tooltip } from '@velocitylabs-org/turtle-ui'
+import { Chain, ManualRecipientInput, Token } from '@velocitylabs-org/turtle-registry'
+import { Button, Tooltip, TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
 import { ChangeEvent, ReactNode, RefObject, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import ChevronDown from '@/assets/svg/ChevronDown'
@@ -7,16 +8,11 @@ import { Cross } from '@/assets/svg/Cross'
 import TokenIcon from '@/assets/svg/TokenIcon'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { Chain } from '@/models/chain'
-import { ManualRecipientInput } from '@/models/select'
-import { Token } from '@/models/token'
-import { cn } from '@/utils/helper'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import { colors } from '../../tailwind.config'
 import ChainTrigger from './ChainTrigger'
 import Dropdown from './Dropdown'
 import SearchBar from './SearchBar'
-import { TokenLogo } from './TokenLogo'
 import VerticalDivider from './VerticalDivider'
 
 const maxDollars = 100000000000 // 100B
@@ -366,7 +362,7 @@ const ChainList = ({
             >
               <div className="flex items-center gap-2">
                 <img
-                  src={option.logoURI}
+                  src={option.logoURI as string}
                   alt={option.name}
                   width={24}
                   height={24}
@@ -421,7 +417,11 @@ const TokenList = ({
               onClick={() => onSelect(option)}
             >
               <div className="flex items-center gap-2">
-                <TokenLogo token={option} sourceChain={sourceChainToDetermineOriginBanner} />
+                <TokenLogo
+                  token={option}
+                  sourceChain={sourceChainToDetermineOriginBanner}
+                  className="border border-turtle-foreground rounded-full"
+                />
                 <span className="text-sm">{option.symbol}</span>
               </div>
 

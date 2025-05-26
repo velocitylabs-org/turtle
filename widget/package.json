@@ -2,7 +2,7 @@
   "name": "@velocitylabs-org/turtle-widget",
   "description": "Turtle Widget – Seamless, trustless cross-chain transfers made easy.",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.8",
   "type": "module",
   "module": "./dist/turtle-widget.js",
   "exports": {
@@ -27,13 +27,11 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@velocitylabs-org/turtle-registry": "workspace:*",
-    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@heroui/react": "^2.7.2",
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
-    "@paraspell/sdk": "^8.13.2",
-    "@paraspell/xcm-router": "^8.13.2",
+    "@paraspell/sdk": "^9.2.2",
+    "@paraspell/xcm-router": "^9.2.2",
     "@polkadot/api": "^15.9.2",
     "@polkadot/extension-dapp": "^0.58.4",
     "@polkadot/extension-inject": "^0.58.8",
@@ -55,8 +53,6 @@
     "lucide-react": "^0.475.0",
     "polkadot-api": "^1.9.2",
     "postcss-nesting": "^13.0.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
@@ -74,6 +70,7 @@
     "@types/react-dom": "^19.0.3",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
+    "@velocitylabs-org/turtle-registry": "workspace:*",
     "@velocitylabs-org/turtle-eslint-config": "workspace:*",
     "@velocitylabs-org/turtle-ui": "workspace:*",
     "@vitejs/plugin-react-swc": "^3.8.0",
@@ -105,9 +102,9 @@
   "peerDependencies": {
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/util": "^13.3.1",
-    "@paraspell/sdk": "^8.11.1",
+    "@paraspell/sdk": "^8.13.1",
     "@types/node": ">=20.16.15",
-    "react": "^18.3.1 || ^19.0.0",
-    "react-dom": "^18.3.1 || ^19.0.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   }
 }

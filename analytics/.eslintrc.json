@@ -1,0 +1,44 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "prettier",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@tanstack/query/recommended"
+  ],
+  "plugins": ["tsdoc", "unused-imports", "@typescript-eslint", "@tanstack/query"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "tsdoc/syntax": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
+    "no-constant-condition": "warn",
+    "unused-imports/no-unused-imports": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-namespace": "off",
+    "import/no-namespace": "warn",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
+  }
+}

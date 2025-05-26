@@ -1,8 +1,8 @@
 import { captureException } from '@sentry/nextjs'
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
+import { Moonbeam } from '@velocitylabs-org/turtle-registry'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
-import { Moonbeam } from '@/registry/mainnet/chains'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getExplorerLink, isSameChainSwap } from './transfer'
 

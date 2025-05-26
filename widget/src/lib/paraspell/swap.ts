@@ -1,14 +1,17 @@
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
+import {
+  Chain,
+  Token,
+  isSameToken,
+  getTokenByMultilocation,
+  Hydration,
+  REGISTRY,
+  Environment,
+} from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { Chain } from '@/models/chain'
-import { Token } from '@/models/token'
-import { REGISTRY } from '@/registry'
-import { Hydration } from '@/registry/mainnet/chains'
-import { Environment } from '@/stores/environmentStore'
 import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { isSameChain } from '@/utils/routes'
-import { isSameToken, getTokenByMultilocation } from '@/utils/token'
 import { getParaSpellNode, getParaspellToken } from './transfer'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
@@ -99,12 +102,8 @@ export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
 /** returns all supported dex chains */
 export const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
 
-/** returns true if the chain is a dex chain */
-export const isDexChain = (chain: Chain) =>
-  getSupportedDexChains().some(dex => dex.uid === chain.uid)
-
 /** returns the paraspell dex for a given chain */
-export const getDex = (chain: Chain): Dex | undefined => {
+const getDex = (chain: Chain): Dex | undefined => {
   const entry = Object.entries(DEX_TO_CHAIN_MAP).find(([, c]) => c.uid === chain.uid)
   return entry?.[0] as Dex | undefined
 }

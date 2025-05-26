@@ -36,5 +36,10 @@ jobs:
           CYPRESS_INSTALL_BINARY: 0 # This disables Cypress binary installation during pnpm install
         run: pnpm i
 
+      - name: Prebuild
+        env:
+          DWELLIR_KEY: "random-dwellir-key-for-testing"
+        run: pnpm run prebuild
+
       - name: Run Jest tests
         run: pnpm run test --filter=@velocitylabs-org/turtle-app

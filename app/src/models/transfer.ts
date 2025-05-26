@@ -1,11 +1,9 @@
 import { TRouterPlan } from '@paraspell/xcm-router'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { Environment } from '@velocitylabs-org/turtle-registry'
+import { Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
 import { Direction } from '@/services/transfer'
-import { Chain } from './chain'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
 import { FromParachainTrackingResult } from './subscan'
-import { Token } from './token'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
@@ -151,14 +149,9 @@ export type TxTrackingResult =
   // Snowbridge API | Snowbridge API | Subscan API
   FromEthTrackingResult | FromAhToEthTrackingResult | FromParachainTrackingResult
 
-type onChainBaseEvents = {
+export type OnChainBaseEvents = {
   messageHash?: string
   messageId?: string
   extrinsicIndex?: string
-}
-
-export type PapiEvents = onChainBaseEvents
-
-export type PjsEvents = onChainBaseEvents & {
   isBatchCompleted?: boolean
 }
