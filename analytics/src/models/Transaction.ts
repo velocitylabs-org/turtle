@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 export type txStatus = 'succeeded' | 'failed' | 'undefined'
 
-export interface TransactionModel extends mongoose.Document {
+export interface TransactionModel {
   txHashId: string
 
   sourceTokenId: string
@@ -55,9 +55,11 @@ export interface TransactionModel extends mongoose.Document {
   oldFormat: boolean // For transactions migrated from an old analytics source with an old format
 }
 
-const transactionSchema = new mongoose.Schema<TransactionModel>(
+export interface TransactionMongooseModel extends mongoose.Document, TransactionModel {}
+
+const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
   {
-    txHashId: { type: String, unique: true, required: true },
+    txHashId: { type: String, unique: true, required: true, index: true },
 
     sourceTokenId: { type: String, required: true },
     sourceTokenName: { type: String, required: true },
@@ -127,4 +129,4 @@ transactionSchema.index({ status: 1, txDate: -1 }) // For combined status and da
 transactionSchema.index({ status: 1, sourceTokenId: 1 }) // For token volume by status queries
 
 export default mongoose.models.Transaction ||
-  mongoose.model<TransactionModel>('Transaction', transactionSchema)
+  mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)

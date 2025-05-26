@@ -31,8 +31,8 @@ export async function OPTIONS(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const origin = request.headers.get('origin')
   try {
-    const origin = request.headers.get('origin')
     if (!validateRequest(request)) {
       captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
