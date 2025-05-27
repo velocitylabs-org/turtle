@@ -57,7 +57,7 @@ The core data entity is the Transaction, which includes:
    ```
    pnpm run dev-analytics
    ```
-5. Linter and format can be run in this directory `/analytics`
+5. Linter and format can be run from the root directory
 
 ## API Endpoints
 
