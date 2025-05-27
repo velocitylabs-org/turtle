@@ -12,28 +12,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { txStatus } from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
+import { TransactionView } from '@/models/transaction-view'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
-type TransactionSmall = {
-  _id: string
-  txDate: string
-  sourceTokenId: string
-  sourceTokenSymbol: string
-  sourceTokenAmount: number
-  sourceTokenAmountUsd: number
-  sourceChainUid: string
-  sourceChainName: string
-  destinationTokenId: string
-  destinationTokenSymbol: string
-  destinationChainUid: string
-  destinationChainName: string
-  status: txStatus
-}
-
 interface RecentTransactionsTableProps {
-  transactions: TransactionSmall[]
+  transactions: TransactionView[]
   isLoading: boolean
 }
 
@@ -126,7 +111,7 @@ export default function RecentTransactionsTable({
 }
 
 interface TransactionStatusIndicatorProps {
-  status: txStatus
+  status: TxStatus
 }
 
 function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps) {

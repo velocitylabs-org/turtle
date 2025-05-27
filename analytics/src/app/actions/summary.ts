@@ -1,5 +1,6 @@
 'use server'
 import Transaction from '@/models/Transaction'
+import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
 
@@ -125,23 +126,11 @@ export async function getSummaryData() {
     const avgTransactionValue =
       successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
-    // Ensure all values are serializable because actions can only return plain objects
-    const serializedRecentTransactions = recentTransactions.map(transaction => ({
-      _id: transaction._id?.toString() || '',
-      txDate:
-        transaction.txDate instanceof Date ? transaction.txDate.toISOString() : transaction.txDate,
-      sourceTokenId: transaction.sourceTokenId,
-      sourceTokenSymbol: transaction.sourceTokenSymbol,
-      sourceTokenAmount: transaction.sourceTokenAmount,
-      sourceTokenAmountUsd: transaction.sourceTokenAmountUsd,
-      sourceChainUid: transaction.sourceChainUid,
-      sourceChainName: transaction.sourceChainName,
-      destinationTokenId: transaction.destinationTokenId,
-      destinationTokenSymbol: transaction.destinationTokenSymbol,
-      destinationChainUid: transaction.destinationChainUid,
-      destinationChainName: transaction.destinationChainName,
-      status: transaction.status,
-    }))
+    
+    // Apply the schema to each transaction
+    const serializedRecentTransactions = recentTransactions.map(transaction => 
+      transactionView.parse(transaction)
+    )
 
     return {
       totalVolumeUsd,

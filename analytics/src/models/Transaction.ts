@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-export type txStatus = 'succeeded' | 'failed' | 'undefined'
+export type TxStatus = 'succeeded' | 'failed' | 'undefined'
 
 export interface TransactionModel {
   txHashId: string
@@ -50,7 +50,7 @@ export interface TransactionModel {
 
   txDate: Date
   hostedOn: string
-  status: txStatus
+  status: TxStatus
   migrated: boolean // For transactions migrated from an old analytics source
   oldFormat: boolean // For transactions migrated from an old analytics source with an old format
 }

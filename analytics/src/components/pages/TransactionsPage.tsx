@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { chains, tokens } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import { txStatus } from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -24,7 +24,7 @@ export default function TransactionsPage() {
   const [destinationChainUid, setDestinationChainUid] = useState<string[]>([])
   const [sourceTokenId, setSourceTokenId] = useState<string[]>([])
   const [destinationTokenId, setDestinationTokenId] = useState<string[]>([])
-  const [statusFilter, setStatusFilter] = useState<null | txStatus>(null)
+  const [statusFilter, setStatusFilter] = useState<null | TxStatus>(null)
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
 

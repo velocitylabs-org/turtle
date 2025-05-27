@@ -1,6 +1,7 @@
 'use server'
 import Transaction from '@/models/Transaction'
-import { txStatus } from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
+import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
 
@@ -9,7 +10,7 @@ type TransactionFilters = {
   destinationChainUid?: string[]
   sourceTokenId?: string[]
   destinationTokenId?: string[]
-  status?: txStatus | null
+  status?: TxStatus | null
   startDate?: Date
   endDate?: Date
 }
@@ -31,7 +32,7 @@ export async function getTransactionsData({
       destinationChainUid?: { $regex: RegExp }
       sourceTokenId?: { $regex: RegExp }
       destinationTokenId?: { $regex: RegExp }
-      status?: txStatus
+      status?: TxStatus
       txDate?: {
         $gte?: Date
         $lte?: Date
@@ -58,7 +59,7 @@ export async function getTransactionsData({
 
     if (status) {
       if (['succeeded', 'failed', 'undefined'].includes(status)) {
-        query.status = status as txStatus
+        query.status = status as TxStatus
       }
     }
 
@@ -142,22 +143,7 @@ export async function getTransactionsData({
     )
 
     // Ensure all values are serializable because actions can only return plain objects
-    const serializedTransactions = filteredTransactions.map(transaction => ({
-      _id: transaction._id?.toString() || '',
-      txDate:
-        transaction.txDate instanceof Date ? transaction.txDate.toISOString() : transaction.txDate,
-      sourceTokenId: transaction.sourceTokenId,
-      sourceTokenSymbol: transaction.sourceTokenSymbol,
-      sourceTokenAmount: transaction.sourceTokenAmount,
-      sourceTokenAmountUsd: transaction.sourceTokenAmountUsd,
-      sourceChainUid: transaction.sourceChainUid,
-      sourceChainName: transaction.sourceChainName,
-      destinationTokenId: transaction.destinationTokenId,
-      destinationTokenSymbol: transaction.destinationTokenSymbol,
-      destinationChainUid: transaction.destinationChainUid,
-      destinationChainName: transaction.destinationChainName,
-      status: transaction.status,
-    }))
+    const serializedTransactions = filteredTransactions.map(transaction => transactionView.parse(transaction))
 
     return {
       transactions: serializedTransactions,
