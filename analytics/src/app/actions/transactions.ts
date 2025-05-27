@@ -143,7 +143,9 @@ export async function getTransactionsData({
     )
 
     // Ensure all values are serializable because actions can only return plain objects
-    const serializedTransactions = filteredTransactions.map(transaction => transactionView.parse(transaction))
+    const serializedTransactions = filteredTransactions.map(transaction =>
+      transactionView.parse(transaction),
+    )
 
     return {
       transactions: serializedTransactions,

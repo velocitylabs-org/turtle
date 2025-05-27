@@ -3,9 +3,10 @@ import { TxStatus } from '@/models/Transaction'
 
 const transactionViewSchema = z.object({
   _id: z.any().transform(id => id?.toString() || ''),
-  txDate: z.date().or(z.string()).transform(date =>
-    date instanceof Date ? date.toISOString() : date
-  ),
+  txDate: z
+    .date()
+    .or(z.string())
+    .transform(date => (date instanceof Date ? date.toISOString() : date)),
   sourceTokenId: z.string(),
   sourceTokenSymbol: z.string(),
   sourceTokenAmount: z.number(),

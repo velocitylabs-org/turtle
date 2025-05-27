@@ -126,10 +126,9 @@ export async function getSummaryData() {
     const avgTransactionValue =
       successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
-    
     // Apply the schema to each transaction
-    const serializedRecentTransactions = recentTransactions.map(transaction => 
-      transactionView.parse(transaction)
+    const serializedRecentTransactions = recentTransactions.map(transaction =>
+      transactionView.parse(transaction),
     )
 
     return {
