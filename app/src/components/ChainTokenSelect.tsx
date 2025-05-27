@@ -325,7 +325,9 @@ const TokenAmountInput = ({
         </div>
 
         {amountProps?.trailingAction && (
-          <div className="absolute right-0 ml-2 mr-3 bg-white">{amountProps.trailingAction}</div>
+          <Tooltip showIcon={false} content="Max transferrable balance">
+            <div className="absolute right-0 ml-2 mr-3 bg-white">{amountProps.trailingAction}</div>
+          </Tooltip>
         )}
       </div>
     </Tooltip>

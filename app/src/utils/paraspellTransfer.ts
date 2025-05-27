@@ -136,7 +136,7 @@ export const getTransferableAmount = async (
   params: TransferParams,
   wssEndpoint?: string,
 ): Promise<bigint> => {
-  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
+  const { sourceChain, destinationChain, sourceToken, recipient, sender } = params
   const sourceChainNode = getParaSpellNode(sourceChain)
   const destinationChainNode = getParaSpellNode(destinationChain)
   if (!sourceChainNode || !destinationChainNode)
@@ -147,7 +147,8 @@ export const getTransferableAmount = async (
   return await Builder(wssEndpoint)
     .from(sourceChainNode as TNodeDotKsmWithRelayChains)
     .to(destinationChainNode)
-    .currency({ ...currencyId, amount: sourceAmount })
+    // Pass a dummy amount
+    .currency({ ...currencyId, amount: 1000n })
     .address(recipient)
     .senderAddress(sender.address)
     .getTransferableAmount()
