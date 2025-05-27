@@ -8,7 +8,7 @@ import {
   TDryRunResult,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
-  verifyEdOnDestination,
+  // verifyEdOnDestination,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -113,18 +113,44 @@ export const dryRun = async (
 
 export const isExistentialDepositMetAfterTransfer = async (
   params: TransferParams,
+  wssEndpoint?: string,
 ): Promise<boolean> => {
-  const destinationChainFromId = getParaSpellNode(params.destinationChain)
-  if (!destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+  if (!sourceChainNode || !destinationChainNode)
+    throw new Error('Dry Run failed: chain id not found.')
 
-  const currencyId = getParaspellToken(params.sourceToken, destinationChainFromId)
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
-  return await verifyEdOnDestination({
-    address: params.recipient,
-    currency: { ...currencyId, amount: params.sourceAmount },
-    node: destinationChainFromId as TNodeDotKsmWithRelayChains,
-    api: params.destinationChain.rpcConnection,
-  })
+  return await Builder(wssEndpoint)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
+    .currency({ ...currencyId, amount: sourceAmount })
+    .address(recipient)
+    .senderAddress(sender.address)
+    .verifyEdOnDestination()
+}
+
+export const getTransferableAmount = async (
+  params: TransferParams,
+  wssEndpoint?: string,
+): Promise<bigint> => {
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+  if (!sourceChainNode || !destinationChainNode)
+    throw new Error('Dry Run failed: chain id not found.')
+
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
+    .currency({ ...currencyId, amount: sourceAmount })
+    .address(recipient)
+    .senderAddress(sender.address)
+    .getTransferableAmount()
 }
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
