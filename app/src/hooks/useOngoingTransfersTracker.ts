@@ -158,7 +158,11 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
           // Analytics tx are created with successful status by default, so we only update for failed ones
           if (failed) {
-            updateTransferMetrics({ txHashId: ongoing.id, status: TxStatus.Failed, environment: ongoing.environment })
+            updateTransferMetrics({
+              txHashId: ongoing.id,
+              status: TxStatus.Failed,
+              environment: ongoing.environment,
+            })
           }
         }
       } else {

@@ -8,7 +8,10 @@ interface UpdateAnalyticsTxStatusParams {
   status: TxStatus
 }
 
-export default async function updateAnalyticsTxStatus({ txHashId, status } : UpdateAnalyticsTxStatusParams) {
+export default async function updateAnalyticsTxStatus({
+  txHashId,
+  status,
+}: UpdateAnalyticsTxStatusParams) {
   try {
     if (!process.env.ANALYTICS_DASHBOARD_AUTH_TOKEN || !process.env.ANALYTICS_DASHBOARD_BASE_URL) {
       throw new Error('Analytics configuration missing')

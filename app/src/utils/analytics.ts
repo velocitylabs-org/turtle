@@ -112,7 +112,11 @@ interface TrackTransferMetricsParams {
   environment: Environment
 }
 
-export async function updateTransferMetrics({ txHashId, status, environment } : TrackTransferMetricsParams) {
+export async function updateTransferMetrics({
+  txHashId,
+  status,
+  environment,
+}: TrackTransferMetricsParams) {
   if (environment !== Environment.Mainnet || !isProduction || !txHashId || !status) {
     return
   }

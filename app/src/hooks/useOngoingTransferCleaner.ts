@@ -43,7 +43,11 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
           severity: NotificationSeverity.Warning,
           dismissible: true,
         })
-        updateTransferMetrics({ txHashId: ongoing.id, status: TxStatus.Undefined, environment: ongoing.environment })
+        updateTransferMetrics({
+          txHashId: ongoing.id,
+          status: TxStatus.Undefined,
+          environment: ongoing.environment,
+        })
         captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
       }
     })

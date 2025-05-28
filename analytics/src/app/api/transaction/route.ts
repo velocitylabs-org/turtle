@@ -87,10 +87,7 @@ export async function PATCH(request: Request) {
     const { txHashId, status } = data
     if (!txHashId || !status) {
       return corsHeaders(
-        NextResponse.json(
-          { error: 'txHashId and status are required' },
-          { status: 400 }
-        ),
+        NextResponse.json({ error: 'txHashId and status are required' }, { status: 400 }),
         origin,
       )
     }
@@ -99,15 +96,12 @@ export async function PATCH(request: Request) {
     const updatedTransaction = await Transaction.findOneAndUpdate(
       { txHashId },
       { status },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     )
 
     if (!updatedTransaction) {
       return corsHeaders(
-        NextResponse.json(
-          { error: 'Transaction not found' },
-          { status: 404 }
-        ),
+        NextResponse.json({ error: 'Transaction not found' }, { status: 404 }),
         origin,
       )
     }
@@ -117,7 +111,7 @@ export async function PATCH(request: Request) {
         {
           message: 'Transaction status updated successfully',
         },
-        { status: 200 }
+        { status: 200 },
       ),
       origin,
     )
