@@ -20,6 +20,7 @@ import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
+import { getTransferableAmount } from '@/utils/paraspellTransfer'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import useFees from './useFees'
@@ -230,25 +231,66 @@ const useTransferForm = () => {
     [setValue],
   )
 
-  const handleMaxButtonClick = useCallback(() => {
+  const handleMaxButtonClick = useCallback(async () => {
     if (
       !sourceWallet?.isConnected ||
       !sourceTokenAmount?.token ||
       balanceData === undefined ||
-      balanceData === null
+      balanceData === null ||
+      !sourceChain
     )
       return
 
-    setValue(
-      'sourceTokenAmount',
-      {
-        token: sourceTokenAmount.token,
-        // Parse as number, then format to our display standard, then parse again as number
-        amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
-      },
-      { shouldValidate: true },
-    )
-  }, [sourceWallet?.isConnected, sourceTokenAmount?.token, balanceData, setValue])
+    if (sourceChain.network === 'Polkadot') {
+      if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken)
+        return
+
+      const recipient =
+        getRecipientAddress(manualRecipient, destinationWallet) ??
+        destinationWallet?.sender?.address
+
+      const transferableAmount = await getTransferableAmount(
+        sourceChain,
+        destinationChain,
+        sourceTokenAmount.token,
+        recipient,
+        sourceWallet.sender?.address,
+      )
+
+      setValue(
+        'sourceTokenAmount',
+        {
+          token: sourceTokenAmount.token,
+          // Parse as number, then format to our display standard, then parse again as number
+          amount: Number(
+            formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer'),
+          ),
+        },
+        { shouldValidate: true },
+      )
+    } else {
+      setValue(
+        'sourceTokenAmount',
+        {
+          token: sourceTokenAmount.token,
+          // Parse as number, then format to our display standard, then parse again as number
+          amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
+        },
+        { shouldValidate: true },
+      )
+    }
+  }, [
+    sourceWallet?.isConnected,
+    sourceTokenAmount?.token,
+    balanceData,
+    setValue,
+    destinationChain,
+    destinationWallet,
+    manualRecipient,
+    sourceChain,
+    sourceToken,
+    sourceWallet?.sender,
+  ])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
     data => {
