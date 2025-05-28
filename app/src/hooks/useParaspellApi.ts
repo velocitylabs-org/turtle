@@ -1,11 +1,12 @@
 import { captureException } from '@sentry/nextjs'
-import { isSameToken } from '@velocitylabs-org/turtle-registry'
+import { AssetHub, isSameToken, PolkadotTokens } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
 import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { config } from '@/config'
+import { getBalance } from '@/hooks/useBalance'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
@@ -125,6 +126,19 @@ const useParaspellApi = () => {
     if (!isExistentialDepositMet)
       throw new Error('Transfer failed: existential deposit will not be met.')
 
+    const senderAddress = await getSenderAddress(params.sender)
+
+    if (
+      params.sourceChain.uid === AssetHub.uid &&
+      ([PolkadotTokens.USDC.id, PolkadotTokens.USDT.id] as string[]).includes(params.sourceToken.id)
+    ) {
+      console.log('*** creating transfer tx ***', params)
+      const dotBalance = await getBalance(params.sourceChain, PolkadotTokens.DOT, senderAddress)
+      const sourceToken = await getBalance(params.sourceChain, params.sourceToken, senderAddress)
+      console.log('*** dotBalance ***', dotBalance)
+      console.log('*** sourceToken ***', sourceToken)
+    }
+
     const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
 
@@ -134,7 +148,6 @@ const useParaspellApi = () => {
       account.pjsSigner.signRaw as SignRaw,
     )
 
-    const senderAddress = await getSenderAddress(params.sender)
     const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
     const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
