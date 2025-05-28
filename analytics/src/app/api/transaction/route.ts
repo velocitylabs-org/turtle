@@ -30,6 +30,7 @@ export async function OPTIONS(request: Request) {
   )
 }
 
+// Create a new transaction
 export async function POST(request: Request) {
   const origin = request.headers.get('origin')
   const data = await request.json()
@@ -65,9 +66,66 @@ export async function POST(request: Request) {
     )
   } catch (e) {
     const error = e as Error
-    await captureServerError(error as Error, data)
+    await captureServerError(error, data)
     return corsHeaders(
       NextResponse.json({ error: `Internal Server Error ${error.message}` }, { status: 500 }),
+      origin,
+    )
+  }
+}
+
+// Update transaction status
+export async function PATCH(request: Request) {
+  const origin = request.headers.get('origin')
+  const data = await request.json()
+  try {
+    if (!validateRequest(request)) {
+      await captureServerError(new Error('Forbidden 403'))
+      return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
+    }
+
+    const { txHashId, status } = data
+    if (!txHashId || !status) {
+      return corsHeaders(
+        NextResponse.json(
+          { error: 'txHashId and status are required' },
+          { status: 400 }
+        ),
+        origin,
+      )
+    }
+
+    await dbConnect()
+    const updatedTransaction = await Transaction.findOneAndUpdate(
+      { txHashId },
+      { status },
+      { new: true, runValidators: true }
+    )
+
+    if (!updatedTransaction) {
+      return corsHeaders(
+        NextResponse.json(
+          { error: 'Transaction not found' },
+          { status: 404 }
+        ),
+        origin,
+      )
+    }
+
+    return corsHeaders(
+      NextResponse.json(
+        {
+          message: 'Transaction status updated successfully',
+        },
+        { status: 200 }
+      ),
+      origin,
+    )
+  } catch (e) {
+    const error = e as Error
+    await captureServerError(error, data)
+    return corsHeaders(
+      NextResponse.json({ error: `Internal Server Error: ${error.message}` }, { status: 500 }),
       origin,
     )
   }

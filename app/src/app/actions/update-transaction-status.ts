@@ -1,6 +1,7 @@
 'use server'
 
 import { TxStatus } from '@/models/transfer'
+import { parseAnalyticsServerActionError } from '@/utils/parseAnalyticsActionError'
 
 interface UpdateAnalyticsTxStatusParams {
   txHashId: string
@@ -17,7 +18,7 @@ export default async function updateAnalyticsTxStatus({ txHashId, status } : Upd
       throw new Error('txHashId and status are required')
     }
 
-    const apiUrl = `${process.env.ANALYTICS_DASHBOARD_BASE_URL}/api/update-transaction-status`
+    const apiUrl = `${process.env.ANALYTICS_DASHBOARD_BASE_URL}/api/transaction`
     const response = await fetch(apiUrl, {
       method: 'PATCH',
       headers: {
@@ -28,7 +29,7 @@ export default async function updateAnalyticsTxStatus({ txHashId, status } : Upd
     })
 
     if (!response.ok) {
-      const errorMessage = await getErrorMessage(response)
+      const errorMessage = await parseAnalyticsServerActionError(response)
       const error = new Error(errorMessage)
       error.name = 'AnalyticsAPIError'
       throw error
@@ -39,18 +40,4 @@ export default async function updateAnalyticsTxStatus({ txHashId, status } : Upd
     const errorMessage = error instanceof Error ? error.message : 'Analytics unknown error'
     throw new Error(errorMessage)
   }
-}
-
-async function getErrorMessage(response: Response) {
-  let errorMessage = `Analytics API error: ${response.status}`
-  const responseText = await response.text()
-  if (responseText) {
-    try {
-      const errorData = JSON.parse(responseText)
-      return errorData.error || `${errorMessage} - ${responseText}`
-    } catch {
-      errorMessage += ` - ${responseText}`
-    }
-  }
-  return errorMessage
 }

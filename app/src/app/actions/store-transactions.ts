@@ -1,5 +1,7 @@
 'use server'
 
+import { parseAnalyticsServerActionError } from '@/utils/parseAnalyticsActionError'
+
 /**
  * Transaction data type is defined in utils/analytics.ts
  * Contains transfer metrics including token details, amounts, chains, and transaction status
@@ -10,7 +12,7 @@ export default async function storeAnalyticsTransaction(data: any) {
       throw new Error('Analytics configuration missing')
     }
 
-    const apiUrl = `${process.env.ANALYTICS_DASHBOARD_BASE_URL}/api/create-transaction`
+    const apiUrl = `${process.env.ANALYTICS_DASHBOARD_BASE_URL}/api/transaction`
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -26,7 +28,7 @@ export default async function storeAnalyticsTransaction(data: any) {
         return { success: true, info: 'Transaction already exists' }
       }
 
-      const errorMessage = await getErrorMessage(response)
+      const errorMessage = await parseAnalyticsServerActionError(response)
       const error = new Error(errorMessage)
       error.name = 'AnalyticsAPIError'
       throw error
@@ -37,18 +39,4 @@ export default async function storeAnalyticsTransaction(data: any) {
     const errorMessage = error instanceof Error ? error.message : 'Analytics unknown error'
     throw new Error(errorMessage)
   }
-}
-
-async function getErrorMessage(response: Response) {
-  let errorMessage = `Analytics API error: ${response.status}`
-  const responseText = await response.text()
-  if (responseText) {
-    try {
-      const errorData = JSON.parse(responseText)
-      return errorData.error || `${errorMessage} - ${responseText}`
-    } catch {
-      errorMessage += ` - ${responseText}`
-    }
-  }
-  return errorMessage
 }
