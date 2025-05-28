@@ -31,15 +31,15 @@ export async function OPTIONS(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const origin = request.headers.get('origin')
+  const data = await request.json()
   try {
-    const origin = request.headers.get('origin')
     if (!validateRequest(request)) {
+      await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
 
     await dbConnect()
-    const data = await request.json()
-
     const existingTransaction = await Transaction.findOne({ txHashId: data.txHashId })
     if (existingTransaction) {
       return corsHeaders(
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     )
   } catch (e) {
     const error = e as Error
-    captureServerError(error as Error)
+    await captureServerError(error as Error, data)
     return corsHeaders(
       NextResponse.json({ error: `Internal Server Error ${error.message}` }, { status: 500 }),
       origin,

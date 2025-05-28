@@ -86,16 +86,16 @@ const useParaspellApi = () => {
     await addToOngoingTransfers(transferToStore, () => {
       setStatus('Idle')
       params.onComplete?.()
+      trackTransferMetrics({
+        transferParams: params,
+        txId: hash,
+        senderAddress,
+        sourceTokenUSDValue,
+        destinationTokenUSDValue,
+        date,
+      })
     })
 
-    trackTransferMetrics({
-      transferParams: params,
-      txId: hash,
-      senderAddress,
-      sourceTokenUSDValue,
-      destinationTokenUSDValue,
-      date,
-    })
     setStatus('Idle')
   }
 
@@ -162,19 +162,18 @@ const useParaspellApi = () => {
           await handleTxEvent(event, transferToStore, () => {
             setStatus('Idle')
             params.onComplete?.()
+            trackTransferMetrics({
+              transferParams: params,
+              txId: event.txHash?.toString(),
+              senderAddress,
+              sourceTokenUSDValue,
+              destinationTokenUSDValue,
+              date,
+            })
           })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
-
-        trackTransferMetrics({
-          transferParams: params,
-          txId: event.txHash?.toString(),
-          senderAddress,
-          sourceTokenUSDValue,
-          destinationTokenUSDValue,
-          date,
-        })
       },
       error: callbackError => {
         if (callbackError instanceof InvalidTxError) {
@@ -239,15 +238,14 @@ const useParaspellApi = () => {
           await handleTxEvent(event, transferToStore, () => {
             setStatus('Idle')
             params.onComplete?.()
-          })
-
-          trackTransferMetrics({
-            transferParams: params,
-            txId: event.txHash?.toString(),
-            senderAddress: account.address,
-            sourceTokenUSDValue,
-            destinationTokenUSDValue,
-            date,
+            trackTransferMetrics({
+              transferParams: params,
+              txId: event.txHash?.toString(),
+              senderAddress: account.address,
+              sourceTokenUSDValue,
+              destinationTokenUSDValue,
+              date,
+            })
           })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())

@@ -5,6 +5,7 @@ import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
 import React, { useState } from 'react'
+import { getTransactionsData } from '@/app/actions/transactions'
 import DatePicker from '@/components/DatePicker'
 import ErrorPanel from '@/components/ErrorPanel'
 import MultiSelect from '@/components/MultiSelect'
@@ -14,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { chains, tokens } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import { txStatus } from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -23,7 +24,7 @@ export default function TransactionsPage() {
   const [destinationChainUid, setDestinationChainUid] = useState<string[]>([])
   const [sourceTokenId, setSourceTokenId] = useState<string[]>([])
   const [destinationTokenId, setDestinationTokenId] = useState<string[]>([])
-  const [statusFilter, setStatusFilter] = useState<null | txStatus>(null)
+  const [statusFilter, setStatusFilter] = useState<null | TxStatus>(null)
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
 
@@ -68,42 +69,16 @@ export default function TransactionsPage() {
       fromDate,
       toDate,
     ],
-    queryFn: async () => {
-      // Build query params based on filters
-      const params = new URLSearchParams()
-      if (sourceTokenId.length > 0) {
-        params.append('sourceTokenId', sourceTokenId.join(','))
-      }
-      if (sourceChainUid.length > 0) {
-        params.append('sourceChainUid', sourceChainUid.join(','))
-      }
-      if (destinationChainUid.length > 0) {
-        params.append('destinationChainUid', destinationChainUid.join(','))
-      }
-      if (destinationTokenId.length > 0) {
-        params.append('destinationTokenId', destinationTokenId.join(','))
-      }
-      if (statusFilter) {
-        params.append('status', statusFilter)
-      }
-      if (fromDate) {
-        params.append('startDate', fromDate.toISOString())
-      }
-      if (toDate) {
-        params.append('endDate', toDate.toISOString())
-      }
-      const url = `/api/transactions?${params.toString()}`
-      const response = await fetch(url, {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_AUTH_TOKEN || '',
-        },
-      })
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`)
-      }
-
-      return response.json()
-    },
+    queryFn: () =>
+      getTransactionsData({
+        sourceChainUid: sourceChainUid.length > 0 ? sourceChainUid : undefined,
+        destinationChainUid: destinationChainUid.length > 0 ? destinationChainUid : undefined,
+        sourceTokenId: sourceTokenId.length > 0 ? sourceTokenId : undefined,
+        destinationTokenId: destinationTokenId.length > 0 ? destinationTokenId : undefined,
+        status: statusFilter,
+        startDate: fromDate,
+        endDate: toDate,
+      }),
   })
   useShowLoadingBar(isLoading)
   const transactions = data?.transactions || []
