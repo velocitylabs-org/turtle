@@ -5,7 +5,9 @@ import { captureException } from '@sentry/nextjs'
 import { Environment } from '@velocitylabs-org/turtle-registry'
 
 import storeAnalyticsTransaction from '@/app/actions/store-transactions'
+import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
 import { TransferParams } from '@/hooks/useTransfer'
+import { TxStatus } from '@/models/transfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 
@@ -90,7 +92,7 @@ export async function trackTransferMetrics({
 
     txDate: date,
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
-    status: 'succeeded',
+    status: TxStatus.Succeeded.toLowerCase(),
   }
 
   try {
@@ -101,5 +103,27 @@ export async function trackTransferMetrics({
       extra: transactionData,
     })
     console.error('Failed to store transaction:', error)
+  }
+}
+
+interface TrackTransferMetricsParams {
+  txHashId: string
+  status: TxStatus
+  environment: Environment
+}
+
+export async function updateTransferMetrics({ txHashId, status, environment } : TrackTransferMetricsParams) {
+  if (environment !== Environment.Mainnet || !isProduction || !txHashId || !status) {
+    return
+  }
+
+  try {
+    await updateAnalyticsTxStatus({ txHashId, status })
+  } catch (error) {
+    captureException(error, {
+      tags: { section: 'analytics' },
+      extra: { txHashId, status },
+    })
+    console.error('Failed to update transaction:', error)
   }
 }

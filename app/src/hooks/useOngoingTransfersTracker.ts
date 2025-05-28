@@ -1,6 +1,5 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
 import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
@@ -10,6 +9,7 @@ import {
   TxTrackingResult,
 } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink } from '@/utils/transfer'
 import {
   findMatchingTransfer,
@@ -158,7 +158,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
           // Analytics tx are created with successful status by default, so we only update for failed ones
           if (failed) {
-            updateAnalyticsTxStatus({ txHashId: ongoing.id, status: TxStatus.Failed })
+            updateTransferMetrics({ txHashId: ongoing.id, status: TxStatus.Failed, environment: ongoing.environment })
           }
         }
       } else {
