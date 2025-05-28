@@ -246,15 +246,14 @@ const useTransferForm = () => {
         return
 
       const recipient =
-        getRecipientAddress(manualRecipient, destinationWallet) ??
-        destinationWallet?.sender?.address
+        getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
 
       const transferableAmount = await getTransferableAmount(
         sourceChain,
         destinationChain,
         sourceTokenAmount.token,
         recipient,
-        sourceWallet.sender?.address,
+        sourceWallet.sender.address,
       )
 
       setValue(
