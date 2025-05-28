@@ -6,6 +6,7 @@
     "logos"
   ],
   "exports": {
-    "./logos/*": "./logos/*"
+    "./logos/*": "./logos/*",
+    "./icons/*": "./icons/*"
   }
 }
