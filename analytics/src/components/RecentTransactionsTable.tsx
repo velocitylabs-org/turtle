@@ -69,7 +69,7 @@ export default function RecentTransactionsTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span>{tx.sourceTokenAmount.toLocaleString()}</span>
+                    <span>{tx.sourceTokenAmount}</span>
                     <span className="text-xs text-muted-foreground">
                       (${formatUSD(tx.sourceTokenAmountUsd)})
                     </span>

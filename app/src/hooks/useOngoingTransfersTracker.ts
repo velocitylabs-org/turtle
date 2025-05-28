@@ -1,5 +1,6 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
 import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
@@ -126,13 +127,13 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
+          const failed = foundTransfer.status === TransferStatus.Failed
 
           // Move from ongoing to done
           remove(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,
-            result:
-              foundTransfer.status === TransferStatus.Failed ? TxStatus.Failed : TxStatus.Succeeded,
+            result: failed ? TxStatus.Failed : TxStatus.Succeeded,
             sourceToken: ongoing.sourceToken,
             destinationToken: ongoing.destinationToken,
             sourceChain: ongoing.sourceChain,
@@ -154,6 +155,11 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             severity: NotificationSeverity.Success,
             dismissible: true,
           })
+
+          // Analytics tx are created with successful status by default, so we only update for failed ones
+          if (failed) {
+            updateAnalyticsTxStatus({ txHashId: ongoing.id, status: TxStatus.Failed })
+          }
         }
       } else {
         // ongoing transfer not found. This means it is more than 2 weeks old.

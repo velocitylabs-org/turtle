@@ -1,5 +1,6 @@
 import { captureException } from '@sentry/nextjs'
 import { useEffect } from 'react'
+import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getExplorerLink, startedTooLongAgo } from '@/utils/transfer'
@@ -42,6 +43,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
           severity: NotificationSeverity.Warning,
           dismissible: true,
         })
+        updateAnalyticsTxStatus({ txHashId: ongoing.id, status: TxStatus.Undefined })
         captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
       }
     })
