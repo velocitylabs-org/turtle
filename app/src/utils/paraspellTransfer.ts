@@ -133,14 +133,17 @@ export const isExistentialDepositMetAfterTransfer = async (
 }
 
 export const getTransferableAmount = async (
-  params: TransferParams,
+  sourceChain: Chain,
+  destinationChain: Chain,
+  sourceToken: Token,
+  recipient: string,
+  sender: string,
   wssEndpoint?: string,
 ): Promise<bigint> => {
-  const { sourceChain, destinationChain, sourceToken, recipient, sender } = params
   const sourceChainNode = getParaSpellNode(sourceChain)
   const destinationChainNode = getParaSpellNode(destinationChain)
   if (!sourceChainNode || !destinationChainNode)
-    throw new Error('Dry Run failed: chain id not found.')
+    throw new Error('Failed to get transferable amount: chain id not found.')
 
   const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
@@ -150,7 +153,7 @@ export const getTransferableAmount = async (
     // Pass a dummy amount
     .currency({ ...currencyId, amount: 1000n })
     .address(recipient)
-    .senderAddress(sender.address)
+    .senderAddress(sender)
     .getTransferableAmount()
 }
 
