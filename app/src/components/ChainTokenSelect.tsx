@@ -54,6 +54,7 @@ interface ChainTokenSelectProps {
     /** The placeholder to display when no amount is entered. Could be the max balance available. */
     placeholder?: string
     disabled?: boolean
+    tooltipContent?: string
   }
   walletProps?: {
     address?: string
@@ -189,6 +190,8 @@ export default function ChainTokenSelect({
         onTriggerClick={handleDropdownTriggerClick}
         triggerRef={triggerRef}
         inDollars={inDollars}
+        chainProps={chainProps.value}
+        tooltipContent={amountProps?.tooltipContent}
       />
 
       {/* Dropdown */}
@@ -243,6 +246,8 @@ interface TokenAmountInputProps {
   triggerRef: RefObject<HTMLDivElement | null>
   disabled?: boolean
   inDollars?: number
+  chainProps?: Chain | null
+  tooltipContent?: string
 }
 
 const TokenAmountInput = ({
@@ -252,6 +257,8 @@ const TokenAmountInput = ({
   onTriggerClick,
   triggerRef,
   inDollars,
+  chainProps,
+  tooltipContent,
 }: TokenAmountInputProps) => {
   const showVerticalDivider = !!amountProps?.value || !!amountProps?.placeholder
   const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -324,9 +331,16 @@ const TokenAmountInput = ({
           </div>
         </div>
 
-        {amountProps?.trailingAction && (
-          <div className="absolute right-0 ml-2 mr-3 bg-white">{amountProps.trailingAction}</div>
-        )}
+        {amountProps?.trailingAction &&
+          (chainProps?.network === 'Polkadot' ? (
+            <Tooltip showIcon={false} content={tooltipContent ?? ''}>
+              <div className="absolute right-0 ml-2 mr-3 bg-white">
+                {amountProps.trailingAction}
+              </div>
+            </Tooltip>
+          ) : (
+            <div className="absolute right-0 ml-2 mr-3 bg-white">{amountProps.trailingAction}</div>
+          ))}
       </div>
     </Tooltip>
   )

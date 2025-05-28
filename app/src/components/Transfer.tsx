@@ -217,7 +217,9 @@ export default function Transfer() {
     !sourceTokenAmount?.token ||
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
-    transferStatus !== 'Idle'
+    transferStatus !== 'Idle' ||
+    (sourceChain?.network === 'Polkadot' &&
+      (!destinationWallet?.sender || !destinationTokenAmount?.token))
 
   const shouldDisplayTxSummary =
     sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
@@ -334,6 +336,7 @@ export default function Transfer() {
                               disabled={shouldDisableMaxButton}
                             />
                           ),
+                          tooltipContent: 'Max transferrable balance',
                         }}
                         walletProps={{
                           address: sourceWallet?.sender?.address,
