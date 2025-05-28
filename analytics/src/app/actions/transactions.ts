@@ -1,35 +1,38 @@
-import { NextResponse } from 'next/server'
+'use server'
 import Transaction from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
+import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
-import validateRequest from '@/utils/validate-request'
 
-export async function GET(request: Request) {
+type TransactionFilters = {
+  sourceChainUid?: string[]
+  destinationChainUid?: string[]
+  sourceTokenId?: string[]
+  destinationTokenId?: string[]
+  status?: TxStatus | null
+  startDate?: Date
+  endDate?: Date
+}
+
+export async function getTransactionsData({
+  sourceChainUid,
+  destinationChainUid,
+  sourceTokenId,
+  destinationTokenId,
+  status,
+  startDate,
+  endDate,
+}: TransactionFilters) {
   try {
-    if (!validateRequest(request)) {
-      return new Response(JSON.stringify({ message: 'Forbidden' }), {
-        status: 403,
-      })
-    }
-
     await dbConnect()
-    const { searchParams } = new URL(request.url)
-
-    // Parse query parameters
-    const sourceChainUid = searchParams.get('sourceChainUid')
-    const destinationChainUid = searchParams.get('destinationChainUid')
-    const sourceTokenId = searchParams.get('sourceTokenId')
-    const destinationTokenId = searchParams.get('destinationTokenId')
-    const status = searchParams.get('status')
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
 
     interface MongoQuery {
       sourceChainUid?: { $regex: RegExp }
       destinationChainUid?: { $regex: RegExp }
       sourceTokenId?: { $regex: RegExp }
       destinationTokenId?: { $regex: RegExp }
-      status?: 'succeeded' | 'failed' | 'undefined'
+      status?: TxStatus
       txDate?: {
         $gte?: Date
         $lte?: Date
@@ -38,27 +41,25 @@ export async function GET(request: Request) {
 
     const query: MongoQuery = {}
 
-    if (sourceChainUid) {
-      query.sourceChainUid = { $regex: new RegExp(sourceChainUid, 'i') }
+    if (sourceChainUid?.length) {
+      query.sourceChainUid = { $regex: new RegExp(sourceChainUid.join('|'), 'i') }
     }
 
-    if (destinationChainUid) {
-      query.destinationChainUid = { $regex: new RegExp(destinationChainUid, 'i') }
+    if (destinationChainUid?.length) {
+      query.destinationChainUid = { $regex: new RegExp(destinationChainUid.join('|'), 'i') }
     }
 
-    if (sourceTokenId) {
-      query.sourceTokenId = { $regex: new RegExp(sourceTokenId, 'i') }
+    if (sourceTokenId?.length) {
+      query.sourceTokenId = { $regex: new RegExp(sourceTokenId.join('|'), 'i') }
     }
 
-    if (destinationTokenId) {
-      query.destinationTokenId = { $regex: new RegExp(destinationTokenId, 'i') }
+    if (destinationTokenId?.length) {
+      query.destinationTokenId = { $regex: new RegExp(destinationTokenId.join('|'), 'i') }
     }
 
-    type ValidStatus = 'succeeded' | 'failed' | 'undefined'
     if (status) {
-      const validStatus = status as ValidStatus
-      if (['succeeded', 'failed', 'undefined'].includes(validStatus)) {
-        query.status = validStatus
+      if (['succeeded', 'failed', 'undefined'].includes(status)) {
+        query.status = status as TxStatus
       }
     }
 
@@ -93,7 +94,8 @@ export async function GET(request: Request) {
             Transaction.schema.paths.destinationChainName.path,
             Transaction.schema.paths.status.path,
           ].join(' '),
-        ),
+        )
+        .lean(),
 
       // Calculate total volume
       Transaction.aggregate([
@@ -117,6 +119,7 @@ export async function GET(request: Request) {
       succeeded: number
       failed: number
       undefined: number
+      total: number
       [key: string]: number
     }
 
@@ -125,31 +128,37 @@ export async function GET(request: Request) {
       count: number
     }
 
-    // Process status counts
     const statusMap = statusCounts.reduce<StatusMap>(
       (acc, curr: StatusCount) => {
         acc[curr._id] = curr.count
+        acc.total += curr.count
         return acc
       },
       {
         succeeded: 0,
         failed: 0,
         undefined: 0,
+        total: 0,
       },
     )
 
-    return NextResponse.json({
-      transactions: filteredTransactions,
+    // Ensure all values are serializable because actions can only return plain objects
+    const serializedTransactions = filteredTransactions.map(transaction =>
+      transactionView.parse(transaction),
+    )
+
+    return {
+      transactions: serializedTransactions,
       summary: {
         totalVolumeUsd: totalVolumeUsd[0]?.total || 0,
-        totalTransactions: Object.values(statusMap).reduce((a: number, b: number) => a + b, 0),
+        totalTransactions: statusMap.total,
         succeededCount: statusMap.succeeded,
         failedCount: statusMap.failed,
         undefinedCount: statusMap.undefined,
       },
-    })
+    }
   } catch (error) {
-    captureServerError(error as Error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    await captureServerError(error as Error)
+    throw error
   }
 }

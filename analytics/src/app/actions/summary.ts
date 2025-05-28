@@ -1,17 +1,11 @@
-import { NextResponse } from 'next/server'
+'use server'
 import Transaction from '@/models/Transaction'
+import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
-import validateRequest from '@/utils/validate-request'
 
-export async function GET(request: Request) {
+export async function getSummaryData() {
   try {
-    if (!validateRequest(request)) {
-      return new Response(JSON.stringify({ message: 'Forbidden' }), {
-        status: 403,
-      })
-    }
-
     await dbConnect()
 
     const [
@@ -59,7 +53,8 @@ export async function GET(request: Request) {
             Transaction.schema.paths.destinationChainName.path,
             Transaction.schema.paths.status.path,
           ].join(' '),
-        ),
+        )
+        .lean(),
 
       // Top 2 tokens by volume
       Transaction.aggregate([
@@ -131,19 +126,22 @@ export async function GET(request: Request) {
     const avgTransactionValue =
       successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
-    const summary = {
+    // Apply the schema to each transaction
+    const serializedRecentTransactions = recentTransactions.map(transaction =>
+      transactionView.parse(transaction),
+    )
+
+    return {
       totalVolumeUsd,
       totalTransactions,
       avgTransactionValue,
       successRate,
-      recentTransactions,
+      recentTransactions: serializedRecentTransactions,
       topTokens: topTokensResult,
       dailyVolume: dailyVolumeResult,
     }
-
-    return NextResponse.json(summary)
   } catch (error) {
-    captureServerError(error as Error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    await captureServerError(error as Error)
+    throw error
   }
 }

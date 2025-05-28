@@ -10,7 +10,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="bg-muted/60">
-      <body>
+      {/* Suppress hydration warnings caused by browser extensions modifying <body> */}
+      <body suppressHydrationWarning>
         <AppProvider>
           <AppLayout>{children}</AppLayout>
         </AppProvider>

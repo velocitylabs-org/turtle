@@ -12,12 +12,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { TransactionModel, txStatus } from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
+import { TransactionView } from '@/models/transaction-view'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 interface RecentTransactionsTableProps {
-  transactions: TransactionModel[]
+  transactions: TransactionView[]
   isLoading: boolean
 }
 
@@ -110,7 +111,7 @@ export default function RecentTransactionsTable({
 }
 
 interface TransactionStatusIndicatorProps {
-  status: txStatus
+  status: TxStatus
 }
 
 function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps) {
