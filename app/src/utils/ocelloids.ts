@@ -4,6 +4,7 @@ import { Moonbeam } from '@velocitylabs-org/turtle-registry'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink, isSameChainSwap } from './transfer'
 
 type ResultNotification = {
@@ -229,6 +230,15 @@ const updateTransferStatus = (
     severity,
     dismissible: true,
   })
+
+  // Analytics tx are created with successful status by default, we only update for failed ones
+  if (status !== TxStatus.Succeeded) {
+    updateTransferMetrics({
+      txHashId: transfer.id,
+      status: status.toLowerCase(),
+      environment: transfer.environment,
+    })
+  }
 
   if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
     captureException(new Error(`Ocelloids tracking error:${message}`), {

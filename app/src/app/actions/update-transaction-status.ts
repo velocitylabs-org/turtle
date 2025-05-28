@@ -1,11 +1,10 @@
 'use server'
 
-import { TxStatus } from '@/models/transfer'
 import { parseAnalyticsServerActionError } from '@/utils/parseAnalyticsActionError'
 
 interface UpdateAnalyticsTxStatusParams {
   txHashId: string
-  status: TxStatus
+  status: string
 }
 
 export default async function updateAnalyticsTxStatus({

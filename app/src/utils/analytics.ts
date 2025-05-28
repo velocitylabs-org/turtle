@@ -108,8 +108,8 @@ export async function trackTransferMetrics({
 
 interface TrackTransferMetricsParams {
   txHashId: string
-  status: TxStatus
-  environment: Environment
+  status: string
+  environment: string
 }
 
 export async function updateTransferMetrics({
