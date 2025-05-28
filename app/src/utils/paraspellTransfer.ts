@@ -8,7 +8,6 @@ import {
   TDryRunResult,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
-  // verifyEdOnDestination,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
