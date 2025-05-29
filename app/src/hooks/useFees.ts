@@ -2,9 +2,6 @@ import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
-import useBalance from './useBalance'
-import useEnvironment from './useEnvironment'
-import useSnowbridgeContext from './useSnowbridgeContext'
 import useNotification from '@/hooks/useNotification'
 import { AmountInfo } from '@/models/transfer'
 
@@ -20,6 +17,9 @@ import {
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
+import useBalance from './useBalance'
+import useEnvironment from './useEnvironment'
+import useSnowbridgeContext from './useSnowbridgeContext'
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
 // When bridging from AssetHub, the basic fees already take the bridging fees into account.
