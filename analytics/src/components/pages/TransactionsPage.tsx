@@ -163,7 +163,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === TxStatus.Succeeded ? 'bg-green-100' : ''}`}
                       onClick={() =>
-                        setStatusFilter(statusFilter === TxStatus.Succeeded ? null : TxStatus.Succeeded)
+                        setStatusFilter(
+                          statusFilter === TxStatus.Succeeded ? null : TxStatus.Succeeded,
+                        )
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
@@ -173,7 +175,9 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === TxStatus.Failed ? 'bg-red-100' : ''}`}
-                      onClick={() => setStatusFilter(statusFilter === TxStatus.Failed ? null : TxStatus.Failed)}
+                      onClick={() =>
+                        setStatusFilter(statusFilter === TxStatus.Failed ? null : TxStatus.Failed)
+                      }
                     >
                       <Ban className="mr-1 h-4 w-4" />
                       <span className="hidden uppercase lg:inline">{TxStatus.Failed}</span>
@@ -183,7 +187,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === TxStatus.Undefined ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
-                        setStatusFilter(statusFilter === TxStatus.Undefined ? null : TxStatus.Undefined)
+                        setStatusFilter(
+                          statusFilter === TxStatus.Undefined ? null : TxStatus.Undefined,
+                        )
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />

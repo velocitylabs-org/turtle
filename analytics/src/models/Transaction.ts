@@ -120,9 +120,9 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
       default: TxStatus.Succeeded,
       validate: nonEmptyString,
       set: (v: string) => {
-        if (!v) return TxStatus.Succeeded;
+        if (!v) return TxStatus.Succeeded
         const lowercased = v.toLowerCase() as TxStatusType // Convert to lowercase since the frontend sends status in uppercase format
-        return txStatusOptions.includes(lowercased) ? lowercased : TxStatus.Succeeded;
+        return txStatusOptions.includes(lowercased) ? lowercased : TxStatus.Succeeded
       },
     },
     migrated: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source
