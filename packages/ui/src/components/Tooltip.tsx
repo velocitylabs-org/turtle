@@ -6,8 +6,8 @@ import {
   Trigger as TooltipTrigger,
   TooltipContent,
 } from '@radix-ui/react-tooltip'
-import clsx from 'clsx'
-import TooltipIcon from '../assets/svg/icons/tooltip-icon.svg'
+import TooltipIcon from '@velocitylabs-org/turtle-assets/icons/tooltip-icon.svg'
+import { cn } from '@/helpers'
 
 interface TooltipProps {
   showIcon?: boolean
@@ -24,6 +24,8 @@ export const Tooltip = ({
   showArrow = true,
   children,
 }: TooltipProps) => {
+  const iconSrc = typeof TooltipIcon === 'string' ? TooltipIcon : TooltipIcon.src
+
   return (
     <TooltipProvider>
       <TooltipRoot delayDuration={350}>
@@ -32,14 +34,14 @@ export const Tooltip = ({
           <TooltipPortal>
             <TooltipContent
               sideOffset={5}
-              className={clsx(
+              className={cn(
                 'z-50 flex rounded-[8px] gap-1 bg-black text-white px-[9px] py-[2px]',
                 'animate-in data-[state=delayed-open]:duration-350 data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:delay-100',
                 'data-[state=closed]:fade-out-0 data-[state=closed]:duration-300 data-[state=closed]:zoom-out-95 origin-[--radix-tooltip-content-transform-origin]',
                 className,
               )}
             >
-              {showIcon && <img src={TooltipIcon} alt="icon" className="mr-[2px]" />}
+              {showIcon && <img src={iconSrc} alt="icon" className="mr-[2px]" />}
               {content}
               {showArrow && <TooltipArrow />}
             </TooltipContent>

@@ -8,9 +8,8 @@
   "private": true,
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "copy-assets": "cp -r ./src/assets ./dist/assets",
     "compile": "tsc -b && tsc-alias",
-    "build": "npm run clean && npm run compile && npm run copy-assets",
+    "build": "npm run clean && npm run compile",
     "watch": "tsc --watch & tsc-alias -w",
     "lint": "eslint ."
   },
