@@ -142,9 +142,12 @@ transactionSchema.index({ sourceTokenAmountUsd: 1 }) // For aggregations on volu
 transactionSchema.index({ status: 1, txDate: -1 }) // For combined status and date queries
 transactionSchema.index({ status: 1, sourceTokenId: 1 }) // For token volume by status queries
 
-export default mongoose.models.Transaction ||
-  mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)
-
 function nonEmptyString(v: string) {
   return v && v.length > 0
 }
+
+const TransactionModel =
+  mongoose.models?.Transaction ||
+  mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)
+
+export default TransactionModel
