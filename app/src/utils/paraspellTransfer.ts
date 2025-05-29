@@ -4,6 +4,7 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
+  hasSupportForAsset,
   TCurrencyCore,
   TDryRunResult,
   TNodeDotKsmWithRelayChains,
@@ -188,4 +189,13 @@ export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
     : getTNode(chain.chainId, 'polkadot')
+}
+
+export function isChainSupportingToken(chain: Chain | null, token: Token | null): boolean {
+  if (!chain || !token) return false
+
+  const node = getParaSpellNode(chain)
+  if (!node) return false
+
+  return hasSupportForAsset(node, token.symbol)
 }

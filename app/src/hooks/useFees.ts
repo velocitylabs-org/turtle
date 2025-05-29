@@ -2,19 +2,24 @@ import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
+import useBalance from './useBalance'
+import useEnvironment from './useEnvironment'
+import useSnowbridgeContext from './useSnowbridgeContext'
 import useNotification from '@/hooks/useNotification'
 import { AmountInfo } from '@/models/transfer'
 
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import {
+  getNativeToken,
+  getParaSpellNode,
+  getParaspellToken,
+  isChainSupportingToken,
+} from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
-import useBalance from './useBalance'
-import useEnvironment from './useEnvironment'
-import useSnowbridgeContext from './useSnowbridgeContext'
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
 // When bridging from AssetHub, the basic fees already take the bridging fees into account.
@@ -46,10 +51,11 @@ const useFees = (
     token: sourceChain ? getNativeToken(sourceChain) : undefined,
     address: senderAddress,
   })
+
   const { balance: dotBalance } = useBalance({
     env: env,
     chain: sourceChain,
-    token: PolkadotTokens.DOT,
+    token: isChainSupportingToken(sourceChain, PolkadotTokens.DOT) ? PolkadotTokens.DOT : undefined,
     address: senderAddress,
   })
 
