@@ -11,7 +11,7 @@ import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '
 import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
-import { trackTransferMetrics } from '@/utils/analytics'
+import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { wait } from '@/utils/datetime'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
@@ -292,7 +292,7 @@ const useParaspellApi = () => {
     })
 
     monitorSwapWithTransfer(transferToStore, onchainEvents)
-    handleSameChainSwapStorage(transferToStore)
+    handleSameChainSwapStorage(transferToStore, event)
   }
 
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
@@ -303,18 +303,37 @@ const useParaspellApi = () => {
     return
   }
 
-  const handleSameChainSwapStorage = async (transfer: StoredTransfer) => {
+  const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
     if (!isSameChainSwap(transfer)) return
+
+    let txSuccessful = true
+
+    if (
+      txEvent.type === 'finalized' &&
+      !txEvent.events.some(
+        event => event.type === 'System' && event.value.type === 'ExtrinsicSuccess',
+      )
+    ) {
+      captureException(new Error('Swap failed'), { extra: { transfer } })
+      console.error('Swap failed!')
+      txSuccessful = false
+    }
 
     // Wait for 3 seconds to ensure user can read swap status update
     // before completing the transfer
     await wait(3000)
 
+    // add Notification
+    addNotification({
+      message: txSuccessful ? 'Swap successful!' : 'Swap failed!',
+      severity: txSuccessful ? NotificationSeverity.Success : NotificationSeverity.Error,
+    })
+
     const explorerLink = getExplorerLink(transfer)
     removeOngoing(transfer.id)
     addCompletedTransfer({
       id: transfer.id,
-      result: TxStatus.Succeeded,
+      result: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
       sourceToken: transfer.sourceToken,
       destinationToken: transfer.destinationToken,
       sourceChain: transfer.sourceChain,
@@ -330,6 +349,14 @@ const useParaspellApi = () => {
       date: transfer.date,
       ...(explorerLink && { explorerLink }),
     } satisfies CompletedTransfer)
+
+    if (!txSuccessful) {
+      updateTransferMetrics({
+        txHashId: transfer.id,
+        status: TxStatus.Failed,
+        environment: transfer.environment,
+      })
+    }
   }
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
