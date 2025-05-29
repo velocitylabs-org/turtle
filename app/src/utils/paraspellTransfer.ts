@@ -1,10 +1,10 @@
 import {
   Builder,
   EvmBuilder,
+  findAsset,
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  hasSupportForAsset,
   TCurrencyCore,
   TDryRunResult,
   TNodeDotKsmWithRelayChains,
@@ -197,5 +197,8 @@ export function isChainSupportingToken(chain: Chain | null, token: Token | null)
   const node = getParaSpellNode(chain)
   if (!node) return false
 
-  return hasSupportForAsset(node, token.symbol)
+  const currency = getParaspellToken(token, node)
+  const asset = findAsset(node, currency, null)
+
+  return !!asset
 }
