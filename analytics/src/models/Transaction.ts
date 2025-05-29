@@ -1,6 +1,13 @@
 import mongoose from 'mongoose'
 
-export type TxStatus = 'succeeded' | 'failed' | 'undefined'
+export enum TxStatus {
+  Succeeded = 'succeeded',
+  Failed = 'failed',
+  Undefined = 'undefined',
+}
+
+export type TxStatusType = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Undefined
+export const txStatusOptions = [TxStatus.Succeeded, TxStatus.Failed, TxStatus.Undefined] as const
 
 export interface TransactionModel {
   txHashId: string
@@ -50,7 +57,7 @@ export interface TransactionModel {
 
   txDate: Date
   hostedOn: string
-  status: TxStatus
+  status: TxStatusType
   migrated: boolean // For transactions migrated from an old analytics source
   oldFormat: boolean // For transactions migrated from an old analytics source with an old format
 }
@@ -108,10 +115,15 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     hostedOn: { type: String, required: true, validate: nonEmptyString },
     status: {
       type: String,
-      enum: ['succeeded', 'failed', 'undefined'],
+      enum: txStatusOptions,
       required: true,
-      default: 'succeeded',
+      default: TxStatus.Succeeded,
       validate: nonEmptyString,
+      set: (v: string) => {
+        if (!v) return TxStatus.Succeeded;
+        const lowercased = v.toLowerCase() as TxStatusType // Convert to lowercase since the frontend sends status in uppercase format
+        return txStatusOptions.includes(lowercased) ? lowercased : TxStatus.Succeeded;
+      },
     },
     migrated: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source
     oldFormat: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source with an old format
@@ -119,7 +131,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
   { timestamps: true },
 )
 
-transactionSchema.index({ txHashId: -1 })
+transactionSchema.index({ txHashId: -1 }) // For querying by txHashId in descending order
 transactionSchema.index({ txDate: -1 }) // For sorting by date in descending order
 transactionSchema.index({ status: 1 }) // For filtering by status
 transactionSchema.index({ sourceChainUid: 1 }) // For filtering by source chain

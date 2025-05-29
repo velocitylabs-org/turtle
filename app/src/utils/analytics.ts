@@ -92,7 +92,7 @@ export async function trackTransferMetrics({
 
     txDate: date,
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
-    status: TxStatus.Succeeded.toLowerCase(),
+    status: TxStatus.Succeeded,
   }
 
   try {

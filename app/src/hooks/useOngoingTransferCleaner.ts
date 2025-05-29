@@ -46,7 +46,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
 
         updateTransferMetrics({
           txHashId: ongoing.id,
-          status: TxStatus.Undefined.toLowerCase(),
+          status: TxStatus.Undefined,
           environment: ongoing.environment,
         })
 

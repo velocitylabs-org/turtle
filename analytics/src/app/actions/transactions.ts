@@ -1,6 +1,6 @@
 'use server'
-import Transaction from '@/models/Transaction'
-import { TxStatus } from '@/models/Transaction'
+import Transaction, { txStatusOptions } from '@/models/Transaction'
+import { TxStatusType } from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
@@ -10,7 +10,7 @@ type TransactionFilters = {
   destinationChainUid?: string[]
   sourceTokenId?: string[]
   destinationTokenId?: string[]
-  status?: TxStatus | null
+  status?: TxStatusType | null
   startDate?: Date
   endDate?: Date
 }
@@ -32,7 +32,7 @@ export async function getTransactionsData({
       destinationChainUid?: { $regex: RegExp }
       sourceTokenId?: { $regex: RegExp }
       destinationTokenId?: { $regex: RegExp }
-      status?: TxStatus
+      status?: TxStatusType
       txDate?: {
         $gte?: Date
         $lte?: Date
@@ -58,8 +58,8 @@ export async function getTransactionsData({
     }
 
     if (status) {
-      if (['succeeded', 'failed', 'undefined'].includes(status)) {
-        query.status = status as TxStatus
+      if (txStatusOptions.includes(status)) {
+        query.status = status as TxStatusType
       }
     }
 

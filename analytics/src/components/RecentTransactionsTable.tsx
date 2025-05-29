@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { TxStatus } from '@/models/Transaction'
+import { TxStatus, TxStatusType } from '@/models/Transaction'
 import { TransactionView } from '@/models/transaction-view'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
@@ -111,30 +111,30 @@ export default function RecentTransactionsTable({
 }
 
 interface TransactionStatusIndicatorProps {
-  status: TxStatus
+  status: TxStatusType
 }
 
 function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps) {
   switch (status) {
-    case 'succeeded':
+    case TxStatus.Succeeded:
       return (
         <div className="flex flex-col items-center">
           <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-          <span className="text-xs">Succeeded</span>
+          <span className="text-xs capitalize">{TxStatus.Succeeded}</span>
         </div>
       )
-    case 'failed':
+    case TxStatus.Failed:
       return (
         <div className="flex flex-col items-center">
           <Ban className="mr-1 h-4 w-4 text-red-500" />
-          <span className="text-xs">Failed</span>
+          <span className="text-xs capitalize">{TxStatus.Failed}</span>
         </div>
       )
-    case 'undefined':
+    case TxStatus.Undefined:
       return (
         <div className="flex flex-col items-center">
           <CircleHelp className="mr-1 h-4 w-4 text-yellow-500" />
-          <span className="text-xs">Undefined</span>
+          <span className="text-xs capitalize">{TxStatus.Undefined}</span>
         </div>
       )
     default:

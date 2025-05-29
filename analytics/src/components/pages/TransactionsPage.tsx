@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { chains, tokens } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import { TxStatus } from '@/models/Transaction'
+import { TxStatus, TxStatusType } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -24,7 +24,7 @@ export default function TransactionsPage() {
   const [destinationChainUid, setDestinationChainUid] = useState<string[]>([])
   const [sourceTokenId, setSourceTokenId] = useState<string[]>([])
   const [destinationTokenId, setDestinationTokenId] = useState<string[]>([])
-  const [statusFilter, setStatusFilter] = useState<null | TxStatus>(null)
+  const [statusFilter, setStatusFilter] = useState<null | TxStatusType>(null)
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
   const [toDate, setToDate] = useState<Date | undefined>(undefined)
 
@@ -161,33 +161,33 @@ export default function TransactionsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
+                      className={`flex-1 ${statusFilter === TxStatus.Succeeded ? 'bg-green-100' : ''}`}
                       onClick={() =>
-                        setStatusFilter(statusFilter === 'succeeded' ? null : 'succeeded')
+                        setStatusFilter(statusFilter === TxStatus.Succeeded ? null : TxStatus.Succeeded)
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
-                      <span className="hidden lg:inline">Succeeded</span>
+                      <span className="hidden uppercase lg:inline">{TxStatus.Succeeded}</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
-                      onClick={() => setStatusFilter(statusFilter === 'failed' ? null : 'failed')}
+                      className={`flex-1 ${statusFilter === TxStatus.Failed ? 'bg-red-100' : ''}`}
+                      onClick={() => setStatusFilter(statusFilter === TxStatus.Failed ? null : TxStatus.Failed)}
                     >
                       <Ban className="mr-1 h-4 w-4" />
-                      <span className="hidden lg:inline">Failed</span>
+                      <span className="hidden uppercase lg:inline">{TxStatus.Failed}</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
+                      className={`flex-1 ${statusFilter === TxStatus.Undefined ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
-                        setStatusFilter(statusFilter === 'undefined' ? null : 'undefined')
+                        setStatusFilter(statusFilter === TxStatus.Undefined ? null : TxStatus.Undefined)
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
-                      <span className="hidden lg:inline">Undefined</span>
+                      <span className="hidden uppercase lg:inline">{TxStatus.Undefined}</span>
                     </Button>
                   </div>
                 </div>

@@ -160,7 +160,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
           if (failed) {
             updateTransferMetrics({
               txHashId: ongoing.id,
-              status: TxStatus.Failed.toString(),
+              status: TxStatus.Failed,
               environment: ongoing.environment,
             })
           }

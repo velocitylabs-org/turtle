@@ -235,7 +235,7 @@ const updateTransferStatus = (
   if (status !== TxStatus.Succeeded) {
     updateTransferMetrics({
       txHashId: transfer.id,
-      status: status.toLowerCase(),
+      status: status,
       environment: transfer.environment,
     })
   }
