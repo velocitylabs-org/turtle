@@ -191,6 +191,13 @@ export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
     : getTNode(chain.chainId, 'polkadot')
 }
 
+/**
+ * Check if a chain supports a token.
+ *
+ * @param chain - The chain to check.
+ * @param token - The token that should be supported.
+ * @returns - A boolean indicating if the chain supports the token.
+ */
 export function isChainSupportingToken(chain: Chain | null, token: Token | null): boolean {
   if (!chain || !token) return false
 
