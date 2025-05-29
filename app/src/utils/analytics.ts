@@ -1,7 +1,10 @@
+'use client'
+
 import { captureException } from '@sentry/nextjs'
 
 import { Environment } from '@velocitylabs-org/turtle-registry'
 
+import storeAnalyticsTransaction from '@/app/actions/store-transactions'
 import { TransferParams } from '@/hooks/useTransfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
@@ -23,17 +26,10 @@ export async function trackTransferMetrics({
   destinationTokenUSDValue,
   date,
 }: TransferMetric) {
-  if (
-    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN ||
-    !process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL ||
-    transferParams.environment !== Environment.Mainnet ||
-    !isProduction ||
-    !txId
-  ) {
+  if (transferParams.environment !== Environment.Mainnet || !isProduction || !txId) {
     return
   }
 
-  const apiUrl = `${process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_BASE_URL}/api/create-transaction`
   const sourceTokenAmount = toHuman(transferParams.sourceAmount, transferParams.sourceToken)
   const feesAmount = toHuman(transferParams.fees.amount, transferParams.fees.token)
   const destinationTokenAmount = transferParams.destinationAmount
@@ -93,18 +89,17 @@ export async function trackTransferMetrics({
     destinationChainNetwork: transferParams.destinationChain.network,
 
     txDate: date,
-    hostedOn: window.location.origin,
+    hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
     status: 'succeeded',
   }
 
-  fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: process.env.NEXT_PUBLIC_ANALYTICS_DASHBOARD_AUTH_TOKEN,
-    },
-    body: JSON.stringify(transactionData),
-  }).catch(error => {
-    captureException(error)
-  })
+  try {
+    await storeAnalyticsTransaction(transactionData)
+  } catch (error) {
+    captureException(error, {
+      tags: { section: 'analytics' },
+      extra: transactionData,
+    })
+    console.error('Failed to store transaction:', error)
+  }
 }

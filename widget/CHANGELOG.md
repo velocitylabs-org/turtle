@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.9
+
+### Patch Changes
+
+- d6b3931: Update PS SDK to fix Dryrun
+
 ## 0.0.8
 
 ### Patch Changes

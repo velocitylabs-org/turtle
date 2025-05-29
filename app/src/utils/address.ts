@@ -114,7 +114,7 @@ export function getAccountId32(address: string): string {
 
 /**
  * In Polkadot, a wallet address gets a chain-specific representation, unlike what happens on Ethereum or EVM-based chains.
- * This function returns a given address converted to its specific representation at the given chain 
+ * This function returns a given address converted to its specific representation at the given chain
  * if it's an ss58 address (substrate) or the input address if it's an ethereum address.
  */
 export function getChainSpecificAddress(address: string, chain: Chain): string {

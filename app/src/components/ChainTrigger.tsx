@@ -40,8 +40,9 @@ export default function ChainTrigger({
 }: ChainTriggerProps) {
   // wallet and ens
   const addressLookup = useLookupName(value?.network, walletAddress?.toLowerCase())
-  const convertedAddress = walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
-  const  displayableAddress = truncateAddress(convertedAddress)
+  const convertedAddress =
+    walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
+  const displayableAddress = truncateAddress(convertedAddress)
   const accountName = addressLookup ?? displayableAddress
 
   const { data: ensAvatar } = useEnsAvatar({
