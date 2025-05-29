@@ -5,7 +5,7 @@ import { ChangeEvent, ReactNode, RefObject, useCallback } from 'react'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
 import useLookupName from '@/hooks/useLookupName'
-import { truncateAddress } from '@/utils/address'
+import { getChainSpecificAddress, truncateAddress } from '@/utils/address'
 import CopyAddress from './ClipboardCopy'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
@@ -40,8 +40,11 @@ export default function ChainTrigger({
 }: ChainTriggerProps) {
   // wallet and ens
   const addressLookup = useLookupName(value?.network, walletAddress?.toLowerCase())
-  const walletAddressShortened = walletAddress ? truncateAddress(walletAddress, 4, 4) : ''
-  const accountName = addressLookup ? addressLookup : walletAddressShortened
+  const convertedAddress =
+    walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
+  const displayableAddress = truncateAddress(convertedAddress)
+  const accountName = addressLookup ?? displayableAddress
+
   const { data: ensAvatar } = useEnsAvatar({
     name: normalize(addressLookup || '') || undefined,
   })
@@ -121,7 +124,7 @@ export default function ChainTrigger({
           )}
 
           {shouldShowConnectedAccount && (
-            <CopyAddress content={accountName} address={walletAddress ?? ''} showIcon={false} />
+            <CopyAddress content={accountName} address={convertedAddress} showIcon={false} />
           )}
 
           {/* Manual Address Input */}
