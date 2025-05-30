@@ -8,7 +8,12 @@ import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import {
+  getNativeToken,
+  getParaSpellNode,
+  getParaspellToken,
+  isChainSupportingToken,
+} from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
@@ -46,10 +51,11 @@ const useFees = (
     token: sourceChain ? getNativeToken(sourceChain) : undefined,
     address: senderAddress,
   })
+
   const { balance: dotBalance } = useBalance({
     env: env,
     chain: sourceChain,
-    token: PolkadotTokens.DOT,
+    token: isChainSupportingToken(sourceChain, PolkadotTokens.DOT) ? PolkadotTokens.DOT : undefined,
     address: senderAddress,
   })
 

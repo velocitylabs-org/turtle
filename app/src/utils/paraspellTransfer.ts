@@ -1,6 +1,7 @@
 import {
   Builder,
   EvmBuilder,
+  findAsset,
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
@@ -188,4 +189,23 @@ export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
     : getTNode(chain.chainId, 'polkadot')
+}
+
+/**
+ * Check if a chain supports a token.
+ *
+ * @param chain - The chain to check.
+ * @param token - The token that should be supported.
+ * @returns - A boolean indicating if the chain supports the token.
+ */
+export function isChainSupportingToken(chain: Chain | null, token: Token | null): boolean {
+  if (!chain || !token) return false
+
+  const node = getParaSpellNode(chain)
+  if (!node) return false
+
+  const currency = getParaspellToken(token, node)
+  const asset = findAsset(node, currency, null)
+
+  return !!asset
 }
