@@ -65,10 +65,16 @@ export async function POST(request: Request) {
       origin,
     )
   } catch (e) {
-    const error = e as Error
+    const error = e instanceof Error ? e : new Error(String(e))
     await captureServerError(error, data)
     return corsHeaders(
-      NextResponse.json({ error: `Internal Server Error ${error.message}` }, { status: 500 }),
+      NextResponse.json(
+        {
+          error: 'Internal Server Error',
+          message: error.message,
+        },
+        { status: 500 },
+      ),
       origin,
     )
   }
@@ -116,10 +122,16 @@ export async function PATCH(request: Request) {
       origin,
     )
   } catch (e) {
-    const error = e as Error
+    const error = e instanceof Error ? e : new Error(String(e))
     await captureServerError(error, data)
     return corsHeaders(
-      NextResponse.json({ error: `Internal Server Error: ${error.message}` }, { status: 500 }),
+      NextResponse.json(
+        {
+          error: 'Internal Server Error',
+          message: error.message,
+        },
+        { status: 500 },
+      ),
       origin,
     )
   }

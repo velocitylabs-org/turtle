@@ -157,8 +157,9 @@ export async function getTransactionsData({
         undefinedCount: statusMap.undefined,
       },
     }
-  } catch (error) {
-    await captureServerError(error as Error)
+  } catch (e) {
+    const error = e instanceof Error ? e : new Error(String(e))
+    await captureServerError(error)
     throw error
   }
 }
