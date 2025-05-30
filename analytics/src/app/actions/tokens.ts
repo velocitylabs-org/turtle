@@ -6,7 +6,6 @@ import dbConnect from '@/utils/db-connect'
 export async function getTokensData() {
   try {
     await dbConnect()
-
     const tokensData = await Transaction.aggregate([
       {
         $match: {
