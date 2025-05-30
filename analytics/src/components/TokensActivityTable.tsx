@@ -35,7 +35,6 @@ export default function TokensActivityTable({
   const [sortColumn, setSortColumn] = useState<SortColumn>('totalVolume')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
-
   const tokens = React.useMemo(() => {
     if (isLoading || initialTokens.length === 0) return initialTokens
 
@@ -100,31 +99,29 @@ export default function TokensActivityTable({
             </TableRow>
           ) : (
             tokens.map((item, i) => {
-              const token = tokensById[item.tokenId];
-              const { logoURI, typeURI } = getTypeBadge(item.tokenId);
+              const token = tokensById[item.tokenId]
+              const { logoURI, typeURI } = getTypeBadge(item.tokenId)
 
               return (
                 <TableRow key={`${item.tokenId}-${i}`}>
                   <TableCell>
                     <div className="inline-flex items-center">
-                      <TokenAndOriginLogos tokenURI={logoURI as string} originURI={typeURI as string} size={28} />
+                      <TokenAndOriginLogos
+                        tokenURI={logoURI as string}
+                        originURI={typeURI as string}
+                        size={28}
+                      />
                       <div className="ml-2 flex flex-col">
                         <span className="font-medium">{token?.symbol || 'Unknown Token'}</span>
                         <span className="text-xs text-muted-foreground">{token?.name || ''}</span>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    {token.origin.type}
-                  </TableCell>
-                  <TableCell>
-                    {formatUSD(item.totalVolume)}
-                  </TableCell>
-                  <TableCell>
-                    {item.totalTransactions}
-                  </TableCell>
+                  <TableCell>{token.origin.type}</TableCell>
+                  <TableCell>{formatUSD(item.totalVolume)}</TableCell>
+                  <TableCell>{item.totalTransactions}</TableCell>
                 </TableRow>
-              );
+              )
             })
           )}
         </TableBody>
@@ -132,7 +129,6 @@ export default function TokensActivityTable({
     </div>
   )
 }
-
 
 interface SortableColumnHeaderProps {
   column: SortColumn
@@ -147,21 +143,19 @@ const SortableColumnHeader = ({
   label,
   currentSortColumn,
   currentSortDirection,
-  onSort
+  onSort,
 }: SortableColumnHeaderProps) => (
   <span className="relative">
-    <button
-      className="font-medium hover:text-primary pr-3"
-      onClick={() => onSort(column)}
-    >
+    <button className="pr-3 font-medium hover:text-primary" onClick={() => onSort(column)}>
       {label}
     </button>
     {currentSortColumn === column && (
       <span className="absolute right-[-15px]" onClick={() => onSort(column)} role="button">
-        {currentSortDirection === 'asc'
-          ? <ChevronUp className="h-5 w-5 text-primary" />
-          : <ChevronDown className="h-5 w-5 text-primary" />
-        }
+        {currentSortDirection === 'asc' ? (
+          <ChevronUp className="h-5 w-5 text-primary" />
+        ) : (
+          <ChevronDown className="h-5 w-5 text-primary" />
+        )}
       </span>
     )}
   </span>

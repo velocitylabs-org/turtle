@@ -26,10 +26,7 @@ export default function TokensPage() {
           <CardDescription>Ranked by volume and transaction count</CardDescription>
         </CardHeader>
         <CardContent>
-          <TokensActivityTable
-            tokens={data?.tokens || []}
-            isLoading={isLoading}
-          />
+          <TokensActivityTable tokens={data?.tokens || []} isLoading={isLoading} />
         </CardContent>
       </Card>
     </div>
