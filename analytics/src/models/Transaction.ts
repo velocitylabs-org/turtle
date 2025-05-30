@@ -1,13 +1,11 @@
 import mongoose from 'mongoose'
 
-export enum TxStatus {
-  Succeeded = 'succeeded',
-  Failed = 'failed',
-  Undefined = 'undefined',
-}
-
-export type TxStatusType = TxStatus.Succeeded | TxStatus.Failed | TxStatus.Undefined
-export const txStatusOptions = [TxStatus.Succeeded, TxStatus.Failed, TxStatus.Undefined] as const
+export type TxStatus = 'succeeded' | 'failed' | 'undefined'
+export const txStatusOptions = [
+  'succeeded',
+  'failed',
+  'undefined',
+] as const satisfies readonly TxStatus[]
 
 export interface TransactionModel {
   txHashId: string
@@ -57,7 +55,7 @@ export interface TransactionModel {
 
   txDate: Date
   hostedOn: string
-  status: TxStatusType
+  status: TxStatus
   migrated: boolean // For transactions migrated from an old analytics source
   oldFormat: boolean // For transactions migrated from an old analytics source with an old format
 }
@@ -117,12 +115,12 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
       type: String,
       enum: txStatusOptions,
       required: true,
-      default: TxStatus.Succeeded,
+      default: 'succeeded',
       validate: nonEmptyString,
       set: (v: string) => {
-        if (!v) return TxStatus.Succeeded
-        const lowercased = v.toLowerCase() as TxStatusType // Convert to lowercase since the frontend sends status in uppercase format
-        return txStatusOptions.includes(lowercased) ? lowercased : TxStatus.Succeeded
+        if (!v) return 'succeeded'
+        const lowercased = v.toLowerCase() as TxStatus // Convert to lowercase since the frontend sends status in uppercase format
+        return txStatusOptions.includes(lowercased) ? lowercased : 'succeeded'
       },
     },
     migrated: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source
