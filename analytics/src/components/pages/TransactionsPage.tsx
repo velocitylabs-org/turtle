@@ -167,7 +167,7 @@ export default function TransactionsPage() {
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
-                      <span className="hidden uppercase lg:inline">succeeded</span>
+                      <span className="hidden capitalize lg:inline">succeeded</span>
                     </Button>
                     <Button
                       variant="outline"
@@ -176,7 +176,7 @@ export default function TransactionsPage() {
                       onClick={() => setStatusFilter(statusFilter === 'failed' ? null : 'failed')}
                     >
                       <Ban className="mr-1 h-4 w-4" />
-                      <span className="hidden uppercase lg:inline">failed</span>
+                      <span className="hidden capitalize lg:inline">failed</span>
                     </Button>
                     <Button
                       variant="outline"
@@ -187,7 +187,7 @@ export default function TransactionsPage() {
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
-                      <span className="hidden uppercase lg:inline">undefined</span>
+                      <span className="hidden capitalize lg:inline">undefined</span>
                     </Button>
                   </div>
                 </div>
