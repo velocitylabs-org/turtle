@@ -11,7 +11,7 @@ import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '
 import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
-import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
+import { trackTransferMetrics } from '@/utils/analytics'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import {
@@ -341,14 +341,6 @@ const useParaspellApi = () => {
       date: transfer.date,
       ...(explorerLink && { explorerLink }),
     } satisfies CompletedTransfer)
-
-    if (!txSuccessful) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: TxStatus.Failed,
-        environment: transfer.environment,
-      })
-    }
   }
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
