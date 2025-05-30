@@ -118,7 +118,7 @@ export default function TokensActivityTable({
                     </div>
                   </TableCell>
                   <TableCell>{token.origin.type}</TableCell>
-                  <TableCell>{formatUSD(item.totalVolume)}</TableCell>
+                  <TableCell>${formatUSD(item.totalVolume)}</TableCell>
                   <TableCell>{item.totalTransactions}</TableCell>
                 </TableRow>
               )
