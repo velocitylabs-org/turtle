@@ -9,6 +9,7 @@ import {
   TxTrackingResult,
 } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink } from '@/utils/transfer'
 import {
   findMatchingTransfer,
@@ -126,13 +127,13 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
         if (isCompletedTransfer(foundTransfer)) {
           const explorerLink = getExplorerLink(ongoing)
+          const failed = foundTransfer.status === TransferStatus.Failed
 
           // Move from ongoing to done
           remove(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,
-            result:
-              foundTransfer.status === TransferStatus.Failed ? TxStatus.Failed : TxStatus.Succeeded,
+            result: failed ? TxStatus.Failed : TxStatus.Succeeded,
             sourceToken: ongoing.sourceToken,
             destinationToken: ongoing.destinationToken,
             sourceChain: ongoing.sourceChain,
@@ -154,6 +155,15 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             severity: NotificationSeverity.Success,
             dismissible: true,
           })
+
+          // Analytics tx are created with successful status by default, we only update for failed ones
+          if (failed) {
+            updateTransferMetrics({
+              txHashId: ongoing.id,
+              status: TxStatus.Failed,
+              environment: ongoing.environment,
+            })
+          }
         }
       } else {
         // ongoing transfer not found. This means it is more than 2 weeks old.

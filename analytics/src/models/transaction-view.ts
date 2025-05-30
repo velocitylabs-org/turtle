@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { TxStatus } from '@/models/Transaction'
+import { txStatusOptions, TxStatus } from '@/models/Transaction'
 
 const transactionViewSchema = z.object({
   _id: z.any().transform(id => id?.toString() || ''),
@@ -17,7 +17,7 @@ const transactionViewSchema = z.object({
   destinationTokenSymbol: z.string(),
   destinationChainUid: z.string(),
   destinationChainName: z.string(),
-  status: z.enum(['pending', 'succeeded', 'failed']) as z.ZodType<TxStatus>,
+  status: z.enum(txStatusOptions) as z.ZodType<TxStatus>,
 })
 
 export type TransactionView = z.infer<typeof transactionViewSchema>

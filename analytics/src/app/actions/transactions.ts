@@ -1,5 +1,5 @@
 'use server'
-import Transaction from '@/models/Transaction'
+import Transaction, { txStatusOptions } from '@/models/Transaction'
 import { TxStatus } from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
@@ -58,7 +58,7 @@ export async function getTransactionsData({
     }
 
     if (status) {
-      if (['succeeded', 'failed', 'undefined'].includes(status)) {
+      if (txStatusOptions.includes(status)) {
         query.status = status as TxStatus
       }
     }
@@ -157,8 +157,9 @@ export async function getTransactionsData({
         undefinedCount: statusMap.undefined,
       },
     }
-  } catch (error) {
-    await captureServerError(error as Error)
+  } catch (e) {
+    const error = e instanceof Error ? e : new Error(String(e))
+    await captureServerError(error)
     throw error
   }
 }
