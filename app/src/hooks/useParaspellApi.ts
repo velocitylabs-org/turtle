@@ -12,7 +12,6 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
-import { wait } from '@/utils/datetime'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import {
@@ -306,26 +305,19 @@ const useParaspellApi = () => {
   const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
     if (!isSameChainSwap(transfer)) return
 
-    let txSuccessful = true
-
-    if (
+    const txSuccessful =
       txEvent.type === 'finalized' &&
-      !txEvent.events.some(
+      txEvent.events.some(
         event => event.type === 'System' && event.value.type === 'ExtrinsicSuccess',
       )
-    ) {
+
+    if (!txSuccessful) {
       captureException(new Error('Swap failed'), { extra: { transfer } })
       console.error('Swap failed!')
-      txSuccessful = false
     }
 
-    // Wait for 3 seconds to ensure user can read swap status update
-    // before completing the transfer
-    await wait(3000)
-
-    // add Notification
     addNotification({
-      message: txSuccessful ? 'Swap successful!' : 'Swap failed!',
+      message: txSuccessful ? 'Swap succeeded!' : 'Swap failed!',
       severity: txSuccessful ? NotificationSeverity.Success : NotificationSeverity.Error,
     })
 
