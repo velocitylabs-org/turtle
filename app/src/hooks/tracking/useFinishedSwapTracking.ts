@@ -5,7 +5,7 @@ import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
-import { getExplorerLink, isSwap } from '@/utils/transfer'
+import { getExplorerLink, isSameChainSwap } from '@/utils/transfer'
 
 /**
  * Hook to handle swaps tracking. The swap's finalized status (success or failure)
@@ -19,7 +19,7 @@ const useFinishedSwapTracking = (ongoingTransfers: StoredTransfer[]) => {
 
   useEffect(() => {
     const finalizedSwaps = ongoingTransfers.filter(
-      transfer => isSwap(transfer) && !!transfer.swapInformation?.finishedStatus,
+      transfer => isSameChainSwap(transfer) && !!transfer.swapInformation?.finishedStatus,
     )
 
     finalizedSwaps.forEach(transfer => {

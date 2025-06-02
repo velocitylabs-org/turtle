@@ -165,7 +165,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(params.sender, error, setStatus, event.txHash.toString(), params.environment)
         }
       },
       error: callbackError => {
@@ -241,7 +241,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(params.sender, error, setStatus, event.txHash.toString(), params.environment)
         }
       },
       error: callbackError => {
@@ -288,28 +288,10 @@ const useParaspellApi = () => {
     handleSameChainSwapTrackingStatus(transferToStorePayload, event)
   }
 
-  const monitorSwapWithTransfer = async (
-    transfer: StoredTransfer,
-    eventsData: OnChainBaseEvents,
-  ) => {
-    // Swap + XCM Transfer are handled with the BatchAll extrinsic from utility pallet
-    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted) {
-      await updateTransferMetrics({
-        txHashId: transfer.id,
-        status: TxStatus.Failed,
-        environment: transfer.environment,
-      })
-      addOrUpdate({
-        ...transfer,
-        swapInformation: {
-          ...(transfer.swapInformation || {}),
-          finishedStatus: 'failed', // Swap part failed, so we handle as a failed swap instead of a swap with transfer failed
-        },
-      })
-      const msg = 'Swap transfer did not completed - Batch failed'
-      captureException(new Error(msg), { extra: { transfer } })
-      console.error(msg)
-    }
+  const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
+    // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
+    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
+      throw new Error('Swap transfer did not completed - Batch failed')
 
     return
   }
@@ -384,6 +366,7 @@ const useParaspellApi = () => {
     e: unknown,
     setStatus: (status: Status) => void,
     txId?: string,
+    environment?: string
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
@@ -397,6 +380,14 @@ const useParaspellApi = () => {
       message,
       severity: NotificationSeverity.Error,
     })
+
+    if (txId && environment) {
+      updateTransferMetrics({
+        txHashId: txId,
+        status: TxStatus.Failed,
+        environment: environment,
+      })
+    }
   }
 
   return { transfer }
