@@ -66,10 +66,17 @@ export async function GET(request: Request) {
       }),
       origin,
     )
-  } catch (error) {
-    await captureServerError(error as Error)
+  } catch (e) {
+    const error = e instanceof Error ? e : new Error(String(e))
+    await captureServerError(error)
     return corsHeaders(
-      NextResponse.json({ error: 'Internal Server Error' }, { status: 500 }),
+      NextResponse.json(
+        {
+          error: 'Internal Server Error',
+          message: error.message,
+        },
+        { status: 500 },
+      ),
       origin,
     )
   }

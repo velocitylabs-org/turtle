@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
 
 export type TxStatus = 'succeeded' | 'failed' | 'undefined'
+export const txStatusOptions = [
+  'succeeded',
+  'failed',
+  'undefined',
+] as const satisfies readonly TxStatus[]
 
 export interface TransactionModel {
   txHashId: string
@@ -108,10 +113,15 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     hostedOn: { type: String, required: true, validate: nonEmptyString },
     status: {
       type: String,
-      enum: ['succeeded', 'failed', 'undefined'],
+      enum: txStatusOptions,
       required: true,
       default: 'succeeded',
       validate: nonEmptyString,
+      set: (v: string) => {
+        if (!v) return 'succeeded'
+        const lowercased = v.toLowerCase() as TxStatus // Convert to lowercase since the frontend sends status in uppercase format
+        return txStatusOptions.includes(lowercased) ? lowercased : 'succeeded'
+      },
     },
     migrated: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source
     oldFormat: { type: Boolean, required: true, default: false }, // For transactions migrated from an old analytics source with an old format
@@ -119,7 +129,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
   { timestamps: true },
 )
 
-transactionSchema.index({ txHashId: -1 })
+transactionSchema.index({ txHashId: -1 }) // For querying by txHashId in descending order
 transactionSchema.index({ txDate: -1 }) // For sorting by date in descending order
 transactionSchema.index({ status: 1 }) // For filtering by status
 transactionSchema.index({ sourceChainUid: 1 }) // For filtering by source chain
@@ -130,9 +140,12 @@ transactionSchema.index({ sourceTokenAmountUsd: 1 }) // For aggregations on volu
 transactionSchema.index({ status: 1, txDate: -1 }) // For combined status and date queries
 transactionSchema.index({ status: 1, sourceTokenId: 1 }) // For token volume by status queries
 
-export default mongoose.models.Transaction ||
-  mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)
-
 function nonEmptyString(v: string) {
   return v && v.length > 0
 }
+
+const TransactionModel =
+  mongoose.models?.Transaction ||
+  mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)
+
+export default TransactionModel

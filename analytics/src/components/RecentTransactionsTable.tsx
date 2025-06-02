@@ -69,7 +69,7 @@ export default function RecentTransactionsTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span>{tx.sourceTokenAmount.toLocaleString()}</span>
+                    <span>{tx.sourceTokenAmount}</span>
                     <span className="text-xs text-muted-foreground">
                       (${formatUSD(tx.sourceTokenAmountUsd)})
                     </span>
@@ -120,21 +120,21 @@ function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps)
       return (
         <div className="flex flex-col items-center">
           <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-          <span className="text-xs">Succeeded</span>
+          <span className="text-xs capitalize">{status}</span>
         </div>
       )
     case 'failed':
       return (
         <div className="flex flex-col items-center">
           <Ban className="mr-1 h-4 w-4 text-red-500" />
-          <span className="text-xs">Failed</span>
+          <span className="text-xs capitalize">{status}</span>
         </div>
       )
     case 'undefined':
       return (
         <div className="flex flex-col items-center">
           <CircleHelp className="mr-1 h-4 w-4 text-yellow-500" />
-          <span className="text-xs">Undefined</span>
+          <span className="text-xs capitalize">{status}</span>
         </div>
       )
     default:
