@@ -81,49 +81,7 @@ export default function TokensActivityTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading ? (
-            <TableRow key={0}>
-              <TableCell colSpan={6} className="text-center">
-                <div className="flex h-[250px] items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-                </div>
-              </TableCell>
-            </TableRow>
-          ) : tokens.length === 0 ? (
-            <TableRow key={1}>
-              <TableCell colSpan={6} className="text-center">
-                <div className="flex h-[250px] items-center justify-center">
-                  <p>There are no recent token activity to display</p>
-                </div>
-              </TableCell>
-            </TableRow>
-          ) : (
-            tokens.map((item, i) => {
-              const token = tokensById[item.tokenId]
-              const { logoURI, typeURI } = getTypeBadge(item.tokenId)
-
-              return (
-                <TableRow key={`${item.tokenId}-${i}`}>
-                  <TableCell>
-                    <div className="inline-flex items-center">
-                      <TokenAndOriginLogos
-                        tokenURI={logoURI as string}
-                        originURI={typeURI as string}
-                        size={28}
-                      />
-                      <div className="ml-2 flex flex-col">
-                        <span className="font-medium">{token?.symbol || 'Unknown Token'}</span>
-                        <span className="text-xs text-muted-foreground">{token?.name || ''}</span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{token.origin.type}</TableCell>
-                  <TableCell>${formatUSD(item.totalVolume)}</TableCell>
-                  <TableCell>{item.totalTransactions}</TableCell>
-                </TableRow>
-              )
-            })
-          )}
+          <TokensTableContent tokens={tokens} isLoading={isLoading} />
         </TableBody>
       </Table>
     </div>
@@ -160,3 +118,60 @@ const SortableColumnHeader = ({
     )}
   </span>
 )
+
+interface TokensTableContentProps {
+  tokens: TokensActivityItem[]
+  isLoading: boolean
+}
+
+function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
+  if (isLoading) {
+    return (
+      <TableRow key={0}>
+        <TableCell colSpan={6} className="text-center">
+          <div className="flex h-[250px] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          </div>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+  if (tokens.length === 0) {
+    return (
+      <TableRow key={1}>
+        <TableCell colSpan={6} className="text-center">
+          <div className="flex h-[250px] items-center justify-center">
+            <p>There are no recent token activity to display</p>
+          </div>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+  return tokens.map((item, i) => {
+    const token = tokensById[item.tokenId]
+    const { logoURI, typeURI } = getTypeBadge(item.tokenId)
+
+    return (
+      <TableRow key={`${item.tokenId}-${i}`}>
+        <TableCell>
+          <div className="inline-flex items-center">
+            <TokenAndOriginLogos
+              tokenURI={logoURI as string}
+              originURI={typeURI as string}
+              size={28}
+            />
+            <div className="ml-2 flex flex-col">
+              <span className="font-medium">{token?.symbol || 'Unknown Token'}</span>
+              <span className="text-xs text-muted-foreground">{token?.name || ''}</span>
+            </div>
+          </div>
+        </TableCell>
+        <TableCell>{token.origin.type}</TableCell>
+        <TableCell>${formatUSD(item.totalVolume)}</TableCell>
+        <TableCell>{item.totalTransactions}</TableCell>
+      </TableRow>
+    )
+  })
+}
