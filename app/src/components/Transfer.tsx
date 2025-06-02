@@ -212,12 +212,17 @@ export default function Transfer() {
     !isLoadingOutputAmount &&
     !exceedsTransferableBalance
 
+  const disableMaxBtnInPolkadotNetwork =
+    sourceChain?.network === 'Polkadot' &&
+    (!destinationWallet?.sender || !destinationTokenAmount?.token)
+
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
     !sourceTokenAmount?.token ||
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
-    transferStatus !== 'Idle'
+    transferStatus !== 'Idle' ||
+    disableMaxBtnInPolkadotNetwork
 
   const shouldDisplayTxSummary =
     sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
@@ -334,6 +339,7 @@ export default function Transfer() {
                               disabled={shouldDisableMaxButton}
                             />
                           ),
+                          tooltipContent: 'Max transferrable balance',
                         }}
                         walletProps={{
                           address: sourceWallet?.sender?.address,
