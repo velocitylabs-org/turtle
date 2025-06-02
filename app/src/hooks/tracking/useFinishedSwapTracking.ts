@@ -19,11 +19,11 @@ const useFinishedSwapTracking = (ongoingTransfers: StoredTransfer[]) => {
 
   useEffect(() => {
     const finalizedSwaps = ongoingTransfers.filter(
-      transfer => isSameChainSwap(transfer) && !!transfer.swapInformation?.finishedStatus,
+      transfer => isSameChainSwap(transfer) && !!transfer.swapOnChainStatus,
     )
 
     finalizedSwaps.forEach(transfer => {
-      const txSuccessful = transfer.swapInformation?.finishedStatus === 'success'
+      const txSuccessful = transfer.swapOnChainStatus === 'success'
       addNotification({
         message: txSuccessful ? 'Swap succeeded!' : 'Swap failed!',
         severity: txSuccessful ? NotificationSeverity.Success : NotificationSeverity.Error,

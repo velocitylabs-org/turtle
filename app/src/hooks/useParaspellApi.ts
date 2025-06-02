@@ -317,10 +317,7 @@ const useParaspellApi = () => {
     addOrUpdate({
       ...transfer,
       finalizedAt: new Date(),
-      swapInformation: {
-        ...transfer.swapInformation,
-        finishedStatus: txSuccessful ? 'success' : 'failed',
-      },
+      swapOnChainStatus: txSuccessful ? 'success' : 'failed'
     })
   }
 

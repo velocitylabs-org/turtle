@@ -39,7 +39,6 @@ export const useOngoingTransfersStore = create<State>()(
           swapInformation: undefined, // set to undefined for now to avoid circular references. It's not used at the moment for 1 click swaps.
         }
 
-        console.log('Adding or updating transfer', persistableTransfer)
         set(state => {
           const transferExists = state.transfers.some(
             transfer => transfer.id === persistableTransfer.id,
