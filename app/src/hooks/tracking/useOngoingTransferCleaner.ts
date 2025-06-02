@@ -1,12 +1,17 @@
 import { captureException } from '@sentry/nextjs'
 import { useEffect } from 'react'
+import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import useNotification from '@/hooks/useNotification'
+import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink, startedTooLongAgo } from '@/utils/transfer'
-import useCompletedTransfers from './useCompletedTransfers'
-import useNotification from './useNotification'
-import useOngoingTransfers from './useOngoingTransfers'
+
+/**
+ * Hook that monitors ongoing transfers and cleans up those that have exceeded the time threshold.
+ * If a transfer remains incomplete for too long, it marks the transfer as undefined.
+ */
 
 const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
   const { remove } = useOngoingTransfers()

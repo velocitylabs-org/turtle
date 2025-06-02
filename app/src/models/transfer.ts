@@ -40,6 +40,7 @@ export interface StoredTransfer extends RawTransfer {
   swapInformation?: {
     currentStep?: number
     plan?: TRouterPlan
+    finishedStatus?: 'success' | 'failed'
   }
 }
 

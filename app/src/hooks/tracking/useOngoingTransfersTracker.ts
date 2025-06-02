@@ -1,5 +1,9 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import useEnvironment from '@/hooks/useEnvironment'
+import useNotification from '@/hooks/useNotification'
+import useOngoingTransfers from '@/hooks/useOngoingTransfers'
 import { NotificationSeverity } from '@/models/notification'
 import {
   CompletedTransfer,
@@ -16,10 +20,12 @@ import {
   getTransferStatus,
   isCompletedTransfer,
 } from '@/utils/transferTracking'
-import useCompletedTransfers from './useCompletedTransfers'
-import useEnvironment from './useEnvironment'
-import useNotification from './useNotification'
-import useOngoingTransfers from './useOngoingTransfers'
+
+/**
+ * Hook that tracks ongoing transfers between Ethereum and Polkadot networks.
+ * Both directions (Eth to Polkadot and Polkadot to Eth) are tracked using
+ * Snowbridge indexer queries to monitor transfer status and completion.
+ */
 
 type ID = string
 type Message = string

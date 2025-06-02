@@ -7,11 +7,12 @@ import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
+import { OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
+import { wait } from '@/utils/datetime'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import {
@@ -22,19 +23,16 @@ import {
   moonbeamTransfer,
 } from '@/utils/paraspellTransfer'
 import {
-  getExplorerLink,
   isSameChainSwap,
   isSwapWithTransfer,
   txWasCancelled,
 } from '@/utils/transfer'
-import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
-  const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const { data: viemClient } = useConnectorClient<Config>({ chainId: moonbeam.id })
 
@@ -279,8 +277,7 @@ const useParaspellApi = () => {
     if (!onchainEvents) return
 
     const { messageHash, messageId, extrinsicIndex } = onchainEvents
-
-    addOrUpdate({
+    const transferToStorePayload = {
       ...transferToStore,
       id: event.txHash.toString(),
       crossChainMessageHash: messageHash,
@@ -288,21 +285,37 @@ const useParaspellApi = () => {
       sourceChainExtrinsicIndex: extrinsicIndex,
       status: `Arriving at ${transferToStore.destChain.name}`,
       finalizedAt: new Date(),
-    })
+    }
+    addOrUpdate(transferToStorePayload)
 
-    monitorSwapWithTransfer(transferToStore, onchainEvents)
-    handleSameChainSwapStorage(transferToStore, event)
+    monitorSwapWithTransfer(transferToStorePayload, onchainEvents)
+    handleSameChainSwapTrackingStatus(transferToStorePayload, event)
   }
 
-  const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
-    // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
-    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
-      throw new Error('Swap transfer did not completed - Batch failed')
+  const monitorSwapWithTransfer = async (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
+    // Swap + XCM Transfer are handled with the BatchAll extrinsic from utility pallet
+    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted) {
+      await updateTransferMetrics({
+        txHashId: transfer.id,
+        status: TxStatus.Failed,
+        environment: transfer.environment,
+      })
+      addOrUpdate({
+        ...transfer,
+        swapInformation: {
+          ...transfer.swapInformation || {},
+          finishedStatus: 'failed' // Swap part failed, so we handle as a failed swap instead of a swap with transfer failed
+        }
+      })
+      const msg = 'Swap transfer did not completed - Batch failed'
+      captureException(new Error(msg), { extra: { transfer } })
+      console.error(msg)
+    }
 
     return
   }
 
-  const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
+  const handleSameChainSwapTrackingStatus = async (transfer: StoredTransfer, txEvent: TxEvent) => {
     if (!isSameChainSwap(transfer)) return
 
     const txSuccessful =
@@ -315,41 +328,19 @@ const useParaspellApi = () => {
       captureException(new Error('Swap failed'), { extra: { transfer } })
       console.error('Swap failed!')
     }
+    // Give some time so the user can read teh last status in the UI
+    await wait (1000)
 
-    addNotification({
-      message: txSuccessful ? 'Swap succeeded!' : 'Swap failed!',
-      severity: txSuccessful ? NotificationSeverity.Success : NotificationSeverity.Error,
+    // Update the ongoing transfer with finalized status
+    // The useSameChainSwapHandler hook will handle moving it to completed transfers
+    addOrUpdate({
+      ...transfer,
+      finalizedAt: new Date(),
+      swapInformation: {
+        ...transfer.swapInformation,
+        finishedStatus: txSuccessful ? 'success' : 'failed'
+      }
     })
-
-    const explorerLink = getExplorerLink(transfer)
-    removeOngoing(transfer.id)
-    addCompletedTransfer({
-      id: transfer.id,
-      result: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
-      sourceToken: transfer.sourceToken,
-      destinationToken: transfer.destinationToken,
-      sourceChain: transfer.sourceChain,
-      destChain: transfer.destChain,
-      sourceAmount: transfer.sourceAmount,
-      destinationAmount: transfer.destinationAmount,
-      sourceTokenUSDValue: transfer.sourceTokenUSDValue ?? 0,
-      destinationTokenUSDValue: transfer.destinationTokenUSDValue,
-      fees: transfer.fees,
-      bridgingFee: transfer.bridgingFee,
-      sender: transfer.sender,
-      recipient: transfer.recipient,
-      date: transfer.date,
-      ...(explorerLink && { explorerLink }),
-    } satisfies CompletedTransfer)
-
-    // Analytics tx are created with successful status by default, we only update for failed ones
-    if (!txSuccessful) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: TxStatus.Failed,
-        environment: transfer.environment,
-      })
-    }
   }
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {

@@ -1,9 +1,10 @@
 'use client'
 import { Token, Chain, tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { Dispatch, SetStateAction } from 'react'
-import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
-import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
-import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
+import useFinishedSwapTracking from '@/hooks/tracking/useFinishedSwapTracking'
+import useOcelloidsSubscribe from '@/hooks/tracking/useOcelloidsSubscribe'
+import useOngoingTransfersCleaner from '@/hooks/tracking/useOngoingTransferCleaner'
+import useOngoingTransfersTracker from '@/hooks/tracking/useOngoingTransfersTracker'
 import { TabOptions } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { colors } from '../../../tailwind.config'
@@ -28,6 +29,7 @@ export default function OngoingTransfers({
 
   useOngoingTransfersCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
+  useFinishedSwapTracking(ongoingTransfers)
 
   return (
     <div id="ongoing-txs">

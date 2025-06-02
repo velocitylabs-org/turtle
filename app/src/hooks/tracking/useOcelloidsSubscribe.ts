@@ -9,6 +9,12 @@ import {
   xcmOcceloidsSubscribe,
 } from '@/utils/ocelloids'
 
+/**
+ * Hook that tracks Polkadot XCM transfers using Ocelloids SDK.
+ * This hook subscribes to transfer events using Ocelloids Agent API,
+ * monitors transfer status, and handles completion notifications.
+ */
+
 const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
   const { remove, updateStatus } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
