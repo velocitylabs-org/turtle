@@ -22,11 +22,7 @@ import {
   isExistentialDepositMetAfterTransfer,
   moonbeamTransfer,
 } from '@/utils/paraspellTransfer'
-import {
-  isSameChainSwap,
-  isSwapWithTransfer,
-  txWasCancelled,
-} from '@/utils/transfer'
+import { isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
@@ -292,7 +288,10 @@ const useParaspellApi = () => {
     handleSameChainSwapTrackingStatus(transferToStorePayload, event)
   }
 
-  const monitorSwapWithTransfer = async (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
+  const monitorSwapWithTransfer = async (
+    transfer: StoredTransfer,
+    eventsData: OnChainBaseEvents,
+  ) => {
     // Swap + XCM Transfer are handled with the BatchAll extrinsic from utility pallet
     if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted) {
       await updateTransferMetrics({
@@ -303,9 +302,9 @@ const useParaspellApi = () => {
       addOrUpdate({
         ...transfer,
         swapInformation: {
-          ...transfer.swapInformation || {},
-          finishedStatus: 'failed' // Swap part failed, so we handle as a failed swap instead of a swap with transfer failed
-        }
+          ...(transfer.swapInformation || {}),
+          finishedStatus: 'failed', // Swap part failed, so we handle as a failed swap instead of a swap with transfer failed
+        },
       })
       const msg = 'Swap transfer did not completed - Batch failed'
       captureException(new Error(msg), { extra: { transfer } })
@@ -329,7 +328,7 @@ const useParaspellApi = () => {
       console.error('Swap failed!')
     }
     // Give some time so the user can read teh last status in the UI
-    await wait (1000)
+    await wait(1000)
 
     // Update the ongoing transfer with finalized status
     // The useSameChainSwapHandler hook will handle moving it to completed transfers
@@ -338,8 +337,8 @@ const useParaspellApi = () => {
       finalizedAt: new Date(),
       swapInformation: {
         ...transfer.swapInformation,
-        finishedStatus: txSuccessful ? 'success' : 'failed'
-      }
+        finishedStatus: txSuccessful ? 'success' : 'failed',
+      },
     })
   }
 

@@ -19,7 +19,7 @@ const useFinishedSwapTracking = (ongoingTransfers: StoredTransfer[]) => {
 
   useEffect(() => {
     const finalizedSwaps = ongoingTransfers.filter(
-      transfer => isSwap(transfer) && !!transfer.swapInformation?.finishedStatus
+      transfer => isSwap(transfer) && !!transfer.swapInformation?.finishedStatus,
     )
 
     finalizedSwaps.forEach(transfer => {
