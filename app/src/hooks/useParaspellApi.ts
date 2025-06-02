@@ -12,7 +12,6 @@ import { getCachedTokenPrice } from '@/services/balance'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
-import { wait } from '@/utils/datetime'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import {
@@ -309,8 +308,6 @@ const useParaspellApi = () => {
       captureException(new Error('Swap failed'), { extra: { transfer } })
       console.error('Swap failed!')
     }
-    // Give some time so the user can read teh last status in the UI
-    await wait(1000)
 
     // Update the ongoing transfer with finalized status
     // The useSameChainSwapHandler hook will handle moving it to completed transfers
