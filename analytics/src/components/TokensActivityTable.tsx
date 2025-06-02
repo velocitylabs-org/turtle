@@ -1,7 +1,7 @@
 'use client'
 import { tokensById } from '@velocitylabs-org/turtle-registry'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import {
   Table,
@@ -35,7 +35,7 @@ export default function TokensActivityTable({
   const [sortColumn, setSortColumn] = useState<SortColumn>('totalVolume')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
-  const tokens = React.useMemo(() => {
+  const tokens = useMemo(() => {
     if (isLoading || initialTokens.length === 0) return initialTokens
 
     return [...initialTokens].sort((a, b) => {
