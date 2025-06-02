@@ -212,14 +212,17 @@ export default function Transfer() {
     !isLoadingOutputAmount &&
     !exceedsTransferableBalance
 
+  const disableMaxBtnInPolkadotNetwork =
+    sourceChain?.network === 'Polkadot' &&
+    (!destinationWallet?.sender || !destinationTokenAmount?.token)
+
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
     !sourceTokenAmount?.token ||
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
     transferStatus !== 'Idle' ||
-    (sourceChain?.network === 'Polkadot' &&
-      (!destinationWallet?.sender || !destinationTokenAmount?.token))
+    disableMaxBtnInPolkadotNetwork
 
   const shouldDisplayTxSummary =
     sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
