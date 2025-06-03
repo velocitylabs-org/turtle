@@ -129,7 +129,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
     return (
       <TableRow key={0}>
         <TableCell colSpan={6} className="text-center">
-          <div className="flex h-[250px] items-center justify-center">
+          <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 300px)' }}>
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           </div>
         </TableCell>
@@ -141,7 +141,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
     return (
       <TableRow key={1}>
         <TableCell colSpan={6} className="text-center">
-          <div className="flex h-[250px] items-center justify-center">
+          <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 300px)' }}>
             <p>There are no recent token activity to display</p>
           </div>
         </TableCell>
