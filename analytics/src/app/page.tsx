@@ -1,23 +1,23 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import {useState} from "react";
+import { useState } from 'react'
 import { getSummaryData } from '@/app/actions/summary'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import SmallStatBox from '@/components/SmallStatBox'
-import TitleToggle from "@/components/TitleToggle";
+import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
 
-type GraphType = "volume" | "transactions"
+type GraphType = 'volume' | 'transactions'
 
 export default function HomeDashboardPage() {
-  const [transactionGraphType, setTransactionGraphType] = useState<GraphType>("volume")
-  const [tokensGraphType, setTokensGraphType] = useState<GraphType>("volume")
+  const [transactionGraphType, setTransactionGraphType] = useState<GraphType>('volume')
+  const [tokensGraphType, setTokensGraphType] = useState<GraphType>('volume')
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
@@ -36,7 +36,6 @@ export default function HomeDashboardPage() {
   }
 
   console.log('data', data)
-
 
   return (
     <div>
@@ -80,19 +79,19 @@ export default function HomeDashboardPage() {
         <Card className="col-span-full lg:col-span-4">
           <CardHeader>
             <div>
-            <CardTitle>
-              Transactions by
-              <TitleToggle
-                options={[
-                  { value: "volume", label: "Volume" },
-                  { value: "transactions", label: "Number" },
-                ]}
-                value={transactionGraphType}
-                onChange={(value) => setTransactionGraphType(value as GraphType)}
-                className="ml-3"
-              />
-            </CardTitle>
-            <CardDescription>Over the last 6 months</CardDescription>
+              <CardTitle>
+                Transactions by
+                <TitleToggle
+                  options={[
+                    { value: 'volume', label: 'Volume' },
+                    { value: 'transactions', label: 'Number' },
+                  ]}
+                  value={transactionGraphType}
+                  onChange={value => setTransactionGraphType(value as GraphType)}
+                  className="ml-3"
+                />
+              </CardTitle>
+              <CardDescription>Over the last 6 months</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="px-4">
@@ -101,7 +100,10 @@ export default function HomeDashboardPage() {
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
               </div>
             ) : (
-              <TransactionChart data={data?.monthlyTransByVolumeAndCount || []} type={transactionGraphType} />
+              <TransactionChart
+                data={data?.monthlyTransByVolumeAndCount || []}
+                type={transactionGraphType}
+              />
             )}
           </CardContent>
         </Card>
@@ -111,11 +113,11 @@ export default function HomeDashboardPage() {
               Top tokens by
               <TitleToggle
                 options={[
-                  { value: "volume", label: "Volume" },
-                  { value: "transactions", label: "Number" },
+                  { value: 'volume', label: 'Volume' },
+                  { value: 'transactions', label: 'Number' },
                 ]}
                 value={tokensGraphType}
-                onChange={(value) => setTokensGraphType(value as GraphType)}
+                onChange={value => setTokensGraphType(value as GraphType)}
                 className="ml-3"
               />
             </CardTitle>
@@ -128,8 +130,12 @@ export default function HomeDashboardPage() {
               </div>
             ) : (
               <TopTokensChart
-                data={tokensGraphType === 'volume'? data?.topTokensByVolume : data?.topTokensByCount}
-                total={tokensGraphType === 'volume'? data?.totalVolumeUsd : data?.totalTransactions}
+                data={
+                  tokensGraphType === 'volume' ? data?.topTokensByVolume : data?.topTokensByCount
+                }
+                total={
+                  tokensGraphType === 'volume' ? data?.totalVolumeUsd : data?.totalTransactions
+                }
                 type={tokensGraphType}
               />
             )}

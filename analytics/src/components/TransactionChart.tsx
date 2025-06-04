@@ -20,7 +20,12 @@ interface TransactionChartProps {
   type: 'volume' | 'transactions'
 }
 
-const CustomTooltip = ({ active, payload, label, type }: TooltipProps<number, string> & { type: 'volume' | 'transactions' }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+  type,
+}: TooltipProps<number, string> & { type: 'volume' | 'transactions' }) => {
   if (!active || !payload || !payload.length) {
     return null
   }
@@ -55,7 +60,7 @@ export default function TransactionChart({ data, type }: TransactionChartProps) 
           </defs>
           <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={10} />
           <YAxis
-            tickFormatter={value => type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value}
+            tickFormatter={value => (type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value)}
             tickLine={false}
             axisLine={false}
             tickMargin={10}

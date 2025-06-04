@@ -69,11 +69,9 @@ const CustomTooltip = ({ active, payload, total, typeVolume }: CustomTooltip) =>
   return (
     <div className="min-w-[8rem] rounded-lg border bg-background p-2 text-xs shadow-xl">
       <span className="font-medium">{data.name} </span>
-      {data?.value && <span>
-        ({((data.value / total) * 100).toFixed(2)}%)
-      </span>}
+      {data?.value && <span>({((data.value / total) * 100).toFixed(2)}%)</span>}
       <p className="text-muted-foreground">
-        {typeVolume ? `${formatUSD(data?.value)}` : `${data?.value} transactions` }
+        {typeVolume ? `${formatUSD(data?.value)}` : `${data?.value} transactions`}
       </p>
       {token && <p className="text-[10px]">({token.origin.type})</p>}
     </div>
@@ -85,16 +83,14 @@ export default function TopTokensChart({ data = [], type, total = 0 }: TopTokens
   const isMobile = useIsMobile()
 
   const formattedData = data.map(item => {
-    const value = typeVolume 
-      ? (item.volume ?? 0)
-      : (item.count ?? 0);
+    const value = typeVolume ? (item.volume ?? 0) : (item.count ?? 0)
 
     return {
       name: item.symbol,
       value,
       percentage: (value / total) * 100,
       id: item.id,
-    };
+    }
   })
 
   // Calculate the sum of the displayed tokens
@@ -131,7 +127,7 @@ export default function TopTokensChart({ data = [], type, total = 0 }: TopTokens
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
           </Pie>
-          <Tooltip content={<CustomTooltip total={total} typeVolume={typeVolume}/>} />
+          <Tooltip content={<CustomTooltip total={total} typeVolume={typeVolume} />} />
         </PieChart>
       </ResponsiveContainer>
     </div>

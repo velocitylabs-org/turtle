@@ -166,7 +166,7 @@ export async function getSummaryData() {
       recentTransactions: serializedRecentTransactions,
       topTokensByVolume,
       topTokensByCount,
-      monthlyTransByVolumeAndCount
+      monthlyTransByVolumeAndCount,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))

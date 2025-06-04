@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from 'react'
 
 interface Option {
   value: string
@@ -16,7 +16,13 @@ interface SegmentedControlProps {
   className?: string
 }
 
-export default function TitleToggle({ options, value, defaultValue, onChange, className }: SegmentedControlProps) {
+export default function TitleToggle({
+  options,
+  value,
+  defaultValue,
+  onChange,
+  className,
+}: SegmentedControlProps) {
   const [internalValue, setInternalValue] = useState(value || defaultValue || options[0]?.value)
   const [indicatorPosition, setIndicatorPosition] = useState({ width: 0, left: 0 })
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([])
@@ -24,7 +30,7 @@ export default function TitleToggle({ options, value, defaultValue, onChange, cl
   const currentValue = value !== undefined ? value : internalValue
 
   useEffect(() => {
-    const activeIndex = options.findIndex((option) => option.value === currentValue)
+    const activeIndex = options.findIndex(option => option.value === currentValue)
     const activeButton = buttonsRef.current[activeIndex]
 
     if (activeButton) {
@@ -43,12 +49,9 @@ export default function TitleToggle({ options, value, defaultValue, onChange, cl
   }
 
   return (
-    <div className={cn(
-      "relative bg-gray-100 rounded-lg p-1 inline-flex",
-      className
-    )}>
+    <div className={cn('relative inline-flex rounded-lg bg-gray-100 p-1', className)}>
       <div
-        className="absolute top-1 bottom-1 bg-white rounded-md shadow-sm transition-all duration-200 ease-out"
+        className="absolute bottom-1 top-1 rounded-md bg-white shadow-sm transition-all duration-200 ease-out"
         style={{
           width: indicatorPosition.width,
           left: indicatorPosition.left,
@@ -57,15 +60,13 @@ export default function TitleToggle({ options, value, defaultValue, onChange, cl
       {options.map((option, index) => (
         <button
           key={option.value}
-          ref={(el) => {
+          ref={el => {
             buttonsRef.current[index] = el
           }}
           onClick={() => handleClick(option.value)}
           className={cn(
-            "relative z-10 px-2 py-1 text-sm font-bold rounded-md transition-all duration-200",
-            currentValue === option.value
-              ? "text-gray-900"
-              : "text-gray-600 hover:text-gray-900"
+            'relative z-10 rounded-md px-2 py-1 text-sm font-bold transition-all duration-200',
+            currentValue === option.value ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900',
           )}
         >
           {option.label}
