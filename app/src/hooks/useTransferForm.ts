@@ -79,9 +79,7 @@ const useTransferForm = () => {
   const {
     fees,
     loading: loadingFees,
-    canPayFees,
     bridgingFee,
-    canPayAdditionalFees,
     refetch: refetchFees,
   } = useFees(
     sourceChain,
@@ -485,8 +483,6 @@ const useTransferForm = () => {
     bridgingFee,
     refetchFees,
     loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
     transferStatus,
     environment,
     sourceTokenAmountError,

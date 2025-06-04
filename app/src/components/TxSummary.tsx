@@ -1,7 +1,9 @@
 import { TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useContext } from 'react'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
+import { FeeContext } from '@/context/fee'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
@@ -19,8 +21,6 @@ interface TxSummaryProps {
   bridgingFee?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
-  canPayFees: boolean
-  canPayAdditionalFees: boolean
   className?: string
   exceedsTransferableBalance: boolean
   applyTransferableBalance: () => void
@@ -43,14 +43,13 @@ export default function TxSummary({
   bridgingFee,
   durationEstimate,
   direction,
-  canPayFees,
-  canPayAdditionalFees,
   className,
   exceedsTransferableBalance,
   applyTransferableBalance,
 }: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
+  const { canPayFees, canPayAdditionalFees } = useContext(FeeContext)
 
   if (!loading && !fees && !bridgingFee) return null
 
