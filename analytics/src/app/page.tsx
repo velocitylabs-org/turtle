@@ -35,7 +35,6 @@ export default function HomeDashboardPage() {
     successRate: 0,
   }
 
-
   return (
     <div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
