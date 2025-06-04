@@ -171,7 +171,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(params.sender, error, setStatus, event.txHash.toString(), params.environment)
         }
       },
       error: callbackError => {
@@ -247,7 +247,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(params.sender, error, setStatus, event.txHash.toString(), params.environment)
         }
       },
       error: callbackError => {
@@ -394,6 +394,7 @@ const useParaspellApi = () => {
     e: unknown,
     setStatus: (status: Status) => void,
     txId?: string,
+    environment?: string,
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
@@ -407,6 +408,14 @@ const useParaspellApi = () => {
       message,
       severity: NotificationSeverity.Error,
     })
+
+    if (txId && environment) {
+      updateTransferMetrics({
+        txHashId: txId,
+        status: TxStatus.Failed,
+        environment: environment,
+      })
+    }
   }
 
   return { transfer }
