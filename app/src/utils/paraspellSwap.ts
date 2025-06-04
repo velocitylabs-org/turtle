@@ -1,4 +1,4 @@
-import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
+import { getExchangeAssets, RouterBuilder, TRouterXcmFeeResult } from '@paraspell/xcm-router'
 import {
   Chain,
   Token,
@@ -94,6 +94,54 @@ export const getExchangeOutputAmount = async (
     .getBestAmountOut()
 
   return amountOut.amountOut
+}
+
+interface GetXcmRouterFeeParams {
+  sourceChain: Chain
+  destinationChain: Chain
+  sourceToken: Token
+  destinationToken: Token
+  exchange: Dex | [Dex, Dex, ...Dex[]]
+  amount: string
+  sender: string
+  recipient: string
+  slippagePct: string
+}
+
+export const getXcmRouterFee = async ({
+  sourceChain,
+  destinationChain,
+  sourceToken,
+  destinationToken,
+  exchange,
+  amount,
+  recipient,
+  sender,
+  slippagePct,
+}: GetXcmRouterFeeParams): Promise<TRouterXcmFeeResult> => {
+  const sourceChainFromId = getParaSpellNode(sourceChain)
+  const destinationChainFromId = getParaSpellNode(destinationChain)
+  if (!sourceChainFromId || !destinationChainFromId)
+    throw new Error('Transfer failed: chain id not found.')
+  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
+    throw new Error('Transfer failed: Ethereum is not supported.')
+
+  const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
+  const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
+
+  const fees = await RouterBuilder()
+    .from(sourceChainFromId)
+    .exchange(exchange)
+    .to(destinationChainFromId)
+    .currencyFrom(currencyIdFrom)
+    .currencyTo(currencyTo)
+    .amount(amount)
+    .senderAddress(sender)
+    .recipientAddress(recipient)
+    .slippagePct(slippagePct)
+    .getXcmFees()
+
+  return fees
 }
 
 /** returns all supported dex paraspell nodes */
