@@ -8,6 +8,7 @@ import HeroProvider from '@/components/HeroProvider'
 import Navbar from '@/components/NavBar'
 import NotificationSystem from '@/components/NotificationSystem'
 import ContextProvider from '@/context'
+import FeeProvider from '@/context/fee'
 import { TURTLE_CONFIG } from '@/utils/turle.config'
 import './globals.css'
 
@@ -34,7 +35,9 @@ export default async function RootLayout({
         <Navbar />
         <NotificationSystem />
         <ContextProvider cookies={cookies}>
-          <HeroProvider>{children}</HeroProvider>
+          <FeeProvider>
+            <HeroProvider>{children}</HeroProvider>
+          </FeeProvider>
         </ContextProvider>
         <Analytics />
       </body>

@@ -19,8 +19,8 @@ import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
+import builderManager from '@/services/builder'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
-import { getTransferableAmount } from '@/utils/paraspellTransfer'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import useFees from './useFees'
@@ -79,9 +79,7 @@ const useTransferForm = () => {
   const {
     fees,
     loading: loadingFees,
-    canPayFees,
     bridgingFee,
-    canPayAdditionalFees,
     refetch: refetchFees,
   } = useFees(
     sourceChain,
@@ -248,13 +246,13 @@ const useTransferForm = () => {
       const recipient =
         getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
 
-      const transferableAmount = await getTransferableAmount(
-        sourceChain,
-        destinationChain,
-        sourceTokenAmount.token,
-        recipient,
-        sourceWallet.sender.address,
-      )
+      const transferableAmount = await builderManager.getTransferableAmount({
+        from: sourceChain,
+        to: destinationChain,
+        token: sourceToken,
+        address: recipient,
+        senderAddress: sourceWallet.sender.address,
+      })
 
       setValue(
         'sourceTokenAmount',
@@ -485,8 +483,6 @@ const useTransferForm = () => {
     bridgingFee,
     refetchFees,
     loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
     transferStatus,
     environment,
     sourceTokenAmountError,

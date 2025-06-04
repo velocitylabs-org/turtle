@@ -1,7 +1,8 @@
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { FeeContext } from '@/context/fee'
 import useNotification from '@/hooks/useNotification'
 import { AmountInfo } from '@/models/transfer'
 
@@ -58,6 +59,8 @@ const useFees = (
     token: isChainSupportingToken(sourceChain, PolkadotTokens.DOT) ? PolkadotTokens.DOT : undefined,
     address: senderAddress,
   })
+
+  const { setCanPayFeesGlobally, setCanPayAdditionalFeesGlobally } = useContext(FeeContext)
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !destToken) {
@@ -220,6 +223,11 @@ const useFees = (
   useEffect(() => {
     fetchFees()
   }, [fetchFees])
+
+  useEffect(() => {
+    setCanPayFeesGlobally(canPayFees)
+    setCanPayAdditionalFeesGlobally(canPayAdditionalFees)
+  }, [canPayFees, canPayAdditionalFees, setCanPayFeesGlobally, setCanPayAdditionalFeesGlobally])
 
   return { fees, bridgingFee, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
 }
