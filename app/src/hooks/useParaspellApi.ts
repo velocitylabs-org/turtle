@@ -9,18 +9,13 @@ import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
+import builderManager from '@/services/builder'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
-import {
-  createTransferTx,
-  dryRun,
-  DryRunResult,
-  isExistentialDepositMetAfterTransfer,
-  moonbeamTransfer,
-} from '@/utils/paraspellTransfer'
+import { DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
 import {
   getExplorerLink,
   isSameChainSwap,
@@ -120,11 +115,25 @@ const useParaspellApi = () => {
     )
       throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
 
-    const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+    const isExistentialDepositMet = await builderManager.isExistentialDepositMetAfterTransfer({
+      from: params.sourceChain,
+      to: params.destinationChain,
+      token: params.sourceToken,
+      address: params.recipient,
+      senderAddress: params.sender.address,
+    })
+
     if (!isExistentialDepositMet)
       throw new Error('Transfer failed: existential deposit will not be met.')
 
-    const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
+    const tx = await builderManager.createTransferTx({
+      wssEndpoint: params.sourceChain.rpcConnection,
+      from: params.sourceChain,
+      to: params.destinationChain,
+      token: params.sourceToken,
+      address: params.recipient,
+      senderAddress: params.sender.address,
+    })
     setStatus('Signing')
 
     const polkadotSigner = getPolkadotSignerFromPjs(
@@ -354,7 +363,14 @@ const useParaspellApi = () => {
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
-      const result = await dryRun(params, params.sourceChain.rpcConnection)
+      const result = await builderManager.dryRun({
+        wssEndpoint: params.sourceChain.rpcConnection,
+        from: params.sourceChain,
+        to: params.destinationChain,
+        token: params.sourceToken,
+        address: params.recipient,
+        senderAddress: params.sender.address,
+      })
 
       return {
         type: 'Supported',
