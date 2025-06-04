@@ -10,10 +10,9 @@ import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { GraphType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
-
-type GraphType = 'volume' | 'transactions'
 
 export default function HomeDashboardPage() {
   const [transactionGraphType, setTransactionGraphType] = useState<GraphType>('volume')

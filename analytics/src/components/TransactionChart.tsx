@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { primaryColor } from '@/constants'
+import { GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
 
 const chartColor = primaryColor
