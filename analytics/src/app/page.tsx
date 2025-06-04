@@ -128,7 +128,7 @@ export default function HomeDashboardPage() {
               </div>
             ) : (
               <TopTokensChart
-                data={tokensGraphType === 'volume'? data?.topTokensByVolume : data?.topTokensByCount || []}
+                data={tokensGraphType === 'volume'? data?.topTokensByVolume : data?.topTokensByCount}
                 total={tokensGraphType === 'volume'? data?.totalVolumeUsd : data?.totalTransactions}
                 type={tokensGraphType}
               />

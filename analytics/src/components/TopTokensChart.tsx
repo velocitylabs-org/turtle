@@ -14,9 +14,8 @@ const colors = [
 ]
 
 interface TopTokensChartProps {
-  data: { symbol: string; volume: number; id: string }[]
+  data?: { symbol: string; volume?: number; count?: number; id: string }[]
   total: number
-  totalCount: number
   type: 'volume' | 'transactions'
 }
 
@@ -81,16 +80,22 @@ const CustomTooltip = ({ active, payload, total, typeVolume }: CustomTooltip) =>
   )
 }
 
-export default function TopTokensChart({ data, type, total = 0 }: TopTokensChartProps) {
+export default function TopTokensChart({ data = [], type, total = 0 }: TopTokensChartProps) {
   const typeVolume = type === 'volume'
   const isMobile = useIsMobile()
 
-  const formattedData = data.map(item => ({
-    name: item.symbol,
-    value: typeVolume ? item.volume : item.count,
-    percentage: (( typeVolume ? item.volume : item.count) / total) * 100,
-    id: item.id,
-  }))
+  const formattedData = data.map(item => {
+    const value = typeVolume 
+      ? (item.volume ?? 0)
+      : (item.count ?? 0);
+
+    return {
+      name: item.symbol,
+      value,
+      percentage: (value / total) * 100,
+      id: item.id,
+    };
+  })
 
   // Calculate the sum of the displayed tokens
   const displayedValue = formattedData.reduce((sum, item) => sum + item.value, 0)
