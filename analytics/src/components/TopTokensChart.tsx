@@ -16,7 +16,7 @@ const colors = [
 interface TopTokensChartProps {
   data?: { symbol: string; volume?: number; count?: number; id: string }[]
   total: number
-  type: 'volume' | 'transactions'
+  type: GraphType
 }
 
 interface CustomTooltip {
