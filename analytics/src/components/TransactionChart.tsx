@@ -25,7 +25,7 @@ const CustomTooltip = ({
   payload,
   label,
   type,
-}: TooltipProps<number, string> & { type: 'volume' | 'transactions' }) => {
+}: TooltipProps<number, string> & { type: GraphType }) => {
   if (!active || !payload || !payload.length) {
     return null
   }
