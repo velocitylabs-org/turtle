@@ -17,7 +17,7 @@ const chartColor = primaryColor
 
 interface TransactionChartProps {
   data: { month: string; volumeUsd: number; count: number }[]
-  type: 'volume' | 'transactions'
+  type: GraphType
 }
 
 const CustomTooltip = ({
