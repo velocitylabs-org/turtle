@@ -14,14 +14,17 @@ const colors = [
 ]
 
 interface TopTokensChartProps {
-  data: { symbol: string; volumeUsd: number; id: string }[]
-  totalVolume: number
+  data: { symbol: string; volume: number; id: string }[]
+  total: number
+  totalCount: number
+  type: 'volume' | 'transactions'
 }
 
 interface CustomTooltip {
   active?: boolean
   payload?: TooltipProps<number, string>['payload']
-  totalVolume: number
+  total: number
+  typeVolume: boolean
 }
 
 interface PieLabelProps {
@@ -56,7 +59,7 @@ function PieLabel({ id, x, y }: PieLabelProps) {
   )
 }
 
-const CustomTooltip = ({ active, payload, totalVolume }: CustomTooltip) => {
+const CustomTooltip = ({ active, payload, total, typeVolume }: CustomTooltip) => {
   if (!active || !payload || !payload.length) {
     return null
   }
@@ -67,33 +70,39 @@ const CustomTooltip = ({ active, payload, totalVolume }: CustomTooltip) => {
   return (
     <div className="min-w-[8rem] rounded-lg border bg-background p-2 text-xs shadow-xl">
       <span className="font-medium">{data.name} </span>
-      {data?.value && <span>({((data.value / totalVolume) * 100).toFixed(2)}%)</span>}
-      <p className="text-muted-foreground">${formatUSD(data?.value)}</p>
+      {data?.value && <span>
+        ({((data.value / total) * 100).toFixed(2)}%)
+      </span>}
+      <p className="text-muted-foreground">
+        {typeVolume ? `${formatUSD(data?.value)}` : `${data?.value} transactions` }
+      </p>
       {token && <p className="text-[10px]">({token.origin.type})</p>}
     </div>
   )
 }
 
-export default function TopTokensChart({ data, totalVolume }: TopTokensChartProps) {
+export default function TopTokensChart({ data, type, total = 0 }: TopTokensChartProps) {
+  const typeVolume = type === 'volume'
   const isMobile = useIsMobile()
+
   const formattedData = data.map(item => ({
     name: item.symbol,
-    value: item.volumeUsd,
-    percentage: (item.volumeUsd / totalVolume) * 100,
+    value: typeVolume ? item.volume : item.count,
+    percentage: (( typeVolume ? item.volume : item.count) / total) * 100,
     id: item.id,
   }))
 
-  // Calculate the sum of the displayed tokens volumes
-  const displayedVolume = formattedData.reduce((sum, item) => sum + item.value, 0)
+  // Calculate the sum of the displayed tokens
+  const displayedValue = formattedData.reduce((sum, item) => sum + item.value, 0)
 
-  // Calculate the remaining volume for all other tokens
-  const remainingVolume = totalVolume - displayedVolume
-  const remainingPercentage = (remainingVolume / totalVolume) * 100
+  // Calculate the remaining value for all other tokens
+  const remainingValue = total - displayedValue
+  const remainingPercentage = (remainingValue / total) * 100
 
   if (remainingPercentage > 0) {
     formattedData.push({
       name: 'Rest',
-      value: remainingVolume,
+      value: remainingValue,
       percentage: remainingPercentage,
       id: 'rest-tokens',
     })
@@ -117,7 +126,7 @@ export default function TopTokensChart({ data, totalVolume }: TopTokensChartProp
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
             ))}
           </Pie>
-          <Tooltip content={<CustomTooltip totalVolume={totalVolume} />} />
+          <Tooltip content={<CustomTooltip total={total} typeVolume={typeVolume}/>} />
         </PieChart>
       </ResponsiveContainer>
     </div>

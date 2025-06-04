@@ -8,7 +8,7 @@ import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import SmallStatBox from '@/components/SmallStatBox'
 import TitleToggle from "@/components/TitleToggle";
 import TopTokensChart from '@/components/TopTokensChart'
-import TransactionVolumeChart from '@/components/TransactionVolumeChart'
+import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
@@ -34,6 +34,9 @@ export default function HomeDashboardPage() {
     avgTransactionValue: 0,
     successRate: 0,
   }
+
+  console.log('data', data)
+
 
   return (
     <div>
@@ -98,7 +101,7 @@ export default function HomeDashboardPage() {
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
               </div>
             ) : (
-              <TransactionVolumeChart data={data?.dailyVolume || []} />
+              <TransactionChart data={data?.monthlyTransByVolumeAndCount || []} type={transactionGraphType} />
             )}
           </CardContent>
         </Card>
@@ -125,8 +128,9 @@ export default function HomeDashboardPage() {
               </div>
             ) : (
               <TopTokensChart
-                data={data?.topTokens || []}
-                totalVolume={data?.totalVolumeUsd || 0}
+                data={tokensGraphType === 'volume'? data?.topTokensByVolume : data?.topTokensByCount || []}
+                total={tokensGraphType === 'volume'? data?.totalVolumeUsd : data?.totalTransactions}
+                type={tokensGraphType}
               />
             )}
           </CardContent>
