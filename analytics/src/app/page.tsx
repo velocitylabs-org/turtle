@@ -35,7 +35,6 @@ export default function HomeDashboardPage() {
     successRate: 0,
   }
 
-  console.log('data', data)
 
   return (
     <div>
