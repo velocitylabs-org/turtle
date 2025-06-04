@@ -84,7 +84,7 @@ export default function HomeDashboardPage() {
                 <TitleToggle
                   options={[
                     { value: 'volume', label: 'Volume' },
-                    { value: 'transactions', label: 'Number' },
+                    { value: 'transactions', label: 'Count' },
                   ]}
                   value={transactionGraphType}
                   onChange={value => setTransactionGraphType(value as GraphType)}
@@ -114,7 +114,7 @@ export default function HomeDashboardPage() {
               <TitleToggle
                 options={[
                   { value: 'volume', label: 'Volume' },
-                  { value: 'transactions', label: 'Number' },
+                  { value: 'transactions', label: 'Count' },
                 ]}
                 value={tokensGraphType}
                 onChange={value => setTokensGraphType(value as GraphType)}

@@ -50,7 +50,7 @@ function PieLabel({ id, x, y }: PieLabelProps) {
 
   const { logoURI, typeURI } = getTypeBadge(id)
   return (
-    <g transform={`translate(${x - 20},${y - 13})`}>
+    <g transform={`translate(${x - 25},${y - 13})`}>
       <foreignObject width="32" height="32">
         <TokenAndOriginLogos tokenURI={logoURI as string} originURI={typeURI as string} size={28} />
       </foreignObject>
