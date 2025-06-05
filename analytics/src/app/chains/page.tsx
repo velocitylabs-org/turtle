@@ -5,13 +5,15 @@ import React, { useState } from 'react'
 import { getChainsData } from '@/app/actions/chains'
 import ErrorPanel from '@/components/ErrorPanel'
 import MultiSelect from '@/components/MultiSelect'
+import TitleToggle from '@/components/TitleToggle'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { chains } from '@/constants'
+import { chains, GraphType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 export default function ChainsPage() {
   const [chainUid, setChainUid] = useState<string>("ethereum")
+  const [graphType, setGraphType] = useState<GraphType>('volume')
   const { data, isLoading, error } = useQuery({
     queryKey: ['chains', chainUid],
     queryFn: () => getChainsData(chainUid),
@@ -28,17 +30,28 @@ export default function ChainsPage() {
     return <ErrorPanel error={error} />
   }
 
-  console.log('data', data)
+  const chainData = graphType === 'volume' ? data?.byVolume : data?.byTransactionCount
+  console.log('chainData', chainData)
 
   return (
     <div>
       <Card>
         <CardHeader>
           <CardTitle>
+            Activity by
+            <TitleToggle
+              options={[
+                { value: 'volume', label: 'Volume' },
+                { value: 'transactions', label: 'Count' },
+              ]}
+              value={graphType}
+              onChange={value => setGraphType(value as GraphType)}
+              className="ml-3"
+            />
+          </CardTitle>
+          <CardDescription>
             <div className="flex items-center gap-4">
-              <div>
-                Activity asset flow
-              </div>
+              <div>Select chain</div>
               <div className="w-[150px]">
                 <MultiSelect
                   options={chainOptions}
@@ -55,8 +68,7 @@ export default function ChainsPage() {
                 />
               </div>
             </div>
-          </CardTitle>
-          <CardDescription>By volume and transaction count</CardDescription>
+          </CardDescription>
         </CardHeader>
         <CardContent>
          <div>some content here</div>
