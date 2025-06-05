@@ -12,7 +12,7 @@ import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 export default function ChainsPage() {
-  const [chainUid, setChainUid] = useState<string>("ethereum")
+  const [chainUid, setChainUid] = useState<string>('ethereum')
   const [graphType, setGraphType] = useState<GraphType>('volume')
   const { data, isLoading, error } = useQuery({
     queryKey: ['chains', chainUid],
@@ -56,7 +56,7 @@ export default function ChainsPage() {
                 <MultiSelect
                   options={chainOptions}
                   selected={[chainUid]}
-                  onChange={(val) => {
+                  onChange={val => {
                     if (Array.isArray(val) && val.length > 0) {
                       setChainUid(val[0])
                     }
@@ -71,7 +71,13 @@ export default function ChainsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-         <div>some content here</div>
+          {isLoading ? (
+            <div className="flex h-[500px] items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <div>chart here</div>
+          )}
         </CardContent>
       </Card>
     </div>

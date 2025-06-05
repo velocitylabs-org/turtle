@@ -5,7 +5,6 @@ import dbConnect from '@/utils/db-connect'
 
 export async function getChainsData(chainUid: string) {
   try {
-
     await dbConnect()
 
     const [byTransactionCount, byVolume] = await Promise.all([

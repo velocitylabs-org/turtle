@@ -64,7 +64,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
       icon: Waypoints,
       href: '/chains',
       active: pathname === '/chains',
-    }
+    },
   ]
 
   const activeRoute = routes.find(route => route.href === pathname)

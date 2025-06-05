@@ -38,7 +38,7 @@ export default function StandardMultiSelect({
   showImagesInBadges = true,
   disabled = false,
   preventEmpty = false,
-  showBadges = true
+  showBadges = true,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
@@ -64,7 +64,7 @@ export default function StandardMultiSelect({
     option.label.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  const showRemoveButton = (!disabled && !preventEmpty)
+  const showRemoveButton = !disabled && !preventEmpty
 
   return (
     <div className={cn('relative', className)}>
@@ -87,8 +87,15 @@ export default function StandardMultiSelect({
                 selected.map(value => {
                   const option = options.find(opt => opt.value === value)
                   return (
-                    <Badge key={value} variant="secondary"
-                           className={cn('mr-1 px-1 py-0', !showRemoveButton && 'pr-2', !showBadges && 'bg-transparent !important')}>
+                    <Badge
+                      key={value}
+                      variant="secondary"
+                      className={cn(
+                        'mr-1 px-1 py-0',
+                        !showRemoveButton && 'pr-2',
+                        !showBadges && '!important bg-transparent',
+                      )}
+                    >
                       <div className="flex items-center">
                         {showImagesInBadges &&
                           renderImage(option?.logoURI as string, option?.originLogoURI as string)}
