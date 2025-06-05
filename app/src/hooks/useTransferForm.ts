@@ -78,6 +78,7 @@ const useTransferForm = () => {
   const destinationWallet = useWallet(destinationChain?.walletType)
   const {
     fees,
+    xcmDestinationfees,
     loading: loadingFees,
     canPayFees,
     bridgingFee,
@@ -482,6 +483,7 @@ const useTransferForm = () => {
     sourceWallet,
     destinationWallet,
     fees,
+    xcmDestinationfees,
     bridgingFee,
     refetchFees,
     loadingFees,
