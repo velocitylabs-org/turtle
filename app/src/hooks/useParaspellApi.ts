@@ -111,18 +111,39 @@ const useParaspellApi = () => {
     setStatus('Validating')
 
     const validationResult = await validateTransfer(params)
-    if (validationResult.type === 'Supported' && !validationResult.origin.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
-    if (
-      validationResult.type === 'Supported' &&
-      validationResult.destination &&
-      !validationResult.destination.success
-    )
-      throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
 
-    const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
-    if (!isExistentialDepositMet)
-      throw new Error('Transfer failed: existential deposit will not be met.')
+    const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
+    if (validationResult.type === 'Unsupported') {
+      addNotification({
+        message:
+          'failureReason' in validationResult.origin
+            ? validationResult.origin?.failureReason
+            : defaultDryRunMessage,
+        severity: NotificationSeverity.Warning,
+      })
+    }
+
+    if (validationResult.type === 'Supported') {
+      if (!validationResult.origin.success) {
+        addNotification({
+          message: validationResult.origin.failureReason ?? defaultDryRunMessage,
+          severity: NotificationSeverity.Warning,
+        })
+      }
+
+      if (!validationResult.destination?.success) {
+        addNotification({
+          message: validationResult.destination?.failureReason ?? defaultDryRunMessage,
+          severity: NotificationSeverity.Warning,
+        })
+      }
+
+      if (validationResult.origin.success && validationResult.destination?.success) {
+        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+        if (!isExistentialDepositMet)
+          throw new Error('Transfer failed: existential deposit will not be met.')
+      }
+    }
 
     const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
