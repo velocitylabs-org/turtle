@@ -113,6 +113,13 @@ const useParaspellApi = () => {
     const validationResult = await validateTransfer(params)
 
     const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
+    const dryRunCapturePayload = {
+      extra: {
+        sourceChain: params.sourceChain.uid,
+        destinationChain: params.destinationChain.uid,
+        token: params.sourceToken.id,
+      },
+    }
     if (validationResult.type === 'Unsupported') {
       addNotification({
         message:
@@ -121,20 +128,30 @@ const useParaspellApi = () => {
             : defaultDryRunMessage,
         severity: NotificationSeverity.Warning,
       })
+      captureException(new Error('DryRun Error: Unsupported'), {
+        ...dryRunCapturePayload,
+        level: 'warning',
+      })
     }
-
     if (validationResult.type === 'Supported') {
       if (!validationResult.origin.success) {
         addNotification({
           message: validationResult.origin.failureReason ?? defaultDryRunMessage,
           severity: NotificationSeverity.Warning,
         })
+        captureException(new Error('DryRun Error: Origin Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
+        })
       }
-
       if (!validationResult.destination?.success) {
         addNotification({
           message: validationResult.destination?.failureReason ?? defaultDryRunMessage,
           severity: NotificationSeverity.Warning,
+        })
+        captureException(new Error('DryRun Error: Destination Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
         })
       }
 
