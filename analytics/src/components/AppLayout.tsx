@@ -1,6 +1,6 @@
 'use client'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { ChevronRight, Coins, LayoutDashboard, Menu, Repeat } from 'lucide-react'
+import { ChevronRight, Coins, LayoutDashboard, Menu, Repeat, Waypoints } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
@@ -59,6 +59,12 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
       href: '/tokens',
       active: pathname === '/tokens',
     },
+    {
+      label: 'Chains',
+      icon: Waypoints,
+      href: '/chains',
+      active: pathname === '/chains',
+    }
   ]
 
   const activeRoute = routes.find(route => route.href === pathname)

@@ -24,6 +24,8 @@ interface MultiSelectProps {
   singleSelect?: boolean
   showImagesInBadges?: boolean
   disabled?: boolean
+  preventEmpty?: boolean
+  showBadges?: boolean
 }
 
 export default function StandardMultiSelect({
@@ -35,6 +37,8 @@ export default function StandardMultiSelect({
   singleSelect = false,
   showImagesInBadges = true,
   disabled = false,
+  preventEmpty = false,
+  showBadges = true
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
@@ -60,6 +64,8 @@ export default function StandardMultiSelect({
     option.label.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
+  const showRemoveButton = (!disabled && !preventEmpty)
+
   return (
     <div className={cn('relative', className)}>
       <Popover open={disabled ? false : open} onOpenChange={disabled ? undefined : setOpen}>
@@ -81,12 +87,13 @@ export default function StandardMultiSelect({
                 selected.map(value => {
                   const option = options.find(opt => opt.value === value)
                   return (
-                    <Badge key={value} variant="secondary" className="mr-1 px-1 py-0">
+                    <Badge key={value} variant="secondary"
+                           className={cn('mr-1 px-1 py-0', !showRemoveButton && 'pr-2', !showBadges && 'bg-transparent !important')}>
                       <div className="flex items-center">
                         {showImagesInBadges &&
                           renderImage(option?.logoURI as string, option?.originLogoURI as string)}
                         <span>{option?.label || value}</span>
-                        {!disabled && (
+                        {showRemoveButton && (
                           <button
                             className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                             onClick={e => {
