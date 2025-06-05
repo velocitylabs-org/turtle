@@ -129,16 +129,26 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
   { timestamps: true },
 )
 
-transactionSchema.index({ txHashId: -1 }) // For querying by txHashId in descending order
-transactionSchema.index({ txDate: -1 }) // For sorting by date in descending order
-transactionSchema.index({ status: 1 }) // For filtering by status
-transactionSchema.index({ sourceChainUid: 1 }) // For filtering by source chain
-transactionSchema.index({ destinationChainUid: 1 }) // For filtering by destination chain
-transactionSchema.index({ sourceTokenId: 1 }) // For filtering by source token
-transactionSchema.index({ destinationTokenId: 1 }) // For filtering by destination token
-transactionSchema.index({ sourceTokenAmountUsd: 1 }) // For aggregations on volume
-transactionSchema.index({ status: 1, txDate: -1 }) // For combined status and date queries
-transactionSchema.index({ status: 1, sourceTokenId: 1 }) // For token volume by status queries
+// Single field indexes
+transactionSchema.index({ txHashId: -1 }) // For txHash lookups
+transactionSchema.index({ txDate: -1 }) // For date sorting
+transactionSchema.index({ status: 1 }) // For status filtering
+transactionSchema.index({ sourceChainUid: 1 }) // For source chain filtering
+transactionSchema.index({ destinationChainUid: 1 }) // For destination chain filtering
+transactionSchema.index({ sourceTokenId: 1 }) // For source token filtering
+transactionSchema.index({ destinationTokenId: 1 }) // For destination token filtering
+
+// Compound indexes for analytics
+transactionSchema.index({ status: 1, txDate: -1 }) // For status and date queries
+transactionSchema.index({ status: 1, sourceTokenId: 1, sourceTokenAmountUsd: 1 }) // For token volume analytics (getTokensData) and top tokens by count
+transactionSchema.index({ status: 1, txDate: -1, sourceTokenAmountUsd: 1 }) // For monthly volume calculations (getSummaryData)
+
+// Compound indexes for filtered queries
+transactionSchema.index({ txDate: -1, status: 1 }) // For date sorting with a status filter
+transactionSchema.index({ sourceChainUid: 1, txDate: -1 }) // For source chain and date queries
+transactionSchema.index({ destinationChainUid: 1, txDate: -1 }) // For destination chain and date queries
+transactionSchema.index({ sourceTokenId: 1, txDate: -1 }) // For source token and date queries
+transactionSchema.index({ destinationTokenId: 1, txDate: -1 }) // For destination token and date queries
 
 function nonEmptyString(v: string) {
   return v && v.length > 0

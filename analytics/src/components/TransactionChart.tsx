@@ -10,16 +10,22 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { primaryColor } from '@/constants'
+import { GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
 
 const chartColor = primaryColor
 
-interface TransactionVolumeChartProps {
-  data: { month: string; volumeUsd: number }[]
+interface TransactionChartProps {
+  data: { month: string; volumeUsd: number; count: number }[]
+  type: GraphType
 }
 
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+  type,
+}: TooltipProps<number, string> & { type: GraphType }) => {
   if (!active || !payload || !payload.length) {
     return null
   }
@@ -27,15 +33,19 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>)
   return (
     <div className="min-w-[8rem] rounded-lg border bg-background p-2 text-xs shadow-xl">
       <p className="font-medium">{label}</p>
-      <p className="text-muted-foreground">${formatUSD(payload[0].value)}</p>
+      {type === 'volume' ? (
+        <p className="text-muted-foreground">${formatUSD(payload[0].value)}</p>
+      ) : (
+        <p className="text-muted-foreground">{payload[0].value} transactions</p>
+      )}
     </div>
   )
 }
 
-export default function TransactionVolumeChart({ data }: TransactionVolumeChartProps) {
+export default function TransactionChart({ data, type }: TransactionChartProps) {
   const formattedData = data.map(item => ({
     date: new Date(item.month).toLocaleDateString('en-US', { month: 'short' }),
-    volume: item.volumeUsd,
+    value: type === 'volume' ? item.volumeUsd : item.count,
   }))
 
   return (
@@ -50,16 +60,16 @@ export default function TransactionVolumeChart({ data }: TransactionVolumeChartP
           </defs>
           <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={10} />
           <YAxis
-            tickFormatter={value => `$${(value / 1000).toFixed(0)}k`}
+            tickFormatter={value => (type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value)}
             tickLine={false}
             axisLine={false}
             tickMargin={10}
           />
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip type={type} />} />
           <Area
             type="monotone"
-            dataKey="volume"
+            dataKey="value"
             stroke={chartColor}
             fillOpacity={1}
             fill="url(#colorVolume)"
