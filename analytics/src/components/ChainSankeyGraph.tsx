@@ -2,6 +2,7 @@ import { chainsByUid } from '@velocitylabs-org/turtle-registry'
 import React, { useRef, useEffect, useState } from 'react'
 import MultiSelect from '@/components/MultiSelect'
 import { chains, GraphType, primaryColor } from '@/constants'
+import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 interface ChainFlowData {
@@ -249,6 +250,9 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       svg.appendChild(path);
     });
 
+    // Calculate total weight for percentage calculation
+    const totalWeight = flowData.reduce((sum, d) => sum + d.size, 0);
+
     // Render nodes
     nodes.forEach(node => {
       const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -296,6 +300,91 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       }
 
       svg.appendChild(group);
+
+      // Add labels for destination nodes (not for the source node)
+      if (node.id !== sourceId && node.id !== `${sourceId}-origin`) {
+        // Find the link that targets this node to get the weight
+        const nodeLink = links.find(link => link.target === node.id);
+        if (nodeLink) {
+          const nodeWeight = nodeLink.value;
+          const percentage = (nodeWeight / totalWeight) * 100;
+
+          // Get chain information
+          const chain = chainsByUid[node.id];
+          const chainName = chain ? chain.name : node.id;
+
+          // Create label group for right side (chain name and weight)
+          const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          // Position it to the right of the node, left-aligned
+          labelGroup.setAttribute('transform', `translate(${node.x + nodeSize/2 + 10}, ${node.y - 7})`);
+
+          // Chain name text
+          const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          nameText.setAttribute('x', '0');
+          nameText.setAttribute('y', '0');
+          nameText.setAttribute('text-anchor', 'start');
+          nameText.setAttribute('dominant-baseline', 'middle');
+          nameText.setAttribute('fill', 'black');
+          nameText.setAttribute('font-size', '12px');
+          nameText.setAttribute('font-weight', 'bold');
+          nameText.textContent = chainName;
+
+          // Weight text
+          const weightText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          weightText.setAttribute('x', '0');
+          weightText.setAttribute('y', '15');
+          weightText.setAttribute('text-anchor', 'start');
+          weightText.setAttribute('dominant-baseline', 'middle');
+          weightText.setAttribute('fill', '#666');
+          weightText.setAttribute('font-size', '10px');
+
+          // Format weight based on type
+          if (type === 'volume') {
+            weightText.textContent = `$${formatUSD(nodeWeight)}`;
+          } else {
+            weightText.textContent = nodeWeight.toString();
+          }
+
+          // Add texts to right label group
+          labelGroup.appendChild(nameText);
+          labelGroup.appendChild(weightText);
+
+          // Add right label group to SVG
+          svg.appendChild(labelGroup);
+
+          // Create percentage label group for left side
+          const percentLabelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          // Position it to the left of the node, centered vertically
+          percentLabelGroup.setAttribute('transform', `translate(${node.x - nodeSize/2 - 40}, ${node.y})`);
+
+          // Percentage text
+          const percentText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          percentText.setAttribute('x', '0');
+          percentText.setAttribute('y', '0');
+          percentText.setAttribute('text-anchor', 'middle');
+          percentText.setAttribute('dominant-baseline', 'middle');
+          percentText.setAttribute('fill', '#666');
+          percentText.setAttribute('font-size', '10px');
+          percentText.setAttribute('font-weight', 'bold');
+
+          // Format percentage: use more decimal places for very small values
+          let percentageText;
+          if (percentage < 0.01 && percentage > 0) {
+            // For very small values, show 4 decimal places
+            percentageText = `${percentage.toFixed(4)}%`;
+          } else {
+            // For normal values, show 2 decimal places
+            percentageText = `${percentage.toFixed(2)}%`;
+          }
+          percentText.textContent = percentageText;
+
+          // Add percentage text to left label group
+          percentLabelGroup.appendChild(percentText);
+
+          // Add left label group to SVG
+          svg.appendChild(percentLabelGroup);
+        }
+      }
     });
 
   }, [flowData, dimensions, type, selectedChain]);
