@@ -58,9 +58,7 @@ export default function ChainsPage() {
               className="ml-3"
             />
           </CardTitle>
-          <CardDescription>
-            Select a source chain from the graph
-          </CardDescription>
+          <CardDescription>Select a source chain from the graph</CardDescription>
         </CardHeader>
         <CardContent>
           {isInitialLoading ? (
@@ -68,7 +66,12 @@ export default function ChainsPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
             </div>
           ) : (
-            <ChainPathsGraph data={chainData} type={graphType} selectedChain={chainUid} setChainUid={(chainUid) => setChainUid(chainUid)}/>
+            <ChainPathsGraph
+              data={chainData}
+              type={graphType}
+              selectedChain={chainUid}
+              setChainUid={chainUid => setChainUid(chainUid)}
+            />
           )}
         </CardContent>
       </Card>

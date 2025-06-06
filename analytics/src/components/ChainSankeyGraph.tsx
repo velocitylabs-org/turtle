@@ -5,41 +5,385 @@ import { chains, GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
+const SVG_NS = 'http://www.w3.org/2000/svg'
+
 interface ChainFlowData {
-  from: string;
-  to: string;
-  size: number;
+  from: string
+  to: string
+  size: number
 }
 
 interface ChainPathGraphProps {
-  data: ChainFlowData[] | undefined;
-  type: GraphType;
-  selectedChain: string;
-  setChainUid: (chainUid: string) => void;
+  data: ChainFlowData[] | undefined
+  type: GraphType
+  selectedChain: string
+  setChainUid: (chainUid: string) => void
 }
 
 interface Node {
-  id: string;
-  name: string;
-  x: number;
-  y: number;
-  logoURI: string;
+  id: string
+  name: string
+  x: number
+  y: number
+  logoURI: string
 }
 
 interface Link {
-  source: string;
-  target: string;
-  value: number;
-  width: number;
-  path: string;
+  source: string
+  target: string
+  value: number
+  width: number
+  path: string
 }
 
-export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid }: ChainPathGraphProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
-  // Add suffix to source chain ID to enable circular dependencies (when source and target are the same chain)
-  const flowData = data?.map((item) => ({ ...item, from: `${item.from}-origin` }))
+// Helper function to create SVG elements
+function createSvgElement(
+  tag: string,
+  attributes: Record<string, string> = {},
+  parent?: SVGElement | HTMLElement,
+): SVGElement {
+  const element = document.createElementNS(SVG_NS, tag)
+  Object.entries(attributes).forEach(([key, value]) => {
+    element.setAttribute(key, value)
+  })
+  if (parent) {
+    parent.appendChild(element)
+  }
+  return element
+}
+
+// Helper function to add right side label (chain name and weight)
+function addRightLabel(
+  svg: SVGSVGElement,
+  node: Node,
+  nodeSize: number,
+  chainName: string,
+  nodeWeight: number,
+  type: GraphType,
+): void {
+  // Create label group for right side
+  const labelGroup = createSvgElement(
+    'g',
+    {
+      transform: `translate(${node.x + nodeSize / 2 + 10}, ${node.y - 7})`,
+    },
+    svg,
+  )
+
+  // Chain name text
+  createSvgElement(
+    'text',
+    {
+      x: '0',
+      y: '0',
+      'text-anchor': 'start',
+      'dominant-baseline': 'middle',
+      fill: 'black',
+      'font-size': '12px',
+      'font-weight': 'bold',
+    },
+    labelGroup,
+  ).textContent = chainName
+
+  // Weight text
+  const weightText = createSvgElement(
+    'text',
+    {
+      x: '0',
+      y: '15',
+      'text-anchor': 'start',
+      'dominant-baseline': 'middle',
+      fill: '#666',
+      'font-size': '10px',
+    },
+    labelGroup,
+  )
+
+  // Format weight based on type
+  weightText.textContent = type === 'volume' ? `$${formatUSD(nodeWeight)}` : nodeWeight.toString()
+}
+
+// Helper function to add left side percentage label
+function addPercentageLabel(
+  svg: SVGSVGElement,
+  node: Node,
+  nodeSize: number,
+  percentage: number,
+): void {
+  // Create percentage label group for left side
+  const percentLabelGroup = createSvgElement(
+    'g',
+    {
+      transform: `translate(${node.x - nodeSize / 2 - 40}, ${node.y})`,
+    },
+    svg,
+  )
+
+  // Percentage text
+  const percentText = createSvgElement(
+    'text',
+    {
+      x: '0',
+      y: '0',
+      'text-anchor': 'middle',
+      'dominant-baseline': 'middle',
+      fill: '#666',
+      'font-size': '10px',
+      'font-weight': 'bold',
+    },
+    percentLabelGroup,
+  )
+
+  // Format percentage: use more decimal places for very small values
+  percentText.textContent =
+    percentage < 0.01 && percentage > 0 ? `${percentage.toFixed(4)}%` : `${percentage.toFixed(2)}%`
+}
+
+// Helper function to create nodes
+function createNodes(
+  flowData: ChainFlowData[],
+  margin: { top: number; right: number; bottom: number; left: number },
+  width: number,
+  nodeSize: number,
+  selectedChain: string,
+): { nodes: Node[]; sourceNode: Node; totalHeight: number } {
+  const nodes: Node[] = []
+  const sourceX = margin.left + nodeSize
+  const targetX = width - margin.right - nodeSize * 2 + 10
+  const nodePadding = 15
+
+  let totalHeight = margin.top
+
+  // Source node Y position
+  const sourceNodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
+
+  // Create virtual source node for path connections
+  const sourceId = selectedChain
+  const sourceChain = chainsByUid[sourceId]
+  const sourceName = sourceChain?.name || sourceId
+
+  const sourceNode = {
+    id: sourceId,
+    name: sourceName,
+    x: sourceX - 20,
+    y: sourceNodeY,
+    logoURI: '',
+  }
+
+  // Reset total height for targets
+  totalHeight = Math.max(margin.top + nodeSize, margin.top)
+
+  // Create target nodes
+  const targets = Array.from(new Set(flowData.map(d => d.to)))
+  targets.forEach(id => {
+    const chain = chainsByUid[id]
+    const logoURI = chain ? getSrcFromLogo(chain) : ''
+
+    // Ensure the node is well within the visible area
+    const nodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
+
+    nodes.push({
+      id,
+      name: chain?.name || id,
+      x: targetX,
+      y: nodeY,
+      logoURI,
+    })
+    totalHeight += nodeSize + nodePadding
+  })
+
+  return { nodes, sourceNode, totalHeight }
+}
+
+// Helper function to create links between nodes
+function createLinks(
+  flowData: ChainFlowData[],
+  nodeMap: Map<string, Node>,
+  selectedChain: string,
+  maxValue: number,
+  nodeSize: number,
+): Link[] {
+  const links: Link[] = []
+
+  flowData.forEach(d => {
+    // Only create links from the selected source (with -origin suffix)
+    if (d.from !== `${selectedChain}-origin`) return
+
+    const source = nodeMap.get(d.from)! // Our virtual source node
+    const target = nodeMap.get(d.to)!
+
+    // Calculate link width - with a minimum of 10px
+    const minLinkWidth = 10
+    const maxLinkWidth = 40
+    const linkWidthScale = maxLinkWidth / maxValue
+    const linkWidth = Math.max(minLinkWidth, d.size * linkWidthScale)
+
+    // Create curved path from source to target
+    const path = `
+      M ${source.x + 150} ${source.y}
+      C ${source.x + 150 + (target.x - source.x - 150) / 2} ${source.y},
+        ${source.x + 150 + (target.x - source.x - 150) / 2} ${target.y},
+        ${target.x - nodeSize / 2} ${target.y}
+    `
+
+    links.push({
+      source: d.from,
+      target: d.to,
+      value: d.size,
+      width: linkWidth,
+      path,
+    })
+  })
+
+  return links
+}
+
+// Helper function to create SVG definitions (defs, clipPath, gradient)
+function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
+  // Create a defs section for gradients and clipPath
+  const defs = createSvgElement('defs', {}, svg)
+
+  // Create clipPath for nodes
+  const clipPath = createSvgElement('clipPath', { id: 'circle-clip' }, defs)
+  createSvgElement(
+    'circle',
+    {
+      cx: (nodeSize / 2).toString(),
+      cy: (nodeSize / 2).toString(),
+      r: (nodeSize / 2).toString(),
+    },
+    clipPath,
+  )
+
+  // Create a gradient for link opacity effect
+  const gradient = createSvgElement(
+    'linearGradient',
+    {
+      id: 'linkGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%',
+    },
+    defs,
+  )
+
+  // Gradient stops
+  createSvgElement(
+    'stop',
+    {
+      offset: '0%',
+      'stop-color': primaryColor,
+      'stop-opacity': '0.5',
+    },
+    gradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '85%',
+      'stop-color': primaryColor,
+      'stop-opacity': '0.5',
+    },
+    gradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '100%',
+      'stop-color': primaryColor,
+      'stop-opacity': '0',
+    },
+    gradient,
+  )
+}
+
+// Helper function to render a node
+function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): void {
+  const group = createSvgElement(
+    'g',
+    {
+      transform: `translate(${node.x - nodeSize / 2}, ${node.y - nodeSize / 2})`,
+    },
+    svg,
+  )
+
+  // Node border circle
+  const circle = createSvgElement(
+    'circle',
+    {
+      cx: (nodeSize / 2).toString(),
+      cy: (nodeSize / 2).toString(),
+      r: (nodeSize / 2).toString(),
+      fill: 'white',
+      stroke: 'black',
+      'stroke-width': '1',
+    },
+    group,
+  )
+
+  // Chain logo image
+  if (node.logoURI) {
+    // Create a group for the image with clip path
+    const imageGroup = createSvgElement(
+      'g',
+      {
+        'clip-path': 'url(#circle-clip)',
+      },
+      group,
+    )
+
+    // Add the image
+    createSvgElement(
+      'image',
+      {
+        x: '0',
+        y: '0',
+        width: nodeSize.toString(),
+        height: nodeSize.toString(),
+        href: node.logoURI,
+      },
+      imageGroup,
+    )
+  } else {
+    // Fallback if no logo is available
+    circle.setAttribute('fill', '#2a2a2a')
+
+    // Add text with the chain name
+    createSvgElement(
+      'text',
+      {
+        x: (nodeSize / 2).toString(),
+        y: (nodeSize / 2 + 4).toString(), // +4 for vertical centering
+        'text-anchor': 'middle',
+        fill: 'black',
+        'font-size': '10px',
+      },
+      group,
+    ).textContent = node.id.substring(0, 3).toUpperCase()
+  }
+}
+
+/**
+ * ChainSankeyGraph - A component that renders a Sankey diagram visualizing chain data flows
+ *
+ * This component displays the flow of data between a selected source chain and multiple
+ * destination chains, with the width of the links representing the volume or count.
+ */
+export default function ChainSankeyGraph({
+  data,
+  type,
+  selectedChain,
+  setChainUid,
+}: ChainPathGraphProps) {
+  const svgRef = useRef<SVGSVGElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [dimensions, setDimensions] = useState({ width: 800, height: 500 })
+
+  // Add suffix to source chain ID to enable circular dependencies
+  const flowData = data?.map(item => ({ ...item, from: `${item.from}-origin` }))
 
   const chainOptions = chains.map(chain => ({
     value: chain.uid,
@@ -50,29 +394,29 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
   // Calculate dynamic height based on number of destination nodes
   const calculateDynamicHeight = () => {
     // Get minimum height needed for the "No data available" message
-    const nodeSize = 28; // Same as in the rendering logic
-    const nodePadding = 15; // Same as in the rendering logic
-    const topMargin = 60; // Space for the MultiSelect and top margin
-    const bottomMargin = 0; // Bottom margin
+    const nodeSize = 28 // Same as in the rendering logic
+    const nodePadding = 15 // Same as in the rendering logic
+    const topMargin = 60 // Space for the MultiSelect and top margin
+    const bottomMargin = 0 // Bottom margin
 
     if (!flowData || flowData.length === 0) {
       // When no data, use minimum height
-      const minHeight = topMargin + bottomMargin;
-      return Math.max(120, minHeight); // Ensure a minimum height of 120px
+      const minHeight = topMargin + bottomMargin
+      return Math.max(120, minHeight) // Ensure a minimum height of 120px
     }
 
     // Get unique destination nodes
-    const targets = Array.from(new Set(flowData.map(d => d.to)));
-    const nodeCount = targets.length;
+    const targets = Array.from(new Set(flowData.map(d => d.to)))
+    const nodeCount = targets.length
 
     // Calculate minimum height needed for all nodes
-    const minHeight = topMargin + (nodeCount * (nodeSize + nodePadding)) + bottomMargin;
+    const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
     // Ensure a minimum height of 120px even for very few nodes
-    return Math.max(120, minHeight);
-  };
+    return Math.max(120, minHeight)
+  }
 
-  const dynamicHeight = calculateDynamicHeight();
+  const dynamicHeight = calculateDynamicHeight()
 
   useEffect(() => {
     function handleResize() {
@@ -80,346 +424,111 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
         setDimensions({
           width: containerRef.current.clientWidth,
           height: dynamicHeight, // Use dynamic height instead of fixed height
-        });
+        })
       }
     }
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [dynamicHeight]); // Add dynamicHeight as a dependency
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [dynamicHeight]) // Add dynamicHeight as a dependency
 
   useEffect(() => {
-    if (!flowData || !svgRef.current) return;
+    if (!flowData || !svgRef.current) return
 
     // Clear previous graph
-    const svg = svgRef.current;
+    const svg = svgRef.current
     while (svg.firstChild) {
-      svg.removeChild(svg.firstChild);
+      svg.removeChild(svg.firstChild)
     }
 
     if (flowData?.length === 0) return
 
-    // Calculate dimensions with extra top padding
-    const width = dimensions.width - 30;
-    const height = dimensions.height;
-    const margin = { top: 5, right: 50, bottom: 20, left: 0 };
+    // Setup dimensions and constants
+    const width = dimensions.width - 30
+    const height = dimensions.height
+    const margin = { top: 5, right: 50, bottom: 20, left: 0 }
+    const nodeSize = 28
 
-    // Define node size constants
-    const nodeSize = 28; // Width and height of node images
-
-    // Extract unique node IDs
-    const nodeIds = Array.from(new Set(flowData.flatMap(d => [d.from, d.to])));
-
-    // Calculate total flow values
-    const nodeFlows = new Map<string, { in: number, out: number }>();
-    nodeIds.forEach(id => nodeFlows.set(id, { in: 0, out: 0 }));
-
+    // Calculate max value for link width scaling
+    let maxValue = 0
     flowData.forEach(d => {
-      const sourceFlow = nodeFlows.get(d.from)!;
-      sourceFlow.out += d.size;
+      maxValue = Math.max(maxValue, d.size)
+    })
 
-      const targetFlow = nodeFlows.get(d.to)!;
-      targetFlow.in += d.size;
-    });
+    // Create nodes and source node
+    const { nodes, sourceNode, totalHeight } = createNodes(
+      flowData,
+      margin,
+      width,
+      nodeSize,
+      selectedChain,
+    )
 
-    // Create nodes
-    const nodes: Node[] = [];
-    const sourceX = margin.left + nodeSize;
-    const targetX = width - margin.right - nodeSize * 2 + 10; // Added 10px more space between nodes
-    // Reduced padding between nodes
-    const nodePadding = 15; // Further reduced padding between nodes
-
-    let totalHeight = margin.top;
-    let maxValue = 0;
-
-    flowData.forEach(d => {
-      maxValue = Math.max(maxValue, d.size);
-    });
-
-    // Source node Y position for reference - ensure it's well within visible area
-    const sourceNodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2);
-
-    // Create a virtual source node for path connections only (won't be rendered)
-    const sourceId = selectedChain;
-    const sourceChain = chainsByUid[sourceId];
-    const sourceName = sourceChain?.name || sourceId;
-
-    // This is a virtual node that won't be rendered but will be used for path connections
-    const sourceNode = {
-      id: sourceId,
-      name: sourceName,
-      x: sourceX - 20, // Move the virtual source node more to the left
-      y: sourceNodeY,
-      logoURI: ''
-    };
-
-    // Reset total height for targets - start from a safe margin
-    totalHeight = Math.max(margin.top + nodeSize, margin.top);
-
-    // Create target nodes
-    const targets = Array.from(new Set(flowData.map(d => d.to)));
-    targets.forEach((id) => {
-      const chain = chainsByUid[id];
-      const logoURI = chain ? getSrcFromLogo(chain) : '';
-
-      // Ensure the first node is well within the visible area
-      const nodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2);
-
-      nodes.push({
-        id,
-        name: chain?.name || id,
-        x: targetX,
-        y: nodeY,
-        logoURI
-      });
-      totalHeight += nodeSize + nodePadding;
-    });
-
-    // Check if totalHeight exceeds available height and adjust if necessary
-    const requiredHeight = totalHeight + margin.bottom;
+    // Adjust SVG height if needed
+    const requiredHeight = totalHeight + margin.bottom
     if (requiredHeight > height) {
-      // Adjust the SVG height
-      svg.setAttribute('height', requiredHeight.toString());
+      svg.setAttribute('height', requiredHeight.toString())
     }
 
-    // Create links
-    const links: Link[] = [];
-    const nodeMap = new Map<string, Node>();
-    nodes.forEach(node => nodeMap.set(node.id, node));
+    // Create node map and links
+    const nodeMap = new Map<string, Node>()
+    nodes.forEach(node => nodeMap.set(node.id, node))
+    nodeMap.set(`${selectedChain}-origin`, sourceNode)
 
-    // Add the source node to the nodeMap (but not to the node array for rendering)
-    nodeMap.set(`${sourceId}-origin`, sourceNode);
+    const links = createLinks(flowData, nodeMap, selectedChain, maxValue, nodeSize)
 
-    flowData.forEach(d => {
-      // Only create links from the selected source (now with -origin suffix)
-      if (d.from !== `${selectedChain}-origin`) return;
+    // Create SVG elements
+    createSvgDefsElements(svg, nodeSize)
 
-      const source = nodeMap.get(d.from)!; // Our virtual source node
-      const target = nodeMap.get(d.to)!;
-
-      // Calculate link width - with a minimum of 10px
-      const minLinkWidth = 10;
-      const maxLinkWidth = 40;
-      const linkWidthScale = maxLinkWidth / maxValue;
-      const linkWidth = Math.max(minLinkWidth, d.size * linkWidthScale);
-
-      // Start the path from where the MultiSelect would be
-      const path = `
-        M ${source.x + 150} ${source.y}
-        C ${source.x + 150 + (target.x - source.x - 150) / 2} ${source.y},
-          ${source.x + 150 + (target.x - source.x - 150) / 2} ${target.y},
-          ${target.x - nodeSize/2} ${target.y}
-      `;
-
-      links.push({
-        source: d.from,
-        target: d.to,
-        value: d.size,
-        width: linkWidth,
-        path,
-      });
-    });
-
-    // Create a defs section for gradients and clipPath
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-
-    // Create clipPath for nodes
-    const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-    clipPath.setAttribute('id', 'circle-clip');
-    const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    clipCircle.setAttribute('cx', (nodeSize/2).toString());
-    clipCircle.setAttribute('cy', (nodeSize/2).toString());
-    clipCircle.setAttribute('r', (nodeSize/2).toString());
-    clipPath.appendChild(clipCircle);
-    defs.appendChild(clipPath);
-
-    // Create a gradient for link opacity effect
-    const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-    gradient.setAttribute('id', 'linkGradient');
-    gradient.setAttribute('x1', '0%');
-    gradient.setAttribute('y1', '0%');
-    gradient.setAttribute('x2', '100%');
-    gradient.setAttribute('y2', '0%');
-
-    // Start with full opacity
-    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    stop1.setAttribute('offset', '0%');
-    stop1.setAttribute('stop-color', primaryColor);
-    stop1.setAttribute('stop-opacity', '0.5');
-
-    // Keep opacity until 85% of the path
-    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    stop2.setAttribute('offset', '85%');
-    stop2.setAttribute('stop-color', primaryColor);
-    stop2.setAttribute('stop-opacity', '0.5');
-
-    // Fade to transparent at the end
-    const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-    stop3.setAttribute('offset', '100%');
-    stop3.setAttribute('stop-color', primaryColor);
-    stop3.setAttribute('stop-opacity', '0');
-
-    gradient.appendChild(stop1);
-    gradient.appendChild(stop2);
-    gradient.appendChild(stop3);
-    defs.appendChild(gradient);
-
-    svg.appendChild(defs);
-
-    // Render links first (so they appear behind nodes)
+    // Render links
     links.forEach(link => {
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', link.path);
-      path.setAttribute('stroke', 'url(#linkGradient)');
-      path.setAttribute('stroke-width', link.width.toString());
-      path.setAttribute('fill', 'none');
-
-      svg.appendChild(path);
-    });
+      createSvgElement(
+        'path',
+        {
+          d: link.path,
+          stroke: 'url(#linkGradient)',
+          'stroke-width': link.width.toString(),
+          fill: 'none',
+        },
+        svg,
+      )
+    })
 
     // Calculate total weight for percentage calculation
-    const totalWeight = flowData.reduce((sum, d) => sum + d.size, 0);
+    const totalWeight = flowData.reduce((sum, d) => sum + d.size, 0)
 
-    // Render nodes
+    // Render nodes and labels
     nodes.forEach(node => {
-      const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      group.setAttribute('transform', `translate(${node.x - nodeSize/2}, ${node.y - nodeSize/2})`);
+      renderNode(svg, node, nodeSize)
 
-      // Node border circle
-      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', (nodeSize/2).toString());
-      circle.setAttribute('cy', (nodeSize/2).toString());
-      circle.setAttribute('r', (nodeSize/2).toString());
-      circle.setAttribute('fill', 'white');
-      circle.setAttribute('stroke', 'black');
-      circle.setAttribute('stroke-width', '1');
-
-      // Chain logo image
-      if (node.logoURI) {
-        // Create a group for the image
-        const imageGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        imageGroup.setAttribute('clip-path', 'url(#circle-clip)');
-
-        const image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-        image.setAttribute('x', '0');
-        image.setAttribute('y', '0');
-        image.setAttribute('width', nodeSize.toString());
-        image.setAttribute('height', nodeSize.toString());
-        image.setAttribute('href', node.logoURI);
-
-        imageGroup.appendChild(image);
-        group.appendChild(circle); // Add border first
-        group.appendChild(imageGroup); // Then add an image
-      } else {
-        // Fallback if no logo is available
-        circle.setAttribute('fill', '#2a2a2a');
-        group.appendChild(circle);
-
-        // Add text with the chain name
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', (nodeSize/2).toString());
-        text.setAttribute('y', (nodeSize/2 + 4).toString()); // +4 for vertical centering
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('fill', 'black');
-        text.setAttribute('font-size', '10px');
-        text.textContent = node.id.substring(0, 3).toUpperCase();
-        group.appendChild(text);
-      }
-
-      svg.appendChild(group);
-
-      // Add labels for destination nodes (not for the source node)
-      if (node.id !== sourceId && node.id !== `${sourceId}-origin`) {
-        // Find the link that targets this node to get the weight
-        const nodeLink = links.find(link => link.target === node.id);
+      // Add labels for destination nodes
+      if (node.id !== selectedChain && node.id !== `${selectedChain}-origin`) {
+        const nodeLink = links.find(link => link.target === node.id)
         if (nodeLink) {
-          const nodeWeight = nodeLink.value;
-          const percentage = (nodeWeight / totalWeight) * 100;
+          const nodeWeight = nodeLink.value
+          const percentage = (nodeWeight / totalWeight) * 100
+          const chain = chainsByUid[node.id]
+          const chainName = chain ? chain.name : node.id
 
-          // Get chain information
-          const chain = chainsByUid[node.id];
-          const chainName = chain ? chain.name : node.id;
-
-          // Create label group for right side (chain name and weight)
-          const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          // Position it to the right of the node, left-aligned
-          labelGroup.setAttribute('transform', `translate(${node.x + nodeSize/2 + 10}, ${node.y - 7})`);
-
-          // Chain name text
-          const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          nameText.setAttribute('x', '0');
-          nameText.setAttribute('y', '0');
-          nameText.setAttribute('text-anchor', 'start');
-          nameText.setAttribute('dominant-baseline', 'middle');
-          nameText.setAttribute('fill', 'black');
-          nameText.setAttribute('font-size', '12px');
-          nameText.setAttribute('font-weight', 'bold');
-          nameText.textContent = chainName;
-
-          // Weight text
-          const weightText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          weightText.setAttribute('x', '0');
-          weightText.setAttribute('y', '15');
-          weightText.setAttribute('text-anchor', 'start');
-          weightText.setAttribute('dominant-baseline', 'middle');
-          weightText.setAttribute('fill', '#666');
-          weightText.setAttribute('font-size', '10px');
-
-          // Format weight based on type
-          if (type === 'volume') {
-            weightText.textContent = `$${formatUSD(nodeWeight)}`;
-          } else {
-            weightText.textContent = nodeWeight.toString();
-          }
-
-          // Add texts to right label group
-          labelGroup.appendChild(nameText);
-          labelGroup.appendChild(weightText);
-
-          // Add right label group to SVG
-          svg.appendChild(labelGroup);
-
-          // Create percentage label group for left side
-          const percentLabelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          // Position it to the left of the node, centered vertically
-          percentLabelGroup.setAttribute('transform', `translate(${node.x - nodeSize/2 - 40}, ${node.y})`);
-
-          // Percentage text
-          const percentText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          percentText.setAttribute('x', '0');
-          percentText.setAttribute('y', '0');
-          percentText.setAttribute('text-anchor', 'middle');
-          percentText.setAttribute('dominant-baseline', 'middle');
-          percentText.setAttribute('fill', '#666');
-          percentText.setAttribute('font-size', '10px');
-          percentText.setAttribute('font-weight', 'bold');
-
-          // Format percentage: use more decimal places for very small values
-          let percentageText;
-          if (percentage < 0.01 && percentage > 0) {
-            // For very small values, show 4 decimal places
-            percentageText = `${percentage.toFixed(4)}%`;
-          } else {
-            // For normal values, show 2 decimal places
-            percentageText = `${percentage.toFixed(2)}%`;
-          }
-          percentText.textContent = percentageText;
-
-          // Add percentage text to left label group
-          percentLabelGroup.appendChild(percentText);
-
-          // Add left label group to SVG
-          svg.appendChild(percentLabelGroup);
+          addRightLabel(svg, node, nodeSize, chainName, nodeWeight, type)
+          addPercentageLabel(svg, node, nodeSize, percentage)
         }
       }
-    });
-
-  }, [flowData, dimensions, type, selectedChain]);
+    })
+  }, [flowData, dimensions, type, selectedChain])
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: `${dynamicHeight}px`, position: 'relative', transition: 'height 300ms cubic-bezier(0.34, 1.56, 1, 1)' }}>
-      <div className="flex absolute" style={{ left: '20px', top: '13px', zIndex: 10 }}>
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        height: `${dynamicHeight}px`,
+        position: 'relative',
+        transition: 'height 300ms cubic-bezier(.165, .84, .44, 1)',
+      }}
+    >
+      <div className="absolute flex" style={{ left: '20px', top: '13px', zIndex: 10 }}>
         <div className="w-[150px]">
           <MultiSelect
             options={chainOptions}
@@ -436,7 +545,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
           />
         </div>
         {(!flowData || flowData.length === 0) && (
-          <div className="ml-3 flex items-center text-sm font-medium text-muted-foreground px-3 py-1 rounded-md">
+          <div className="ml-3 flex items-center rounded-md px-3 py-1 text-sm font-medium text-muted-foreground">
             ⚠️ No data available. Please select another chain.
           </div>
         )}
@@ -445,8 +554,8 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
         ref={svgRef}
         width={dimensions.width}
         height={dynamicHeight}
-        style={{ transition: 'height 200ms cubic-bezier(.86, 0, .07, 1)' }}
+        style={{ transition: 'height 300ms cubic-bezier(.165, .84, .44, 1)' }}
       />
     </div>
-  );
+  )
 }
