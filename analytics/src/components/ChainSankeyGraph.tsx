@@ -16,7 +16,6 @@ interface ChainPathGraphProps {
   type: GraphType;
   selectedChain: string;
   setChainUid: (chainUid: string) => void;
-  loading: boolean;
 }
 
 interface Node {
@@ -35,7 +34,7 @@ interface Link {
   path: string;
 }
 
-export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid, loading }: ChainPathGraphProps) {
+export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid }: ChainPathGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
@@ -64,7 +63,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
   }, []);
 
   useEffect(() => {
-    if (!flowData || flowData.length === 0 || !svgRef.current) return;
+    if (!flowData || !svgRef.current) return;
 
     // Clear previous graph
     const svg = svgRef.current;
@@ -72,10 +71,12 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       svg.removeChild(svg.firstChild);
     }
 
+    if (flowData?.length === 0) return
+
     // Calculate dimensions with extra top padding
-    const width = dimensions.width;
+    const width = dimensions.width - 30;
     const height = dimensions.height;
-    const margin = { top: 5, right: 20, bottom: 20, left: 70 };
+    const margin = { top: 5, right: 40, bottom: 20, left: 10 };
 
     // Define node size constants
     const nodeSize = 28; // Width and height of node images
@@ -98,7 +99,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     // Create nodes
     const nodes: Node[] = [];
     const sourceX = margin.left + nodeSize;
-    const targetX = width - margin.right - nodeSize * 2;
+    const targetX = width - margin.right - nodeSize * 2 + 10; // Added 10px more space between nodes
     // Reduced padding between nodes
     const nodePadding = 15; // Further reduced padding between nodes
 
@@ -407,7 +408,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
             showBadges={false}
           />
         </div>
-        {!loading && (!flowData || flowData.length === 0) && (
+        {(!flowData || flowData.length === 0) && (
           <div className="ml-3 flex items-center text-sm font-medium text-muted-foreground px-3 py-1 rounded-md">
             ⚠️ No data available. Please select another chain.
           </div>
@@ -417,7 +418,6 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
         ref={svgRef}
         width={dimensions.width}
         height={dimensions.height}
-        style={{ maxWidth: '100%', marginLeft: '-70px' }}
       />
     </div>
   );
