@@ -33,7 +33,7 @@ interface Link {
   path: string;
 }
 
-export default function ChainPathsGraph({ data: flowData, type, selectedChain, setChainUid }: ChainPathGraphProps) {
+export default function ChainSankeyGraph({ data: flowData, type, selectedChain, setChainUid }: ChainPathGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });

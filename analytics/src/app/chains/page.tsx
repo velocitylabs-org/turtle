@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { getChainsData } from '@/app/actions/chains'
-import ChainPathsGraph from '@/components/ChainPathsGraph'
+import ChainPathsGraph from '@/components/ChainSankeyGraph'
 import ErrorPanel from '@/components/ErrorPanel'
 import TitleToggle from '@/components/TitleToggle'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
