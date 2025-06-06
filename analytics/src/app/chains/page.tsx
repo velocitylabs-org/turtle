@@ -11,7 +11,7 @@ import { GraphType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 
 export default function ChainsPage() {
-  const [chainUid, setChainUid] = useState<string>('ethereum')
+  const [chainUid, setChainUid] = useState<string>('polkadot')
   const [graphType, setGraphType] = useState<GraphType>('volume')
   const { data, isLoading, error } = useQuery({
     queryKey: ['chains', chainUid],
