@@ -1,7 +1,7 @@
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
 import React, { useRef, useEffect, useState } from 'react'
 import MultiSelect from '@/components/MultiSelect'
-import { chains, GraphType } from '@/constants'
+import { chains, GraphType, primaryColor } from '@/constants'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 interface ChainFlowData {
@@ -15,6 +15,7 @@ interface ChainPathGraphProps {
   type: GraphType;
   selectedChain: string;
   setChainUid: (chainUid: string) => void;
+  loading: boolean;
 }
 
 interface Node {
@@ -33,7 +34,7 @@ interface Link {
   path: string;
 }
 
-export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid }: ChainPathGraphProps) {
+export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid, loading }: ChainPathGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
@@ -215,19 +216,19 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     // Start with full opacity
     const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stop1.setAttribute('offset', '0%');
-    stop1.setAttribute('stop-color', '#00FF29');
+    stop1.setAttribute('stop-color', primaryColor);
     stop1.setAttribute('stop-opacity', '0.5');
 
     // Keep opacity until 85% of the path
     const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stop2.setAttribute('offset', '85%');
-    stop2.setAttribute('stop-color', '#00FF29');
+    stop2.setAttribute('stop-color', primaryColor);
     stop2.setAttribute('stop-opacity', '0.5');
 
     // Fade to transparent at the end
     const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stop3.setAttribute('offset', '100%');
-    stop3.setAttribute('stop-color', '#00FF29');
+    stop3.setAttribute('stop-color', primaryColor);
     stop3.setAttribute('stop-opacity', '0');
 
     gradient.appendChild(stop1);
@@ -301,27 +302,27 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '400px', position: 'relative' }}>
-      <div
-        className="w-[150px] absolute"
-        style={{
-          left: '20px',
-          top: '13px',
-          zIndex: 10
-        }}
-      >
-        <MultiSelect
-          options={chainOptions}
-          selected={[selectedChain]}
-          onChange={val => {
-            if (Array.isArray(val) && val.length > 0) {
-              setChainUid(val[0])
-            }
-          }}
-          placeholder="Source chain"
-          singleSelect
-          preventEmpty
-          showBadges={false}
-        />
+      <div className="flex absolute" style={{ left: '20px', top: '13px', zIndex: 10 }}>
+        <div className="w-[150px]">
+          <MultiSelect
+            options={chainOptions}
+            selected={[selectedChain]}
+            onChange={val => {
+              if (Array.isArray(val) && val.length > 0) {
+                setChainUid(val[0])
+              }
+            }}
+            placeholder="Source chain"
+            singleSelect
+            preventEmpty
+            showBadges={false}
+          />
+        </div>
+        {!loading && (!flowData || flowData.length === 0) && (
+          <div className="ml-3 flex items-center text-sm font-medium text-muted-foreground px-3 py-1 rounded-md">
+            ⚠️ No data available. Please select another chain.
+          </div>
+        )}
       </div>
       <svg
         ref={svgRef}

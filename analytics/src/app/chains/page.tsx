@@ -52,7 +52,7 @@ export default function ChainsPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
             </div>
           ) : (
-            <ChainPathsGraph data={chainData} type={graphType} selectedChain={chainUid} setChainUid={(chainUid) => setChainUid(chainUid)}/>
+            <ChainPathsGraph data={chainData} type={graphType} loading={isLoading} selectedChain={chainUid} setChainUid={(chainUid) => setChainUid(chainUid)}/>
           )}
         </CardContent>
       </Card>
