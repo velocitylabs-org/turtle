@@ -64,7 +64,7 @@ export default function ChainsPage() {
         </CardHeader>
         <CardContent>
           {isInitialLoading ? (
-            <div className="flex h-[500px] items-center justify-center">
+            <div className="flex h-[361px] items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
             </div>
           ) : (

@@ -47,12 +47,39 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     logoURI: getSrcFromLogo(chain),
   }))
 
+  // Calculate dynamic height based on number of destination nodes
+  const calculateDynamicHeight = () => {
+    // Get minimum height needed for the "No data available" message
+    const nodeSize = 28; // Same as in the rendering logic
+    const nodePadding = 15; // Same as in the rendering logic
+    const topMargin = 60; // Space for the MultiSelect and top margin
+    const bottomMargin = 0; // Bottom margin
+
+    if (!flowData || flowData.length === 0) {
+      // When no data, use minimum height
+      const minHeight = topMargin + bottomMargin;
+      return Math.max(120, minHeight); // Ensure a minimum height of 120px
+    }
+
+    // Get unique destination nodes
+    const targets = Array.from(new Set(flowData.map(d => d.to)));
+    const nodeCount = targets.length;
+
+    // Calculate minimum height needed for all nodes
+    const minHeight = topMargin + (nodeCount * (nodeSize + nodePadding)) + bottomMargin;
+
+    // Ensure a minimum height of 120px even for very few nodes
+    return Math.max(120, minHeight);
+  };
+
+  const dynamicHeight = calculateDynamicHeight();
+
   useEffect(() => {
     function handleResize() {
       if (containerRef.current) {
         setDimensions({
           width: containerRef.current.clientWidth,
-          height: containerRef.current.clientHeight || 500,
+          height: dynamicHeight, // Use dynamic height instead of fixed height
         });
       }
     }
@@ -60,7 +87,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [dynamicHeight]); // Add dynamicHeight as a dependency
 
   useEffect(() => {
     if (!flowData || !svgRef.current) return;
@@ -76,7 +103,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     // Calculate dimensions with extra top padding
     const width = dimensions.width - 30;
     const height = dimensions.height;
-    const margin = { top: 5, right: 40, bottom: 20, left: 10 };
+    const margin = { top: 5, right: 50, bottom: 20, left: 0 };
 
     // Define node size constants
     const nodeSize = 28; // Width and height of node images
@@ -391,7 +418,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
   }, [flowData, dimensions, type, selectedChain]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '400px', position: 'relative' }}>
+    <div ref={containerRef} style={{ width: '100%', height: `${dynamicHeight}px`, position: 'relative', transition: 'height 300ms cubic-bezier(0.34, 1.56, 1, 1)' }}>
       <div className="flex absolute" style={{ left: '20px', top: '13px', zIndex: 10 }}>
         <div className="w-[150px]">
           <MultiSelect
@@ -417,7 +444,8 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       <svg
         ref={svgRef}
         width={dimensions.width}
-        height={dimensions.height}
+        height={dynamicHeight}
+        style={{ transition: 'height 200ms cubic-bezier(.86, 0, .07, 1)' }}
       />
     </div>
   );
