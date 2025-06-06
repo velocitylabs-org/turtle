@@ -22,7 +22,7 @@ export default function TokensPage() {
     <div>
       <Card>
         <CardHeader>
-          <CardTitle>Token activity overview</CardTitle>
+          <CardTitle>Activity overview</CardTitle>
           <CardDescription>Ranked by volume and transaction count</CardDescription>
         </CardHeader>
         <CardContent>

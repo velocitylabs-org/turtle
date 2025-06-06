@@ -3,7 +3,7 @@ import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
 
-export async function getChainsData(chainUid: string) {
+export async function getChainSankeyData(chainUid: string) {
   try {
     await dbConnect()
 
@@ -67,6 +67,43 @@ export async function getChainsData(chainUid: string) {
       selectedChain: chainUid,
       byTransactionCount,
       byVolume,
+    }
+  } catch (e) {
+    const error = e instanceof Error ? e : new Error(String(e))
+    await captureServerError(error)
+    throw error
+  }
+}
+
+export async function getChainsData() {
+  try {
+    await dbConnect()
+    const chainsData = await Transaction.aggregate([
+      {
+        $match: {
+          status: 'succeeded',
+        },
+      },
+      {
+        $group: {
+          _id: '$sourceChainUid',
+          chainUid: { $first: '$sourceChainUid' },
+          totalVolume: { $sum: '$sourceTokenAmountUsd' },
+          totalTransactions: { $sum: 1 },
+        },
+      },
+      { $sort: { totalVolume: -1 } },
+      {
+        $project: {
+          _id: 0,
+          chainUid: 1,
+          totalVolume: 1,
+          totalTransactions: 1,
+        },
+      },
+    ])
+    return {
+      chains: chainsData,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))

@@ -43,7 +43,7 @@ export interface TransactionModel {
   senderAddress: string
   recipientAddress: string
 
-  sourceChainUid: string
+  sourceChainUid: string // Unique ID for the source chain, used for filtering and analytics
   sourceChainId: string
   sourceChainName: string
   sourceChainNetwork: string
@@ -99,7 +99,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     senderAddress: { type: String, required: true, validate: nonEmptyString },
     recipientAddress: { type: String, required: true, validate: nonEmptyString },
 
-    sourceChainUid: { type: String, required: true, validate: nonEmptyString },
+    sourceChainUid: { type: String, required: true, validate: nonEmptyString }, // Unique ID for the source chain, used for filtering and analytics
     sourceChainId: { type: String, required: true, validate: nonEmptyString },
     sourceChainName: { type: String, required: true, validate: nonEmptyString },
     sourceChainNetwork: { type: String, required: true, validate: nonEmptyString },
