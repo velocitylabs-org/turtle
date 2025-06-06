@@ -39,10 +39,10 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
 
   const chainOptions = chains.map(chain => ({
-      value: chain.uid,
-      label: chain.name,
-      logoURI: getSrcFromLogo(chain),
-    }))
+    value: chain.uid,
+    label: chain.name,
+    logoURI: getSrcFromLogo(chain),
+  }))
 
   useEffect(() => {
     function handleResize() {
@@ -68,10 +68,10 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
       svg.removeChild(svg.firstChild);
     }
 
-    // Calculate dimensions
+    // Calculate dimensions with extra top padding
     const width = dimensions.width;
     const height = dimensions.height;
-    const margin = { top: 20, right: 20, bottom: 20, left: 70 };
+    const margin = { top: 5, right: 20, bottom: 20, left: 70 };
 
     // Define node size constants
     const nodeSize = 28; // Width and height of node images
@@ -105,10 +105,10 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
       maxValue = Math.max(maxValue, d.size);
     });
 
-    // Source node Y position for reference
-    const sourceNodeY = totalHeight + nodeSize / 2;
+    // Source node Y position for reference - ensure it's well within visible area
+    const sourceNodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2);
 
-    // Create virtual source node for path connections only (won't be rendered)
+    // Create a virtual source node for path connections only (won't be rendered)
     const sourceId = selectedChain;
     const sourceChain = chainsByUid[sourceId];
     const sourceName = sourceChain?.name || sourceId;
@@ -117,13 +117,13 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
     const sourceNode = {
       id: sourceId,
       name: sourceName,
-      x: sourceX - 20, // Move virtual source node more to the left
+      x: sourceX - 20, // Move the virtual source node more to the left
       y: sourceNodeY,
       logoURI: ''
     };
 
-    // Reset total height for targets
-    totalHeight = margin.top;
+    // Reset total height for targets - start from a safe margin
+    totalHeight = Math.max(margin.top + nodeSize, margin.top);
 
     // Create target nodes
     const targets = Array.from(new Set(flowData.map(d => d.to)));
@@ -131,11 +131,14 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
       const chain = chainsByUid[id];
       const logoURI = chain ? getSrcFromLogo(chain) : '';
 
+      // Ensure the first node is well within the visible area
+      const nodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2);
+
       nodes.push({
         id,
         name: chain?.name || id,
         x: targetX,
-        y: totalHeight + nodeSize / 2,
+        y: nodeY,
         logoURI
       });
       totalHeight += nodeSize + nodePadding;
@@ -153,7 +156,7 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
     const nodeMap = new Map<string, Node>();
     nodes.forEach(node => nodeMap.set(node.id, node));
 
-    // Add the source node to the nodeMap (but not to the nodes array for rendering)
+    // Add the source node to the nodeMap (but not to the node array for rendering)
     nodeMap.set(sourceId, sourceNode);
 
     flowData.forEach(d => {
@@ -186,8 +189,10 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
       });
     });
 
-    // Create a defs section for node clipPath
+    // Create a defs section for gradients and clipPath
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+    // Create clipPath for nodes
     const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
     clipPath.setAttribute('id', 'circle-clip');
     const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -196,20 +201,47 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
     clipCircle.setAttribute('r', (nodeSize/2).toString());
     clipPath.appendChild(clipCircle);
     defs.appendChild(clipPath);
+
+    // Create a gradient for link opacity effect
+    const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    gradient.setAttribute('id', 'linkGradient');
+    gradient.setAttribute('x1', '0%');
+    gradient.setAttribute('y1', '0%');
+    gradient.setAttribute('x2', '100%');
+    gradient.setAttribute('y2', '0%');
+
+    // Start with full opacity
+    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop1.setAttribute('offset', '0%');
+    stop1.setAttribute('stop-color', '#00FF29');
+    stop1.setAttribute('stop-opacity', '0.5');
+
+    // Keep opacity until 85% of the path
+    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop2.setAttribute('offset', '85%');
+    stop2.setAttribute('stop-color', '#00FF29');
+    stop2.setAttribute('stop-opacity', '0.5');
+
+    // Fade to transparent at the end
+    const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+    stop3.setAttribute('offset', '100%');
+    stop3.setAttribute('stop-color', '#00FF29');
+    stop3.setAttribute('stop-opacity', '0');
+
+    gradient.appendChild(stop1);
+    gradient.appendChild(stop2);
+    gradient.appendChild(stop3);
+    defs.appendChild(gradient);
+
     svg.appendChild(defs);
 
     // Render links first (so they appear behind nodes)
     links.forEach(link => {
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', link.path);
-      path.setAttribute('stroke', '#00FF29');
+      path.setAttribute('stroke', 'url(#linkGradient)');
       path.setAttribute('stroke-width', link.width.toString());
       path.setAttribute('fill', 'none');
-      path.setAttribute('opacity', '0.5');
-
-      const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-      title.textContent = `${link.value} ${type === 'volume' ? 'USD' : 'transactions'}`;
-      path.appendChild(title);
 
       svg.appendChild(path);
     });
@@ -243,13 +275,13 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
 
         imageGroup.appendChild(image);
         group.appendChild(circle); // Add border first
-        group.appendChild(imageGroup); // Then add image
+        group.appendChild(imageGroup); // Then add an image
       } else {
         // Fallback if no logo is available
         circle.setAttribute('fill', '#2a2a2a');
         group.appendChild(circle);
 
-        // Add text with chain name
+        // Add text with the chain name
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', (nodeSize/2).toString());
         text.setAttribute('y', (nodeSize/2 + 4).toString()); // +4 for vertical centering
@@ -260,11 +292,6 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
         group.appendChild(text);
       }
 
-      // Add chain name as tooltip
-      const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-      title.textContent = node.name;
-      group.appendChild(title);
-
       svg.appendChild(group);
     });
 
@@ -272,11 +299,11 @@ export default function ChainPathsGraph({ data: flowData, type, selectedChain, s
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '400px', position: 'relative' }}>
-      <div 
-        className="w-[150px] absolute" 
-        style={{ 
+      <div
+        className="w-[150px] absolute"
+        style={{
           left: '20px',
-          top: '14px',
+          top: '13px',
           zIndex: 10
         }}
       >
