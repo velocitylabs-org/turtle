@@ -33,10 +33,12 @@ interface Link {
   path: string;
 }
 
-export default function ChainSankeyGraph({ data: flowData, type, selectedChain, setChainUid }: ChainPathGraphProps) {
+export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid }: ChainPathGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 500 });
+  // Add suffix to source chain ID to enable circular dependencies (when source and target are the same chain)
+  const flowData = data?.map((item) => ({ ...item, from: `${item.from}-origin` }))
 
   const chainOptions = chains.map(chain => ({
     value: chain.uid,
@@ -157,11 +159,11 @@ export default function ChainSankeyGraph({ data: flowData, type, selectedChain, 
     nodes.forEach(node => nodeMap.set(node.id, node));
 
     // Add the source node to the nodeMap (but not to the node array for rendering)
-    nodeMap.set(sourceId, sourceNode);
+    nodeMap.set(`${sourceId}-origin`, sourceNode);
 
     flowData.forEach(d => {
-      // Only create links from the selected source
-      if (d.from !== selectedChain) return;
+      // Only create links from the selected source (now with -origin suffix)
+      if (d.from !== `${selectedChain}-origin`) return;
 
       const source = nodeMap.get(d.from)!; // Our virtual source node
       const target = nodeMap.get(d.to)!;
