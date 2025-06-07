@@ -46,7 +46,6 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
 
   // Prefetch data for all main pages when the app loads
   useEffect(() => {
-    console.log('pasoo')
     routes.forEach(route => {
       router.prefetch(route.href)
     })
@@ -149,7 +148,7 @@ function NavigationMenu({
                 'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
                 isActiveRoute(route) ? 'bg-muted text-primary' : 'text-muted-foreground',
               )}
-              onClick={onNavItemClicked}
+              onClick={isActiveRoute(route) ? () => {} : onNavItemClicked}
             >
               <div className="flex flex-1 items-center">
                 <route.icon

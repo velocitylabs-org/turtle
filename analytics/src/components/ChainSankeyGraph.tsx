@@ -1,6 +1,5 @@
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
-import debounce from 'just-debounce-it'
-import React, { useRef, useEffect, useLayoutEffect, useState, useCallback, useMemo } from 'react'
+import React, { useRef, useEffect, useLayoutEffect, useState } from 'react'
 import MultiSelect from '@/components/MultiSelect'
 import { chains, GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
@@ -8,6 +7,7 @@ import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 const svgNs = 'http://www.w3.org/2000/svg'
 const hoverColor = '#00CC20'
+const easeOutQuart = 'cubic-bezier(.165, .84, .44, 1)'
 
 interface ChainFlowData {
   from: string
@@ -22,458 +22,6 @@ interface ChainPathGraphProps {
   setChainUid: (chainUid: string) => void
 }
 
-interface Node {
-  id: string
-  name: string
-  x: number
-  y: number
-  logoURI: string
-}
-
-interface Link {
-  source: string
-  target: string
-  value: number
-  width: number
-  path: string
-}
-
-// Helper function to create SVG elements
-function createSvgElement(
-  tag: string,
-  attributes: Record<string, string> = {},
-  parent?: SVGElement | HTMLElement,
-): SVGElement {
-  const element = document.createElementNS(svgNs, tag)
-
-  // Add transition for smooth animations when tag is 'path'
-  if (tag === 'path') {
-    element.style.transition =
-      'd 300ms cubic-bezier(.165, .84, .44, 1), stroke-width 300ms cubic-bezier(.165, .84, .44, 1), stroke 300ms cubic-bezier(.165, .84, .44, 1)'
-  }
-
-  Object.entries(attributes).forEach(([key, value]) => {
-    element.setAttribute(key, value)
-  })
-
-  if (parent) {
-    parent.appendChild(element)
-  }
-  return element
-}
-
-// Helper function to add right side label (chain name and weight)
-function addRightLabel(
-  svg: SVGSVGElement,
-  node: Node,
-  nodeSize: number,
-  chainName: string,
-  nodeWeight: number,
-  type: GraphType,
-): { group: SVGElement; nameText: SVGElement; weightText: SVGElement } {
-  // Create label group for right side
-  const labelGroup = createSvgElement(
-    'g',
-    {
-      transform: `translate(${node.x + nodeSize / 2 + 10}, ${node.y - 7})`,
-      style: 'z-index: 10',
-    },
-    svg,
-  )
-
-  // Chain name text
-  const nameText = createSvgElement(
-    'text',
-    {
-      x: '0',
-      y: '0',
-      'text-anchor': 'start',
-      'dominant-baseline': 'middle',
-      fill: 'black',
-      'font-size': '12px',
-      'font-weight': 'bold',
-      style:
-        'transition: font-size 300ms cubic-bezier(.165, .84, .44, 1), font-weight 300ms cubic-bezier(.165, .84, .44, 1)',
-    },
-    labelGroup,
-  )
-  nameText.textContent = chainName
-
-  // Weight text
-  const weightText = createSvgElement(
-    'text',
-    {
-      x: '0',
-      y: '15',
-      'text-anchor': 'start',
-      'dominant-baseline': 'middle',
-      fill: '#666',
-      'font-size': '10px',
-      style: 'transition: font-size 300ms cubic-bezier(.165, .84, .44, 1)',
-    },
-    labelGroup,
-  )
-
-  // Format weight based on type
-  weightText.textContent = type === 'volume' ? `$${formatUSD(nodeWeight)}` : nodeWeight.toString()
-
-  return { group: labelGroup, nameText, weightText }
-}
-
-// Helper function to add left side percentage label
-function addPercentageLabel(
-  svg: SVGSVGElement,
-  node: Node,
-  nodeSize: number,
-  percentage: number,
-): { group: SVGElement; text: SVGElement } {
-  // Create percentage label group for left side
-  const percentLabelGroup = createSvgElement(
-    'g',
-    {
-      transform: `translate(${node.x - nodeSize / 2 - 40}, ${node.y})`,
-      style: 'z-index: 10',
-    },
-    svg,
-  )
-
-  // Percentage text
-  const percentText = createSvgElement(
-    'text',
-    {
-      x: '0',
-      y: '0',
-      'text-anchor': 'middle',
-      'dominant-baseline': 'middle',
-      fill: '#666',
-      'font-size': '12px',
-      'font-weight': 'bold',
-      style: 'transition: font-size 300ms cubic-bezier(.165, .84, .44, 1)',
-    },
-    percentLabelGroup,
-  )
-
-  // Format percentage: use more decimal places for very small values
-  percentText.textContent =
-    percentage < 0.01 && percentage > 0 ? `${percentage.toFixed(4)}%` : `${percentage.toFixed(2)}%`
-
-  // Add hover effects to the percentage label itself
-  percentLabelGroup.addEventListener('mouseenter', () => {
-    percentText.setAttribute('font-size', '14px')
-    percentText.setAttribute('fill', hoverColor)
-    // Move the label group to the end of its parent to bring it to the front
-    svg.appendChild(percentLabelGroup)
-  })
-
-  percentLabelGroup.addEventListener('mouseleave', () => {
-    percentText.setAttribute('font-size', '12px')
-    percentText.setAttribute('fill', '#666')
-  })
-
-  return { group: percentLabelGroup, text: percentText }
-}
-
-// Helper function to create nodes
-function createNodes(
-  flowData: ChainFlowData[],
-  margin: { top: number; right: number; bottom: number; left: number },
-  width: number,
-  nodeSize: number,
-  selectedChain: string,
-): { nodes: Node[]; sourceNode: Node; totalHeight: number } {
-  const nodes: Node[] = []
-  const sourceX = margin.left + nodeSize
-  const targetX = width - margin.right - nodeSize * 2 + 10
-  const nodePadding = 15
-
-  let totalHeight = margin.top
-
-  // Source node Y position
-  const sourceNodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
-
-  // Create virtual source node for path connections
-  const sourceId = selectedChain
-  const sourceChain = chainsByUid[sourceId]
-  const sourceName = sourceChain?.name || sourceId
-
-  const sourceNode = {
-    id: sourceId,
-    name: sourceName,
-    x: sourceX - 20,
-    y: sourceNodeY,
-    logoURI: '',
-  }
-
-  // Reset total height for targets
-  totalHeight = Math.max(margin.top + nodeSize, margin.top)
-
-  // Create target nodes
-  const targets = Array.from(new Set(flowData.map(d => d.to)))
-  targets.forEach(id => {
-    const chain = chainsByUid[id]
-    const logoURI = chain ? getSrcFromLogo(chain) : ''
-
-    // Ensure the node is well within the visible area
-    const nodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
-
-    nodes.push({
-      id,
-      name: chain?.name || id,
-      x: targetX,
-      y: nodeY,
-      logoURI,
-    })
-    totalHeight += nodeSize + nodePadding
-  })
-
-  return { nodes, sourceNode, totalHeight }
-}
-
-// Helper function to create links between nodes
-function createLinks(
-  flowData: ChainFlowData[],
-  nodeMap: Map<string, Node>,
-  selectedChain: string,
-  maxValue: number,
-  nodeSize: number,
-  containerWidth?: number,
-): Link[] {
-  const links: Link[] = []
-
-  flowData.forEach(d => {
-    // Only create links from the selected source (with -origin suffix)
-    if (d.from !== `${selectedChain}-origin`) return
-
-    const source = nodeMap.get(d.from)! // Our virtual source node
-    const target = nodeMap.get(d.to)!
-
-    // Calculate link width - with a minimum of 10px
-    const minLinkWidth = 10
-    const maxLinkWidth = 40
-    const linkWidthScale = maxLinkWidth / maxValue
-    const linkWidth = Math.max(minLinkWidth, d.size * linkWidthScale)
-
-    // Calculate control point distance based on container width for more responsive curves
-    // This makes the curves adapt to the container width
-    const controlPointDistance = containerWidth
-      ? Math.min(150, containerWidth * 0.2) // Responsive control point distance
-      : 150 // Default if containerWidth not provided
-
-    // Create curved path from source to target with responsive control points
-    const path = `
-      M ${source.x + controlPointDistance} ${source.y}
-      C ${source.x + controlPointDistance + (target.x - source.x - controlPointDistance) / 2} ${source.y},
-        ${source.x + controlPointDistance + (target.x - source.x - controlPointDistance) / 2} ${target.y},
-        ${target.x - nodeSize / 2} ${target.y}
-    `
-
-    links.push({
-      source: d.from,
-      target: d.to,
-      value: d.size,
-      width: linkWidth,
-      path,
-    })
-  })
-
-  return links
-}
-
-// Helper function to create SVG definitions (defs, clipPath, gradient)
-function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
-  // Create a defs section for gradients and clipPath
-  const defs = createSvgElement('defs', {}, svg)
-
-  // Create clipPath for nodes
-  const clipPath = createSvgElement('clipPath', { id: 'circle-clip' }, defs)
-  createSvgElement(
-    'circle',
-    {
-      cx: (nodeSize / 2).toString(),
-      cy: (nodeSize / 2).toString(),
-      r: (nodeSize / 2).toString(),
-    },
-    clipPath,
-  )
-
-  // Create a gradient for link opacity effect
-  const gradient = createSvgElement(
-    'linearGradient',
-    {
-      id: 'linkGradient',
-      x1: '0%',
-      y1: '0%',
-      x2: '100%',
-      y2: '0%',
-    },
-    defs,
-  )
-
-  // Gradient stops
-  createSvgElement(
-    'stop',
-    {
-      offset: '0%',
-      'stop-color': primaryColor,
-      'stop-opacity': '0.5',
-    },
-    gradient,
-  )
-
-  createSvgElement(
-    'stop',
-    {
-      offset: '85%',
-      'stop-color': primaryColor,
-      'stop-opacity': '0.5',
-    },
-    gradient,
-  )
-
-  createSvgElement(
-    'stop',
-    {
-      offset: '100%',
-      'stop-color': primaryColor,
-      'stop-opacity': '0',
-    },
-    gradient,
-  )
-
-  // Create a hover gradient for hover effect that maintains translucid ends
-  const hoverGradient = createSvgElement(
-    'linearGradient',
-    {
-      id: 'hoverLinkGradient',
-      x1: '0%',
-      y1: '0%',
-      x2: '100%',
-      y2: '0%',
-    },
-    defs,
-  )
-
-  // Hover gradient stops
-  createSvgElement(
-    'stop',
-    {
-      offset: '0%',
-      'stop-color': hoverColor,
-      'stop-opacity': '0.5',
-    },
-    hoverGradient,
-  )
-
-  createSvgElement(
-    'stop',
-    {
-      offset: '85%',
-      'stop-color': hoverColor,
-      'stop-opacity': '0.5',
-    },
-    hoverGradient,
-  )
-
-  createSvgElement(
-    'stop',
-    {
-      offset: '100%',
-      'stop-color': hoverColor,
-      'stop-opacity': '0',
-    },
-    hoverGradient,
-  )
-}
-
-// Helper function to render a node
-function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): SVGElement {
-  const group = createSvgElement(
-    'g',
-    {
-      transform: `translate(${node.x - nodeSize / 2}, ${node.y - nodeSize / 2})`,
-    },
-    svg,
-  )
-
-  // Node border circle
-  const circle = createSvgElement(
-    'circle',
-    {
-      cx: (nodeSize / 2).toString(),
-      cy: (nodeSize / 2).toString(),
-      r: (nodeSize / 2).toString(),
-      fill: 'white',
-      stroke: '#666',
-      'stroke-width': '1',
-      style:
-        'transition: stroke 300ms cubic-bezier(.165, .84, .44, 1), stroke-width 300ms cubic-bezier(.165, .84, .44, 1)',
-    },
-    group,
-  )
-
-  // Add hover effects to the group
-  group.addEventListener('mouseenter', () => {
-    circle.setAttribute('stroke', hoverColor)
-    circle.setAttribute('stroke-width', '2')
-    // Move the group to the end of its parent to bring it to the front
-    svg.appendChild(group)
-  })
-
-  group.addEventListener('mouseleave', () => {
-    circle.setAttribute('stroke', '#666')
-    circle.setAttribute('stroke-width', '1')
-  })
-
-  // Chain logo image
-  if (node.logoURI) {
-    // Create a group for the image with clip path
-    const imageGroup = createSvgElement(
-      'g',
-      {
-        'clip-path': 'url(#circle-clip)',
-      },
-      group,
-    )
-
-    // Add the image
-    createSvgElement(
-      'image',
-      {
-        x: '0',
-        y: '0',
-        width: nodeSize.toString(),
-        height: nodeSize.toString(),
-        href: node.logoURI,
-      },
-      imageGroup,
-    )
-  } else {
-    // Fallback if no logo is available
-    circle.setAttribute('fill', '#2a2a2a')
-
-    // Add text with the chain name
-    createSvgElement(
-      'text',
-      {
-        x: (nodeSize / 2).toString(),
-        y: (nodeSize / 2 + 4).toString(), // +4 for vertical centering
-        'text-anchor': 'middle',
-        fill: 'black',
-        'font-size': '10px',
-      },
-      group,
-    ).textContent = node.id.substring(0, 3).toUpperCase()
-  }
-
-  return group
-}
-
-/**
- * ChainSankeyGraph - A component that renders a Sankey diagram visualizing chain data flows
- *
- * This component displays the flow of data between a selected source chain and multiple
- * destination chains, with the width of the links representing the volume or count.
- */
 export default function ChainSankeyGraph({
   data,
   type,
@@ -482,10 +30,8 @@ export default function ChainSankeyGraph({
 }: ChainPathGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  // Initialize with a reasonable default width that will be updated in useLayoutEffect
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
-  // Add suffix to source chain ID to enable circular dependencies
   const flowData = data?.map(item => ({ ...item, from: `${item.from}-origin` }))
 
   const chainOptions = chains.map(chain => ({
@@ -494,60 +40,28 @@ export default function ChainSankeyGraph({
     logoURI: getSrcFromLogo(chain),
   }))
 
-  // Calculate dynamic height based on number of destination nodes
   const calculateDynamicHeight = () => {
-    // Get minimum height needed for the "No data available" message
-    const nodeSize = 28 // Same as in the rendering logic
-    const nodePadding = 15 // Same as in the rendering logic
-    const topMargin = 60 // Space for the MultiSelect and top margin
-    const bottomMargin = 0 // Bottom margin
+    const nodeSize = 28
+    const nodePadding = 15
+    const topMargin = 60
+    const bottomMargin = 0
 
     if (!flowData || flowData.length === 0) {
-      // When no data, use minimum height
       const minHeight = topMargin + bottomMargin
-      return Math.max(120, minHeight) // Ensure a minimum height of 120px
+      return Math.max(120, minHeight)
     }
 
-    // Get unique destination nodes
     const targets = Array.from(new Set(flowData.map(d => d.to)))
     const nodeCount = targets.length
-
-    // Calculate minimum height needed for all nodes
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
-    // Ensure a minimum height of 120px even for very few nodes
     return Math.max(120, minHeight)
   }
 
   const dynamicHeight = calculateDynamicHeight()
 
-  // Create a debounced function to update dimensions
-  const debouncedUpdateDimensions = useMemo(
-    () =>
-      debounce(() => {
-        if (containerRef.current) {
-          // Only update if the width has changed
-          const newWidth = containerRef.current.clientWidth
-          if (newWidth !== dimensions.width) {
-            setDimensions({
-              width: newWidth,
-              height: dynamicHeight, // Use dynamic height instead of fixed height
-            })
-          }
-        }
-      }, 20),
-    [dynamicHeight, dimensions.width],
-  )
-
-  // Create a resize handler that uses the memoized debounced function
-  const handleResize = useCallback(() => {
-    debouncedUpdateDimensions()
-  }, [debouncedUpdateDimensions])
-
-  // Use useLayoutEffect for initial size calculation to prevent flickering
   useLayoutEffect(() => {
     if (containerRef.current) {
-      // Get the initial container width synchronously before the first render
       const containerWidth = containerRef.current.clientWidth
       setDimensions({
         width: containerWidth,
@@ -556,15 +70,32 @@ export default function ChainSankeyGraph({
     }
   }, [dynamicHeight])
 
-  // Use useEffect for setting up resize observers after the initial render
   useEffect(() => {
-    // Set up ResizeObserver to detect container width changes only
     let resizeObserver: ResizeObserver | null = null
     let previousWidth = containerRef.current?.clientWidth || 0
 
+    function handleResize() {
+      if (containerRef.current) {
+        const newWidth = containerRef.current.clientWidth
+        if (newWidth !== dimensions.width) {
+          setDimensions({
+            width: newWidth,
+            height: dynamicHeight,
+          })
+        }
+      }
+    }
+
+    const handleWindowResize = () => {
+      const newWidth = containerRef.current?.clientWidth || 0
+      if (newWidth !== previousWidth) {
+        previousWidth = newWidth
+        handleResize()
+      }
+    }
+
     if (containerRef.current && typeof ResizeObserver !== 'undefined') {
       resizeObserver = new ResizeObserver(entries => {
-        // Only trigger resize if width has changed
         const newWidth = entries[0].contentRect.width
         if (newWidth !== previousWidth) {
           previousWidth = newWidth
@@ -574,30 +105,20 @@ export default function ChainSankeyGraph({
       resizeObserver.observe(containerRef.current)
     }
 
-    // Also listen for window resize events as a fallback
-    const handleWindowResize = () => {
-      const newWidth = containerRef.current?.clientWidth || 0
-      if (newWidth !== previousWidth) {
-        previousWidth = newWidth
-        handleResize()
-      }
-    }
     window.addEventListener('resize', handleWindowResize)
 
     return () => {
-      // Clean up
       if (resizeObserver) {
         resizeObserver.disconnect()
       }
       window.removeEventListener('resize', handleWindowResize)
     }
-  }, [handleResize]) // handleResize already has dynamicHeight as a dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
-    // Don't render if no data, no SVG ref, or if dimensions haven't been set yet
     if (!flowData || !svgRef.current || dimensions.width === 0) return
 
-    // Clear previous graph
     const svg = svgRef.current
     while (svg.firstChild) {
       svg.removeChild(svg.firstChild)
@@ -605,19 +126,16 @@ export default function ChainSankeyGraph({
 
     if (flowData?.length === 0) return
 
-    // Setup dimensions and constants
     const width = dimensions.width - 30
     const height = dimensions.height
     const margin = { top: 5, right: 50, bottom: 20, left: 0 }
     const nodeSize = 28
 
-    // Calculate max value for link width scaling
     let maxValue = 0
     flowData.forEach(d => {
       maxValue = Math.max(maxValue, d.size)
     })
 
-    // Create nodes and source node
     const { nodes, sourceNode, totalHeight } = createNodes(
       flowData,
       margin,
@@ -626,23 +144,19 @@ export default function ChainSankeyGraph({
       selectedChain,
     )
 
-    // Adjust SVG height if needed
     const requiredHeight = totalHeight + margin.bottom
     if (requiredHeight > height) {
       svg.setAttribute('height', requiredHeight.toString())
     }
 
-    // Create node map and links
     const nodeMap = new Map<string, Node>()
     nodes.forEach(node => nodeMap.set(node.id, node))
     nodeMap.set(`${selectedChain}-origin`, sourceNode)
 
     const links = createLinks(flowData, nodeMap, selectedChain, maxValue, nodeSize, width)
 
-    // Create SVG elements
     createSvgDefsElements(svg, nodeSize)
 
-    // Render links and store references to path elements
     const pathElements = new Map<string, SVGElement>()
     links.forEach(link => {
       const path = createSvgElement(
@@ -656,13 +170,10 @@ export default function ChainSankeyGraph({
         svg,
       )
 
-      // Store reference to the path element
       pathElements.set(link.target, path)
 
-      // Add hover effects to the path
       path.addEventListener('mouseenter', () => {
         path.setAttribute('stroke', 'url(#hoverLinkGradient)')
-        // Move the path to the end of its parent to bring it to the front
         svg.appendChild(path)
       })
 
@@ -671,15 +182,40 @@ export default function ChainSankeyGraph({
       })
     })
 
-    // Calculate total weight for percentage calculation
     const totalWeight = flowData.reduce((sum, d) => sum + d.size, 0)
 
-    // Render nodes and labels
+    function applyHoverEffect(
+      percentText: SVGElement,
+      nameText: SVGElement,
+      weightText: SVGElement,
+      rightLabelGroup: SVGElement,
+    ) {
+      percentText.setAttribute('font-size', '14px')
+      percentText.setAttribute('fill', hoverColor)
+      svg.appendChild(percentText.parentElement as unknown as SVGElement)
+
+      nameText.setAttribute('font-size', '14px')
+      nameText.setAttribute('font-weight', '900')
+      weightText.setAttribute('font-size', '12px')
+      svg.appendChild(rightLabelGroup)
+    }
+
+    function removeHoverEffect(
+      percentText: SVGElement,
+      nameText: SVGElement,
+      weightText: SVGElement,
+    ) {
+      percentText.setAttribute('font-size', '12px')
+      percentText.setAttribute('fill', '#666')
+
+      nameText.setAttribute('font-size', '12px')
+      nameText.setAttribute('font-weight', 'bold')
+      weightText.setAttribute('font-size', '10px')
+    }
+
     nodes.forEach(node => {
       const nodeGroup = renderNode(svg, node, nodeSize)
 
-      // Add labels for destination nodes
-      // We need to check if this is a target node (not the source node with -origin suffix)
       if (node.id !== `${selectedChain}-origin`) {
         const nodeLink = links.find(link => link.target === node.id)
         if (nodeLink) {
@@ -695,60 +231,22 @@ export default function ChainSankeyGraph({
           } = addRightLabel(svg, node, nodeSize, chainName, nodeWeight, type)
           const { text: percentText } = addPercentageLabel(svg, node, nodeSize, percentage)
 
-          // Connect hover effects between node, link, and both labels (percentage and right-side)
           nodeGroup.addEventListener('mouseenter', () => {
-            // Percentage label hover effect
-            percentText.setAttribute('font-size', '14px')
-            percentText.setAttribute('fill', hoverColor)
-            // Move the percentage label to the front
-            svg.appendChild(percentText.parentElement as SVGElement)
-
-            // Right-side label hover effect
-            nameText.setAttribute('font-size', '14px')
-            nameText.setAttribute('font-weight', '900')
-            weightText.setAttribute('font-size', '12px')
-            // Move the right-side label to the front
-            svg.appendChild(rightLabelGroup)
+            applyHoverEffect(percentText, nameText, weightText, rightLabelGroup)
           })
 
           nodeGroup.addEventListener('mouseleave', () => {
-            // Percentage label reset
-            percentText.setAttribute('font-size', '12px')
-            percentText.setAttribute('fill', '#666')
-
-            // Right-side label reset
-            nameText.setAttribute('font-size', '12px')
-            nameText.setAttribute('font-weight', 'bold')
-            weightText.setAttribute('font-size', '10px')
+            removeHoverEffect(percentText, nameText, weightText)
           })
 
-          // Get the corresponding path element from our map
           const pathElement = pathElements.get(node.id)
           if (pathElement) {
             pathElement.addEventListener('mouseenter', () => {
-              // Percentage label hover effect
-              percentText.setAttribute('font-size', '14px')
-              percentText.setAttribute('fill', hoverColor)
-              // Move the percentage label to the front
-              svg.appendChild(percentText.parentElement as SVGElement)
-
-              // Right-side label hover effect
-              nameText.setAttribute('font-size', '14px')
-              nameText.setAttribute('font-weight', '900')
-              weightText.setAttribute('font-size', '12px')
-              // Move the right-side label to the front
-              svg.appendChild(rightLabelGroup)
+              applyHoverEffect(percentText, nameText, weightText, rightLabelGroup)
             })
 
             pathElement.addEventListener('mouseleave', () => {
-              // Percentage label reset
-              percentText.setAttribute('font-size', '12px')
-              percentText.setAttribute('fill', '#666')
-
-              // Right-side label reset
-              nameText.setAttribute('font-size', '12px')
-              nameText.setAttribute('font-weight', 'bold')
-              weightText.setAttribute('font-size', '10px')
+              removeHoverEffect(percentText, nameText, weightText)
             })
           }
         }
@@ -763,7 +261,7 @@ export default function ChainSankeyGraph({
         width: '100%',
         height: `${dynamicHeight}px`,
         position: 'relative',
-        transition: 'height 300ms cubic-bezier(.165, .84, .44, 1)',
+        transition: `height 300ms ${easeOutQuart}`,
       }}
     >
       <div className="absolute flex" style={{ left: '20px', top: '13px', zIndex: 10 }}>
@@ -792,8 +290,402 @@ export default function ChainSankeyGraph({
         ref={svgRef}
         width={dimensions.width}
         height={dynamicHeight}
-        style={{ transition: 'height 300ms cubic-bezier(.165, .84, .44, 1)' }}
+        style={{ transition: `height 300ms ${easeOutQuart}` }}
       />
     </div>
   )
+}
+
+interface Node {
+  id: string
+  name: string
+  x: number
+  y: number
+  logoURI: string
+}
+
+interface Link {
+  source: string
+  target: string
+  value: number
+  width: number
+  path: string
+}
+
+function createSvgElement(
+  tag: string,
+  attributes: Record<string, string> = {},
+  parent?: SVGElement | HTMLElement,
+): SVGElement {
+  const element = document.createElementNS(svgNs, tag)
+  Object.entries(attributes).forEach(([key, value]) => {
+    element.setAttribute(key, value)
+  })
+
+  if (parent) {
+    parent.appendChild(element)
+  }
+  return element
+}
+
+function addRightLabel(
+  svg: SVGSVGElement,
+  node: Node,
+  nodeSize: number,
+  chainName: string,
+  nodeWeight: number,
+  type: GraphType,
+): { group: SVGElement; nameText: SVGElement; weightText: SVGElement } {
+  const labelGroup = createSvgElement(
+    'g',
+    {
+      transform: `translate(${node.x + nodeSize / 2 + 10}, ${node.y - 7})`,
+      style: 'z-index: 10',
+    },
+    svg,
+  )
+
+  const nameText = createSvgElement(
+    'text',
+    {
+      x: '0',
+      y: '0',
+      'text-anchor': 'start',
+      'dominant-baseline': 'middle',
+      fill: 'black',
+      'font-size': '12px',
+      'font-weight': 'bold',
+      style: `transition: font-size 300ms ${easeOutQuart}, font-weight 300ms ${easeOutQuart}`,
+    },
+    labelGroup,
+  )
+  nameText.textContent = chainName
+
+  const weightText = createSvgElement(
+    'text',
+    {
+      x: '0',
+      y: '15',
+      'text-anchor': 'start',
+      'dominant-baseline': 'middle',
+      fill: '#666',
+      'font-size': '10px',
+      style: `transition: font-size 300ms ${easeOutQuart}`,
+    },
+    labelGroup,
+  )
+
+  weightText.textContent = type === 'volume' ? `$${formatUSD(nodeWeight)}` : nodeWeight.toString()
+
+  return { group: labelGroup, nameText, weightText }
+}
+
+function addPercentageLabel(
+  svg: SVGSVGElement,
+  node: Node,
+  nodeSize: number,
+  percentage: number,
+): { group: SVGElement; text: SVGElement } {
+  const percentLabelGroup = createSvgElement(
+    'g',
+    {
+      transform: `translate(${node.x - nodeSize / 2 - 40}, ${node.y})`,
+      style: 'z-index: 10',
+    },
+    svg,
+  )
+
+  const percentText = createSvgElement(
+    'text',
+    {
+      x: '0',
+      y: '0',
+      'text-anchor': 'middle',
+      'dominant-baseline': 'middle',
+      fill: '#666',
+      'font-size': '12px',
+      'font-weight': 'bold',
+      style: `transition: font-size 300ms ${easeOutQuart}`,
+    },
+    percentLabelGroup,
+  )
+
+  percentText.textContent =
+    percentage < 0.01 && percentage > 0 ? `${percentage.toFixed(4)}%` : `${percentage.toFixed(2)}%`
+
+  percentLabelGroup.addEventListener('mouseenter', () => {
+    percentText.setAttribute('font-size', '14px')
+    percentText.setAttribute('fill', hoverColor)
+    svg.appendChild(percentLabelGroup)
+  })
+
+  percentLabelGroup.addEventListener('mouseleave', () => {
+    percentText.setAttribute('font-size', '12px')
+    percentText.setAttribute('fill', '#666')
+  })
+
+  return { group: percentLabelGroup, text: percentText }
+}
+
+function createNodes(
+  flowData: ChainFlowData[],
+  margin: { top: number; right: number; bottom: number; left: number },
+  width: number,
+  nodeSize: number,
+  selectedChain: string,
+): { nodes: Node[]; sourceNode: Node; totalHeight: number } {
+  const nodes: Node[] = []
+  const sourceX = margin.left + nodeSize
+  const targetX = width - margin.right - nodeSize * 2 + 10
+  const nodePadding = 15
+
+  let totalHeight = margin.top
+
+  const sourceNodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
+
+  const sourceId = selectedChain
+  const sourceChain = chainsByUid[sourceId]
+  const sourceName = sourceChain?.name || sourceId
+
+  const sourceNode = {
+    id: sourceId,
+    name: sourceName,
+    x: sourceX - 20,
+    y: sourceNodeY,
+    logoURI: '',
+  }
+
+  totalHeight = Math.max(margin.top + nodeSize, margin.top)
+
+  const targets = Array.from(new Set(flowData.map(d => d.to)))
+  targets.forEach(id => {
+    const chain = chainsByUid[id]
+    const logoURI = chain ? getSrcFromLogo(chain) : ''
+    const nodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
+
+    nodes.push({
+      id,
+      name: chain?.name || id,
+      x: targetX,
+      y: nodeY,
+      logoURI,
+    })
+    totalHeight += nodeSize + nodePadding
+  })
+
+  return { nodes, sourceNode, totalHeight }
+}
+
+function createLinks(
+  flowData: ChainFlowData[],
+  nodeMap: Map<string, Node>,
+  selectedChain: string,
+  maxValue: number,
+  nodeSize: number,
+  containerWidth?: number,
+): Link[] {
+  const links: Link[] = []
+
+  flowData.forEach(d => {
+    if (d.from !== `${selectedChain}-origin`) return
+
+    const source = nodeMap.get(d.from)!
+    const target = nodeMap.get(d.to)!
+
+    const minLinkWidth = 10
+    const maxLinkWidth = 40
+    const linkWidthScale = maxLinkWidth / maxValue
+    const linkWidth = Math.max(minLinkWidth, d.size * linkWidthScale)
+
+    const controlPointDistance = containerWidth ? Math.min(150, containerWidth * 0.2) : 150
+
+    const path = `
+      M ${source.x + controlPointDistance} ${source.y}
+      C ${source.x + controlPointDistance + (target.x - source.x - controlPointDistance) / 2} ${source.y},
+        ${source.x + controlPointDistance + (target.x - source.x - controlPointDistance) / 2} ${target.y},
+        ${target.x - nodeSize / 2} ${target.y}
+    `
+
+    links.push({
+      source: d.from,
+      target: d.to,
+      value: d.size,
+      width: linkWidth,
+      path,
+    })
+  })
+
+  return links
+}
+
+function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
+  const defs = createSvgElement('defs', {}, svg)
+
+  const clipPath = createSvgElement('clipPath', { id: 'circle-clip' }, defs)
+  createSvgElement(
+    'circle',
+    {
+      cx: (nodeSize / 2).toString(),
+      cy: (nodeSize / 2).toString(),
+      r: (nodeSize / 2).toString(),
+    },
+    clipPath,
+  )
+
+  const gradient = createSvgElement(
+    'linearGradient',
+    {
+      id: 'linkGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%',
+    },
+    defs,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '0%',
+      'stop-color': primaryColor,
+      'stop-opacity': '0.5',
+    },
+    gradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '85%',
+      'stop-color': primaryColor,
+      'stop-opacity': '0.5',
+    },
+    gradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '100%',
+      'stop-color': primaryColor,
+      'stop-opacity': '0',
+    },
+    gradient,
+  )
+
+  const hoverGradient = createSvgElement(
+    'linearGradient',
+    {
+      id: 'hoverLinkGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%',
+    },
+    defs,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '0%',
+      'stop-color': hoverColor,
+      'stop-opacity': '0.5',
+    },
+    hoverGradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '85%',
+      'stop-color': hoverColor,
+      'stop-opacity': '0.5',
+    },
+    hoverGradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '100%',
+      'stop-color': hoverColor,
+      'stop-opacity': '0',
+    },
+    hoverGradient,
+  )
+}
+
+function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): SVGElement {
+  const group = createSvgElement(
+    'g',
+    {
+      transform: `translate(${node.x - nodeSize / 2}, ${node.y - nodeSize / 2})`,
+    },
+    svg,
+  )
+
+  const circle = createSvgElement(
+    'circle',
+    {
+      cx: (nodeSize / 2).toString(),
+      cy: (nodeSize / 2).toString(),
+      r: (nodeSize / 2).toString(),
+      fill: 'white',
+      stroke: '#666',
+      'stroke-width': '1',
+      style: `transition: stroke 300ms ${easeOutQuart}, stroke-width 300ms ${easeOutQuart}`,
+    },
+    group,
+  )
+
+  group.addEventListener('mouseenter', () => {
+    circle.setAttribute('stroke', hoverColor)
+    circle.setAttribute('stroke-width', '2')
+    svg.appendChild(group)
+  })
+
+  group.addEventListener('mouseleave', () => {
+    circle.setAttribute('stroke', '#666')
+    circle.setAttribute('stroke-width', '1')
+  })
+
+  if (node.logoURI) {
+    const imageGroup = createSvgElement(
+      'g',
+      {
+        'clip-path': 'url(#circle-clip)',
+      },
+      group,
+    )
+
+    createSvgElement(
+      'image',
+      {
+        x: '0',
+        y: '0',
+        width: nodeSize.toString(),
+        height: nodeSize.toString(),
+        href: node.logoURI,
+      },
+      imageGroup,
+    )
+  } else {
+    circle.setAttribute('fill', '#2a2a2a')
+
+    createSvgElement(
+      'text',
+      {
+        x: (nodeSize / 2).toString(),
+        y: (nodeSize / 2 + 4).toString(),
+        'text-anchor': 'middle',
+        fill: 'black',
+        'font-size': '10px',
+      },
+      group,
+    ).textContent = node.id.substring(0, 3).toUpperCase()
+  }
+
+  return group
 }
