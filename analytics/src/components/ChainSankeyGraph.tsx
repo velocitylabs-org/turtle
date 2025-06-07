@@ -7,6 +7,7 @@ import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 const svgNs = 'http://www.w3.org/2000/svg'
+const hoverColor = '#00CC20'
 
 interface ChainFlowData {
   from: string
@@ -48,7 +49,7 @@ function createSvgElement(
   // Add transition for smooth animations when tag is 'path'
   if (tag === 'path') {
     element.style.transition =
-      'd 300ms cubic-bezier(.165, .84, .44, 1), stroke-width 300ms cubic-bezier(.165, .84, .44, 1)'
+      'd 300ms cubic-bezier(.165, .84, .44, 1), stroke-width 300ms cubic-bezier(.165, .84, .44, 1), stroke 300ms cubic-bezier(.165, .84, .44, 1)'
   }
 
   Object.entries(attributes).forEach(([key, value]) => {
@@ -69,18 +70,19 @@ function addRightLabel(
   chainName: string,
   nodeWeight: number,
   type: GraphType,
-): void {
+): { group: SVGElement; nameText: SVGElement; weightText: SVGElement } {
   // Create label group for right side
   const labelGroup = createSvgElement(
     'g',
     {
       transform: `translate(${node.x + nodeSize / 2 + 10}, ${node.y - 7})`,
+      style: 'z-index: 10',
     },
     svg,
   )
 
   // Chain name text
-  createSvgElement(
+  const nameText = createSvgElement(
     'text',
     {
       x: '0',
@@ -90,9 +92,12 @@ function addRightLabel(
       fill: 'black',
       'font-size': '12px',
       'font-weight': 'bold',
+      style:
+        'transition: font-size 300ms cubic-bezier(.165, .84, .44, 1), font-weight 300ms cubic-bezier(.165, .84, .44, 1)',
     },
     labelGroup,
-  ).textContent = chainName
+  )
+  nameText.textContent = chainName
 
   // Weight text
   const weightText = createSvgElement(
@@ -104,12 +109,15 @@ function addRightLabel(
       'dominant-baseline': 'middle',
       fill: '#666',
       'font-size': '10px',
+      style: 'transition: font-size 300ms cubic-bezier(.165, .84, .44, 1)',
     },
     labelGroup,
   )
 
   // Format weight based on type
   weightText.textContent = type === 'volume' ? `$${formatUSD(nodeWeight)}` : nodeWeight.toString()
+
+  return { group: labelGroup, nameText, weightText }
 }
 
 // Helper function to add left side percentage label
@@ -118,12 +126,13 @@ function addPercentageLabel(
   node: Node,
   nodeSize: number,
   percentage: number,
-): void {
+): { group: SVGElement; text: SVGElement } {
   // Create percentage label group for left side
   const percentLabelGroup = createSvgElement(
     'g',
     {
       transform: `translate(${node.x - nodeSize / 2 - 40}, ${node.y})`,
+      style: 'z-index: 10',
     },
     svg,
   )
@@ -137,8 +146,9 @@ function addPercentageLabel(
       'text-anchor': 'middle',
       'dominant-baseline': 'middle',
       fill: '#666',
-      'font-size': '10px',
+      'font-size': '12px',
       'font-weight': 'bold',
+      style: 'transition: font-size 300ms cubic-bezier(.165, .84, .44, 1)',
     },
     percentLabelGroup,
   )
@@ -146,6 +156,21 @@ function addPercentageLabel(
   // Format percentage: use more decimal places for very small values
   percentText.textContent =
     percentage < 0.01 && percentage > 0 ? `${percentage.toFixed(4)}%` : `${percentage.toFixed(2)}%`
+
+  // Add hover effects to the percentage label itself
+  percentLabelGroup.addEventListener('mouseenter', () => {
+    percentText.setAttribute('font-size', '14px')
+    percentText.setAttribute('fill', hoverColor)
+    // Move the label group to the end of its parent to bring it to the front
+    svg.appendChild(percentLabelGroup)
+  })
+
+  percentLabelGroup.addEventListener('mouseleave', () => {
+    percentText.setAttribute('font-size', '12px')
+    percentText.setAttribute('fill', '#666')
+  })
+
+  return { group: percentLabelGroup, text: percentText }
 }
 
 // Helper function to create nodes
@@ -314,10 +339,54 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
     },
     gradient,
   )
+
+  // Create a hover gradient for hover effect that maintains translucid ends
+  const hoverGradient = createSvgElement(
+    'linearGradient',
+    {
+      id: 'hoverLinkGradient',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%',
+    },
+    defs,
+  )
+
+  // Hover gradient stops
+  createSvgElement(
+    'stop',
+    {
+      offset: '0%',
+      'stop-color': hoverColor,
+      'stop-opacity': '0.5',
+    },
+    hoverGradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '85%',
+      'stop-color': hoverColor,
+      'stop-opacity': '0.5',
+    },
+    hoverGradient,
+  )
+
+  createSvgElement(
+    'stop',
+    {
+      offset: '100%',
+      'stop-color': hoverColor,
+      'stop-opacity': '0',
+    },
+    hoverGradient,
+  )
 }
 
 // Helper function to render a node
-function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): void {
+function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): SVGElement {
   const group = createSvgElement(
     'g',
     {
@@ -334,11 +403,26 @@ function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): void {
       cy: (nodeSize / 2).toString(),
       r: (nodeSize / 2).toString(),
       fill: 'white',
-      stroke: 'black',
+      stroke: '#666',
       'stroke-width': '1',
+      style:
+        'transition: stroke 300ms cubic-bezier(.165, .84, .44, 1), stroke-width 300ms cubic-bezier(.165, .84, .44, 1)',
     },
     group,
   )
+
+  // Add hover effects to the group
+  group.addEventListener('mouseenter', () => {
+    circle.setAttribute('stroke', hoverColor)
+    circle.setAttribute('stroke-width', '2')
+    // Move the group to the end of its parent to bring it to the front
+    svg.appendChild(group)
+  })
+
+  group.addEventListener('mouseleave', () => {
+    circle.setAttribute('stroke', '#666')
+    circle.setAttribute('stroke-width', '1')
+  })
 
   // Chain logo image
   if (node.logoURI) {
@@ -380,6 +464,8 @@ function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): void {
       group,
     ).textContent = node.id.substring(0, 3).toUpperCase()
   }
+
+  return group
 }
 
 /**
@@ -556,9 +642,10 @@ export default function ChainSankeyGraph({
     // Create SVG elements
     createSvgDefsElements(svg, nodeSize)
 
-    // Render links
+    // Render links and store references to path elements
+    const pathElements = new Map<string, SVGElement>()
     links.forEach(link => {
-      createSvgElement(
+      const path = createSvgElement(
         'path',
         {
           d: link.path,
@@ -568,6 +655,20 @@ export default function ChainSankeyGraph({
         },
         svg,
       )
+
+      // Store reference to the path element
+      pathElements.set(link.target, path)
+
+      // Add hover effects to the path
+      path.addEventListener('mouseenter', () => {
+        path.setAttribute('stroke', 'url(#hoverLinkGradient)')
+        // Move the path to the end of its parent to bring it to the front
+        svg.appendChild(path)
+      })
+
+      path.addEventListener('mouseleave', () => {
+        path.setAttribute('stroke', 'url(#linkGradient)')
+      })
     })
 
     // Calculate total weight for percentage calculation
@@ -575,7 +676,7 @@ export default function ChainSankeyGraph({
 
     // Render nodes and labels
     nodes.forEach(node => {
-      renderNode(svg, node, nodeSize)
+      const nodeGroup = renderNode(svg, node, nodeSize)
 
       // Add labels for destination nodes
       // We need to check if this is a target node (not the source node with -origin suffix)
@@ -587,8 +688,69 @@ export default function ChainSankeyGraph({
           const chain = chainsByUid[node.id]
           const chainName = chain ? chain.name : node.id
 
-          addRightLabel(svg, node, nodeSize, chainName, nodeWeight, type)
-          addPercentageLabel(svg, node, nodeSize, percentage)
+          const {
+            nameText,
+            weightText,
+            group: rightLabelGroup,
+          } = addRightLabel(svg, node, nodeSize, chainName, nodeWeight, type)
+          const { text: percentText } = addPercentageLabel(svg, node, nodeSize, percentage)
+
+          // Connect hover effects between node, link, and both labels (percentage and right-side)
+          nodeGroup.addEventListener('mouseenter', () => {
+            // Percentage label hover effect
+            percentText.setAttribute('font-size', '14px')
+            percentText.setAttribute('fill', hoverColor)
+            // Move the percentage label to the front
+            svg.appendChild(percentText.parentElement as SVGElement)
+
+            // Right-side label hover effect
+            nameText.setAttribute('font-size', '14px')
+            nameText.setAttribute('font-weight', '900')
+            weightText.setAttribute('font-size', '12px')
+            // Move the right-side label to the front
+            svg.appendChild(rightLabelGroup)
+          })
+
+          nodeGroup.addEventListener('mouseleave', () => {
+            // Percentage label reset
+            percentText.setAttribute('font-size', '12px')
+            percentText.setAttribute('fill', '#666')
+
+            // Right-side label reset
+            nameText.setAttribute('font-size', '12px')
+            nameText.setAttribute('font-weight', 'bold')
+            weightText.setAttribute('font-size', '10px')
+          })
+
+          // Get the corresponding path element from our map
+          const pathElement = pathElements.get(node.id)
+          if (pathElement) {
+            pathElement.addEventListener('mouseenter', () => {
+              // Percentage label hover effect
+              percentText.setAttribute('font-size', '14px')
+              percentText.setAttribute('fill', hoverColor)
+              // Move the percentage label to the front
+              svg.appendChild(percentText.parentElement as SVGElement)
+
+              // Right-side label hover effect
+              nameText.setAttribute('font-size', '14px')
+              nameText.setAttribute('font-weight', '900')
+              weightText.setAttribute('font-size', '12px')
+              // Move the right-side label to the front
+              svg.appendChild(rightLabelGroup)
+            })
+
+            pathElement.addEventListener('mouseleave', () => {
+              // Percentage label reset
+              percentText.setAttribute('font-size', '12px')
+              percentText.setAttribute('fill', '#666')
+
+              // Right-side label reset
+              nameText.setAttribute('font-size', '12px')
+              nameText.setAttribute('font-weight', 'bold')
+              weightText.setAttribute('font-size', '10px')
+            })
+          }
         }
       }
     })
