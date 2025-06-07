@@ -143,7 +143,7 @@ export default function HomeDashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Last 5 transactions</CardDescription>
+            <CardDescription>Last 10 transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable

@@ -1,8 +1,8 @@
 'use client'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { ChevronRight, Coins, LayoutDashboard, Menu, Repeat, Waypoints } from 'lucide-react'
+import { ChevronRight, Menu } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import type React from 'react'
 import { useState, useEffect } from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
@@ -10,6 +10,7 @@ import TurtleLogo from '@/components/TurtleLogo'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { loadingBarOpt } from '@/constants'
+import { routes, RouteItem } from '@/constants/routes'
 import useIsMobile from '@/hooks/useMobile'
 
 const headerHeight = 75
@@ -20,6 +21,7 @@ interface DashboardLayoutProps {
 
 export default function AppLayout({ children }: DashboardLayoutProps) {
   const { start } = useLoadingBar(loadingBarOpt)
+  const router = useRouter()
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile)
@@ -40,34 +42,15 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
     )
   }, [])
 
-  const routes = [
-    {
-      label: 'Dashboard',
-      icon: LayoutDashboard,
-      href: '/',
-      active: pathname === '/',
-    },
-    {
-      label: 'Transactions',
-      icon: Repeat,
-      href: '/transactions',
-      active: pathname === '/transactions',
-    },
-    {
-      label: 'Tokens',
-      icon: Coins,
-      href: '/tokens',
-      active: pathname === '/tokens',
-    },
-    {
-      label: 'Chains',
-      icon: Waypoints,
-      href: '/chains',
-      active: pathname === '/chains',
-    },
-  ]
+  const activeRoute = routes.find((route: RouteItem) => route.href === pathname)
 
-  const activeRoute = routes.find(route => route.href === pathname)
+  // Prefetch data for all main pages when the app loads
+  useEffect(() => {
+    console.log('pasoo')
+    routes.forEach(route => {
+      router.prefetch(route.href)
+    })
+  }, [router])
 
   const onNavItemClicked = () => {
     start() // Show loading bar
@@ -81,7 +64,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
       {/* Mobile Navigation */}
       <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={open => setIsSidebarOpen(open)}>
         <SheetContent side="left" className="w-72 bg-background/95 p-0 backdrop-blur-sm">
-          <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} />
+          <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} pathname={pathname} />
         </SheetContent>
       </Sheet>
 
@@ -92,7 +75,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
           isSidebarOpen ? 'left-0' : '-left-64',
         )}
       >
-        <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} />
+        <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} pathname={pathname} />
       </div>
 
       {/* Main Content */}
@@ -131,20 +114,16 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   )
 }
 
-interface RouteItem {
-  label: string
-  icon: React.FC<{ className?: string }>
-  href: string
-  active: boolean
-}
-
 interface NavigationMenuProps {
   routes: RouteItem[]
   title?: string
   onNavItemClicked: () => void
+  pathname?: string
 }
 
-function NavigationMenu({ routes, onNavItemClicked, title = 'Overview' }: NavigationMenuProps) {
+function NavigationMenu({ routes, onNavItemClicked, title = 'Overview', pathname }: NavigationMenuProps) {
+  const isActiveRoute = (route: RouteItem) => route.href === pathname
+
   return (
     <div className="flex h-full flex-col space-y-4">
       <div className="mb-2 flex items-center border-b" style={{ height: headerHeight }}>
@@ -163,7 +142,7 @@ function NavigationMenu({ routes, onNavItemClicked, title = 'Overview' }: Naviga
               prefetch={true}
               className={cn(
                 'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
-                route.active ? 'bg-muted text-primary' : 'text-muted-foreground',
+                isActiveRoute(route) ? 'bg-muted text-primary' : 'text-muted-foreground',
               )}
               onClick={onNavItemClicked}
             >
@@ -171,12 +150,12 @@ function NavigationMenu({ routes, onNavItemClicked, title = 'Overview' }: Naviga
                 <route.icon
                   className={cn(
                     'mr-3 h-4 w-4',
-                    route.active ? 'text-primary' : 'text-muted-foreground',
+                    isActiveRoute(route) ? 'text-primary' : 'text-muted-foreground',
                   )}
                 />
                 {route.label}
               </div>
-              {route.active && <ChevronRight className="relative top-[2px] h-4 w-4" />}
+              {isActiveRoute(route) && <ChevronRight className="relative top-[2px] h-4 w-4" />}
             </Link>
           ))}
         </div>

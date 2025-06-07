@@ -74,10 +74,10 @@ export async function getTransactionsData({
     }
 
     const [filteredTransactions, totalVolumeUsd, statusCounts] = await Promise.all([
-      // Get latest 5 transactions
+      // Get latest 10 transactions
       Transaction.find(query)
         .sort({ txDate: -1 })
-        .limit(5)
+        .limit(10)
         .select(
           [
             '_id',

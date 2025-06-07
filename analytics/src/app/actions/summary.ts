@@ -34,10 +34,10 @@ export async function getSummaryData() {
       // Successful transactions count
       Transaction.countDocuments({ status: 'succeeded' }),
 
-      // Last 5 transactions
+      // Last 10 transactions
       Transaction.find()
         .sort({ txDate: -1 })
-        .limit(5)
+        .limit(10)
         .select(
           [
             '_id',
