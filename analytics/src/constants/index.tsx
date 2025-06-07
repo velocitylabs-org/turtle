@@ -8,6 +8,8 @@ export const loadingBarOpt = {
   waitingTime: 200,
 }
 
+export const defaultTransactionLimit = 10
+
 // Chains
 export const chains = REGISTRY.mainnet.chains
 export const ethereumChain = Ethereum

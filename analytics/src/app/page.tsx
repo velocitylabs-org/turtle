@@ -10,7 +10,7 @@ import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { GraphType } from '@/constants'
+import { defaultTransactionLimit, GraphType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
 
@@ -143,7 +143,7 @@ export default function HomeDashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Last 10 transactions</CardDescription>
+            <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable

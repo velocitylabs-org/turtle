@@ -1,4 +1,5 @@
 'use server'
+import { defaultTransactionLimit } from '@/constants'
 import Transaction from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
@@ -34,10 +35,10 @@ export async function getSummaryData() {
       // Successful transactions count
       Transaction.countDocuments({ status: 'succeeded' }),
 
-      // Last 10 transactions
+      // Last default transaction limit transactions
       Transaction.find()
         .sort({ txDate: -1 })
-        .limit(10)
+        .limit(defaultTransactionLimit)
         .select(
           [
             '_id',
