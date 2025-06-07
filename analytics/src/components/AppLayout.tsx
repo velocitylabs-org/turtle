@@ -51,7 +51,8 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
     })
   }, [router])
 
-  const onNavItemClicked = () => {
+  const onNavItemClicked = (isActive: boolean) => {
+    if (isActive) return
     start() // Show loading bar
     if (isMobile) {
       setIsSidebarOpen(prev => !prev)
@@ -116,7 +117,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
 interface NavigationMenuProps {
   routes: RouteItem[]
   title?: string
-  onNavItemClicked: () => void
+  onNavItemClicked: (isActive: boolean) => void
   pathname?: string
 }
 
@@ -148,7 +149,7 @@ function NavigationMenu({
                 'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
                 isActiveRoute(route) ? 'bg-muted text-primary' : 'text-muted-foreground',
               )}
-              onClick={isActiveRoute(route) ? () => {} : onNavItemClicked}
+              onClick={() => onNavItemClicked(isActiveRoute(route))}
             >
               <div className="flex flex-1 items-center">
                 <route.icon
