@@ -150,6 +150,11 @@ transactionSchema.index({ destinationChainUid: 1, txDate: -1 }) // For destinati
 transactionSchema.index({ sourceTokenId: 1, txDate: -1 }) // For source token and date queries
 transactionSchema.index({ destinationTokenId: 1, txDate: -1 }) // For destination token and date queries
 
+// Additional indexes for chain analytics queries
+transactionSchema.index({ status: 1, sourceChainUid: 1 }) // For getChainSankeyData filtering
+transactionSchema.index({ status: 1, sourceChainUid: 1, destinationChainUid: 1 }) // For chain-to-chain analytics
+transactionSchema.index({ status: 1, sourceChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by source chain
+
 function nonEmptyString(v: string) {
   return v && v.length > 0
 }
