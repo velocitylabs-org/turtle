@@ -503,7 +503,8 @@ export default function ChainSankeyGraph({
       renderNode(svg, node, nodeSize)
 
       // Add labels for destination nodes
-      if (node.id !== selectedChain && node.id !== `${selectedChain}-origin`) {
+      // We need to check if this is a target node (not the source node with -origin suffix)
+      if (node.id !== `${selectedChain}-origin`) {
         const nodeLink = links.find(link => link.target === node.id)
         if (nodeLink) {
           const nodeWeight = nodeLink.value
