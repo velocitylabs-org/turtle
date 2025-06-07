@@ -21,6 +21,7 @@
     "babel-plugin-react-compiler": "19.1.0-rc.1",
     "class-variance-authority": "^0.7.1",
     "date-fns": "latest",
+    "just-debounce-it": "^3.2.0",
     "lucide-react": "^0.454.0",
     "mongoose": "^8.14.0",
     "next": "15.2.4",

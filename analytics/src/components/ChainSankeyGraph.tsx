@@ -1,11 +1,12 @@
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
-import React, { useRef, useEffect, useState } from 'react'
+import debounce from 'just-debounce-it'
+import React, { useRef, useEffect, useLayoutEffect, useState, useCallback, useMemo } from 'react'
 import MultiSelect from '@/components/MultiSelect'
 import { chains, GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
-const SVG_NS = 'http://www.w3.org/2000/svg'
+const svgNs = 'http://www.w3.org/2000/svg'
 
 interface ChainFlowData {
   from: string
@@ -42,10 +43,18 @@ function createSvgElement(
   attributes: Record<string, string> = {},
   parent?: SVGElement | HTMLElement,
 ): SVGElement {
-  const element = document.createElementNS(SVG_NS, tag)
+  const element = document.createElementNS(svgNs, tag)
+
+  // Add transition for smooth animations when tag is 'path'
+  if (tag === 'path') {
+    element.style.transition =
+      'd 300ms cubic-bezier(.165, .84, .44, 1), stroke-width 300ms cubic-bezier(.165, .84, .44, 1)'
+  }
+
   Object.entries(attributes).forEach(([key, value]) => {
     element.setAttribute(key, value)
   })
+
   if (parent) {
     parent.appendChild(element)
   }
@@ -202,6 +211,7 @@ function createLinks(
   selectedChain: string,
   maxValue: number,
   nodeSize: number,
+  containerWidth?: number,
 ): Link[] {
   const links: Link[] = []
 
@@ -218,11 +228,17 @@ function createLinks(
     const linkWidthScale = maxLinkWidth / maxValue
     const linkWidth = Math.max(minLinkWidth, d.size * linkWidthScale)
 
-    // Create curved path from source to target
+    // Calculate control point distance based on container width for more responsive curves
+    // This makes the curves adapt to the container width
+    const controlPointDistance = containerWidth
+      ? Math.min(150, containerWidth * 0.2) // Responsive control point distance
+      : 150 // Default if containerWidth not provided
+
+    // Create curved path from source to target with responsive control points
     const path = `
-      M ${source.x + 150} ${source.y}
-      C ${source.x + 150 + (target.x - source.x - 150) / 2} ${source.y},
-        ${source.x + 150 + (target.x - source.x - 150) / 2} ${target.y},
+      M ${source.x + controlPointDistance} ${source.y}
+      C ${source.x + controlPointDistance + (target.x - source.x - controlPointDistance) / 2} ${source.y},
+        ${source.x + controlPointDistance + (target.x - source.x - controlPointDistance) / 2} ${target.y},
         ${target.x - nodeSize / 2} ${target.y}
     `
 
@@ -380,7 +396,8 @@ export default function ChainSankeyGraph({
 }: ChainPathGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [dimensions, setDimensions] = useState({ width: 800, height: 500 })
+  // Initialize with a reasonable default width that will be updated in useLayoutEffect
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
   // Add suffix to source chain ID to enable circular dependencies
   const flowData = data?.map(item => ({ ...item, from: `${item.from}-origin` }))
@@ -418,23 +435,81 @@ export default function ChainSankeyGraph({
 
   const dynamicHeight = calculateDynamicHeight()
 
+  // Create a debounced function to update dimensions
+  const debouncedUpdateDimensions = useMemo(
+    () =>
+      debounce(() => {
+        if (containerRef.current) {
+          // Only update if the width has changed
+          const newWidth = containerRef.current.clientWidth
+          if (newWidth !== dimensions.width) {
+            setDimensions({
+              width: newWidth,
+              height: dynamicHeight, // Use dynamic height instead of fixed height
+            })
+          }
+        }
+      }, 20),
+    [dynamicHeight, dimensions.width],
+  )
+
+  // Create a resize handler that uses the memoized debounced function
+  const handleResize = useCallback(() => {
+    debouncedUpdateDimensions()
+  }, [debouncedUpdateDimensions])
+
+  // Use useLayoutEffect for initial size calculation to prevent flickering
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      // Get the initial container width synchronously before the first render
+      const containerWidth = containerRef.current.clientWidth
+      setDimensions({
+        width: containerWidth,
+        height: dynamicHeight,
+      })
+    }
+  }, [dynamicHeight])
+
+  // Use useEffect for setting up resize observers after the initial render
   useEffect(() => {
-    function handleResize() {
-      if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.clientWidth,
-          height: dynamicHeight, // Use dynamic height instead of fixed height
-        })
-      }
+    // Set up ResizeObserver to detect container width changes only
+    let resizeObserver: ResizeObserver | null = null
+    let previousWidth = containerRef.current?.clientWidth || 0
+
+    if (containerRef.current && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(entries => {
+        // Only trigger resize if width has changed
+        const newWidth = entries[0].contentRect.width
+        if (newWidth !== previousWidth) {
+          previousWidth = newWidth
+          handleResize()
+        }
+      })
+      resizeObserver.observe(containerRef.current)
     }
 
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [dynamicHeight]) // Add dynamicHeight as a dependency
+    // Also listen for window resize events as a fallback
+    const handleWindowResize = () => {
+      const newWidth = containerRef.current?.clientWidth || 0
+      if (newWidth !== previousWidth) {
+        previousWidth = newWidth
+        handleResize()
+      }
+    }
+    window.addEventListener('resize', handleWindowResize)
+
+    return () => {
+      // Clean up
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+      }
+      window.removeEventListener('resize', handleWindowResize)
+    }
+  }, [handleResize]) // handleResize already has dynamicHeight as a dependency
 
   useEffect(() => {
-    if (!flowData || !svgRef.current) return
+    // Don't render if no data, no SVG ref, or if dimensions haven't been set yet
+    if (!flowData || !svgRef.current || dimensions.width === 0) return
 
     // Clear previous graph
     const svg = svgRef.current
@@ -476,7 +551,7 @@ export default function ChainSankeyGraph({
     nodes.forEach(node => nodeMap.set(node.id, node))
     nodeMap.set(`${selectedChain}-origin`, sourceNode)
 
-    const links = createLinks(flowData, nodeMap, selectedChain, maxValue, nodeSize)
+    const links = createLinks(flowData, nodeMap, selectedChain, maxValue, nodeSize, width)
 
     // Create SVG elements
     createSvgDefsElements(svg, nodeSize)
