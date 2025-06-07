@@ -24,13 +24,11 @@ export default function TokensPage() {
     <div>
       <Card>
         <CardHeader>
-          <CardTitle>
-            Data flow
-          </CardTitle>
+          <CardTitle>Data flow</CardTitle>
           <CardDescription>Transaction count VS volume in USD</CardDescription>
         </CardHeader>
         <CardContent>
-          <TokensCountVolumeGraph loading={isLoading} data={data?.tokens || []}/>
+          <TokensCountVolumeGraph loading={isLoading} data={data?.tokens || []} />
         </CardContent>
       </Card>
       <div className="mt-4">

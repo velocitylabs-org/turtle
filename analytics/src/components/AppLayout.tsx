@@ -121,7 +121,12 @@ interface NavigationMenuProps {
   pathname?: string
 }
 
-function NavigationMenu({ routes, onNavItemClicked, title = 'Overview', pathname }: NavigationMenuProps) {
+function NavigationMenu({
+  routes,
+  onNavItemClicked,
+  title = 'Overview',
+  pathname,
+}: NavigationMenuProps) {
   const isActiveRoute = (route: RouteItem) => route.href === pathname
 
   return (

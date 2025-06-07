@@ -27,5 +27,5 @@ export const routes: RouteItem[] = [
     label: 'Tokens',
     icon: Coins,
     href: '/tokens',
-  }
+  },
 ]

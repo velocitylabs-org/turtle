@@ -46,13 +46,9 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   return (
     <div className="min-w-[8rem] rounded-lg border bg-background p-2 text-xs shadow-xl">
       <div className="inline-flex items-center">
-        <TokenAndOriginLogos
-          tokenURI={logoURI as string}
-          originURI={typeURI as string}
-          size={18}
-        />
-        <div className="ml-1 flex flex-col -mt-[1px]">
-        <span className="font-medium text-xs">{token?.symbol}</span>
+        <TokenAndOriginLogos tokenURI={logoURI as string} originURI={typeURI as string} size={18} />
+        <div className="-mt-[1px] ml-1 flex flex-col">
+          <span className="text-xs font-medium">{token?.symbol}</span>
         </div>
       </div>
       <p className="text-muted-foreground">Transactions {data.x}</p>
@@ -64,11 +60,9 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
 export default function TokensCountVolumeGraph({ data, loading }: TokensCountVolumeGraphProps) {
   if (loading) {
     return (
-    <div
-      className="w-full flex items-center justify-center h-[320px]"
-    >
-      <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-    </div>
+      <div className="flex h-[320px] w-full items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+      </div>
     )
   }
 
@@ -91,34 +85,29 @@ export default function TokensCountVolumeGraph({ data, loading }: TokensCountVol
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            type="number" 
-            dataKey="x" 
-            name="Transactions" 
+          <XAxis
+            type="number"
+            dataKey="x"
+            name="Transactions"
             tickLine={false}
             axisLine={false}
             tickMargin={10}
           >
             <Label value="Transaction count" offset={-30} position="insideBottom" />
           </XAxis>
-          <YAxis 
-            type="number" 
-            dataKey="y" 
-            name="Volume" 
-            tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+          <YAxis
+            type="number"
+            dataKey="y"
+            name="Volume"
+            tickFormatter={value => `$${(value / 1000).toFixed(0)}k`}
             tickLine={false}
             axisLine={false}
             tickMargin={10}
           >
-            <Label value="Total volume" angle={-90} position="insideLeft" offset={-50}/>
+            <Label value="Total volume" angle={-90} position="insideLeft" offset={-50} />
           </YAxis>
           <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
-          <Scatter 
-            name="Tokens" 
-            data={formattedData} 
-            fill={primaryColor}
-            shape="circle"
-          />
+          <Scatter name="Tokens" data={formattedData} fill={primaryColor} shape="circle" />
         </ScatterChart>
       </ResponsiveContainer>
     </div>
