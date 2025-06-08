@@ -1,5 +1,5 @@
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
-import React, { useRef, useEffect, useLayoutEffect, useState } from 'react'
+import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
 import MultiSelect from '@/components/MultiSelect'
 import { chains, GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
@@ -22,6 +22,7 @@ interface ChainPathGraphProps {
   setChainUid: (chainUid: string) => void
 }
 
+// Renders a Sankey graph visualizing flow between blockchain chains
 export default function ChainSankeyGraph({
   data,
   type,
@@ -40,25 +41,24 @@ export default function ChainSankeyGraph({
     logoURI: getSrcFromLogo(chain),
   }))
 
-  const calculateDynamicHeight = () => {
+  const dynamicHeight = useMemo(() => {
     const nodeSize = 28
     const nodePadding = 15
     const topMargin = 60
     const bottomMargin = 0
+    const baseMinHeight = 120 // 120 is the min height if there is no item to show
 
     if (!flowData || flowData.length === 0) {
       const minHeight = topMargin + bottomMargin
-      return Math.max(120, minHeight)
+      return Math.max(baseMinHeight, minHeight)
     }
 
     const targets = Array.from(new Set(flowData.map(d => d.to)))
     const nodeCount = targets.length
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
-    return Math.max(120, minHeight)
-  }
-
-  const dynamicHeight = calculateDynamicHeight()
+    return Math.max(baseMinHeight, minHeight)
+  }, [flowData])
 
   useLayoutEffect(() => {
     if (containerRef.current) {
@@ -70,6 +70,7 @@ export default function ChainSankeyGraph({
     }
   }, [dynamicHeight])
 
+  // Monitor and update graph when container width changes to ensure a responsive layout
   useEffect(() => {
     let resizeObserver: ResizeObserver | null = null
     let previousWidth = containerRef.current?.clientWidth || 0
@@ -130,7 +131,6 @@ export default function ChainSankeyGraph({
     const height = dimensions.height
     const margin = { top: 5, right: 50, bottom: 20, left: 0 }
     const nodeSize = 28
-
     let maxValue = 0
     flowData.forEach(d => {
       maxValue = Math.max(maxValue, d.size)
@@ -148,13 +148,10 @@ export default function ChainSankeyGraph({
     if (requiredHeight > height) {
       svg.setAttribute('height', requiredHeight.toString())
     }
-
     const nodeMap = new Map<string, Node>()
     nodes.forEach(node => nodeMap.set(node.id, node))
     nodeMap.set(`${selectedChain}-origin`, sourceNode)
-
     const links = createLinks(flowData, nodeMap, selectedChain, maxValue, nodeSize, width)
-
     createSvgDefsElements(svg, nodeSize)
 
     const pathElements = new Map<string, SVGElement>()
@@ -171,19 +168,15 @@ export default function ChainSankeyGraph({
       )
 
       pathElements.set(link.target, path)
-
       path.addEventListener('mouseenter', () => {
         path.setAttribute('stroke', 'url(#hoverLinkGradient)')
         svg.appendChild(path)
       })
-
       path.addEventListener('mouseleave', () => {
         path.setAttribute('stroke', 'url(#linkGradient)')
       })
     })
-
     const totalWeight = flowData.reduce((sum, d) => sum + d.size, 0)
-
     function applyHoverEffect(
       percentText: SVGElement,
       nameText: SVGElement,
@@ -199,7 +192,6 @@ export default function ChainSankeyGraph({
       weightText.setAttribute('font-size', '12px')
       svg.appendChild(rightLabelGroup)
     }
-
     function removeHoverEffect(
       percentText: SVGElement,
       nameText: SVGElement,
@@ -230,21 +222,17 @@ export default function ChainSankeyGraph({
             group: rightLabelGroup,
           } = addRightLabel(svg, node, nodeSize, chainName, nodeWeight, type)
           const { text: percentText } = addPercentageLabel(svg, node, nodeSize, percentage)
-
           nodeGroup.addEventListener('mouseenter', () => {
             applyHoverEffect(percentText, nameText, weightText, rightLabelGroup)
           })
-
           nodeGroup.addEventListener('mouseleave', () => {
             removeHoverEffect(percentText, nameText, weightText)
           })
-
           const pathElement = pathElements.get(node.id)
           if (pathElement) {
             pathElement.addEventListener('mouseenter', () => {
               applyHoverEffect(percentText, nameText, weightText, rightLabelGroup)
             })
-
             pathElement.addEventListener('mouseleave', () => {
               removeHoverEffect(percentText, nameText, weightText)
             })
@@ -312,6 +300,7 @@ interface Link {
   path: string
 }
 
+// Creates an SVG element with the specified attributes and optionally appends it to a parent element
 function createSvgElement(
   tag: string,
   attributes: Record<string, string> = {},
@@ -328,6 +317,7 @@ function createSvgElement(
   return element
 }
 
+// Adds a label to the right side of a node showing the chain name and its weight
 function addRightLabel(
   svg: SVGSVGElement,
   node: Node,
@@ -374,12 +364,11 @@ function addRightLabel(
     },
     labelGroup,
   )
-
   weightText.textContent = type === 'volume' ? `$${formatUSD(nodeWeight)}` : nodeWeight.toString()
-
   return { group: labelGroup, nameText, weightText }
 }
 
+// Adds a percentage label to the left side of a node showing its proportion of the total flow
 function addPercentageLabel(
   svg: SVGSVGElement,
   node: Node,
@@ -394,7 +383,6 @@ function addPercentageLabel(
     },
     svg,
   )
-
   const percentText = createSvgElement(
     'text',
     {
@@ -412,13 +400,11 @@ function addPercentageLabel(
 
   percentText.textContent =
     percentage < 0.01 && percentage > 0 ? `${percentage.toFixed(4)}%` : `${percentage.toFixed(2)}%`
-
   percentLabelGroup.addEventListener('mouseenter', () => {
     percentText.setAttribute('font-size', '14px')
     percentText.setAttribute('fill', hoverColor)
     svg.appendChild(percentLabelGroup)
   })
-
   percentLabelGroup.addEventListener('mouseleave', () => {
     percentText.setAttribute('font-size', '12px')
     percentText.setAttribute('fill', '#666')
@@ -427,6 +413,7 @@ function addPercentageLabel(
   return { group: percentLabelGroup, text: percentText }
 }
 
+// Creates and positions node objects for the graph based on flow data
 function createNodes(
   flowData: ChainFlowData[],
   margin: { top: number; right: number; bottom: number; left: number },
@@ -440,9 +427,7 @@ function createNodes(
   const nodePadding = 15
 
   let totalHeight = margin.top
-
   const sourceNodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
-
   const sourceId = selectedChain
   const sourceChain = chainsByUid[sourceId]
   const sourceName = sourceChain?.name || sourceId
@@ -456,7 +441,6 @@ function createNodes(
   }
 
   totalHeight = Math.max(margin.top + nodeSize, margin.top)
-
   const targets = Array.from(new Set(flowData.map(d => d.to)))
   targets.forEach(id => {
     const chain = chainsByUid[id]
@@ -476,6 +460,7 @@ function createNodes(
   return { nodes, sourceNode, totalHeight }
 }
 
+// Creates connection paths between nodes representing data flow between chains
 function createLinks(
   flowData: ChainFlowData[],
   nodeMap: Map<string, Node>,
@@ -518,9 +503,9 @@ function createLinks(
   return links
 }
 
+// Creates SVG definition elements like gradients and clip paths used by the graph
 function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
   const defs = createSvgElement('defs', {}, svg)
-
   const clipPath = createSvgElement('clipPath', { id: 'circle-clip' }, defs)
   createSvgElement(
     'circle',
@@ -617,6 +602,7 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
   )
 }
 
+// Creates and renders a visual node in the graph with hover effects and appropriate styling
 function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): SVGElement {
   const group = createSvgElement(
     'g',
@@ -625,7 +611,6 @@ function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): SVGElemen
     },
     svg,
   )
-
   const circle = createSvgElement(
     'circle',
     {
@@ -633,7 +618,7 @@ function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): SVGElemen
       cy: (nodeSize / 2).toString(),
       r: (nodeSize / 2).toString(),
       fill: 'white',
-      stroke: '#666',
+      stroke: '#000',
       'stroke-width': '1',
       style: `transition: stroke 300ms ${easeOutQuart}, stroke-width 300ms ${easeOutQuart}`,
     },
