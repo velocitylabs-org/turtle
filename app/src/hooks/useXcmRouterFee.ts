@@ -12,11 +12,11 @@ interface UseXcmRouterFeeParams {
   sourceToken: Token
   destinationToken: Token
   exchange: Dex | [Dex, Dex, ...Dex[]]
-  /** Fee is usually not strongly dependent on the amount. */
+  /** Fee is usually not strongly dependent on the amount. It will default to 10^decimals of the source token. */
   amount?: string
-  /** Fee is usually independent of the addresses. Recommened not to pass this as it could result in unnecessary re-fetching. */
+  /** Fee is usually independent of the addresses. Recommened not to pass this. It will default to the placeholder address. */
   sender?: string
-  /** Fee is usually independent of the addresses. Recommened not to pass this as it could result in unnecessary re-fetching. */
+  /** Fee is usually independent of the addresses. Recommened not to pass this. It will default to the placeholder address. */
   recipient?: string
   slippagePct?: string
 }
@@ -29,7 +29,7 @@ export function useXcmRouterFee({
   sourceToken,
   destinationToken,
   exchange = 'HydrationDex',
-  amount = BigInt(10 ** sourceToken.decimals).toString(), // the fee does not depend too much on the amount
+  amount = BigInt(10 ** sourceToken.decimals).toString(), // placeholder amount
   sender,
   recipient,
   slippagePct = '1',
@@ -59,6 +59,7 @@ export function useXcmRouterFee({
           recipient: recipient ?? getPlaceholderAddress(destinationChain.supportedAddressTypes[0]),
           slippagePct,
         })
+        return fee
       } catch (error) {
         captureException(error, {
           level: 'error',
@@ -75,7 +76,7 @@ export function useXcmRouterFee({
           },
         })
         console.error('Failed to fetch xcm router fee:', error)
-        return null
+        return
       }
     },
     enabled: !!sourceChain && !!destinationChain && !!sourceToken && !!destinationToken,
@@ -85,7 +86,7 @@ export function useXcmRouterFee({
 
   return useMemo(
     () => ({
-      outputAmount: data,
+      xcmRouterFee: data,
       isLoading: isLoading || isFetching,
     }),
     [data, isLoading, isFetching],
