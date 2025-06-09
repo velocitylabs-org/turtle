@@ -31,6 +31,7 @@ import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
+import { TDryRunNodeResult } from '@paraspell/sdk'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
@@ -112,7 +113,6 @@ const useParaspellApi = () => {
 
     const validationResult = await validateTransfer(params)
 
-    const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
     const dryRunCapturePayload = {
       extra: {
         sourceChain: params.sourceChain.uid,
@@ -120,12 +120,10 @@ const useParaspellApi = () => {
         token: params.sourceToken.id,
       },
     }
+
     if (validationResult.type === 'Unsupported') {
       addNotification({
-        message:
-          'failureReason' in validationResult.origin
-            ? validationResult.origin?.failureReason
-            : defaultDryRunMessage,
+        message: getFailureReason(validationResult),
         severity: NotificationSeverity.Warning,
       })
       captureException(new Error('DryRun Error: Unsupported'), {
@@ -135,24 +133,18 @@ const useParaspellApi = () => {
     }
     if (validationResult.type === 'Supported') {
       if (!validationResult.origin.success) {
-        addNotification({
-          message: validationResult.origin.failureReason ?? defaultDryRunMessage,
-          severity: NotificationSeverity.Warning,
-        })
         captureException(new Error('DryRun Error: Origin Validation Failed'), {
           ...dryRunCapturePayload,
           level: 'warning',
         })
+        throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
       }
-      if (!validationResult.destination?.success) {
-        addNotification({
-          message: validationResult.destination?.failureReason ?? defaultDryRunMessage,
-          severity: NotificationSeverity.Warning,
-        })
+      if (validationResult.destination && !validationResult.destination.success) {
         captureException(new Error('DryRun Error: Destination Validation Failed'), {
           ...dryRunCapturePayload,
           level: 'warning',
         })
+        throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
       }
 
       if (validationResult.origin.success && validationResult.destination?.success) {
@@ -402,9 +394,33 @@ const useParaspellApi = () => {
     }
   }
 
+  const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
+    return !(
+      !dryRunNodeResult.success &&
+      dryRunNodeResult.failureReason.includes('DryRunApi is not available')
+    )
+  }
+
+  const getFailureReason = (dryRunResult: DryRunResult) => {
+    const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
+    if ('failureReason' in dryRunResult.origin) return dryRunResult.origin.failureReason
+    if (dryRunResult.destination && 'failureReason' in dryRunResult.destination)
+      return dryRunResult.destination.failureReason
+    return defaultDryRunMessage
+  }
+
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
       const result = await dryRun(params, params.sourceChain.rpcConnection)
+      if (
+        !isDryRunApiSupported(result.origin) ||
+        (result.destination && !isDryRunApiSupported(result.destination))
+      ) {
+        return {
+          type: 'Unsupported',
+          ...result,
+        }
+      }
 
       return {
         type: 'Supported',
