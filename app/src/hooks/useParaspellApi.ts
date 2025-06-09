@@ -111,18 +111,56 @@ const useParaspellApi = () => {
     setStatus('Validating')
 
     const validationResult = await validateTransfer(params)
-    if (validationResult.type === 'Supported' && !validationResult.origin.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
-    if (
-      validationResult.type === 'Supported' &&
-      validationResult.destination &&
-      !validationResult.destination.success
-    )
-      throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
 
-    const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
-    if (!isExistentialDepositMet)
-      throw new Error('Transfer failed: existential deposit will not be met.')
+    const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
+    const dryRunCapturePayload = {
+      extra: {
+        sourceChain: params.sourceChain.uid,
+        destinationChain: params.destinationChain.uid,
+        token: params.sourceToken.id,
+      },
+    }
+    if (validationResult.type === 'Unsupported') {
+      addNotification({
+        message:
+          'failureReason' in validationResult.origin
+            ? validationResult.origin?.failureReason
+            : defaultDryRunMessage,
+        severity: NotificationSeverity.Warning,
+      })
+      captureException(new Error('DryRun Error: Unsupported'), {
+        ...dryRunCapturePayload,
+        level: 'warning',
+      })
+    }
+    if (validationResult.type === 'Supported') {
+      if (!validationResult.origin.success) {
+        addNotification({
+          message: validationResult.origin.failureReason ?? defaultDryRunMessage,
+          severity: NotificationSeverity.Warning,
+        })
+        captureException(new Error('DryRun Error: Origin Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
+        })
+      }
+      if (!validationResult.destination?.success) {
+        addNotification({
+          message: validationResult.destination?.failureReason ?? defaultDryRunMessage,
+          severity: NotificationSeverity.Warning,
+        })
+        captureException(new Error('DryRun Error: Destination Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
+        })
+      }
+
+      if (validationResult.origin.success && validationResult.destination?.success) {
+        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+        if (!isExistentialDepositMet)
+          throw new Error('Transfer failed: existential deposit will not be met.')
+      }
+    }
 
     const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
@@ -171,7 +209,13 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(
+            params.sender,
+            error,
+            setStatus,
+            event.txHash.toString(),
+            params.environment,
+          )
         }
       },
       error: callbackError => {
@@ -247,7 +291,13 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(
+            params.sender,
+            error,
+            setStatus,
+            event.txHash.toString(),
+            params.environment,
+          )
         }
       },
       error: callbackError => {
@@ -394,6 +444,7 @@ const useParaspellApi = () => {
     e: unknown,
     setStatus: (status: Status) => void,
     txId?: string,
+    environment?: string,
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
@@ -407,6 +458,14 @@ const useParaspellApi = () => {
       message,
       severity: NotificationSeverity.Error,
     })
+
+    if (txId && environment) {
+      updateTransferMetrics({
+        txHashId: txId,
+        status: TxStatus.Failed,
+        environment: environment,
+      })
+    }
   }
 
   return { transfer }
