@@ -154,6 +154,7 @@ transactionSchema.index({ destinationTokenId: 1, txDate: -1 }) // For destinatio
 transactionSchema.index({ status: 1, sourceChainUid: 1 }) // For getChainSankeyData filtering
 transactionSchema.index({ status: 1, sourceChainUid: 1, destinationChainUid: 1 }) // For chain-to-chain analytics
 transactionSchema.index({ status: 1, sourceChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by source chain
+transactionSchema.index({ status: 1, destinationChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by destination chain
 
 function nonEmptyString(v: string) {
   return v && v.length > 0
