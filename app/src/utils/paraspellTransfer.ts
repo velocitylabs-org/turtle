@@ -184,8 +184,8 @@ export const getOriginAndDestXCMFee = async (
     .from(sourceChainNode as TNodeDotKsmWithRelayChains)
     .to(destinationChainNode)
     .currency({ ...currencyId, amount: safeConvertAmount(amount, sourceToken) ?? defaultAmount }) // hardcoded amount fallback, because the fee is usually independent of the amount
-    .address(recipient ?? getPlaceholderAddress(sourceChain.supportedAddressTypes[0])) // hardcode sender address fallback, because the fee is usually independent of the sender
-    .senderAddress(sender ?? getPlaceholderAddress(destinationChain.supportedAddressTypes[0])) // hardcode recipient address fallback, because the fee is usually independent of the recipient
+    .address(recipient ?? getPlaceholderAddress(destinationChain.supportedAddressTypes[0])) // hardcode sender address fallback, because the fee is usually independent of the sender
+    .senderAddress(sender ?? getPlaceholderAddress(sourceChain.supportedAddressTypes[0])) // hardcode recipient address fallback, because the fee is usually independent of the recipient
     .getXcmFee({ disableFallback: false })
 }
 
