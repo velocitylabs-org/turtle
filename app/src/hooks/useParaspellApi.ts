@@ -403,8 +403,7 @@ const useParaspellApi = () => {
 
   const getFailureReason = (dryRunResult: DryRunResult) => {
     const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
-    if ('failureReason' in dryRunResult.origin) 
-      return dryRunResult.origin.failureReason
+    if ('failureReason' in dryRunResult.origin) return dryRunResult.origin.failureReason
     if (dryRunResult.destination && 'failureReason' in dryRunResult.destination)
       return dryRunResult.destination.failureReason
 
