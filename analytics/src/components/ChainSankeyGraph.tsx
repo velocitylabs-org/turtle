@@ -2,6 +2,7 @@ import { chainsByUid } from '@velocitylabs-org/turtle-registry'
 import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
 import MultiSelect from '@/components/MultiSelect'
 import { chains, GraphType, primaryColor } from '@/constants'
+import useIsMobile from '@/hooks/useMobile'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -29,6 +30,7 @@ export default function ChainSankeyGraph({
   selectedChain,
   setChainUid,
 }: ChainPathGraphProps) {
+  const isMobile = useIsMobile()
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
@@ -129,7 +131,9 @@ export default function ChainSankeyGraph({
 
     const width = dimensions.width - 30
     const height = dimensions.height
-    const margin = { top: 5, right: 50, bottom: 20, left: 0 }
+    const margin = isMobile
+      ? { top: 5, right: 15, bottom: 0, left: -10 }
+      : { top: 5, right: 50, bottom: 20, left: 0 }
     const nodeSize = 28
     let maxValue = 0
     flowData.forEach(d => {
@@ -240,46 +244,50 @@ export default function ChainSankeyGraph({
         }
       }
     })
-  }, [flowData, dimensions, type, selectedChain])
+  }, [flowData, dimensions, type, selectedChain, isMobile])
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width: '100%',
-        height: `${dynamicHeight}px`,
-        position: 'relative',
-        transition: `height 300ms ${easeOutQuart}`,
-      }}
-    >
-      <div className="absolute flex" style={{ left: '20px', top: '13px', zIndex: 10 }}>
-        <div className="w-[150px]">
-          <MultiSelect
-            options={chainOptions}
-            selected={[selectedChain]}
-            onChange={val => {
-              if (Array.isArray(val) && val.length > 0) {
-                setChainUid(val[0])
-              }
-            }}
-            placeholder="Source chain"
-            singleSelect
-            preventEmpty
-            showBadges={false}
-          />
-        </div>
-        {(!flowData || flowData.length === 0) && (
-          <div className="ml-3 flex items-center rounded-md px-3 py-1 text-sm font-medium text-muted-foreground">
-            ⚠️ No data available. Please select another chain.
+    <div className="overflow-x-scroll">
+      <div
+        ref={containerRef}
+        className="full-width relative min-w-[450px]"
+        style={{
+          height: `${dynamicHeight}px`,
+          transition: `height 300ms ${easeOutQuart}`,
+        }}
+      >
+        <div
+          className="absolute flex"
+          style={{ left: isMobile ? '0' : '20px', top: '13px', zIndex: 10 }}
+        >
+          <div style={{ width: isMobile ? '145px' : '150px' }}>
+            <MultiSelect
+              options={chainOptions}
+              selected={[selectedChain]}
+              onChange={val => {
+                if (Array.isArray(val) && val.length > 0) {
+                  setChainUid(val[0])
+                }
+              }}
+              placeholder="Source chain"
+              singleSelect
+              preventEmpty
+              showBadges={false}
+            />
           </div>
-        )}
+          {(!flowData || flowData.length === 0) && (
+            <div className="ml-3 flex items-center rounded-md px-3 py-1 text-sm font-medium text-muted-foreground">
+              ⚠️ No data available. Please select another chain.
+            </div>
+          )}
+        </div>
+        <svg
+          ref={svgRef}
+          width={dimensions.width}
+          height={dynamicHeight}
+          style={{ transition: `height 300ms ${easeOutQuart}` }}
+        />
       </div>
-      <svg
-        ref={svgRef}
-        width={dimensions.width}
-        height={dynamicHeight}
-        style={{ transition: `height 300ms ${easeOutQuart}` }}
-      />
     </div>
   )
 }
@@ -398,8 +406,7 @@ function addPercentageLabel(
     percentLabelGroup,
   )
 
-  percentText.textContent =
-    percentage < 0.01 && percentage > 0 ? `${percentage.toFixed(4)}%` : `${percentage.toFixed(2)}%`
+  percentText.textContent = formatPercentage(percentage)
   percentLabelGroup.addEventListener('mouseenter', () => {
     percentText.setAttribute('font-size', '14px')
     percentText.setAttribute('fill', hoverColor)
@@ -673,4 +680,16 @@ function renderNode(svg: SVGSVGElement, node: Node, nodeSize: number): SVGElemen
   }
 
   return group
+}
+
+function formatPercentage(percentage: number): string {
+  if (percentage % 1 === 0) {
+    return `${percentage}%`
+  }
+
+  if (percentage < 0.01 && percentage > 0) {
+    return `${percentage.toFixed(4)}%`
+  }
+
+  return `${percentage.toFixed(2)}%`
 }
