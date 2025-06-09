@@ -1,3 +1,4 @@
+import { TDryRunNodeResult } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
@@ -31,7 +32,6 @@ import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import { Sender, Status, TransferParams } from './useTransfer'
-import { TDryRunNodeResult } from '@paraspell/sdk'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
