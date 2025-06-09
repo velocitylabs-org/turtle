@@ -16,8 +16,10 @@ import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 type ChainsActivityItem = {
   chainUid: string
-  totalVolume: number
-  totalTransactions: number
+  incomingTransactions: number
+  incomingVolume: number
+  outgoingTransactions: number
+  outgoingVolume: number
 }
 
 interface ChainsActivityTable {
@@ -25,14 +27,19 @@ interface ChainsActivityTable {
   isLoading: boolean
 }
 
-type SortColumn = 'chainUid' | 'network' | 'totalVolume' | 'totalTransactions'
+type SortColumn =
+  | 'chainUid'
+  | 'incomingTransactions'
+  | 'incomingVolume'
+  | 'outgoingTransactions'
+  | 'outgoingVolume'
 type SortDirection = 'asc' | 'desc'
 
 export default function ChainsActivityTable({
   chains: initialChains,
   isLoading,
 }: ChainsActivityTable) {
-  const [sortColumn, setSortColumn] = useState<SortColumn>('totalVolume')
+  const [sortColumn, setSortColumn] = useState<SortColumn>('outgoingVolume')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
   const chains = useMemo(() => {
@@ -46,12 +53,6 @@ export default function ChainsActivityTable({
         const chainA = chainsByUid[a.chainUid]?.name || ''
         const chainB = chainsByUid[b.chainUid]?.name || ''
         return chainA.localeCompare(chainB) * modifier
-      }
-
-      if (sortColumn === 'network') {
-        const networkA = chainsByUid[a.chainUid]?.network || ''
-        const networkB = chainsByUid[b.chainUid]?.network || ''
-        return networkA.localeCompare(networkB) * modifier
       }
 
       // Handle numeric columns
@@ -84,8 +85,8 @@ export default function ChainsActivityTable({
             </TableHead>
             <TableHead>
               <SortableColumnHeader
-                column="network"
-                label="Network"
+                column="incomingVolume"
+                label="Incoming volume (USD)"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -93,8 +94,8 @@ export default function ChainsActivityTable({
             </TableHead>
             <TableHead>
               <SortableColumnHeader
-                column="totalVolume"
-                label="Volume (USD)"
+                column="incomingTransactions"
+                label="Incoming transactions"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -102,8 +103,17 @@ export default function ChainsActivityTable({
             </TableHead>
             <TableHead>
               <SortableColumnHeader
-                column="totalTransactions"
-                label="Transactions"
+                column="outgoingVolume"
+                label="Outgoing volume (USD)"
+                currentSortColumn={sortColumn}
+                currentSortDirection={sortDirection}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead>
+              <SortableColumnHeader
+                column="outgoingTransactions"
+                label="Outgoing transactions"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -200,9 +210,10 @@ function ChainsTableContent({ chains, isLoading }: ChainsTableContentProps) {
             </div>
           </div>
         </TableCell>
-        <TableCell>{chain.network}</TableCell>
-        <TableCell>${formatUSD(item.totalVolume)}</TableCell>
-        <TableCell>{item.totalTransactions}</TableCell>
+        <TableCell>${formatUSD(item.incomingVolume)}</TableCell>
+        <TableCell>{item.incomingTransactions}</TableCell>
+        <TableCell>${formatUSD(item.outgoingVolume)}</TableCell>
+        <TableCell>{item.outgoingTransactions}</TableCell>
       </TableRow>
     )
   })

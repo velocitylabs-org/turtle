@@ -21,7 +21,7 @@ export async function getChainSankeyData(chainUid: string) {
             _id: '$destinationChainUid',
             from: { $first: chainUid },
             to: { $first: '$destinationChainUid' },
-            size: { $sum: 1 }, // Count of transactions
+            size: { $sum: 1 },
           },
         },
         { $sort: { size: -1 } },
@@ -48,7 +48,7 @@ export async function getChainSankeyData(chainUid: string) {
             _id: '$destinationChainUid',
             from: { $first: chainUid },
             to: { $first: '$destinationChainUid' },
-            size: { $sum: '$sourceTokenAmountUsd' }, // Sum of USD volume
+            size: { $sum: '$sourceTokenAmountUsd' },
           },
         },
         { $sort: { size: -1 } },
@@ -78,32 +78,64 @@ export async function getChainSankeyData(chainUid: string) {
 export async function getChainsData() {
   try {
     await dbConnect()
-    const chainsData = await Transaction.aggregate([
+    const results = await Transaction.aggregate([
       {
-        $match: {
-          status: 'succeeded',
-        },
+        $match: { status: 'succeeded' },
       },
+      // Outgoing data
       {
         $group: {
           _id: '$sourceChainUid',
           chainUid: { $first: '$sourceChainUid' },
-          totalVolume: { $sum: '$sourceTokenAmountUsd' },
-          totalTransactions: { $sum: 1 },
+          outgoingVolume: { $sum: '$sourceTokenAmountUsd' },
+          outgoingTransactions: { $sum: 1 },
+          incomingVolume: { $sum: 0 },
+          incomingTransactions: { $sum: 0 },
         },
       },
-      { $sort: { totalVolume: -1 } },
+      // Merge with incoming using $unionWith
+      {
+        $unionWith: {
+          coll: 'transactions',
+          pipeline: [
+            { $match: { status: 'succeeded' } },
+            {
+              $group: {
+                _id: '$destinationChainUid',
+                chainUid: { $first: '$destinationChainUid' },
+                incomingVolume: { $sum: '$sourceTokenAmountUsd' },
+                incomingTransactions: { $sum: 1 },
+                outgoingVolume: { $sum: 0 },
+                outgoingTransactions: { $sum: 0 },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: '$chainUid',
+          chainUid: { $first: '$chainUid' },
+          incomingVolume: { $sum: '$incomingVolume' },
+          incomingTransactions: { $sum: '$incomingTransactions' },
+          outgoingVolume: { $sum: '$outgoingVolume' },
+          outgoingTransactions: { $sum: '$outgoingTransactions' },
+        },
+      },
       {
         $project: {
           _id: 0,
           chainUid: 1,
-          totalVolume: 1,
-          totalTransactions: 1,
+          incomingVolume: 1,
+          incomingTransactions: 1,
+          outgoingVolume: 1,
+          outgoingTransactions: 1,
         },
       },
     ])
+
     return {
-      chains: chainsData,
+      chains: results,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))
