@@ -407,6 +407,7 @@ const useParaspellApi = () => {
       return dryRunResult.origin.failureReason
     if (dryRunResult.destination && 'failureReason' in dryRunResult.destination)
       return dryRunResult.destination.failureReason
+
     return defaultDryRunMessage
   }
 
