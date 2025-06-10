@@ -60,9 +60,18 @@ const useFees = (
     address: senderAddress,
   })
 
-  const { setCanPayFeesGlobally, setCanPayAdditionalFeesGlobally } = useContext(FeeContext)
+  const { setCanPayFeesGlobally, setCanPayAdditionalFeesGlobally, setParams } =
+    useContext(FeeContext)
+
+  useEffect(() => {
+    if (sourceChain && destinationChain && token) {
+      setParams({ sourceChain, destinationChain, token })
+    }
+  }, [sourceChain, destinationChain, token, setParams])
 
   const fetchFees = useCallback(async () => {
+    // Do we need to check for tokens? You can't select a token if you don't have a source chain.
+    // Same for destination chain.
     if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
       setBridgingFee(null)

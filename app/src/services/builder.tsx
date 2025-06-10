@@ -59,6 +59,7 @@ class BuilderManager {
       .to(destinationChainNode as TNodeDotKsmWithRelayChains)
       .currency({ ...currencyId, amount: 1000n })
       .address(params.address)
+      .senderAddress(params.senderAddress)
 
     this.builders.set(key, builder)
     return builder
@@ -73,19 +74,33 @@ class BuilderManager {
   async getTransferableAmount(params: TxParams) {
     const builder = await this.getBuilder(params)
     // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.senderAddress(params.senderAddress).getTransferableAmount()
+    return builder.getTransferableAmount()
+  }
+
+  async getXcmFee(params: TxParams) {
+    const builder = await this.getBuilder(params)
+
+    // @ts-expect-error - types are being weird and can't find to correctly cast this
+    return builder.getXcmFee()
+  }
+
+  async getOriginXcmFee(params: TxParams) {
+    const builder = await this.getBuilder(params)
+
+    // @ts-expect-error - types are being weird and can't find to correctly cast this
+    return builder.getOriginXcmFee()
   }
 
   async isExistentialDepositMetAfterTransfer(params: TxParams) {
     const builder = await this.getBuilder(params)
     // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.senderAddress(params.senderAddress).verifyEdOnDestination()
+    return builder.verifyEdOnDestination()
   }
 
   async dryRun(params: TxParams) {
     const builder = await this.getBuilder(params)
     // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.senderAddress(params.senderAddress).dryRun()
+    return builder.dryRun()
   }
 
   async createTransferTx(params: TxParams) {
