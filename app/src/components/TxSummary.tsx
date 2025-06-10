@@ -160,27 +160,28 @@ export default function TxSummary({
             )}
 
             {/* XCM Destination fee */}
-            {xcmDestinationfees && (
-              <li className="mt-4 flex items-start justify-between border-turtle-level2">
-                <div className="items-left flex flex-col">
-                  <div className="pt-[3px] text-sm font-bold">Destination fee</div>
-                </div>
-                <div className="items-right flex">
-                  <div>
-                    <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {formatAmount(toHuman(xcmDestinationfees.amount, xcmDestinationfees.token))}{' '}
-                      {xcmDestinationfees.token.symbol}
-                    </div>
-
-                    {xcmDestinationfees.inDollars > 0 && (
-                      <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(xcmDestinationfees.inDollars)}
-                      </div>
-                    )}
+            {xcmDestinationfees &&
+              toHuman(xcmDestinationfees.amount, xcmDestinationfees.token) > 0 && (
+                <li className="mt-4 flex items-start justify-between border-turtle-level2">
+                  <div className="items-left flex flex-col">
+                    <div className="pt-[3px] text-sm font-bold">Destination fee</div>
                   </div>
-                </div>
-              </li>
-            )}
+                  <div className="items-right flex">
+                    <div>
+                      <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
+                        {formatAmount(toHuman(xcmDestinationfees.amount, xcmDestinationfees.token))}{' '}
+                        {xcmDestinationfees.token.symbol}
+                      </div>
+
+                      {xcmDestinationfees.inDollars > 0 && (
+                        <div className="text-right text-sm text-turtle-level4">
+                          ${formatAmount(xcmDestinationfees.inDollars)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              )}
 
             {/* Bridging fees */}
             {isBridgeTransfer && bridgingFee && (

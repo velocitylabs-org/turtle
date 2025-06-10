@@ -90,9 +90,6 @@ const useFees = (
 
           const { origin: sourceFeePayload, destination: destinationFeePayload } = feesPayload
 
-          console.log('sourceFeePayload', sourceFeePayload)
-          console.log('destinationFeePayload', destinationFeePayload)
-
           // TODO: this should be the fee token, not necessarily the native token.
           const sourceFeeToken = getNativeToken(sourceChain)
           const sourcefee = sourceFeePayload.fee ?? 0n
@@ -106,20 +103,30 @@ const useFees = (
               : 0,
           })
 
-          const isSufficientFee = (xcmfee: TXcmFeeDetail) => {
+          const isSufficientFee = (xcmfee: TXcmFeeDetail, source: 'origin' | 'destination') => {
+            // We consider DryRun as a sufficient.
             if (!senderAddress || !amount || xcmfee.feeType !== 'paymentInfo') return true
-            if (xcmfee.feeType === 'paymentInfo' && xcmfee.sufficient) return xcmfee.sufficient
-            return true
+
+            if (
+              'sufficient' in xcmfee &&
+              xcmfee.sufficient === undefined &&
+              source === 'destination'
+            ) {
+              // Notify user to about a potential token change between destination native token to the sent token.
+              // setNotifyFeesMayChange or setVerifyDestFeesBalance
+            }
+            // We consider PaymentInfo true and undefined as a sufficient.
+            return xcmfee.sufficient !== false
           }
 
-          setCanPayFees(isSufficientFee(sourceFeePayload))
+          setCanPayFees(isSufficientFee(sourceFeePayload, 'origin'))
 
           let destinationFeeToken: Token
           let destinationTokenInDollars: number
           const destinationfee = destinationFeePayload.fee ?? 0n
 
           if (destinationFeePayload.feeType === 'paymentInfo') {
-            // Should we convert the destinationFeePayload to the token sent ?
+            // PaymentInfo returns the destination fee in the destination chain native token, not in the token sent.
             destinationFeeToken = getNativeToken(destinationChain)
             destinationTokenInDollars = (await getCachedTokenPrice(destinationFeeToken))?.usd ?? 0
           } else {
@@ -134,12 +141,6 @@ const useFees = (
               ? toHuman(destinationfee, destinationFeeToken) * destinationTokenInDollars
               : 0,
           })
-
-          // destination fee (source chain native token or destination chain native token)
-          // destination fee token
-          // destination fee in dollars
-          // canPayDestination fee
-          // confirm there are no dest fee to Eth might need to handle eth exception in getXCMTransferInfo or getOriginAndDestXCMFee
 
           // The bridging fee when sending to Ethereum is paid in DOT
           if (destinationChain.network === 'Ethereum') {
