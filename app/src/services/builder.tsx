@@ -73,20 +73,19 @@ class BuilderManager {
 
   async getTransferableAmount(params: TxParams) {
     const builder = await this.getBuilder(params)
+
     // @ts-expect-error - types are being weird and can't find to correctly cast this
     return builder.getTransferableAmount()
   }
 
-  async getXcmFee(params: TxParams) {
+  async getOriginAndDestinationXcmFee(params: TxParams) {
     const builder = await this.getBuilder(params)
-
     // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.getXcmFee()
+    return builder.getXcmFee({ disableFeeCheck: false })
   }
 
   async getOriginXcmFee(params: TxParams) {
     const builder = await this.getBuilder(params)
-
     // @ts-expect-error - types are being weird and can't find to correctly cast this
     return builder.getOriginXcmFee()
   }
