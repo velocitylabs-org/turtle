@@ -189,31 +189,6 @@ export const getOriginAndDestXCMFee = async (
     .getXcmFee({ disableFallback: false })
 }
 
-// export const getXCMTransferInfo = async (
-//   sourceChain: Chain,
-//   destinationChain: Chain,
-//   sourceToken: Token,
-//   amount?: string | number | bigint,
-//   recipient?: string,
-//   sender?: string,
-//   wssEndpoint?: string,
-// ): Promise<TTransferInfo> => {
-//   const sourceChainNode = getParaSpellNode(sourceChain)
-//   const destinationChainNode = getParaSpellNode(destinationChain)
-//   if (!sourceChainNode || !destinationChainNode)
-//     throw new Error('Failed to get XCM transfer info: chain id not found.')
-
-//   const currencyId = getParaspellToken(sourceToken, sourceChainNode)
-
-//   return await Builder(wssEndpoint)
-//     .from(sourceChainNode as TNodeDotKsmWithRelayChains)
-//     .to(destinationChainNode)
-//     .currency({ ...currencyId, amount: amount ?? 100000n }) // hardcoded amount fallback, because the fee is usually independent of the amount
-//     .address(recipient ?? getPlaceholderAddress(sourceChain.supportedAddressTypes[0])) // hardcode sender address fallback, because the fee is usually independent of the sender
-//     .senderAddress(sender ?? getPlaceholderAddress(destinationChain.supportedAddressTypes[0])) // hardcode recipient address fallback, because the fee is usually independent of the recipient
-//     .getTransferInfo()
-// }
-
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 

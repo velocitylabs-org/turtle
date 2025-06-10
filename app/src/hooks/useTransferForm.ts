@@ -417,7 +417,7 @@ const useTransferForm = () => {
 
     // Check if the transfer amount plus all applicable fees exceeds the available balance
     return transferAmount + totalFeesAmount > balanceAmount
-  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
+  }, [fees, xcmDestinationfees, bridgingFee, balanceData, sourceTokenAmount])
 
   const applyTransferableBalance = useCallback(() => {
     if (exceedsTransferableBalance && sourceTokenAmount?.token) {
