@@ -8,7 +8,7 @@ import ChainSankeyGraph from '@/components/ChainSankeyGraph'
 import ErrorPanel from '@/components/ErrorPanel'
 import TitleToggle from '@/components/TitleToggle'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { GraphType } from '@/constants'
+import { GraphType, relayChain } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 
 type ChainSankeyDataItem = {
@@ -24,7 +24,7 @@ type ChainSankeyData = {
 }
 
 export default function ChainsPage() {
-  const [chainUid, setChainUid] = useState<string>('polkadot')
+  const [chainUid, setChainUid] = useState<string>(relayChain.uid)
   const [graphType, setGraphType] = useState<GraphType>('volume')
   const [isSankeyDataInitialLoading, setSankeyDataInitialLoading] = useState(true)
   const previousSankeyDataRef = useRef<ChainSankeyData>(null)
@@ -49,7 +49,6 @@ export default function ChainsPage() {
 
   useShowLoadingBar(loadingSankeyData)
 
-  // Store sankey data in a ref when it's available
   useEffect(() => {
     if (chainSankeyData) {
       previousSankeyDataRef.current = chainSankeyData
@@ -76,7 +75,7 @@ export default function ChainsPage() {
       <Card>
         <CardHeader>
           <CardTitle>
-            Data flow by
+            Data flow grouped by
             <TitleToggle
               options={[
                 { value: 'volume', label: 'Volume' },

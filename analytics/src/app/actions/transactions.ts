@@ -75,7 +75,7 @@ export async function getTransactionsData({
     }
 
     const [filteredTransactions, totalVolumeUsd, statusCounts] = await Promise.all([
-      // Get last default transaction limit transactions
+      // Retrieve the latest transactions, limiting results to defaultTransactionLimit
       Transaction.find(query)
         .sort({ txDate: -1 })
         .limit(defaultTransactionLimit)

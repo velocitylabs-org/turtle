@@ -44,7 +44,6 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
 
   const activeRoute = routes.find((route: RouteItem) => route.href === pathname)
 
-  // Prefetch data for all main pages when the app loads
   useEffect(() => {
     routes.forEach(route => {
       router.prefetch(route.href)

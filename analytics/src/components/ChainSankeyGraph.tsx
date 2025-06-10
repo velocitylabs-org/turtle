@@ -23,7 +23,6 @@ interface ChainPathGraphProps {
   setChainUid: (chainUid: string) => void
 }
 
-// Renders a Sankey graph visualizing flow between blockchain chains
 export default function ChainSankeyGraph({
   data,
   type,
@@ -48,7 +47,7 @@ export default function ChainSankeyGraph({
     const nodePadding = 15
     const topMargin = 60
     const bottomMargin = 0
-    const baseMinHeight = 120 // 120 is the min height if there is no item to show
+    const baseMinHeight = 120 // Min height if there is no item to show
 
     if (!flowData || flowData.length === 0) {
       const minHeight = topMargin + bottomMargin

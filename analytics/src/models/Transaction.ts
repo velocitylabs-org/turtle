@@ -48,7 +48,7 @@ export interface TransactionModel {
   sourceChainName: string
   sourceChainNetwork: string
 
-  destinationChainUid: string
+  destinationChainUid: string // Unique ID for the dest chain, used for filtering and analytics
   destinationChainId: string
   destinationChainName: string
   destinationChainNetwork: string
@@ -104,7 +104,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     sourceChainName: { type: String, required: true, validate: nonEmptyString },
     sourceChainNetwork: { type: String, required: true, validate: nonEmptyString },
 
-    destinationChainUid: { type: String, required: true, validate: nonEmptyString },
+    destinationChainUid: { type: String, required: true, validate: nonEmptyString }, // Unique ID for the dest chain, used for filtering and analytics
     destinationChainId: { type: String, required: true, validate: nonEmptyString },
     destinationChainName: { type: String, required: true, validate: nonEmptyString },
     destinationChainNetwork: { type: String, required: true, validate: nonEmptyString },

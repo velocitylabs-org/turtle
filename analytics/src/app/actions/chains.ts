@@ -35,7 +35,7 @@ export async function getChainSankeyData(chainUid: string) {
         },
       ]),
 
-      // Aggregation for volume in USD
+      // Aggregation for total volume
       Transaction.aggregate([
         {
           $match: {
@@ -93,7 +93,7 @@ export async function getChainsData() {
           incomingTransactions: { $sum: 0 },
         },
       },
-      // Merge with incoming using $unionWith
+      // Merge with incoming using
       {
         $unionWith: {
           coll: 'transactions',

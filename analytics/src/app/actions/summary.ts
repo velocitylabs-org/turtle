@@ -35,7 +35,7 @@ export async function getSummaryData() {
       // Successful transactions count
       Transaction.countDocuments({ status: 'succeeded' }),
 
-      // Last default transaction limit transactions
+      // Retrieve the latest transactions, limiting results to defaultTransactionLimit
       Transaction.find()
         .sort({ txDate: -1 })
         .limit(defaultTransactionLimit)

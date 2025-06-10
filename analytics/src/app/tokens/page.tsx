@@ -24,7 +24,7 @@ export default function TokensPage() {
     <div>
       <Card>
         <CardHeader>
-          <CardTitle>Data flow</CardTitle>
+          <CardTitle>Transaction volume distribution</CardTitle>
           <CardDescription>Transaction count VS volume in USD</CardDescription>
         </CardHeader>
         <CardContent>
