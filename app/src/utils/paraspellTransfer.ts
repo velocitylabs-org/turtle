@@ -178,7 +178,7 @@ export const getOriginAndDestXCMFee = async (
     throw new Error('Failed to get XCM fee: chain id not found.')
 
   const currencyId = getParaspellToken(sourceToken, sourceChainNode)
-  const defaultAmount = 1n
+  const defaultAmount = BigInt(10 ** sourceToken.decimals).toString()
 
   return await Builder(wssEndpoint)
     .from(sourceChainNode as TNodeDotKsmWithRelayChains)
