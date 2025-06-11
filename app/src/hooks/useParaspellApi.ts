@@ -1,3 +1,4 @@
+import { TDryRunNodeResult } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
@@ -106,25 +107,47 @@ const useParaspellApi = () => {
     setStatus('Validating')
 
     const validationResult = await validateTransfer(params)
-    if (validationResult.type === 'Supported' && !validationResult.origin.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
-    if (
-      validationResult.type === 'Supported' &&
-      validationResult.destination &&
-      !validationResult.destination.success
-    )
-      throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
 
-    const isExistentialDepositMet = await builderManager.isExistentialDepositMetAfterTransfer({
-      from: params.sourceChain,
-      to: params.destinationChain,
-      token: params.sourceToken,
-      address: params.recipient,
-      senderAddress: params.sender.address,
-    })
+    const dryRunCapturePayload = {
+      extra: {
+        sourceChain: params.sourceChain.uid,
+        destinationChain: params.destinationChain.uid,
+        token: params.sourceToken.id,
+      },
+    }
 
-    if (!isExistentialDepositMet)
-      throw new Error('Transfer failed: existential deposit will not be met.')
+    if (validationResult.type === 'Unsupported') {
+      addNotification({
+        message: getFailureReason(validationResult),
+        severity: NotificationSeverity.Warning,
+      })
+      captureException(new Error('DryRun Error: Unsupported'), {
+        ...dryRunCapturePayload,
+        level: 'warning',
+      })
+    }
+    if (validationResult.type === 'Supported') {
+      if (!validationResult.origin.success) {
+        captureException(new Error('DryRun Error: Origin Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
+        })
+        throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
+      }
+      if (validationResult.destination && !validationResult.destination.success) {
+        captureException(new Error('DryRun Error: Destination Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
+        })
+        throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
+      }
+
+      if (validationResult.origin.success && validationResult.destination?.success) {
+        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+        if (!isExistentialDepositMet)
+          throw new Error('Transfer failed: existential deposit will not be met.')
+      }
+    }
 
     const tx = await builderManager.createTransferTx({
       wssEndpoint: params.sourceChain.rpcConnection,
@@ -180,7 +203,13 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(
+            params.sender,
+            error,
+            setStatus,
+            event.txHash.toString(),
+            params.environment,
+          )
         }
       },
       error: callbackError => {
@@ -256,7 +285,13 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(
+            params.sender,
+            error,
+            setStatus,
+            event.txHash.toString(),
+            params.environment,
+          )
         }
       },
       error: callbackError => {
@@ -361,16 +396,34 @@ const useParaspellApi = () => {
     }
   }
 
+  const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
+    return !(
+      !dryRunNodeResult.success &&
+      dryRunNodeResult.failureReason.includes('DryRunApi is not available')
+    )
+  }
+
+  const getFailureReason = (dryRunResult: DryRunResult) => {
+    const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
+    if ('failureReason' in dryRunResult.origin) return dryRunResult.origin.failureReason
+    if (dryRunResult.destination && 'failureReason' in dryRunResult.destination)
+      return dryRunResult.destination.failureReason
+
+    return defaultDryRunMessage
+  }
+
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
-      const result = await builderManager.dryRun({
-        wssEndpoint: params.sourceChain.rpcConnection,
-        from: params.sourceChain,
-        to: params.destinationChain,
-        token: params.sourceToken,
-        address: params.recipient,
-        senderAddress: params.sender.address,
-      })
+      const result = await dryRun(params, params.sourceChain.rpcConnection)
+      if (
+        !isDryRunApiSupported(result.origin) ||
+        (result.destination && !isDryRunApiSupported(result.destination))
+      ) {
+        return {
+          type: 'Unsupported',
+          ...result,
+        }
+      }
 
       return {
         type: 'Supported',
@@ -410,6 +463,7 @@ const useParaspellApi = () => {
     e: unknown,
     setStatus: (status: Status) => void,
     txId?: string,
+    environment?: string,
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
@@ -423,6 +477,14 @@ const useParaspellApi = () => {
       message,
       severity: NotificationSeverity.Error,
     })
+
+    if (txId && environment) {
+      updateTransferMetrics({
+        txHashId: txId,
+        status: TxStatus.Failed,
+        environment: environment,
+      })
+    }
   }
 
   return { transfer }

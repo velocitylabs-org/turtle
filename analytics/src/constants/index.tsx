@@ -15,3 +15,5 @@ export const relayChain = RelayChain
 
 // Tokens
 export const tokens = REGISTRY.mainnet.tokens
+
+export type GraphType = 'volume' | 'transactions'

@@ -13,8 +13,9 @@ export async function getSummaryData() {
       totalTransactions,
       successfulTransactions,
       recentTransactions,
-      topTokensResult,
-      dailyVolumeResult,
+      topTokensByVolume,
+      topTokensByCount,
+      monthlyTransByVolumeAndCount,
     ] = await Promise.all([
       // Total volume in USD
       Transaction.aggregate([
@@ -68,11 +69,10 @@ export async function getSummaryData() {
             _id: '$sourceTokenId', // Group only by sourceTokenId
             symbol: { $first: '$sourceTokenSymbol' },
             name: { $first: '$sourceTokenName' },
-            volumeUsd: { $sum: '$sourceTokenAmountUsd' },
-            count: { $sum: 1 },
+            volume: { $sum: '$sourceTokenAmountUsd' },
           },
         },
-        { $sort: { volumeUsd: -1 } },
+        { $sort: { volume: -1 } },
         { $limit: 2 },
         {
           $project: {
@@ -80,13 +80,40 @@ export async function getSummaryData() {
             id: '$_id',
             symbol: 1,
             name: 1,
-            volumeUsd: 1,
+            volume: 1,
+          },
+        },
+      ]),
+
+      // Top 2 tokens by transaction count
+      Transaction.aggregate([
+        {
+          $match: {
+            status: 'succeeded',
+          },
+        },
+        {
+          $group: {
+            _id: '$sourceTokenId', // Group only by sourceTokenId
+            symbol: { $first: '$sourceTokenSymbol' },
+            name: { $first: '$sourceTokenName' },
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1 } },
+        { $limit: 2 },
+        {
+          $project: {
+            _id: 0,
+            id: '$_id',
+            symbol: 1,
+            name: 1,
             count: 1,
           },
         },
       ]),
 
-      // Monthly volume for the last 6 months
+      // Monthly trans by volume and transaction count, for the last 6 months
       Transaction.aggregate([
         {
           $match: {
@@ -137,8 +164,9 @@ export async function getSummaryData() {
       avgTransactionValue,
       successRate,
       recentTransactions: serializedRecentTransactions,
-      topTokens: topTokensResult,
-      dailyVolume: dailyVolumeResult,
+      topTokensByVolume,
+      topTokensByCount,
+      monthlyTransByVolumeAndCount,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))
