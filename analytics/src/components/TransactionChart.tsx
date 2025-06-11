@@ -44,28 +44,30 @@ const CustomTooltip = ({
 }
 
 export default function TransactionChart({ data, type, timeRange }: TransactionChartProps) {
-  const formattedData = data.map(item => {
-    let dateStr: string
-    const date = new Date(item.timestamp)
+  const formattedData = data
+    .map(item => {
+      let dateStr: string
+      const date = new Date(item.timestamp)
 
-    if (timeRange === 'last-6-months') {
-      // Format for 6 months view (YYYY-MM) - show month name
-      dateStr = date.toLocaleDateString('en-US', { month: 'short' })
-    } else if (timeRange === 'last-month') {
-      // Format for last month view (YYYY-MM-DD) - show day number
-      dateStr = date.getDate().toString()
-    } else if (timeRange === 'this-week') {
-      // Format for this week view (YYYY-MM-DD) - show day name
-      dateStr = date.toLocaleDateString('en-US', { weekday: 'long' })
-    } else {
-      dateStr = 'Unknown'
-    }
+      if (timeRange === 'last-6-months') {
+        // Format for 6 months view (YYYY-MM) - show month name
+        dateStr = date.toLocaleDateString('en-US', { month: 'short' })
+      } else if (timeRange === 'last-month') {
+        // Format for last month view (YYYY-MM-DD) - show day number
+        dateStr = date.getDate().toString()
+      } else if (timeRange === 'this-week') {
+        // Format for this week view (YYYY-MM-DD) - show day name
+        dateStr = date.toLocaleDateString('en-US', { weekday: 'long' })
+      } else {
+        dateStr = 'Unknown'
+      }
 
-    return {
-      date: dateStr,
-      value: type === 'volume' ? item.volumeUsd : item.count,
-    }
-  }).filter(item => item !== null)
+      return {
+        date: dateStr,
+        value: type === 'volume' ? item.volumeUsd : item.count,
+      }
+    })
+    .filter(item => item !== null)
 
   return (
     <div className="h-[300px] w-full">

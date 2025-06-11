@@ -267,7 +267,7 @@ async function getAllTransactionData() {
   return {
     sixMonthsData,
     lastMonthData,
-    thisWeekData: completeThisWeekData
+    thisWeekData: completeThisWeekData,
   }
 }
 
@@ -275,7 +275,7 @@ async function getAllTransactionData() {
 function fillMissingDaysInWeek(
   data: { timestamp: string; volumeUsd: number; count: number }[],
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ) {
   const allDays = []
   let currentDate = new Date(startDate)
@@ -287,17 +287,16 @@ function fillMissingDaysInWeek(
     currentDate = addDays(currentDate, 1)
   }
 
-
   return allDays.map(day => {
-    const existingData = data.find(item =>
-      item.timestamp === day.formattedDate
-    )
+    const existingData = data.find(item => item.timestamp === day.formattedDate)
 
     // If data exists for this day, use it, otherwise, use zero values
-    return existingData || {
-      timestamp: day.formattedDate,
-      volumeUsd: 0,
-      count: 0
-    }
+    return (
+      existingData || {
+        timestamp: day.formattedDate,
+        volumeUsd: 0,
+        count: 0,
+      }
+    )
   })
 }

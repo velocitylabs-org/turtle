@@ -19,19 +19,19 @@ const periodConfig = {
   'last-6-months': {
     dataKey: 'sixMonthsData',
     timeRange: 'last-6-months',
-    label: 'Six months'
+    label: 'Six months',
   },
   'last-month': {
     dataKey: 'lastMonthData',
     timeRange: 'last-month',
-    label: 'Last month'
+    label: 'Last month',
   },
   'this-week': {
     dataKey: 'thisWeekData',
     timeRange: 'this-week',
-    label: 'This week'
-  }
-} as const;
+    label: 'This week',
+  },
+} as const
 
 export default function HomeDashboardPage() {
   const [transactionGraphType, setTransactionGraphType] = useState<GraphType>('volume')
@@ -48,9 +48,9 @@ export default function HomeDashboardPage() {
   }
 
   const getTransactionData = () => {
-    const dataKey = periodConfig[timePeriod].dataKey;
-    return data?.transactionData?.[dataKey] || [];
-  };
+    const dataKey = periodConfig[timePeriod].dataKey
+    return data?.transactionData?.[dataKey] || []
+  }
 
   const summaryData = data || {
     totalVolumeUsd: 0,
@@ -100,40 +100,40 @@ export default function HomeDashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-7">
         <Card className="col-span-full lg:col-span-4">
           <CardHeader>
-              <CardTitle>
-                Transactions by
-                <TitleToggle
-                  options={[
-                    { value: 'volume', label: 'Volume' },
-                    { value: 'transactions', label: 'Count' },
-                  ]}
-                  value={transactionGraphType}
-                  onChange={value => setTransactionGraphType(value as GraphType)}
-                  className="ml-3"
+            <CardTitle>
+              Transactions by
+              <TitleToggle
+                options={[
+                  { value: 'volume', label: 'Volume' },
+                  { value: 'transactions', label: 'Count' },
+                ]}
+                value={transactionGraphType}
+                onChange={value => setTransactionGraphType(value as GraphType)}
+                className="ml-3"
+              />
+            </CardTitle>
+            <CardDescription>
+              <div className="relative -top-[7px] flex items-center gap-1">
+                Select timeframe
+                <StandardMultiSelect
+                  options={Object.entries(periodConfig).map(([value, config]) => ({
+                    value,
+                    label: config.label,
+                  }))}
+                  selected={[timePeriod]}
+                  onChange={values => {
+                    if (Array.isArray(values)) {
+                      setTimePeriod(values[0] as TimePeriodType)
+                    }
+                  }}
+                  showBadges={false}
+                  singleSelect
+                  minimal
+                  preventEmpty
+                  className="w-[100px]"
                 />
-              </CardTitle>
-                <CardDescription>
-                  <div className="flex items-center gap-1 relative -top-[7px]">
-                    Select timeframe
-                    <StandardMultiSelect
-                      options={Object.entries(periodConfig).map(([value, config]) => ({
-                        value,
-                        label: config.label
-                      }))}
-                      selected={[timePeriod]}
-                      onChange={values => {
-                        if (Array.isArray(values)) {
-                          setTimePeriod(values[0] as TimePeriodType)
-                        }
-                      }}
-                      showBadges={false}
-                      singleSelect
-                      minimal
-                      preventEmpty
-                      className="w-[100px]"
-                    />
-                  </div>
-                </CardDescription>
+              </div>
+            </CardDescription>
           </CardHeader>
           <CardContent className="px-4">
             {isLoading ? (

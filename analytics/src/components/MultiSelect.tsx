@@ -40,7 +40,7 @@ export default function StandardMultiSelect({
   disabled = false,
   preventEmpty = false,
   showBadges = true,
-  minimal
+  minimal,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -72,17 +72,17 @@ export default function StandardMultiSelect({
       <Popover open={disabled ? false : open} onOpenChange={disabled ? undefined : setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant={minimal ? "ghost" : "outline"}
+            variant={minimal ? 'ghost' : 'outline'}
             role="combobox"
             aria-expanded={open}
             className={cn(
               'h-auto min-h-10 w-full justify-between py-1',
               disabled && 'cursor-not-allowed opacity-50',
-              minimal && 'border-0 hover:bg-transparent p-0 m-0'
+              minimal && 'm-0 border-0 p-0 hover:bg-transparent',
             )}
             disabled={disabled}
           >
-            <div className={cn("flex flex-wrap items-center", minimal && "flex-grow")}>
+            <div className={cn('flex flex-wrap items-center', minimal && 'flex-grow')}>
               {selected.length === 0 ? (
                 <span className="text-muted-foreground">{placeholder}</span>
               ) : (
@@ -95,7 +95,7 @@ export default function StandardMultiSelect({
                       className={cn(
                         'mr-1 px-1 py-0',
                         !showBadges && '!important bg-transparent',
-                        minimal && 'bg-transparent hover:bg-transparent'
+                        minimal && 'bg-transparent hover:bg-transparent',
                       )}
                     >
                       <div className="flex items-center">
