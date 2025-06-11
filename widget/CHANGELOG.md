@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.11
+
+### Patch Changes
+
+- 00e84b2: Update UI & Assets packages
+
 ## 0.0.10
 
 ### Patch Changes

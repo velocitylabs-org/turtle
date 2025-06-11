@@ -1,5 +1,12 @@
 # @velocitylabs-org/turtle-registry
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [00e84b2]
+  - @velocitylabs-org/turtle-assets@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes
