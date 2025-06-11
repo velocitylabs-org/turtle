@@ -10,6 +10,7 @@ import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
+import { getTransferableAmount } from '@/lib/paraspell/transfer'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { wagmiConfig } from '@/providers/config'
@@ -23,7 +24,6 @@ import useFees from './useFees'
 import { useOutputAmount } from './useOutputAmount'
 import useTransfer from './useTransfer'
 import useWallet from './useWallet'
-import { getTransferableAmount } from '@/lib/paraspell/transfer'
 
 interface FormInputs {
   sourceChain: Chain | null
