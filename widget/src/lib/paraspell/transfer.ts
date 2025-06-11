@@ -108,6 +108,52 @@ export const dryRun = async (
     .dryRun()
 }
 
+export const isExistentialDepositMetAfterTransfer = async (
+  params: TransferParams,
+  wssEndpoint?: string,
+): Promise<boolean> => {
+  const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+  if (!sourceChainNode || !destinationChainNode)
+    throw new Error('Dry Run failed: chain id not found.')
+
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
+    .currency({ ...currencyId, amount: sourceAmount })
+    .address(recipient)
+    .senderAddress(sender.address)
+    .verifyEdOnDestination()
+}
+
+export const getTransferableAmount = async (
+  sourceChain: Chain,
+  destinationChain: Chain,
+  sourceToken: Token,
+  recipient: string,
+  sender: string,
+  wssEndpoint?: string,
+): Promise<bigint> => {
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+  if (!sourceChainNode || !destinationChainNode)
+    throw new Error('Failed to get transferable amount: chain id not found.')
+
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
+    // Pass a dummy amount
+    .currency({ ...currencyId, amount: 1000n })
+    .address(recipient)
+    .senderAddress(sender)
+    .getTransferableAmount()
+}
+
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
