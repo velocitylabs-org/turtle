@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.10
+
+### Patch Changes
+
+- a433a7a: Update PS SDK to last version and implement new Builder pattern
+
 ## 0.0.9
 
 ### Patch Changes
