@@ -1,4 +1,4 @@
-import { getTransferableAmount, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getAssetBalance, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { Chain, Token, Balance, Environment } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -23,7 +23,7 @@ export async function getBalance(
   const currency = getCurrencyId(env, node, chain.uid, token)
 
   const balance =
-    (await getTransferableAmount({
+    (await getAssetBalance({
       address,
       node: node as TNodeDotKsmWithRelayChains,
       currency,

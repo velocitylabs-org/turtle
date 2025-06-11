@@ -169,12 +169,17 @@ const Transfer: FC = () => {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
+  const disableMaxBtnInPolkadotNetwork =
+    sourceChain?.network === 'Polkadot' &&
+    (!destinationWallet?.sender || !destinationTokenAmount?.token)
+
   const shouldDisableMaxButton =
     !sourceWallet?.isConnected ||
     !sourceTokenAmount?.token ||
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
-    transferStatus !== 'Idle'
+    transferStatus !== 'Idle' ||
+    disableMaxBtnInPolkadotNetwork
 
   const shouldDisplayTxSummary =
     sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
@@ -316,6 +321,7 @@ const Transfer: FC = () => {
                             disabled={shouldDisableMaxButton}
                           />
                         ),
+                        tooltipContent: 'Max transferrable balance',
                       }}
                       walletProps={{
                         address: sourceWallet?.sender?.address,
