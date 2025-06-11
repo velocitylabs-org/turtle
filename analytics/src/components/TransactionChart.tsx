@@ -16,8 +16,9 @@ import formatUSD from '@/utils/format-USD'
 const chartColor = primaryColor
 
 interface TransactionChartProps {
-  data: { month: string; volumeUsd: number; count: number }[]
+  data: { timestamp: string; volumeUsd: number; count: number }[]
   type: GraphType
+  timeRange: 'last-6-months' | 'last-month' | 'this-week'
 }
 
 const CustomTooltip = ({
@@ -42,11 +43,29 @@ const CustomTooltip = ({
   )
 }
 
-export default function TransactionChart({ data, type }: TransactionChartProps) {
-  const formattedData = data.map(item => ({
-    date: new Date(item.month).toLocaleDateString('en-US', { month: 'short' }),
-    value: type === 'volume' ? item.volumeUsd : item.count,
-  }))
+export default function TransactionChart({ data, type, timeRange }: TransactionChartProps) {
+  const formattedData = data.map(item => {
+    let dateStr: string
+    const date = new Date(item.timestamp)
+
+    if (timeRange === 'last-6-months') {
+      // Format for 6 months view (YYYY-MM) - show month name
+      dateStr = date.toLocaleDateString('en-US', { month: 'short' })
+    } else if (timeRange === 'last-month') {
+      // Format for last month view (YYYY-MM-DD) - show day number
+      dateStr = date.getDate().toString()
+    } else if (timeRange === 'this-week') {
+      // Format for this week view (YYYY-MM-DD) - show day name
+      dateStr = date.toLocaleDateString('en-US', { weekday: 'long' })
+    } else {
+      dateStr = 'Unknown'
+    }
+
+    return {
+      date: dateStr,
+      value: type === 'volume' ? item.volumeUsd : item.count,
+    }
+  }).filter(item => item !== null)
 
   return (
     <div className="h-[300px] w-full">

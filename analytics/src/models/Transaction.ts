@@ -141,7 +141,7 @@ transactionSchema.index({ destinationTokenId: 1 }) // For destination token filt
 // Compound indexes for analytics
 transactionSchema.index({ status: 1, txDate: -1 }) // For status and date queries
 transactionSchema.index({ status: 1, sourceTokenId: 1, sourceTokenAmountUsd: 1 }) // For token volume analytics (getTokensData) and top tokens by count
-transactionSchema.index({ status: 1, txDate: -1, sourceTokenAmountUsd: 1 }) // For monthly volume calculations (getSummaryData)
+transactionSchema.index({ status: 1, txDate: -1, sourceTokenAmountUsd: 1 }) // For monthly volume calculations and faceted aggregations (getSummaryData)
 
 // Compound indexes for filtered queries
 transactionSchema.index({ txDate: -1, status: 1 }) // For date sorting with a status filter

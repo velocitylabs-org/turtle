@@ -1,7 +1,7 @@
 'use client'
 import { Token } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { Check, ChevronsUpDown, Search, X } from 'lucide-react'
+import { Check, ChevronsUpDown, X } from 'lucide-react'
 import React from 'react'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import { Badge } from '@/components/ui/badge'
@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 type Option = {
   value: string
   label: string
-  logoURI: Token['logoURI']
+  logoURI?: Token['logoURI']
   originLogoURI?: Token['logoURI']
 }
 
@@ -26,6 +26,7 @@ interface MultiSelectProps {
   disabled?: boolean
   preventEmpty?: boolean
   showBadges?: boolean
+  minimal?: boolean
 }
 
 export default function StandardMultiSelect({
@@ -39,14 +40,18 @@ export default function StandardMultiSelect({
   disabled = false,
   preventEmpty = false,
   showBadges = true,
+  minimal
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
-  const [searchQuery, setSearchQuery] = React.useState('')
 
   const handleSelect = (value: string) => {
     if (disabled) return
 
     if (selected.includes(value)) {
+      // If preventEmpty is true and there's only one item selected, don't remove it
+      if (preventEmpty && selected.length === 1) {
+        return
+      }
       onChange(selected.filter(item => item !== value))
     } else if (singleSelect) {
       onChange([value])
@@ -60,10 +65,6 @@ export default function StandardMultiSelect({
     onChange(selected.filter(item => item !== value))
   }
 
-  const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
-
   const showRemoveButton = !disabled && !preventEmpty
 
   return (
@@ -71,16 +72,17 @@ export default function StandardMultiSelect({
       <Popover open={disabled ? false : open} onOpenChange={disabled ? undefined : setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
+            variant={minimal ? "ghost" : "outline"}
             role="combobox"
             aria-expanded={open}
             className={cn(
               'h-auto min-h-10 w-full justify-between py-1',
               disabled && 'cursor-not-allowed opacity-50',
+              minimal && 'border-0 hover:bg-transparent p-0 m-0'
             )}
             disabled={disabled}
           >
-            <div className="flex flex-wrap items-center gap-1">
+            <div className={cn("flex flex-wrap items-center", minimal && "flex-grow")}>
               {selected.length === 0 ? (
                 <span className="text-muted-foreground">{placeholder}</span>
               ) : (
@@ -92,8 +94,8 @@ export default function StandardMultiSelect({
                       variant="secondary"
                       className={cn(
                         'mr-1 px-1 py-0',
-                        !showRemoveButton && 'pr-2',
                         !showBadges && '!important bg-transparent',
+                        minimal && 'bg-transparent hover:bg-transparent'
                       )}
                     >
                       <div className="flex items-center">
@@ -117,29 +119,20 @@ export default function StandardMultiSelect({
                   )
                 })
               )}
+              {minimal && <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />}
             </div>
-            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+            {!minimal && <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <div className="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground">
-            <div className="flex items-center border-b px-3">
-              <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-              <input
-                className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                disabled={disabled}
-              />
-            </div>
             <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
-              {filteredOptions.length === 0 ? (
-                <div className="py-6 text-center text-sm">No results found.</div>
+              {options.length === 0 ? (
+                <div className="py-6 text-center text-sm">No options available.</div>
               ) : (
                 <div className="overflow-hidden p-1 text-foreground">
                   <div className="max-h-64 overflow-auto">
-                    {filteredOptions.map(option => (
+                    {options.map(option => (
                       <div
                         key={option.value}
                         className={cn(
