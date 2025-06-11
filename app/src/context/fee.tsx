@@ -14,6 +14,7 @@ export const FeeContext = createContext<{
   setCanPayAdditionalFeesGlobally: (canPayAdditionalFees: boolean) => void
   setParams: (params: { sourceChain: Chain; destinationChain: Chain; token: Token }) => void
   xcmFees: TGetXcmFeeResult | null
+  isSufficientFee: (source: 'origin' | 'destination') => boolean
 }>({
   canPayFees: false,
   setCanPayFeesGlobally: () => {},
@@ -21,6 +22,7 @@ export const FeeContext = createContext<{
   setCanPayAdditionalFeesGlobally: () => {},
   setParams: () => {},
   xcmFees: null,
+  isSufficientFee: () => false,
 })
 
 export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
@@ -52,21 +54,24 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
     setXcmFees(fees)
   }, [params])
 
-  // const checkIfFeeIsPayableWithNativeToken = useCallback(async () => {
-  //   if (!params) {
-  //     return
-  //   }
+  const isSufficientFee = (source: 'origin' | 'destination') => {
+    // We consider DryRun as a sufficient.
+    if (xcmFees?.[source]?.feeType === 'dryRun' || xcmFees?.[source]?.feeType !== 'paymentInfo')
+      return true
 
-  //   const fee = await builderManager.getOriginXcmFee({
-  //     from: params.sourceChain,
-  //     to: params.destinationChain,
-  //     token: params.token,
-  //     address: getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
-  //     senderAddress: getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
-  //   })
+    if (
+      xcmFees?.[source]?.feeType === 'paymentInfo' &&
+      xcmFees?.[source]?.sufficient === undefined &&
+      source === 'destination'
+    ) {
+      // Notify user to about a potential token change between destination native token to the sent token.
+      // setNotifyFeesMayChange or setVerifyDestFeesBalance
+      // ...maybe not directly here, but in the parent component
+    }
 
-  //   console.log('getting xcm fee', fee)
-  // }, [params])
+    // We consider PaymentInfo true and undefined as a sufficient.
+    return xcmFees?.[source]?.sufficient !== false
+  }
 
   // TODO: on pause for a second, while we work on the provider itself
   useEffect(() => {
@@ -75,7 +80,6 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
       const feeAssets = getFeeAssets(node as TNodeDotKsmWithRelayChains)
       console.log(feeAssets)
 
-      // checkIfFeeIsPayableWithNativeToken()
       calculateXcmFees()
     }
   }, [calculateXcmFees, params])
@@ -89,6 +93,7 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
         setCanPayAdditionalFeesGlobally: setCanPayAdditionalFees,
         setParams,
         xcmFees,
+        isSufficientFee,
       }}
     >
       {children}
