@@ -1,12 +1,11 @@
 'use client'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { ChevronRight, Menu } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { Menu } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useState, useEffect } from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
-import TurtleLogo from '@/components/TurtleLogo'
+import NavigationMenu from '@/components/NavigationMenu'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { loadingBarOpt } from '@/constants'
@@ -21,7 +20,6 @@ interface DashboardLayoutProps {
 
 export default function AppLayout({ children }: DashboardLayoutProps) {
   const { start } = useLoadingBar(loadingBarOpt)
-  const router = useRouter()
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile)
@@ -43,13 +41,6 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const activeRoute = routes.find((route: RouteItem) => route.href === pathname)
-
-  useEffect(() => {
-    routes.forEach(route => {
-      router.prefetch(route.href)
-    })
-  }, [router])
-
   const onNavItemClicked = (isActive: boolean) => {
     if (isActive) return
     start() // Show loading bar
@@ -109,61 +100,6 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
         {/* Pages */}
         <div className="h-full p-4 pb-10 pt-0 md:p-8 md:pb-6 md:pt-0">{children}</div>
       </main>
-    </div>
-  )
-}
-
-interface NavigationMenuProps {
-  routes: RouteItem[]
-  title?: string
-  onNavItemClicked: (isActive: boolean) => void
-  pathname?: string
-}
-
-function NavigationMenu({
-  routes,
-  onNavItemClicked,
-  title = 'Overview',
-  pathname,
-}: NavigationMenuProps) {
-  const isActiveRoute = (route: RouteItem) => route.href === pathname
-
-  return (
-    <div className="flex h-full flex-col space-y-4">
-      <div className="mb-2 flex items-center border-b" style={{ height: headerHeight }}>
-        <TurtleLogo className="ml-5" />
-        <h2 className="ml-3 flex items-center gap-2 text-lg font-semibold tracking-tight">
-          Turtle Analytics
-        </h2>
-      </div>
-      <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">{title}</h2>
-        <div className="space-y-1">
-          {routes.map(route => (
-            <Link
-              key={route.href}
-              href={route.href}
-              prefetch={true}
-              className={cn(
-                'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
-                isActiveRoute(route) ? 'bg-muted text-primary' : 'text-muted-foreground',
-              )}
-              onClick={() => onNavItemClicked(isActiveRoute(route))}
-            >
-              <div className="flex flex-1 items-center">
-                <route.icon
-                  className={cn(
-                    'mr-3 h-4 w-4',
-                    isActiveRoute(route) ? 'text-primary' : 'text-muted-foreground',
-                  )}
-                />
-                {route.label}
-              </div>
-              {isActiveRoute(route) && <ChevronRight className="relative top-[2px] h-4 w-4" />}
-            </Link>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }
