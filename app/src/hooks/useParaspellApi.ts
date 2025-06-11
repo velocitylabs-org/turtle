@@ -143,7 +143,13 @@ const useParaspellApi = () => {
       }
 
       if (validationResult.origin.success && validationResult.destination?.success) {
-        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+        const isExistentialDepositMet = await builderManager.isExistentialDepositMetAfterTransfer({
+          from: params.sourceChain,
+          to: params.destinationChain,
+          token: params.sourceToken,
+          address: params.recipient,
+          senderAddress: params.sender.address,
+        })
         if (!isExistentialDepositMet)
           throw new Error('Transfer failed: existential deposit will not be met.')
       }
@@ -414,7 +420,14 @@ const useParaspellApi = () => {
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
-      const result = await dryRun(params, params.sourceChain.rpcConnection)
+      const result = await builderManager.dryRun({
+        wssEndpoint: params.sourceChain.rpcConnection,
+        from: params.sourceChain,
+        to: params.destinationChain,
+        token: params.sourceToken,
+        address: params.recipient,
+        senderAddress: params.sender.address,
+      })
       if (
         !isDryRunApiSupported(result.origin) ||
         (result.destination && !isDryRunApiSupported(result.destination))
