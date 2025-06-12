@@ -39,11 +39,15 @@ const useParaspellApi = () => {
     setStatus('Loading')
 
     try {
-      if (!isSameToken(params.sourceToken, params.destinationToken))
-        await handleSwap(params, setStatus)
-      else if (params.sourceChain.uid === 'moonbeam')
-        await handleMoonbeamTransfer(params, setStatus)
-      else await handlePolkadotTransfer(params, setStatus)
+      if (!isSameToken(params.sourceToken, params.destinationToken)) {
+        return await handleSwap(params, setStatus)
+      }
+
+      if (params.sourceChain.uid === 'moonbeam') {
+        return await handleMoonbeamTransfer(params, setStatus)
+      }
+
+      return await handlePolkadotTransfer(params, setStatus)
     } catch (e) {
       handleSendError(params.sender, e, setStatus)
     }

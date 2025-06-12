@@ -1,5 +1,14 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.0.5
+
+### Patch Changes
+
+- 00e84b2: Update UI & Assets packages
+- Updated dependencies [00e84b2]
+  - @velocitylabs-org/turtle-assets@0.0.4
+  - @velocitylabs-org/turtle-registry@0.0.4
+
 ## 0.0.4
 
 ### Patch Changes

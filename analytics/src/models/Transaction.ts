@@ -43,12 +43,12 @@ export interface TransactionModel {
   senderAddress: string
   recipientAddress: string
 
-  sourceChainUid: string
+  sourceChainUid: string // Unique ID for the source chain, used for filtering and analytics
   sourceChainId: string
   sourceChainName: string
   sourceChainNetwork: string
 
-  destinationChainUid: string
+  destinationChainUid: string // Unique ID for the dest chain, used for filtering and analytics
   destinationChainId: string
   destinationChainName: string
   destinationChainNetwork: string
@@ -99,12 +99,12 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     senderAddress: { type: String, required: true, validate: nonEmptyString },
     recipientAddress: { type: String, required: true, validate: nonEmptyString },
 
-    sourceChainUid: { type: String, required: true, validate: nonEmptyString },
+    sourceChainUid: { type: String, required: true, validate: nonEmptyString }, // Unique ID for the source chain, used for filtering and analytics
     sourceChainId: { type: String, required: true, validate: nonEmptyString },
     sourceChainName: { type: String, required: true, validate: nonEmptyString },
     sourceChainNetwork: { type: String, required: true, validate: nonEmptyString },
 
-    destinationChainUid: { type: String, required: true, validate: nonEmptyString },
+    destinationChainUid: { type: String, required: true, validate: nonEmptyString }, // Unique ID for the dest chain, used for filtering and analytics
     destinationChainId: { type: String, required: true, validate: nonEmptyString },
     destinationChainName: { type: String, required: true, validate: nonEmptyString },
     destinationChainNetwork: { type: String, required: true, validate: nonEmptyString },
@@ -141,7 +141,7 @@ transactionSchema.index({ destinationTokenId: 1 }) // For destination token filt
 // Compound indexes for analytics
 transactionSchema.index({ status: 1, txDate: -1 }) // For status and date queries
 transactionSchema.index({ status: 1, sourceTokenId: 1, sourceTokenAmountUsd: 1 }) // For token volume analytics (getTokensData) and top tokens by count
-transactionSchema.index({ status: 1, txDate: -1, sourceTokenAmountUsd: 1 }) // For monthly volume calculations (getSummaryData)
+transactionSchema.index({ status: 1, txDate: -1, sourceTokenAmountUsd: 1 }) // For monthly volume calculations and faceted aggregations (getSummaryData)
 
 // Compound indexes for filtered queries
 transactionSchema.index({ txDate: -1, status: 1 }) // For date sorting with a status filter
@@ -149,6 +149,12 @@ transactionSchema.index({ sourceChainUid: 1, txDate: -1 }) // For source chain a
 transactionSchema.index({ destinationChainUid: 1, txDate: -1 }) // For destination chain and date queries
 transactionSchema.index({ sourceTokenId: 1, txDate: -1 }) // For source token and date queries
 transactionSchema.index({ destinationTokenId: 1, txDate: -1 }) // For destination token and date queries
+
+// Additional indexes for chain analytics queries
+transactionSchema.index({ status: 1, sourceChainUid: 1 }) // For getChainSankeyData filtering
+transactionSchema.index({ status: 1, sourceChainUid: 1, destinationChainUid: 1 }) // For chain-to-chain analytics
+transactionSchema.index({ status: 1, sourceChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by source chain
+transactionSchema.index({ status: 1, destinationChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by destination chain
 
 function nonEmptyString(v: string) {
   return v && v.length > 0

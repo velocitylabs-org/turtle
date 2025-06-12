@@ -1,3 +1,4 @@
+import { TDryRunNodeResult } from '@paraspell/sdk'
 import { getTokenPrice, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError } from 'polkadot-api'
@@ -6,7 +7,13 @@ import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs
 import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { createRouterPlan } from '@/lib/paraspell/swap'
-import { createTransferTx, dryRun, DryRunResult, moonbeamTransfer } from '@/lib/paraspell/transfer'
+import {
+  createTransferTx,
+  dryRun,
+  DryRunResult,
+  isExistentialDepositMetAfterTransfer,
+  moonbeamTransfer,
+} from '@/lib/paraspell/transfer'
 import { extractPapiEvent } from '@/lib/polkadot/papi'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
@@ -95,14 +102,27 @@ const useParaspellApi = () => {
     setStatus('Validating')
 
     const validationResult = await validateTransfer(params)
-    if (validationResult.type === 'Supported' && !validationResult.origin.success)
-      throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
-    if (
-      validationResult.type === 'Supported' &&
-      validationResult.destination &&
-      !validationResult.destination.success
-    )
-      throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
+
+    if (validationResult.type === 'Unsupported') {
+      addNotification({
+        message: getFailureReason(validationResult),
+        severity: NotificationSeverity.Warning,
+      })
+    }
+    if (validationResult.type === 'Supported') {
+      if (!validationResult.origin.success) {
+        throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
+      }
+      if (validationResult.destination && !validationResult.destination.success) {
+        throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
+      }
+
+      if (validationResult.origin.success && validationResult.destination?.success) {
+        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+        if (!isExistentialDepositMet)
+          throw new Error('Transfer failed: existential deposit will not be met.')
+      }
+    }
 
     const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
     setStatus('Signing')
@@ -294,9 +314,34 @@ const useParaspellApi = () => {
     } satisfies CompletedTransfer)
   }
 
+  const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
+    return !(
+      !dryRunNodeResult.success &&
+      dryRunNodeResult.failureReason.includes('DryRunApi is not available')
+    )
+  }
+
+  const getFailureReason = (dryRunResult: DryRunResult) => {
+    const defaultDryRunMessage = "Transfer may not succeed. DryRun can't be performed."
+    if ('failureReason' in dryRunResult.origin) return dryRunResult.origin.failureReason
+    if (dryRunResult.destination && 'failureReason' in dryRunResult.destination)
+      return dryRunResult.destination.failureReason
+
+    return defaultDryRunMessage
+  }
+
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
       const result = await dryRun(params, params.sourceChain.rpcConnection)
+      if (
+        !isDryRunApiSupported(result.origin) ||
+        (result.destination && !isDryRunApiSupported(result.destination))
+      ) {
+        return {
+          type: 'Unsupported',
+          ...result,
+        }
+      }
 
       return {
         type: 'Supported',

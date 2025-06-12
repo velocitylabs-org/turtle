@@ -13,7 +13,7 @@ import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import SmallStatBox from '@/components/SmallStatBox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { chains, tokens } from '@/constants'
+import { chains, defaultTransactionLimit, tokens } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
@@ -247,7 +247,7 @@ export default function TransactionsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Last 5 transactions</CardDescription>
+            <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable transactions={transactions} isLoading={isLoading} />

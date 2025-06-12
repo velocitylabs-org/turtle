@@ -1,8 +1,8 @@
 'use client'
-import { tokensById } from '@velocitylabs-org/turtle-registry'
+import { chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
-import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
+import { LogoImg } from '@/components/TokenAndOriginLogos'
 import {
   Table,
   TableBody,
@@ -12,52 +12,53 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import formatUSD from '@/utils/format-USD'
-import getTypeBadge from '@/utils/get-type-badge'
+import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
-type TokensActivityItem = {
-  tokenId: string
-  totalVolume: number
-  totalTransactions: number
+type ChainsActivityItem = {
+  chainUid: string
+  incomingTransactions: number
+  incomingVolume: number
+  outgoingTransactions: number
+  outgoingVolume: number
 }
 
-interface TokensActivityTable {
-  tokens: TokensActivityItem[]
+interface ChainsActivityTable {
+  chains: ChainsActivityItem[]
   isLoading: boolean
 }
 
-type SortColumn = 'tokenId' | 'network' | 'totalVolume' | 'totalTransactions'
+type SortColumn =
+  | 'chainUid'
+  | 'incomingTransactions'
+  | 'incomingVolume'
+  | 'outgoingTransactions'
+  | 'outgoingVolume'
 type SortDirection = 'asc' | 'desc'
 
-export default function TokensActivityTable({
-  tokens: initialTokens,
+export default function ChainsActivityTable({
+  chains: initialChains,
   isLoading,
-}: TokensActivityTable) {
-  const [sortColumn, setSortColumn] = useState<SortColumn>('totalVolume')
+}: ChainsActivityTable) {
+  const [sortColumn, setSortColumn] = useState<SortColumn>('outgoingVolume')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
 
-  const tokens = useMemo(() => {
-    if (isLoading || initialTokens.length === 0) return initialTokens
+  const chains = useMemo(() => {
+    if (isLoading || initialChains.length === 0) return initialChains
 
-    return [...initialTokens].sort((a, b) => {
+    return [...initialChains].sort((a, b) => {
       const modifier = sortDirection === 'asc' ? 1 : -1
 
       // Handle string columns
-      if (sortColumn === 'tokenId') {
-        const tokenA = tokensById[a.tokenId]?.symbol || ''
-        const tokenB = tokensById[b.tokenId]?.symbol || ''
-        return tokenA.localeCompare(tokenB) * modifier
-      }
-
-      if (sortColumn === 'network') {
-        const networkA = tokensById[a.tokenId]?.origin.type || ''
-        const networkB = tokensById[b.tokenId]?.origin.type || ''
-        return networkA.localeCompare(networkB) * modifier
+      if (sortColumn === 'chainUid') {
+        const chainA = chainsByUid[a.chainUid]?.name || ''
+        const chainB = chainsByUid[b.chainUid]?.name || ''
+        return chainA.localeCompare(chainB) * modifier
       }
 
       // Handle numeric columns
       return (a[sortColumn] - b[sortColumn]) * modifier
     })
-  }, [initialTokens, sortColumn, sortDirection, isLoading])
+  }, [initialChains, sortColumn, sortDirection, isLoading])
 
   const handleSort = (column: SortColumn) => {
     if (sortColumn === column) {
@@ -75,8 +76,8 @@ export default function TokensActivityTable({
           <TableRow>
             <TableHead>
               <SortableColumnHeader
-                column="tokenId"
-                label="Token"
+                column="chainUid"
+                label="Chains"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -84,8 +85,8 @@ export default function TokensActivityTable({
             </TableHead>
             <TableHead>
               <SortableColumnHeader
-                column="network"
-                label="Network"
+                column="incomingVolume"
+                label="Incoming volume (USD)"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -93,8 +94,8 @@ export default function TokensActivityTable({
             </TableHead>
             <TableHead>
               <SortableColumnHeader
-                column="totalVolume"
-                label="Volume (USD)"
+                column="incomingTransactions"
+                label="Incoming transactions"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -102,8 +103,17 @@ export default function TokensActivityTable({
             </TableHead>
             <TableHead>
               <SortableColumnHeader
-                column="totalTransactions"
-                label="Transactions"
+                column="outgoingVolume"
+                label="Outgoing volume (USD)"
+                currentSortColumn={sortColumn}
+                currentSortDirection={sortDirection}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead>
+              <SortableColumnHeader
+                column="outgoingTransactions"
+                label="Outgoing transactions"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}
@@ -112,7 +122,7 @@ export default function TokensActivityTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TokensTableContent tokens={tokens} isLoading={isLoading} />
+          <ChainsTableContent chains={chains} isLoading={isLoading} />
         </TableBody>
       </Table>
     </div>
@@ -150,12 +160,12 @@ const SortableColumnHeader = ({
   </span>
 )
 
-interface TokensTableContentProps {
-  tokens: TokensActivityItem[]
+interface ChainsTableContentProps {
+  chains: ChainsActivityItem[]
   isLoading: boolean
 }
 
-function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
+function ChainsTableContent({ chains, isLoading }: ChainsTableContentProps) {
   if (isLoading) {
     return (
       <TableRow key={0}>
@@ -171,7 +181,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
     )
   }
 
-  if (tokens.length === 0) {
+  if (chains.length === 0) {
     return (
       <TableRow key={1}>
         <TableCell colSpan={6} className="text-center">
@@ -179,35 +189,31 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
             className="flex items-center justify-center"
             style={{ height: 'calc(100vh - 300px)' }}
           >
-            <p>There are no recent token activity to display</p>
+            <p>There are no recent chains activity to display</p>
           </div>
         </TableCell>
       </TableRow>
     )
   }
 
-  return tokens.map((item, i) => {
-    const token = tokensById[item.tokenId]
-    const { logoURI, typeURI } = getTypeBadge(item.tokenId)
+  return chains.map((item, i) => {
+    const chain = chainsByUid[item.chainUid]
+    const logoUrl = getSrcFromLogo(chain)
 
     return (
-      <TableRow key={`${item.tokenId}-${i}`}>
+      <TableRow key={`${item.chainUid}-${i}`}>
         <TableCell>
           <div className="inline-flex items-center">
-            <TokenAndOriginLogos
-              tokenURI={logoURI as string}
-              originURI={typeURI as string}
-              size={28}
-            />
+            <LogoImg logoURI={logoUrl} size={28} className="border border-black" />
             <div className="ml-2 flex flex-col">
-              <span className="font-medium">{token?.symbol || 'Unknown Token'}</span>
-              <span className="text-xs text-muted-foreground">{token?.name || ''}</span>
+              <span className="text-xs text-muted-foreground">{chain.name}</span>
             </div>
           </div>
         </TableCell>
-        <TableCell>{token.origin.type}</TableCell>
-        <TableCell>${formatUSD(item.totalVolume)}</TableCell>
-        <TableCell>{item.totalTransactions}</TableCell>
+        <TableCell>${formatUSD(item.incomingVolume)}</TableCell>
+        <TableCell>{item.incomingTransactions}</TableCell>
+        <TableCell>${formatUSD(item.outgoingVolume)}</TableCell>
+        <TableCell>{item.outgoingTransactions}</TableCell>
       </TableRow>
     )
   })

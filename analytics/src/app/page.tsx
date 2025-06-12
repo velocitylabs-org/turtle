@@ -4,19 +4,39 @@ import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
 import { useState } from 'react'
 import { getSummaryData } from '@/app/actions/summary'
 import ErrorPanel from '@/components/ErrorPanel'
+import StandardMultiSelect from '@/components/MultiSelect'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import SmallStatBox from '@/components/SmallStatBox'
 import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { GraphType } from '@/constants'
+import { defaultTransactionLimit, GraphType, TimePeriodType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
+
+const periodConfig = {
+  'last-6-months': {
+    dataKey: 'sixMonthsData',
+    timeRange: 'last-6-months',
+    label: 'Six months',
+  },
+  'last-month': {
+    dataKey: 'lastMonthData',
+    timeRange: 'last-month',
+    label: 'Last month',
+  },
+  'this-week': {
+    dataKey: 'thisWeekData',
+    timeRange: 'this-week',
+    label: 'This week',
+  },
+} as const
 
 export default function HomeDashboardPage() {
   const [transactionGraphType, setTransactionGraphType] = useState<GraphType>('volume')
   const [tokensGraphType, setTokensGraphType] = useState<GraphType>('volume')
+  const [timePeriod, setTimePeriod] = useState<TimePeriodType>('last-6-months')
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
@@ -25,6 +45,11 @@ export default function HomeDashboardPage() {
   useShowLoadingBar(isLoading)
   if (error && !isLoading) {
     return <ErrorPanel error={error} />
+  }
+
+  const getTransactionData = () => {
+    const dataKey = periodConfig[timePeriod].dataKey
+    return data?.transactionData?.[dataKey] || []
   }
 
   const summaryData = data || {
@@ -75,21 +100,40 @@ export default function HomeDashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-7">
         <Card className="col-span-full lg:col-span-4">
           <CardHeader>
-            <div>
-              <CardTitle>
-                Transactions by
-                <TitleToggle
-                  options={[
-                    { value: 'volume', label: 'Volume' },
-                    { value: 'transactions', label: 'Count' },
-                  ]}
-                  value={transactionGraphType}
-                  onChange={value => setTransactionGraphType(value as GraphType)}
-                  className="ml-3"
+            <CardTitle>
+              Transactions by
+              <TitleToggle
+                options={[
+                  { value: 'volume', label: 'Volume' },
+                  { value: 'transactions', label: 'Count' },
+                ]}
+                value={transactionGraphType}
+                onChange={value => setTransactionGraphType(value as GraphType)}
+                className="ml-3"
+              />
+            </CardTitle>
+            <CardDescription>
+              <div className="relative -top-[10px] flex items-center gap-1">
+                Timeframe
+                <StandardMultiSelect
+                  options={Object.entries(periodConfig).map(([value, config]) => ({
+                    value,
+                    label: config.label,
+                  }))}
+                  selected={[timePeriod]}
+                  onChange={values => {
+                    if (Array.isArray(values)) {
+                      setTimePeriod(values[0] as TimePeriodType)
+                    }
+                  }}
+                  showBadges={false}
+                  singleSelect
+                  minimal
+                  preventEmpty
+                  className="w-[100px]"
                 />
-              </CardTitle>
-              <CardDescription>Over the last 6 months</CardDescription>
-            </div>
+              </div>
+            </CardDescription>
           </CardHeader>
           <CardContent className="px-4">
             {isLoading ? (
@@ -98,8 +142,9 @@ export default function HomeDashboardPage() {
               </div>
             ) : (
               <TransactionChart
-                data={data?.monthlyTransByVolumeAndCount || []}
+                data={getTransactionData()}
                 type={transactionGraphType}
+                timeRange={periodConfig[timePeriod].timeRange}
               />
             )}
           </CardContent>
@@ -143,7 +188,7 @@ export default function HomeDashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Last 5 transactions</CardDescription>
+            <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable

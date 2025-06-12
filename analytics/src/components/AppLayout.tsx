@@ -1,15 +1,15 @@
 'use client'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { ChevronRight, Coins, LayoutDashboard, Menu, Repeat } from 'lucide-react'
-import Link from 'next/link'
+import { Menu } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useState, useEffect } from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
-import TurtleLogo from '@/components/TurtleLogo'
+import NavigationMenu from '@/components/NavigationMenu'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { loadingBarOpt } from '@/constants'
+import { routes, RouteItem } from '@/constants/routes'
 import useIsMobile from '@/hooks/useMobile'
 
 const headerHeight = 75
@@ -40,31 +40,12 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
     )
   }, [])
 
-  const routes = [
-    {
-      label: 'Dashboard',
-      icon: LayoutDashboard,
-      href: '/',
-      active: pathname === '/',
-    },
-    {
-      label: 'Transactions',
-      icon: Repeat,
-      href: '/transactions',
-      active: pathname === '/transactions',
-    },
-    {
-      label: 'Tokens',
-      icon: Coins,
-      href: '/tokens',
-      active: pathname === '/tokens',
-    },
-  ]
-
-  const activeRoute = routes.find(route => route.href === pathname)
-
-  const onNavItemClicked = () => {
-    start() // Show loading bar
+  const activeRoute = routes.find((route: RouteItem) => route.href === pathname)
+  const onNavItemClicked = (isActive: boolean, externalLink: boolean) => {
+    if (isActive) return
+    if (!externalLink) {
+      start() // Show loading bar
+    }
     if (isMobile) {
       setIsSidebarOpen(prev => !prev)
     }
@@ -75,7 +56,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
       {/* Mobile Navigation */}
       <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={open => setIsSidebarOpen(open)}>
         <SheetContent side="left" className="w-72 bg-background/95 p-0 backdrop-blur-sm">
-          <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} />
+          <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} pathname={pathname} />
         </SheetContent>
       </Sheet>
 
@@ -86,7 +67,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
           isSidebarOpen ? 'left-0' : '-left-64',
         )}
       >
-        <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} />
+        <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} pathname={pathname} />
       </div>
 
       {/* Main Content */}
@@ -121,60 +102,6 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
         {/* Pages */}
         <div className="h-full p-4 pb-10 pt-0 md:p-8 md:pb-6 md:pt-0">{children}</div>
       </main>
-    </div>
-  )
-}
-
-interface RouteItem {
-  label: string
-  icon: React.FC<{ className?: string }>
-  href: string
-  active: boolean
-}
-
-interface NavigationMenuProps {
-  routes: RouteItem[]
-  title?: string
-  onNavItemClicked: () => void
-}
-
-function NavigationMenu({ routes, onNavItemClicked, title = 'Overview' }: NavigationMenuProps) {
-  return (
-    <div className="flex h-full flex-col space-y-4">
-      <div className="mb-2 flex items-center border-b" style={{ height: headerHeight }}>
-        <TurtleLogo className="ml-5" />
-        <h2 className="ml-3 flex items-center gap-2 text-lg font-semibold tracking-tight">
-          Turtle Analytics
-        </h2>
-      </div>
-      <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">{title}</h2>
-        <div className="space-y-1">
-          {routes.map(route => (
-            <Link
-              key={route.href}
-              href={route.href}
-              prefetch={true}
-              className={cn(
-                'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
-                route.active ? 'bg-muted text-primary' : 'text-muted-foreground',
-              )}
-              onClick={onNavItemClicked}
-            >
-              <div className="flex flex-1 items-center">
-                <route.icon
-                  className={cn(
-                    'mr-3 h-4 w-4',
-                    route.active ? 'text-primary' : 'text-muted-foreground',
-                  )}
-                />
-                {route.label}
-              </div>
-              {route.active && <ChevronRight className="relative top-[2px] h-4 w-4" />}
-            </Link>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }
