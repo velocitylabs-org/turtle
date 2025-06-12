@@ -11,7 +11,7 @@ const headerHeight = 75
 interface NavigationMenuProps {
   routes: RouteItem[]
   title?: string
-  onNavItemClicked: (isActive: boolean) => void
+  onNavItemClicked: (isActive: boolean, externalLink: boolean) => void
   pathname?: string
 }
 
@@ -42,7 +42,9 @@ function NavigationMenu({
                 'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
                 isActiveRoute(route) ? 'bg-muted text-primary' : 'text-muted-foreground',
               )}
-              onClick={() => onNavItemClicked(isActiveRoute(route))}
+              onClick={() => onNavItemClicked(isActiveRoute(route), !!route.external)}
+              target={route.external ? '_blank' : undefined}
+              rel={route.external ? 'noopener noreferrer' : undefined}
               prefetch
             >
               <div className="flex flex-1 items-center">

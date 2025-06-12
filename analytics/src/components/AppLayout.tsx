@@ -41,9 +41,11 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const activeRoute = routes.find((route: RouteItem) => route.href === pathname)
-  const onNavItemClicked = (isActive: boolean) => {
+  const onNavItemClicked = (isActive: boolean, externalLink: boolean) => {
     if (isActive) return
-    start() // Show loading bar
+    if (!externalLink) {
+      start() // Show loading bar
+    }
     if (isMobile) {
       setIsSidebarOpen(prev => !prev)
     }
