@@ -21,6 +21,7 @@ interface ChainPathGraphProps {
   type: GraphType
   selectedChain: string
   setChainUid: (chainUid: string) => void
+  loading: boolean
 }
 
 export default function ChainSankeyGraph({
@@ -28,6 +29,7 @@ export default function ChainSankeyGraph({
   type,
   selectedChain,
   setChainUid,
+  loading
 }: ChainPathGraphProps) {
   const isMobile = useIsMobile()
   const svgRef = useRef<SVGSVGElement>(null)
@@ -43,6 +45,7 @@ export default function ChainSankeyGraph({
   }))
 
   const dynamicHeight = useMemo(() => {
+    if (loading) return dimensions.height
     const nodeSize = 28
     const nodePadding = 15
     const topMargin = 60
@@ -59,7 +62,7 @@ export default function ChainSankeyGraph({
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
     return Math.max(baseMinHeight, minHeight)
-  }, [flowData])
+  }, [flowData, loading])
 
   useLayoutEffect(() => {
     if (containerRef.current) {
@@ -119,14 +122,12 @@ export default function ChainSankeyGraph({
   }, [])
 
   useEffect(() => {
-    if (!flowData || !svgRef.current || dimensions.width === 0) return
+    if (!flowData || !svgRef.current || dimensions.width === 0 || flowData?.length === 0 || loading) return
 
     const svg = svgRef.current
     while (svg.firstChild) {
       svg.removeChild(svg.firstChild)
     }
-
-    if (flowData?.length === 0) return
 
     const width = dimensions.width - 30
     const height = dimensions.height
@@ -243,7 +244,13 @@ export default function ChainSankeyGraph({
         }
       }
     })
-  }, [flowData, dimensions, type, selectedChain, isMobile])
+  }, [flowData, dimensions, isMobile, loading])
+
+  const noDataAvailable = useMemo(() => {
+    if (loading) return false
+    return !flowData || flowData.length === 0;
+
+  }, [flowData, loading])
 
   return (
     <div className="overflow-x-scroll">
@@ -274,7 +281,7 @@ export default function ChainSankeyGraph({
               showBadges={false}
             />
           </div>
-          {(!flowData || flowData.length === 0) && (
+          {noDataAvailable && (
             <div className="ml-3 flex items-center rounded-md px-3 py-1 text-sm font-medium text-muted-foreground">
               ⚠️ No data available. Please select another chain.
             </div>
@@ -284,7 +291,10 @@ export default function ChainSankeyGraph({
           ref={svgRef}
           width={dimensions.width}
           height={dynamicHeight}
-          style={{ transition: `height 300ms ${easeOutQuart}` }}
+          style={{
+            transition: `height 300ms ${easeOutQuart}`,
+            display: noDataAvailable ? 'none' : 'block',
+          }}
         />
       </div>
     </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { getChainSankeyData, getChainsData } from '@/app/actions/chains'
 import ChainsActivityTable from '@/components/ChainsActivityTable'
 import ChainSankeyGraph from '@/components/ChainSankeyGraph'
@@ -11,23 +11,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { GraphType, relayChain } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 
-type ChainSankeyDataItem = {
-  from: string
-  to: string
-  size: number
-}
-
-type ChainSankeyData = {
-  selectedChain: string
-  byTransactionCount: ChainSankeyDataItem[]
-  byVolume: ChainSankeyDataItem[]
-}
-
 export default function ChainsPage() {
   const [chainUid, setChainUid] = useState<string>(relayChain.uid)
   const [graphType, setGraphType] = useState<GraphType>('volume')
   const [isSankeyDataInitialLoading, setSankeyDataInitialLoading] = useState(true)
-  const previousSankeyDataRef = useRef<ChainSankeyData>(null)
 
   const {
     data: chainData,
@@ -51,7 +38,6 @@ export default function ChainsPage() {
 
   useEffect(() => {
     if (chainSankeyData) {
-      previousSankeyDataRef.current = chainSankeyData
       // Once we have chainSankeyData for the first time, we're no longer in the initial loading state
       if (isSankeyDataInitialLoading) {
         setSankeyDataInitialLoading(false)
@@ -59,10 +45,8 @@ export default function ChainsPage() {
     }
   }, [chainSankeyData, isSankeyDataInitialLoading])
 
-  // Use current data if available, otherwise use previous data to maintain graph continuity during loading states
-  const currentSankeyData = chainSankeyData || previousSankeyDataRef.current
   const chainCurrentSankeyData =
-    graphType === 'volume' ? currentSankeyData?.byVolume : currentSankeyData?.byTransactionCount
+    graphType === 'volume' ? chainSankeyData?.byVolume : chainSankeyData?.byTransactionCount
 
   const error = errorChainData || errorSankeyData
   const loading = loadingChainData || loadingSankeyData
@@ -99,6 +83,7 @@ export default function ChainsPage() {
               type={graphType}
               selectedChain={chainUid}
               setChainUid={chainUid => setChainUid(chainUid)}
+              loading={loadingSankeyData}
             />
           )}
         </CardContent>
