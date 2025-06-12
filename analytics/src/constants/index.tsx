@@ -8,6 +8,8 @@ export const loadingBarOpt = {
   waitingTime: 200,
 }
 
+export const defaultTransactionLimit = 10
+
 // Chains
 export const chains = REGISTRY.mainnet.chains
 export const ethereumChain = Ethereum
@@ -17,3 +19,5 @@ export const relayChain = RelayChain
 export const tokens = REGISTRY.mainnet.tokens
 
 export type GraphType = 'volume' | 'transactions'
+
+export type TimePeriodType = 'last-6-months' | 'last-month' | 'this-week'
