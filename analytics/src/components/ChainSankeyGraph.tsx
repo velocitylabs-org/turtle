@@ -62,6 +62,7 @@ export default function ChainSankeyGraph({
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
     return Math.max(baseMinHeight, minHeight)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flowData, loading])
 
   useLayoutEffect(() => {
@@ -244,6 +245,7 @@ export default function ChainSankeyGraph({
         }
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flowData, dimensions, isMobile, loading])
 
   const noDataAvailable = useMemo(() => {
@@ -279,6 +281,7 @@ export default function ChainSankeyGraph({
               singleSelect
               preventEmpty
               showBadges={false}
+              loading={loading}
             />
           </div>
           {noDataAvailable && (

@@ -27,6 +27,7 @@ interface MultiSelectProps {
   preventEmpty?: boolean
   showBadges?: boolean
   minimal?: boolean
+  loading?: boolean
 }
 
 export default function StandardMultiSelect({
@@ -41,11 +42,12 @@ export default function StandardMultiSelect({
   preventEmpty = false,
   showBadges = true,
   minimal,
+  loading
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
 
   const handleSelect = (value: string) => {
-    if (disabled) return
+    if (disabled || loading) return
 
     if (selected.includes(value)) {
       // If preventEmpty is true and there's only one item selected, don't remove it
@@ -61,15 +63,15 @@ export default function StandardMultiSelect({
   }
 
   const handleRemove = (value: string) => {
-    if (disabled) return
+    if (disabled || loading) return
     onChange(selected.filter(item => item !== value))
   }
 
-  const showRemoveButton = !disabled && !preventEmpty
+  const showRemoveButton = !disabled && !preventEmpty && !loading
 
   return (
     <div className={cn('relative', className)}>
-      <Popover open={disabled ? false : open} onOpenChange={disabled ? undefined : setOpen}>
+      <Popover open={disabled ? false : open} onOpenChange={(disabled || loading) ? undefined : setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant={minimal ? 'ghost' : 'outline'}
@@ -83,7 +85,11 @@ export default function StandardMultiSelect({
             disabled={disabled}
           >
             <div className={cn('flex flex-wrap items-center', minimal && 'flex-grow')}>
-              {selected.length === 0 ? (
+              {loading ? (
+                <div className="flex items-center flex-grow justify-center ml-3">
+                  <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-primary" />
+                </div>
+              ) : selected.length === 0 ? (
                 <span className="text-muted-foreground">{placeholder}</span>
               ) : (
                 selected.map(value => {
