@@ -42,7 +42,7 @@ export default function StandardMultiSelect({
   preventEmpty = false,
   showBadges = true,
   minimal,
-  loading
+  loading,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -71,7 +71,10 @@ export default function StandardMultiSelect({
 
   return (
     <div className={cn('relative', className)}>
-      <Popover open={disabled ? false : open} onOpenChange={(disabled || loading) ? undefined : setOpen}>
+      <Popover
+        open={disabled ? false : open}
+        onOpenChange={disabled || loading ? undefined : setOpen}
+      >
         <PopoverTrigger asChild>
           <Button
             variant={minimal ? 'ghost' : 'outline'}
@@ -86,7 +89,7 @@ export default function StandardMultiSelect({
           >
             <div className={cn('flex flex-wrap items-center', minimal && 'flex-grow')}>
               {loading ? (
-                <div className="flex items-center flex-grow justify-center ml-3">
+                <div className="ml-3 flex flex-grow items-center justify-center">
                   <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-primary" />
                 </div>
               ) : selected.length === 0 ? (

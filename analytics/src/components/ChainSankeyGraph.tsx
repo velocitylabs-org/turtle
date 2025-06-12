@@ -29,7 +29,7 @@ export default function ChainSankeyGraph({
   type,
   selectedChain,
   setChainUid,
-  loading
+  loading,
 }: ChainPathGraphProps) {
   const isMobile = useIsMobile()
   const svgRef = useRef<SVGSVGElement>(null)
@@ -123,7 +123,8 @@ export default function ChainSankeyGraph({
   }, [])
 
   useEffect(() => {
-    if (!flowData || !svgRef.current || dimensions.width === 0 || flowData?.length === 0 || loading) return
+    if (!flowData || !svgRef.current || dimensions.width === 0 || flowData?.length === 0 || loading)
+      return
 
     const svg = svgRef.current
     while (svg.firstChild) {
@@ -250,8 +251,7 @@ export default function ChainSankeyGraph({
 
   const noDataAvailable = useMemo(() => {
     if (loading) return false
-    return !flowData || flowData.length === 0;
-
+    return !flowData || flowData.length === 0
   }, [flowData, loading])
 
   return (

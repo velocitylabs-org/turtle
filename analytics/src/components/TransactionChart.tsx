@@ -58,10 +58,10 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
               <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis 
-            dataKey="date" 
-            tickLine={false} 
-            axisLine={false} 
+          <XAxis
+            dataKey="date"
+            tickLine={false}
+            axisLine={false}
             tickMargin={10}
             tick={{ fontSize: timeRange === 'last-month' ? 14 : 15 }}
             interval={timeRange === 'last-month' ? 1 : 0}
@@ -88,24 +88,27 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
 }
 
 const CustomTooltip = ({
-   active,
-   payload,
-   label,
-   type,
-   timeRange,
-}: TooltipProps<number, string> & { type: GraphType, timeRange: 'last-6-months' | 'last-month' | 'this-week' }) => {
+  active,
+  payload,
+  label,
+  type,
+  timeRange,
+}: TooltipProps<number, string> & {
+  type: GraphType
+  timeRange: 'last-6-months' | 'last-month' | 'this-week'
+}) => {
   if (!active || !payload || !payload.length) {
     return null
   }
 
-  let displayLabel = label;
+  let displayLabel = label
 
   const timestamp = payload[0].payload.timestamp
-  const date = timestamp && new Date(timestamp);
+  const date = timestamp && new Date(timestamp)
   if (timeRange === 'last-month' && timestamp) {
-    const day = date.getDate();
-    const suffix = getDaySuffix(day);
-    displayLabel = `${date.toLocaleDateString('en-US', { month: 'long' })} ${day}${suffix}`;
+    const day = date.getDate()
+    const suffix = getDaySuffix(day)
+    displayLabel = `${date.toLocaleDateString('en-US', { month: 'long' })} ${day}${suffix}`
   }
 
   if (timeRange === 'last-6-months' && timestamp) {
@@ -113,9 +116,9 @@ const CustomTooltip = ({
   }
 
   if (timeRange === 'this-week' && timestamp) {
-    const day = date.getDate();
-    const suffix = getDaySuffix(day);
-    displayLabel = `${label} ${day}${suffix}`;
+    const day = date.getDate()
+    const suffix = getDaySuffix(day)
+    displayLabel = `${label} ${day}${suffix}`
   }
 
   return (
@@ -130,13 +133,16 @@ const CustomTooltip = ({
   )
 }
 
-
 function getDaySuffix(day: number): string {
-  if (day > 3 && day < 21) return 'th';
+  if (day > 3 && day < 21) return 'th'
   switch (day % 10) {
-    case 1: return 'st';
-    case 2: return 'nd';
-    case 3: return 'rd';
-    default: return 'th';
+    case 1:
+      return 'st'
+    case 2:
+      return 'nd'
+    case 3:
+      return 'rd'
+    default:
+      return 'th'
   }
 }
