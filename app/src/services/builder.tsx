@@ -37,8 +37,6 @@ class BuilderManager {
   }
 
   createBuilder(params: TxParams): TxBuilder {
-    console.log('builder does not exist, creating: ', params)
-
     const sourceChainNode = getParaSpellNode(params.from)
     const destinationChainNode = getParaSpellNode(params.to)
 
@@ -57,7 +55,7 @@ class BuilderManager {
     const builder = Builder(params.wssEndpoint)
       .from(sourceChainNode as TNodeDotKsmWithRelayChains)
       .to(destinationChainNode as TNodeDotKsmWithRelayChains)
-      .currency({ ...currencyId, amount: 1000n })
+      .currency({ ...currencyId, amount: BigInt(10 ** params.token.decimals).toString() })
       .address(params.address)
       .senderAddress(params.senderAddress)
 

@@ -1,15 +1,14 @@
 'use client'
 
-import { getFeeAssets, TGetXcmFeeResult, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { TGetXcmFeeResult } from '@paraspell/sdk'
 import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { createContext, useCallback, useEffect, useState } from 'react'
 import builderManager from '@/services/builder'
 import { getPlaceholderAddress } from '@/utils/address'
-import { getParaSpellNode } from '@/utils/paraspellTransfer'
 
 export const FeeContext = createContext<{
   canPayFees: boolean
-  setCanPayFeesGlobally: (canPayFees: boolean) => void
+  setCanPayFees: (canPayFees: boolean) => void
   canPayAdditionalFees: boolean
   setCanPayAdditionalFeesGlobally: (canPayAdditionalFees: boolean) => void
   setParams: (params: { sourceChain: Chain; destinationChain: Chain; token: Token }) => void
@@ -17,7 +16,7 @@ export const FeeContext = createContext<{
   isSufficientFee: (source: 'origin' | 'destination') => boolean
 }>({
   canPayFees: false,
-  setCanPayFeesGlobally: () => {},
+  setCanPayFees: () => {},
   canPayAdditionalFees: false,
   setCanPayAdditionalFeesGlobally: () => {},
   setParams: () => {},
@@ -29,7 +28,6 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   const [canPayFees, setCanPayFees] = useState(false)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState(false)
   const [xcmFees, setXcmFees] = useState<TGetXcmFeeResult | null>(null)
-
   const [params, setParams] = useState<{
     sourceChain: Chain
     destinationChain: Chain
@@ -48,8 +46,6 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
       address: getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
       senderAddress: getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
     })
-
-    console.log('fees', fees)
 
     setXcmFees(fees)
   }, [params])
@@ -76,9 +72,9 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   // TODO: on pause for a second, while we work on the provider itself
   useEffect(() => {
     if (params?.sourceChain && params?.destinationChain && params?.token) {
-      const node = getParaSpellNode(params.sourceChain)
-      const feeAssets = getFeeAssets(node as TNodeDotKsmWithRelayChains)
-      console.log(feeAssets)
+      // Leaving these here for now, useful for the next feature
+      // const node = getParaSpellNode(params.sourceChain)
+      // const feeAssets = getFeeAssets(node as TNodeDotKsmWithRelayChains)
 
       calculateXcmFees()
     }
@@ -88,7 +84,7 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
     <FeeContext.Provider
       value={{
         canPayFees,
-        setCanPayFeesGlobally: setCanPayFees,
+        setCanPayFees,
         canPayAdditionalFees,
         setCanPayAdditionalFeesGlobally: setCanPayAdditionalFees,
         setParams,

@@ -1,7 +1,7 @@
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 import { FeeContext } from '@/context/fee'
 import useNotification from '@/hooks/useNotification'
 import { AmountInfo } from '@/models/transfer'
@@ -39,7 +39,6 @@ const useFees = (
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
-  const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
@@ -60,8 +59,7 @@ const useFees = (
     address: senderAddress,
   })
 
-  const { setCanPayFeesGlobally, setCanPayAdditionalFeesGlobally, setParams } =
-    useContext(FeeContext)
+  const { setCanPayFees, setCanPayAdditionalFeesGlobally, setParams } = use(FeeContext)
 
   useEffect(() => {
     if (sourceChain && destinationChain && token) {
@@ -234,11 +232,10 @@ const useFees = (
   }, [fetchFees])
 
   useEffect(() => {
-    setCanPayFeesGlobally(canPayFees)
     setCanPayAdditionalFeesGlobally(canPayAdditionalFees)
-  }, [canPayFees, canPayAdditionalFees, setCanPayFeesGlobally, setCanPayAdditionalFeesGlobally])
+  }, [canPayAdditionalFees, setCanPayAdditionalFeesGlobally])
 
-  return { fees, bridgingFee, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
+  return { fees, bridgingFee, loading, refetch: fetchFees, canPayAdditionalFees }
 }
 
 export default useFees

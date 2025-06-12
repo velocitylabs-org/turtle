@@ -4,7 +4,7 @@ import { cn } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { useContext, useMemo, useState } from 'react'
+import { use, useMemo, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { FeeContext } from '@/context/fee'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
@@ -128,7 +128,7 @@ export default function Transfer() {
     applyTransferableBalance,
   } = useTransferForm()
 
-  const { canPayFees, canPayAdditionalFees } = useContext(FeeContext)
+  const { canPayFees, canPayAdditionalFees } = use(FeeContext)
 
   const {
     allowance: erc20SpendAllowance,

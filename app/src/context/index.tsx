@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
 import { Config, cookieToInitialState, WagmiProvider } from 'wagmi'
 import { mainnet_networks, wagmiAdapter } from '@/config'
+import FeeProvider from '@/context/fee'
 import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
 
 // Setup queryClient
@@ -46,7 +47,9 @@ export default function ContextProvider({ children, cookies }: ContextProviderPr
 
   return (
     <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <FeeProvider>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </FeeProvider>
     </WagmiProvider>
   )
 }
