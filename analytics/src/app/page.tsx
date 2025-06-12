@@ -113,8 +113,8 @@ export default function HomeDashboardPage() {
               />
             </CardTitle>
             <CardDescription>
-              <div className="relative -top-[7px] flex items-center gap-1">
-                Select timeframe
+              <div className="relative -top-[10px] flex items-center gap-1">
+                Timeframe
                 <StandardMultiSelect
                   options={Object.entries(periodConfig).map(([value, config]) => ({
                     value,
