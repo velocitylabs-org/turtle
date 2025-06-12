@@ -33,6 +33,6 @@ export const routes: RouteItem[] = [
     label: 'Analytics',
     icon: ChartNoAxesColumn,
     href: 'https://vercel.com/velocity-labs/turtle-app/analytics',
-    external: true
+    external: true,
   },
 ]
