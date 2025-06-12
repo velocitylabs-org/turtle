@@ -1,7 +1,8 @@
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
-import { useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
+import { FeeContext } from '@/context/fee'
 import useNotification from '@/hooks/useNotification'
 import { AmountInfo } from '@/models/transfer'
 
@@ -38,7 +39,6 @@ const useFees = (
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
-  const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
@@ -59,7 +59,17 @@ const useFees = (
     address: senderAddress,
   })
 
+  const { setCanPayFees, setCanPayAdditionalFeesGlobally, setParams } = use(FeeContext)
+
+  useEffect(() => {
+    if (sourceChain && destinationChain && token) {
+      setParams({ sourceChain, destinationChain, token })
+    }
+  }, [sourceChain, destinationChain, token, setParams])
+
   const fetchFees = useCallback(async () => {
+    // Do we need to check for tokens? You can't select a token if you don't have a source chain.
+    // Same for destination chain.
     if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
       setBridgingFee(null)
@@ -221,7 +231,11 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, bridgingFee, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
+  useEffect(() => {
+    setCanPayAdditionalFeesGlobally(canPayAdditionalFees)
+  }, [canPayAdditionalFees, setCanPayAdditionalFeesGlobally])
+
+  return { fees, bridgingFee, loading, refetch: fetchFees, canPayAdditionalFees }
 }
 
 export default useFees
