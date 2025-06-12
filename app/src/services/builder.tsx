@@ -52,14 +52,21 @@ class BuilderManager {
       return this.builders.get(key)!
     }
 
-    const builder = Builder(params.wssEndpoint)
-      .from(sourceChainNode as TNodeDotKsmWithRelayChains)
-      .to(destinationChainNode as TNodeDotKsmWithRelayChains)
-      .currency({ ...currencyId, amount: BigInt(10 ** params.token.decimals).toString() })
-      .address(params.address)
-      .senderAddress(params.senderAddress)
+    let builder: TxBuilder
+    try {
+      builder = Builder(params.wssEndpoint)
+        .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+        .to(destinationChainNode as TNodeDotKsmWithRelayChains)
+        .currency({ ...currencyId, amount: BigInt(10 ** params.token.decimals).toString() })
+        .address(params.address)
+        .senderAddress(params.senderAddress)
 
-    this.builders.set(key, builder)
+      this.builders.set(key, builder)
+    } catch (error) {
+      console.error('Failed to create builder: ', error)
+      throw error
+    }
+
     return builder
   }
 
@@ -89,21 +96,36 @@ class BuilderManager {
   }
 
   async isExistentialDepositMetAfterTransfer(params: TxParams) {
-    const builder = await this.getBuilder(params)
-    // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.verifyEdOnDestination()
+    try {
+      const builder = await this.getBuilder(params)
+      // @ts-expect-error - types are being weird and can't find to correctly cast this
+      return builder.verifyEdOnDestination()
+    } catch (error) {
+      console.error('Failed to verify existential deposit: ', error)
+      return false
+    }
   }
 
   async dryRun(params: TxParams) {
-    const builder = await this.getBuilder(params)
-    // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.dryRun()
+    try {
+      const builder = await this.getBuilder(params)
+      // @ts-expect-error - types are being weird and can't find to correctly cast this
+      return builder.dryRun()
+    } catch (error) {
+      console.error('Failed to dry run: ', error)
+      throw error
+    }
   }
 
   async createTransferTx(params: TxParams) {
-    const builder = await this.getBuilder(params)
-    // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.senderAddress(params.senderAddress).build()
+    try {
+      const builder = await this.getBuilder(params)
+      // @ts-expect-error - types are being weird and can't find to correctly cast this
+      return builder.senderAddress(params.senderAddress).build()
+    } catch (error) {
+      console.error('Failed to create transfer tx: ', error)
+      throw error
+    }
   }
 }
 

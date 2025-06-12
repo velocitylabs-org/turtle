@@ -112,6 +112,8 @@ const useParaspellApi = () => {
 
     const validationResult = await validateTransfer(params)
 
+    console.log('validationResult', validationResult)
+
     const dryRunCapturePayload = {
       extra: {
         sourceChain: params.sourceChain.uid,
