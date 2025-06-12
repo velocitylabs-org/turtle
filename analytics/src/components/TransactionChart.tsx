@@ -118,7 +118,8 @@ const CustomTooltip = ({
   if (timeRange === 'this-week' && timestamp) {
     const day = date.getDate()
     const suffix = getDaySuffix(day)
-    displayLabel = `${label} ${day}${suffix}`
+    const weekday = date.toLocaleDateString('en-US', { weekday: 'long' })
+    displayLabel = `${weekday} ${day}${suffix}`
   }
 
   return (
