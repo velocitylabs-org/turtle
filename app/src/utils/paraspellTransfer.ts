@@ -7,8 +7,10 @@ import {
   getTNode,
   TCurrencyCore,
   TDryRunResult,
+  TGetXcmFeeResult,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
+  // TTransferInfo,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
@@ -20,6 +22,8 @@ import {
   REGISTRY,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
+import { getPlaceholderAddress } from './address'
+import { safeConvertAmount } from './transfer'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -155,6 +159,34 @@ export const getTransferableAmount = async (
     .address(recipient)
     .senderAddress(sender)
     .getTransferableAmount()
+}
+
+export const getOriginAndDestXCMFee = async (
+  sourceChain: Chain,
+  destinationChain: Chain,
+  sourceToken: Token,
+  amount?: number | null,
+  recipient?: string,
+  sender?: string,
+  wssEndpoint?: string,
+): Promise<TGetXcmFeeResult | null> => {
+  if (amount === 0) return null
+
+  const sourceChainNode = getParaSpellNode(sourceChain)
+  const destinationChainNode = getParaSpellNode(destinationChain)
+  if (!sourceChainNode || !destinationChainNode)
+    throw new Error('Failed to get XCM fee: chain id not found.')
+
+  const currencyId = getParaspellToken(sourceToken, sourceChainNode)
+  const defaultAmount = BigInt(10 ** sourceToken.decimals).toString()
+
+  return await Builder(wssEndpoint)
+    .from(sourceChainNode as TNodeDotKsmWithRelayChains)
+    .to(destinationChainNode)
+    .currency({ ...currencyId, amount: safeConvertAmount(amount, sourceToken) ?? defaultAmount }) // hardcoded amount fallback, because the fee is usually independent of the amount
+    .address(recipient ?? getPlaceholderAddress(destinationChain.supportedAddressTypes[0])) // hardcode sender address fallback, because the fee is usually independent of the sender
+    .senderAddress(sender ?? getPlaceholderAddress(sourceChain.supportedAddressTypes[0])) // hardcode recipient address fallback, because the fee is usually independent of the recipient
+    .getXcmFee({ disableFallback: false })
 }
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {

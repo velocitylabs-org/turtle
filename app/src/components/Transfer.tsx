@@ -111,6 +111,7 @@ export default function Transfer() {
     sourceWallet,
     destinationWallet,
     fees,
+    xcmDestinationfees,
     bridgingFee,
     refetchFees,
     loadingFees,
@@ -494,6 +495,7 @@ export default function Transfer() {
             loading={loadingFees}
             tokenAmount={sourceTokenAmount}
             fees={fees}
+            xcmDestinationfees={xcmDestinationfees}
             bridgingFee={bridgingFee}
             durationEstimate={durationEstimate}
             canPayFees={canPayFees}

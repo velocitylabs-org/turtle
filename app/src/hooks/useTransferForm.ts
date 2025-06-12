@@ -78,6 +78,7 @@ const useTransferForm = () => {
   const destinationWallet = useWallet(destinationChain?.walletType)
   const {
     fees,
+    xcmDestinationfees,
     loading: loadingFees,
     canPayFees,
     bridgingFee,
@@ -389,6 +390,9 @@ const useTransferForm = () => {
     const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
     const hasBalance = Boolean(balanceData?.formatted)
     const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+    const hasXCMDestinationFee = Boolean(
+      xcmDestinationfees?.token?.id && xcmDestinationfees?.amount,
+    )
     if (!hasTokenAmount || !hasBalance) return false
 
     const transferToken = sourceTokenAmount!.token!.id
@@ -404,18 +408,25 @@ const useTransferForm = () => {
     if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
       totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
     }
+    // We have XCM destination fees in the same token as the transfer
+    if (hasXCMDestinationFee && xcmDestinationfees!.token!.id === transferToken) {
+      totalFeesAmount += toHuman(xcmDestinationfees!.amount, xcmDestinationfees!.token)
+    }
     // If we have no fees at all, there's no risk of exceeding transferable balance
     if (totalFeesAmount === 0) return false
 
     // Check if the transfer amount plus all applicable fees exceeds the available balance
     return transferAmount + totalFeesAmount > balanceAmount
-  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
+  }, [fees, xcmDestinationfees, bridgingFee, balanceData, sourceTokenAmount])
 
   const applyTransferableBalance = useCallback(() => {
     if (exceedsTransferableBalance && sourceTokenAmount?.token) {
       const transferToken = sourceTokenAmount.token.id
       const hasFees = Boolean(fees?.token?.id && fees?.amount)
       const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
+      const hasXCMDestinationFee = Boolean(
+        xcmDestinationfees?.token?.id && xcmDestinationfees?.amount,
+      )
       let totalFeesAmount = 0
 
       // We have regular fees in the same token as the transfer
@@ -425,6 +436,10 @@ const useTransferForm = () => {
       // We have bridging fees in the same token as the transfer
       if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
         totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
+      }
+      // We have XCM destination fees in the same token as the transfer
+      if (hasXCMDestinationFee && xcmDestinationfees!.token!.id === transferToken) {
+        totalFeesAmount += toHuman(xcmDestinationfees!.amount, xcmDestinationfees!.token)
       }
 
       const balanceAmount = Number(balanceData!.formatted)
@@ -445,6 +460,7 @@ const useTransferForm = () => {
     exceedsTransferableBalance,
     sourceTokenAmount?.token,
     bridgingFee,
+    xcmDestinationfees,
     fees,
     balanceData,
     setValue,
@@ -482,6 +498,7 @@ const useTransferForm = () => {
     sourceWallet,
     destinationWallet,
     fees,
+    xcmDestinationfees,
     bridgingFee,
     refetchFees,
     loadingFees,
