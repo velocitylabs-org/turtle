@@ -30,17 +30,17 @@ interface SingleSelectProps {
 }
 
 export default function Select({
- options,
- selected,
- onChange,
- placeholder = 'Select option...',
- className,
- showImageInBadge = true,
- disabled = false,
- showBadge = true,
- minimal,
- loading,
- allowClear = true,
+  options,
+  selected,
+  onChange,
+  placeholder = 'Select option...',
+  className,
+  showImageInBadge = true,
+  disabled = false,
+  showBadge = true,
+  minimal,
+  loading,
+  allowClear = true,
 }: SingleSelectProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -92,14 +92,14 @@ export default function Select({
               ) : showBadge ? (
                 <Badge
                   variant="secondary"
-                  className={cn(
-                    'mr-1 px-1 py-0',
-                    minimal && 'bg-transparent hover:bg-transparent',
-                  )}
+                  className={cn('mr-1 px-1 py-0', minimal && 'bg-transparent hover:bg-transparent')}
                 >
                   <div className="flex items-center">
                     {showImageInBadge &&
-                      renderImage(selectedOption?.logoURI as string, selectedOption?.originLogoURI as string)}
+                      renderImage(
+                        selectedOption?.logoURI as string,
+                        selectedOption?.originLogoURI as string,
+                      )}
                     <span>{selectedOption?.label || selected}</span>
                     {showClearButton && (
                       <span
@@ -118,7 +118,10 @@ export default function Select({
               ) : (
                 <div className="flex items-center">
                   {showImageInBadge &&
-                    renderImage(selectedOption?.logoURI as string, selectedOption?.originLogoURI as string)}
+                    renderImage(
+                      selectedOption?.logoURI as string,
+                      selectedOption?.originLogoURI as string,
+                    )}
                   <span>{selectedOption?.label || selected}</span>
                 </div>
               )}
@@ -142,7 +145,7 @@ export default function Select({
                           'relative flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none',
                           selected === option.value ? 'bg-accent text-accent-foreground' : '',
                           !disabled &&
-                          'cursor-pointer hover:bg-accent hover:text-accent-foreground',
+                            'cursor-pointer hover:bg-accent hover:text-accent-foreground',
                           disabled && 'cursor-not-allowed opacity-50',
                         )}
                         onClick={() => !disabled && handleSelect(option.value)}

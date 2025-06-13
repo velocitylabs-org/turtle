@@ -12,10 +12,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { GraphType, relayChain } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 
-const graphTypeQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
+const graphTypeQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault(
+  'volume',
+)
 
 export default function ChainsPage() {
-  const [chainUid, setChainUid] = useQueryState('chainUid', { defaultValue: relayChain.uid})
+  const [chainUid, setChainUid] = useQueryState('chainUid', { defaultValue: relayChain.uid })
   const [graphType, setGraphType] = useQueryState('graphType', graphTypeQueryDefault)
   const [isSankeyDataInitialLoading, setSankeyDataInitialLoading] = useState(true)
 

@@ -39,10 +39,17 @@ const periodConfig = {
 } as const
 
 const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
-const timePeriodQueryDefault = parseAsStringLiteral(['last-6-months', 'last-month', 'this-week'] as const).withDefault('last-6-months')
+const timePeriodQueryDefault = parseAsStringLiteral([
+  'last-6-months',
+  'last-month',
+  'this-week',
+] as const).withDefault('last-6-months')
 
 export default function HomeDashboardPage() {
-  const [transactionGraphType, setTransactionGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
+  const [transactionGraphType, setTransactionGraphType] = useQueryState(
+    'transactionsBy',
+    togglesQueryDefault,
+  )
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
 

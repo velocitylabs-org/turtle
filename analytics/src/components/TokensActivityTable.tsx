@@ -28,7 +28,12 @@ interface TokensActivityTable {
 
 type SortColumn = 'tokenId' | 'network' | 'totalVolume' | 'totalTransactions'
 
-const sortColumnQueryDefault = parseAsStringLiteral(['tokenId', 'network', 'totalVolume', 'totalTransactions'] as const).withDefault('totalVolume')
+const sortColumnQueryDefault = parseAsStringLiteral([
+  'tokenId',
+  'network',
+  'totalVolume',
+  'totalTransactions',
+] as const).withDefault('totalVolume')
 const sortDirectionQueryDefault = parseAsStringLiteral(['asc', 'desc'] as const).withDefault('desc')
 
 export default function TokensActivityTable({
@@ -36,7 +41,10 @@ export default function TokensActivityTable({
   isLoading,
 }: TokensActivityTable) {
   const [sortColumn, setSortColumn] = useQueryState('sortColumn', sortColumnQueryDefault)
-  const [sortDirection, setSortDirection] = useQueryState('sortDirection', sortDirectionQueryDefault)
+  const [sortDirection, setSortDirection] = useQueryState(
+    'sortDirection',
+    sortDirectionQueryDefault,
+  )
 
   const tokens = useMemo(() => {
     if (isLoading || initialTokens.length === 0) return initialTokens

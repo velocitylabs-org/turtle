@@ -52,11 +52,11 @@ export default function DatePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="center">
-          <Calendar 
-            mode="single" 
-            selected={date || undefined} 
-            onSelect={(date: Date | undefined) => setDate(date || null)} 
-            required={false} 
+          <Calendar
+            mode="single"
+            selected={date || undefined}
+            onSelect={(date: Date | undefined) => setDate(date || null)}
+            required={false}
           />
         </PopoverContent>
       </Popover>

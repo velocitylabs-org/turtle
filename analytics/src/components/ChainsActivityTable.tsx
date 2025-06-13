@@ -28,8 +28,14 @@ interface ChainsActivityTable {
   isLoading: boolean
 }
 
-const sortColumnOptions = ['chainUid', 'incomingTransactions', 'incomingVolume', 'outgoingTransactions', 'outgoingVolume'] as const
-type SortColumn = typeof sortColumnOptions[number]
+const sortColumnOptions = [
+  'chainUid',
+  'incomingTransactions',
+  'incomingVolume',
+  'outgoingTransactions',
+  'outgoingVolume',
+] as const
+type SortColumn = (typeof sortColumnOptions)[number]
 
 const sortDirectionsOptions = ['asc', 'desc'] as const
 
@@ -41,7 +47,10 @@ export default function ChainsActivityTable({
   isLoading,
 }: ChainsActivityTable) {
   const [sortColumn, setSortColumn] = useQueryState('sortColumn', sortColumnQueryDefault)
-  const [sortDirection, setSortDirection] = useQueryState('sortDirection', sortDirectionQueryDefault)
+  const [sortDirection, setSortDirection] = useQueryState(
+    'sortDirection',
+    sortDirectionQueryDefault,
+  )
 
   const chains = useMemo(() => {
     if (isLoading || initialChains.length === 0) return initialChains

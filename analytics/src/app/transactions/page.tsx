@@ -27,16 +27,24 @@ const chainOptions = chains.map(chain => ({
 }))
 
 // Using 'all' as default to represent null (no filter)
-const statusFilterParser = parseAsStringLiteral(['succeeded', 'failed', 'undefined', 'all'] as const).withDefault('all')
-const emptyDefaultString = { defaultValue: ''}
+const statusFilterParser = parseAsStringLiteral([
+  'succeeded',
+  'failed',
+  'undefined',
+  'all',
+] as const).withDefault('all')
+const emptyDefaultString = { defaultValue: '' }
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useQueryState('sourceChain', emptyDefaultString)
-  const [destinationChainUid, setDestinationChainUid] = useQueryState('destChain', emptyDefaultString)
+  const [destinationChainUid, setDestinationChainUid] = useQueryState(
+    'destChain',
+    emptyDefaultString,
+  )
   const [sourceTokenId, setSourceTokenId] = useQueryState('sourceToken', emptyDefaultString)
   const [destinationTokenId, setDestinationTokenId] = useQueryState('destToken', emptyDefaultString)
   const [statusFilterRaw, setStatusFilterRaw] = useQueryState('status', statusFilterParser)
-  const statusFilter = statusFilterRaw === 'all' ? null : statusFilterRaw as TxStatus | null
+  const statusFilter = statusFilterRaw === 'all' ? null : (statusFilterRaw as TxStatus | null)
   const [fromDate, setFromDate] = useQueryState('fromDate', parseAsIsoDate)
   const [toDate, setToDate] = useQueryState('toDate', parseAsIsoDate)
 
@@ -182,7 +190,9 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
-                      onClick={() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')}
+                      onClick={() =>
+                        setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')
+                      }
                     >
                       <Ban className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">failed</span>
@@ -215,7 +225,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={sourceChainUid}
-                    onChange={(val) => setSourceChainUid(val as string)}
+                    onChange={val => setSourceChainUid(val as string)}
                     placeholder="Source Chain"
                   />
                 </div>
@@ -223,7 +233,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenSourceOptions}
                     selected={sourceTokenId}
-                    onChange={(val) => setSourceTokenId(val as string)}
+                    onChange={val => setSourceTokenId(val as string)}
                     placeholder="Source Token"
                     disabled={!sourceChainUid}
                   />
@@ -232,7 +242,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={(val) => {
+                    onChange={val => {
                       setDestinationChainUid(val as string)
                       if (!val) {
                         setDestinationTokenId('')
@@ -245,7 +255,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenDestinationOptions}
                     selected={destinationTokenId}
-                    onChange={(val) => setDestinationTokenId(val as string)}
+                    onChange={val => setDestinationTokenId(val as string)}
                     placeholder="Destination Token"
                     disabled={!destinationChainUid}
                   />
