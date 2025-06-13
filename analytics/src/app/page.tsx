@@ -1,11 +1,11 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import { useState } from 'react'
+import { useQueryState, parseAsStringLiteral } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
 import ErrorPanel from '@/components/ErrorPanel'
-import StandardMultiSelect from '@/components/MultiSelect'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
+import Select from '@/components/Select'
 import SmallStatBox from '@/components/SmallStatBox'
 import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
@@ -14,6 +14,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { defaultTransactionLimit, GraphType, TimePeriodType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
+
+const toggleOptions = [
+  { value: 'volume', label: 'Volume' },
+  { value: 'count', label: 'Count' },
+]
 
 const periodConfig = {
   'last-6-months': {
@@ -33,10 +38,14 @@ const periodConfig = {
   },
 } as const
 
+const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
+const timePeriodQueryDefault = parseAsStringLiteral(['last-6-months', 'last-month', 'this-week'] as const).withDefault('last-6-months')
+
 export default function HomeDashboardPage() {
-  const [transactionGraphType, setTransactionGraphType] = useState<GraphType>('volume')
-  const [tokensGraphType, setTokensGraphType] = useState<GraphType>('volume')
-  const [timePeriod, setTimePeriod] = useState<TimePeriodType>('last-6-months')
+  const [transactionGraphType, setTransactionGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
+  const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
+  const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
@@ -103,10 +112,7 @@ export default function HomeDashboardPage() {
             <CardTitle>
               Transactions by
               <TitleToggle
-                options={[
-                  { value: 'volume', label: 'Volume' },
-                  { value: 'transactions', label: 'Count' },
-                ]}
+                options={toggleOptions}
                 value={transactionGraphType}
                 onChange={value => setTransactionGraphType(value as GraphType)}
                 className="ml-3"
@@ -115,21 +121,15 @@ export default function HomeDashboardPage() {
             <CardDescription>
               <div className="relative -top-[10px] flex items-center gap-1">
                 Timeframe
-                <StandardMultiSelect
+                <Select
                   options={Object.entries(periodConfig).map(([value, config]) => ({
                     value,
                     label: config.label,
                   }))}
-                  selected={[timePeriod]}
-                  onChange={values => {
-                    if (Array.isArray(values)) {
-                      setTimePeriod(values[0] as TimePeriodType)
-                    }
-                  }}
-                  showBadges={false}
-                  singleSelect
+                  selected={timePeriod}
+                  onChange={val => setTimePeriod(val as TimePeriodType)}
+                  showBadge={false}
                   minimal
-                  preventEmpty
                   className="w-[100px]"
                 />
               </div>
@@ -154,10 +154,7 @@ export default function HomeDashboardPage() {
             <CardTitle>
               Top tokens by
               <TitleToggle
-                options={[
-                  { value: 'volume', label: 'Volume' },
-                  { value: 'transactions', label: 'Count' },
-                ]}
+                options={toggleOptions}
                 value={tokensGraphType}
                 onChange={value => setTokensGraphType(value as GraphType)}
                 className="ml-3"

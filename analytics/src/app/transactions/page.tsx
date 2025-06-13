@@ -4,12 +4,13 @@ import { Token } from '@velocitylabs-org/turtle-registry'
 import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
-import React, { useState } from 'react'
+import { useQueryState, parseAsStringLiteral, parseAsIsoDate } from 'nuqs'
+import React from 'react'
 import { getTransactionsData } from '@/app/actions/transactions'
 import DatePicker from '@/components/DatePicker'
 import ErrorPanel from '@/components/ErrorPanel'
-import MultiSelect from '@/components/MultiSelect'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
+import Select from '@/components/Select'
 import SmallStatBox from '@/components/SmallStatBox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -19,24 +20,29 @@ import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
-export default function TransactionsPage() {
-  const [sourceChainUid, setSourceChainUid] = useState<string[]>([])
-  const [destinationChainUid, setDestinationChainUid] = useState<string[]>([])
-  const [sourceTokenId, setSourceTokenId] = useState<string[]>([])
-  const [destinationTokenId, setDestinationTokenId] = useState<string[]>([])
-  const [statusFilter, setStatusFilter] = useState<null | TxStatus>(null)
-  const [fromDate, setFromDate] = useState<Date | undefined>(undefined)
-  const [toDate, setToDate] = useState<Date | undefined>(undefined)
+const chainOptions = chains.map(chain => ({
+  value: chain.uid,
+  label: chain.name,
+  logoURI: getSrcFromLogo(chain),
+}))
 
-  const chainOptions = chains.map(chain => ({
-    value: chain.uid,
-    label: chain.name,
-    logoURI: getSrcFromLogo(chain),
-  }))
+// Using 'all' as default to represent null (no filter)
+const statusFilterParser = parseAsStringLiteral(['succeeded', 'failed', 'undefined', 'all'] as const).withDefault('all')
+const emptyDefaultString = { defaultValue: ''}
+
+export default function TransactionsPage() {
+  const [sourceChainUid, setSourceChainUid] = useQueryState('sourceChain', emptyDefaultString)
+  const [destinationChainUid, setDestinationChainUid] = useQueryState('destChain', emptyDefaultString)
+  const [sourceTokenId, setSourceTokenId] = useQueryState('sourceToken', emptyDefaultString)
+  const [destinationTokenId, setDestinationTokenId] = useQueryState('destToken', emptyDefaultString)
+  const [statusFilterRaw, setStatusFilterRaw] = useQueryState('status', statusFilterParser)
+  const statusFilter = statusFilterRaw === 'all' ? null : statusFilterRaw as TxStatus | null
+  const [fromDate, setFromDate] = useQueryState('fromDate', parseAsIsoDate)
+  const [toDate, setToDate] = useQueryState('toDate', parseAsIsoDate)
 
   const tokenSourceOptions = tokens
     .map((token: Token) => {
-      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid[0])
+      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid)
       return {
         value: token.id,
         label: token.symbol,
@@ -48,7 +54,7 @@ export default function TransactionsPage() {
 
   const tokenDestinationOptions = tokens
     .map((token: Token) => {
-      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, destinationChainUid[0])
+      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, destinationChainUid)
       return {
         value: token.id,
         label: token.symbol,
@@ -76,8 +82,8 @@ export default function TransactionsPage() {
         sourceTokenId: sourceTokenId.length > 0 ? sourceTokenId : undefined,
         destinationTokenId: destinationTokenId.length > 0 ? destinationTokenId : undefined,
         status: statusFilter,
-        startDate: fromDate,
-        endDate: toDate,
+        startDate: fromDate || undefined,
+        endDate: toDate || undefined,
       }),
   })
   useShowLoadingBar(isLoading)
@@ -91,18 +97,21 @@ export default function TransactionsPage() {
   }
 
   const resetFilters = () => {
-    setStatusFilter(null)
-    setSourceChainUid([])
-    setDestinationChainUid([])
-    setSourceTokenId([])
-    setDestinationTokenId([])
-    setFromDate(undefined)
-    setToDate(undefined)
+    setStatusFilterRaw('all')
+    setSourceChainUid('')
+    setDestinationChainUid('')
+    setSourceTokenId('')
+    setDestinationTokenId('')
+    setFromDate(null)
+    setToDate(null)
   }
 
   if (error && !isLoading) {
     return <ErrorPanel error={error} />
   }
+
+  console.log('sourceChainUid', sourceChainUid)
+  console.log('chainOptions', chainOptions)
 
   return (
     <div>
@@ -163,7 +172,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
                       onClick={() =>
-                        setStatusFilter(statusFilter === 'succeeded' ? null : 'succeeded')
+                        setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded')
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
@@ -173,7 +182,7 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
-                      onClick={() => setStatusFilter(statusFilter === 'failed' ? null : 'failed')}
+                      onClick={() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')}
                     >
                       <Ban className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">failed</span>
@@ -183,7 +192,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
-                        setStatusFilter(statusFilter === 'undefined' ? null : 'undefined')
+                        setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined')
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
@@ -203,41 +212,42 @@ export default function TransactionsPage() {
               {/* Chain and token selectors */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <MultiSelect
+                  <Select
                     options={chainOptions}
                     selected={sourceChainUid}
-                    onChange={setSourceChainUid}
+                    onChange={(val) => setSourceChainUid(val as string)}
                     placeholder="Source Chain"
-                    singleSelect
                   />
                 </div>
                 <div>
-                  <MultiSelect
+                  <Select
                     options={tokenSourceOptions}
                     selected={sourceTokenId}
-                    onChange={setSourceTokenId}
+                    onChange={(val) => setSourceTokenId(val as string)}
                     placeholder="Source Token"
-                    disabled={sourceChainUid.length === 0}
-                    singleSelect
+                    disabled={!sourceChainUid}
                   />
                 </div>
                 <div>
-                  <MultiSelect
+                  <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={setDestinationChainUid}
+                    onChange={(val) => {
+                      setDestinationChainUid(val as string)
+                      if (!val) {
+                        setDestinationTokenId('')
+                      }
+                    }}
                     placeholder="Destination Chain"
-                    singleSelect
                   />
                 </div>
                 <div>
-                  <MultiSelect
+                  <Select
                     options={tokenDestinationOptions}
                     selected={destinationTokenId}
-                    onChange={setDestinationTokenId}
+                    onChange={(val) => setDestinationTokenId(val as string)}
                     placeholder="Destination Token"
-                    singleSelect
-                    disabled={destinationChainUid.length === 0}
+                    disabled={!destinationChainUid}
                   />
                 </div>
               </div>

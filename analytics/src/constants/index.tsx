@@ -18,6 +18,6 @@ export const relayChain = RelayChain
 // Tokens
 export const tokens = REGISTRY.mainnet.tokens
 
-export type GraphType = 'volume' | 'transactions'
+export type GraphType = 'volume' | 'count'
 
 export type TimePeriodType = 'last-6-months' | 'last-month' | 'this-week'

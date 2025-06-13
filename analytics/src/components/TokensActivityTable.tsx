@@ -1,7 +1,8 @@
 'use client'
 import { tokensById } from '@velocitylabs-org/turtle-registry'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import React, { useMemo, useState } from 'react'
+import { useQueryState, parseAsStringLiteral } from 'nuqs'
+import React, { useMemo } from 'react'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import {
   Table,
@@ -26,14 +27,16 @@ interface TokensActivityTable {
 }
 
 type SortColumn = 'tokenId' | 'network' | 'totalVolume' | 'totalTransactions'
-type SortDirection = 'asc' | 'desc'
+
+const sortColumnQueryDefault = parseAsStringLiteral(['tokenId', 'network', 'totalVolume', 'totalTransactions'] as const).withDefault('totalVolume')
+const sortDirectionQueryDefault = parseAsStringLiteral(['asc', 'desc'] as const).withDefault('desc')
 
 export default function TokensActivityTable({
   tokens: initialTokens,
   isLoading,
 }: TokensActivityTable) {
-  const [sortColumn, setSortColumn] = useState<SortColumn>('totalVolume')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [sortColumn, setSortColumn] = useQueryState('sortColumn', sortColumnQueryDefault)
+  const [sortDirection, setSortDirection] = useQueryState('sortDirection', sortDirectionQueryDefault)
 
   const tokens = useMemo(() => {
     if (isLoading || initialTokens.length === 0) return initialTokens
@@ -55,7 +58,9 @@ export default function TokensActivityTable({
       }
 
       // Handle numeric columns
-      return (a[sortColumn] - b[sortColumn]) * modifier
+      const valueA = a[sortColumn as keyof typeof a] as number
+      const valueB = b[sortColumn as keyof typeof b] as number
+      return (valueA - valueB) * modifier
     })
   }, [initialTokens, sortColumn, sortDirection, isLoading])
 
@@ -122,8 +127,8 @@ export default function TokensActivityTable({
 interface SortableColumnHeaderProps {
   column: SortColumn
   label: string
-  currentSortColumn: SortColumn
-  currentSortDirection: SortDirection
+  currentSortColumn: string
+  currentSortDirection: string
   onSort: (column: SortColumn) => void
 }
 
