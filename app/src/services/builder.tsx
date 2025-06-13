@@ -1,4 +1,10 @@
-import { Builder, TAddress, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import {
+  Builder,
+  GeneralBuilder,
+  TAddress,
+  TNodeDotKsmWithRelayChains,
+  TSendBaseOptionsWithSenderAddress,
+} from '@paraspell/sdk'
 import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 
@@ -79,27 +85,29 @@ class BuilderManager {
   async getTransferableAmount(params: TxParams) {
     const builder = await this.getBuilder(params)
 
-    // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.getTransferableAmount()
+    return (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferableAmount()
   }
 
   async getOriginAndDestinationXcmFee(params: TxParams) {
     const builder = await this.getBuilder(params)
-    // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.getXcmFee({ disableFeeCheck: false })
+
+    return (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getXcmFee({
+      // @ts-expect-error - types are being weird and can't find to correctly cast this
+      disableFeeCheck: false,
+    })
   }
 
   async getOriginXcmFee(params: TxParams) {
     const builder = await this.getBuilder(params)
-    // @ts-expect-error - types are being weird and can't find to correctly cast this
-    return builder.getOriginXcmFee()
+
+    return (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getOriginXcmFee()
   }
 
   async isExistentialDepositMetAfterTransfer(params: TxParams) {
     try {
       const builder = await this.getBuilder(params)
-      // @ts-expect-error - types are being weird and can't find to correctly cast this
-      return builder.verifyEdOnDestination()
+
+      return (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).verifyEdOnDestination()
     } catch (error) {
       console.error('Failed to verify existential deposit: ', error)
       return false
@@ -109,8 +117,10 @@ class BuilderManager {
   async dryRun(params: TxParams) {
     try {
       const builder = await this.getBuilder(params)
-      // @ts-expect-error - types are being weird and can't find to correctly cast this
-      return builder.dryRun()
+
+      console.log('builder', builder)
+
+      return (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).dryRun()
     } catch (error) {
       console.error('Failed to dry run: ', error)
       throw error
@@ -120,8 +130,10 @@ class BuilderManager {
   async createTransferTx(params: TxParams) {
     try {
       const builder = await this.getBuilder(params)
-      // @ts-expect-error - types are being weird and can't find to correctly cast this
-      return builder.senderAddress(params.senderAddress).build()
+
+      return (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>)
+        .senderAddress(params.senderAddress)
+        .build()
     } catch (error) {
       console.error('Failed to create transfer tx: ', error)
       throw error
