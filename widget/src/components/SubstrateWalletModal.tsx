@@ -17,17 +17,11 @@ const noItemsFoundTransitions = {
   exit: { opacity: 0, transition: { duration: animationDuration / 2 } },
 }
 
-const accountsViewTransitions = {
-  initial: { x: 5, opacity: 0 },
-  animate: { x: 0, opacity: 1, transition: { duration: animationDuration / 2, type: 'spring' } },
-  exit: { x: 5, opacity: 0, transition: { duration: animationDuration / 2, type: 'spring' } },
-}
-
 const headerElementAnimationProps = {
   initial: { opacity: 0, left: 5 },
   animate: { opacity: 1, left: 0 },
   exit: { opacity: 0, left: 5 },
-  transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' },
+  transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' as const },
 }
 
 const loadingTransitions = {
@@ -96,7 +90,7 @@ export default function SubstrateWalletModal() {
     () => ({
       initial: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
       animate: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
-      transition: { duration: animationDuration, type: 'spring' },
+      transition: { duration: animationDuration, type: 'spring' as const },
     }),
     [currentView],
   )
@@ -109,12 +103,12 @@ export default function SubstrateWalletModal() {
             animate: {
               x: 0,
               opacity: 1,
-              transition: { duration: animationDuration / 2, type: 'spring' },
+              transition: { duration: animationDuration / 2, type: 'spring' as const },
             },
             exit: {
               x: -10,
               opacity: 0,
-              transition: { duration: animationDuration / 2, type: 'spring' },
+              transition: { duration: animationDuration / 2, type: 'spring' as const },
             },
           }
         : {
@@ -169,7 +163,26 @@ export default function SubstrateWalletModal() {
                 </motion.div>
               )}
               {currentView === 'accounts' && (
-                <motion.div key="accountsView" {...accountsViewTransitions}>
+                <motion.div
+                  key="accountsView"
+                  initial={{ x: 5, opacity: 0 }}
+                  animate={{
+                    x: 0,
+                    opacity: 1,
+                    transition: {
+                      duration: animationDuration / 2,
+                      type: 'spring' as const,
+                    },
+                  }}
+                  exit={{
+                    x: 5,
+                    opacity: 0,
+                    transition: {
+                      duration: animationDuration / 2,
+                      type: 'spring' as const,
+                    },
+                  }}
+                >
                   Connect Wallet
                 </motion.div>
               )}
@@ -254,7 +267,17 @@ export default function SubstrateWalletModal() {
             {currentView === 'accounts' && !loading && (
               <motion.div
                 key="accountsView"
-                {...accountsViewTransitions}
+                initial={{ x: 5, opacity: 0 }}
+                animate={{
+                  x: 0,
+                  opacity: 1,
+                  transition: { duration: animationDuration / 2, type: 'spring' },
+                }}
+                exit={{
+                  x: 5,
+                  opacity: 0,
+                  transition: { duration: animationDuration / 2, type: 'spring' },
+                }}
                 className="flex w-full flex-1 flex-col"
               >
                 {filteredAccounts.length > 0 ? (
