@@ -15,59 +15,54 @@ type Option = {
   originLogoURI?: Token['logoURI']
 }
 
-interface MultiSelectProps {
+interface SingleSelectProps {
   options: Option[]
-  selected: string[]
-  onChange: (selected: string[] | ((prev: string[]) => string[])) => void
+  selected: string
+  onChange: (selected: string) => void
   placeholder?: string
   className?: string
-  singleSelect?: boolean
-  showImagesInBadges?: boolean
+  showImageInBadge?: boolean
   disabled?: boolean
-  preventEmpty?: boolean
-  showBadges?: boolean
+  showBadge?: boolean
   minimal?: boolean
   loading?: boolean
+  allowClear?: boolean
 }
 
-export default function StandardMultiSelect({
+export default function Select({
   options,
   selected,
   onChange,
-  placeholder = 'Select options...',
+  placeholder = 'Select option...',
   className,
-  singleSelect = false,
-  showImagesInBadges = true,
+  showImageInBadge = true,
   disabled = false,
-  preventEmpty = false,
-  showBadges = true,
+  showBadge = true,
   minimal,
   loading,
-}: MultiSelectProps) {
+  allowClear = true,
+}: SingleSelectProps) {
   const [open, setOpen] = React.useState(false)
 
   const handleSelect = (value: string) => {
     if (disabled || loading) return
 
-    if (selected.includes(value)) {
-      // If preventEmpty is true and there's only one item selected, don't remove it
-      if (preventEmpty && selected.length === 1) {
-        return
+    if (selected === value) {
+      if (allowClear) {
+        onChange('')
       }
-      onChange(selected.filter(item => item !== value))
-    } else if (singleSelect) {
-      onChange([value])
     } else {
-      onChange([...selected, value])
+      onChange(value)
     }
   }
 
-  const handleRemove = (value: string) => {
+  const handleClear = () => {
     if (disabled || loading) return
-    onChange(selected.filter(item => item !== value))
+    onChange('')
   }
 
-  const showRemoveButton = !disabled && !preventEmpty && !loading
+  const selectedOption = options.find(opt => opt.value === selected)
+  const showClearButton = !disabled && allowClear && selected && !loading
 
   return (
     <div className={cn('relative', className)}>
@@ -87,46 +82,48 @@ export default function StandardMultiSelect({
             )}
             disabled={disabled}
           >
-            <div className={cn('flex flex-wrap items-center', minimal && 'flex-grow')}>
+            <div className={cn('flex items-center', minimal && 'flex-grow')}>
               {loading ? (
                 <div className="ml-3 flex flex-grow items-center justify-center">
                   <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-primary" />
                 </div>
-              ) : selected.length === 0 ? (
+              ) : !selected ? (
                 <span className="text-muted-foreground">{placeholder}</span>
-              ) : (
-                selected.map(value => {
-                  const option = options.find(opt => opt.value === value)
-                  return (
-                    <Badge
-                      key={value}
-                      variant="secondary"
-                      className={cn(
-                        'mr-1 px-1 py-0',
-                        !showBadges && '!important bg-transparent',
-                        minimal && 'bg-transparent hover:bg-transparent',
+              ) : showBadge ? (
+                <Badge
+                  variant="secondary"
+                  className={cn('mr-1 px-1 py-0', minimal && 'bg-transparent hover:bg-transparent')}
+                >
+                  <div className="flex items-center">
+                    {showImageInBadge &&
+                      renderImage(
+                        selectedOption?.logoURI as string,
+                        selectedOption?.originLogoURI as string,
                       )}
-                    >
-                      <div className="flex items-center">
-                        {showImagesInBadges &&
-                          renderImage(option?.logoURI as string, option?.originLogoURI as string)}
-                        <span>{option?.label || value}</span>
-                        {showRemoveButton && (
-                          <button
-                            className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            onClick={e => {
-                              e.stopPropagation()
-                              handleRemove(value)
-                            }}
-                          >
-                            <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                            <span className="sr-only">Remove {option?.label || value}</span>
-                          </button>
-                        )}
-                      </div>
-                    </Badge>
-                  )
-                })
+                    <span>{selectedOption?.label || selected}</span>
+                    {showClearButton && (
+                      <span
+                        role="button"
+                        className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        onClick={e => {
+                          e.stopPropagation()
+                          handleClear()
+                        }}
+                      >
+                        <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                      </span>
+                    )}
+                  </div>
+                </Badge>
+              ) : (
+                <div className="flex items-center">
+                  {showImageInBadge &&
+                    renderImage(
+                      selectedOption?.logoURI as string,
+                      selectedOption?.originLogoURI as string,
+                    )}
+                  <span>{selectedOption?.label || selected}</span>
+                </div>
               )}
               {minimal && <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />}
             </div>
@@ -146,7 +143,7 @@ export default function StandardMultiSelect({
                         key={option.value}
                         className={cn(
                           'relative flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none',
-                          selected.includes(option.value) ? 'bg-accent text-accent-foreground' : '',
+                          selected === option.value ? 'bg-accent text-accent-foreground' : '',
                           !disabled &&
                             'cursor-pointer hover:bg-accent hover:text-accent-foreground',
                           disabled && 'cursor-not-allowed opacity-50',
@@ -156,7 +153,7 @@ export default function StandardMultiSelect({
                         <Check
                           className={cn(
                             'h-4 w-4',
-                            selected.includes(option.value) ? 'opacity-100' : 'opacity-0',
+                            selected === option.value ? 'opacity-100' : 'opacity-0',
                           )}
                         />
                         {renderImage(option.logoURI as string, option?.originLogoURI as string)}

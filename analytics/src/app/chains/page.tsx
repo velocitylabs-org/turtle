@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { useQueryState, parseAsStringLiteral } from 'nuqs'
 import React, { useState, useEffect } from 'react'
 import { getChainSankeyData, getChainsData } from '@/app/actions/chains'
 import ChainsActivityTable from '@/components/ChainsActivityTable'
@@ -11,9 +12,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { GraphType, relayChain } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 
+const graphTypeQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault(
+  'volume',
+)
+
 export default function ChainsPage() {
-  const [chainUid, setChainUid] = useState<string>(relayChain.uid)
-  const [graphType, setGraphType] = useState<GraphType>('volume')
+  const [chainUid, setChainUid] = useQueryState('chainUid', { defaultValue: relayChain.uid })
+  const [graphType, setGraphType] = useQueryState('graphType', graphTypeQueryDefault)
   const [isSankeyDataInitialLoading, setSankeyDataInitialLoading] = useState(true)
 
   const {
@@ -59,11 +64,11 @@ export default function ChainsPage() {
       <Card>
         <CardHeader>
           <CardTitle>
-            Data flow grouped by
+            Data flow by
             <TitleToggle
               options={[
                 { value: 'volume', label: 'Volume' },
-                { value: 'transactions', label: 'Count' },
+                { value: 'count', label: 'Count' },
               ]}
               value={graphType}
               onChange={value => setGraphType(value as GraphType)}

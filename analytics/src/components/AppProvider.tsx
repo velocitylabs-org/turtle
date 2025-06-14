@@ -1,7 +1,9 @@
 'use client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import React from 'react'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import React, { Suspense } from 'react'
 import { LoadingBarContainer } from 'react-top-loading-bar'
+import { loadingBarOpt } from '@/constants'
 
 const queryClient = new QueryClient()
 interface AppProviderProps {
@@ -11,7 +13,20 @@ interface AppProviderProps {
 export default function AppProvider({ children }: AppProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <LoadingBarContainer>{children}</LoadingBarContainer>
+      <NuqsAdapter>
+        <Suspense>
+          <LoadingBarContainer props={loadingBarOpt}>{children}</LoadingBarContainer>
+        </Suspense>
+      </NuqsAdapter>
     </QueryClientProvider>
   )
 }
+
+/**
+ * useQueryState uses useSearchParams under the hood, which accesses search parameters
+ * without a Suspense boundary. This opts the entire page into client-side rendering,
+ * causing a blank page until client-side JS loads.
+ *
+ * We wrap all content in Suspense to handle this gracefully and ensure proper loading behavior
+ * since many pages use useQueryState.
+ */

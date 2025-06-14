@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 
 const MOBILE_BREAKPOINT = 768
 
+export const isMobileDevice = (userAgent: string): boolean => {
+  return /android.+mobile|ip(hone|[oa]d)/i.test(userAgent)
+}
+
 export default function useIsMobile() {
   // Default to false for server-side rendering
   const [isMobile, setIsMobile] = useState<boolean>(false)
@@ -9,7 +13,16 @@ export default function useIsMobile() {
   useEffect(() => {
     // This code only runs client-side
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+      // First check if it's a mobile device by user agent
+      const userAgent = navigator.userAgent
+      const isMobileByUserAgent = isMobileDevice(userAgent)
+
+      // Then check viewport width
+      const isMobileByViewport = window.innerWidth < MOBILE_BREAKPOINT
+
+      // Consider it mobile if either condition is true
+      // User agent takes precedence for actual mobile devices
+      setIsMobile(isMobileByUserAgent || isMobileByViewport)
     }
 
     checkIfMobile()
