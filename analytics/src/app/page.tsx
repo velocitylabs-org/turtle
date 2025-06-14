@@ -126,7 +126,7 @@ export default function HomeDashboardPage() {
               />
             </CardTitle>
             <CardDescription>
-              <div className="relative -top-[10px] flex items-center gap-1">
+              <div className="relative -top-[10px] flex items-center gap-2">
                 Timeframe
                 <Select
                   options={Object.entries(periodConfig).map(([value, config]) => ({
@@ -137,7 +137,7 @@ export default function HomeDashboardPage() {
                   onChange={val => setTimePeriod(val as TimePeriodType)}
                   showBadge={false}
                   minimal
-                  className="w-[100px]"
+                  className="w-[100px] !text-black"
                 />
               </div>
             </CardDescription>

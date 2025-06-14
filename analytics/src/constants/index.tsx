@@ -4,7 +4,7 @@ export const primaryColor = '#00FF29'
 
 export const loadingBarOpt = {
   color: primaryColor,
-  height: 3,
+  height: 4,
   waitingTime: 200,
 }
 
