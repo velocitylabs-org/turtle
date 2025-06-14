@@ -64,7 +64,7 @@ export default function ChainsPage() {
       <Card>
         <CardHeader>
           <CardTitle>
-            Data flow grouped by
+            Data flow by
             <TitleToggle
               options={[
                 { value: 'volume', label: 'Volume' },

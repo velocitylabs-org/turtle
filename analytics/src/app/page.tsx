@@ -191,7 +191,7 @@ export default function HomeDashboardPage() {
       <div className="mt-4">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
+            <CardTitle>Recent transactions</CardTitle>
             <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
           </CardHeader>
           <CardContent>

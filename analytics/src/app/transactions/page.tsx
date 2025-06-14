@@ -266,7 +266,7 @@ export default function TransactionsPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
+            <CardTitle>Recent transactions</CardTitle>
             <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
           </CardHeader>
           <CardContent>
