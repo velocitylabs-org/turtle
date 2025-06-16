@@ -118,8 +118,6 @@ export default function TransactionsPage() {
     return <ErrorPanel error={error} />
   }
 
-  console.log('sourceChainUid', sourceChainUid)
-  console.log('chainOptions', chainOptions)
 
   return (
     <div>
