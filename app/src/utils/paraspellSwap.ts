@@ -142,7 +142,14 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   if (!dex) return []
 
   const pairs = getDexPairs(dex)
-  return [...new Set(pairs.flatMap(([token1, token2]) => [token1, token2]))]
+  const uniqueTokens = new Map(
+    pairs.flatMap(([token1, token2]) => [
+      [token1.id, token1],
+      [token2.id, token2],
+    ]),
+  )
+
+  return Array.from(uniqueTokens.values())
 }
 
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
