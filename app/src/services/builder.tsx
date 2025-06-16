@@ -17,14 +17,15 @@ type TxParams = {
   token: Token
   address: TAddress
   senderAddress: string
+  amount?: bigint | string | number | null
 }
 
-const txKey = ({ wssEndpoint, from, to, token, address }: TxParams): string => {
+const txKey = ({ wssEndpoint, from, to, token, address, amount }: TxParams): string => {
   if (!wssEndpoint) {
-    return [from.uid, to.uid, token.symbol, address].join('|')
+    return [from.uid, to.uid, token.symbol, address, amount].join('|')
   }
 
-  return [wssEndpoint, from.uid, to.uid, token.symbol, address].join('|')
+  return [wssEndpoint, from.uid, to.uid, token.symbol, address, amount].join('|')
 }
 
 class BuilderManager {
@@ -52,6 +53,8 @@ class BuilderManager {
 
     const currencyId = getParaspellToken(params.token, sourceChainNode)
 
+    params.amount = params.amount || BigInt(10 ** params.token.decimals).toString()
+
     const key = txKey(params)
 
     if (this.builders.has(key)) {
@@ -63,7 +66,7 @@ class BuilderManager {
       builder = Builder(params.wssEndpoint)
         .from(sourceChainNode as TNodeDotKsmWithRelayChains)
         .to(destinationChainNode as TNodeDotKsmWithRelayChains)
-        .currency({ ...currencyId, amount: BigInt(10 ** params.token.decimals).toString() })
+        .currency({ ...currencyId, amount: params.amount })
         .address(params.address)
         .senderAddress(params.senderAddress)
 
@@ -117,8 +120,6 @@ class BuilderManager {
   async dryRun(params: TxParams) {
     try {
       const builder = await this.getBuilder(params)
-
-      console.log('builder', builder)
 
       return (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).dryRun()
     } catch (error) {

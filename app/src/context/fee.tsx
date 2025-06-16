@@ -43,7 +43,7 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
       from: params.sourceChain,
       to: params.destinationChain,
       token: params.token,
-      address: getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
+      address: getPlaceholderAddress(params.destinationChain.supportedAddressTypes[0]),
       senderAddress: getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
     })
 

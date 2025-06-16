@@ -112,8 +112,6 @@ const useParaspellApi = () => {
 
     const validationResult = await validateTransfer(params)
 
-    console.log('validationResult', validationResult)
-
     const dryRunCapturePayload = {
       extra: {
         sourceChain: params.sourceChain.uid,
@@ -155,9 +153,12 @@ const useParaspellApi = () => {
           token: params.sourceToken,
           address: params.recipient,
           senderAddress: params.sender.address,
+          amount: params.sourceAmount,
         })
-        if (!isExistentialDepositMet)
+
+        if (!isExistentialDepositMet) {
           throw new Error('Transfer failed: existential deposit will not be met.')
+        }
       }
     }
 
@@ -168,6 +169,7 @@ const useParaspellApi = () => {
       token: params.sourceToken,
       address: params.recipient,
       senderAddress: params.sender.address,
+      amount: params.sourceAmount,
     })
     setStatus('Signing')
 
@@ -433,6 +435,7 @@ const useParaspellApi = () => {
         token: params.sourceToken,
         address: params.recipient,
         senderAddress: params.sender.address,
+        amount: params.sourceAmount,
       })
       if (
         !isDryRunApiSupported(result.origin) ||

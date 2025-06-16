@@ -252,6 +252,7 @@ const useTransferForm = () => {
         token: sourceToken,
         address: recipient,
         senderAddress: sourceWallet.sender.address,
+        amount: sourceAmount,
       })
 
       setValue(
