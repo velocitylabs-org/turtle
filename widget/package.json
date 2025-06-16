@@ -8,7 +8,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/turtle-widget.js"
+      "import": "./dist/turtle-widget.js",
+      "default": "./dist/turtle-widget.js"
     }
   },
   "files": [
