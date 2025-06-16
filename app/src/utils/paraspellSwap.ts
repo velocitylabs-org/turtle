@@ -1,4 +1,4 @@
-import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
+import { getExchangeAssets, getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
 import {
   Chain,
   Token,
@@ -113,6 +113,22 @@ export const getDexTokens = (dex: Dex): Token[] =>
   getExchangeAssets(dex)
     .map(asset => (asset.multiLocation ? getTokenByMultilocation(asset.multiLocation) : undefined))
     .filter((token): token is Token => token !== undefined)
+
+export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
+  const pairs = getExchangePairs(dex)
+  const turtlePairs = pairs
+    .map(pair => {
+      const [token1, token2] = pair
+      if (!token1.multiLocation || !token2.multiLocation) return null
+
+      const t1 = getTokenByMultilocation(token1.multiLocation)
+      const t2 = getTokenByMultilocation(token2.multiLocation)
+      if (!t1 || !t2) return null // not supported by turtle registry
+      return [t1, t2] as [Token, Token]
+    })
+    .filter((pair): pair is [Token, Token] => pair !== null)
+  return turtlePairs
+}
 
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => getSupportedDexChains()
