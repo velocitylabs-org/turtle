@@ -114,6 +114,7 @@ export const getDexTokens = (dex: Dex): Token[] =>
     .map(asset => (asset.multiLocation ? getTokenByMultilocation(asset.multiLocation) : undefined))
     .filter((token): token is Token => token !== undefined)
 
+/** returns all pairs supported by a dex */
 export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const pairs = getExchangePairs(dex)
   const turtlePairs = pairs
@@ -140,7 +141,8 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   const dex = getDex(sourceChain)
   if (!dex) return []
 
-  return getDexTokens(dex)
+  const pairs = getDexPairs(dex)
+  return [...new Set(pairs.flatMap(([token1, token2]) => [token1, token2]))]
 }
 
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
