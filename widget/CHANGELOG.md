@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.13
+
+### Patch Changes
+
+- f181eff: update package.json exports
+
 ## 0.0.12
 
 ### Patch Changes
