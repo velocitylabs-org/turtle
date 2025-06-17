@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.14
+
+### Patch Changes
+
+- f5a7397: Update Readme with Troubleshooting
+
 ## 0.0.13
 
 ### Patch Changes
