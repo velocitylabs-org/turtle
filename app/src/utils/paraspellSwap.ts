@@ -152,6 +152,22 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   return getDexTokens(dex)
 }
 
+/** returns all tokens that can be traded with the given source token on the specified dex */
+export const getTradeableTokens = (dex: Dex, sourceToken: Token): Set<string> => {
+  const dexPairs = getDexPairs(dex)
+  const tradeableTokens = new Set<string>()
+
+  dexPairs.forEach(([token1, token2]) => {
+    if (isSameToken(token1, sourceToken)) {
+      tradeableTokens.add(token2.id)
+    } else if (isSameToken(token2, sourceToken)) {
+      tradeableTokens.add(token1.id)
+    }
+  })
+
+  return tradeableTokens
+}
+
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
 export const getSwapsDestinationChains = (
   sourceChain: Chain | null,
@@ -165,19 +181,16 @@ export const getSwapsDestinationChains = (
   if (!dex) return []
   chains.push(sourceChain)
 
-  const dexTokens = new Set(getDexTokens(dex).map(token => token.id)) // Use Set for O(1) lookups
-  if (!dexTokens.has(sourceToken.id)) return []
+  const tradeableTokens = getTradeableTokens(dex, sourceToken)
 
   // get transfer routes we can reach from the source chain
   const routes = REGISTRY[Environment.Mainnet].routes.filter(
     route => route.from === sourceChain.uid,
   )
 
-  // TODO: filter routes by dex trading pairs. A route needs to support a token from the dex trading pairs together with the source token
-  // waiting for trading pairs to be available in xcm-router sdk. For now it simply checks tokens in the route.
-  // Check for routes that have at least one token supported by the dex
+  // Filter routes by dex trading pairs. A route needs to support at least one trading pair of the dex
   routes.forEach(route => {
-    if (route.tokens.some(tokenId => dexTokens.has(tokenId))) {
+    if (route.tokens.some(tokenId => tradeableTokens.has(tokenId))) {
       // lookup destination chain and add it to the list
       const destinationChain = REGISTRY[Environment.Mainnet].chains.find(
         chain => chain.uid === route.to,
@@ -189,8 +202,8 @@ export const getSwapsDestinationChains = (
   return chains
 }
 
-// TODO: use trading pairs once available in xcm-router sdk. Enables support for non-omnipool dexes.
 /** returns all allowed destination tokens for a swap. */
+// TODO: use trading pairs once available in xcm-router sdk. Enables support for non-omnipool dexes.
 export const getSwapsDestinationTokens = (
   sourceChain: Chain | null,
   sourceToken: Token | null,
