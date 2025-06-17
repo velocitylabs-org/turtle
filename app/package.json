@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
-    "@heroui/react": "2.7.2",
     "@hookform/resolvers": "3.9.0",
     "@jest/globals": "^29.7.0",
     "@number-flow/react": "^0.4.1",

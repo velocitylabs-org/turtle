@@ -28,8 +28,6 @@ export interface ButtonProps {
   children?: ReactNode
   /** The type of the button. */
   type?: ButtonType
-  /** Cypress ID for testing. */
-  cypressID?: string
 }
 
 const styles = {
