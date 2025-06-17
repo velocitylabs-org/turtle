@@ -36,6 +36,8 @@
     "@polkadot/extension-inject": "^0.58.8",
     "@polkadot/react-identicon": "^3.12.2",
     "@polkadot/types": "^15.9.3",
+    "@polkadot/keyring": "^13.5.1",
+    "@polkadot/util": "^13.5.1",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.2",
     "@reown/appkit": "^1.6.8",
@@ -99,9 +101,6 @@
     "vite-plugin-wasm": "^3.4.1"
   },
   "peerDependencies": {
-    "@paraspell/sdk": "^8.13.1",
-    "@polkadot/keyring": "^13.2.1",
-    "@polkadot/util": "^13.3.1",
     "@types/node": ">=20.16.15",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
