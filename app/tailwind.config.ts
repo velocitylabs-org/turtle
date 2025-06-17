@@ -1,4 +1,3 @@
-import { heroui } from '@heroui/react'
 import type { Config } from 'tailwindcss'
 
 const prefix = 'turtle'
@@ -49,7 +48,6 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     '../packages/ui/src/**/*.{ts,tsx,js,jsx}',
-    '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -92,6 +90,6 @@ const config: Config = {
     },
   },
   darkMode: 'class',
-  plugins: [heroui(), require('tailwindcss-animate'), require('tailwindcss-motion')],
+  plugins: [require('tailwindcss-animate'), require('tailwindcss-motion')],
 }
 export default config

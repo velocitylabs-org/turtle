@@ -67,7 +67,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                   src={(transfer.sourceChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
-                  className="rounded-full border border-turtle-secondary-dark bg-background"
+                  className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
                 />
                 <div className="text-xs sm:text-sm">{transfer.sourceChain.name}</div>
               </div>
@@ -77,7 +77,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                   src={(transfer.destChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
-                  className="rounded-full border border-turtle-secondary-dark bg-background"
+                  className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
                 />
                 <div className="text-xs sm:text-sm">{transfer.destChain.name}</div>
               </div>

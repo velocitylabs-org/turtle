@@ -1,5 +1,5 @@
 import { TokenAmount } from '@velocitylabs-org/turtle-registry'
-import { cn } from '@velocitylabs-org/turtle-ui'
+import { cn, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
@@ -7,7 +7,6 @@ import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
-import { spinnerSize } from './Button'
 import Delayed from './Delayed'
 import ExclamationMark from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
@@ -110,7 +109,7 @@ export default function TxSummary({
                     {bridgingFee ? 'Execution fee' : 'Fee'}{' '}
                   </div>
                   {!canPayFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
                         height={16}
@@ -121,7 +120,7 @@ export default function TxSummary({
                     </div>
                   )}
                   {exceedsTransferableBalanceInFees && canPayFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
                         height={16}
@@ -163,7 +162,7 @@ export default function TxSummary({
                 <div className="items-left flex flex-col">
                   <div className="pt-[3px] text-sm font-bold">Bridging fee</div>
                   {!canPayAdditionalFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
                         height={16}
@@ -174,7 +173,7 @@ export default function TxSummary({
                     </div>
                   )}
                   {exceedsTransferableBalanceInBridgingFee && canPayAdditionalFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border-1 border-black bg-turtle-warning px-2 py-1 text-xs">
+                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                       <ExclamationMark
                         width={16}
                         height={16}
