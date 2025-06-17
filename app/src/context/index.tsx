@@ -10,8 +10,6 @@ import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
 // Setup queryClient
 export const queryClient = new QueryClient()
 
-console.log('queryClient', queryClient)
-
 // Get projectId at https://cloud.walletconnect.com
 if (!projectId) throw new Error('Project ID is not defined')
 
