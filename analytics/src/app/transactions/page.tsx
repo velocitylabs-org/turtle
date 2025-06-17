@@ -118,7 +118,6 @@ export default function TransactionsPage() {
     return <ErrorPanel error={error} />
   }
 
-
   return (
     <div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
