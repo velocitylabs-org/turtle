@@ -24,6 +24,16 @@ interface TxSummaryProps {
   applyTransferableBalance: () => void
 }
 
+const animationConfig = {
+  initial: { opacity: 0, height: 0 },
+  animate: {
+    opacity: 1,
+    height: 'auto',
+    transition: { type: 'spring' as const, bounce: 0.6, duration: 0.5 },
+  },
+  exit: { opacity: 0, height: 0, transition: { duration: 0.2 } },
+}
+
 const TxSummary = ({
   loading,
   tokenAmount,
@@ -182,29 +192,7 @@ const TxSummary = ({
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, height: 0 }}
-        animate={{
-          opacity: 1,
-          height: 'auto',
-          transition: {
-            type: 'spring',
-            bounce: 0.2,
-            duration: 0.6,
-          },
-        }}
-        exit={{
-          opacity: 0,
-          height: 0,
-          transition: {
-            type: 'spring',
-            bounce: 0.2,
-            duration: 0.6,
-          },
-        }}
-      >
-        {renderContent()}
-      </motion.div>
+      <motion.div {...animationConfig}>{renderContent()}</motion.div>
     </AnimatePresence>
   )
 }

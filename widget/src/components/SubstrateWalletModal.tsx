@@ -17,6 +17,20 @@ const noItemsFoundTransitions = {
   exit: { opacity: 0, transition: { duration: animationDuration / 2 } },
 }
 
+const accountsViewTransitions = {
+  initial: { x: 5, opacity: 0 },
+  animate: {
+    x: 0,
+    opacity: 1,
+    transition: { duration: animationDuration / 2, type: 'spring' as const },
+  },
+  exit: {
+    x: 5,
+    opacity: 0,
+    transition: { duration: animationDuration / 2, type: 'spring' as const },
+  },
+}
+
 const headerElementAnimationProps = {
   initial: { opacity: 0, left: 5 },
   animate: { opacity: 1, left: 0 },
@@ -163,26 +177,7 @@ export default function SubstrateWalletModal() {
                 </motion.div>
               )}
               {currentView === 'accounts' && (
-                <motion.div
-                  key="accountsView"
-                  initial={{ x: 5, opacity: 0 }}
-                  animate={{
-                    x: 0,
-                    opacity: 1,
-                    transition: {
-                      duration: animationDuration / 2,
-                      type: 'spring' as const,
-                    },
-                  }}
-                  exit={{
-                    x: 5,
-                    opacity: 0,
-                    transition: {
-                      duration: animationDuration / 2,
-                      type: 'spring' as const,
-                    },
-                  }}
-                >
+                <motion.div key="accountsView" {...accountsViewTransitions}>
                   Connect Wallet
                 </motion.div>
               )}
@@ -267,17 +262,7 @@ export default function SubstrateWalletModal() {
             {currentView === 'accounts' && !loading && (
               <motion.div
                 key="accountsView"
-                initial={{ x: 5, opacity: 0 }}
-                animate={{
-                  x: 0,
-                  opacity: 1,
-                  transition: { duration: animationDuration / 2, type: 'spring' },
-                }}
-                exit={{
-                  x: 5,
-                  opacity: 0,
-                  transition: { duration: animationDuration / 2, type: 'spring' },
-                }}
+                {...accountsViewTransitions}
                 className="flex w-full flex-1 flex-col"
               >
                 {filteredAccounts.length > 0 ? (
