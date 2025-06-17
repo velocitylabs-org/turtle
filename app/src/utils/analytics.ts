@@ -17,6 +17,7 @@ interface TransferMetric {
   sourceTokenUSDValue: number
   destinationTokenUSDValue: number
   date: Date
+  isSwap?: boolean
   txId?: string
 }
 
@@ -27,6 +28,7 @@ export async function trackTransferMetrics({
   sourceTokenUSDValue,
   destinationTokenUSDValue,
   date,
+  isSwap = false,
 }: TransferMetric) {
   if (transferParams.environment !== Environment.Mainnet || !isProduction || !txId) {
     return
@@ -93,6 +95,7 @@ export async function trackTransferMetrics({
     txDate: date,
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
     status: TxStatus.Succeeded,
+    isSwap,
   }
 
   try {

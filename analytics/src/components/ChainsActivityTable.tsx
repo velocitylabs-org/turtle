@@ -1,7 +1,8 @@
 'use client'
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import React, { useMemo, useState } from 'react'
+import { useQueryState, parseAsStringLiteral } from 'nuqs'
+import React, { useMemo } from 'react'
 import { LogoImg } from '@/components/TokenAndOriginLogos'
 import {
   Table,
@@ -27,20 +28,29 @@ interface ChainsActivityTable {
   isLoading: boolean
 }
 
-type SortColumn =
-  | 'chainUid'
-  | 'incomingTransactions'
-  | 'incomingVolume'
-  | 'outgoingTransactions'
-  | 'outgoingVolume'
-type SortDirection = 'asc' | 'desc'
+const sortColumnOptions = [
+  'chainUid',
+  'incomingTransactions',
+  'incomingVolume',
+  'outgoingTransactions',
+  'outgoingVolume',
+] as const
+type SortColumn = (typeof sortColumnOptions)[number]
+
+const sortDirectionsOptions = ['asc', 'desc'] as const
+
+const sortColumnQueryDefault = parseAsStringLiteral(sortColumnOptions).withDefault('outgoingVolume')
+const sortDirectionQueryDefault = parseAsStringLiteral(sortDirectionsOptions).withDefault('desc')
 
 export default function ChainsActivityTable({
   chains: initialChains,
   isLoading,
 }: ChainsActivityTable) {
-  const [sortColumn, setSortColumn] = useState<SortColumn>('outgoingVolume')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [sortColumn, setSortColumn] = useQueryState('sortColumn', sortColumnQueryDefault)
+  const [sortDirection, setSortDirection] = useQueryState(
+    'sortDirection',
+    sortDirectionQueryDefault,
+  )
 
   const chains = useMemo(() => {
     if (isLoading || initialChains.length === 0) return initialChains
@@ -56,7 +66,9 @@ export default function ChainsActivityTable({
       }
 
       // Handle numeric columns
-      return (a[sortColumn] - b[sortColumn]) * modifier
+      const valueA = a[sortColumn as keyof typeof a] as number
+      const valueB = b[sortColumn as keyof typeof b] as number
+      return (valueA - valueB) * modifier
     })
   }, [initialChains, sortColumn, sortDirection, isLoading])
 
@@ -132,8 +144,8 @@ export default function ChainsActivityTable({
 interface SortableColumnHeaderProps {
   column: SortColumn
   label: string
-  currentSortColumn: SortColumn
-  currentSortDirection: SortDirection
+  currentSortColumn: string
+  currentSortDirection: string
   onSort: (column: SortColumn) => void
 }
 
