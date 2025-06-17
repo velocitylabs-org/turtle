@@ -108,13 +108,21 @@ export const getDex = (chain: Chain): Dex | undefined => {
   return entry?.[0] as Dex | undefined
 }
 
-/** returns all tokens supported by a dex */
-export const getDexTokens = (dex: Dex): Token[] =>
-  getExchangeAssets(dex)
-    .map(asset => (asset.multiLocation ? getTokenByMultilocation(asset.multiLocation) : undefined))
-    .filter((token): token is Token => token !== undefined)
+/** returns all tokens supported by a dex that are also supported by our registry and have at least one trading pair */
+export const getDexTokens = (dex: Dex): Token[] => {
+  const pairs = getDexPairs(dex)
 
-/** returns all pairs supported by a dex */
+  const uniqueTokens = new Map(
+    pairs.flatMap(([token1, token2]) => [
+      [token1.id, token1],
+      [token2.id, token2],
+    ]),
+  )
+
+  return Array.from(uniqueTokens.values())
+}
+
+/** returns all pairs supported by a dex and supported by our registry */
 export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const pairs = getExchangePairs(dex)
   const turtlePairs = pairs
@@ -141,15 +149,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   const dex = getDex(sourceChain)
   if (!dex) return []
 
-  const pairs = getDexPairs(dex)
-  const uniqueTokens = new Map(
-    pairs.flatMap(([token1, token2]) => [
-      [token1.id, token1],
-      [token2.id, token2],
-    ]),
-  )
-
-  return Array.from(uniqueTokens.values())
+  return getDexTokens(dex)
 }
 
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
