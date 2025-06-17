@@ -65,9 +65,16 @@ const useFees = (
   // but for the sake of simplicity, we'll keep it here for now
   useEffect(() => {
     if (sourceChain && destinationChain && token) {
-      setParams({ sourceChain, destinationChain, token })
+      setParams({
+        sourceChain,
+        destinationChain,
+        token,
+        sender: senderAddress,
+        recipient: recipientAddress,
+        amount,
+      })
     }
-  }, [sourceChain, destinationChain, token, setParams])
+  }, [sourceChain, destinationChain, token, senderAddress, recipientAddress, amount, setParams])
 
   const fetchFees = useCallback(async () => {
     // Do we need to check for tokens? You can't select a token if you don't have a source chain.

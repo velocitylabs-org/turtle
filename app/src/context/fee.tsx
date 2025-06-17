@@ -5,13 +5,28 @@ import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { createContext, useCallback, useEffect, useState } from 'react'
 import builderManager from '@/services/builder'
 import { getPlaceholderAddress } from '@/utils/address'
+import { resolveSdk } from '@/utils/routes'
+import { safeConvertAmount } from '@/utils/transfer'
+
+type BaseFeeParams = {
+  sourceChain: Chain
+  destinationChain: Chain
+  token: Token
+  destToken?: Token | null
+}
+
+type OptionalFeeParams = {
+  recipient?: string
+  sender?: string
+  amount?: number | null
+}
 
 export const FeeContext = createContext<{
   canPayFees: boolean
   setCanPayFees: (canPayFees: boolean) => void
   canPayAdditionalFees: boolean
   setCanPayAdditionalFeesGlobally: (canPayAdditionalFees: boolean) => void
-  setParams: (params: { sourceChain: Chain; destinationChain: Chain; token: Token }) => void
+  setParams: (params: BaseFeeParams & OptionalFeeParams) => void
   xcmFees: TGetXcmFeeResult | null
   isSufficientFee: (source: 'origin' | 'destination') => boolean
 }>({
@@ -28,26 +43,27 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   const [canPayFees, setCanPayFees] = useState(false)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState(false)
   const [xcmFees, setXcmFees] = useState<TGetXcmFeeResult | null>(null)
-  const [params, setParams] = useState<{
-    sourceChain: Chain
-    destinationChain: Chain
-    token: Token
-  }>()
+  const [params, setParams] = useState<BaseFeeParams & OptionalFeeParams>()
 
   const calculateXcmFees = useCallback(async () => {
     if (!params) {
       return
     }
 
-    const fees = await builderManager.getOriginAndDestinationXcmFee({
+    const feesPayload = await builderManager.getOriginAndDestinationXcmFee({
       from: params.sourceChain,
       to: params.destinationChain,
       token: params.token,
-      address: getPlaceholderAddress(params.destinationChain.supportedAddressTypes[0]),
-      senderAddress: getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
+      address:
+        params.recipient ?? getPlaceholderAddress(params.destinationChain.supportedAddressTypes[0]),
+      senderAddress:
+        params.sender ?? getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
+      amount: params.amount && safeConvertAmount(params.amount, params.token),
     })
+    // if (!feesPayload) return
+    // const { origin: sourceFeePayload, destination: destinationFeePayload } = feesPayload
 
-    setXcmFees(fees)
+    setXcmFees(feesPayload)
   }, [params])
 
   const isSufficientFee = (source: 'origin' | 'destination') => {
@@ -72,11 +88,9 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   // TODO: on pause for a second, while we work on the provider itself
   useEffect(() => {
     if (params?.sourceChain && params?.destinationChain && params?.token) {
-      // Leaving these here for now, useful for the next feature
-      // const node = getParaSpellNode(params.sourceChain)
-      // const feeAssets = getFeeAssets(node as TNodeDotKsmWithRelayChains)
-
-      calculateXcmFees()
+      const sdk = resolveSdk(params.sourceChain, params.destinationChain)
+      if (!sdk) throw new Error('Route not supported')
+      if (sdk === 'ParaSpellApi') calculateXcmFees()
     }
   }, [calculateXcmFees, params])
 
