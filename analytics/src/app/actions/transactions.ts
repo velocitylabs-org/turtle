@@ -7,10 +7,10 @@ import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
 
 type TransactionFilters = {
-  sourceChainUid?: string[]
-  destinationChainUid?: string[]
-  sourceTokenId?: string[]
-  destinationTokenId?: string[]
+  sourceChainUid?: string
+  destinationChainUid?: string
+  sourceTokenId?: string
+  destinationTokenId?: string
   status?: TxStatus | null
   startDate?: Date
   endDate?: Date
@@ -42,20 +42,20 @@ export async function getTransactionsData({
 
     const query: MongoQuery = {}
 
-    if (sourceChainUid?.length) {
-      query.sourceChainUid = { $regex: new RegExp(sourceChainUid.join('|'), 'i') }
+    if (sourceChainUid) {
+      query.sourceChainUid = { $regex: new RegExp(sourceChainUid, 'i') }
     }
 
-    if (destinationChainUid?.length) {
-      query.destinationChainUid = { $regex: new RegExp(destinationChainUid.join('|'), 'i') }
+    if (destinationChainUid) {
+      query.destinationChainUid = { $regex: new RegExp(destinationChainUid, 'i') }
     }
 
-    if (sourceTokenId?.length) {
-      query.sourceTokenId = { $regex: new RegExp(sourceTokenId.join('|'), 'i') }
+    if (sourceTokenId) {
+      query.sourceTokenId = { $regex: new RegExp(sourceTokenId, 'i') }
     }
 
-    if (destinationTokenId?.length) {
-      query.destinationTokenId = { $regex: new RegExp(destinationTokenId.join('|'), 'i') }
+    if (destinationTokenId) {
+      query.destinationTokenId = { $regex: new RegExp(destinationTokenId, 'i') }
     }
 
     if (status) {

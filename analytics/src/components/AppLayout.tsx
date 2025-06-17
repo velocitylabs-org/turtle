@@ -8,7 +8,6 @@ import { useLoadingBar } from 'react-top-loading-bar'
 import NavigationMenu from '@/components/NavigationMenu'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
-import { loadingBarOpt } from '@/constants'
 import { routes, RouteItem } from '@/constants/routes'
 import useIsMobile from '@/hooks/useMobile'
 
@@ -19,7 +18,7 @@ interface DashboardLayoutProps {
 }
 
 export default function AppLayout({ children }: DashboardLayoutProps) {
-  const { start } = useLoadingBar(loadingBarOpt)
+  const { start } = useLoadingBar()
   const pathname = usePathname()
   const isMobile = useIsMobile()
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile)
