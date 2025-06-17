@@ -61,6 +61,8 @@ const useFees = (
 
   const { setCanPayFees, setCanPayAdditionalFeesGlobally, setParams } = use(FeeContext)
 
+  // Setting parameters for the provider – most likely should be moved at a higher level
+  // but for the sake of simplicity, we'll keep it here for now
   useEffect(() => {
     if (sourceChain && destinationChain && token) {
       setParams({ sourceChain, destinationChain, token })
