@@ -49,7 +49,17 @@ export default function TxSummary({
 }: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
-  const { canPayFees, canPayAdditionalFees } = use(FeeContext)
+
+  const {
+    loading: feeContextLoading,
+    sourceChainfee,
+    bridgingFee: feeContextBridgingFee,
+    canPayFees,
+    canPayAdditionalFees,
+  } = use(FeeContext)
+  console.log('loadingFromContext', feeContextLoading)
+  console.log('sourceChainfee', sourceChainfee)
+  console.log('feeContextBridgingFee', feeContextBridgingFee)
 
   if (!loading && !fees && !bridgingFee) return null
 
