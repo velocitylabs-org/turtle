@@ -1,4 +1,4 @@
-import { getExchangeAssets, getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
+import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
 import {
   Chain,
   Token,
