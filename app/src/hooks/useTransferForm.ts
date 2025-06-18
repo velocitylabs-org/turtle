@@ -8,10 +8,11 @@ import {
   TokenAmount,
 } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { use, useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
 import { config } from '@/config'
+import { FeeContext } from '@/context/fee'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
 import { useOutputAmount } from '@/hooks/useOutputAmount'
@@ -46,6 +47,7 @@ const useTransferForm = () => {
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
   const { addNotification } = useNotification()
+  const { setParams } = use(FeeContext)
 
   const {
     control,
@@ -459,6 +461,35 @@ const useTransferForm = () => {
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, setValue])
+
+  // Setting parameters for the provider
+  const feeParams = useMemo(() => {
+    if (sourceChain && destinationChain && sourceToken) {
+      return {
+        sourceChain,
+        destinationChain,
+        token: sourceToken,
+        sender: sourceWallet?.sender?.address,
+        recipient: getRecipientAddress(manualRecipient, destinationWallet),
+        amount: sourceAmount,
+      }
+    }
+    return null
+  }, [
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    sourceWallet?.sender?.address,
+    manualRecipient,
+    destinationWallet,
+    sourceAmount,
+  ])
+
+  useEffect(() => {
+    if (feeParams) {
+      setParams(feeParams)
+    }
+  }, [feeParams, setParams])
 
   return {
     control,
