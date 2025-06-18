@@ -1,12 +1,12 @@
 import { TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { use } from 'react'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
-import { FeeContext } from '@/context/fee'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
+import { useFeeStore } from '@/store/feeStore'
+import { useShallow } from 'zustand/react/shallow'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import { spinnerSize } from './Button'
@@ -49,7 +49,9 @@ export default function TxSummary({
 }: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
-  const { canPayFees, canPayAdditionalFees } = use(FeeContext)
+  const { canPayFees, canPayAdditionalFees } = useFeeStore(
+    useShallow((state) => ({ canPayFees: state.canPayFees, canPayAdditionalFees: state.canPayAdditionalFees }))
+  )
 
   if (!loading && !fees && !bridgingFee) return null
 
