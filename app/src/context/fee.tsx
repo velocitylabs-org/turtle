@@ -11,6 +11,9 @@ import { getPlaceholderAddress } from '@/utils/address'
 import { getNativeToken, isChainSupportingToken } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { safeConvertAmount, toHuman } from '@/utils/transfer'
+import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
+import { Direction, resolveDirection } from '@/services/transfer'
+import { getFeeEstimate } from '@/utils/snowbridge'
 
 type BaseFeeParams = {
   sourceChain: Chain
@@ -30,16 +33,16 @@ export const FeeContext = createContext<{
   bridgingFee: AmountInfo | null
   canPayFees: boolean
   canPayAdditionalFees: boolean
-  setCanPayAdditionalFeesGlobally: (canPayAdditionalFees: boolean) => void
   setParams: (params: BaseFeeParams & OptionalFeeParams) => void
+  refetch: () => void
   loading: boolean
 }>({
   sourceChainfee: null,
   bridgingFee: null,
   canPayFees: false,
   canPayAdditionalFees: false,
-  setCanPayAdditionalFeesGlobally: () => {},
   setParams: () => {},
+  refetch: () => {},
   loading: false,
 })
 
@@ -51,6 +54,8 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   const [canPayFees, setCanPayFees] = useState(false)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState(false)
 
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
+    useSnowbridgeContext()
   const setParams = useCallback((newParams: BaseFeeParams & OptionalFeeParams) => {
     _setParams(prev => {
       const isSame =
@@ -63,6 +68,13 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
     })
   }, [])
 
+  const { balance: feeBalance } = useBalance({
+    env: Environment.Mainnet,
+    chain: params?.sourceChain,
+    token: params?.sourceChain ? getNativeToken(params.sourceChain) : undefined,
+    address: params?.sender,
+  })
+
   const { balance: dotBalance } = useBalance({
     env: Environment.Mainnet,
     chain: params?.sourceChain,
@@ -74,74 +86,133 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   })
 
   const calculateXcmFees = useCallback(async () => {
-    try {
-      if (!params) return
+    if (!params) return
 
-      setLoading(true)
+    setLoading(true)
 
-      const feesPayload = await builderManager.getOriginAndDestinationXcmFee({
-        from: params.sourceChain,
-        to: params.destinationChain,
-        token: params.token,
-        address:
-          params.recipient ??
-          getPlaceholderAddress(params.destinationChain.supportedAddressTypes[0]),
-        senderAddress:
-          params.sender ?? getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
-        amount: params.amount && safeConvertAmount(params.amount, params.token),
-      })
+    const feesPayload = await builderManager.getOriginAndDestinationXcmFee({
+      from: params.sourceChain,
+      to: params.destinationChain,
+      token: params.token,
+      address:
+        params.recipient ?? getPlaceholderAddress(params.destinationChain.supportedAddressTypes[0]),
+      senderAddress:
+        params.sender ?? getPlaceholderAddress(params.sourceChain.supportedAddressTypes[0]),
+      amount: params.amount && safeConvertAmount(params.amount, params.token),
+    })
 
-      if (!feesPayload) return
-      const { origin: sourceFeePayload } = feesPayload
+    if (!feesPayload) return
+    const { origin: sourceFeePayload } = feesPayload
 
-      // TODO: @Stefano, this should be the fee token, not necessarily the native token.
-      const sourceFeeToken = getNativeToken(params.sourceChain)
-      const sourcefee = sourceFeePayload.fee ?? 0n
-      const feeTokenInDollars = (await getCachedTokenPrice(sourceFeeToken))?.usd
+    // TODO: @Stefano, this should be the fee token, not necessarily the native token.
+    const sourceFeeToken = getNativeToken(params.sourceChain)
+    const sourcefee = sourceFeePayload.fee ?? 0n
+    const feeTokenInDollars = (await getCachedTokenPrice(sourceFeeToken))?.usd
 
-      setSourceChainFee({
-        amount: sourcefee,
-        token: sourceFeeToken,
-        inDollars: feeTokenInDollars ? toHuman(sourcefee, sourceFeeToken) * feeTokenInDollars : 0,
-      })
+    setSourceChainFee({
+      amount: sourcefee,
+      token: sourceFeeToken,
+      inDollars: feeTokenInDollars ? toHuman(sourcefee, sourceFeeToken) * feeTokenInDollars : 0,
+    })
 
-      const isSufficientFee = (xcmfee: TXcmFeeDetail, source: 'origin' | 'destination') => {
-        // We consider DryRun as a sufficient.
-        if (!params.sender || !params.amount || xcmfee.feeType !== 'paymentInfo') return true
+    const isSufficientFee = (xcmfee: TXcmFeeDetail, source: 'origin' | 'destination') => {
+      // We consider DryRun as a sufficient.
+      if (!params.sender || !params.amount || xcmfee.feeType !== 'paymentInfo') return true
 
-        if ('sufficient' in xcmfee && xcmfee.sufficient === undefined && source === 'destination') {
-          // TODO: Later when we implement the dest fees
-          // Notify user to about a potential token change between destination native token to the sent token.
-          // setNotifyFeesMayChange or setVerifyDestFeesBalance
-        }
-        // We consider PaymentInfo true and undefined as a sufficient.
-        return xcmfee.sufficient !== false
+      if ('sufficient' in xcmfee && xcmfee.sufficient === undefined && source === 'destination') {
+        // TODO: Later when we implement the dest fees
+        // Notify user to about a potential token change between destination native token to the sent token.
+        // setNotifyFeesMayChange or setVerifyDestFeesBalance
       }
+      // We consider PaymentInfo true and undefined as a sufficient.
+      return xcmfee.sufficient !== false
+    }
 
-      setCanPayFees(isSufficientFee(sourceFeePayload, 'origin'))
+    setCanPayFees(isSufficientFee(sourceFeePayload, 'origin'))
 
-      // The bridging fee when sending to Ethereum is paid in DOT
-      if (params.destinationChain.network === 'Ethereum') {
-        const bridgeFeeToken = PolkadotTokens.DOT
-        const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
-        const bridgeFee = await getCachedBridgingFee()
+    // The bridging fee when sending to Ethereum is paid in DOT
+    if (params.destinationChain.network === 'Ethereum') {
+      const bridgeFeeToken = PolkadotTokens.DOT
+      const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
+      const bridgeFee = await getCachedBridgingFee()
 
-        setBridgingFee({
-          amount: bridgeFee,
-          token: bridgeFeeToken,
-          inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
-        })
+      setBridgingFee({
+        amount: bridgeFee,
+        token: bridgeFeeToken,
+        inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+      })
 
-        // if the bridging fee is the same as the execution fee, sum them both before checking the user can pay for it all.
-        const toPay =
-          sourceChainfee?.token === bridgeFeeToken
-            ? BigInt(sourceChainfee.amount) + bridgeFee
-            : bridgeFee
+      // if the bridging fee is the same as the execution fee, sum them both before checking the user can pay for it all.
+      const toPay =
+        sourceChainfee?.token === bridgeFeeToken
+          ? BigInt(sourceChainfee.amount) + bridgeFee
+          : bridgeFee
 
-        // if the dotBalance is not available, we act as if it's ok. This prevents a delay
-        // in the UI showing the error label for insufficient fee balance, which is particularly
-        // noticable when switching chains.
-        setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
+      // if the dotBalance is not available, we act as if it's ok. This prevents a delay
+      // in the UI showing the error label for insufficient fee balance, which is particularly
+      // noticable when switching chains.
+      setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
+    }
+  }, [params])
+
+  const calculateSnowbridgeFees = useCallback(async () => {
+    if (!params || !params.sender || !params.amount || !params.recipient) return
+
+    setLoading(true)
+
+    const direction = resolveDirection(params.sourceChain, params.destinationChain)
+    if (
+      (direction === Direction.ToEthereum || direction === Direction.ToPolkadot) &&
+      isSnowbridgeContextLoading
+    ) {
+      setSourceChainFee(null)
+      setBridgingFee(null)
+      return
+    }
+
+    if (!snowbridgeContext || snowbridgeContextError)
+      throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
+
+    const fee = await getFeeEstimate(
+      params.token,
+      params.sourceChain,
+      params.destinationChain,
+      direction,
+      snowbridgeContext,
+      params.sender,
+      params.recipient,
+      params.amount,
+    )
+    if (!fee) {
+      setSourceChainFee(null)
+      setBridgingFee(null)
+      return
+    }
+
+    switch (fee.origin) {
+      case 'Ethereum': {
+        setSourceChainFee(fee.execution)
+        setBridgingFee(fee.bridging)
+
+        const totalCost = BigInt(fee.execution?.amount ?? 0n) + BigInt(fee.bridging.amount)
+        setCanPayAdditionalFees(totalCost < BigInt(feeBalance?.value ?? 0n))
+        break
+      }
+      case 'Polkadot': {
+        setSourceChainFee(fee.fee)
+        break
+      }
+    }
+  }, [params])
+
+  const fetchFees = useCallback(() => {
+    try {
+      if (params?.sourceChain && params?.destinationChain && params?.token) {
+        const sdk = resolveSdk(params.sourceChain, params.destinationChain)
+        if (!sdk) throw new Error('Route not supported')
+        if (sdk === 'ParaSpellApi') calculateXcmFees() // verify isSwap false
+        if (sdk === 'SnowbridgeApi') calculateSnowbridgeFees()
+        // if (sdk === 'ParaSpellApi') calculateXcmSWAPFees() // isSwap true
       }
     } catch (error) {
       setSourceChainFee(null)
@@ -151,17 +222,11 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setLoading(false)
     }
-  }, [params])
+  }, [params, calculateXcmFees, calculateSnowbridgeFees])
 
   useEffect(() => {
-    if (params?.sourceChain && params?.destinationChain && params?.token) {
-      const sdk = resolveSdk(params.sourceChain, params.destinationChain)
-      if (!sdk) throw new Error('Route not supported')
-      if (sdk === 'ParaSpellApi') calculateXcmFees() // isSwap false
-      // if (sdk === 'ParaSpellApi') calculateXcmSWAPFees() // isSwap true
-      // if (sdk === 'Snowbridge') calculateETHFees()
-    }
-  }, [params])
+    fetchFees()
+  }, [fetchFees])
 
   return (
     <FeeContext.Provider
@@ -171,7 +236,7 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
         bridgingFee,
         canPayFees,
         canPayAdditionalFees,
-        setCanPayAdditionalFeesGlobally: setCanPayAdditionalFees,
+        refetch: fetchFees,
         setParams,
       }}
     >
