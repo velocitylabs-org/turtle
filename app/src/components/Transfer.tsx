@@ -113,7 +113,6 @@ export default function Transfer() {
     destinationWallet,
     fees,
     bridgingFee,
-    refetchFees,
     loadingFees,
     transferStatus,
     environment,
@@ -140,7 +139,6 @@ export default function Transfer() {
     network: sourceChain?.network,
     tokenAmount: sourceTokenAmount,
     owner: sourceWallet?.sender?.address,
-    refetchFees,
   })
 
   const {

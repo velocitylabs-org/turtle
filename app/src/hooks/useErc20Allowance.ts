@@ -3,27 +3,29 @@ import { Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
 import { Network, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { Signer } from 'ethers'
-import { useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { convertAmount, toHuman } from '../utils/transfer'
 import useNotification from './useNotification'
+import { FeeContext } from '@/context/fee'
 
 interface Params {
   context?: Context
   network?: Network
   tokenAmount: TokenAmount | null
   owner?: string
-  refetchFees: () => Promise<void>
 }
 
 /**
  * Hook to fetch the ERC20 token spend allowance for a given token and owner account.
  */
-const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }: Params) => {
+const useErc20Allowance = ({ network, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const [allowance, setAllowance] = useState<number | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   const [approving, setApproving] = useState<boolean>(false)
+
+  const { refetch: refetchFees } = use(FeeContext)
 
   const fetchAllowance = useCallback(async () => {
     if (
