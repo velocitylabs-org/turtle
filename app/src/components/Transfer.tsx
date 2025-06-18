@@ -11,7 +11,6 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
-
 import { resolveDirection } from '@/services/transfer'
 import {
   getAllowedDestinationChains,
@@ -21,7 +20,6 @@ import {
 } from '@/utils/routes'
 import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
-
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
 import GlobalBanner from './GlobalBanner'
