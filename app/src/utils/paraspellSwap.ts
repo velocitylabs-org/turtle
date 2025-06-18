@@ -153,19 +153,19 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
 }
 
 /** returns all tokens that can be traded with the given source token on the specified dex */
-export const getTradeableTokens = (dex: Dex, sourceToken: Token): Set<string> => {
+export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
   const dexPairs = getDexPairs(dex)
-  const tradeableTokens = new Set<string>()
+  const tradeableTokens = new Set<Token>()
 
   dexPairs.forEach(([token1, token2]) => {
     if (isSameToken(token1, sourceToken)) {
-      tradeableTokens.add(token2.id)
+      tradeableTokens.add(token2)
     } else if (isSameToken(token2, sourceToken)) {
-      tradeableTokens.add(token1.id)
+      tradeableTokens.add(token1)
     }
   })
 
-  return tradeableTokens
+  return Array.from(tradeableTokens)
 }
 
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
@@ -188,9 +188,13 @@ export const getSwapsDestinationChains = (
     route => route.from === sourceChain.uid,
   )
 
-  // Filter routes by dex trading pairs. A route needs to support at least one trading pair of the dex
+  // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
-    if (route.tokens.some(tokenId => tradeableTokens.has(tokenId))) {
+    if (
+      route.tokens.some(routeTokenId =>
+        tradeableTokens.some(tradeableToken => tradeableToken.id === routeTokenId),
+      )
+    ) {
       // lookup destination chain and add it to the list
       const destinationChain = REGISTRY[Environment.Mainnet].chains.find(
         chain => chain.uid === route.to,
@@ -203,7 +207,6 @@ export const getSwapsDestinationChains = (
 }
 
 /** returns all allowed destination tokens for a swap. */
-// TODO: use trading pairs once available in xcm-router sdk. Enables support for non-omnipool dexes.
 export const getSwapsDestinationTokens = (
   sourceChain: Chain | null,
   sourceToken: Token | null,
@@ -213,18 +216,21 @@ export const getSwapsDestinationTokens = (
 
   const dex = getDex(sourceChain)
   if (!dex) return []
-  const dexTokens = getDexTokens(dex)
 
-  if (!dexTokens.some(token => isSameToken(token, sourceToken))) return []
+  // Check for tradeable tokens
+  const tradeableTokens = getTradeableTokens(dex, sourceToken)
+  if (tradeableTokens.length === 0) return []
+  if (isSameChain(sourceChain, destinationChain)) return tradeableTokens
 
-  const dexTokensWithoutSourceToken = dexTokens.filter(token => !isSameToken(token, sourceToken))
-  if (isSameChain(sourceChain, destinationChain)) return dexTokensWithoutSourceToken
-
-  // if destination chain is different, filter tokens by routes
+  // Check if we can reach the destination chain
   const route = REGISTRY[Environment.Mainnet].routes.find(
     route => route.from === sourceChain.uid && route.to === destinationChain.uid,
   )
   if (!route) return []
 
-  return dexTokensWithoutSourceToken.filter(token => route.tokens.includes(token.id))
+  const tradeableAndTransferableTokens = tradeableTokens.filter(tradeableToken =>
+    route.tokens.includes(tradeableToken.id),
+  )
+
+  return tradeableAndTransferableTokens
 }
