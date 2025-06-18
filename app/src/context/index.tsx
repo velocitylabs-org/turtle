@@ -47,9 +47,9 @@ export default function ContextProvider({ children, cookies }: ContextProviderPr
 
   return (
     <WagmiProvider config={wagmiAdapter.wagmiConfig as Config} initialState={initialState}>
-      <FeeProvider>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      </FeeProvider>
+      <QueryClientProvider client={queryClient}>
+        <FeeProvider>{children}</FeeProvider>
+      </QueryClientProvider>
     </WagmiProvider>
   )
 }
