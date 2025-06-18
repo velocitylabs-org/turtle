@@ -4,10 +4,10 @@ import { assetStatusInfo } from '@snowbridge/api/dist/assets'
 import { Network, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { Signer } from 'ethers'
 import { use, useCallback, useEffect, useState } from 'react'
+import { FeeContext } from '@/context/fee'
 import { NotificationSeverity } from '@/models/notification'
 import { convertAmount, toHuman } from '../utils/transfer'
 import useNotification from './useNotification'
-import { FeeContext } from '@/context/fee'
 
 interface Params {
   context?: Context
