@@ -8,7 +8,7 @@ import {
   isAssetHub,
 } from '@velocitylabs-org/turtle-registry'
 import { SnowbridgeContext } from '@/models/snowbridge'
-import { Fee , AmountInfo } from '@/models/transfer'
+import { Fee, AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction } from '@/services/transfer'
 import { safeConvertAmount, toHuman } from './transfer'
