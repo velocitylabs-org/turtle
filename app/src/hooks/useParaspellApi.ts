@@ -296,6 +296,7 @@ const useParaspellApi = () => {
               sourceTokenUSDValue,
               destinationTokenUSDValue,
               date,
+              isSwap: true,
             })
           })
         } catch (error) {

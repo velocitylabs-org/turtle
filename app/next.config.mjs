@@ -25,7 +25,7 @@ const nextConfig = {
   },
   experimental: {
     webpackMemoryOptimizations: true,
-    optimizePackageImports: ['@heroui/theme', 'lucide-react'],
+    optimizePackageImports: ['lucide-react'],
   },
   async headers() {
     return [

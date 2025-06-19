@@ -1,6 +1,12 @@
 import { captureRequestError, init } from '@sentry/nextjs'
 
 export async function register() {
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  if (!isProduction) {
+    return
+  }
+
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     init({
       dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
