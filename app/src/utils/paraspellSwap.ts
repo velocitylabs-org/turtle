@@ -1,4 +1,4 @@
-import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
+import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
 import {
   Chain,
   Token,
@@ -108,11 +108,36 @@ export const getDex = (chain: Chain): Dex | undefined => {
   return entry?.[0] as Dex | undefined
 }
 
-/** returns all tokens supported by a dex */
-export const getDexTokens = (dex: Dex): Token[] =>
-  getExchangeAssets(dex)
-    .map(asset => (asset.multiLocation ? getTokenByMultilocation(asset.multiLocation) : undefined))
-    .filter((token): token is Token => token !== undefined)
+/** returns all tokens supported by a dex that are also supported by our registry and have at least one trading pair */
+export const getDexTokens = (dex: Dex): Token[] => {
+  const pairs = getDexPairs(dex)
+
+  const uniqueTokens = new Map(
+    pairs.flatMap(([token1, token2]) => [
+      [token1.id, token1],
+      [token2.id, token2],
+    ]),
+  )
+
+  return Array.from(uniqueTokens.values())
+}
+
+/** returns all pairs supported by a dex and supported by our registry */
+export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
+  const pairs = getExchangePairs(dex)
+  const turtlePairs = pairs
+    .map(pair => {
+      const [token1, token2] = pair
+      if (!token1.multiLocation || !token2.multiLocation) return null
+
+      const t1 = getTokenByMultilocation(token1.multiLocation)
+      const t2 = getTokenByMultilocation(token2.multiLocation)
+      if (!t1 || !t2) return null // not supported by turtle registry
+      return [t1, t2] as [Token, Token]
+    })
+    .filter((pair): pair is [Token, Token] => pair !== null)
+  return turtlePairs
+}
 
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => getSupportedDexChains()
@@ -127,6 +152,22 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   return getDexTokens(dex)
 }
 
+/** returns all tokens that can be traded with the given source token on the specified dex */
+export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
+  const dexPairs = getDexPairs(dex)
+  const tradeableTokens = new Set<Token>()
+
+  dexPairs.forEach(([token1, token2]) => {
+    if (isSameToken(token1, sourceToken)) {
+      tradeableTokens.add(token2)
+    } else if (isSameToken(token2, sourceToken)) {
+      tradeableTokens.add(token1)
+    }
+  })
+
+  return Array.from(tradeableTokens)
+}
+
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
 export const getSwapsDestinationChains = (
   sourceChain: Chain | null,
@@ -135,24 +176,25 @@ export const getSwapsDestinationChains = (
   if (!sourceChain || !sourceToken) return []
   const chains: Chain[] = []
 
-  // add dex chain itself
   const dex = getDex(sourceChain)
   if (!dex) return []
-  chains.push(sourceChain)
 
-  const dexTokens = new Set(getDexTokens(dex).map(token => token.id)) // Use Set for O(1) lookups
-  if (!dexTokens.has(sourceToken.id)) return []
+  const tradeableTokens = getTradeableTokens(dex, sourceToken)
+  if (tradeableTokens.length === 0) return []
+  chains.push(sourceChain)
 
   // get transfer routes we can reach from the source chain
   const routes = REGISTRY[Environment.Mainnet].routes.filter(
     route => route.from === sourceChain.uid,
   )
 
-  // TODO: filter routes by dex trading pairs. A route needs to support a token from the dex trading pairs together with the source token
-  // waiting for trading pairs to be available in xcm-router sdk. For now it simply checks tokens in the route.
-  // Check for routes that have at least one token supported by the dex
+  // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
-    if (route.tokens.some(tokenId => dexTokens.has(tokenId))) {
+    if (
+      route.tokens.some(routeTokenId =>
+        tradeableTokens.some(tradeableToken => tradeableToken.id === routeTokenId),
+      )
+    ) {
       // lookup destination chain and add it to the list
       const destinationChain = REGISTRY[Environment.Mainnet].chains.find(
         chain => chain.uid === route.to,
@@ -164,7 +206,6 @@ export const getSwapsDestinationChains = (
   return chains
 }
 
-// TODO: use trading pairs once available in xcm-router sdk. Enables support for non-omnipool dexes.
 /** returns all allowed destination tokens for a swap. */
 export const getSwapsDestinationTokens = (
   sourceChain: Chain | null,
@@ -175,18 +216,21 @@ export const getSwapsDestinationTokens = (
 
   const dex = getDex(sourceChain)
   if (!dex) return []
-  const dexTokens = getDexTokens(dex)
 
-  if (!dexTokens.some(token => isSameToken(token, sourceToken))) return []
+  // Check for tradeable tokens
+  const tradeableTokens = getTradeableTokens(dex, sourceToken)
+  if (tradeableTokens.length === 0) return []
+  if (isSameChain(sourceChain, destinationChain)) return tradeableTokens
 
-  const dexTokensWithoutSourceToken = dexTokens.filter(token => !isSameToken(token, sourceToken))
-  if (isSameChain(sourceChain, destinationChain)) return dexTokensWithoutSourceToken
-
-  // if destination chain is different, filter tokens by routes
+  // Check if we can reach the destination chain
   const route = REGISTRY[Environment.Mainnet].routes.find(
     route => route.from === sourceChain.uid && route.to === destinationChain.uid,
   )
   if (!route) return []
 
-  return dexTokensWithoutSourceToken.filter(token => route.tokens.includes(token.id))
+  const tradeableAndTransferableTokens = tradeableTokens.filter(tradeableToken =>
+    route.tokens.includes(tradeableToken.id),
+  )
+
+  return tradeableAndTransferableTokens
 }
