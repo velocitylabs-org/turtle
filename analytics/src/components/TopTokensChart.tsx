@@ -142,7 +142,7 @@ const CustomTooltip = ({ active, payload, total, typeVolume }: CustomTooltip) =>
       <span className="font-medium">{data.name} </span>
       {data?.value && <span>({((data.value / total) * 100).toFixed(2)}%)</span>}
       <p className="text-muted-foreground">
-        {typeVolume ? `${formatUSD(data?.value)}` : `${data?.value} transactions`}
+        {typeVolume ? `$${formatUSD(data?.value)}` : `${data?.value} transactions`}
       </p>
       {token && <p className="text-[10px]">({token.origin.type})</p>}
     </div>
