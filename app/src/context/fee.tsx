@@ -1,6 +1,7 @@
 'use client'
 
 import { TXcmFeeDetail } from '@paraspell/sdk'
+import { captureException } from '@sentry/nextjs'
 import { Chain, Environment, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
 import { createContext, useCallback, useEffect, useState } from 'react'
 import useBalance from '@/hooks/useBalance'
@@ -39,8 +40,8 @@ export const FeeContext = createContext<{
 }>({
   sourceChainfee: null,
   bridgingFee: null,
-  canPayFees: false,
-  canPayAdditionalFees: false,
+  canPayFees: true,
+  canPayAdditionalFees: true,
   setParams: () => {},
   refetch: () => {},
   loading: false,
@@ -54,8 +55,7 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   const [canPayFees, setCanPayFees] = useState(false)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState(false)
 
-  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
-    useSnowbridgeContext()
+  // Prevent infinite re-renders when the params are the same
   const setParams = useCallback((newParams: BaseFeeParams & OptionalFeeParams) => {
     _setParams(prev => {
       const isSame =
@@ -67,6 +67,9 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
       return newParams
     })
   }, [])
+
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
+    useSnowbridgeContext()
 
   const { balance: feeBalance } = useBalance({
     env: Environment.Mainnet,
@@ -156,7 +159,12 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   }, [params])
 
   const calculateSnowbridgeFees = useCallback(async () => {
-    if (!params || !params.sender || !params.amount || !params.recipient) return
+    if (!params || !params.sender || !params.amount || !params.recipient) {
+      setLoading(false)
+      setSourceChainFee(null)
+      setBridgingFee(null)
+      return
+    }
 
     setLoading(true)
 
@@ -205,19 +213,25 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [params])
 
-  const fetchFees = useCallback(() => {
+  const fetchFees = useCallback(async () => {
     try {
+      if (!params?.sourceChain || !params?.destinationChain || !params?.token) {
+        setSourceChainFee(null)
+        setBridgingFee(null)
+        return
+      }
+
       if (params?.sourceChain && params?.destinationChain && params?.token) {
         const sdk = resolveSdk(params.sourceChain, params.destinationChain)
         if (!sdk) throw new Error('Route not supported')
-        if (sdk === 'ParaSpellApi') calculateXcmFees() // verify isSwap false
-        if (sdk === 'SnowbridgeApi') calculateSnowbridgeFees()
+        if (sdk === 'ParaSpellApi') await calculateXcmFees() // verify isSwap false
+        if (sdk === 'SnowbridgeApi') await calculateSnowbridgeFees()
         // if (sdk === 'ParaSpellApi') calculateXcmSWAPFees() // isSwap true
       }
     } catch (error) {
       setSourceChainFee(null)
       setBridgingFee(null)
-      // captureException(error)
+      captureException(error)
       console.error('Fee context error', error)
     } finally {
       setLoading(false)
@@ -236,7 +250,7 @@ export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
         bridgingFee,
         canPayFees,
         canPayAdditionalFees,
-        refetch: fetchFees,
+        refetch: () => fetchFees(),
         setParams,
       }}
     >

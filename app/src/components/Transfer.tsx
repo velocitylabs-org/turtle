@@ -111,9 +111,6 @@ export default function Transfer() {
     manualRecipient,
     sourceWallet,
     destinationWallet,
-    fees,
-    bridgingFee,
-    loadingFees,
     transferStatus,
     environment,
     sourceTokenAmountError,
@@ -127,7 +124,13 @@ export default function Transfer() {
     applyTransferableBalance,
   } = useTransferForm()
 
-  const { canPayFees, canPayAdditionalFees } = use(FeeContext)
+  const {
+    sourceChainfee,
+    bridgingFee,
+    loading: loadingFees,
+    canPayFees,
+    canPayAdditionalFees,
+  } = use(FeeContext)
 
   const {
     allowance: erc20SpendAllowance,
@@ -202,7 +205,7 @@ export default function Transfer() {
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    fees &&
+    sourceChainfee &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
@@ -267,13 +270,14 @@ export default function Transfer() {
   const sourceTokenAmountErrorMessage = useMemo(() => {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
     if (sourceTokenAmountError) return sourceTokenAmountError
-    if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
+    if (exceedsTransferableBalance)
+      return `We need some of that ${sourceChainfee?.token?.symbol} to pay fees`
     return undefined
   }, [
     errors.sourceTokenAmount?.amount?.message,
     sourceTokenAmountError,
     exceedsTransferableBalance,
-    fees,
+    sourceChainfee,
   ])
 
   return (
@@ -490,10 +494,7 @@ export default function Transfer() {
 
         {shouldDisplayTxSummary && (
           <TxSummary
-            loading={loadingFees}
             tokenAmount={sourceTokenAmount}
-            fees={fees}
-            bridgingFee={bridgingFee}
             durationEstimate={durationEstimate}
             direction={direction}
             className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
