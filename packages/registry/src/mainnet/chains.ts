@@ -79,7 +79,7 @@ export const Hydration: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-hydradx.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-hydration.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Phala: Chain = {
