@@ -7,6 +7,7 @@ import {
   REGISTRY,
   getTokenByMultilocation,
   isSameToken,
+  AssetHub,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
@@ -18,6 +19,7 @@ import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
 /** contains all supported paraspell dexes mapped to the chain they run on */
 export const DEX_TO_CHAIN_MAP = {
   HydrationDex: Hydration,
+  AssetHubPolkadotDex: AssetHub,
   // AcalaDex: Acala,
   // InterlayDex: Interlay,
   // BifrostPolkadotDex: Bifrost,
@@ -49,10 +51,12 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
   const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
   const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
+  const dex = getDex(sourceChain)
+
   const routerPlan = await RouterBuilder()
     .from(sourceChainFromId)
     .to(destinationChainFromId)
-    .exchange('HydrationDex') // only Hydration is supported for now
+    .exchange(dex)
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
     .amount(sourceAmount)
@@ -84,10 +88,12 @@ export const getExchangeOutputAmount = async (
   const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
   const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
 
+  const dex = getDex(sourceChain)
+
   const amountOut = await RouterBuilder()
     .from(sourceChainFromId)
     .to(destinationChainFromId)
-    .exchange('HydrationDex') // TODO: hardcoded for now as it's the only dex supported.
+    .exchange(dex)
     .currencyFrom(currencyIdFrom)
     .currencyTo(currencyTo)
     .amount(amount)
@@ -176,12 +182,12 @@ export const getSwapsDestinationChains = (
   if (!sourceChain || !sourceToken) return []
   const chains: Chain[] = []
 
-  // add dex chain itself
   const dex = getDex(sourceChain)
   if (!dex) return []
-  chains.push(sourceChain)
 
   const tradeableTokens = getTradeableTokens(dex, sourceToken)
+  if (tradeableTokens.length === 0) return []
+  chains.push(sourceChain)
 
   // get transfer routes we can reach from the source chain
   const routes = REGISTRY[Environment.Mainnet].routes.filter(
