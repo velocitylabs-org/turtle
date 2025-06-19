@@ -5,6 +5,7 @@ import { subscribeWithSelector } from 'zustand/middleware'
 
 interface FeesStore {
   fees: TXcmFeeDetail
+  feesInDollars: number
   canPayFees: boolean
   canPayAdditionalFees: boolean
   sourceChainFee: Pick<AmountInfo, 'amount' | 'inDollars'> | null
@@ -12,15 +13,16 @@ interface FeesStore {
   loading: boolean
   setIsLoading: (loading: boolean) => void
   setFees: (fees: TXcmFeeDetail) => void
+  setFeesInDollars: (feesInDollars: number) => void
   setCanPayFees: (canPayFees: boolean) => void
   setCanPayAdditionalFees: (canPayAdditionalFees: boolean) => void
-  setSourceChainFee: (sourceChainfee: Pick<AmountInfo, 'amount' | 'inDollars'>) => void
   setBridgingFee: (bridgingFee: AmountInfo) => void
 }
 
 export const useFeesStore = create(
   subscribeWithSelector<FeesStore>(set => ({
     fees: {} as TXcmFeeDetail,
+    feesInDollars: 0,
     canPayFees: false,
     canPayAdditionalFees: false,
     sourceChainFee: null,
@@ -28,10 +30,9 @@ export const useFeesStore = create(
     loading: false,
     setIsLoading: (loading: boolean) => set({ loading }),
     setFees: (fees: TXcmFeeDetail) => set({ fees }),
+    setFeesInDollars: (feesInDollars: number) => set({ feesInDollars }),
     setCanPayFees: (canPayFees: boolean) => set({ canPayFees }),
     setCanPayAdditionalFees: (canPayAdditionalFees: boolean) => set({ canPayAdditionalFees }),
-    setSourceChainFee: (sourceChainFee: Pick<AmountInfo, 'amount' | 'inDollars'>) =>
-      set({ sourceChainFee }),
     setBridgingFee: (bridgingFee: AmountInfo) => set({ bridgingFee }),
   })),
 )

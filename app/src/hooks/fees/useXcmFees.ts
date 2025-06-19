@@ -29,12 +29,12 @@ const XcmFees = () => {
     })),
   )
 
-  const { setSourceChainFee, setIsLoading, setFees, setCanPayFees } = useFeesStore(
+  const { setIsLoading, setFees, setCanPayFees, setFeesInDollars } = useFeesStore(
     useShallow(state => ({
-      setSourceChainFee: state.setSourceChainFee,
       setCanPayFees: state.setCanPayFees,
       setIsLoading: state.setIsLoading,
       setFees: state.setFees,
+      setFeesInDollars: state.setFeesInDollars,
     })),
   )
 
@@ -51,24 +51,12 @@ const XcmFees = () => {
       // this shouldn't be happen here
       const feeTokenInDollars = (await getCachedTokenPrice(sourceFeeToken))?.usd
 
-      setSourceChainFee({
-        // this could easily be retrived from the store itself, without having to pass it here
-        amount: sourcefee,
-        // we already have the token in the store, I don't see the point of passing it here again
-        // it's just more confusing
-        // token: sourceFeeToken,
+      const feesInDollars = feeTokenInDollars
+        ? toHuman(sourcefee, sourceFeeToken) * feeTokenInDollars
+        : 0
 
-        // this we can calculate in place where we need it, in TxSummary
-        inDollars: feeTokenInDollars ? toHuman(sourcefee, sourceFeeToken) * feeTokenInDollars : 0,
-      })
-
-      let isSufficientFee = !!fees.sufficient
-
-      if (fees.feeType === 'paymentInfo' && sourceWallet?.sender?.address && sourceToken?.amount) {
-        isSufficientFee = true
-      }
-
-      setCanPayFees(isSufficientFee)
+      setFeesInDollars(feesInDollars)
+      setCanPayFees(!!fees.sufficient)
     },
   )
 

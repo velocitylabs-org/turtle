@@ -1,3 +1,5 @@
+'use client'
+
 import { Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -48,23 +50,23 @@ export default function TxSummary({
     })),
   )
 
-  const { loading, fees, sourceChainFee, bridgingFee, canPayFees, canPayAdditionalFees } =
+  const { loading, fees, feesInDollars, bridgingFee, canPayFees, canPayAdditionalFees } =
     useFeesStore(
       useShallow(state => ({
         fees: state.fees,
         loading: state.loading,
-        sourceChainFee: state.sourceChainFee,
         bridgingFee: state.bridgingFee,
         canPayFees: state.canPayFees,
         canPayAdditionalFees: state.canPayAdditionalFees,
+        feesInDollars: state.feesInDollars,
       })),
     )
 
-  if (!loading && !sourceChainFee && !bridgingFee && !sourceToken) return null
+  if (!loading && !fees.fee && !bridgingFee && !sourceToken) return null
 
   const transferAmount = toAmountInfo(tokenAmount, price)
   const renderContent = () => {
-    if (loading) {
+    if (loading || !fees.fee) {
       return (
         <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
@@ -86,8 +88,7 @@ export default function TxSummary({
     }
 
     const isAmountTooLow =
-      transferAmount &&
-      transferAmount.inDollars < (sourceChainFee?.inDollars ?? 0) * AMOUNT_VS_FEE_RATIO
+      transferAmount && transferAmount.inDollars < feesInDollars * AMOUNT_VS_FEE_RATIO
 
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
@@ -113,7 +114,7 @@ export default function TxSummary({
           </div>
           <ul>
             {/* Execution fees */}
-            {sourceChainFee && (
+            {fees.fee && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="pt-[3px] text-sm font-bold">
@@ -158,9 +159,9 @@ export default function TxSummary({
                       {sourceToken?.token?.symbol}
                     </div>
 
-                    {sourceChainFee.inDollars > 0 && (
+                    {feesInDollars > 0 && (
                       <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(sourceChainFee.inDollars)}
+                        ${formatAmount(feesInDollars)}
                       </div>
                     )}
                   </div>

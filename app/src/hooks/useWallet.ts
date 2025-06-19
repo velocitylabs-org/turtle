@@ -7,6 +7,7 @@ export interface WalletInfo {
   sender?: Sender
   disconnect: () => void
   isConnected: boolean
+  // why is there modal thingies in the wallet info?
   openModal: () => void
   closeModal: () => void
 }
