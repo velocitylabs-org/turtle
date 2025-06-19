@@ -8,11 +8,11 @@ import {
   TokenAmount,
 } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { use, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
+import { useShallow } from 'zustand/react/shallow'
 import { config } from '@/config'
-import { FeeContext } from '@/context/fee'
 import useBalance from '@/hooks/useBalance'
 import useEnvironment from '@/hooks/useEnvironment'
 import { useOutputAmount } from '@/hooks/useOutputAmount'
@@ -21,6 +21,7 @@ import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import builderManager from '@/services/builder'
+import { useFeesStore } from '@/store/fees'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
@@ -46,7 +47,12 @@ const useTransferForm = () => {
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
   const { addNotification } = useNotification()
-  const { setParams, sourceChainfee, bridgingFee } = use(FeeContext)
+  const { sourceChainFee, bridgingFee } = useFeesStore(
+    useShallow(state => ({
+      sourceChainFee: state.sourceChainFee,
+      bridgingFee: state.bridgingFee,
+    })),
+  )
 
   const {
     control,
@@ -98,7 +104,7 @@ const useTransferForm = () => {
       sourceAmount && sourceToken
         ? safeConvertAmount(sourceAmount, sourceToken)?.toString()
         : undefined,
-    fees: sourceChainfee,
+    fees: sourceChainFee,
   })
 
   // Update destination amount when output amount changes
@@ -302,7 +308,7 @@ const useTransferForm = () => {
         !sourceTokenAmount?.token ||
         !destinationTokenAmount?.token ||
         !sourceAmount ||
-        !sourceChainfee
+        !sourceChainFee
       )
         return
 
@@ -316,7 +322,7 @@ const useTransferForm = () => {
         sourceAmount: sourceAmount,
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
-        fees: sourceChainfee,
+        fees: sourceChainFee,
         bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success
@@ -337,7 +343,7 @@ const useTransferForm = () => {
     },
     [
       destinationWallet,
-      sourceChainfee,
+      sourceChainFee,
       bridgingFee,
       reset,
       sourceWallet?.sender,
@@ -371,7 +377,7 @@ const useTransferForm = () => {
   // Unlike canPayFees and canPayAdditionalFees, which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
   // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
   const exceedsTransferableBalance = useMemo(() => {
-    const hasFees = Boolean(sourceChainfee?.token?.id && sourceChainfee?.amount)
+    const hasFees = Boolean(sourceChainFee?.token?.id && sourceChainFee?.amount)
     const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
     const hasBalance = Boolean(balanceData?.formatted)
     const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
@@ -383,8 +389,8 @@ const useTransferForm = () => {
     let totalFeesAmount = 0
 
     // We have regular fees in the same token as the transfer
-    if (hasFees && sourceChainfee!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(sourceChainfee!.amount, sourceChainfee!.token)
+    if (hasFees && sourceChainFee!.token!.id === transferToken) {
+      totalFeesAmount += toHuman(sourceChainFee!.amount, sourceChainFee!.token)
     }
     // We have bridging fees in the same token as the transfer, This applies whether we have regular fees
     if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
@@ -395,18 +401,18 @@ const useTransferForm = () => {
 
     // Check if the transfer amount plus all applicable fees exceeds the available balance
     return transferAmount + totalFeesAmount > balanceAmount
-  }, [sourceChainfee, bridgingFee, balanceData, sourceTokenAmount])
+  }, [sourceChainFee, bridgingFee, balanceData, sourceTokenAmount])
 
   const applyTransferableBalance = useCallback(() => {
     if (exceedsTransferableBalance && sourceTokenAmount?.token) {
       const transferToken = sourceTokenAmount.token.id
-      const hasFees = Boolean(sourceChainfee?.token?.id && sourceChainfee?.amount)
+      const hasFees = Boolean(sourceChainFee?.token?.id && sourceChainFee?.amount)
       const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
       let totalFeesAmount = 0
 
       // We have regular fees in the same token as the transfer
-      if (hasFees && sourceChainfee!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(sourceChainfee!.amount, sourceChainfee!.token)
+      if (hasFees && sourceChainFee!.token!.id === transferToken) {
+        totalFeesAmount += toHuman(sourceChainFee!.amount, sourceChainFee!.token)
       }
       // We have bridging fees in the same token as the transfer
       if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
@@ -431,7 +437,7 @@ const useTransferForm = () => {
     exceedsTransferableBalance,
     sourceTokenAmount?.token,
     bridgingFee,
-    sourceChainfee,
+    sourceChainFee,
     balanceData,
     setValue,
   ])
@@ -446,35 +452,6 @@ const useTransferForm = () => {
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, setValue])
-
-  // Setting parameters for the provider
-  const feeParams = useMemo(() => {
-    if (sourceChain && destinationChain && sourceToken) {
-      return {
-        sourceChain,
-        destinationChain,
-        token: sourceToken,
-        sender: sourceWallet?.sender?.address,
-        recipient: getRecipientAddress(manualRecipient, destinationWallet),
-        amount: sourceAmount,
-      }
-    }
-    return null
-  }, [
-    sourceChain,
-    destinationChain,
-    sourceToken,
-    sourceWallet?.sender?.address,
-    manualRecipient,
-    destinationWallet,
-    sourceAmount,
-  ])
-
-  useEffect(() => {
-    if (feeParams) {
-      setParams(feeParams)
-    }
-  }, [feeParams, setParams])
 
   return {
     control,

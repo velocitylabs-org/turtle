@@ -4,9 +4,9 @@ import { cn } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { use, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Controller } from 'react-hook-form'
-import { FeeContext } from '@/context/fee'
+import { useShallow } from 'zustand/react/shallow'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
@@ -14,6 +14,7 @@ import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 
 import { resolveDirection } from '@/services/transfer'
+import { useFeesStore } from '@/store/fees'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
@@ -125,12 +126,20 @@ export default function Transfer() {
   } = useTransferForm()
 
   const {
-    sourceChainfee,
+    sourceChainFee,
     bridgingFee,
     loading: loadingFees,
     canPayFees,
     canPayAdditionalFees,
-  } = use(FeeContext)
+  } = useFeesStore(
+    useShallow(state => ({
+      sourceChainFee: state.sourceChainFee,
+      bridgingFee: state.bridgingFee,
+      loading: state.loading,
+      canPayFees: state.canPayFees,
+      canPayAdditionalFees: state.canPayAdditionalFees,
+    })),
+  )
 
   const {
     allowance: erc20SpendAllowance,
@@ -205,7 +214,7 @@ export default function Transfer() {
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    sourceChainfee &&
+    sourceChainFee &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
@@ -271,13 +280,13 @@ export default function Transfer() {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (exceedsTransferableBalance)
-      return `We need some of that ${sourceChainfee?.token?.symbol} to pay fees`
+      return `We need some of that ${sourceChainFee?.token?.symbol} to pay fees`
     return undefined
   }, [
     errors.sourceTokenAmount?.amount?.message,
     sourceTokenAmountError,
     exceedsTransferableBalance,
-    sourceChainfee,
+    sourceChainFee,
   ])
 
   return (
@@ -295,7 +304,7 @@ export default function Transfer() {
       />
       <form
         onSubmit={handleSubmit}
-        className="z-20 flex w-[100vw] max-w-[90vw] flex-col gap-1 rounded-3xl border-1 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+        className="border-1 z-20 flex w-[100vw] max-w-[90vw] flex-col gap-1 rounded-3xl border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
       >
         <div className="flex flex-col gap-5">
           <Controller

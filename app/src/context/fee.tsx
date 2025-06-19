@@ -1,15 +1,18 @@
 'use client'
 
 import { TXcmFeeDetail } from '@paraspell/sdk'
+
 import { captureException } from '@sentry/nextjs'
 import { Chain, Environment, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
 import { createContext, useCallback, useEffect, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import useBalance from '@/hooks/useBalance'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import { AmountInfo } from '@/models/transfer'
 import { getCachedBridgingFee, getCachedTokenPrice } from '@/services/balance'
 import builderManager from '@/services/builder'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { FeesStore, useFeesStore } from '@/store/fees'
 import { getPlaceholderAddress } from '@/utils/address'
 import { getNativeToken, isChainSupportingToken } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
@@ -49,24 +52,15 @@ export const FeeContext = createContext<{
 
 export const FeeProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false)
-  const [params, _setParams] = useState<BaseFeeParams & OptionalFeeParams>()
+  const [params, setParams] = useState<BaseFeeParams & OptionalFeeParams>()
   const [sourceChainfee, setSourceChainFee] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState(false)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState(false)
 
-  // Prevent infinite re-renders when the params are the same
-  const setParams = useCallback((newParams: BaseFeeParams & OptionalFeeParams) => {
-    _setParams(prev => {
-      const isSame =
-        prev &&
-        Object.keys(newParams).every(
-          key => prev[key as keyof typeof prev] === newParams[key as keyof typeof newParams],
-        )
-      if (isSame) return prev
-      return newParams
-    })
-  }, [])
+  const { fees, setFees } = useFeesStore<FeesStore>(
+    useShallow(state => ({ fees: state.fees, setFees: state.setFees })),
+  )
 
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
     useSnowbridgeContext()
