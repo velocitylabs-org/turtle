@@ -59,7 +59,7 @@ export default Home
 >
 > 2. **Update your `vite.config.ts` to include the plugin**
 >
-> ```tsx
+> ```typescript
 > import { defineConfig } from 'vite'
 > import react from '@vitejs/plugin-react'
 > import wasm from 'vite-plugin-wasm'
@@ -69,7 +69,26 @@ export default Home
 > })
 > ```
 >
-> Optional; You may also need to set your `target` in `tsconfig.json` or `vite.config.ts` to `esnext`, to allow top-level await and modern JS features.
+> 3. **Optional: Build Configuration**
+>
+> If you encounter build errors, make sure your `vite.config.ts` includes the following build configuration to support modern JS features, WASM and allow top-level await:
+>
+> ```typescript
+> export default defineConfig({
+>   plugins: [wasm(), react()],
+>   ...
+>   build: {
+>     target: "esnext",
+>     rollupOptions: {
+>       output: {
+>         format: "es",
+>       },
+>     },
+>   }
+> })
+> ```
+>
+> You may also need to set your `target` in `tsconfig.json`
 
 ### Next.js (With SSR Handling)
 

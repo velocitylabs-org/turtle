@@ -21,7 +21,7 @@ export const Icon = ({ width, height, src, className }: IconProps) => {
 
   return (
     <div
-      className={cn('rounded-full border-1 bg-cover bg-center', className)}
+      className={cn('rounded-full border bg-cover bg-center', className)}
       style={{ backgroundImage, width: `${width}px`, height: `${height}px` }}
     />
   )

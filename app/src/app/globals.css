@@ -114,7 +114,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
     letter-spacing: var(--letter-spacing-default);
 
     -webkit-font-smoothing: antialiased;

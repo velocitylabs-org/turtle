@@ -36,7 +36,7 @@ export default function OngoingTransfers({
           <div className="xl-letter-spacing self-center text-center text-3xl text-turtle-foreground">
             Ongoing
           </div>
-          <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border-1 border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
+          <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => {
               const transfer = {
                 ...tx,

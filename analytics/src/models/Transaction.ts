@@ -15,7 +15,7 @@ export interface TransactionModel {
   sourceTokenSymbol: string
   sourceTokenAmount: number // Amount of tokens sent from a source chain
   sourceTokenAmountUsd: number // Transaction amount converted to USD at the time of transaction
-  sourceTokenUSDValue?: number // USD value per token at transaction time
+  sourceTokenUSDValue: number // USD value per token at transaction time
   sourceTokenAmountRaw: string // For debugging, without using to human helper
 
   destinationTokenId: string
@@ -55,6 +55,7 @@ export interface TransactionModel {
 
   txDate: Date
   hostedOn: string
+  isSwap?: boolean
   status: TxStatus
   migrated: boolean // For transactions migrated from an old analytics source
   oldFormat: boolean // For transactions migrated from an old analytics source with an old format
@@ -70,8 +71,8 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     sourceTokenName: { type: String, required: true, validate: nonEmptyString },
     sourceTokenSymbol: { type: String, required: true, validate: nonEmptyString },
     sourceTokenAmount: { type: Number, required: true }, // Amount of tokens sent from a source chain
-    sourceTokenAmountUsd: { type: Number, required: true }, // Transaction amount converted to USD at the time of transaction
-    sourceTokenUSDValue: { type: Number }, // USD value per token at transaction time
+    sourceTokenAmountUsd: { type: Number, required: true, validate: greaterThanZero }, // Transaction amount converted to USD at the time of transaction
+    sourceTokenUSDValue: { type: Number, required: true }, // USD value per token at transaction time
     sourceTokenAmountRaw: { type: String, required: true, validate: nonEmptyString }, // For debugging, without using to human helper
 
     destinationTokenId: { type: String, required: true, validate: nonEmptyString },
@@ -111,6 +112,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
 
     txDate: { type: Date, required: true },
     hostedOn: { type: String, required: true, validate: nonEmptyString },
+    isSwap: { type: Boolean, default: false }, // TODO Make this required
     status: {
       type: String,
       enum: txStatusOptions,
@@ -158,6 +160,10 @@ transactionSchema.index({ status: 1, destinationChainUid: 1, sourceTokenAmountUs
 
 function nonEmptyString(v: string) {
   return v && v.length > 0
+}
+
+function greaterThanZero(v: number) {
+  return v > 0
 }
 
 const TransactionModel =

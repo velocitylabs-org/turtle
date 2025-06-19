@@ -1,6 +1,6 @@
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
 import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
-import MultiSelect from '@/components/MultiSelect'
+import Select from '@/components/Select'
 import { chains, GraphType, primaryColor } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
 import formatUSD from '@/utils/format-USD'
@@ -269,18 +269,12 @@ export default function ChainSankeyGraph({
           style={{ left: isMobile ? '0' : '20px', top: '13px', zIndex: 10 }}
         >
           <div style={{ width: isMobile ? '145px' : '150px' }}>
-            <MultiSelect
+            <Select
               options={chainOptions}
-              selected={[selectedChain]}
-              onChange={val => {
-                if (Array.isArray(val) && val.length > 0) {
-                  setChainUid(val[0])
-                }
-              }}
+              selected={selectedChain}
+              onChange={val => setChainUid(val as string)}
               placeholder="Source chain"
-              singleSelect
-              preventEmpty
-              showBadges={false}
+              showBadge={false}
               loading={loading}
             />
           </div>

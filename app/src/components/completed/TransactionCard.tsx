@@ -71,7 +71,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                   src={(tx.sourceChain.logoURI as Record<string, string>).src}
                   alt={`${tx.sourceChain.name}`}
                   className={cn(
-                    'rounded-full border bg-background',
+                    'rounded-full border bg-turtle-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />
@@ -86,7 +86,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                   src={(tx.destChain.logoURI as Record<string, string>).src}
                   alt={`${tx.destChain.name}`}
                   className={cn(
-                    'rounded-full border bg-background',
+                    'rounded-full border bg-turtle-background',
                     transferFailed ? 'border-turtle-error' : 'border-black',
                   )}
                 />

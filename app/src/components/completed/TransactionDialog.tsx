@@ -55,7 +55,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                   src={(tx.sourceChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
-                  className={cn('rounded-full border bg-background', getBorder(tx.result))}
+                  className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}
                 />
                 <div className="text-xs sm:text-sm">{tx.sourceChain.name}</div>
               </div>
@@ -65,7 +65,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                   src={(tx.destChain.logoURI as Record<string, string>).src}
                   width={22}
                   height={22}
-                  className={cn('rounded-full border bg-background', getBorder(tx.result))}
+                  className={cn('rounded-full border bg-turtle-background', getBorder(tx.result))}
                 />
                 <div className="text-xs sm:text-sm">{tx.destChain.name}</div>
               </div>

@@ -61,6 +61,7 @@ export const routes: Route[] = [
     tokens: [
       EthereumTokens.ETH.id,
       EthereumTokens.USDC.id,
+      EthereumTokens.USDT.id,
       EthereumTokens.WBTC.id,
     ],
   },
@@ -252,7 +253,12 @@ export const routes: Route[] = [
     from: Hydration.uid,
     to: Ethereum.uid,
     sdk: "ParaSpellApi",
-    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
+    tokens: [
+      EthereumTokens.ETH.id,
+      EthereumTokens.USDC.id,
+      EthereumTokens.USDT.id,
+      EthereumTokens.WBTC.id,
+    ],
   },
 
   // Para To System

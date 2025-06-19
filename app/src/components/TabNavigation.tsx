@@ -1,7 +1,6 @@
-import { cn } from '@velocitylabs-org/turtle-ui'
+import { cn, Button } from '@velocitylabs-org/turtle-ui'
 import { Dispatch, SetStateAction } from 'react'
 import { TabOptions } from '@/models/transfer'
-import Button from './Button'
 
 interface TabNavigationProps {
   selectedTab: TabOptions

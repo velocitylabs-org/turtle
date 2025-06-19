@@ -21,7 +21,7 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
         <button
           type="button"
           className={cn(
-            'relative inline-flex h-6 w-10 cursor-pointer items-center rounded-[8px] border-1 border-turtle-level3 transition-colors duration-200 ease-in-out',
+            'relative inline-flex h-6 w-10 cursor-pointer items-center rounded-[8px] border border-turtle-level3 transition-colors duration-200 ease-in-out',
             checked ? 'bg-turtle-primary-light' : 'bg-turtle-level1',
             disabled ? 'cursor-not-allowed opacity-30' : 'cursor-pointer',
           )}
@@ -33,7 +33,7 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
         >
           <span
             className={cn(
-              'inline-block h-4 w-4 transform rounded-[4px] border-1 border-black bg-white transition duration-200 ease-in-out',
+              'inline-block h-4 w-4 transform rounded-[4px] border border-black bg-white transition duration-200 ease-in-out',
               checked ? 'translate-x-5 bg-turtle-primary' : 'translate-x-1',
             )}
           />

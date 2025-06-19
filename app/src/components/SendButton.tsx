@@ -1,7 +1,7 @@
+import { Button, ButtonProps, ButtonVariant } from '@velocitylabs-org/turtle-ui'
 import { ReactNode, useEffect, useState } from 'react'
 import { Status } from '@/hooks/useTransfer'
 import { colors } from '../../tailwind.config'
-import Button, { ButtonProps, ButtonVariant } from './Button'
 import LoadingIcon from './svg/LoadingIcon'
 
 type SendButtonProps = ButtonProps & { status: Status }

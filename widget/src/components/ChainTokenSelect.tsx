@@ -378,7 +378,7 @@ const ChainList = ({
                   alt={option.name}
                   width={24}
                   height={24}
-                  className="h-[2rem] w-[2rem] rounded-full border border-turtle-foreground bg-turtle-background"
+                  className="h-[2rem] w-[2rem] border rounded-full border-turtle-foreground bg-turtle-background"
                 />
                 <span className="text-sm">{option.name}</span>
               </div>
@@ -432,7 +432,7 @@ const TokenList = ({
                 <TokenLogo
                   token={option}
                   sourceChain={sourceChainToDetermineOriginBanner}
-                  className="border border-turtle-foreground rounded-full"
+                  className=" border-turtle-foreground rounded-full"
                 />
                 <span className="text-sm">{option.symbol}</span>
               </div>

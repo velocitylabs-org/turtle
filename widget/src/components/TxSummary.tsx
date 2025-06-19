@@ -29,7 +29,7 @@ const animationConfig = {
   animate: {
     opacity: 1,
     height: 'auto',
-    transition: { type: 'spring', bounce: 0.6, duration: 0.5 },
+    transition: { type: 'spring' as const, bounce: 0.6, duration: 0.5 },
   },
   exit: { opacity: 0, height: 0, transition: { duration: 0.2 } },
 }

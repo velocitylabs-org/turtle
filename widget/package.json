@@ -2,13 +2,14 @@
   "name": "@velocitylabs-org/turtle-widget",
   "description": "Turtle Widget – Seamless, trustless cross-chain transfers made easy.",
   "private": false,
-  "version": "0.0.11",
+  "version": "0.0.14",
   "type": "module",
   "module": "./dist/turtle-widget.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/turtle-widget.js"
+      "import": "./dist/turtle-widget.js",
+      "default": "./dist/turtle-widget.js"
     }
   },
   "files": [

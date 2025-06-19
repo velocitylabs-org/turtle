@@ -1,7 +1,7 @@
 'use client'
 import NumberFlow from '@number-flow/react'
 import { Chain, Token, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
-import { TokenLogo, Tooltip, cn } from '@velocitylabs-org/turtle-ui'
+import { Button, TokenLogo, Tooltip, cn } from '@velocitylabs-org/turtle-ui'
 
 import Image from 'next/image'
 import { ChangeEvent, ReactNode, RefObject, useMemo, useRef, useState } from 'react'
@@ -10,7 +10,6 @@ import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import { colors } from '../../tailwind.config'
-import Button from './Button'
 import ChainTrigger from './ChainTrigger'
 import Dropdown from './Dropdown'
 import SearchBar from './SearchBar'
@@ -153,7 +152,7 @@ export default function ChainTokenSelect({
       <div className="flex">
         <div className="relative flex-1">
           {/* 1. Floating Label */}
-          <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+          <label className="absolute -top-2 left-3 z-30 origin-top-left bg-turtle-background px-1 text-xs text-turtle-level5">
             {isOpen ? 'Chain' : floatingLabel}
           </label>
 
@@ -176,7 +175,7 @@ export default function ChainTokenSelect({
         {/* 2. Floating Label */}
         {isOpen && (
           <div className="relative flex-1">
-            <label className="absolute -top-2 left-3 z-30 origin-top-left bg-background px-1 text-xs text-turtle-level5">
+            <label className="absolute -top-2 left-3 z-30 origin-top-left bg-turtle-background px-1 text-xs text-turtle-level5">
               Token
             </label>
           </div>
@@ -198,7 +197,7 @@ export default function ChainTokenSelect({
       <Dropdown isOpen={isOpen} dropdownRef={dropdownRef}>
         <div className="flex">
           {/* Chain options (left side) */}
-          <div className="flex flex-1 flex-col border-r-1 border-turtle-level3">
+          <div className="flex flex-1 flex-col border-r border-turtle-level3">
             <ChainList
               searchString={chainSearch}
               setSearchString={setChainSearch}
@@ -271,9 +270,9 @@ const TokenAmountInput = ({
       <div
         ref={triggerRef}
         className={cn(
-          'flex items-center justify-between rounded-md rounded-t-none border-1 border-t-0 border-turtle-level3 bg-background px-3 text-sm',
+          'flex items-center justify-between rounded-md rounded-t-none border border-t-0 border-turtle-level3 bg-turtle-background px-3 text-sm',
           disabled && 'opacity-30',
-          amountProps?.error && 'border-1 border-turtle-error',
+          amountProps?.error && 'border border-turtle-error',
         )}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
@@ -387,7 +386,7 @@ const ChainList = ({
                   width={24}
                   height={24}
                   priority
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                  className="h-[2rem] w-[2rem] rounded-full border border-turtle-foreground bg-turtle-background"
                 />
                 <span className="text-sm">{option.name}</span>
               </div>
