@@ -176,12 +176,12 @@ export const getSwapsDestinationChains = (
   if (!sourceChain || !sourceToken) return []
   const chains: Chain[] = []
 
-  // add dex chain itself
   const dex = getDex(sourceChain)
   if (!dex) return []
-  chains.push(sourceChain)
 
   const tradeableTokens = getTradeableTokens(dex, sourceToken)
+  if (tradeableTokens.length === 0) return []
+  chains.push(sourceChain)
 
   // get transfer routes we can reach from the source chain
   const routes = REGISTRY[Environment.Mainnet].routes.filter(
