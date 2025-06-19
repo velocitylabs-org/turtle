@@ -44,17 +44,22 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
     try {
       setLoading(true)
       let fetchedBalance: Balance | undefined
+      const isNativeToken = getNativeToken(chain).id === token.id
 
       switch (chain.network) {
         case 'Ethereum': {
-          fetchedBalance =
-            getNativeToken(chain).id === token.id
-              ? (await fetchEthBalance()).data
-              : (await fetchErc20Balance()).data
+          fetchedBalance = isNativeToken
+            ? (await fetchEthBalance()).data
+            : (await fetchErc20Balance()).data
 
-          if (fetchedBalance)
-            // apply a 90% factor to safe-guard for fees and other unseen costs
-            fetchedBalance.formatted = (toHuman(fetchedBalance.value, token) * 0.9).toString() // override formatted value
+          if (fetchedBalance) {
+            // Apply a 90% transferrable ratio for the native token to safe-guard for fees and other unforseen costs.
+            // Consider the totally of the available balance otherwise for the other tokens.
+            const transferrableRatio = isNativeToken ? 0.9 : 1
+            fetchedBalance.formatted = (
+              toHuman(fetchedBalance.value, token) * transferrableRatio
+            ).toString() // override formatted value
+          }
           break
         }
 
