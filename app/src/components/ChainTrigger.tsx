@@ -70,7 +70,7 @@ export default function ChainTrigger({
       <div
         ref={triggerRef}
         className={cn(
-          'flex items-center justify-between border-1 border-turtle-level3 bg-background px-3 text-sm',
+          'flex items-center justify-between border border-turtle-level3 bg-turtle-background px-3 text-sm',
           disabled && 'opacity-30',
           error && 'border-turtle-error',
           className,
@@ -89,7 +89,7 @@ export default function ChainTrigger({
                   alt={value.name}
                   width={24}
                   height={24}
-                  className="h-[2rem] w-[2rem] rounded-full border-1 border-turtle-foreground bg-background"
+                  className="h-[2rem] w-[2rem] rounded-full border border-turtle-foreground bg-turtle-background"
                 />
                 {shouldShowChainName && (
                   <span className="ml-1 text-nowrap" data-cy="chain-select-value">
@@ -119,7 +119,7 @@ export default function ChainTrigger({
               alt="ENS Avatar"
               width={24}
               height={24}
-              className="h-[1.5rem] w-[1.5rem] rounded-full border-1 border-turtle-foreground bg-background"
+              className="h-[1.5rem] w-[1.5rem] rounded-full border border-turtle-foreground bg-turtle-background"
             />
           )}
 

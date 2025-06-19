@@ -1,5 +1,23 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.14
+
+### Patch Changes
+
+- f5a7397: Update Readme with Troubleshooting
+
+## 0.0.13
+
+### Patch Changes
+
+- f181eff: update package.json exports
+
+## 0.0.12
+
+### Patch Changes
+
+- 107b787: Add Coinbase wallet to rollup config - external
+
 ## 0.0.11
 
 ### Patch Changes

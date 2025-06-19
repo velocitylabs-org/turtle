@@ -9,8 +9,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 interface DatePickerProps {
   className?: string
-  date: Date | undefined
-  setDate: (date: Date | undefined) => void
+  date: Date | null
+  setDate: (date: Date | null) => void
   placeholder?: string
 }
 
@@ -35,16 +35,16 @@ export default function DatePicker({
             {date ? (
               <div className="flex w-full items-center justify-between">
                 <span>{format(date, 'LLL dd, y')}</span>
-                <button
+                <span
+                  role="button"
                   className="ml-2 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   onClick={e => {
                     e.stopPropagation()
-                    setDate(undefined)
+                    setDate(null)
                   }}
                 >
                   <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  <span className="sr-only">Clear date</span>
-                </button>
+                </span>
               </div>
             ) : (
               <span>{placeholder}</span>
@@ -52,7 +52,12 @@ export default function DatePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="center">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
+          <Calendar
+            mode="single"
+            selected={date || undefined}
+            onSelect={(date: Date | undefined) => setDate(date || null)}
+            required={false}
+          />
         </PopoverContent>
       </Popover>
     </div>

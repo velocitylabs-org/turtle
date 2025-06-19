@@ -5,7 +5,9 @@ import { useEffect } from 'react'
 
 export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   useEffect(() => {
-    captureException(error)
+    if (process.env.NODE_ENV === 'production') {
+      captureException(error)
+    }
   }, [error])
 
   return (
