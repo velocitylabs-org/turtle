@@ -7,9 +7,8 @@ import {
   Token,
   isAssetHub,
 } from '@velocitylabs-org/turtle-registry'
-import { Fee } from '@/hooks/useFees'
 import { SnowbridgeContext } from '@/models/snowbridge'
-import { AmountInfo } from '@/models/transfer'
+import { Fee , AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction } from '@/services/transfer'
 import { safeConvertAmount, toHuman } from './transfer'
@@ -143,7 +142,7 @@ export const getFeeEstimate = async (
         captureException(new Error('Estimated Tx cost failed'), {
           level: 'warning',
           tags: {
-            useFeesHook:
+            FeeContextProvider:
               error instanceof Error && 'action' in error && typeof error.action === 'string'
                 ? error.action
                 : 'estimateTransactionFees',

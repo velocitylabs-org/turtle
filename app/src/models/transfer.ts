@@ -155,3 +155,7 @@ export type OnChainBaseEvents = {
   extrinsicIndex?: string
   isBatchCompleted?: boolean
 }
+
+export type Fee =
+  | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
+  | { origin: 'Polkadot'; fee: AmountInfo }
