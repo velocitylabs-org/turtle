@@ -20,7 +20,7 @@ export interface TransferParams {
   recipient: string
   sourceAmount: bigint
   destinationAmount?: bigint
-  fees: AmountInfo
+  fees: Pick<AmountInfo, 'amount' | 'token'>
   bridgingFee: AmountInfo | null
   /**
    * Callback when Turtle has completed submitting the transfer.

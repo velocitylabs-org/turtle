@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useShallow } from 'zustand/react/shallow'
+import XcmFees from '@/hooks/fees/useXcmFees'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
@@ -14,6 +15,7 @@ import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
 import { useFeesStore } from '@/store/fees'
+import { useFormStore } from '@/store/form'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
@@ -123,15 +125,21 @@ export default function Transfer() {
     applyTransferableBalance,
   } = useTransferForm()
 
+  const { sourceToken } = useFormStore(
+    useShallow(state => ({
+      sourceToken: state.sourceToken,
+    })),
+  )
+
   const {
-    sourceChainFee,
+    fees,
     bridgingFee,
     loading: loadingFees,
     canPayFees,
     canPayAdditionalFees,
   } = useFeesStore(
     useShallow(state => ({
-      sourceChainFee: state.sourceChainFee,
+      fees: state.fees,
       bridgingFee: state.bridgingFee,
       loading: state.loading,
       canPayFees: state.canPayFees,
@@ -212,7 +220,7 @@ export default function Transfer() {
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    sourceChainFee &&
+    fees &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
@@ -278,17 +286,18 @@ export default function Transfer() {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (exceedsTransferableBalance)
-      return `We need some of that ${sourceChainFee?.token?.symbol} to pay fees`
+      return `We need some of that ${sourceToken?.token?.symbol} to pay fees`
     return undefined
   }, [
     errors.sourceTokenAmount?.amount?.message,
     sourceTokenAmountError,
     exceedsTransferableBalance,
-    sourceChainFee,
+    sourceToken,
   ])
 
   return (
     <>
+      <XcmFees />
       <GlobalBanner
         isVisible={isBannerVisible}
         onClose={() => setIsBannerVisible(false)}

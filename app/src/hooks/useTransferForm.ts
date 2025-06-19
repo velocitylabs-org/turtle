@@ -22,6 +22,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import builderManager from '@/services/builder'
 import { useFeesStore } from '@/store/fees'
+import { useFormStore } from '@/store/form'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
@@ -47,10 +48,17 @@ const useTransferForm = () => {
   const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
   const { addNotification } = useNotification()
-  const { sourceChainFee, bridgingFee } = useFeesStore(
+
+  const { bridgingFee, fees } = useFeesStore(
     useShallow(state => ({
-      sourceChainFee: state.sourceChainFee,
       bridgingFee: state.bridgingFee,
+      fees: state.fees,
+    })),
+  )
+
+  const { setStoreValues } = useFormStore(
+    useShallow(state => ({
+      setStoreValues: state.setStoreValues,
     })),
   )
 
@@ -104,8 +112,32 @@ const useTransferForm = () => {
       sourceAmount && sourceToken
         ? safeConvertAmount(sourceAmount, sourceToken)?.toString()
         : undefined,
-    fees: sourceChainFee,
+    fees:
+      fees?.fee && sourceTokenAmount?.token
+        ? { amount: fees.fee, token: sourceTokenAmount.token }
+        : undefined,
   })
+
+  useEffect(() => {
+    setStoreValues({
+      sourceChain,
+      destinationChain,
+      sourceToken: sourceTokenAmount,
+      destinationToken: destToken,
+      manualRecipient,
+      destinationWallet,
+      sourceWallet,
+    })
+  }, [
+    sourceChain,
+    destinationChain,
+    sourceTokenAmount,
+    destToken,
+    manualRecipient,
+    destinationWallet,
+    sourceWallet,
+    setStoreValues,
+  ])
 
   // Update destination amount when output amount changes
   useEffect(() => {
@@ -272,15 +304,16 @@ const useTransferForm = () => {
     }
   }, [
     sourceWallet?.isConnected,
+    sourceWallet?.sender,
     sourceTokenAmount?.token,
     balanceData,
-    setValue,
+    sourceChain,
     destinationChain,
     destinationWallet,
-    manualRecipient,
-    sourceChain,
     sourceToken,
-    sourceWallet?.sender,
+    manualRecipient,
+    sourceAmount,
+    setValue,
   ])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
@@ -308,7 +341,7 @@ const useTransferForm = () => {
         !sourceTokenAmount?.token ||
         !destinationTokenAmount?.token ||
         !sourceAmount ||
-        !sourceChainFee
+        !fees.fee
       )
         return
 
@@ -322,7 +355,7 @@ const useTransferForm = () => {
         sourceAmount: sourceAmount,
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
-        fees: sourceChainFee,
+        fees: { amount: fees.fee ?? 0n, token: sourceTokenAmount?.token as Token },
         bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success
@@ -343,12 +376,12 @@ const useTransferForm = () => {
     },
     [
       destinationWallet,
-      sourceChainFee,
-      bridgingFee,
-      reset,
       sourceWallet?.sender,
+      fees.fee,
       transfer,
       environment,
+      bridgingFee,
+      reset,
       addNotification,
     ],
   )
@@ -358,7 +391,7 @@ const useTransferForm = () => {
     setManualRecipientError(
       isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address',
     )
-  }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
+  }, [destinationChain, sourceChain, manualRecipient])
 
   // validate token amount
   useEffect(() => {
@@ -377,7 +410,7 @@ const useTransferForm = () => {
   // Unlike canPayFees and canPayAdditionalFees, which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
   // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
   const exceedsTransferableBalance = useMemo(() => {
-    const hasFees = Boolean(sourceChainFee?.token?.id && sourceChainFee?.amount)
+    const hasFees = !!fees.fee
     const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
     const hasBalance = Boolean(balanceData?.formatted)
     const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
@@ -389,8 +422,8 @@ const useTransferForm = () => {
     let totalFeesAmount = 0
 
     // We have regular fees in the same token as the transfer
-    if (hasFees && sourceChainFee!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(sourceChainFee!.amount, sourceChainFee!.token)
+    if (hasFees && sourceTokenAmount!.token!.id === transferToken) {
+      totalFeesAmount += toHuman(fees.fee!, sourceTokenAmount!.token as Token)
     }
     // We have bridging fees in the same token as the transfer, This applies whether we have regular fees
     if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
@@ -401,18 +434,18 @@ const useTransferForm = () => {
 
     // Check if the transfer amount plus all applicable fees exceeds the available balance
     return transferAmount + totalFeesAmount > balanceAmount
-  }, [sourceChainFee, bridgingFee, balanceData, sourceTokenAmount])
+  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
 
   const applyTransferableBalance = useCallback(() => {
     if (exceedsTransferableBalance && sourceTokenAmount?.token) {
       const transferToken = sourceTokenAmount.token.id
-      const hasFees = Boolean(sourceChainFee?.token?.id && sourceChainFee?.amount)
+      const hasFees = Boolean(sourceTokenAmount?.token?.id && fees?.fee)
       const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
       let totalFeesAmount = 0
 
       // We have regular fees in the same token as the transfer
-      if (hasFees && sourceChainFee!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(sourceChainFee!.amount, sourceChainFee!.token)
+      if (hasFees && sourceTokenAmount!.token!.id === transferToken) {
+        totalFeesAmount += toHuman(fees.fee!, sourceTokenAmount!.token as Token)
       }
       // We have bridging fees in the same token as the transfer
       if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
@@ -433,14 +466,7 @@ const useTransferForm = () => {
         { shouldValidate: true },
       )
     }
-  }, [
-    exceedsTransferableBalance,
-    sourceTokenAmount?.token,
-    bridgingFee,
-    sourceChainFee,
-    balanceData,
-    setValue,
-  ])
+  }, [exceedsTransferableBalance, sourceTokenAmount, fees.fee, bridgingFee, balanceData, setValue])
 
   // reset token amount
   useEffect(() => {

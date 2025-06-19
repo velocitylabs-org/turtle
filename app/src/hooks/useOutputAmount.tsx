@@ -13,7 +13,7 @@ interface UseOutputAmountParams {
   /** Amount in the source token's decimal base */
   amount?: string | null
   /** Fees are used to calculate the output amount for transfers */
-  fees?: AmountInfo | null
+  fees?: Pick<AmountInfo, 'amount' | 'token'> | null
 }
 
 interface OutputAmountResult {
