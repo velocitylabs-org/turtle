@@ -4,7 +4,7 @@ import { cn, Button } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
@@ -85,7 +85,6 @@ const getReceiveAmountPlaceholder = ({
 }
 
 export default function Transfer() {
-  const [isBannerVisible, setIsBannerVisible] = useState(true)
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
