@@ -1,5 +1,5 @@
 'use client'
-import { Balance, EthereumTokens, Hydration, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { Balance, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn, Button } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
