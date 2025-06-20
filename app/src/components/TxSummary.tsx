@@ -1,6 +1,6 @@
 'use client'
 
-import { Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useShallow } from 'zustand/react/shallow'
@@ -155,7 +155,9 @@ export default function TxSummary({
                 <div className="items-right flex">
                   <div>
                     <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {fees.fee && formatAmount(toHuman(fees.fee, sourceToken?.token as Token))}{' '}
+                      {fees.fee &&
+                        sourceToken?.token &&
+                        formatAmount(toHuman(fees.fee, sourceToken?.token))}{' '}
                       {sourceToken?.token?.symbol}
                     </div>
 

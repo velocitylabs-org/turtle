@@ -119,6 +119,8 @@ const useTransferForm = () => {
   })
 
   useEffect(() => {
+    console.log('re-setting store values')
+
     setStoreValues({
       sourceChain,
       destinationChain,

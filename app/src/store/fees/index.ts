@@ -1,7 +1,8 @@
 import { TXcmFeeDetail } from '@paraspell/sdk'
+import { isEqual } from 'lodash'
 import { create } from 'zustand'
-import { AmountInfo } from '@/models/transfer'
 import { subscribeWithSelector } from 'zustand/middleware'
+import { AmountInfo } from '@/models/transfer'
 
 interface FeesStore {
   fees: TXcmFeeDetail
@@ -29,7 +30,11 @@ export const useFeesStore = create(
     bridgingFee: null,
     loading: false,
     setIsLoading: (loading: boolean) => set({ loading }),
-    setFees: (fees: TXcmFeeDetail) => set({ fees }),
+    setFees: (newFees: TXcmFeeDetail) =>
+      set(state => {
+        if (isEqual(state.fees, newFees)) return state
+        return { fees: newFees }
+      }),
     setFeesInDollars: (feesInDollars: number) => set({ feesInDollars }),
     setCanPayFees: (canPayFees: boolean) => set({ canPayFees }),
     setCanPayAdditionalFees: (canPayAdditionalFees: boolean) => set({ canPayAdditionalFees }),

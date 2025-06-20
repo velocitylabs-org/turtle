@@ -7,7 +7,6 @@ import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useShallow } from 'zustand/react/shallow'
-import XcmFees from '@/hooks/fees/useXcmFees'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
@@ -34,6 +33,7 @@ import SwapFromToChains from './SwapFromToChains'
 import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
+import XcmFees from './XcmFees'
 
 const manualInputAnimationProps = {
   initial: { opacity: 0, height: 0 },

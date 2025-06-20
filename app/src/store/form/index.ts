@@ -1,4 +1,5 @@
 import { Chain, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { isEqual } from 'lodash'
 import { create } from 'zustand'
 import { WalletInfo } from '@/hooks/useWallet'
 
@@ -38,5 +39,21 @@ export const useFormStore = create<
   setManualRecipient: (manualRecipient: ManualRecipient) => set({ manualRecipient }),
   setDestinationWallet: (destinationWallet: WalletInfo) => set({ destinationWallet }),
   setSourceWallet: (sourceWallet: WalletInfo) => set({ sourceWallet }),
-  setStoreValues: (values: Partial<FormStore>) => set(values),
+  setStoreValues: newValues =>
+    set(state => {
+      const current = {
+        sourceChain: state.sourceChain,
+        destinationChain: state.destinationChain,
+        sourceToken: state.sourceToken,
+        destinationToken: state.destinationToken,
+        manualRecipient: state.manualRecipient,
+        destinationWallet: state.destinationWallet,
+        sourceWallet: state.sourceWallet,
+      }
+
+      if (isEqual(current, newValues)) return state
+
+      console.log('setting new store values', current, newValues)
+      return { ...state, ...newValues }
+    }),
 }))
