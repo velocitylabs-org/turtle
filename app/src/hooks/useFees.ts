@@ -1,13 +1,14 @@
 import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
-import { use, useCallback, useEffect, useState } from 'react'
-import { FeeContext } from '@/context/fee'
+import { useCallback, useEffect, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import useNotification from '@/hooks/useNotification'
 import { AmountInfo } from '@/models/transfer'
 
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
+import { useFeeStore } from '@/store/feeStore'
 import { getPlaceholderAddress } from '@/utils/address'
 import {
   getNativeToken,
@@ -59,7 +60,13 @@ const useFees = (
     address: senderAddress,
   })
 
-  const { setCanPayFees, setCanPayAdditionalFeesGlobally, setParams } = use(FeeContext)
+  const { setCanPayFees, setCanPayAdditionalFeesGlobally, setParams } = useFeeStore(
+    useShallow((state) => ({ 
+      setCanPayFees: state.setCanPayFees, 
+      setCanPayAdditionalFeesGlobally: state.setCanPayAdditionalFeesGlobally, 
+      setParams: state.setParams
+    }))
+  )
 
   // Setting parameters for the provider – most likely should be moved at a higher level
   // but for the sake of simplicity, we'll keep it here for now

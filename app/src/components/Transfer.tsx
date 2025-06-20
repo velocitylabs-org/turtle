@@ -4,15 +4,16 @@ import { cn, Button } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { use, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Controller } from 'react-hook-form'
-import { FeeContext } from '@/context/fee'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
+import { useFeeStore } from '@/store/feeStore'
+import { useShallow } from 'zustand/react/shallow'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
@@ -126,7 +127,9 @@ export default function Transfer() {
     applyTransferableBalance,
   } = useTransferForm()
 
-  const { canPayFees, canPayAdditionalFees } = use(FeeContext)
+  const { canPayFees, canPayAdditionalFees } = useFeeStore(
+    useShallow((state) => ({ canPayFees: state.canPayFees, canPayAdditionalFees: state.canPayAdditionalFees }))
+  )
 
   const {
     allowance: erc20SpendAllowance,
