@@ -24,3 +24,24 @@ export const getCachedTokenPrice = async (token: Token): Promise<TokenPrice> => 
   }
   return await response.json()
 }
+
+/**
+ * Fetches and caches the bridging fee of a transfer from AH to Ethereum.
+ * It serves as a cached layer.
+ *
+ * @returns - A Promise resolving to the current bridging fee value.
+ */
+export const getCachedBridgingFee = async (): Promise<bigint> => {
+  const response = await fetch(`/api/bridging-fee`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const { error } = await response.json()
+    throw new Error(error || `Failed to fetch bridging fee`)
+  }
+  return await response.json().then(BigInt)
+}

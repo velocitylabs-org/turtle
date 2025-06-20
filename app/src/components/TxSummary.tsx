@@ -1,12 +1,14 @@
+'use client'
+
 import { TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { use } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
-import { FeeContext } from '@/context/fee'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
+import { useFeesStore } from '@/store/fees'
+import { useFormStore } from '@/store/form'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import Delayed from './Delayed'
@@ -15,9 +17,6 @@ import LoadingIcon from './svg/LoadingIcon'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount
-  loading?: boolean
-  fees?: AmountInfo | null
-  bridgingFee?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
   className?: string
@@ -36,10 +35,7 @@ const animationConfig = {
 }
 
 export default function TxSummary({
-  loading,
   tokenAmount,
-  fees,
-  bridgingFee,
   durationEstimate,
   direction,
   className,
@@ -47,13 +43,30 @@ export default function TxSummary({
   applyTransferableBalance,
 }: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
+
+  const { sourceToken } = useFormStore(
+    useShallow(state => ({
+      sourceToken: state.sourceToken,
+    })),
+  )
+
+  const { loading, fees, feesInDollars, bridgingFee, canPayFees, canPayAdditionalFees } =
+    useFeesStore(
+      useShallow(state => ({
+        fees: state.fees,
+        loading: state.loading,
+        bridgingFee: state.bridgingFee,
+        canPayFees: state.canPayFees,
+        canPayAdditionalFees: state.canPayAdditionalFees,
+        feesInDollars: state.feesInDollars,
+      })),
+    )
+
+  if (!loading && !fees.fee && !bridgingFee && !sourceToken) return null
+
   const transferAmount = toAmountInfo(tokenAmount, price)
-  const { canPayFees, canPayAdditionalFees } = use(FeeContext)
-
-  if (!loading && !fees && !bridgingFee) return null
-
   const renderContent = () => {
-    if (loading) {
+    if (loading || !fees.fee) {
       return (
         <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
@@ -75,7 +88,7 @@ export default function TxSummary({
     }
 
     const isAmountTooLow =
-      transferAmount && transferAmount.inDollars < (fees?.inDollars ?? 0) * AMOUNT_VS_FEE_RATIO
+      transferAmount && transferAmount.inDollars < feesInDollars * AMOUNT_VS_FEE_RATIO
 
     const isBridgeTransfer =
       direction === Direction.ToEthereum || direction === Direction.ToPolkadot
@@ -83,8 +96,8 @@ export default function TxSummary({
     const exceedsTransferableBalanceInFees =
       exceedsTransferableBalance &&
       transferAmount?.token?.id &&
-      fees?.token?.id &&
-      transferAmount.token.id === fees.token.id
+      sourceToken?.token?.id &&
+      transferAmount.token.id === sourceToken.token.id
 
     const exceedsTransferableBalanceInBridgingFee =
       exceedsTransferableBalance &&
@@ -101,7 +114,7 @@ export default function TxSummary({
           </div>
           <ul>
             {/* Execution fees */}
-            {fees && (
+            {fees.fee && (
               <li className="mt-4 flex items-start justify-between border-turtle-level2">
                 <div className="items-left flex flex-col">
                   <div className="pt-[3px] text-sm font-bold">
@@ -115,7 +128,7 @@ export default function TxSummary({
                         fill={colors['turtle-foreground']}
                         className="mr-2"
                       />
-                      <span>You don&apos;t have enough {fees.token.symbol} </span>
+                      <span>You don&apos;t have enough {sourceToken?.token?.symbol} </span>
                     </div>
                   )}
                   {exceedsTransferableBalanceInFees && canPayFees && (
@@ -127,7 +140,7 @@ export default function TxSummary({
                         className="mr-2"
                       />
                       <span>
-                        We need some of that {fees.token.symbol} to pay fees{' '}
+                        We need some of that {sourceToken?.token?.symbol} to pay fees{' '}
                         <span
                           role="button"
                           onClick={applyTransferableBalance}
@@ -142,12 +155,15 @@ export default function TxSummary({
                 <div className="items-right flex">
                   <div>
                     <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
+                      {fees.fee &&
+                        sourceToken?.token &&
+                        formatAmount(toHuman(fees.fee, sourceToken?.token))}{' '}
+                      {sourceToken?.token?.symbol}
                     </div>
 
-                    {fees.inDollars > 0 && (
+                    {feesInDollars > 0 && (
                       <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(fees.inDollars)}
+                        ${formatAmount(feesInDollars)}
                       </div>
                     )}
                   </div>
