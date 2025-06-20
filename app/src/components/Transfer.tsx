@@ -1,10 +1,10 @@
 'use client'
-import { Balance, EthereumTokens, Hydration, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { Balance, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn, Button } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
@@ -22,7 +22,6 @@ import { formatAmount, getDurationEstimate } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
-import GlobalBanner from './GlobalBanner'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
 import AlertIcon from './svg/AlertIcon'
@@ -86,7 +85,6 @@ const getReceiveAmountPlaceholder = ({
 }
 
 export default function Transfer() {
-  const [isBannerVisible, setIsBannerVisible] = useState(true)
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
@@ -277,17 +275,6 @@ export default function Transfer() {
 
   return (
     <>
-      <GlobalBanner
-        isVisible={isBannerVisible}
-        onClose={() => setIsBannerVisible(false)}
-        title="Turtle v3 out 🎉"
-        description="Swap any token on Hydration and move it to any parachain in one go."
-        actionText="Try now"
-        onAction={() => {
-          setIsBannerVisible(false)
-          handleSourceChainChange(Hydration)
-        }}
-      />
       <form
         onSubmit={handleSubmit}
         className="z-20 flex w-[100vw] max-w-[90vw] flex-col gap-1 rounded-3xl border border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
