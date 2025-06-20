@@ -10,18 +10,13 @@ import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
+import builderManager from '@/services/builder'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
-import {
-  createTransferTx,
-  dryRun,
-  DryRunResult,
-  isExistentialDepositMetAfterTransfer,
-  moonbeamTransfer,
-} from '@/utils/paraspellTransfer'
+import { DryRunResult, moonbeamTransfer } from '@/utils/paraspellTransfer'
 import {
   getExplorerLink,
   isSameChainSwap,
@@ -44,11 +39,15 @@ const useParaspellApi = () => {
     setStatus('Loading')
 
     try {
-      if (!isSameToken(params.sourceToken, params.destinationToken))
-        await handleSwap(params, setStatus)
-      else if (params.sourceChain.uid === 'moonbeam')
-        await handleMoonbeamTransfer(params, setStatus)
-      else await handlePolkadotTransfer(params, setStatus)
+      if (!isSameToken(params.sourceToken, params.destinationToken)) {
+        return await handleSwap(params, setStatus)
+      }
+
+      if (params.sourceChain.uid === 'moonbeam') {
+        return await handleMoonbeamTransfer(params, setStatus)
+      }
+
+      return await handlePolkadotTransfer(params, setStatus)
     } catch (e) {
       handleSendError(params.sender, e, setStatus)
     }
@@ -148,13 +147,30 @@ const useParaspellApi = () => {
       }
 
       if (validationResult.origin.success && validationResult.destination?.success) {
-        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
-        if (!isExistentialDepositMet)
+        const isExistentialDepositMet = await builderManager.isExistentialDepositMetAfterTransfer({
+          from: params.sourceChain,
+          to: params.destinationChain,
+          token: params.sourceToken,
+          address: params.recipient,
+          senderAddress: params.sender.address,
+          amount: params.sourceAmount,
+        })
+
+        if (!isExistentialDepositMet) {
           throw new Error('Transfer failed: existential deposit will not be met.')
+        }
       }
     }
 
-    const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
+    const tx = await builderManager.createTransferTx({
+      wssEndpoint: params.sourceChain.rpcConnection,
+      from: params.sourceChain,
+      to: params.destinationChain,
+      token: params.sourceToken,
+      address: params.recipient,
+      senderAddress: params.sender.address,
+      amount: params.sourceAmount,
+    })
     setStatus('Signing')
 
     const polkadotSigner = getPolkadotSignerFromPjs(
@@ -413,7 +429,15 @@ const useParaspellApi = () => {
 
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
-      const result = await dryRun(params, params.sourceChain.rpcConnection)
+      const result = await builderManager.dryRun({
+        wssEndpoint: params.sourceChain.rpcConnection,
+        from: params.sourceChain,
+        to: params.destinationChain,
+        token: params.sourceToken,
+        address: params.recipient,
+        senderAddress: params.sender.address,
+        amount: params.sourceAmount,
+      })
       if (
         !isDryRunApiSupported(result.origin) ||
         (result.destination && !isDryRunApiSupported(result.destination))

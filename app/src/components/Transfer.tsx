@@ -4,8 +4,9 @@ import { cn, Button } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { use, useMemo, useState } from 'react'
 import { Controller } from 'react-hook-form'
+import { FeeContext } from '@/context/fee'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
@@ -112,8 +113,6 @@ export default function Transfer() {
     bridgingFee,
     refetchFees,
     loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
     transferStatus,
     environment,
     sourceTokenAmountError,
@@ -126,6 +125,8 @@ export default function Transfer() {
     exceedsTransferableBalance,
     applyTransferableBalance,
   } = useTransferForm()
+
+  const { canPayFees, canPayAdditionalFees } = use(FeeContext)
 
   const {
     allowance: erc20SpendAllowance,
@@ -494,8 +495,6 @@ export default function Transfer() {
             fees={fees}
             bridgingFee={bridgingFee}
             durationEstimate={durationEstimate}
-            canPayFees={canPayFees}
-            canPayAdditionalFees={canPayAdditionalFees}
             direction={direction}
             className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
             exceedsTransferableBalance={exceedsTransferableBalance}
