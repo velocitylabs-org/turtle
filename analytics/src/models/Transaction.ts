@@ -55,7 +55,7 @@ export interface TransactionModel {
 
   txDate: Date
   hostedOn: string
-  isSwap?: boolean
+  isSwap: boolean
   status: TxStatus
   migrated: boolean // For transactions migrated from an old analytics source
   oldFormat: boolean // For transactions migrated from an old analytics source with an old format
@@ -90,6 +90,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
     feesTokenAmountUsd: { type: Number, required: true },
     feesTokenAmountRaw: { type: String, required: true, validate: nonEmptyString },
 
+    // Currently empty for migrated transactions from firestore (migrated: true). Future migration needed to backfill historical gas fees and calculate bridging fees.
     bridgingFeeTokenId: { type: String },
     bridgingFeeTokenName: { type: String },
     bridgingFeeTokenSymbol: { type: String },
@@ -112,7 +113,7 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
 
     txDate: { type: Date, required: true },
     hostedOn: { type: String, required: true, validate: nonEmptyString },
-    isSwap: { type: Boolean, default: false }, // TODO Make this required
+    isSwap: { type: Boolean, default: false, required: true },
     status: {
       type: String,
       enum: txStatusOptions,
@@ -133,30 +134,22 @@ const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
 
 // Single field indexes
 transactionSchema.index({ txHashId: -1 }) // For txHash lookups
-transactionSchema.index({ txDate: -1 }) // For date sorting
-transactionSchema.index({ status: 1 }) // For status filtering
-transactionSchema.index({ sourceChainUid: 1 }) // For source chain filtering
-transactionSchema.index({ destinationChainUid: 1 }) // For destination chain filtering
-transactionSchema.index({ sourceTokenId: 1 }) // For source token filtering
-transactionSchema.index({ destinationTokenId: 1 }) // For destination token filtering
+// transactionSchema.index({ isSwap: -1 }) // For swaps tx lookups TODO uncomment once we have significant number of swaps
 
 // Compound indexes for analytics
-transactionSchema.index({ status: 1, txDate: -1 }) // For status and date queries
-transactionSchema.index({ status: 1, sourceTokenId: 1, sourceTokenAmountUsd: 1 }) // For token volume analytics (getTokensData) and top tokens by count
-transactionSchema.index({ status: 1, txDate: -1, sourceTokenAmountUsd: 1 }) // For monthly volume calculations and faceted aggregations (getSummaryData)
+transactionSchema.index({ sourceTokenId: 1, sourceTokenAmountUsd: 1 }) // For token volume analytics (getTokensData) and top tokens by count
+transactionSchema.index({ txDate: -1, sourceTokenAmountUsd: 1 }) // For monthly volume calculations and faceted aggregations (getSummaryData)
 
 // Compound indexes for filtered queries
-transactionSchema.index({ txDate: -1, status: 1 }) // For date sorting with a status filter
 transactionSchema.index({ sourceChainUid: 1, txDate: -1 }) // For source chain and date queries
 transactionSchema.index({ destinationChainUid: 1, txDate: -1 }) // For destination chain and date queries
 transactionSchema.index({ sourceTokenId: 1, txDate: -1 }) // For source token and date queries
 transactionSchema.index({ destinationTokenId: 1, txDate: -1 }) // For destination token and date queries
 
 // Additional indexes for chain analytics queries
-transactionSchema.index({ status: 1, sourceChainUid: 1 }) // For getChainSankeyData filtering
-transactionSchema.index({ status: 1, sourceChainUid: 1, destinationChainUid: 1 }) // For chain-to-chain analytics
-transactionSchema.index({ status: 1, sourceChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by source chain
-transactionSchema.index({ status: 1, destinationChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by destination chain
+transactionSchema.index({ sourceChainUid: 1, destinationChainUid: 1 }) // For chain-to-chain analytics
+transactionSchema.index({ sourceChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by source chain
+transactionSchema.index({ destinationChainUid: 1, sourceTokenAmountUsd: 1 }) // For volume calculations by destination chain
 
 function nonEmptyString(v: string) {
   return v && v.length > 0
