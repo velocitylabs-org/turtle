@@ -777,4 +777,31 @@ export const PolkadotTokens = {
     coingeckoId: "mythos",
     origin: parachain(3369),
   },
+
+  AUSDT: {
+    id: "ausdt",
+    name: "Aave Hydrated USDT",
+    symbol: "aUSDT",
+    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/5761.png",
+    decimals: 6,
+    address: "",
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2034,
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: "0xc64980e4eaf9a1151bd21712b9946b81e41e2b92",
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: "aave-usdt",
+    origin: parachain(2034),
+  },
 } as const satisfies Record<string, Token>;
