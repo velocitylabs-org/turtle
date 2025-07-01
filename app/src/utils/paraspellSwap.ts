@@ -7,14 +7,12 @@ import {
   REGISTRY,
   getTokenByMultilocation,
   isSameToken,
-  PolkadotTokens,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { isSameChain } from '@/utils/routes'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
-import { deepEqual } from '@paraspell/sdk'
 
 // Only supports Hydration for now because trading pairs are not available in xcm-router sdk. And hydration is an omnipool.
 /** contains all supported paraspell dexes mapped to the chain they run on */
@@ -148,15 +146,6 @@ export const getSwapsSourceChains = (): Chain[] => getSupportedDexChains()
 export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   if (!sourceChain) return []
 
-  console.log(
-    'all pairs',
-    getExchangePairs('HydrationDex').filter(
-      pair =>
-        deepEqual(pair[0].multiLocation, PolkadotTokens.AUSDT.multilocation) ||
-        deepEqual(pair[1].multiLocation, PolkadotTokens.AUSDT.multilocation),
-    ),
-  )
-
   const dex = getDex(sourceChain)
   if (!dex) return []
 
@@ -232,8 +221,6 @@ export const getSwapsDestinationTokens = (
   const tradeableTokens = getTradeableTokens(dex, sourceToken)
   if (tradeableTokens.length === 0) return []
   if (isSameChain(sourceChain, destinationChain)) return tradeableTokens
-
-  console.log('tradeableTokens', tradeableTokens)
 
   // Check if we can reach the destination chain
   const route = REGISTRY[Environment.Mainnet].routes.find(
