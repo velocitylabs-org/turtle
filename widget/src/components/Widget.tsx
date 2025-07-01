@@ -1,4 +1,3 @@
-import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { ArrowLeft, History } from 'lucide-react'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import NotificationSystem from '@/components/NotificationSystem'
@@ -6,7 +5,7 @@ import SubstrateWalletModal from '@/components/SubstrateWalletModal'
 import TransferForm from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { Providers } from '@/providers'
-import { ConfigProvider } from '@/providers/ConfigProviders'
+import { ConfigProvider, ConfigRegistryType } from '@/providers/ConfigProviders'
 import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import { generateWidgetTheme, WidgetTheme } from '@/utils/theme'
 import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
@@ -14,15 +13,7 @@ import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
 export type TransferTab = 'New' | 'History'
 export type TransferTabOptions = TransferTab
 
-const Widget = ({
-  theme,
-  allowedChains,
-  allowedTokens,
-}: {
-  theme?: WidgetTheme
-  allowedChains?: Chain['uid'][]
-  allowedTokens?: Token['id'][]
-}) => {
+const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigRegistryType }) => {
   useMemo(() => generateWidgetTheme(theme), [theme])
 
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
@@ -36,7 +27,7 @@ const Widget = ({
   return (
     <div className="turtle-wrapper">
       <Providers>
-        <ConfigProvider allowedChains={allowedChains} allowedTokens={allowedTokens}>
+        <ConfigProvider registry={registry ?? { chains: [], tokens: [] }}>
           <div className="m-4 flex flex-col items-center justify-center p-6">
             <div className="relative">
               {(ongoingTransfers.length > 0 ||

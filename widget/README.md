@@ -122,69 +122,82 @@ You can pass a theme prop to `<Widget />` to override default styles like colors
 
 ## ⛓️ Chain and Token Configuration
 
-You can also customize the Chains and Tokens you want to show in your widget instance – it works by passing the variables `allowedChains` and `allowedTokens` to the `<Widget />` component. If left empty, all the chains will be shown by default – they are optional properties.
+You can also customize the Chains and Tokens you want to show in your widget instance – it works by passing the variable registry
+
+```
+registry = {
+  chains: [],
+  tokens: []
+}
+```
+
+to the `<Widget />` component. If left empty, all the chains will be shown by default – they are optional properties.
 
 These are the values available for the chains
 
 #### Chains ids
 
 ```
-ethereum            // Ethereum
-polkadot-assethub   // Asset Hub
-polkadot            // Relay Chain
-polkadot-bridgehub  // BridgeHub
-bifrost             // Bifrost
-hydration           // Hydration
-phala               // Phala
-moonbeam            // Moonbeam
-interlay            // Interlay
-acala               // Acala
-polimec             // Polimec
-centrifuge          // Centrifuge
-astar               // Astar
-mythos              // Mythos
+ethereum // Ethereum
+polkadot-assethub // Asset Hub
+polkadot // Relay Chain
+polkadot-bridgehub // BridgeHub
+bifrost // Bifrost
+hydration // Hydration
+phala // Phala
+moonbeam // Moonbeam
+interlay // Interlay
+acala // Acala
+polimec // Polimec
+centrifuge // Centrifuge
+astar // Astar
+mythos // Mythos
 ```
 
 #### Tokens ids
 
 ```
-eth       // Ethereum
-usdc.e    // USD Coin (bridged)
-dai.e     // DAI (bridged)
-usdt.e    // Tether (bridged)
-weth.e    // Wrapped Ether (bridged)
-veth.e    // vEther
-wbtc.e    // Wrapped Bitcoin (bridged)
-myth.e    // Mythos (bridged)
-shib.e    // Shiba Inu (bridged)
-pepe.e    // Pepe (bridged)
-ton.e     // Toncoin (bridged)
-wsteth.e  // Wrapped Staked Ether (bridged)
-tbtc.e    // tBTC (bridged)
-aca       // Acala
-astr      // Astar
-bnc       // Bifrost Native Coin
-cfg       // Centrifuge
-hdx       // HydraDX
-usdc      // USD Coin
-usdt      // Tether
-glmr      // Moonbeam (GLMR)
-pha       // Phala
-intr      // Interlay
-dot       // Polkadot
-vdot      // Voucher DOT
-ibtc      // InterBTC
-plmc      // Polimec
-myth.p    // Mythos (native or parachain)
+eth // Ethereum
+usdc.e // USD Coin (bridged)
+dai.e // DAI (bridged)
+usdt.e // Tether (bridged)
+weth.e // Wrapped Ether (bridged)
+veth.e // vEther
+wbtc.e // Wrapped Bitcoin (bridged)
+myth.e // Mythos (bridged)
+shib.e // Shiba Inu (bridged)
+pepe.e // Pepe (bridged)
+ton.e // Toncoin (bridged)
+wsteth.e // Wrapped Staked Ether (bridged)
+tbtc.e // tBTC (bridged)
+aca // Acala
+astr // Astar
+bnc // Bifrost Native Coin
+cfg // Centrifuge
+hdx // HydraDX
+usdc // USD Coin
+usdt // Tether
+glmr // Moonbeam (GLMR)
+pha // Phala
+intr // Interlay
+dot // Polkadot
+vdot // Voucher DOT
+ibtc // InterBTC
+plmc // Polimec
+myth.p // Mythos (native or parachain)
 ```
 
 To be used like this:
 
 ```
+
 <Widget
-  allowedChains={['ethereum', 'polkadot']}
-  allowedTokens={['eth', 'usdc.e', 'usdc']}
+  registry={{
+    chains: ['ethereum', 'polkadot']
+    tokens: ['eth', 'usdc.e', 'usdc']
+  }}
 />
+
 ```
 
 🧩 Types
@@ -213,13 +226,15 @@ const theme = {
   //...
 } satisfies WidgetTheme
 
-const allowedChains = [] // your preferred chains, or empty for default
-const allowedTokens = [] // your preferred tokens, or empty for default
+const registry = {
+  chains: ['polkadot', 'hydration'],
+  tokens: ['dot', 'usdc', 'usdt'],
+}
 
 function Home() {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <Widget theme={theme} allowedChains={allowedChains} allowedTokens={allowedTokens} />
+      <Widget theme={theme} registry={registry} />
     </div>
   )
 }
