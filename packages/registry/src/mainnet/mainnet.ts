@@ -44,6 +44,7 @@ export const MainnetRegistry: Registry = {
     PolkadotTokens.USDC,
     EthereumTokens.USDT,
     PolkadotTokens.USDT,
+    PolkadotTokens.AUSDT,
     EthereumTokens.WSTETH,
     EthereumTokens.TBTC,
     PolkadotTokens.DOT,
