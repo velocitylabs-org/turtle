@@ -124,12 +124,15 @@ You can pass a theme prop to `<Widget />` to override default styles like colors
 
 You can also customize the Chains and Tokens you want to show in your widget instance – it works by passing the `registry` configuration. It defaults to using all chains & tokens supported by the [Turtle App](app.turtle.cool) otherwise.
 
-```
-registry = {
-  chains: [],
-  tokens: []
+
+For example:
+
+\```
+const registry = {
+  chains: ['polkadot', 'hydration'],
+  tokens: ['dot', 'usdc', 'usdt'],
 }
-```
+\```
 
 to the `<Widget />` component. If left empty, all the chains will be shown by default – they are optional properties.
 
