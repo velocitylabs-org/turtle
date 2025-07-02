@@ -122,7 +122,7 @@ You can pass a theme prop to `<Widget />` to override default styles like colors
 
 ## ⛓️ Chain and Token Configuration
 
-You can also customize the Chains and Tokens you want to show in your widget instance – it works by passing the variable registry
+You can also customize the Chains and Tokens you want to show in your widget instance – it works by passing the `registry` configuration. It defaults to using all chains & tokens supported by the [Turtle App](app.turtle.cool) otherwise.
 
 ```
 registry = {
