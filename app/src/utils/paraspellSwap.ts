@@ -165,6 +165,8 @@ export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
     }
   })
 
+  console.log('tradeableTokens', tradeableTokens)
+
   return Array.from(tradeableTokens)
 }
 
