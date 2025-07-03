@@ -41,6 +41,7 @@ export interface StoredTransfer extends RawTransfer {
     currentStep?: number
     plan?: TRouterPlan
   }
+  swapOnChainStatus?: 'success' | 'failed' // Track the status of the swap on-chain and clean up in ongoingTransfer
 }
 
 /** Version 0 of a stored transfer. It was used before introducing swaps. */
