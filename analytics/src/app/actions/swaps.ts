@@ -15,7 +15,7 @@ export async function getSwapsData() {
       successfulSwaps,
       rawRecentSwaps,
       transactionsSinceSwaps,
-      swapsActivity
+      swapsActivity,
     ] = await Promise.all([
       // Total swaps volume in USD
       Transaction.aggregate([
@@ -67,7 +67,7 @@ export async function getSwapsData() {
         {
           $match: {
             status: 'succeeded',
-            isSwap: true
+            isSwap: true,
           },
         },
         // Outgoing data
@@ -89,8 +89,8 @@ export async function getSwapsData() {
               {
                 $match: {
                   status: 'succeeded',
-                  isSwap: true
-                }
+                  isSwap: true,
+                },
               },
               {
                 $group: {
@@ -118,11 +118,11 @@ export async function getSwapsData() {
         {
           $addFields: {
             totalVolume: { $add: ['$incomingVolume', '$outgoingVolume'] },
-            totalTransactions: { $add: ['$incomingTransactions', '$outgoingTransactions'] }
-          }
+            totalTransactions: { $add: ['$incomingTransactions', '$outgoingTransactions'] },
+          },
         },
         {
-          $sort: { totalVolume: -1 }
+          $sort: { totalVolume: -1 },
         },
         {
           $project: {
@@ -133,21 +133,18 @@ export async function getSwapsData() {
             outgoingVolume: 1,
             outgoingTransactions: 1,
             totalVolume: 1,
-            totalTransactions: 1
+            totalTransactions: 1,
           },
         },
-      ])
+      ]),
     ])
 
     const swapsTotalVolume = swapsVolumeResult[0]?.total || 0
-    const swapsSuccessRate =
-      totalSwaps > 0 ? (successfulSwaps / totalSwaps) * 100 : 0
+    const swapsSuccessRate = totalSwaps > 0 ? (successfulSwaps / totalSwaps) * 100 : 0
     const swapsPercentageOfTransactions = (successfulSwaps * 100) / transactionsSinceSwaps
 
     // Ensure all values are serializable because actions can only return plain objects
-    const recentSwaps = rawRecentSwaps.map(swap =>
-      swapView.parse(swap),
-    )
+    const recentSwaps = rawRecentSwaps.map(swap => swapView.parse(swap))
 
     return {
       swapsTotalVolume,
@@ -155,7 +152,7 @@ export async function getSwapsData() {
       swapsSuccessRate,
       recentSwaps,
       swapsPercentageOfTransactions,
-      swapsActivity
+      swapsActivity,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))
@@ -163,4 +160,3 @@ export async function getSwapsData() {
     throw error
   }
 }
-

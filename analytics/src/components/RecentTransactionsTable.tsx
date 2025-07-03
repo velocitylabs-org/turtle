@@ -52,7 +52,7 @@ export default function RecentTransactionsTable({
               </TableCell>
             </TableRow>
           ) : (
-            transactions.map((tx) => (
+            transactions.map(tx => (
               <TableRow key={tx._id}>
                 <TableCell>
                   <div className="flex items-center">

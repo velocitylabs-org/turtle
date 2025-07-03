@@ -18,10 +18,7 @@ interface RecentSwapsTableProps {
   isLoading: boolean
 }
 
-export default function RecentSwapsTable({
-  swaps,
-  isLoading,
-}: RecentSwapsTableProps) {
+export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -53,11 +50,14 @@ export default function RecentSwapsTable({
               </TableCell>
             </TableRow>
           ) : (
-            swaps.map((swap) => (
+            swaps.map(swap => (
               <TableRow key={swap._id}>
                 <TableCell>
                   <div className="flex items-center">
-                    <TokenChainDisplay tokenId={swap.sourceTokenId} chainUid={swap.sourceChainUid} />
+                    <TokenChainDisplay
+                      tokenId={swap.sourceTokenId}
+                      chainUid={swap.sourceChainUid}
+                    />
                     <div className="ml-2 flex flex-col">
                       <span className="font-medium">{swap.sourceTokenSymbol}</span>
                       <span className="text-xs text-muted-foreground">{swap.sourceChainName}</span>
