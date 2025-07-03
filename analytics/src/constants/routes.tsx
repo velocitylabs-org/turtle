@@ -1,4 +1,4 @@
-import { ChartNoAxesColumn, Coins, LayoutDashboard, Repeat, Waypoints } from 'lucide-react'
+import { ChartNoAxesColumn, Coins, LayoutDashboard, Repeat, Shuffle, Waypoints } from 'lucide-react'
 import type React from 'react'
 
 export interface RouteItem {
@@ -16,7 +16,7 @@ export const routes: RouteItem[] = [
   },
   {
     label: 'Transactions',
-    icon: Repeat,
+    icon: Shuffle,
     href: '/transactions',
   },
   {
@@ -28,6 +28,11 @@ export const routes: RouteItem[] = [
     label: 'Tokens',
     icon: Coins,
     href: '/tokens',
+  },
+  {
+    label: 'Swaps',
+    icon: Repeat,
+    href: '/swaps',
   },
   {
     label: 'Analytics',
