@@ -430,7 +430,11 @@ const useParaspellApi = () => {
       }
     } catch (e: unknown) {
       if (e instanceof Error && e.message.includes('DryRunApi is not available'))
-        return { type: 'Unsupported', origin: { success: false, failureReason: e.message } }
+        return {
+          type: 'Unsupported',
+          origin: { success: false, failureReason: e.message },
+          hops: [],
+        }
 
       return {
         type: 'Supported',
@@ -438,6 +442,7 @@ const useParaspellApi = () => {
           success: false,
           failureReason: (e as Error).message,
         },
+        hops: [],
       }
     }
   }
