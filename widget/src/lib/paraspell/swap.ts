@@ -99,9 +99,6 @@ export const getExchangeOutputAmount = async (
 /** returns all supported dex paraspell nodes */
 export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
 
-/** returns all supported dex chains */
-export const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
-
 /** returns the paraspell dex for a given chain */
 const getDex = (chain: Chain): Dex | undefined => {
   const entry = Object.entries(DEX_TO_CHAIN_MAP).find(([, c]) => c.uid === chain.uid)
@@ -115,7 +112,7 @@ export const getDexTokens = (dex: Dex): Token[] =>
     .filter((token): token is Token => token !== undefined)
 
 /** returns all allowed source chains for a swap. */
-export const getSwapsSourceChains = (): Chain[] => getSupportedDexChains()
+export const getSwapsSourceChains = (): Chain[] => Object.values(DEX_TO_CHAIN_MAP)
 
 /** returns all allowed source tokens for a swap. Currently only supports 1-signature flows. */
 export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
