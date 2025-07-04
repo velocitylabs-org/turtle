@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
 import {
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
@@ -51,20 +51,14 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={formattedData} margin={{ top: 10, left: 30, right: 25, bottom: 10 }}>
-          <defs>
-            <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
-              <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
-            </linearGradient>
-          </defs>
+        <BarChart data={formattedData} margin={{ top: 10, left: 30, right: 25, bottom: 10 }}>
           <XAxis
             dataKey="date"
             tickLine={false}
             axisLine={false}
             tickMargin={10}
-            tick={{ fontSize: timeRange === 'last-month' ? 14 : 15 }}
-            interval={timeRange === 'last-month' ? 1 : 0}
+            tick={{ fontSize: timeRange === 'last-month' ? 13 : 15 }}
+            interval={0}
           />
           <YAxis
             tickFormatter={value => (type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value)}
@@ -74,14 +68,12 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
           />
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <Tooltip content={<CustomTooltip type={type} timeRange={timeRange} />} />
-          <Area
-            type="monotone"
+          <Bar
             dataKey="value"
-            stroke={chartColor}
-            fillOpacity={1}
-            fill="url(#colorVolume)"
+            fill={chartColor}
+            minPointSize={1}
           />
-        </AreaChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   )
