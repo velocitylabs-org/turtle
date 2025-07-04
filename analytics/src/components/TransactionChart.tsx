@@ -2,7 +2,8 @@
 import React from 'react'
 import {
   Bar,
-  BarChart,
+  ComposedChart,
+  Line,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
@@ -51,7 +52,7 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={formattedData} margin={{ top: 10, left: 30, right: 25, bottom: 10 }}>
+        <ComposedChart data={formattedData} margin={{ top: 10, left: 30, right: 25, bottom: 10 }}>
           <XAxis
             dataKey="date"
             tickLine={false}
@@ -69,7 +70,8 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <Tooltip content={<CustomTooltip type={type} timeRange={timeRange} />} />
           <Bar dataKey="value" fill={chartColor} minPointSize={1} />
-        </BarChart>
+          <Line type="monotone" dataKey="value" stroke="grey" strokeWidth={1} dot={false} />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   )
