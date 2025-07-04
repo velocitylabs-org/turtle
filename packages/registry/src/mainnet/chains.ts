@@ -90,7 +90,7 @@ export const Phala: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-phala.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-phala.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Moonbeam: Chain = {

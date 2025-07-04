@@ -565,6 +565,12 @@ export const routes: Route[] = [
   },
   {
     from: Mythos.uid,
+    to: Ethereum.uid,
+    sdk: "ParaSpellApi",
+    tokens: [EthereumTokens.MYTH.id],
+  },
+  {
+    from: Mythos.uid,
     to: Hydration.uid,
     sdk: "ParaSpellApi",
     tokens: [EthereumTokens.MYTH.id],

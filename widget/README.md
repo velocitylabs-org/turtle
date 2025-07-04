@@ -120,6 +120,89 @@ You can pass a theme prop to `<Widget />` to override default styles like colors
 
 > ⚠️ Note: The Turtle Widget bundles its own Tailwind CSS, but it's not sandboxed. Global styles from your app (e.g., `.your-wrapper p { ... }`) may still affect it. This allows for advanced customization, but be cautious with _aggressive_ global CSS.
 
+## ⛓️ Chain and Token Configuration
+
+You can also customize the Chains and Tokens you want to show in your widget instance – it works by passing the `registry` configuration. It defaults to using all chains & tokens supported by the [Turtle App](app.turtle.cool) otherwise.
+
+
+For example:
+
+\```
+const registry = {
+  chains: ['polkadot', 'hydration'],
+  tokens: ['dot', 'usdc', 'usdt'],
+}
+\```
+
+to the `<Widget />` component. If left empty, all the chains will be shown by default – they are optional properties.
+
+These are the values available for the chains
+
+#### Chains ids
+
+```
+ethereum // Ethereum
+polkadot-assethub // Asset Hub
+polkadot // Relay Chain
+polkadot-bridgehub // BridgeHub
+bifrost // Bifrost
+hydration // Hydration
+phala // Phala
+moonbeam // Moonbeam
+interlay // Interlay
+acala // Acala
+polimec // Polimec
+centrifuge // Centrifuge
+astar // Astar
+mythos // Mythos
+```
+
+#### Tokens ids
+
+```
+eth // Ethereum
+usdc.e // USD Coin (bridged)
+dai.e // DAI (bridged)
+usdt.e // Tether (bridged)
+weth.e // Wrapped Ether (bridged)
+veth.e // vEther
+wbtc.e // Wrapped Bitcoin (bridged)
+myth.e // Mythos (bridged)
+shib.e // Shiba Inu (bridged)
+pepe.e // Pepe (bridged)
+ton.e // Toncoin (bridged)
+wsteth.e // Wrapped Staked Ether (bridged)
+tbtc.e // tBTC (bridged)
+aca // Acala
+astr // Astar
+bnc // Bifrost Native Coin
+cfg // Centrifuge
+hdx // HydraDX
+usdc // USD Coin
+usdt // Tether
+glmr // Moonbeam (GLMR)
+pha // Phala
+intr // Interlay
+dot // Polkadot
+vdot // Voucher DOT
+ibtc // InterBTC
+plmc // Polimec
+myth.p // Mythos (native or parachain)
+```
+
+To be used like this:
+
+```
+
+<Widget
+  registry={{
+    chains: ['ethereum', 'polkadot']
+    tokens: ['eth', 'usdc.e', 'usdc']
+  }}
+/>
+
+```
+
 🧩 Types
 
 ```tsx
@@ -146,10 +229,15 @@ const theme = {
   //...
 } satisfies WidgetTheme
 
+const registry = {
+  chains: ['polkadot', 'hydration'],
+  tokens: ['dot', 'usdc', 'usdt'],
+}
+
 function Home() {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <Widget theme={theme} />
+      <Widget theme={theme} registry={registry} />
     </div>
   )
 }
