@@ -68,11 +68,7 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
           />
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <Tooltip content={<CustomTooltip type={type} timeRange={timeRange} />} />
-          <Bar
-            dataKey="value"
-            fill={chartColor}
-            minPointSize={1}
-          />
+          <Bar dataKey="value" fill={chartColor} minPointSize={1} />
         </BarChart>
       </ResponsiveContainer>
     </div>
