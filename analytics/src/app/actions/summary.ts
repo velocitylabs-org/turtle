@@ -1,5 +1,5 @@
 'use server'
-import { startOfWeek, startOfMonth, subMonths, format, addDays } from 'date-fns'
+import { startOfWeek, startOfMonth, subMonths, format, addDays, startOfDay } from 'date-fns'
 import { defaultTransactionLimit } from '@/constants'
 import Transaction from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
@@ -150,8 +150,10 @@ export async function getSummaryData() {
 async function getAllTransactionData() {
   const now = new Date()
   const sixMonthsAgo = subMonths(now, 6)
+  const currentMonthStart = startOfMonth(now)
   const lastMonthStart = startOfMonth(subMonths(now, 1))
   const thisWeekStart = startOfWeek(now)
+  const todayStart = startOfDay(now)
 
   // Get all data in a single aggregation
   const aggregationResult = await Transaction.aggregate([
@@ -165,8 +167,15 @@ async function getAllTransactionData() {
     },
     {
       $facet: {
-        // Six-month data grouped by month
+        // Six-month data grouped by month (excluding current month)
         sixMonthsData: [
+          {
+            $match: {
+              txDate: {
+                $lt: currentMonthStart,
+              },
+            },
+          },
           {
             $group: {
               _id: {
@@ -190,13 +199,13 @@ async function getAllTransactionData() {
           },
         ],
 
-        // Last month data grouped by day
+        // Last month data grouped by day (excluding current day)
         lastMonthData: [
           {
             $match: {
               txDate: {
                 $gte: lastMonthStart,
-                $lt: now,
+                $lt: todayStart,
               },
             },
           },
@@ -223,13 +232,13 @@ async function getAllTransactionData() {
           },
         ],
 
-        // This week data grouped by day
+        // This week data grouped by day (excluding current day)
         thisWeekData: [
           {
             $match: {
               txDate: {
                 $gte: thisWeekStart,
-                $lt: now,
+                $lt: todayStart,
               },
             },
           },
@@ -261,8 +270,8 @@ async function getAllTransactionData() {
 
   const { sixMonthsData, lastMonthData, thisWeekData: rawThisWeekData } = aggregationResult[0]
 
-  // Ensure all days of the week are included for weekly data
-  const completeThisWeekData = fillMissingDaysInWeek(rawThisWeekData, thisWeekStart, now)
+  // Ensure all days of the week are included for weekly data (excluding today)
+  const completeThisWeekData = fillMissingDaysInWeek(rawThisWeekData, thisWeekStart, todayStart)
 
   return {
     sixMonthsData,
@@ -279,7 +288,7 @@ function fillMissingDaysInWeek(
 ) {
   const allDays = []
   let currentDate = new Date(startDate)
-  while (currentDate <= endDate) {
+  while (currentDate < endDate) {
     allDays.push({
       date: new Date(currentDate),
       formattedDate: format(currentDate, 'yyyy-MM-dd'),
