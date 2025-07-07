@@ -20,6 +20,11 @@ export const routes: RouteItem[] = [
     href: '/transactions',
   },
   {
+    label: 'Swaps',
+    icon: Repeat,
+    href: '/swaps',
+  },
+  {
     label: 'Chains',
     icon: Waypoints,
     href: '/chains',
@@ -28,11 +33,6 @@ export const routes: RouteItem[] = [
     label: 'Tokens',
     icon: Coins,
     href: '/tokens',
-  },
-  {
-    label: 'Swaps',
-    icon: Repeat,
-    href: '/swaps',
   },
   {
     label: 'Analytics',
