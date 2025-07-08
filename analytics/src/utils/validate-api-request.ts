@@ -1,4 +1,4 @@
-export function validateAppRequest(req: Request): boolean {
+export function validateApiRequest(req: Request): boolean {
   return validateRequest(req, 'AUTH_TOKEN')
 }
 

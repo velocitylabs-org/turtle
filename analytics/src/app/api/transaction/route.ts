@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
-import { validateAppRequest, validateWidgetRequest } from '@/utils/validate-app-request'
+import { validateApiRequest, validateWidgetRequest } from '@/utils/validate-api-request'
 
 function corsHeaders(response: NextResponse, origin?: string | null) {
   const allowedOrigins =
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   const origin = request.headers.get('origin')
   const data = await request.json()
   try {
-    if (!validateAppRequest(request) && !validateWidgetRequest(request)) {
+    if (!validateApiRequest(request) && !validateWidgetRequest(request)) {
       await captureServerError(new Error('Forbidden 403the thing is '))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
@@ -85,7 +85,7 @@ export async function PATCH(request: Request) {
   const origin = request.headers.get('origin')
   const data = await request.json()
   try {
-    if (!validateAppRequest(request) && !validateWidgetRequest(request)) {
+    if (!validateApiRequest(request) && !validateWidgetRequest(request)) {
       await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
