@@ -8,20 +8,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { TransactionView } from '@/models/transaction-view'
+import { SwapView } from '@/models/swap-view'
 import formatUSD from '@/utils/format-USD'
 import { TokenChainDisplay } from './TokenChainDisplay'
 import { TransactionStatusIndicator } from './TransactionStatusIndicator'
 
-interface RecentTransactionsTableProps {
-  transactions: TransactionView[]
+interface RecentSwapsTableProps {
+  swaps: SwapView[]
   isLoading: boolean
 }
 
-export default function RecentTransactionsTable({
-  transactions,
-  isLoading,
-}: RecentTransactionsTableProps) {
+export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -30,6 +27,7 @@ export default function RecentTransactionsTable({
             <TableHead>Source</TableHead>
             <TableHead>Amount</TableHead>
             <TableHead>Destination</TableHead>
+            <TableHead>Amount</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="w-[100px] text-center">Status</TableHead>
           </TableRow>
@@ -38,56 +36,67 @@ export default function RecentTransactionsTable({
           {isLoading ? (
             <TableRow key={0}>
               <TableCell colSpan={6} className="text-center">
-                <div className="flex h-[250px] items-center justify-center">
+                <div className="flex h-[450px] items-center justify-center">
                   <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
                 </div>
               </TableCell>
             </TableRow>
-          ) : transactions.length === 0 ? (
+          ) : swaps.length === 0 ? (
             <TableRow key={1}>
               <TableCell colSpan={6} className="text-center">
-                <div className="flex h-[450px] items-center justify-center">
+                <div className="flex h-[250px] items-center justify-center">
                   <p>There are no recent transactions to display</p>
                 </div>
               </TableCell>
             </TableRow>
           ) : (
-            transactions.map(tx => (
-              <TableRow key={tx._id}>
+            swaps.map(swap => (
+              <TableRow key={swap._id}>
                 <TableCell>
                   <div className="flex items-center">
-                    <TokenChainDisplay tokenId={tx.sourceTokenId} chainUid={tx.sourceChainUid} />
+                    <TokenChainDisplay
+                      tokenId={swap.sourceTokenId}
+                      chainUid={swap.sourceChainUid}
+                    />
                     <div className="ml-2 flex flex-col">
-                      <span className="font-medium">{tx.sourceTokenSymbol}</span>
-                      <span className="text-xs text-muted-foreground">{tx.sourceChainName}</span>
+                      <span className="font-medium">{swap.sourceTokenSymbol}</span>
+                      <span className="text-xs text-muted-foreground">{swap.sourceChainName}</span>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span>{tx.sourceTokenAmount}</span>
+                    <span>{swap.sourceTokenAmount}</span>
                     <span className="text-xs text-muted-foreground">
-                      (${formatUSD(tx.sourceTokenAmountUsd)})
+                      (${formatUSD(swap.sourceTokenAmountUsd)})
                     </span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">
                     <TokenChainDisplay
-                      tokenId={tx.destinationTokenId}
-                      chainUid={tx.destinationChainUid}
+                      tokenId={swap.destinationTokenId}
+                      chainUid={swap.destinationChainUid}
                     />
                     <div className="ml-2 flex flex-col">
-                      <span className="font-medium">{tx.destinationTokenSymbol}</span>
+                      <span className="font-medium">{swap.destinationTokenSymbol}</span>
                       <span className="text-xs text-muted-foreground">
-                        {tx.destinationChainName}
+                        {swap.destinationChainName}
                       </span>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
+                  <div className="flex flex-col">
+                    <span>{swap.destinationTokenAmount}</span>
+                    <span className="text-xs text-muted-foreground">
+                      (${formatUSD(swap.destinationTokenAmountUsd)})
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
                   <div className="text-xs">
-                    {new Date(tx.txDate).toLocaleString('en-GB', {
+                    {new Date(swap.txDate).toLocaleString('en-GB', {
                       dateStyle: 'short',
                       timeStyle: 'short',
                       hour12: false,
@@ -95,7 +104,7 @@ export default function RecentTransactionsTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <TransactionStatusIndicator status={tx.status} />
+                  <TransactionStatusIndicator status={swap.status} />
                 </TableCell>
               </TableRow>
             ))
