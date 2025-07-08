@@ -70,8 +70,6 @@ export const getAllowedSourceChains = (allowedChains?: Chain['uid'][]): Chain[] 
     ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
     : MainnetRegistry.chains
 
-  console.log('filteredChains', filteredChains)
-
   // Filters all chains by available routes
   const transferSourceChains = filteredChains.filter(chain =>
     MainnetRegistry.routes.some(route => route.from === chain.uid),
