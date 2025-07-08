@@ -140,11 +140,11 @@ If you leave the `chains` or `tokens` arrays empty, all chains and tokens will b
 
 #### Chains ids
 
-```tsx
+```cpp
 ethereum // Ethereum
-polkadot - assethub // Asset Hub
+polkadot-assethub // Asset Hub
 polkadot // Relay Chain
-polkadot - bridgehub // BridgeHub
+polkadot-bridgehub // BridgeHub
 bifrost // Bifrost
 hydration // Hydration
 phala // Phala
