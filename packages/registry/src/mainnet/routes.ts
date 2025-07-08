@@ -206,7 +206,7 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.ETH.id,
       EthereumTokens.WSTETH.id,
-      // EthereumTokens.TBTC.id, TODO: PS working on a fix
+      EthereumTokens.TBTC.id,
     ],
   },
   {

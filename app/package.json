@@ -22,6 +22,7 @@
     "@paraspell/sdk": "^10.10.2",
     "@paraspell/xcm-router": "^10.10.2",
     "@polkadot/api": "^16.1.1",
+    "@polkadot/api-base": "^16.1.1",
     "@polkadot/types": "^16.1.1",
     "@polkadot/apps-config": "^0.145.1",
     "@polkadot/extension-dapp": "^0.56.2",
