@@ -26,6 +26,11 @@ const chainOptions = chains.map(chain => ({
   logoURI: getSrcFromLogo(chain),
 }))
 
+const originOptions = [
+  { value: 'https://app.turtle.cool', label: 'Turtle' },
+  { value: 'https://app.polimec.org', label: 'Polimec' },
+]
+
 // Using 'all' as default to represent null (no filter)
 const statusFilterParser = parseAsStringLiteral([
   'succeeded',
@@ -47,6 +52,7 @@ export default function TransactionsPage() {
   const statusFilter = statusFilterRaw === 'all' ? null : (statusFilterRaw as TxStatus | null)
   const [fromDate, setFromDate] = useQueryState('fromDate', parseAsIsoDate)
   const [toDate, setToDate] = useQueryState('toDate', parseAsIsoDate)
+  const [origin, setOrigin] = useQueryState('origin', emptyDefaultString)
 
   const tokenSourceOptions = tokens
     .map((token: Token) => {
@@ -82,6 +88,7 @@ export default function TransactionsPage() {
       statusFilter,
       fromDate,
       toDate,
+      origin,
     ],
     queryFn: () =>
       getTransactionsData({
@@ -92,6 +99,7 @@ export default function TransactionsPage() {
         status: statusFilter,
         startDate: fromDate || undefined,
         endDate: toDate || undefined,
+        hostedOn: origin.length > 0 ? origin : undefined,
       }),
   })
   useShowLoadingBar(isLoading)
@@ -112,6 +120,7 @@ export default function TransactionsPage() {
     setDestinationTokenId('')
     setFromDate(null)
     setToDate(null)
+    setOrigin('')
   }
 
   if (error && !isLoading) {
@@ -217,7 +226,7 @@ export default function TransactionsPage() {
                 </div>
               </div>
               {/* Chain and token selectors */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
                 <div>
                   <Select
                     options={chainOptions}
@@ -255,6 +264,14 @@ export default function TransactionsPage() {
                     onChange={val => setDestinationTokenId(val as string)}
                     placeholder="Destination Token"
                     disabled={!destinationChainUid}
+                  />
+                </div>
+                <div>
+                  <Select
+                    options={originOptions}
+                    selected={origin}
+                    onChange={val => setOrigin(val as string)}
+                    placeholder="Origin"
                   />
                 </div>
               </div>
