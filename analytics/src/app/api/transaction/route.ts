@@ -36,7 +36,7 @@ export async function POST(request: Request) {
   const data = await request.json()
   try {
     if (!validateApiRequest(request) && !validateWidgetRequest(request)) {
-      await captureServerError(new Error('Forbidden 403the thing is '))
+      await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
 
