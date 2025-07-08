@@ -35,8 +35,8 @@ export async function POST(request: Request) {
   const origin = request.headers.get('origin')
   const data = await request.json()
   try {
-    if (!validateAppRequest(request) || !validateWidgetRequest(request)) {
-      await captureServerError(new Error('Forbidden 403'))
+    if (!validateAppRequest(request) && !validateWidgetRequest(request)) {
+      await captureServerError(new Error('Forbidden 403the thing is '))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
 
@@ -85,7 +85,7 @@ export async function PATCH(request: Request) {
   const origin = request.headers.get('origin')
   const data = await request.json()
   try {
-    if (!validateAppRequest(request) || !validateWidgetRequest(request)) {
+    if (!validateAppRequest(request) && !validateWidgetRequest(request)) {
       await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }

@@ -15,5 +15,5 @@ export const AMOUNT_VS_FEE_RATIO: number = 10
 
 export const ANALYTICS_DASHBOARD_BASE_URL: string =
   import.meta.env.VITE_ANALYTICS_DASHBOARD_BASE_URL || ''
-export const VITE_ANALYTICS_WIDGET_AUTH_TOKEN: string =
-  import.meta.env.VITE_ANALYTICS_DASHBOARD_BASE_URL || ''
+export const ANALYTICS_WIDGET_AUTH_TOKEN: string =
+  import.meta.env.VITE_ANALYTICS_WIDGET_AUTH_TOKEN || ''

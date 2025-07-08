@@ -6,7 +6,7 @@ import { TxStatus } from '@/models/transfer'
 import {
   ANALYTICS_DASHBOARD_BASE_URL,
   isProduction,
-  VITE_ANALYTICS_WIDGET_AUTH_TOKEN,
+  ANALYTICS_WIDGET_AUTH_TOKEN,
 } from '@/utils/consts'
 import { toHuman } from '@/utils/transfer'
 
@@ -98,7 +98,7 @@ export async function trackTransferMetrics({
   }
 
   try {
-    if (!VITE_ANALYTICS_WIDGET_AUTH_TOKEN || !ANALYTICS_DASHBOARD_BASE_URL) {
+    if (!ANALYTICS_WIDGET_AUTH_TOKEN || !ANALYTICS_DASHBOARD_BASE_URL) {
       throw new Error('Analytics configuration missing')
     }
 
@@ -107,7 +107,7 @@ export async function trackTransferMetrics({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: VITE_ANALYTICS_WIDGET_AUTH_TOKEN,
+        Authorization: ANALYTICS_WIDGET_AUTH_TOKEN,
       },
       body: JSON.stringify(transactionData),
     })
@@ -148,7 +148,7 @@ export async function updateTransferMetrics({
   }
 
   try {
-    if (!VITE_ANALYTICS_WIDGET_AUTH_TOKEN || !ANALYTICS_DASHBOARD_BASE_URL) {
+    if (!ANALYTICS_WIDGET_AUTH_TOKEN || !ANALYTICS_DASHBOARD_BASE_URL) {
       throw new Error('Analytics configuration missing')
     }
 
@@ -161,7 +161,7 @@ export async function updateTransferMetrics({
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: VITE_ANALYTICS_WIDGET_AUTH_TOKEN,
+        Authorization: ANALYTICS_WIDGET_AUTH_TOKEN,
       },
       body: JSON.stringify({ txHashId, status }),
     })
