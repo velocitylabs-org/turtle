@@ -250,16 +250,16 @@ export const getSwapsDestinationTokens = (
   if (!sourceChain || !sourceToken || !destinationChain) return []
 
   const dex = getDex(sourceChain)
-  if (!dex) return []
+  if (!dex && !sourceChain.allows1SigSendSwapSendFlow) return []
 
   // Check for tradeable tokens
-  const tradeableTokens = getTradeableTokens(dex, sourceToken)
+  const tradeableTokens = getTradeableTokens('HydrationDex', sourceToken)
   if (tradeableTokens.length === 0) return []
-  if (isSameChain(sourceChain, destinationChain)) return tradeableTokens
+  if (isSameChain(Hydration, destinationChain)) return tradeableTokens
 
   // Check if we can reach the destination chain
-  const route = REGISTRY[Environment.Mainnet].routes.find(
-    route => route.from === sourceChain.uid && route.to === destinationChain.uid,
+  const route = REGISTRY.mainnet.routes.find(
+    route => route.from === Hydration.uid && route.to === destinationChain.uid,
   )
   if (!route) return []
 
