@@ -19,9 +19,11 @@ export default async function Home() {
 
       {/* Analytics section */}
       {analyticsData && (
-        <section
-          className="relative z-50 mt-[-20px] flex flex-row items-center justify-center gap-8 bg-info pb-36 pt-20 md:pb-72 lg:pb-96">
-          <AnalyticData volume={analyticsData.totalVolumeUsd} transactions={analyticsData.totalTransactions}/>
+        <section className="relative z-50 mt-[-20px] flex flex-row items-center justify-center gap-8 bg-info pb-36 pt-20 md:pb-72 lg:pb-96">
+          <AnalyticData
+            volume={analyticsData.totalVolumeUsd}
+            transactions={analyticsData.totalTransactions}
+          />
         </section>
       )}
     </>
