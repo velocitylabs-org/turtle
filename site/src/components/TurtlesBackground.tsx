@@ -1,8 +1,4 @@
-interface TurtlesBackgroundProps {
-  header: string
-}
-
-export const TurtlesBackground: React.FC<TurtlesBackgroundProps> = ({ header }) => {
+export default function TurtlesBackground({ header }: { header: string}) {
   return (
     <div className="absolute top-0 z-0">
       <div className="turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/bg.png')] bg-cover bg-bottom">
