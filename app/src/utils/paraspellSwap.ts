@@ -136,6 +136,22 @@ export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] =
   return turtlePairs
 }
 
+/** returns all tokens that can be traded with the given source token on the specified dex */
+export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
+  const dexPairs = getDexPairs(dex)
+  const tradeableTokens = new Set<Token>()
+
+  dexPairs.forEach(([token1, token2]) => {
+    if (isSameToken(token1, sourceToken)) {
+      tradeableTokens.add(token2)
+    } else if (isSameToken(token2, sourceToken)) {
+      tradeableTokens.add(token1)
+    }
+  })
+
+  return Array.from(tradeableTokens)
+}
+
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => {
   const chainsSupportingOneClickFlow = REGISTRY.mainnet.chains.filter(
@@ -189,23 +205,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   return tokensWithTradingPair
 }
 
-/** returns all tokens that can be traded with the given source token on the specified dex */
-export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
-  const dexPairs = getDexPairs(dex)
-  const tradeableTokens = new Set<Token>()
-
-  dexPairs.forEach(([token1, token2]) => {
-    if (isSameToken(token1, sourceToken)) {
-      tradeableTokens.add(token2)
-    } else if (isSameToken(token2, sourceToken)) {
-      tradeableTokens.add(token1)
-    }
-  })
-
-  return Array.from(tradeableTokens)
-}
-
-/** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
+/** returns all allowed destination chains for a swap. */
 export const getSwapsDestinationChains = (
   sourceChain: Chain | null,
   sourceToken: Token | null,
@@ -214,16 +214,14 @@ export const getSwapsDestinationChains = (
   const chains: Chain[] = []
 
   const dex = getDex(sourceChain)
-  if (!dex) return []
+  if (!dex && !sourceChain.allows1SigSendSwapSendFlow) return []
 
-  const tradeableTokens = getTradeableTokens(dex, sourceToken)
+  const tradeableTokens = getTradeableTokens('HydrationDex', sourceToken)
   if (tradeableTokens.length === 0) return []
   chains.push(sourceChain)
 
-  // get transfer routes we can reach from the source chain
-  const routes = REGISTRY[Environment.Mainnet].routes.filter(
-    route => route.from === sourceChain.uid,
-  )
+  // get transfer routes we can reach from the dex
+  const routes = REGISTRY.mainnet.routes.filter(route => route.from === Hydration.uid)
 
   // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
