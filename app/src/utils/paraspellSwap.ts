@@ -144,14 +144,15 @@ export const getSwapsSourceChains = (): Chain[] => {
 
   const chainsSupportingOneClickFlowAndHaveTradingPairOnDex = chainsSupportingOneClickFlow.filter(
     chain => {
-      const route = REGISTRY.mainnet.routes.filter(
+      const route = REGISTRY.mainnet.routes.find(
         route => route.from === chain.uid && route.to === Hydration.uid,
       )
-      return route.some(route =>
-        getDexPairs('HydrationDex').some(pair =>
-          pair.some(token => route.tokens.includes(token.id)),
-        ),
+      if (!route) return false
+
+      const isTradingPairCompatible = getDexPairs('HydrationDex').some(pair =>
+        pair.some(token => route.tokens.includes(token.id)),
       )
+      return isTradingPairCompatible
     },
   )
 
@@ -161,14 +162,31 @@ export const getSwapsSourceChains = (): Chain[] => {
   )
 }
 
-/** returns all allowed source tokens for a swap. Currently only supports 1-signature flows. */
+/** returns all allowed source tokens for a swap. */
 export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   if (!sourceChain) return []
 
   const dex = getDex(sourceChain)
-  if (!dex) return []
+  if (dex) return getDexTokens(dex)
 
-  return getDexTokens(dex)
+  if (!sourceChain.allows1SigSendSwapSendFlow) return []
+
+  const routeToDex = REGISTRY.mainnet.routes.find(
+    route => route.from === sourceChain.uid && route.to === Hydration.uid,
+  )
+  if (!routeToDex) return []
+
+  const dexTokens = getDexPairs('HydrationDex')
+
+  const tokenIdsWithTradingPair = routeToDex.tokens.filter(tokenId =>
+    dexTokens.some(pair => pair.some(token => token.id === tokenId)),
+  )
+
+  const tokensWithTradingPair = tokenIdsWithTradingPair
+    .map(tokenId => REGISTRY.mainnet.tokens.find(token => token.id === tokenId))
+    .filter((token): token is Token => token !== undefined)
+
+  return tokensWithTradingPair
 }
 
 /** returns all tokens that can be traded with the given source token on the specified dex */
