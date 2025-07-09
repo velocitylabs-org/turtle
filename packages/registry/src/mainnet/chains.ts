@@ -34,6 +34,7 @@ export const AssetHub: Chain = {
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
   rpcConnection: `wss://api-asset-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
+  allows1SigSendSwapSendFlow: true,
 };
 
 export const RelayChain: Chain = {
