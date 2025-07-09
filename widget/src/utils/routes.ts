@@ -33,8 +33,6 @@ export const getTransferTokens = (
       ? MainnetRegistry.tokens.filter(token => allowedTokens.includes(token.id))
       : MainnetRegistry.tokens
 
-  console.log('filteredTokens', filteredTokens, allowedTokens)
-
   return filteredTokens.filter(token =>
     MainnetRegistry.routes.some(
       route =>
