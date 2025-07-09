@@ -92,7 +92,7 @@ export async function trackTransferMetrics({
     destinationChainName: transferParams.destinationChain.name,
     destinationChainNetwork: transferParams.destinationChain.network,
 
-    txDate: date,
+    txDate: date.toISOString(),
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
     status: TxStatus.Succeeded,
     isSwap,
