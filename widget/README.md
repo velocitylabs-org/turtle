@@ -252,3 +252,11 @@ export default Home
 - success, warning, error (+ dark/light variants, ...)
 - dialogOverlayRgb, dialogOverlayOpacity
 - noteWarn
+
+
+## Integration Support
+
+If you're planning to integrate our widget, please contact the Velocity team first — we offer personalized support to ensure a smooth setup.
+
+📧 Email: ops@velocitylabs.org
+🐦 Twitter/X: @TurtlecoolApp

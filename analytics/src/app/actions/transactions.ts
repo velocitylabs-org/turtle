@@ -14,6 +14,7 @@ type TransactionFilters = {
   status?: TxStatus | null
   startDate?: Date
   endDate?: Date
+  hostedOn?: string
 }
 
 export async function getTransactionsData({
@@ -24,6 +25,7 @@ export async function getTransactionsData({
   status,
   startDate,
   endDate,
+  hostedOn,
 }: TransactionFilters) {
   try {
     await dbConnect()
@@ -38,6 +40,7 @@ export async function getTransactionsData({
         $gte?: Date
         $lte?: Date
       }
+      hostedOn?: { $regex: RegExp }
     }
 
     const query: MongoQuery = {}
@@ -62,6 +65,10 @@ export async function getTransactionsData({
       if (txStatusOptions.includes(status)) {
         query.status = status as TxStatus
       }
+    }
+
+    if (hostedOn) {
+      query.hostedOn = { $regex: new RegExp(hostedOn, 'i') }
     }
 
     if (startDate || endDate) {

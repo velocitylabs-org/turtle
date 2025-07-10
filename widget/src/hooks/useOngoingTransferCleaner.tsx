@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { updateTransferMetrics } from '@/utils/analytics.ts'
 import { getExplorerLink } from '@/utils/explorer'
 import { startedTooLongAgo } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
@@ -42,6 +43,13 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
           severity: NotificationSeverity.Warning,
           dismissible: true,
         })
+
+        updateTransferMetrics({
+          txHashId: ongoing.id,
+          status: TxStatus.Undefined,
+          environment: ongoing.environment,
+        })
+
         // captureException(new Error('Transfer tracking failed'), { extra: { ongoing } }) - Sentry
       }
     })
