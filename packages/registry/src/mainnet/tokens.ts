@@ -777,4 +777,23 @@ export const PolkadotTokens = {
     coingeckoId: "mythos",
     origin: parachain(3369),
   },
+
+  KSM: {
+    id: "ksm",
+    name: "Kusama",
+    symbol: "KSM",
+    logoURI: 'https://cryptologos.cc/logos/kusama-ksm-logo.svg?v=040', //todo(nuno)
+    decimals: 12,
+    address: "",
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: {
+          Parachain: 2,
+        },
+      },
+    },
+    coingeckoId: "kusama",
+    origin: parachain(2),
+  }
 } as const satisfies Record<string, Token>;

@@ -25,6 +25,17 @@ export const Ethereum: Chain = {
   supportedAddressTypes: ["evm"],
 };
 
+export const Polkadot: Chain = {
+  uid: "polkadot",
+  name: "Polkadot",
+  logoURI: polkadotLogo,
+  chainId: 0,
+  network: "Polkadot",
+  supportedAddressTypes: ["ss58"],
+  walletType: "Substrate",
+  rpcConnection: `wss://api-polkadot.n.dwellir.com/${DWELLIR_KEY}`,
+};
+
 export const AssetHub: Chain = {
   uid: "polkadot-assethub",
   name: "Asset Hub",
@@ -34,17 +45,6 @@ export const AssetHub: Chain = {
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
   rpcConnection: `wss://api-asset-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
-};
-
-export const RelayChain: Chain = {
-  uid: "polkadot",
-  name: "Polkadot",
-  logoURI: polkadotLogo,
-  chainId: 0,
-  network: "Polkadot",
-  supportedAddressTypes: ["ss58"],
-  walletType: "Substrate",
-  rpcConnection: `wss://api-polkadot.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const BridgeHub: Chain = {
@@ -175,4 +175,26 @@ export const Mythos: Chain = {
   supportedAddressTypes: ["evm"],
   walletType: "SubstrateEVM",
   rpcConnection: "wss://polkadot-mythos-rpc.polkadot.io",
+};
+
+export const Kusama: Chain = {
+  uid: "kusama",
+  name: "Kusama",
+  logoURI: 'https://automata-network.github.io/ata.lib/1rpc/networks/kusama.svg', //todo(nuno)
+  chainId: 2,
+  network: "Kusama",
+  supportedAddressTypes: ["ss58"],
+  walletType: "Substrate",
+  rpcConnection: `wss://kusama-rpc.n.dwellir.com/${DWELLIR_KEY}`,
+};
+
+export const KusamaAssetHub: Chain = {
+  uid: "kusama-assethub",
+  name: "Kusama Asset Hub",
+  logoURI: assetHubLogo, //todo(nuno)
+  chainId: 420420418,
+  network: "Kusama",
+  supportedAddressTypes: ["ss58"],
+  walletType: "Substrate",
+  rpcConnection: `wss://api-asset-hub-kusama.n.dwellir.com/${DWELLIR_KEY}`,
 };
