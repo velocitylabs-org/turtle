@@ -66,16 +66,8 @@ const config: import('tailwindcss').Config = {
         },
       },
       colors,
-      fontFamily: {
-        dazzed: ['var(--font-dazzed)'],
-        'dazzed-bold': ['var(--font-dazzed-bold)'],
-      },
-      fontSize: {
-        large: '2rem',
-      },
       borderRadius: {
         '4xl': '2rem',
-        '5xl': '2.5rem',
       },
       backgroundColor: {
         'btn-disabled': colors[`${prefix}-primary`],
