@@ -55,6 +55,7 @@ const config: import('tailwindcss').Config = {
     './src/**/*.{ts,tsx,js,jsx}',
     '../packages/ui/src/**/*.{ts,tsx,js,jsx}',
   ],
+  important: '.turtle-wrapper',
   theme: {
     extend: {
       container: {

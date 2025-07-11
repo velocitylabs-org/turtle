@@ -5,6 +5,7 @@ const config = {
     'tailwindcss/nesting': {},
     tailwindcss: {},
     autoprefixer: {},
+    'postcss-nested': {},
   },
 }
 
