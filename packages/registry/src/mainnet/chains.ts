@@ -181,7 +181,7 @@ export const Kusama: Chain = {
   uid: "kusama",
   name: "Kusama",
   logoURI: 'https://automata-network.github.io/ata.lib/1rpc/networks/kusama.svg', //todo(nuno)
-  chainId: 2,
+  chainId: 0,
   network: "Kusama",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",

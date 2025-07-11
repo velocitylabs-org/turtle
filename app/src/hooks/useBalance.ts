@@ -63,7 +63,8 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           break
         }
 
-        case 'Polkadot': {
+        case 'Polkadot':
+        case 'Kusama': {
           fetchedBalance = await getBalance(chain, token, address)
 
           break
@@ -98,6 +99,8 @@ export async function getBalance(
   address: string,
 ): Promise<Balance | undefined> {
   const node = getParaSpellNode(chain)
+
+  console.log("KSM - node not found for chain", chain.name)
   if (!node) throw new Error('Node not found')
   const currency = getParaspellToken(token, node)
 

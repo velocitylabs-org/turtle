@@ -788,12 +788,10 @@ export const PolkadotTokens = {
     multilocation: {
       parents: 1,
       interior: {
-        X1: {
-          Parachain: 2,
-        },
+        Here: null,
       },
     },
     coingeckoId: "kusama",
-    origin: parachain(2),
+    origin: parachain(0),
   }
 } as const satisfies Record<string, Token>;
