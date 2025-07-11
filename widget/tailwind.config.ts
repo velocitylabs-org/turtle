@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import tailwindcssAnimate from 'tailwindcss-animate'
 import tailwindcssMotion from 'tailwindcss-motion'
+import { scopedPreflightStyles, isolateInsideOfContainer } from 'tailwindcss-scoped-preflight'
 
 const prefix = 'turtle'
 
@@ -98,7 +99,15 @@ const config: import('tailwindcss').Config = {
     },
   },
   darkMode: ['class'],
-  plugins: [tailwindcssAnimate, tailwindcssMotion],
+  plugins: [
+    tailwindcssAnimate,
+    tailwindcssMotion,
+    scopedPreflightStyles({
+      isolationStrategy: isolateInsideOfContainer('.turtle-wrapper', {
+        except: '.no-turtle-wrapper', // optional, to exclude some elements under .twp from being preflighted, like external markup
+      }),
+    }),
+  ],
 }
 
 export default config
