@@ -134,11 +134,13 @@ export default function TransactionDetailPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Status</span>
-                <Badge className="text-white" style={{ background: statusColors[transaction.status].hex }}>
+                <Badge
+                  className="text-white"
+                  style={{ background: statusColors[transaction.status].hex }}
+                >
                   {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
                 </Badge>
               </div>
-
 
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Date</span>
