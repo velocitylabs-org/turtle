@@ -4,7 +4,6 @@
 
 ### Patch Changes
 
-- 547d127: Added the tracking for analytics purposes
 - 6a474da: Added tracking for analytics purposes
 
 ## 0.0.15
