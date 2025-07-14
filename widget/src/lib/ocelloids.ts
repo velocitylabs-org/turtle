@@ -2,6 +2,7 @@ import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocel
 import { Moonbeam } from '@velocitylabs-org/turtle-registry'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { updateTransferMetrics } from '@/utils/analytics.ts'
 import { OCELLOIDS_API_Key } from '@/utils/consts'
 import { getExplorerLink } from '@/utils/explorer'
 import { Direction, isSameChainSwap, resolveDirection } from '@/utils/transfer'
@@ -237,6 +238,15 @@ const updateTransferStatus = (
       severity,
       dismissible: true,
     })
+
+    // Analytics tx are created with successful status by default, we only update for failed ones
+    if (status !== TxStatus.Succeeded) {
+      updateTransferMetrics({
+        txHashId: transfer.id,
+        status: status,
+        environment: transfer.environment,
+      })
+    }
 
     if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
       console.log(new Error(`Ocelloids tracking error:${message}`))

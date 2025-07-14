@@ -1,14 +1,13 @@
 'use client'
 
-import { captureException } from '@sentry/nextjs'
-
 import { Environment } from '@velocitylabs-org/turtle-registry'
-
-import storeAnalyticsTransaction from '@/app/actions/store-transactions'
-import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
 import { TransferParams } from '@/hooks/useTransfer'
 import { TxStatus } from '@/models/transfer'
-import { isProduction } from '@/utils/env'
+import {
+  ANALYTICS_DASHBOARD_BASE_URL,
+  isProduction,
+  ANALYTICS_WIDGET_AUTH_TOKEN,
+} from '@/utils/consts'
 import { toHuman } from '@/utils/transfer'
 
 interface TransferMetric {
@@ -99,12 +98,36 @@ export async function trackTransferMetrics({
   }
 
   try {
-    await storeAnalyticsTransaction(transactionData)
-  } catch (error) {
-    captureException(error, {
-      tags: { section: 'analytics' },
-      extra: transactionData,
+    if (!ANALYTICS_WIDGET_AUTH_TOKEN || !ANALYTICS_DASHBOARD_BASE_URL) {
+      throw new Error('Analytics configuration missing')
+    }
+
+    const apiUrl = `${ANALYTICS_DASHBOARD_BASE_URL}/api/transaction`
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: ANALYTICS_WIDGET_AUTH_TOKEN,
+      },
+      body: JSON.stringify(transactionData),
     })
+
+    if (!response.ok) {
+      // Handle 409 conflict (duplicate transaction) as a non-error case
+      if (response.status === 409) {
+        return { success: true, info: 'Transaction already exists' }
+      }
+
+      const errorMessage = await parseAnalyticsServerActionError(response)
+      const error = new Error(errorMessage)
+      error.name = 'AnalyticsAPIError'
+      throw error
+    }
+  } catch (error) {
+    // captureException(error, {
+    //   tags: { section: 'analytics' },
+    //   extra: transactionData,
+    // })
     console.error('Failed to store transaction:', error)
   }
 }
@@ -125,12 +148,44 @@ export async function updateTransferMetrics({
   }
 
   try {
-    await updateAnalyticsTxStatus({ txHashId, status })
-  } catch (error) {
-    captureException(error, {
-      tags: { section: 'analytics' },
-      extra: { txHashId, status },
+    if (!ANALYTICS_WIDGET_AUTH_TOKEN || !ANALYTICS_DASHBOARD_BASE_URL) {
+      throw new Error('Analytics configuration missing')
+    }
+
+    if (!txHashId || !status) {
+      throw new Error('txHashId and status are required')
+    }
+
+    const apiUrl = `${ANALYTICS_DASHBOARD_BASE_URL}/api/transaction`
+    const response = await fetch(apiUrl, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: ANALYTICS_WIDGET_AUTH_TOKEN,
+      },
+      body: JSON.stringify({ txHashId, status }),
     })
+
+    if (!response.ok) {
+      const errorMessage = await parseAnalyticsServerActionError(response)
+      const error = new Error(errorMessage)
+      error.name = 'AnalyticsAPIError'
+      throw error
+    }
+  } catch (error) {
+    // captureException(error, {
+    //   tags: { section: 'analytics' },
+    //   extra: { txHashId, status },
+    // })
     console.error('Failed to update transaction:', error)
+  }
+}
+
+async function parseAnalyticsServerActionError(response: Response): Promise<string> {
+  try {
+    const errorData = await response.json()
+    return errorData.message || errorData.error || 'Unknown API error'
+  } catch {
+    return `HTTP ${response.status}: ${response.statusText}`
   }
 }
