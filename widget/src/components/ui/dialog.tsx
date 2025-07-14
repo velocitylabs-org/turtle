@@ -52,7 +52,7 @@ const DialogContent = React.forwardRef<
   } = closeButtonProps || {}
 
   return (
-    <DialogPortal>
+    <DialogPortal container={document.querySelector('.turtle-wrapper')}>
       <DialogOverlay {...overlayProps} />
       <DialogPrimitive.Content
         ref={ref}
