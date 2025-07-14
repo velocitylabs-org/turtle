@@ -57,7 +57,7 @@ export default function SwapPairsGraph({
   const formattedData = data.map((pair, index) => {
     const value = isVolumeType ? pair.totalVolume : pair.totalTransactions
     const percentage = (value / total) * 100
-    const minPercentage = 2.5 // Minimum 2.5% slice width
+    const minPercentage = 1.5 // Minimum 1.5% slice width
 
     return {
       ...pair,
