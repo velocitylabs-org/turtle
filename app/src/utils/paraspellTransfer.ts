@@ -182,7 +182,7 @@ export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
     case 'Polkadot':
       return 'polkadot'
     case 'Kusama':
-      return 'kusama';
+      return 'kusama'
     default:
       throw new Error('Cannot find relay node. Unsupported environment')
   }
@@ -203,7 +203,7 @@ export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TC
 
 /**
  * Convert a Turtle 'network' value to a ParaSpell 'TEcosystemType'
- * @param network 
+ * @param network
  * @returns the matching paraspell value
  */
 export function toPsEcosystem(network: Network): TEcosystemType {
@@ -215,7 +215,7 @@ export function getNativeToken(chain: Chain): Token {
 
   const relay = getRelayNode(chain.network)
   const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
+  if (!chainNode) throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
   const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols

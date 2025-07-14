@@ -782,7 +782,7 @@ export const PolkadotTokens = {
     id: "ksm",
     name: "Kusama",
     symbol: "KSM",
-    logoURI: 'https://cryptologos.cc/logos/kusama-ksm-logo.svg?v=040', //todo(nuno)
+    logoURI: polkadotLogo, //todo(nuno)
     decimals: 12,
     address: "",
     multilocation: {

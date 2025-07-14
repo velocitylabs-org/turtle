@@ -44,7 +44,7 @@ export const AssetHub: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-asset-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-asset-hub-polkadot.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const BridgeHub: Chain = {
@@ -55,7 +55,7 @@ export const BridgeHub: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-bridge-hub-polkadot.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-bridge-hub-polkadot.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Bifrost: Chain = {
@@ -67,7 +67,7 @@ export const Bifrost: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-bifrost-polkadot.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-bifrost-polkadot.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Hydration: Chain = {
@@ -114,7 +114,7 @@ export const Interlay: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-interlay.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-interlay.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Acala: Chain = {
@@ -126,7 +126,7 @@ export const Acala: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-acala.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-acala.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Polimec: Chain = {
@@ -150,7 +150,7 @@ export const Centrifuge: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-centrifuge.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-centrifuge.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Astar: Chain = {
@@ -162,7 +162,7 @@ export const Astar: Chain = {
   network: "Polkadot",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
-  rpcConnection: `wss://api-astar.dwellir.com/${DWELLIR_KEY}`,
+  rpcConnection: `wss://api-astar.n.dwellir.com/${DWELLIR_KEY}`,
 };
 
 export const Mythos: Chain = {
@@ -180,7 +180,7 @@ export const Mythos: Chain = {
 export const Kusama: Chain = {
   uid: "kusama",
   name: "Kusama",
-  logoURI: 'https://automata-network.github.io/ata.lib/1rpc/networks/kusama.svg', //todo(nuno)
+  logoURI: polkadotLogo, //todo(nuno)
   chainId: 0,
   network: "Kusama",
   supportedAddressTypes: ["ss58"],
@@ -192,7 +192,7 @@ export const KusamaAssetHub: Chain = {
   uid: "kusama-assethub",
   name: "Kusama Asset Hub",
   logoURI: assetHubLogo, //todo(nuno)
-  chainId: 420420418,
+  chainId: 1000,
   network: "Kusama",
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",

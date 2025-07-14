@@ -122,5 +122,8 @@ export function getChainSpecificAddress(address: string, chain: Chain): string {
   if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address))
     return address
 
-  return convertSs58(address, getTNode(chain.chainId, toPsEcosystem(chain.network)) as TNodeDotKsmWithRelayChains)
+  return convertSs58(
+    address,
+    getTNode(chain.chainId, toPsEcosystem(chain.network)) as TNodeDotKsmWithRelayChains,
+  )
 }

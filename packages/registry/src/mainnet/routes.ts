@@ -616,4 +616,10 @@ export const routes: Route[] = [
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.KSM.id],
   },
+  {
+    from: KusamaAssetHub.uid,
+    to: Kusama.uid,
+    sdk: "ParaSpellApi",
+    tokens: [PolkadotTokens.KSM.id],
+  },
 ];
