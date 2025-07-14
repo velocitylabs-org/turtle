@@ -256,7 +256,8 @@ export default Home
 
 ## Integration Support
 
-If you're planning to integrate our widget, please contact the Velocity team first — we offer personalized support to ensure a smooth setup.
+If you're planning to integrate our widget, please contact the Velocity team first, we offer personalized support to ensure a smooth setup.
 
-📧 Email: ops@velocitylabs.org
-🐦 Twitter/X: @TurtlecoolApp
+Email: ops@velocitylabs.org <br />
+Twitter/X: @TurtlecoolApp <br />
+Telegram: t.me/velocitylabs/137 <br />
