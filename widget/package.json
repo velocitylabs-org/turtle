@@ -100,7 +100,7 @@
     "vite-plugin-wasm": "^3.4.1"
   },
   "peerDependencies": {
-    "@paraspell/sdk": "^8.13.1",
+    "@paraspell/sdk": "^10.10.4",
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/util": "^13.3.1",
     "@types/node": ">=20.16.15",
