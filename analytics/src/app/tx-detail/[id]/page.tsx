@@ -70,14 +70,14 @@ export default function TransactionDetailPage() {
   return (
     <div>
       <Card>
-        <CardContent className="mt-[25px] relative">
+        <CardContent className="relative mt-[25px]">
           <Button
             variant="ghost"
             size="icon"
             className="absolute left-4 top-[-7px] h-8 w-8"
             onClick={() => router.back()}
           >
-            <ChevronLeft className="!h-[24px] !w-[24px]"/>
+            <ChevronLeft className="!h-[24px] !w-[24px]" />
           </Button>
           <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border px-2 py-1">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">

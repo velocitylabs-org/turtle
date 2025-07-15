@@ -58,7 +58,12 @@ export default function RecentTransactionsTable({
           ) : (
             transactions.map(tx => (
               <TableRow key={tx._id} className="hover:bg-muted/50">
-                <Link href={`/tx-detail/${tx._id}`} className="contents cursor-pointer" prefetch onClick={() => start()}>
+                <Link
+                  href={`/tx-detail/${tx._id}`}
+                  className="contents cursor-pointer"
+                  prefetch
+                  onClick={() => start()}
+                >
                   <TableCell>
                     <div className="flex items-center">
                       <TokenChainDisplay tokenId={tx.sourceTokenId} chainUid={tx.sourceChainUid} />

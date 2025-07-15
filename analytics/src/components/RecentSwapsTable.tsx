@@ -56,7 +56,12 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
           ) : (
             swaps.map(swap => (
               <TableRow key={swap._id} className="hover:bg-muted/50">
-                <Link href={`/tx-detail/${swap._id}`} className="contents cursor-pointer" prefetch onClick={() => start()}>
+                <Link
+                  href={`/tx-detail/${swap._id}`}
+                  className="contents cursor-pointer"
+                  prefetch
+                  onClick={() => start()}
+                >
                   <TableCell>
                     <div className="flex items-center">
                       <TokenChainDisplay
