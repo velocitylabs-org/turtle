@@ -1,6 +1,12 @@
-import { AssetHub, Chain, Environment, KusamaAssetHub, Network, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import {
+  AssetHub,
+  Chain,
+  KusamaAssetHub,
+  Network,
+  Token,
+  TokenAmount,
+} from '@velocitylabs-org/turtle-registry'
 import { ethers, JsonRpcSigner } from 'ethers'
-import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
 import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -118,17 +124,17 @@ export const removeURLSlash = (url: string) => {
 }
 
 const EXPLORERS = {
-    // Ethereum
-    etherscan: 'https://etherscan.io/',
+  // Ethereum
+  etherscan: 'https://etherscan.io/',
 
-    // Polkadot
-    subscan_polkadot: 'https://polkadot.subscan.io/',
-    subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
-    subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
+  // Polkadot
+  subscan_polkadot: 'https://polkadot.subscan.io/',
+  subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
+  subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
 
-    subscan_kusama: 'https://polkadot.subscan.io/',
-    subscan_kusama_ah: 'https://assethub-polkadot.subscan.io/',
-    subscan_kusama_bh: 'https://bridgehub-polkadot.subscan.io/',
+  subscan_kusama: 'https://polkadot.subscan.io/',
+  subscan_kusama_ah: 'https://assethub-polkadot.subscan.io/',
+  subscan_kusama_bh: 'https://bridgehub-polkadot.subscan.io/',
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {

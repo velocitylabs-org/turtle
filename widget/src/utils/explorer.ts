@@ -2,17 +2,17 @@ import { AssetHub, KusamaAssetHub } from '@velocitylabs-org/turtle-registry'
 import { StoredTransfer } from '@/models/transfer'
 
 const EXPLORERS = {
-    // Ethereum
-    etherscan: 'https://etherscan.io/',
+  // Ethereum
+  etherscan: 'https://etherscan.io/',
 
-    // Polkadot
-    subscan_polkadot: 'https://polkadot.subscan.io/',
-    subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
-    subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
+  // Polkadot
+  subscan_polkadot: 'https://polkadot.subscan.io/',
+  subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
+  subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
 
-    subscan_kusama: 'https://polkadot.subscan.io/',
-    subscan_kusama_ah: 'https://assethub-polkadot.subscan.io/',
-    subscan_kusama_bh: 'https://bridgehub-polkadot.subscan.io/',
+  subscan_kusama: 'https://polkadot.subscan.io/',
+  subscan_kusama_ah: 'https://assethub-polkadot.subscan.io/',
+  subscan_kusama_bh: 'https://bridgehub-polkadot.subscan.io/',
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
