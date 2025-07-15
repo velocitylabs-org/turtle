@@ -18,13 +18,13 @@ export const routes: RouteItem[] = [
   },
   {
     label: 'Transactions',
-    icon: Shuffle,
+    icon: Repeat,
     leftNavigation: true,
     href: '/transactions',
   },
   {
     label: 'Swaps',
-    icon: Repeat,
+    icon: Shuffle,
     leftNavigation: true,
     href: '/swaps',
   },
