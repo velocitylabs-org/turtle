@@ -16,12 +16,12 @@ export const routes: RouteItem[] = [
   },
   {
     label: 'Transactions',
-    icon: Shuffle,
+    icon: Repeat,
     href: '/transactions',
   },
   {
     label: 'Swaps',
-    icon: Repeat,
+    icon: Shuffle,
     href: '/swaps',
   },
   {

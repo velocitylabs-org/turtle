@@ -20,6 +20,7 @@ import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '
 import { wagmiConfig } from '@/providers/config'
 import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
+import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics.ts'
 import { wait } from '@/utils/datetime'
 import { getExplorerLink } from '@/utils/explorer'
 import { isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
@@ -57,7 +58,8 @@ const useParaspellApi = () => {
     const hash = await moonbeamTransfer(params, viemClient)
 
     const senderAddress = await getSenderAddress(params.sender)
-    const tokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     const transferToStore = {
@@ -65,7 +67,7 @@ const useParaspellApi = () => {
       sourceChain: params.sourceChain,
       sourceToken: params.sourceToken,
       destinationToken: params.destinationToken,
-      sourceTokenUSDValue: tokenUSDValue,
+      sourceTokenUSDValue,
       sender: senderAddress,
       destChain: params.destinationChain,
       sourceAmount: params.sourceAmount.toString(),
@@ -80,13 +82,15 @@ const useParaspellApi = () => {
     await addToOngoingTransfers(transferToStore, () => {
       setStatus('Idle')
       params.onComplete?.()
+      trackTransferMetrics({
+        transferParams: params,
+        txId: hash,
+        senderAddress,
+        sourceTokenUSDValue,
+        destinationTokenUSDValue,
+        date,
+      })
     })
-
-    // We intentionally track the transfer on submit. The intention was clear, and if it fails somehow we see it in sentry and fix it.
-    // if (params.environment === Environment.Mainnet && isProduction) {
-    //   trackTransferMetrics()
-    //   setStatus('Idle')
-    // }
   }
 
   const handlePolkadotTransfer = async (
@@ -134,7 +138,8 @@ const useParaspellApi = () => {
     )
 
     const senderAddress = await getSenderAddress(params.sender)
-    const tokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
@@ -144,7 +149,7 @@ const useParaspellApi = () => {
           sourceChain: params.sourceChain,
           sourceToken: params.sourceToken,
           destinationToken: params.destinationToken,
-          sourceTokenUSDValue: tokenUSDValue,
+          sourceTokenUSDValue,
           sender: senderAddress,
           destChain: params.destinationChain,
           sourceAmount: params.sourceAmount.toString(),
@@ -160,9 +165,23 @@ const useParaspellApi = () => {
           await handleTxEvent(event, transferToStore, () => {
             setStatus('Idle')
             params.onComplete?.()
+            trackTransferMetrics({
+              transferParams: params,
+              txId: event.txHash?.toString(),
+              senderAddress,
+              sourceTokenUSDValue,
+              destinationTokenUSDValue,
+              date,
+            })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(
+            params.sender,
+            error,
+            setStatus,
+            event.txHash.toString(),
+            params.environment,
+          )
         }
       },
       error: callbackError => {
@@ -228,9 +247,24 @@ const useParaspellApi = () => {
           await handleTxEvent(event, transferToStore, () => {
             setStatus('Idle')
             params.onComplete?.()
+            trackTransferMetrics({
+              transferParams: params,
+              txId: event.txHash?.toString(),
+              senderAddress: account.address,
+              sourceTokenUSDValue,
+              destinationTokenUSDValue,
+              date,
+              isSwap: true,
+            })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash?.toString())
+          handleSendError(
+            params.sender,
+            error,
+            setStatus,
+            event.txHash?.toString(),
+            params.environment,
+          )
         }
       },
       error: callbackError => {
@@ -274,7 +308,7 @@ const useParaspellApi = () => {
     })
 
     monitorSwapWithTransfer(transferToStore, onchainEvents)
-    handleSameChainSwapStorage(transferToStore)
+    handleSameChainSwapStorage(transferToStore, event)
   }
 
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
@@ -285,12 +319,28 @@ const useParaspellApi = () => {
     return
   }
 
-  const handleSameChainSwapStorage = async (transfer: StoredTransfer) => {
+  const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
     if (!isSameChainSwap(transfer)) return
 
     // Wait for 3 seconds to ensure user can read swap status update
     // before completing the transfer
     await wait(3000)
+
+    const txSuccessful =
+      txEvent.type === 'finalized' &&
+      txEvent.events.some(
+        event => event.type === 'System' && event.value.type === 'ExtrinsicSuccess',
+      )
+
+    if (!txSuccessful) {
+      // captureException(new Error('Swap failed'), { extra: { transfer } })
+      console.error('Swap failed!')
+    }
+
+    addNotification({
+      message: txSuccessful ? 'Swap succeeded!' : 'Swap failed!',
+      severity: txSuccessful ? NotificationSeverity.Success : NotificationSeverity.Error,
+    })
 
     const explorerLink = getExplorerLink(transfer)
     removeOngoing(transfer.id)
@@ -312,6 +362,15 @@ const useParaspellApi = () => {
       date: transfer.date,
       ...(explorerLink && { explorerLink }),
     } satisfies CompletedTransfer)
+
+    // Analytics tx are created with successful status by default, we only update for failed ones
+    if (!txSuccessful) {
+      updateTransferMetrics({
+        txHashId: transfer.id,
+        status: TxStatus.Failed,
+        environment: transfer.environment,
+      })
+    }
   }
 
   const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
@@ -386,6 +445,7 @@ const useParaspellApi = () => {
     e: unknown,
     setStatus: (status: Status) => void,
     txId?: string,
+    environment?: string,
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
@@ -399,6 +459,14 @@ const useParaspellApi = () => {
       message,
       severity: NotificationSeverity.Error,
     })
+
+    if (txId && environment) {
+      updateTransferMetrics({
+        txHashId: txId,
+        status: TxStatus.Failed,
+        environment: environment,
+      })
+    }
   }
 
   return { transfer }

@@ -9,6 +9,7 @@ import { SnowbridgeContext } from '@/models/snowbridge'
 import { StoredTransfer } from '@/models/transfer'
 import { wagmiConfig } from '@/providers/config'
 import { getSenderAddress } from '@/utils/address'
+import { trackTransferMetrics } from '@/utils/analytics.ts'
 import { Direction, resolveDirection, txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -137,7 +138,8 @@ const useSnowbridgeApi = () => {
       onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
-      const tokenUSDValue = (await getTokenPrice(sourceToken))?.usd ?? 0
+      const sourceTokenUSDValue = (await getTokenPrice(sourceToken))?.usd ?? 0
+      const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
       const date = new Date()
 
       addOrUpdate({
@@ -145,7 +147,7 @@ const useSnowbridgeApi = () => {
         sourceChain,
         sourceToken,
         destinationToken,
-        sourceTokenUSDValue: tokenUSDValue,
+        sourceTokenUSDValue,
         sender: senderAddress,
         destChain: destinationChain,
         sourceAmount: sourceAmount.toString(),
@@ -156,19 +158,14 @@ const useSnowbridgeApi = () => {
         bridgingFee,
       } satisfies StoredTransfer)
 
-      // trackTransferMetrics({
-      // id: response.hash,
-      // sender: senderAddress,
-      // sourceChain,
-      // token: sourceToken,
-      // amount: sourceAmount,
-      // destinationChain,
-      // tokenUSDValue,
-      // fees,
-      // recipient,
-      // date,
-      // environment,
-      // })
+      trackTransferMetrics({
+        transferParams: params,
+        txId: response.hash,
+        senderAddress,
+        sourceTokenUSDValue,
+        destinationTokenUSDValue,
+        date,
+      })
     } catch (e) {
       handleSendError(sender, e)
     } finally {
