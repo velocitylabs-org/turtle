@@ -100,7 +100,6 @@ export async function getBalance(
 ): Promise<Balance | undefined> {
   const node = getParaSpellNode(chain)
 
-  console.log('KSM - node not found for chain', chain.name)
   if (!node) throw new Error('Node not found')
   const currency = getParaspellToken(token, node)
 

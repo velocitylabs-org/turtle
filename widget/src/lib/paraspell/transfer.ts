@@ -205,7 +205,6 @@ export function getNativeToken(chain: Chain): Token {
 
   const relay = getRelayNode(env)
 
-  console.log('getNativeToken ', chain.chainId, relay)
   const chainNode = getTNode(chain.chainId, relay)
   if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
 

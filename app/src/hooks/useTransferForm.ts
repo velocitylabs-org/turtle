@@ -138,9 +138,6 @@ const useTransferForm = () => {
     (!manualRecipient.enabled || manualRecipient.address.length > 0) &&
     (manualRecipient.enabled || destinationWallet?.isConnected)
 
-  console.log('IsFormValid', isFormValid, isValidZodSchema, !sourceTokenAmountError)
-  console.log('Form errors are:', errors)
-
   const allowFromToSwap = useCallback(() => {
     return (
       !isValidating &&
