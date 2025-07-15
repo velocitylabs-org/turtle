@@ -14,7 +14,7 @@ import {
   Polimec,
   Polkadot,
   Kusama,
-  KusamaAssetHub
+  KusamaAssetHub,
 } from "./chains";
 import { EthereumTokens, PolkadotTokens } from "./tokens";
 

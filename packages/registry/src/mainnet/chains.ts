@@ -5,6 +5,8 @@ import bifrostLogo from "@velocitylabs-org/turtle-assets/logos/bifrost.svg";
 import bridgehubLogo from "@velocitylabs-org/turtle-assets/logos/bridgehub.svg";
 import centrifugeLogo from "@velocitylabs-org/turtle-assets/logos/cfg.svg";
 import ethereumLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
+import kusamaLogo from "@velocitylabs-org/turtle-assets/logos/kusama.svg";
+import kusamaAhLogo from "@velocitylabs-org/turtle-assets/logos/kusama-ah.svg";
 import hydraLogo from "@velocitylabs-org/turtle-assets/logos/hydra.svg";
 import interlayLogo from "@velocitylabs-org/turtle-assets/logos/interlay.svg";
 import moonbeamLogo from "@velocitylabs-org/turtle-assets/logos/moonbeam.svg";
@@ -180,7 +182,7 @@ export const Mythos: Chain = {
 export const Kusama: Chain = {
   uid: "kusama",
   name: "Kusama",
-  logoURI: polkadotLogo, //todo(nuno)
+  logoURI: kusamaLogo,
   chainId: 0,
   network: "Kusama",
   supportedAddressTypes: ["ss58"],
@@ -191,7 +193,7 @@ export const Kusama: Chain = {
 export const KusamaAssetHub: Chain = {
   uid: "kusama-assethub",
   name: "Kusama Asset Hub",
-  logoURI: assetHubLogo, //todo(nuno)
+  logoURI: kusamaAhLogo,
   chainId: 1000,
   network: "Kusama",
   supportedAddressTypes: ["ss58"],

@@ -90,7 +90,11 @@ export const xcmOcceloidsSubscribe = async (
     const { id: txHash, sourceChain, destChain } = transfer
 
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
-      getSubscription(sourceChain.chainId, destChain.chainId, sourceChain.network.toLocaleLowerCase()),
+      getSubscription(
+        sourceChain.chainId,
+        destChain.chainId,
+        sourceChain.network.toLocaleLowerCase(),
+      ),
       {
         onMessage: msg => {
           const {
@@ -183,7 +187,7 @@ const getSubscription = (
   destChainId: number,
   sender?: string,
   events?: xcm.XcmNotificationType[],
-  consensus: 'polkadot' | 'kusama' = 'polkadot', 
+  consensus: 'polkadot' | 'kusama' = 'polkadot',
 ): xcm.XcmInputs => {
   return {
     senders: sender ? [sender] : '*',

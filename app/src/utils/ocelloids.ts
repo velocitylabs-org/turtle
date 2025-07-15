@@ -178,9 +178,9 @@ export const xcmOcceloidsSubscribe = async (
 const getSubscription = (
   sourceChainId: number,
   destChainId: number,
+  consensus: 'polkadot' | 'kusama' = 'polkadot', 
   sender?: string,
   events?: xcm.XcmNotificationType[],
-  consensus: 'polkadot' | 'kusama' = 'polkadot', 
 ): xcm.XcmInputs => {
   console.log("getSubscription > consensus >", consensus)
   return {

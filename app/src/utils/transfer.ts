@@ -126,6 +126,7 @@ const EXPLORERS: { [environment in Environment]: { [explorerName: string]: strin
   },
 }
 
+// todo: support kusama
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const {
     environment,
