@@ -90,11 +90,7 @@ export const xcmOcceloidsSubscribe = async (
     const { id: txHash, sourceChain, destChain } = transfer
 
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
-      getSubscription(
-        sourceChain.chainId,
-        destChain.chainId,
-        sourceChain.network,
-      ),
+      getSubscription(sourceChain.chainId, destChain.chainId, sourceChain.network),
       {
         onMessage: msg => {
           const {
