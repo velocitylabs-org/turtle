@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.16
+
+### Patch Changes
+
+- 6a474da: Added tracking for analytics purposes
+
 ## 0.0.15
 
 ### Patch Changes
