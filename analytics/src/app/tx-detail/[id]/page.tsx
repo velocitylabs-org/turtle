@@ -1,8 +1,8 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import { chainsByUid, tokensById } from '@velocitylabs-org/turtle-registry'
-import { ArrowRight, ExternalLink, Copy, Check } from 'lucide-react'
-import { useParams } from 'next/navigation'
+import { ArrowRight, ExternalLink, Copy, Check, ChevronLeft } from 'lucide-react'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { getTxDetail } from '@/app/actions/tx-detail'
 import ErrorPanel from '@/components/ErrorPanel'
@@ -19,6 +19,7 @@ import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 export default function TransactionDetailPage() {
   const params = useParams()
+  const router = useRouter()
   const id = params.id as string
 
   const {
@@ -66,12 +67,18 @@ export default function TransactionDetailPage() {
 
   const explorerLink = getExplorerLink(transaction)
 
-  console.log(transaction)
-
   return (
     <div>
       <Card>
-        <CardContent className="mt-[25px]">
+        <CardContent className="mt-[25px] relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute left-4 top-[-7px] h-8 w-8"
+            onClick={() => router.back()}
+          >
+            <ChevronLeft className="!h-[24px] !w-[24px]"/>
+          </Button>
           <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border px-2 py-1">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <LogoImg

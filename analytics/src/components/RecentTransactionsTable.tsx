@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import React from 'react'
+import { useLoadingBar } from 'react-top-loading-bar'
 import {
   Table,
   TableBody,
@@ -23,6 +24,8 @@ export default function RecentTransactionsTable({
   transactions,
   isLoading,
 }: RecentTransactionsTableProps) {
+  const { start } = useLoadingBar()
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -55,7 +58,7 @@ export default function RecentTransactionsTable({
           ) : (
             transactions.map(tx => (
               <TableRow key={tx._id} className="hover:bg-muted/50">
-                <Link href={`/tx-detail/${tx._id}`} className="contents cursor-pointer" prefetch>
+                <Link href={`/tx-detail/${tx._id}`} className="contents cursor-pointer" prefetch onClick={() => start()}>
                   <TableCell>
                     <div className="flex items-center">
                       <TokenChainDisplay tokenId={tx.sourceTokenId} chainUid={tx.sourceChainUid} />

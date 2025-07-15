@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import React from 'react'
+import { useLoadingBar } from 'react-top-loading-bar'
 import {
   Table,
   TableBody,
@@ -20,6 +21,8 @@ interface RecentSwapsTableProps {
 }
 
 export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableProps) {
+  const { start } = useLoadingBar()
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -53,7 +56,7 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
           ) : (
             swaps.map(swap => (
               <TableRow key={swap._id} className="hover:bg-muted/50">
-                <Link href={`/tx-detail/${swap._id}`} className="contents cursor-pointer" prefetch>
+                <Link href={`/tx-detail/${swap._id}`} className="contents cursor-pointer" prefetch onClick={() => start()}>
                   <TableCell>
                     <div className="flex items-center">
                       <TokenChainDisplay
