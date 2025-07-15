@@ -10,7 +10,7 @@ export default function getExplorerLink(tx: TxDetailView): string | undefined {
   const explorersUrls = {
     etherscan: 'https://etherscan.io/',
     subscan_assethub: 'https://assethub-polkadot.subscan.io/',
-    subscan_brigehub: 'https://bridgehub-polkadot.subscan.io/',
+    subscan_bridgehub: 'https://bridgehub-polkadot.subscan.io/',
     subscan_relaychain: 'https://polkadot.subscan.io/',
   }
 
