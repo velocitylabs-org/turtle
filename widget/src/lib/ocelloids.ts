@@ -1,5 +1,5 @@
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { Moonbeam } from '@velocitylabs-org/turtle-registry'
+import { Moonbeam, Network } from '@velocitylabs-org/turtle-registry'
 import { NotificationSeverity, Notification } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { OCELLOIDS_API_Key } from '@/utils/consts'
@@ -93,7 +93,7 @@ export const xcmOcceloidsSubscribe = async (
       getSubscription(
         sourceChain.chainId,
         destChain.chainId,
-        sourceChain.network.toLocaleLowerCase(),
+        sourceChain.network,
       ),
       {
         onMessage: msg => {
@@ -185,15 +185,15 @@ export const xcmOcceloidsSubscribe = async (
 const getSubscription = (
   sourceChainId: number,
   destChainId: number,
+  network: Network,
   sender?: string,
   events?: xcm.XcmNotificationType[],
-  consensus: 'polkadot' | 'kusama' = 'polkadot',
 ): xcm.XcmInputs => {
   return {
     senders: sender ? [sender] : '*',
     events: events ? events : '*',
-    origins: [`urn:ocn:${consensus}:${sourceChainId}`],
-    destinations: [`urn:ocn:${consensus}:${destChainId}`],
+    origins: [`urn:ocn:${network.toLocaleLowerCase()}:${sourceChainId}`],
+    destinations: [`urn:ocn:${network.toLocaleLowerCase()}:${destChainId}`],
   }
 }
 

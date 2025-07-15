@@ -111,8 +111,6 @@ export async function lookupName(network: Network, address: string): Promise<str
       //todo(nuno)
       return null
   }
-
-  return null
 }
 
 export const removeURLSlash = (url: string) => {
