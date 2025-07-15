@@ -215,7 +215,8 @@ export function getNativeToken(chain: Chain): Token {
 
   const relay = getRelayNode(chain.network)
   const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode) throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
+  if (!chainNode)
+    throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
   const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols

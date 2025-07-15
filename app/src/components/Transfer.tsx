@@ -196,7 +196,19 @@ export default function Transfer() {
 
   const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
 
-  console.log("IsTransferAllowed", isValid, !isValidating, fees, transferStatus === 'Idle', !requiresErc20SpendApproval, !loadingFees, canPayFees, canPayBridgingFee, !isLoadingOutputAmount, !exceedsTransferableBalance)
+  console.log(
+    'IsTransferAllowed',
+    isValid,
+    !isValidating,
+    fees,
+    transferStatus === 'Idle',
+    !requiresErc20SpendApproval,
+    !loadingFees,
+    canPayFees,
+    canPayBridgingFee,
+    !isLoadingOutputAmount,
+    !exceedsTransferableBalance,
+  )
 
   const isTransferAllowed =
     isValid &&
