@@ -26,6 +26,7 @@ interface SwapPairsGraphProps {
 }
 
 const colors = ['#2e4afb', '#22c55e', '#f59e0b', '#9eadc5']
+const minimumFragmentPercentage = 1.5 // Minimum percentage threshold to ensure pie chart segments are visible
 
 export default function SwapPairsGraph({
   data = [],
@@ -57,12 +58,11 @@ export default function SwapPairsGraph({
   const formattedData = data.map((pair, index) => {
     const value = isVolumeType ? pair.totalVolume : pair.totalTransactions
     const percentage = (value / total) * 100
-    const minPercentage = 1.5 // Minimum 1.5% slice width
 
     return {
       ...pair,
       percentage: percentage,
-      displayValue: Math.max(value, (total * minPercentage) / 100), // Ensure minimum display value
+      displayValue: Math.max(value, (total * minimumFragmentPercentage) / 100), // Ensure minimum display value
       fill: colors[index % colors.length],
     }
   })
@@ -86,7 +86,7 @@ export default function SwapPairsGraph({
       totalVolume: isVolumeType ? remainingValue : 0,
       totalTransactions: isVolumeType ? 0 : remainingValue,
       percentage: remainingPercentage,
-      displayValue: Math.max(remainingValue, (total * 2.5) / 100),
+      displayValue: Math.max(remainingValue, (total * minimumFragmentPercentage) / 100),
       fill: colors[colors.length - 1],
     })
   }
