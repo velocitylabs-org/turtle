@@ -102,7 +102,7 @@ export default function SwapsPage() {
                 className="ml-3"
               />
             </CardTitle>
-            <CardDescription>Success swaps only</CardDescription>
+            <CardDescription>Successful swaps only</CardDescription>
           </CardHeader>
           <CardContent>
             <SwapPairsGraph
