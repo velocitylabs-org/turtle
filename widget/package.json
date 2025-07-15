@@ -2,7 +2,7 @@
   "name": "@velocitylabs-org/turtle-widget",
   "description": "Turtle Widget – Seamless, trustless cross-chain transfers made easy.",
   "private": false,
-  "version": "0.0.14",
+  "version": "0.0.16",
   "type": "module",
   "module": "./dist/turtle-widget.js",
   "exports": {
@@ -30,8 +30,8 @@
   "dependencies": {
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
-    "@paraspell/sdk": "^10.10.2",
-    "@paraspell/xcm-router": "^10.10.2",
+    "@paraspell/sdk": "^10.10.4",
+    "@paraspell/xcm-router": "^10.10.4",
     "@polkadot/api": "^15.9.2",
     "@polkadot/extension-dapp": "^0.58.4",
     "@polkadot/extension-inject": "^0.58.8",
@@ -87,6 +87,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "postcss": "^8",
+    "postcss-nested": "^7.0.2",
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "rimraf": "^6.0.1",
