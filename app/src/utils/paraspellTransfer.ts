@@ -16,7 +16,6 @@ import { captureException } from '@sentry/nextjs'
 import {
   Chain,
   Token,
-  Environment,
   EthereumTokens,
   REGISTRY,
   Network,
@@ -213,13 +212,12 @@ export function toPsEcosystem(network: Network): TEcosystemType {
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const relay = getRelayNode(chain.network)
-  const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode)
-    throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
+  const ecosystem = toPsEcosystem(chain.network)
+  const chainNode = getTNode(chain.chainId, ecosystem)
+  if (!chainNode) throw Error(`ChainNode with id ${chain.uid} not found in ${ecosystem}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
-  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  const token = REGISTRY.tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
 }

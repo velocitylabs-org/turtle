@@ -1,6 +1,6 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
-import { Token } from '@velocitylabs-org/turtle-registry'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
@@ -20,7 +20,7 @@ import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
-const chainOptions = chains.map(chain => ({
+const chainOptions = chains.map((chain: Chain) => ({
   value: chain.uid,
   label: chain.name,
   logoURI: getSrcFromLogo(chain),
@@ -64,7 +64,6 @@ export default function TransactionsPage() {
         originLogoURI,
       }
     })
-    .filter(token => !!token.originLogoURI)
 
   const tokenDestinationOptions = tokens
     .map((token: Token) => {
@@ -76,7 +75,7 @@ export default function TransactionsPage() {
         originLogoURI,
       }
     })
-    .filter(token => !!token.originLogoURI)
+    .filter((token: any) => !!token.originLogoURI)
 
   const { data, isLoading, error } = useQuery({
     queryKey: [

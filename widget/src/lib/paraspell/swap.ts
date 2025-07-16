@@ -6,7 +6,6 @@ import {
   getTokenByMultilocation,
   Hydration,
   REGISTRY,
-  Environment,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { SubstrateAccount } from '@/stores/substrateWalletStore'
@@ -141,7 +140,7 @@ export const getSwapsDestinationChains = (
   if (!dexTokens.has(sourceToken.id)) return []
 
   // get transfer routes we can reach from the source chain
-  const routes = REGISTRY[Environment.Mainnet].routes.filter(
+  const routes = REGISTRY.routes.filter(
     route => route.from === sourceChain.uid,
   )
 
@@ -151,7 +150,7 @@ export const getSwapsDestinationChains = (
   routes.forEach(route => {
     if (route.tokens.some(tokenId => dexTokens.has(tokenId))) {
       // lookup destination chain and add it to the list
-      const destinationChain = REGISTRY[Environment.Mainnet].chains.find(
+      const destinationChain = REGISTRY.chains.find(
         chain => chain.uid === route.to,
       )
       if (destinationChain) chains.push(destinationChain)
@@ -180,7 +179,7 @@ export const getSwapsDestinationTokens = (
   if (isSameChain(sourceChain, destinationChain)) return dexTokensWithoutSourceToken
 
   // if destination chain is different, filter tokens by routes
-  const route = REGISTRY[Environment.Mainnet].routes.find(
+  const route = REGISTRY.routes.find(
     route => route.from === sourceChain.uid && route.to === destinationChain.uid,
   )
   if (!route) return []

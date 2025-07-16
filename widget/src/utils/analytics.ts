@@ -1,6 +1,5 @@
 'use client'
 
-import { Environment } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
 import { TxStatus } from '@/models/transfer'
 import {
@@ -29,7 +28,7 @@ export async function trackTransferMetrics({
   date,
   isSwap = false,
 }: TransferMetric) {
-  if (transferParams.environment !== Environment.Mainnet || !isProduction || !txId) {
+  if (!isProduction || !txId) {
     return
   }
 
@@ -135,15 +134,13 @@ export async function trackTransferMetrics({
 interface TrackTransferMetricsParams {
   txHashId: string
   status: string
-  environment: string
 }
 
 export async function updateTransferMetrics({
   txHashId,
   status,
-  environment,
 }: TrackTransferMetricsParams) {
-  if (environment !== Environment.Mainnet || !isProduction || !txHashId || !status) {
+  if (!isProduction || !txHashId || !status) {
     return
   }
 

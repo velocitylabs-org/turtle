@@ -17,7 +17,6 @@ import {
   isCompletedTransfer,
 } from '@/utils/transferTracking'
 import useCompletedTransfers from './useCompletedTransfers'
-import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 
@@ -31,7 +30,6 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const { remove, updateUniqueId } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
-  const env = useEnvironment()
 
   const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
     return ongoingTransfers
@@ -64,7 +62,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
     try {
       setLoading(true)
-      const response = await fetch(`/api/history?env=${env}`, {
+      const response = await fetch(`/api/history`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +76,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
     } finally {
       setLoading(false)
     }
-  }, [env, ongoingTransfers])
+  }, [ongoingTransfers])
 
   const ongoingTransfersRef = useRef(ongoingTransfers)
 
@@ -161,7 +159,6 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             updateTransferMetrics({
               txHashId: ongoing.id,
               status: TxStatus.Failed,
-              environment: ongoing.environment,
             })
           }
         }
