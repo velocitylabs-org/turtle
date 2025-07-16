@@ -2,18 +2,31 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { CircleCheckBig, DollarSign, Percent, Repeat } from 'lucide-react'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import React from 'react'
 import { getSwapsData } from '@/app/actions/swaps'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentSwapsTable from '@/components/RecentSwapsTable'
 import SmallStatBox from '@/components/SmallStatBox'
-import SwapsActivityTable from '@/components/SwapsActivityTable'
+import SwapPairsGraph from '@/components/SwapPairsGraph'
+import TitleToggle from '@/components/TitleToggle'
+import TokensActivityTable from '@/components/TokensActivityTable'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { defaultTransactionLimit } from '@/constants'
+import { defaultTransactionLimit, GraphType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
 
+const toggleOptions = [
+  { value: 'volume', label: 'Volume' },
+  { value: 'count', label: 'Count' },
+]
+const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
+
 export default function SwapsPage() {
+  const [topSwapsGraphType, setTopSwapsGraphType] = useQueryState(
+    'transactionsBy',
+    togglesQueryDefault,
+  )
   const { data, isLoading, error } = useQuery({
     queryKey: ['swaps'],
     queryFn: getSwapsData,
@@ -30,9 +43,14 @@ export default function SwapsPage() {
     swapsSuccessRate: 0,
     swapsPercentageOfTransactions: 0,
     recentSwaps: 0,
+    swapPairsByVolume: [],
+    swapPairsByTransactions: [],
   }
 
-  console.log('swapsActivity', data?.swapsActivity)
+  const topSwapsPairs =
+    topSwapsGraphType === 'volume'
+      ? data?.swapPairsByVolume || []
+      : data?.swapPairsByTransactions || []
 
   return (
     <div>
@@ -47,7 +65,7 @@ export default function SwapsPage() {
           description="Successful swaps only"
         />
         <SmallStatBox
-          title="Total Swaps"
+          title="Succeeded swaps"
           value={swapsSummaryData.successfulSwaps}
           icon={Repeat}
           iconColor="#D2B48C"
@@ -75,11 +93,36 @@ export default function SwapsPage() {
       <div className="mt-4">
         <Card>
           <CardHeader>
-            <CardTitle>Swaps overview</CardTitle>
-            <CardDescription>Ranked by volume and transaction count</CardDescription>
+            <CardTitle>
+              Top swap pairs by
+              <TitleToggle
+                options={toggleOptions}
+                value={topSwapsGraphType}
+                onChange={value => setTopSwapsGraphType(value as GraphType)}
+                className="ml-3"
+              />
+            </CardTitle>
+            <CardDescription>Successful swaps only</CardDescription>
           </CardHeader>
           <CardContent>
-            <SwapsActivityTable tokens={data?.swapsActivity || []} isLoading={isLoading} />
+            <SwapPairsGraph
+              data={topSwapsPairs}
+              loading={isLoading}
+              type={topSwapsGraphType}
+              totalVolume={swapsSummaryData.swapsTotalVolume}
+              totalSwaps={swapsSummaryData.successfulSwaps}
+            />
+          </CardContent>
+        </Card>
+      </div>
+      <div className="mt-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Swaps overview</CardTitle>
+            <CardDescription>By volume and transaction count (successful only)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <TokensActivityTable tokens={data?.swapsActivity || []} isLoading={isLoading} />
           </CardContent>
         </Card>
       </div>

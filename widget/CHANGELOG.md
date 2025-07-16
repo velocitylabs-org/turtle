@@ -1,5 +1,17 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.0.16
+
+### Patch Changes
+
+- 6a474da: Added tracking for analytics purposes
+
+## 0.0.15
+
+### Patch Changes
+
+- c7cf6ce: Implemented important selector strategy for the widget along with scoping the preflight from tailwind with postcss-nested
+
 ## 0.0.14
 
 ### Patch Changes

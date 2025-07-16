@@ -5,6 +5,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, TooltipProps } from 
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import { GraphType } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
+import formatPercentage from '@/utils/format-percentage'
 import formatUSD from '@/utils/format-USD'
 import getTypeBadge from '@/utils/get-type-badge'
 
@@ -72,6 +73,7 @@ export default function TopTokensChart({ data = [], type, total = 0 }: TopTokens
 
 const colors = [
   '#0077da',
+  '#32a27e',
   '#f91033',
   '#9eadc5', // Rest tokens
 ]
@@ -140,7 +142,7 @@ const CustomTooltip = ({ active, payload, total, typeVolume }: CustomTooltip) =>
   return (
     <div className="min-w-[8rem] rounded-lg border bg-background p-2 text-xs shadow-xl">
       <span className="font-medium">{data.name} </span>
-      {data?.value && <span>({((data.value / total) * 100).toFixed(2)}%)</span>}
+      {data?.value && <span>({formatPercentage((data.value / total) * 100)}%)</span>}
       <p className="text-muted-foreground">
         {typeVolume ? `$${formatUSD(data?.value)}` : `${data?.value} transactions`}
       </p>

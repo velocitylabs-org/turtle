@@ -23,3 +23,9 @@ export type GraphType = 'volume' | 'count'
 export type TimePeriodType = 'last-6-months' | 'last-month' | 'this-week'
 
 export const swapsStartingDate = new Date('2023-04-29')
+
+export const statusColors = {
+  succeeded: { hex: '#22c55e', className: 'green-500' },
+  failed: { hex: '#ef4444', className: 'red-500' },
+  undefined: { hex: '#eab308', className: 'yellow-500' },
+}
