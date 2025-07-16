@@ -173,12 +173,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(
-            params.sender,
-            error,
-            setStatus,
-            event.txHash.toString(),
-          )
+          handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
       },
       error: callbackError => {
@@ -254,12 +249,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(
-            params.sender,
-            error,
-            setStatus,
-            event.txHash?.toString(),
-          )
+          handleSendError(params.sender, error, setStatus, event.txHash?.toString())
         }
       },
       error: callbackError => {

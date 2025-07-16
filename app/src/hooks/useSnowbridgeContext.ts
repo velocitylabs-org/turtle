@@ -4,7 +4,6 @@ import { getSnowBridgeContext } from '@/context/snowbridge'
 import { SnowbridgeContext } from '@/models/snowbridge'
 
 const useSnowbridgeContext = () => {
-
   const {
     data: snowbridgeContext,
     isLoading: isSnowbridgeContextLoading,

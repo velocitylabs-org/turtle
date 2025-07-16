@@ -183,9 +183,7 @@ export const getSwapsDestinationChains = (
   chains.push(sourceChain)
 
   // get transfer routes we can reach from the source chain
-  const routes = REGISTRY.routes.filter(
-    route => route.from === sourceChain.uid,
-  )
+  const routes = REGISTRY.routes.filter(route => route.from === sourceChain.uid)
 
   // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
@@ -195,9 +193,7 @@ export const getSwapsDestinationChains = (
       )
     ) {
       // lookup destination chain and add it to the list
-      const destinationChain = REGISTRY.chains.find(
-        chain => chain.uid === route.to,
-      )
+      const destinationChain = REGISTRY.chains.find(chain => chain.uid === route.to)
       if (destinationChain) chains.push(destinationChain)
     }
   })

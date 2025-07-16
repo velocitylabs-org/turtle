@@ -136,10 +136,7 @@ interface TrackTransferMetricsParams {
   status: string
 }
 
-export async function updateTransferMetrics({
-  txHashId,
-  status,
-}: TrackTransferMetricsParams) {
+export async function updateTransferMetrics({ txHashId, status }: TrackTransferMetricsParams) {
   if (!isProduction || !txHashId || !status) {
     return
   }

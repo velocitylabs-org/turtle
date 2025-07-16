@@ -29,8 +29,7 @@ import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
  */
 export function getSbEnvironment(network: Network): environment.SnowbridgeEnvironment {
   const sbNetwork = toSnowbridgeNetwork(network)
-  if (sbNetwork === undefined)
-    throw Error(`Snowbridge doesn't support the given Network`)
+  if (sbNetwork === undefined) throw Error(`Snowbridge doesn't support the given Network`)
 
   const env = environment.SNOWBRIDGE_ENV[sbNetwork]
 
@@ -40,8 +39,7 @@ export function getSbEnvironment(network: Network): environment.SnowbridgeEnviro
     env.config.BRIDGE_HUB_PARAID = BridgeHub.chainId
     env.config.RELAY_CHAIN_URL = rpcConnectionAsHttps(Polkadot.rpcConnection)
     env.config.PARACHAINS = SNOWBRIDGE_MAINNET_PARACHAIN_URLS
-  }
-  else {
+  } else {
     throw Error(`Snowbridge doesn't support the given Network`)
   }
 

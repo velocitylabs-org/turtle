@@ -345,16 +345,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [
-      destinationWallet,
-      fees,
-      bridgingFee,
-      reset,
-      sourceWallet?.sender,
-      transfer,
-      environment,
-      addNotification,
-    ],
+    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   // validate recipient address
@@ -484,7 +475,6 @@ const useTransferForm = () => {
     canPayFees,
     canPayAdditionalFees,
     transferStatus,
-    environment,
     sourceTokenAmountError,
     manualRecipientError,
     isBalanceAvailable: balanceData?.value != undefined,

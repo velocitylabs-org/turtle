@@ -54,16 +54,15 @@ export default function TransactionsPage() {
   const [toDate, setToDate] = useQueryState('toDate', parseAsIsoDate)
   const [origin, setOrigin] = useQueryState('origin', emptyDefaultString)
 
-  const tokenSourceOptions = tokens
-    .map((token: Token) => {
-      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid)
-      return {
-        value: token.id,
-        label: token.symbol,
-        logoURI,
-        originLogoURI,
-      }
-    })
+  const tokenSourceOptions = tokens.map((token: Token) => {
+    const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid)
+    return {
+      value: token.id,
+      label: token.symbol,
+      logoURI,
+      originLogoURI,
+    }
+  })
 
   const tokenDestinationOptions = tokens
     .map((token: Token) => {

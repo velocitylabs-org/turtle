@@ -451,15 +451,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [
-      destinationWallet,
-      fees,
-      bridgingFee,
-      reset,
-      sourceWallet?.sender,
-      transfer,
-      addNotification,
-    ],
+    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   return {

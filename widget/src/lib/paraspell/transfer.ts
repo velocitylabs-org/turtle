@@ -18,7 +18,7 @@ import {
   EthereumTokens,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { toPsEcosystem } from '../../../../app/src/utils/paraspellTransfer';
+import { toPsEcosystem } from '../../../../app/src/utils/paraspellTransfer'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
