@@ -331,7 +331,7 @@ const TokenAmountInput = ({
         </div>
 
         {amountProps?.trailingAction &&
-          (chainProps?.network === 'Polkadot' ? (
+          (chainProps?.network === 'Polkadot' || chainProps?.network === 'Kusama' ? (
             <Tooltip showIcon={false} content={tooltipContent ?? ''}>
               <div className="absolute right-0 ml-2 mr-3 bg-white">
                 {amountProps.trailingAction}
