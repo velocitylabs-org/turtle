@@ -12,7 +12,9 @@ import {
   Mythos,
   Phala,
   Polimec,
-  RelayChain,
+  Polkadot,
+  Kusama,
+  KusamaAssetHub,
 } from "./chains";
 import { EthereumTokens, PolkadotTokens } from "./tokens";
 
@@ -86,55 +88,55 @@ export const routes: Route[] = [
 
   // Relay To Para Routes
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: AssetHub.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Acala.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Moonbeam.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Hydration.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Interlay.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Centrifuge.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Astar.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Bifrost.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
-    from: RelayChain.uid,
+    from: Polkadot.uid,
     to: Polimec.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
@@ -143,43 +145,43 @@ export const routes: Route[] = [
   // Para To Relay Routes
   {
     from: AssetHub.uid,
-    to: RelayChain.uid,
+    to: Polkadot.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
     from: Acala.uid,
-    to: RelayChain.uid,
+    to: Polkadot.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
     from: Bifrost.uid,
-    to: RelayChain.uid,
+    to: Polkadot.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   /* {
     from: Interlay.uid,
-    to: RelayChain.uid,
+    to: Polkadot.uid,
     sdk: 'ParaSpellApi',
     tokens: [PolkadotTokens.DOT.id],
   }, */
   {
     from: Moonbeam.uid,
-    to: RelayChain.uid,
+    to: Polkadot.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
     from: Hydration.uid,
-    to: RelayChain.uid,
+    to: Polkadot.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
   {
     from: Astar.uid,
-    to: RelayChain.uid,
+    to: Polkadot.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.DOT.id],
   },
@@ -607,5 +609,17 @@ export const routes: Route[] = [
     to: Hydration.uid,
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.PHA.id],
+  },
+  {
+    from: Kusama.uid,
+    to: KusamaAssetHub.uid,
+    sdk: "ParaSpellApi",
+    tokens: [PolkadotTokens.KSM.id],
+  },
+  {
+    from: KusamaAssetHub.uid,
+    to: Kusama.uid,
+    sdk: "ParaSpellApi",
+    tokens: [PolkadotTokens.KSM.id],
   },
 ];

@@ -1,4 +1,4 @@
-import { REGISTRY, Ethereum, RelayChain } from '@velocitylabs-org/turtle-registry'
+import { REGISTRY, Ethereum, Polkadot } from '@velocitylabs-org/turtle-registry'
 
 export const primaryColor = '#00FF29'
 
@@ -13,7 +13,7 @@ export const defaultTransactionLimit = 20
 // Chains
 export const chains = REGISTRY.mainnet.chains
 export const ethereumChain = Ethereum
-export const relayChain = RelayChain
+export const relayChain = Polkadot
 
 // Tokens
 export const tokens = REGISTRY.mainnet.tokens
