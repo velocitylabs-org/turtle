@@ -41,7 +41,7 @@ export default function getExplorerLink(tx: TxDetailView): string | undefined {
       if (walletType === 'SubstrateEVM') {
         return getCustomExplorerLink(name, sender)
       }
-      // Default Polkadot network explorer link:
+      // Default Kusama network explorer link:
       return `${removeURLSlash(explorersUrls.subscan_kusama)}/account/${sender}?tab=xcm_transfer`
     }
     default:
