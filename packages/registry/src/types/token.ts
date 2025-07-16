@@ -26,5 +26,4 @@ export type Bridge = "Snowbridge" | "Other";
 // The origin of a token
 export type Origin =
   | { type: "Ethereum"; bridge: Bridge }
-  | { type: "Polkadot"; paraId: number }
-  | { type: "Kusama"; paraId: number };
+  | { type: "Polkadot"; paraId: number };

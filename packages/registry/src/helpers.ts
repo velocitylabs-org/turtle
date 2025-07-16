@@ -9,13 +9,6 @@ export function isAssetHub(chain: Chain): boolean {
   return chain.network == "Polkadot" && chain.chainId === 1000;
 }
 
-export function kusamaChain(paraId: number): Origin {
-  return {
-    type: "Kusama",
-    paraId,
-  };
-}
-
 export function parachain(paraId: number): Origin {
   return {
     type: "Polkadot",

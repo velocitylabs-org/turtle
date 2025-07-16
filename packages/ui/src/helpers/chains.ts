@@ -44,14 +44,12 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
     }
   }
 
-  if (sourceChain.network === 'Kusama' && token.origin.type === 'Kusama') {
+  if (sourceChain.network === 'Kusama' && token.origin.type === 'Polkadot') {
     return {
       logoURI: kusamaLogo,
       text: `Kusama ${token.symbol}`,
     }
   }
-
-  console.log('Unknown origin', sourceChain.network, token.origin.type)
 
   return
 }

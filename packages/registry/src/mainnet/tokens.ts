@@ -25,7 +25,7 @@ import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
 
-import { kusamaChain, parachain, snowbridgeWrapped } from "@/helpers";
+import { parachain, snowbridgeWrapped } from "@/helpers";
 import { Token } from "@/types";
 
 // Tokens
@@ -794,6 +794,6 @@ export const PolkadotTokens = {
       },
     },
     coingeckoId: "kusama",
-    origin: kusamaChain(0),
+    origin: parachain(0),
   },
 } as const satisfies Record<string, Token>;
