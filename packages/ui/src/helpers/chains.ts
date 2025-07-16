@@ -1,4 +1,5 @@
 import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
+import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import snowbridgeLogo from '@velocitylabs-org/turtle-assets/logos/snowbridge.svg'
 import { Token, Chain } from '@velocitylabs-org/turtle-registry'
@@ -42,6 +43,15 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
       }
     }
   }
+
+  if (sourceChain.network === 'Kusama' && token.origin.type === 'Kusama') {
+    return {
+      logoURI: kusamaLogo,
+      text: `Kusama ${token.symbol}`,
+    }
+  }
+
+  console.log('Unknown origin', sourceChain.network, token.origin.type)
 
   return
 }

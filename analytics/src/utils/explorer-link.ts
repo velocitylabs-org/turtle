@@ -8,10 +8,18 @@ export default function getExplorerLink(tx: TxDetailView): string | undefined {
   const txHash = tx.txHashId
   const succeeded = tx.status === 'succeeded'
   const explorersUrls = {
+    // Ethereum
     etherscan: 'https://etherscan.io/',
-    subscan_assethub: 'https://assethub-polkadot.subscan.io/',
-    subscan_bridgehub: 'https://bridgehub-polkadot.subscan.io/',
-    subscan_relaychain: 'https://polkadot.subscan.io/',
+
+    // Polkadot
+    subscan_polkadot: 'https://polkadot.subscan.io/',
+    subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
+    subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
+
+    // Kusama
+    subscan_kusama: 'https://kusama.subscan.io/',
+    subscan_kusama_ah: 'https://assethub-kusama.subscan.io/',
+    subscan_kusama_bh: 'https://bridgehub-kusama.subscan.io/',
   }
 
   switch (network) {
@@ -27,7 +35,14 @@ export default function getExplorerLink(tx: TxDetailView): string | undefined {
       }
 
       // Default Polkadot network explorer link:
-      return `${removeURLSlash(explorersUrls.subscan_relaychain)}/account/${sender}?tab=xcm_transfer`
+      return `${removeURLSlash(explorersUrls.subscan_polkadot)}/account/${sender}?tab=xcm_transfer`
+    }
+    case 'Kusama': {
+      if (walletType === 'SubstrateEVM') {
+        return getCustomExplorerLink(name, sender)
+      }
+      // Default Polkadot network explorer link:
+      return `${removeURLSlash(explorersUrls.subscan_kusama)}/account/${sender}?tab=xcm_transfer`
     }
     default:
       console.log(`Unsupported network: ${network}`)
