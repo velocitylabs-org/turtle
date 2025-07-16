@@ -135,6 +135,7 @@ export const getTransferableAmount = async (
   sourceToken: Token,
   recipient: string,
   sender: string,
+  userBalance: bigint,
   wssEndpoint?: string,
 ): Promise<bigint> => {
   const sourceChainNode = getParaSpellNode(sourceChain)
@@ -144,14 +145,15 @@ export const getTransferableAmount = async (
 
   const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
-  return await Builder(wssEndpoint)
+  const transferableAmount = await Builder(wssEndpoint)
     .from(sourceChainNode as TNodeDotKsmWithRelayChains)
     .to(destinationChainNode)
-    // Pass a dummy amount
-    .currency({ ...currencyId, amount: 1000n })
+    .currency({ ...currencyId, amount: userBalance })
     .address(recipient)
     .senderAddress(sender)
     .getTransferableAmount()
+
+  return (transferableAmount * 99n) / 100n // 1% Temporary fix as PS investigate getTransferableAmount issue
 }
 
 export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
