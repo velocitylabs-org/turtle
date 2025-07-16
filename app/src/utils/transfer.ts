@@ -132,9 +132,10 @@ const EXPLORERS = {
   subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
   subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
 
-  subscan_kusama: 'https://polkadot.subscan.io/',
-  subscan_kusama_ah: 'https://assethub-polkadot.subscan.io/',
-  subscan_kusama_bh: 'https://bridgehub-polkadot.subscan.io/',
+  // Kusama
+  subscan_kusama: 'https://kusama.subscan.io/',
+  subscan_kusama_ah: 'https://assethub-kusama.subscan.io/',
+  subscan_kusama_bh: 'https://bridgehub-kusama.subscan.io/',
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
