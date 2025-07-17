@@ -63,7 +63,7 @@ export default function TransactionDetailPage() {
   const feesToken = tokensById[transaction.feesTokenId]
   const bridgingFeeToken = tokensById[transaction.bridgingFeeTokenId || '']
   const network = sourceChain.network
-  const isPolkadot = network === 'Polkadot'
+  const isEthereum = network === 'Ethereum'
 
   const explorerLink = getExplorerLink(transaction)
 
@@ -259,7 +259,7 @@ export default function TransactionDetailPage() {
               <div className="ml-[3px] mt-[15px] flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Explorer</span>
                 <div className="flex items-center gap-1">
-                  <span className="text-sm">{isPolkadot ? 'subscan.io' : 'etherscan.io'}</span>
+                  <span className="text-sm">{isEthereum ? 'etherscan.io' : 'subscan.io'}</span>
                   <Button
                     variant="ghost"
                     size="icon"
