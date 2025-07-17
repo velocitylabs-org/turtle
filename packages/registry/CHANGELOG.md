@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-registry
 
+## 0.0.6
+
+### Patch Changes
+
+- f130090: Added readme to the package
+
 ## 0.0.5
 
 ### Patch Changes

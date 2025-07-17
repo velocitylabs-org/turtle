@@ -1,5 +1,12 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [f130090]
+  - @velocitylabs-org/turtle-registry@0.0.6
+
 ## 0.0.6
 
 ### Patch Changes
