@@ -1,5 +1,20 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [f130090]
+  - @velocitylabs-org/turtle-registry@0.0.6
+
+## 0.0.6
+
+### Patch Changes
+
+- c7cf6ce: Implemented important selector strategy for the widget along with scoping the preflight from tailwind with postcss-nested
+- Updated dependencies [c7cf6ce]
+  - @velocitylabs-org/turtle-registry@0.0.5
+
 ## 0.0.5
 
 ### Patch Changes

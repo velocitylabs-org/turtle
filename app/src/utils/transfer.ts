@@ -1,6 +1,12 @@
-import { Chain, Environment, Network, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import {
+  AssetHub,
+  Chain,
+  KusamaAssetHub,
+  Network,
+  Token,
+  TokenAmount,
+} from '@velocitylabs-org/turtle-registry'
 import { ethers, JsonRpcSigner } from 'ethers'
-import { getEnvironment } from '@/context/snowbridge'
 import { Sender } from '@/hooks/useTransfer'
 import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -101,10 +107,9 @@ export async function lookupName(network: Network, address: string): Promise<str
         return null
       }
     }
-    case 'Polkadot': {
+    default:
       //todo(nuno)
       return null
-    }
   }
 }
 
@@ -118,55 +123,72 @@ export const removeURLSlash = (url: string) => {
   }
 }
 
-const EXPLORERS: { [environment in Environment]: { [explorerName: string]: string } } = {
-  [Environment.Mainnet]: {
-    etherscan: 'https://etherscan.io/',
-    subscan_assethub: 'https://assethub-polkadot.subscan.io/',
-    subscan_brigehub: 'https://bridgehub-polkadot.subscan.io/',
-    subscan_relaychain: 'https://polkadot.subscan.io/',
-  },
+const EXPLORERS = {
+  // Ethereum
+  etherscan: 'https://etherscan.io/',
+
+  // Polkadot
+  subscan_polkadot: 'https://polkadot.subscan.io/',
+  subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
+  subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
+
+  // Kusama
+  subscan_kusama: 'https://kusama.subscan.io/',
+  subscan_kusama_ah: 'https://assethub-kusama.subscan.io/',
+  subscan_kusama_bh: 'https://bridgehub-kusama.subscan.io/',
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const {
-    environment,
     sourceChain: { network, chainId, walletType, name },
-    sendResult: result,
+    sendResult: txHash,
     sender,
     id,
     uniqueTrackingId,
   } = transfer
-  const explorersUrls = EXPLORERS[environment]
+
   switch (network) {
     case 'Ethereum': {
-      if (result?.success?.ethereum && 'transactionHash' in result.success.ethereum)
-        return `${removeURLSlash(explorersUrls.etherscan)}/tx/${result.success.ethereum.transactionHash}`
+      if (txHash) return `${removeURLSlash(EXPLORERS.etherscan)}/tx/${txHash}`
 
       // Default Ethereum network explorer link:
-      return `${removeURLSlash(explorersUrls.etherscan)}/address/${sender}`
+      return `${removeURLSlash(EXPLORERS.etherscan)}/address/${sender}`
     }
     case 'Polkadot': {
-      const txHash =
-        result?.success?.assetHub && 'txHash' in result.success.assetHub
-          ? result.success.assetHub.txHash
-          : undefined
-      if (txHash) return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${txHash}`
+      if (txHash) return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${txHash}`
 
       if (uniqueTrackingId) {
-        const path = getSubdomainPath(explorersUrls.subscan_relaychain)
-        return `${removeURLSlash(explorersUrls.subscan_relaychain)}/xcm_message/${path}-${uniqueTrackingId}`
+        const path = getSubdomainPath(EXPLORERS.subscan_polkadot)
+        return `${removeURLSlash(EXPLORERS.subscan_polkadot)}/xcm_message/${path}-${uniqueTrackingId}`
       }
 
       if (walletType === 'SubstrateEVM') {
         return getCustomExplorerLink(name, sender)
       }
 
-      const env = getEnvironment(environment)
-      if (chainId === env.config.ASSET_HUB_PARAID)
-        return `${removeURLSlash(explorersUrls.subscan_assethub)}/extrinsic/${id}`
+      if (chainId === AssetHub.chainId)
+        return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${id}`
 
       // Default Polkadot network explorer link:
-      return `${removeURLSlash(explorersUrls.subscan_relaychain)}/account/${sender}?tab=xcm_transfer`
+      return `${removeURLSlash(EXPLORERS.subscan_polkadot)}/account/${sender}?tab=xcm_transfer`
+    }
+    case 'Kusama': {
+      if (txHash) return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${txHash}`
+
+      if (uniqueTrackingId) {
+        const path = getSubdomainPath(EXPLORERS.subscan_kusama)
+        return `${removeURLSlash(EXPLORERS.subscan_kusama)}/xcm_message/${path}-${uniqueTrackingId}`
+      }
+
+      if (walletType === 'SubstrateEVM') {
+        return getCustomExplorerLink(name, sender)
+      }
+
+      if (chainId === KusamaAssetHub.chainId)
+        return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${id}`
+
+      // Default Polkadot network explorer link:
+      return `${removeURLSlash(EXPLORERS.subscan_kusama)}/account/${sender}?tab=xcm_transfer`
     }
     default:
       console.log(`Unsupported network: ${network}`)

@@ -51,7 +51,7 @@ export async function lookupName(network: Network, address: string): Promise<str
         return null
       }
     }
-    case 'Polkadot': {
+    default: {
       //todo(nuno)
       return null
     }

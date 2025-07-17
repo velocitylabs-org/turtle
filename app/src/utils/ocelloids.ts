@@ -1,6 +1,6 @@
 import { captureException } from '@sentry/nextjs'
 import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { Moonbeam } from '@velocitylabs-org/turtle-registry'
+import { Moonbeam, Network } from '@velocitylabs-org/turtle-registry'
 import { Notification, NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -90,7 +90,7 @@ export const xcmOcceloidsSubscribe = async (
     const { id: txHash, sourceChain, destChain } = transfer
 
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
-      getSubscription(sourceChain.chainId, destChain.chainId),
+      getSubscription(sourceChain.chainId, destChain.chainId, sourceChain.network),
       {
         onMessage: msg => {
           const {
@@ -178,15 +178,15 @@ export const xcmOcceloidsSubscribe = async (
 const getSubscription = (
   sourceChainId: number,
   destChainId: number,
+  network: Network,
   sender?: string,
   events?: xcm.XcmNotificationType[],
 ): xcm.XcmInputs => {
-  const consensus = 'polkadot'
   return {
     senders: sender ? [sender] : '*',
     events: events ? events : '*',
-    origins: [`urn:ocn:${consensus}:${sourceChainId}`],
-    destinations: [`urn:ocn:${consensus}:${destChainId}`],
+    origins: [`urn:ocn:${network.toLocaleLowerCase()}:${sourceChainId}`],
+    destinations: [`urn:ocn:${network.toLocaleLowerCase()}:${destChainId}`],
   }
 }
 

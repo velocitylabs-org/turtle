@@ -6,7 +6,7 @@ import {
   rpcConnectionAsHttps,
   AssetHub,
   BridgeHub,
-  RelayChain,
+  Polkadot,
   EthereumTokens,
   PolkadotTokens,
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
@@ -35,7 +35,7 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
   if (env === Environment.Mainnet) {
     x.config.ASSET_HUB_PARAID = AssetHub.chainId
     x.config.BRIDGE_HUB_PARAID = BridgeHub.chainId
-    x.config.RELAY_CHAIN_URL = rpcConnectionAsHttps(RelayChain.rpcConnection)
+    x.config.RELAY_CHAIN_URL = rpcConnectionAsHttps(Polkadot.rpcConnection)
     x.config.PARACHAINS = SNOWBRIDGE_MAINNET_PARACHAIN_URLS
   }
   // TODO support Paseo testnet

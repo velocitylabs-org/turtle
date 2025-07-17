@@ -34,31 +34,36 @@ function NavigationMenu({
       <div className="px-3 py-2">
         <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">{title}</h2>
         <div className="space-y-1">
-          {routes.map(route => (
-            <Link
-              key={route.href}
-              href={route.href}
-              className={cn(
-                'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
-                isActiveRoute(route) ? 'bg-muted text-primary' : 'text-muted-foreground',
-              )}
-              onClick={() => onNavItemClicked(isActiveRoute(route), !!route.external)}
-              target={route.external ? '_blank' : undefined}
-              rel={route.external ? 'noopener noreferrer' : undefined}
-              prefetch
-            >
-              <div className="flex flex-1 items-center">
-                <route.icon
+          {routes.map(
+            route =>
+              route.leftNavigation && (
+                <Link
+                  key={route.href}
+                  href={route.href}
                   className={cn(
-                    'mr-3 h-4 w-4',
-                    isActiveRoute(route) ? 'text-primary' : 'text-muted-foreground',
+                    'group flex w-full cursor-pointer justify-start rounded-lg p-3 text-sm font-medium transition hover:bg-muted hover:text-primary',
+                    isActiveRoute(route) ? 'bg-muted text-primary' : 'text-muted-foreground',
                   )}
-                />
-                {route.label}
-              </div>
-              {isActiveRoute(route) && <ChevronRight className="relative top-[2px] h-4 w-4" />}
-            </Link>
-          ))}
+                  onClick={() => onNavItemClicked(isActiveRoute(route), !!route.external)}
+                  target={route.external ? '_blank' : undefined}
+                  rel={route.external ? 'noopener noreferrer' : undefined}
+                  prefetch
+                >
+                  <div className="flex flex-1 items-center">
+                    {route.icon && (
+                      <route.icon
+                        className={cn(
+                          'mr-3 h-4 w-4',
+                          isActiveRoute(route) ? 'text-primary' : 'text-muted-foreground',
+                        )}
+                      />
+                    )}
+                    {route.label}
+                  </div>
+                  {isActiveRoute(route) && <ChevronRight className="relative top-[2px] h-4 w-4" />}
+                </Link>
+              ),
+          )}
         </div>
       </div>
     </div>

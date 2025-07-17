@@ -16,6 +16,8 @@ export async function getSwapsData() {
       rawRecentSwaps,
       transactionsSinceSwaps,
       swapsActivity,
+      swapPairsByVolume,
+      swapPairsByTransactions,
     ] = await Promise.all([
       // Total swaps volume in USD
       Transaction.aggregate([
@@ -62,7 +64,7 @@ export async function getSwapsData() {
       // Transactions since swaps
       Transaction.countDocuments({ txDate: { $gt: swapsStartingDate }, status: 'succeeded' }),
 
-      // Swaps incoming and outgoing volume and transaction
+      // Swaps activity - combined volume per token with network info
       Transaction.aggregate([
         {
           $match: {
@@ -70,68 +72,149 @@ export async function getSwapsData() {
             isSwap: true,
           },
         },
-        // Outgoing data
         {
-          $group: {
-            _id: '$sourceTokenId',
-            tokenId: { $first: '$sourceTokenId' },
-            outgoingVolume: { $sum: '$sourceTokenAmountUsd' },
-            outgoingTransactions: { $sum: 1 },
-            incomingVolume: { $sum: 0 },
-            incomingTransactions: { $sum: 0 },
-          },
-        },
-        // Merge with incoming using
-        {
-          $unionWith: {
-            coll: 'transactions',
-            pipeline: [
-              {
-                $match: {
-                  status: 'succeeded',
-                  isSwap: true,
-                },
-              },
+          $facet: {
+            sourceTokens: [
               {
                 $group: {
-                  _id: '$destinationTokenId',
+                  _id: {
+                    tokenId: '$sourceTokenId',
+                    chainName: '$sourceChainName',
+                  },
+                  tokenId: { $first: '$sourceTokenId' },
+                  chainName: { $first: '$sourceChainName' },
+                  totalVolume: { $sum: '$sourceTokenAmountUsd' },
+                  totalTransactions: { $sum: 1 },
+                },
+              },
+            ],
+            destinationTokens: [
+              {
+                $group: {
+                  _id: {
+                    tokenId: '$destinationTokenId',
+                    chainName: '$destinationChainName',
+                  },
                   tokenId: { $first: '$destinationTokenId' },
-                  incomingVolume: { $sum: '$destinationTokenAmountUsd' },
-                  incomingTransactions: { $sum: 1 },
-                  outgoingVolume: { $sum: 0 },
-                  outgoingTransactions: { $sum: 0 },
+                  chainName: { $first: '$destinationChainName' },
+                  totalVolume: { $sum: '$destinationTokenAmountUsd' },
+                  totalTransactions: { $sum: 1 },
                 },
               },
             ],
           },
         },
         {
+          $project: {
+            combined: { $concatArrays: ['$sourceTokens', '$destinationTokens'] },
+          },
+        },
+        { $unwind: '$combined' },
+        { $replaceRoot: { newRoot: '$combined' } },
+        {
           $group: {
-            _id: '$tokenId',
+            _id: {
+              tokenId: '$tokenId',
+              chainName: '$chainName',
+            },
             tokenId: { $first: '$tokenId' },
-            incomingVolume: { $sum: '$incomingVolume' },
-            incomingTransactions: { $sum: '$incomingTransactions' },
-            outgoingVolume: { $sum: '$outgoingVolume' },
-            outgoingTransactions: { $sum: '$outgoingTransactions' },
+            chainName: { $first: '$chainName' },
+            totalVolume: { $sum: '$totalVolume' },
+            totalTransactions: { $sum: '$totalTransactions' },
           },
         },
-        {
-          $addFields: {
-            totalVolume: { $add: ['$incomingVolume', '$outgoingVolume'] },
-            totalTransactions: { $add: ['$incomingTransactions', '$outgoingTransactions'] },
-          },
-        },
-        {
-          $sort: { totalVolume: -1 },
-        },
+        { $sort: { totalVolume: -1 } },
         {
           $project: {
             _id: 0,
             tokenId: 1,
-            incomingVolume: 1,
-            incomingTransactions: 1,
-            outgoingVolume: 1,
-            outgoingTransactions: 1,
+            chainName: 1,
+            totalVolume: 1,
+            totalTransactions: 1,
+          },
+        },
+      ]),
+
+      // Swap pairs data by volume (top 3 trading pairs by volume)
+      Transaction.aggregate([
+        {
+          $match: {
+            status: 'succeeded',
+            isSwap: true,
+          },
+        },
+        {
+          $group: {
+            _id: {
+              sourceTokenId: '$sourceTokenId',
+              destinationTokenId: '$destinationTokenId',
+            },
+            sourceTokenSymbol: { $first: '$sourceTokenSymbol' },
+            destinationTokenSymbol: { $first: '$destinationTokenSymbol' },
+            totalVolume: { $sum: '$sourceTokenAmountUsd' },
+            totalTransactions: { $sum: 1 },
+          },
+        },
+        {
+          $addFields: {
+            pairName: {
+              $concat: ['$sourceTokenSymbol', ' → ', '$destinationTokenSymbol'],
+            },
+          },
+        },
+        { $sort: { totalVolume: -1 } },
+        { $limit: 3 },
+        {
+          $project: {
+            _id: 0,
+            pairName: 1,
+            sourceTokenId: '$_id.sourceTokenId',
+            destinationTokenId: '$_id.destinationTokenId',
+            sourceTokenSymbol: 1,
+            destinationTokenSymbol: 1,
+            totalVolume: 1,
+            totalTransactions: 1,
+          },
+        },
+      ]),
+
+      // Swap pairs data by transactions (top 3 trading pairs by transaction count)
+      Transaction.aggregate([
+        {
+          $match: {
+            status: 'succeeded',
+            isSwap: true,
+          },
+        },
+        {
+          $group: {
+            _id: {
+              sourceTokenId: '$sourceTokenId',
+              destinationTokenId: '$destinationTokenId',
+            },
+            sourceTokenSymbol: { $first: '$sourceTokenSymbol' },
+            destinationTokenSymbol: { $first: '$destinationTokenSymbol' },
+            totalVolume: { $sum: '$sourceTokenAmountUsd' },
+            totalTransactions: { $sum: 1 },
+          },
+        },
+        {
+          $addFields: {
+            pairName: {
+              $concat: ['$sourceTokenSymbol', ' → ', '$destinationTokenSymbol'],
+            },
+          },
+        },
+        { $sort: { totalTransactions: -1 } },
+        { $limit: 3 },
+        {
+          $project: {
+            _id: 0,
+            pairName: 1,
+            sourceTokenId: '$_id.sourceTokenId',
+            destinationTokenId: '$_id.destinationTokenId',
+            sourceTokenSymbol: 1,
+            destinationTokenSymbol: 1,
             totalVolume: 1,
             totalTransactions: 1,
           },
@@ -153,6 +236,8 @@ export async function getSwapsData() {
       recentSwaps,
       swapsPercentageOfTransactions,
       swapsActivity,
+      swapPairsByVolume,
+      swapPairsByTransactions,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))

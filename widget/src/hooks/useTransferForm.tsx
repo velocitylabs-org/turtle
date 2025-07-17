@@ -7,13 +7,14 @@ import {
   Ethereum,
 } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { use, useCallback, useEffect, useMemo, useState } from 'react'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
 import { getTransferableAmount } from '@/lib/paraspell/transfer'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { wagmiConfig } from '@/providers/config'
+import { ConfigContext } from '@/providers/ConfigProviders'
 import { useEnvironmentStore } from '@/stores/environmentStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { getRecipientAddress, isValidRecipient } from '@/utils/address'
@@ -75,6 +76,7 @@ const useTransferForm = () => {
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
   const { transfer, transferStatus } = useTransfer()
+  const { allowedTokens } = use(ConfigContext)
 
   const {
     fees,
@@ -182,7 +184,12 @@ const useTransferForm = () => {
 
       if (
         !isSameDestination &&
-        isTokenAvailableForSourceChain(newValue, destinationChain, sourceTokenAmount?.token)
+        isTokenAvailableForSourceChain(
+          newValue,
+          destinationChain,
+          sourceTokenAmount?.token,
+          allowedTokens,
+        )
       ) {
         // Update the source chain here to prevent triggering unexpected states, e.g., the useFees hook.
         setValue('sourceChain', newValue)
@@ -195,7 +202,7 @@ const useTransferForm = () => {
       setValue('destinationChain', null)
       setValue('sourceTokenAmount', { token: null, amount: null })
     },
-    [setValue, sourceChain, destinationChain, sourceTokenAmount],
+    [setValue, sourceChain, destinationChain, sourceTokenAmount, allowedTokens],
   )
 
   const handleSourceTokenChange = useCallback(
