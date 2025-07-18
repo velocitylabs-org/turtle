@@ -1,11 +1,17 @@
-import { Features } from '@/components/features'
-import { TurtlesBackground } from '@/components/TurtlesBackground'
+import Features from '@/components/features'
+import TurtlesBackground from '@/components/TurtlesBackground'
+import getAnalyticsData from '@/actions/analytics'
 
-export default function Home() {
+export default async function Home() {
+  const analyticsData = await getAnalyticsData()
+
   return (
     <>
-      <section className="relative z-20 flex h-[40vh] h-[75vh] flex-col items-center justify-center">
-        <TurtlesBackground header={'Frictionless cross-chain transfers'} />
+      <section className="relative z-20 flex h-[78vh] flex-col items-center justify-center">
+        <TurtlesBackground
+          header="Frictionless cross-chain transfers"
+          initialVolume={analyticsData?.totalVolumeUsd}
+        />
       </section>
 
       {/* Features section */}

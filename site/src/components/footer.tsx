@@ -22,8 +22,8 @@ export default function Footer() {
             <p>Trustless, Simple, Turtle.</p>
           </h3>
 
-          <div className="flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-10 md:space-y-0">
-            <div className="space-x-5 text-sm underline md:space-x-10">
+          <div className="flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-2 md:space-y-0">
+            <div className="space-x-5 text-sm underline md:space-x-2">
               <Link
                 href="https://app.turtle.cool"
                 aria-label="Turle bridge decentralized application"
@@ -31,10 +31,10 @@ export default function Footer() {
                 Start a transfer
               </Link>
             </div>
-            <div className="flex items-center space-x-10 md:hidden">
+            <div className="flex items-center space-x-2 md:hidden">
               <TurtleSocialIcons />
             </div>
-            <div className="mr-10 hidden space-x-10 text-sm capitalize underline md:flex">
+            <div className="mr-10 hidden space-x-2 text-sm capitalize underline md:flex">
               {TurtleSocialData.map((item, idx) => {
                 return (
                   <a

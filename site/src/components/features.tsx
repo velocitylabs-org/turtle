@@ -5,7 +5,7 @@ import locker from '../../public/locker.png'
 import record from '../../public/record.png'
 import chart from '../../public/chart.png'
 
-export const Features = () => {
+export default function Features() {
   const mainFeatures = [
     {
       title: 'Hard-shelled Security',

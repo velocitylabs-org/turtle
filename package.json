@@ -8,6 +8,7 @@
     "dev-app": "turbo run dev --filter=@velocitylabs-org/turtle-app",
     "dev-analytics": "turbo run dev --filter=@velocitylabs-org/turtle-analytics",
     "dev-widget": "turbo run dev --filter=@velocitylabs-org/turtle-widget",
+    "dev-site": "turbo run dev --filter=@velocitylabs-org/turtle-site",
     "lint": "turbo run lint",
     "format": "turbo run format",
     "format-check": "turbo run format-check",
