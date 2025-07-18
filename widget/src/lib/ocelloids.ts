@@ -244,7 +244,6 @@ const updateTransferStatus = (
       updateTransferMetrics({
         txHashId: transfer.id,
         status: status,
-        environment: transfer.environment,
       })
     }
 

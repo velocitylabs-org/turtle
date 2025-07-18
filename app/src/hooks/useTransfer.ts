@@ -1,4 +1,4 @@
-import { Chain, Token, Environment } from '@velocitylabs-org/turtle-registry'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
 import { AmountInfo } from '@/models/transfer'
@@ -11,7 +11,6 @@ import useSnowbridgeApi from './useSnowbridgeApi'
 export type Sender = JsonRpcSigner | SubstrateAccount
 
 export interface TransferParams {
-  environment: Environment // TODO: remove this
   sender: Sender
   sourceChain: Chain
   sourceToken: Token

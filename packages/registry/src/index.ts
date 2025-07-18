@@ -8,7 +8,7 @@ import {
   Moonbeam,
   Mythos,
 } from "./mainnet/chains";
-import { Chain, Environment, LocalAssetUid, Token } from "./types";
+import { Chain, LocalAssetUid, Token } from "./types";
 
 const SNOWBRIDGE_MAINNET_PARACHAINS = [
   AssetHub,
@@ -19,9 +19,7 @@ const SNOWBRIDGE_MAINNET_PARACHAINS = [
   Mythos,
 ];
 
-export const REGISTRY = {
-  mainnet: MainnetRegistry,
-};
+export const REGISTRY = MainnetRegistry;
 
 export const tokensById = MainnetRegistry.tokens.reduce<Record<string, Token>>(
   (acc, token) => {
@@ -47,11 +45,10 @@ export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = Object.fromEntries(
 );
 
 export function getAssetUid(
-  env: Environment,
   chainId: string,
   tokenId: string,
 ): LocalAssetUid | undefined {
-  return REGISTRY[env].assetUid.get(chainId)?.get(tokenId);
+  return REGISTRY.assetUid.get(chainId)?.get(tokenId);
 }
 
 export * from "./helpers";

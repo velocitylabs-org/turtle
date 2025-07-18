@@ -7,7 +7,7 @@ import { resolveDirection } from '@/services/transfer'
 import { trackXcm } from './subscan'
 
 export const trackTransfers = async (
-  env: environment.SnowbridgeEnvironment,
+  sbEnv: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransfers,
 ) => {
   const transfers: TxTrackingResult[] = []
@@ -27,7 +27,7 @@ export const trackTransfers = async (
 
   // Keep as back-up in case Ocelloids does not support a transfer path
   if (withinPolkadot.length) {
-    const xcmTx = await trackXcm(env, withinPolkadot)
+    const xcmTx = await trackXcm(sbEnv, withinPolkadot)
     console.log('Whithin Polkadot transfers:', xcmTx.length)
     transfers.push(...xcmTx)
   }
