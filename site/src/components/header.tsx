@@ -9,17 +9,19 @@ export default function Header() {
         <p className="turtle-text-shadow text-[2rem] font-medium text-white">Turtle</p>
       </Link>
 
-      <a href="https://app.turtle.cool" target="_blank">
-        <nav>
-          <ul className="items-center space-x-6">
-            <li>
-              <div className="btn btn-primary flex h-[20px] w-[122px] flex-row justify-center rounded-lg border-black text-lg font-medium hover:border-black sm:h-[56px] sm:text-xl">
-                Transfer
-              </div>
-            </li>
-          </ul>
-        </nav>
-      </a>
+      <nav>
+        <ul className="items-center space-x-6">
+          <li>
+            <a
+              href="https://app.turtle.cool"
+              target="_blank"
+              className="btn btn-primary flex h-[20px] w-[122px] flex-row justify-center rounded-lg border-black text-lg font-medium hover:border-black sm:h-[56px] sm:text-xl"
+            >
+              Transfer
+            </a>
+          </li>
+        </ul>
+      </nav>
     </header>
   )
 }
