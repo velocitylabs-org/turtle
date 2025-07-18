@@ -49,7 +49,6 @@ const config: Config = {
     extend: {
       colors: colors,
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
         dazzed: ['var(--font-dazzed)'],
       },
       borderRadius: {
