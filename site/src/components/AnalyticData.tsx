@@ -6,7 +6,7 @@ import { getAnalyticsAction } from '@/actions/analytics'
 import { QueryProvider } from '@/providers/queryProvider'
 
 export default function AnalyticData({ initialVolume }: { initialVolume: number }) {
-  // Using client-side rendering here while keeping the rest of the app server-side for optimal performance
+  // Using client-side rendering here while keeping the rest of the app server-side for SEO performance
   return (
     <QueryProvider>
       <AnalyticDataClient initialVolume={initialVolume} />
