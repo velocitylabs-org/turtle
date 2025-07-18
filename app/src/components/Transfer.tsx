@@ -207,7 +207,7 @@ export default function Transfer() {
     !exceedsTransferableBalance
 
   const disableMaxBtnInPolkadotNetwork =
-    sourceChain?.network === 'Polkadot' &&
+    (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&
     (!destinationWallet?.sender || !destinationTokenAmount?.token)
 
   const shouldDisableMaxButton =
