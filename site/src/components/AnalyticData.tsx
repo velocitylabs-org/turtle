@@ -2,8 +2,15 @@
 
 import NumberFlow from '@number-flow/react'
 import { useQuery } from '@tanstack/react-query'
-import { getAnalyticsAction } from '@/actions/analytics'
+import getAnalyticsData from '@/actions/analytics'
 import { QueryProvider } from '@/providers/queryProvider'
+
+const format = {
+  style: 'currency',
+  currency: 'USD',
+  trailingZeroDisplay: 'stripIfInteger',
+  maximumFractionDigits: 1,
+} as const
 
 export default function AnalyticData({ initialVolume }: { initialVolume: number }) {
   // Using client-side rendering here while keeping the rest of the app server-side for SEO performance
@@ -18,20 +25,23 @@ function AnalyticDataClient({ initialVolume }: { initialVolume: number }) {
   const { data: realTimeData } = useQuery({
     queryKey: ['analytics'],
     queryFn: async () => {
-      return await getAnalyticsAction()
+      return await getAnalyticsData()
     },
   })
 
   // Fallback to initialVolume when realTimeData is loading or unavailable to avoid empty state on first render
   const value = realTimeData?.totalVolumeUsd || initialVolume
 
+  console.log('initialVolume', initialVolume)
+  console.log('realTimeData?.totalVolumeUsd', realTimeData?.totalVolumeUsd)
+
   return (
     <div className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
       <div className="flex items-center gap-2 rounded-full border border-black bg-turtle-primary px-4 py-2 md:px-5 md:py-3">
         <BoltIcon />
         <span className="text-[16px] text-black md:text-[18px] lg:text-[20px]">
-          <span className="ml-2 mr-3 inline-flex w-[100px] items-center justify-center font-bold md:w-[110px] lg:w-[125px]">
-            <NumberFlow value={value} prefix={value ? '$' : ''} />
+          <span className="mr-1 inline-flex w-[100px] items-center justify-center font-bold md:w-[110px] lg:w-[125px]">
+            <NumberFlow value={value} format={format} />
           </span>{' '}
           Total funds moved in Turtle
         </span>
