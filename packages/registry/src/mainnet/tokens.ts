@@ -7,7 +7,7 @@ import ethereumLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
 import hydraLogo from "@velocitylabs-org/turtle-assets/logos/hydra.svg";
 import ibtcLogo from "@velocitylabs-org/turtle-assets/logos/ibtc.svg";
 import interlayLogo from "@velocitylabs-org/turtle-assets/logos/interlay.svg";
-import ksmLogo from "@velocitylabs-org/turtle-assets/logos/kusama.svg";
+import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg';
 import moonbeamLogo from "@velocitylabs-org/turtle-assets/logos/moonbeam.svg";
 import mythLogo from "@velocitylabs-org/turtle-assets/logos/myth.svg";
 import pepeLogo from "@velocitylabs-org/turtle-assets/logos/pepe.svg";
@@ -784,7 +784,7 @@ export const PolkadotTokens = {
     id: "ksm",
     name: "Kusama",
     symbol: "KSM",
-    logoURI: ksmLogo,
+    logoURI: kusamaLogo,
     decimals: 12,
     address: "",
     multilocation: {
