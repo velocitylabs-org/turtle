@@ -16,6 +16,7 @@
   "dependencies": {
     "@number-flow/react": "^0.5.10",
     "@sentry/nextjs": "^7.114.0",
+    "@tanstack/react-query": "^5.83.0",
     "@velocitylabs-org/turtle-ui": "workspace:*",
     "clsx": "^2.1.1",
     "framer-motion": "^11.1.9",

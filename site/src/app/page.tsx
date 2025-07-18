@@ -1,6 +1,6 @@
 import Features from '@/components/features'
 import TurtlesBackground from '@/components/TurtlesBackground'
-import getAnalyticsData from '@/utils/get-analytics-data'
+import getAnalyticsData from '@/utils/getAnalyticsData'
 
 export default async function Home() {
   const analyticsData = await getAnalyticsData()
@@ -10,7 +10,7 @@ export default async function Home() {
       <section className="relative z-20 flex h-[78vh] flex-col items-center justify-center">
         <TurtlesBackground
           header="Frictionless cross-chain transfers"
-          volume={analyticsData?.totalVolumeUsd}
+          initialVolume={analyticsData?.totalVolumeUsd}
         />
       </section>
 
