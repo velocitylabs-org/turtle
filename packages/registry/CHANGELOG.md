@@ -1,5 +1,12 @@
 # @velocitylabs-org/turtle-registry
 
+## 0.0.7
+
+### Patch Changes
+
+- 12e7cdc: Version bump
+- 98fdc39: Fix MAX button flow and amount
+
 ## 0.0.6
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.0.8
+
+### Patch Changes
+
+- 12e7cdc: Version bump
+- Updated dependencies [12e7cdc]
+- Updated dependencies [98fdc39]
+  - @velocitylabs-org/turtle-registry@0.0.7
+
 ## 0.0.7
 
 ### Patch Changes
