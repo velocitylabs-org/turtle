@@ -1,10 +1,16 @@
+'use client'
+
+import NumberFlow from '@number-flow/react'
 export default function AnalyticData({ volume }: { volume: number }) {
+
   return (
     <div className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
       <div className="flex items-center gap-2 rounded-full border border-black bg-turtle-primary px-4 py-2 md:px-5 md:py-3">
         <BoltIcon />
         <span className="text-[16px] text-black md:text-[18px] lg:text-[20px]">
-          <span className="mr-1 font-bold">${volume.toLocaleString()}</span> Total funds moved in
+          <span className="mr-1 font-bold w-[100px] md:w-[110px] lg:w-[125px] inline-flex items-center justify-center">
+            <NumberFlow value={volume} prefix={ volume ? '$' : ''}/>
+          </span> Total funds moved in
           Turtle
         </span>
       </div>

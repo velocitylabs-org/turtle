@@ -599,6 +599,9 @@ importers:
 
   site:
     dependencies:
+      '@number-flow/react':
+        specifier: ^0.5.10
+        version: 0.5.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sentry/nextjs':
         specifier: ^7.114.0
         version: 7.120.3(next@14.2.15(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(webpack@5.99.9(@swc/core@1.12.0(@swc/helpers@0.5.17)))
@@ -15093,6 +15096,13 @@ snapshots:
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
+  '@number-flow/react@0.5.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      esm-env: 1.2.2
+      number-flow: 0.5.8
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@number-flow/react@0.5.10(react-dom@19.0.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       esm-env: 1.2.2
@@ -24832,7 +24842,7 @@ snapshots:
       tinyglobby: 0.2.14
       unrs-resolver: 1.7.13
     optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
