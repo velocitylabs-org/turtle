@@ -8,7 +8,10 @@ export default async function Home() {
   return (
     <>
       <section className="relative z-20 flex h-[78vh] flex-col items-center justify-center">
-        <TurtlesBackground header="Frictionless cross-chain transfers" volume={analyticsData?.totalVolumeUsd} />
+        <TurtlesBackground
+          header="Frictionless cross-chain transfers"
+          volume={analyticsData?.totalVolumeUsd}
+        />
       </section>
 
       {/* Features section */}
