@@ -202,10 +202,13 @@ export const routes: Route[] = [
     to: Hydration.uid,
     sdk: "ParaSpellApi",
     tokens: [
+      // Polkadot
       PolkadotTokens.DOT.id,
       PolkadotTokens.USDC.id,
       PolkadotTokens.USDT.id,
+      // Ethereum
       EthereumTokens.USDC.id,
+      EthereumTokens.USDT.id,
       EthereumTokens.ETH.id,
       EthereumTokens.WSTETH.id,
       EthereumTokens.TBTC.id,
