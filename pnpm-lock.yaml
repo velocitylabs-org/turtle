@@ -772,10 +772,10 @@ importers:
         specifier: ^13.0.1
         version: 13.0.2(postcss@8.5.4)
       react:
-        specifier: ^19.0.0
+        specifier: '>=19.0.0'
         version: 19.0.0
       react-dom:
-        specifier: ^19.0.0
+        specifier: '>=19.0.0'
         version: 19.0.0(react@19.0.0)
       react-hook-form:
         specifier: ^7.54.2
