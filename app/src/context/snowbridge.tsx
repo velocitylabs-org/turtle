@@ -1,4 +1,4 @@
-import { Context, environment, status } from '@snowbridge/api'
+import { Context, contextConfigFor, environment, status } from '@snowbridge/api'
 import {
   Environment,
   rpcConnectionAsHttps,
@@ -7,10 +7,7 @@ import {
   Polkadot,
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
 } from '@velocitylabs-org/turtle-registry'
-import { AbstractProvider, AlchemyProvider } from 'ethers'
 import { SnowbridgeStatus } from '@/models/snowbridge'
-
-const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -39,30 +36,11 @@ export function getEnvironment(env: Environment): environment.SnowbridgeEnvironm
   return x
 }
 
-export async function getContext(environment: environment.SnowbridgeEnvironment): Promise<Context> {
-  const { config, ethChainId, name } = environment
-  const ethereumProvider = new AlchemyProvider(ethChainId, ALCHEMY_API_KEY)
-  const ethChains: { [ethChainId: string]: string | AbstractProvider } = {}
-  ethChains[ethChainId.toString()] = ethereumProvider
+export async function getSnowBridgeContext(): Promise<Context> {
+  const snowbridgeNetwork = toSnowbridgeNetwork(Environment.Mainnet)
+  const config = contextConfigFor(snowbridgeNetwork)
 
-  return new Context({
-    environment: name,
-    ethereum: {
-      beacon_url: config.BEACON_HTTP_API,
-      ethChainId,
-      ethChains: { '1': config.ETHEREUM_CHAINS[1](ALCHEMY_API_KEY) },
-    },
-    polkadot: {
-      assetHubParaId: config.ASSET_HUB_PARAID,
-      bridgeHubParaId: config.BRIDGE_HUB_PARAID,
-      relaychain: config.RELAY_CHAIN_URL,
-      parachains: config.PARACHAINS,
-    },
-    appContracts: {
-      gateway: config.GATEWAY_CONTRACT,
-      beefy: config.BEEFY_CONTRACT,
-    },
-  })
+  return new Context(config)
 }
 
 /**
@@ -76,11 +54,6 @@ export function toSnowbridgeNetwork(env: Environment): string {
     case Environment.Mainnet:
       return 'polkadot_mainnet'
   }
-}
-
-export async function getSnowBridgeContext(environment: Environment): Promise<Context> {
-  const snowbridgeEnv = getEnvironment(environment)
-  return await getContext(snowbridgeEnv)
 }
 
 export async function getSnowBridgeEtimatedTransferDuration(
