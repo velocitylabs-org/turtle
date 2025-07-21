@@ -608,6 +608,9 @@ importers:
       '@velocitylabs-org/turtle-ui':
         specifier: workspace:*
         version: link:../packages/ui
+      '@velocitylabs-org/turtle-widget':
+        specifier: workspace:*
+        version: link:../widget
       clsx:
         specifier: ^2.1.1
         version: 2.1.1

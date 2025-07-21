@@ -3,12 +3,16 @@ import { cn } from '@velocitylabs-org/turtle-ui'
 interface TurtlesBackgroundProps {
   header?: string
   blurredBackground?: boolean
+  whiteWaves?: boolean
 }
 
 export const TurtlesBackground = ({
   header,
   blurredBackground = false,
+  whiteWaves = false,
 }: TurtlesBackgroundProps) => {
+  const fill = whiteWaves ? '255,255,255' : '191,218,220'
+
   return (
     <>
       <div
@@ -25,6 +29,7 @@ export const TurtlesBackground = ({
           )}
         </div>
       </div>
+
       <div className="waves-container">
         <svg
           className="waves"
@@ -41,10 +46,10 @@ export const TurtlesBackground = ({
             />
           </defs>
           <g className="parallax">
-            <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(191,218,220,0.85" />
-            <use xlinkHref="#gentle-wave" x="48" y="3" fill="rgba(191,218,220,0.65)" />
-            <use xlinkHref="#gentle-wave" x="48" y="5" fill="rgba(191,218,220,0.45)" />
-            <use xlinkHref="#gentle-wave" x="48" y="7" fill="#BFDADC" />
+            <use xlinkHref="#gentle-wave" x="48" y="0" fill={`rgba(${fill},0.85)`} />
+            <use xlinkHref="#gentle-wave" x="48" y="3" fill={`rgba(${fill},0.65)`} />
+            <use xlinkHref="#gentle-wave" x="48" y="5" fill={`rgba(${fill},0.45)`} />
+            <use xlinkHref="#gentle-wave" x="48" y="7" fill={`rgb(${fill})`} />
           </g>
         </svg>
       </div>

@@ -56,7 +56,7 @@ const config: Config = {
         '5xl': '2.5rem',
       },
       fontSize: {
-        logo: '2rem',
+        'section-title': '2rem',
         'h-sub': '3.5rem',
         'hero-xl': '6.625rem',
       },
