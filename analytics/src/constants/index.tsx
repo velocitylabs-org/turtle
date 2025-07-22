@@ -11,12 +11,12 @@ export const loadingBarOpt = {
 export const defaultTransactionLimit = 20
 
 // Chains
-export const chains = REGISTRY.mainnet.chains
+export const chains = REGISTRY.chains
 export const ethereumChain = Ethereum
 export const relayChain = Polkadot
 
 // Tokens
-export const tokens = REGISTRY.mainnet.tokens
+export const tokens = REGISTRY.tokens
 
 export type GraphType = 'volume' | 'count'
 

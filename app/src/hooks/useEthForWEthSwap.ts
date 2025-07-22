@@ -1,6 +1,6 @@
 import { captureException } from '@sentry/nextjs'
 import { Context, environment, toPolkadot } from '@snowbridge/api'
-import { Environment, EthereumTokens, Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { EthereumTokens, Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import useBalance from '@/hooks/useBalance'
@@ -9,7 +9,6 @@ import { NotificationSeverity } from '@/models/notification'
 import { convertAmount, toHuman } from '../utils/transfer'
 
 interface Params {
-  env: Environment
   context?: Context
   chain?: Chain | null
   tokenAmount: TokenAmount | null
@@ -18,10 +17,9 @@ interface Params {
 
 /** Hook to swap ETH for wETH */
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
-const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) => {
+const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
   const { balance: tokenBalance } = useBalance({
-    env,
     chain,
     token: tokenAmount?.token ?? undefined,
     address: owner,
@@ -64,7 +62,6 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
       SetIsSwapping(true)
 
       if (
-        !env ||
         !context ||
         chain?.network !== 'Ethereum' ||
         !owner ||
@@ -102,7 +99,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
         SetIsSwapping(false)
       }
     },
-    [env, chain?.network, tokenAmount, context, ethBalance, owner, addNotification],
+    [chain?.network, tokenAmount, context, ethBalance, owner, addNotification],
   )
 
   return { ethBalance, swapEthtoWEth, isSwapping }

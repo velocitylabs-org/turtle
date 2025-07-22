@@ -21,7 +21,6 @@ export const migrateOngoingTransfers = (persistedState: any, version: number) =>
       sourceChainExtrinsicIndex: transfer.sourceChainExtrinsicIndex,
       fees: transfer.fees,
       bridgingFee: transfer.bridgingFee,
-      environment: transfer.environment,
       sendResult: transfer.sendResult,
       uniqueTrackingId: transfer.uniqueTrackingId,
       status: transfer.status,

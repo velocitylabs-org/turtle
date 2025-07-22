@@ -11,7 +11,6 @@ import useTokenPrice from '@/hooks/useTokenPrice'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
 import { getFeeEstimate } from '@/lib/snowbridge'
 import { AmountInfo } from '@/models/transfer'
-import { useEnvironmentStore } from '@/stores/environmentStore'
 import { getPlaceholderAddress } from '@/utils/address'
 import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
 import { resolveSdk } from '@/utils/routes'
@@ -67,7 +66,6 @@ const useFees = (
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
     useSnowbridgeContext()
   const { addNotification } = useNotification()
-  const env = useEnvironmentStore(state => state.current)
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {
@@ -94,7 +92,7 @@ const useFees = (
           const destinationChainNode = getParaSpellNode(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
-          const currency = getCurrencyId(env, sourceChainNode, sourceChain.uid, token)
+          const currency = getCurrencyId(sourceChainNode, sourceChain.uid, token)
           const info = await getOriginFeeDetails({
             origin: sourceChainNode as TNodeDotKsmWithRelayChains,
             destination: destinationChainNode,
@@ -126,7 +124,7 @@ const useFees = (
 
             if (senderAddress) {
               const balance =
-                (await getBalance(env, sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
+                (await getBalance(sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
               setCanPayAdditionalFees(bridgingFee < balance)
             }
           }
@@ -205,7 +203,6 @@ const useFees = (
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    env,
     sourceChain,
     destinationChain,
     token?.id,

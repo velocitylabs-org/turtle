@@ -3,21 +3,19 @@ export const dynamic = 'force-dynamic' // Always run dynamically
 export const revalidate = 30 // Keep cache for 2 minutes
 export const maxDuration = 90 // Timout adter
 
-import { Environment } from '@velocitylabs-org/turtle-registry'
 import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
-import { getEnvironment } from '@/context/snowbridge'
+import { getSbEnvironment } from '@/context/snowbridge'
 import { ongoingTransfersSchema } from '@/models/api-schemas'
 import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
-import { environmentFromStr } from '@/store/environmentStore'
 import { getErrorMessage, trackTransfers } from '@/utils/transferTracking'
 
 const CACHE_REVALIDATE_IN_SECONDS = 30
 
 const getCachedTransferHistory = unstable_cache(
-  (env: Environment, ongoingTransfers: OngoingTransferWithDirection[]) => {
-    const snowbridgeEnv = getEnvironment(env)
+  (ongoingTransfers: OngoingTransferWithDirection[]) => {
+    const snowbridgeEnv = getSbEnvironment()
 
     try {
       const transfers: OngoingTransfers = {
@@ -62,9 +60,6 @@ export async function POST(request: Request) {
   try {
     // Safely parses & validates the request body with a ZOD schema
     const requestValue = await ongoingTransfersSchema.spa(await request.json())
-    const { searchParams } = new URL(request.url)
-    const envParam = searchParams.get('env')
-    const env = environmentFromStr(envParam || '')
 
     // Returns 400 if body does not respect the expected schema
     if (!requestValue.success) {
@@ -76,7 +71,7 @@ export async function POST(request: Request) {
     // Returns 200 if ongoingTransfers is empty
     if (!ongoingTransfers.length) return NextResponse.json([], { status: 200 })
 
-    const history = await getCachedTransferHistory(env, ongoingTransfers)
+    const history = await getCachedTransferHistory(ongoingTransfers)
     return NextResponse.json(history, { status: 200 })
   } catch (err) {
     return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 })
