@@ -14,22 +14,24 @@
     "prepare": "cd .. && husky install site/.husky"
   },
   "dependencies": {
+    "@highlightjs/cdn-assets": "^11.11.1",
+    "@sentry/nextjs": "^7.114.0",
     "@velocitylabs-org/turtle-ui": "workspace:*",
     "@velocitylabs-org/turtle-widget": "workspace:*",
-    "@sentry/nextjs": "^7.114.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.1.9",
+    "highlight.js": "^11.11.1",
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
-    "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^15.0.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "daisyui": "^4.10.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",

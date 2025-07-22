@@ -1,41 +1,47 @@
 'use client'
 
 import { TurtlesBackground } from '@/components/TurtlesBackground'
-import TurtleWidget from '@velocitylabs-org/turtle-widget'
+import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
+// @ts-ignore
+import hljs from '@highlightjs/cdn-assets/es/core.min.js'
+// @ts-ignore
+import bash from '@highlightjs/cdn-assets/es/languages/bash.min.js'
+// @ts-ignore
+import typescript from '@highlightjs/cdn-assets/es/languages/typescript.min.js'
+import '@highlightjs/cdn-assets/styles/github.min.css'
+import { useEffect } from 'react'
+import { developerIntegrationGuide, features } from '@/components/widget/data'
 
-const features = [
-  {
-    title: 'Seamless Interactions',
-    listItems: [
-      'Bridging, XCM transfers, swaps — all from within your own product UI and focused on your use case',
-      'Upcoming: fiat-to-crypto onramps, 1-click bridge & swaps, 1-click swaps within Polkadot, and more.',
-    ],
-  },
-  {
-    title: 'Customizable & Configurable',
-    listItems: [
-      'Match your brand with themes, layouts, and styling options.',
-      'Define default tokens, chains, and flows to align with your use case.',
-    ],
-  },
-  {
-    title: 'Easy Integration',
-    listItems: ['Drop-in React component', 'Minimal config'],
-  },
-  {
-    title: 'Wide Ecosystem Support',
-    listItems: ['Support across all major Polkadot parachains & Ethereum through Snowbridge'],
-  },
-  {
-    title: 'Data Dashboard',
-    listItems: [
-      'Track all the relevant data in real time for your widget (i.e. volumes, # of transfers, tokens, origin/destination chains and more)',
-    ],
-  },
-]
+hljs.registerLanguage('bash', bash)
+hljs.registerLanguage('typescript', typescript)
+
+const SectionInnerContainer = ({
+  children,
+  className,
+  heading,
+}: {
+  children: React.ReactNode
+  className?: string
+  heading: string
+}) => {
+  return (
+    <div className={cn('flex flex-col gap-8 lg:w-[865px]', className)}>
+      <h3 className="text-section-title font-bold leading-none">{heading}</h3>
+      {children}
+    </div>
+  )
+}
+
+const Divider = () => {
+  return <div className="border-gray border-b" />
+}
 
 export default function Widget() {
+  useEffect(() => {
+    hljs.highlightAll()
+  }, [])
+
   return (
     <>
       <section className="relative flex h-[100vh] flex-col items-center justify-center">
@@ -49,9 +55,8 @@ export default function Widget() {
           {/* <TurtleWidget /> */}
         </div>
       </section>
-      <section className="mb-48 flex min-h-[100vh] flex-col items-center gap-24 bg-white">
-        <div className="mt-24 flex flex-col gap-8 lg:w-[865px]">
-          <h3 className="text-section-title font-bold leading-none">🐢 What is the Turtle app?</h3>
+      <section className="flex min-h-[100vh] flex-col items-center gap-20 bg-white pb-48 lg:pb-96">
+        <SectionInnerContainer className="mt-24" heading="🐢 What is the Turtle app?">
           <p>
             The Turtle app is a seamless cross-chain token transfer solution designed to simplify
             and streamline the movement of digital assets across different blockchain networks. By
@@ -60,14 +65,13 @@ export default function Widget() {
             routing, multiple wallet approvals, or switching between interfaces.
           </p>
           <Image src="/networks.jpg" alt="Turtle app" width={865} height={400} />
-          <div className="border-gray border-b" />
-        </div>
-        <div className="flex flex-col gap-4 lg:w-[865px]">
-          <h3 className="text-section-title font-bold leading-none">🧰 Features</h3>
-          <ul className="flex flex-col gap-4">
+          <Divider />
+        </SectionInnerContainer>
+        <SectionInnerContainer className="flex flex-col gap-8" heading="🧰 Features">
+          <ul className="flex flex-col gap-8">
             {features.map((feature) => (
               <li className="flex flex-col gap-2" key={feature.title}>
-                <h4 className="text-xl font-bold">{feature.title}</h4>
+                <h4 className="text-xl font-bold leading-none">{feature.title}</h4>
                 <ul className="ml-6 list-disc">
                   {feature.listItems.map((item) => (
                     <li key={item}>
@@ -78,7 +82,35 @@ export default function Widget() {
               </li>
             ))}
           </ul>
-        </div>
+          <Divider />
+        </SectionInnerContainer>
+        <SectionInnerContainer heading="💻  Developer Integration Guide">
+          <ol className="ml-6 flex list-decimal flex-col gap-8">
+            {developerIntegrationGuide.map((guide) => (
+              <li className="flex flex-col gap-4 rounded-3xl text-xl font-bold" key={guide.title}>
+                <p>{guide.title}</p>
+                <pre className="theme-github turtle-foreground rounded-3xl border border-turtle-foreground pb-4 pt-4">
+                  <code className={`language-${guide.language} font-mono text-sm`}>
+                    {guide.code}
+                  </code>
+                </pre>
+              </li>
+            ))}
+          </ol>
+        </SectionInnerContainer>
+        <SectionInnerContainer heading="🌐 Compatible Networks & Tokens">
+          <p>An Ever-Expanding Network</p>
+        </SectionInnerContainer>
+        <SectionInnerContainer heading="🙋 Questions or Feedback?">
+          <p>Need help integrating or have questions?</p>
+          <div className="flex gap-4">
+            <Button>
+              <a href="https://www.npmjs.com/package/@velocitylabs-org/turtle-widget">
+                Read the full documentation
+              </a>
+            </Button>
+          </div>
+        </SectionInnerContainer>
       </section>
     </>
   )
