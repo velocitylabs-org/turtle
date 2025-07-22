@@ -32,9 +32,6 @@ function AnalyticDataClient({ initialVolume }: { initialVolume: number }) {
   // Fallback to initialVolume when realTimeData is loading or unavailable to avoid empty state on first render
   const value = realTimeData?.totalVolumeUsd || initialVolume
 
-  console.log('initialVolume', initialVolume)
-  console.log('realTimeData?.totalVolumeUsd', realTimeData?.totalVolumeUsd)
-
   return (
     <div className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
       <div className="flex items-center gap-2 rounded-full border border-black bg-turtle-primary px-4 py-2 md:px-5 md:py-3">
