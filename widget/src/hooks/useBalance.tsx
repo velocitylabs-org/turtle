@@ -81,7 +81,8 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
           break
         }
 
-        case 'Polkadot': {
+        case 'Polkadot':
+        case 'Kusama': {
           fetchedBalance = await getBalance(env, chain, token, address)
           break
         }
