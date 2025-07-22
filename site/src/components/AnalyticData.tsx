@@ -1,9 +1,9 @@
 'use client'
 
 import NumberFlow from '@number-flow/react'
-import {useQuery} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import getAnalyticsData from '@/actions/analytics'
-import {QueryProvider} from '@/providers/queryProvider'
+import { QueryProvider } from '@/providers/queryProvider'
 
 const format = {
   style: 'currency',
@@ -16,17 +16,17 @@ interface AnalyticDataProps {
   initialVolume: number | undefined
 }
 
-export default function AnalyticData({initialVolume}: AnalyticDataProps) {
+export default function AnalyticData({ initialVolume }: AnalyticDataProps) {
   // Using client-side rendering here while keeping the rest of the app server-side for SEO performance
   return (
     <QueryProvider>
-      <AnalyticDataClient initialVolume={initialVolume}/>
+      <AnalyticDataClient initialVolume={initialVolume} />
     </QueryProvider>
   )
 }
 
-function AnalyticDataClient({initialVolume}: AnalyticDataProps) {
-  const {data: realTimeData} = useQuery({
+function AnalyticDataClient({ initialVolume }: AnalyticDataProps) {
+  const { data: realTimeData } = useQuery({
     queryKey: ['analytics'],
     queryFn: async () => {
       return await getAnalyticsData()
@@ -37,14 +37,12 @@ function AnalyticDataClient({initialVolume}: AnalyticDataProps) {
   const value = realTimeData?.totalVolumeUsd || initialVolume || 0
 
   return (
-    <div
-      className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
-      <div
-        className="flex items-center gap-2 rounded-full border border-black bg-turtle-primary px-4 py-2 md:px-5 md:py-3">
-        <BoltIcon/>
+    <div className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
+      <div className="flex items-center gap-2 rounded-full border border-black bg-turtle-primary px-4 py-2 md:px-5 md:py-3">
+        <BoltIcon />
         <span className="text-[16px] text-black md:text-[18px] lg:text-[20px]">
           <span className="mr-1 inline-flex w-[100px] items-center justify-center font-bold md:w-[110px] lg:w-[125px]">
-            <NumberFlow value={value} format={format}/>
+            <NumberFlow value={value} format={format} />
           </span>{' '}
           Total funds moved in Turtle
         </span>
