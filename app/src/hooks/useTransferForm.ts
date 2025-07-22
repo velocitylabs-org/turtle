@@ -241,7 +241,7 @@ const useTransferForm = () => {
     )
       return
 
-    if (sourceChain.network === 'Polkadot') {
+    if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
       if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken)
         return
 
@@ -254,6 +254,7 @@ const useTransferForm = () => {
         sourceTokenAmount.token,
         recipient,
         sourceWallet.sender.address,
+        balanceData.value,
       )
 
       setValue(
