@@ -12,7 +12,7 @@ export default async function fetchAnalyticsData(): Promise<AnalyticsData | null
         'Content-Type': 'application/json',
         Authorization: process.env.AUTH_TOKEN || '',
       },
-      cache: 'no-store',
+      cache: 'max-age=60',
     })
 
     if (!response.ok) {
