@@ -97,17 +97,25 @@ export default function Widget() {
               </li>
             ))}
           </ol>
+          <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer heading="🌐 Compatible Networks & Tokens">
           <p>An Ever-Expanding Network</p>
+          <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer heading="🙋 Questions or Feedback?">
           <p>Need help integrating or have questions?</p>
           <div className="flex gap-4">
-            <Button>
-              <a href="https://www.npmjs.com/package/@velocitylabs-org/turtle-widget">
-                Read the full documentation
-              </a>
+            <Button
+              size="lg"
+              as="a"
+              href="https://www.npmjs.com/package/@velocitylabs-org/turtle-widget"
+              target="_blank"
+            >
+              📖 Read the docs
+            </Button>
+            <Button size="lg" as="a" href="mailto:support@velocitylabs.org">
+              💬 Talk to our team
             </Button>
           </div>
         </SectionInnerContainer>

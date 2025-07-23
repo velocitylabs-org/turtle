@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { TurtleIcon } from './assets/turtle-icon'
+import { Button } from '@velocitylabs-org/turtle-ui'
 
 export default function Header() {
   return (
@@ -12,13 +13,15 @@ export default function Header() {
       <nav>
         <ul className="items-center space-x-6">
           <li>
-            <a
+            <Button
+              as="a"
               href="https://app.turtle.cool"
               target="_blank"
-              className="btn btn-primary flex h-[20px] w-[122px] flex-row justify-center rounded-lg border-black text-lg font-medium hover:border-black sm:h-[56px] sm:text-xl"
+              size="lg"
+              className="text-lg sm:text-xl"
             >
               Transfer
-            </a>
+            </Button>
           </li>
         </ul>
       </nav>
