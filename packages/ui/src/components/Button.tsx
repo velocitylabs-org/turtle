@@ -18,7 +18,7 @@ type PolymorphicComponentProps<
 > = React.PropsWithChildren<Props & AsProp<T>> &
   Omit<React.ComponentPropsWithoutRef<T>, PropsToOmit<T, Props>>
 
-type ButtonProps<T extends React.ElementType = 'button'> = PolymorphicComponentProps<
+export type ButtonProps<T extends React.ElementType = 'button'> = PolymorphicComponentProps<
   T,
   {
     /** Text shown inside the button. */
