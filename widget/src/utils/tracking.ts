@@ -1,4 +1,4 @@
-import { historyV2 as history } from '@snowbridge/api'
+import { environment, historyV2 as history } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { FromParaToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
 import {
@@ -9,17 +9,21 @@ import {
 } from '@/models/transfer'
 import { Direction, resolveDirection } from './transfer'
 
-export const trackTransfers = async (ongoingTransfers: OngoingTransfers) => {
+export const trackTransfers = async (
+  env: environment.SnowbridgeEnvironment,
+  ongoingTransfers: OngoingTransfers,
+) => {
   const transfers: TxTrackingResult[] = []
   const { toPolkadot, toEthereum } = ongoingTransfers
 
   for (const transfer of toPolkadot) {
-    const tx = await history.toPolkadotTransferById(transfer.id)
+    const tx = await history.toPolkadotTransferById(env.config.GRAPHQL_API_URL, transfer.id)
     if (tx) transfers.push(tx)
   }
 
   for (const transfer of toEthereum) {
     const tx = await history.toEthereumTransferById(
+      env.config.GRAPHQL_API_URL,
       transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
     )
     if (tx) transfers.push(tx)
@@ -59,7 +63,11 @@ export const findMatchingTransfer = (
           transfer.submitted.extrinsic_hash === ongoingTransfer.id)
       )
     } else {
-      return transfer.id === ongoingTransfer.id
+      return (
+        transfer.id === ongoingTransfer.id ||
+        ('transactionHash' in transfer.submitted &&
+          transfer.submitted.transactionHash === ongoingTransfer.id)
+      )
     }
   })
 
