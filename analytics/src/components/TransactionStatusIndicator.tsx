@@ -31,7 +31,7 @@ export function TransactionStatusIndicator({ status }: TransactionStatusIndicato
     case 'ongoing':
       return (
         <div className="flex flex-col items-center">
-          <RefreshCcw className="mr-1 h-4 w-4 text-blue-500 animate-spin" />
+          <RefreshCcw className="mr-1 h-4 w-4 animate-spin text-blue-500" />
           <span className="text-xs capitalize">{status}</span>
         </div>
       )
