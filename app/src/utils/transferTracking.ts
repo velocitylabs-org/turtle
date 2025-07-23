@@ -14,12 +14,13 @@ export const trackTransfers = async (
   const { toPolkadot, toEthereum, withinPolkadot } = ongoingTransfers
 
   for (const transfer of toPolkadot) {
-    const tx = await history.toPolkadotTransferById(transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+    const tx = await history.toPolkadotTransferById(env.config.GRAPHQL_API_URL, transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
     if (tx) transfers.push(tx)
   }
 
   for (const transfer of toEthereum) {
     const tx = await history.toEthereumTransferById(
+      env.config.GRAPHQL_API_URL,
       transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
     )
     if (tx) transfers.push(tx)
