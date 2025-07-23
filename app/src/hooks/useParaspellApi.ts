@@ -385,14 +385,11 @@ const useParaspellApi = () => {
       ...(explorerLink && { explorerLink }),
     } satisfies CompletedTransfer)
 
-    // Analytics tx are created with successful status by default, we only update for failed ones
-    if (!txSuccessful) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: TxStatus.Failed,
-        environment: transfer.environment,
-      })
-    }
+    updateTransferMetrics({
+      txHashId: transfer.id,
+      status: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
+      environment: transfer.environment,
+    })
   }
 
   const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {

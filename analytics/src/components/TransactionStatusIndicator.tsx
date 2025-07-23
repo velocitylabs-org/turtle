@@ -1,4 +1,4 @@
-import { Ban, CheckCircle, CircleHelp } from 'lucide-react'
+import { Ban, CheckCircle, CircleHelp, RefreshCcw } from 'lucide-react'
 import { TxStatus } from '@/models/Transaction'
 
 interface TransactionStatusIndicatorProps {
@@ -25,6 +25,13 @@ export function TransactionStatusIndicator({ status }: TransactionStatusIndicato
       return (
         <div className="flex flex-col items-center">
           <CircleHelp className="mr-1 h-4 w-4 text-yellow-500" />
+          <span className="text-xs capitalize">{status}</span>
+        </div>
+      )
+    case 'ongoing':
+      return (
+        <div className="flex flex-col items-center">
+          <RefreshCcw className="mr-1 h-4 w-4 text-blue-500 animate-spin" />
           <span className="text-xs capitalize">{status}</span>
         </div>
       )

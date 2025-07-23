@@ -7,7 +7,6 @@ import { Environment } from '@velocitylabs-org/turtle-registry'
 import storeAnalyticsTransaction from '@/app/actions/store-transactions'
 import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
 import { TransferParams } from '@/hooks/useTransfer'
-import { TxStatus } from '@/models/transfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 
@@ -94,7 +93,7 @@ export async function trackTransferMetrics({
 
     txDate: date.toISOString(),
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
-    status: TxStatus.Succeeded,
+    status: 'ongoing',
     isSwap,
   }
 

@@ -127,6 +127,7 @@ export async function getTransactionsData({
       succeeded: number
       failed: number
       undefined: number
+      ongoing: number
       total: number
       [key: string]: number
     }
@@ -146,6 +147,7 @@ export async function getTransactionsData({
         succeeded: 0,
         failed: 0,
         undefined: 0,
+        ongoing: 0,
         total: 0,
       },
     )
@@ -163,6 +165,7 @@ export async function getTransactionsData({
         succeededCount: statusMap.succeeded,
         failedCount: statusMap.failed,
         undefinedCount: statusMap.undefined,
+        ongoingCount: statusMap.ongoing,
       },
     }
   } catch (e) {

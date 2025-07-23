@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Token } from '@velocitylabs-org/turtle-registry'
 import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
-import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
+import { CheckCircle, X, DollarSign, Ban, CircleHelp, RefreshCcw } from 'lucide-react'
 import { useQueryState, parseAsStringLiteral, parseAsIsoDate } from 'nuqs'
 import React from 'react'
 import { getTransactionsData } from '@/app/actions/transactions'
@@ -36,6 +36,7 @@ const statusFilterParser = parseAsStringLiteral([
   'succeeded',
   'failed',
   'undefined',
+  'ongoing',
   'all',
 ] as const).withDefault('all')
 const emptyDefaultString = { defaultValue: '' }
@@ -110,6 +111,7 @@ export default function TransactionsPage() {
     succeededCount: 0,
     failedCount: 0,
     undefinedCount: 0,
+    ongoingCount: 0,
   }
 
   const resetFilters = () => {
@@ -214,9 +216,20 @@ export default function TransactionsPage() {
                       <CircleHelp className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">undefined</span>
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`flex-1 ${statusFilter === 'ongoing' ? 'bg-blue-100' : ''}`}
+                      onClick={() =>
+                        setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing')
+                      }
+                    >
+                      <RefreshCcw className="mr-1 h-4 w-4" />
+                      <span className="hidden capitalize lg:inline">ongoing</span>
+                    </Button>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="col-span-1">
                     <DatePicker date={fromDate} setDate={setFromDate} placeholder="From date" />
                   </div>
