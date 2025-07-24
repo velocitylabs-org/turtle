@@ -20,6 +20,30 @@ import useOngoingTransfers from './useOngoingTransfers'
 type ID = string
 type Message = string
 
+const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
+  return ongoingTransfers
+    .map((t) => {
+      const direction = resolveDirection(t.sourceChain, t.destChain)
+      return {
+        id: t.id,
+        sourceChain: t.sourceChain,
+        destChain: t.destChain,
+        sender: t.sender,
+        recipient: t.recipient,
+        sourceToken: t.sourceToken,
+        destinationToken: t.destinationToken,
+        date: t.date,
+        direction,
+        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
+        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+        ...(t.sourceChainExtrinsicIndex && {
+          sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
+        }),
+      }
+    })
+    .filter((t) => t.direction !== Direction.WithinPolkadot)
+}
+
 const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
   const [statusMessages, setStatusMessages] = useState<Record<ID, Message>>({})
@@ -28,30 +52,6 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const env = useEnvironment()
-
-  const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
-    return ongoingTransfers
-      .map((t) => {
-        const direction = resolveDirection(t.sourceChain, t.destChain)
-        return {
-          id: t.id,
-          sourceChain: t.sourceChain,
-          destChain: t.destChain,
-          sender: t.sender,
-          recipient: t.recipient,
-          sourceToken: t.sourceToken,
-          destinationToken: t.destinationToken,
-          date: t.date,
-          direction,
-          ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
-          ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
-          ...(t.sourceChainExtrinsicIndex && {
-            sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
-          }),
-        }
-      })
-      .filter((t) => t.direction !== Direction.WithinPolkadot)
-  }
 
   const fetchTransfers = useCallback(async () => {
     const formattedTransfers: OngoingTransferWithDirection[] = formatTransfersWithDirection(ongoingTransfers)
@@ -73,7 +73,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
     } finally {
       setLoading(false)
     }
-  }, [env, ongoingTransfers, formatTransfersWithDirection])
+  }, [env, ongoingTransfers])
 
   const ongoingTransfersRef = useRef(ongoingTransfers)
 

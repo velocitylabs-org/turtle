@@ -10,6 +10,7 @@ interface ErrorProps {
   error: Error & { digest?: string }
 }
 
+// biome-ignore lint/suspicious/noShadowRestrictedNames: Error Component
 export default function Error({ error }: ErrorProps) {
   useEffect(() => {
     captureException(error)

@@ -2,7 +2,6 @@ import { getOriginFeeDetails, type TNodeDotKsmWithRelayChains } from '@paraspell
 import { captureException } from '@sentry/nextjs'
 import { type Chain, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
-import useNotification from '@/hooks/useNotification'
 import type { AmountInfo } from '@/models/transfer'
 
 import { getCachedTokenPrice } from '@/services/balance'
@@ -37,7 +36,6 @@ const useFees = (
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
-  const { addNotification } = useNotification()
   const env = useEnvironment()
   const { balance: feeBalance } = useBalance({
     env: env,

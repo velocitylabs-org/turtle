@@ -2,7 +2,6 @@ import { type Context, environment, toPolkadot } from '@snowbridge/api'
 import { type Chain, type Environment, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
 import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
-import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { NotificationSeverity } from '@/models/notification'
 import { convertAmount, toHuman } from '@/utils/transfer'
@@ -19,12 +18,6 @@ interface Params {
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
 const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
-  const { balance: tokenBalance } = useBalance({
-    env,
-    chain,
-    token: tokenAmount?.token ?? undefined,
-    address: owner,
-  })
   const [ethBalance, setEthBalance] = useState<number | undefined>()
   const [isSwapping, setIsSwapping] = useState<boolean>(false)
 

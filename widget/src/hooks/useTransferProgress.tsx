@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { StoredTransfer } from '@/models/transfer'
 import { Direction } from '@/utils/transfer'
 
@@ -52,14 +52,14 @@ const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => 
   )
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const updateProgress = () => {
+  const updateProgress = useCallback(() => {
     const transferProgress = getTransferProgress(transferDate, direction, shouldStartProgress)
     setProgress(transferProgress)
     if (transferProgress >= 90 && progressIntervalRef.current) {
       clearInterval(progressIntervalRef.current)
       progressIntervalRef.current = null
     }
-  }
+  }, [transferDate, direction, shouldStartProgress])
 
   useEffect(() => {
     const intervalDuration = direction === Direction.WithinPolkadot ? 1500 : 5000
@@ -74,7 +74,6 @@ const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => 
         clearInterval(progressIntervalRef.current)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transferDate, direction, progress, shouldStartProgress, updateProgress])
 
   return progress

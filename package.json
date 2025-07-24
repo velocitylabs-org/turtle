@@ -10,7 +10,7 @@
     "dev-widget": "turbo run dev --filter=@velocitylabs-org/turtle-widget",
     "dev-site": "turbo run dev --filter=@velocitylabs-org/turtle-site",
     "lint": "biome check .",
-    "lint:fix": "biome check --write --unsafe .",
+    "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "format-check": "biome format .",
     "start": "turbo run start",

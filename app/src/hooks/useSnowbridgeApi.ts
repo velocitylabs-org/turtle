@@ -110,6 +110,7 @@ const useSnowbridgeApi = () => {
     } = params
     try {
       setStatus('Sending')
+      // biome-ignore lint/suspicious/noImplicitAnyLet: response
       let response
 
       switch (direction) {

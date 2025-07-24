@@ -61,7 +61,8 @@
         "useButtonType": "off",
         "useFocusableInteractive": "off",
         "useSemanticElements": "off",
-        "noStaticElementInteractions": "off"
+        "noStaticElementInteractions": "off",
+        "noLabelWithoutControl": "off"
       }
     }
   },

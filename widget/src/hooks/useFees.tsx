@@ -2,7 +2,6 @@ import { getOriginFeeDetails, getParaEthTransferFees, type TNodeDotKsmWithRelayC
 import { useQuery } from '@tanstack/react-query'
 import { type Chain, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import useNotification from '@/hooks/useNotification'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
 import { getFeeEstimate } from '@/lib/snowbridge'
@@ -59,7 +58,6 @@ const useFees = (
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
-  const { addNotification } = useNotification()
   const env = useEnvironmentStore((state) => state.current)
 
   const fetchFees = useCallback(async () => {
