@@ -6,6 +6,8 @@ import { parseAnalyticsServerActionError } from '@/utils/parseAnalyticsActionErr
  * Transaction data type is defined in utils/analytics.ts
  * Contains transfer metrics including token details, amounts, chains, and transaction status
  */
+
+// biome-ignore lint/suspicious/noExplicitAny: any
 export default async function storeAnalyticsTransaction(data: any) {
   try {
     if (!process.env.ANALYTICS_DASHBOARD_AUTH_TOKEN || !process.env.ANALYTICS_DASHBOARD_BASE_URL) {

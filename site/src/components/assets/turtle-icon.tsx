@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
@@ -27,12 +27,7 @@ export const TurtleIcon = (props: TurtleIconProps) => (
         width="28"
         height="28"
       >
-        <rect
-          width="28"
-          height="28"
-          transform="matrix(-1 0 0 1 28 0)"
-          fill="url(#pattern1_597_16)"
-        />
+        <rect width="28" height="28" transform="matrix(-1 0 0 1 28 0)" fill="url(#pattern1_597_16)" />
       </mask>
       <g mask="url(#mask0_597_16)">
         <rect width="28" height="28" transform="matrix(-1 0 0 1 28 0)" fill="#00FF29" />

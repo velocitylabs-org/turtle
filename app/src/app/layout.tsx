@@ -1,7 +1,7 @@
 import { Analytics } from '@vercel/analytics/react'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { dazzed } from '@/components/fonts/fonts'
 import Navbar from '@/components/NavBar'

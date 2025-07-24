@@ -1,7 +1,7 @@
 import clsx from 'clsx'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { twMerge } from 'tailwind-merge'
-import { Sizes } from '../types/global'
+import type { Sizes } from '../types/global'
 import { LoadingIcon } from './LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
@@ -33,8 +33,7 @@ export interface ButtonProps {
 const styles = {
   primary: 'bg-turtle-primary border border-black disabled:opacity-30',
   secondary: 'bg-turtle-secondary border border-black disabled:opacity-30',
-  outline:
-    'border border-turtle-level3 bg-transparent disabled:border-turtle-level3 disabled:opacity-30',
+  outline: 'border border-turtle-level3 bg-transparent disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
   update:
     'border bg-turtle-secondary border border-turtle-secondary-dark text-turtle-secondary-dark disabled:opacity-100 disabled:bg-turtle-secondary-50 disabled:border-turtle-secondary-dark-40',

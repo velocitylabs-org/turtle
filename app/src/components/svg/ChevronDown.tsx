@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 interface ChevronDownProps extends ComponentPropsWithoutRef<'svg'> {
   height?: number

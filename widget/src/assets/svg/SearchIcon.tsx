@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 interface SearchIconProps extends ComponentPropsWithoutRef<'svg'> {
   fill?: string
@@ -6,14 +6,7 @@ interface SearchIconProps extends ComponentPropsWithoutRef<'svg'> {
 
 export default function SearchIcon({ fill = '#001B04', ...props }: SearchIconProps) {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"

@@ -1,6 +1,6 @@
 'use client'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -30,16 +30,9 @@ export default function SmallStatBox({
         <Icon className="h-4 w-4 text-muted-foreground" style={{ color: iconColor }} />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
-          {isLoading ? <Skeleton className={`h-8 ${skeletonWidth}`} /> : value}
-        </div>
+        <div className="text-2xl font-bold">{isLoading ? <Skeleton className={`h-8 ${skeletonWidth}`} /> : value}</div>
         {description && (
-          <div
-            className={cn(
-              'flex items-center space-x-2 text-xs text-muted-foreground',
-              isLoading && 'opacity-0',
-            )}
-          >
+          <div className={cn('flex items-center space-x-2 text-xs text-muted-foreground', isLoading && 'opacity-0')}>
             {description}
           </div>
         )}

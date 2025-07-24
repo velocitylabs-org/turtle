@@ -11,7 +11,10 @@
     "compile": "tsc -b && tsc-alias",
     "build": "npm run clean && npm run compile",
     "watch": "tsc --watch & tsc-alias -w",
-    "lint": "eslint ."
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "format-check": "biome format ."
   },
   "files": [
     "dist"
@@ -28,23 +31,14 @@
     "@velocitylabs-org/turtle-registry": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/js": "^9.19.0",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
-    "@velocitylabs-org/turtle-eslint-config": "workspace:*",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "dotenv": "^16.4.5",
-    "eslint": "^9.25.1",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.14.0",
-    "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "tsc-alias": "^1.8.16",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.22.0"
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "clsx": "^2.1.1",

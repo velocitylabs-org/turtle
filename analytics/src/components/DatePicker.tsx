@@ -2,7 +2,6 @@
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { format } from 'date-fns'
 import { CalendarIcon, X } from 'lucide-react'
-import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -14,22 +13,14 @@ interface DatePickerProps {
   placeholder?: string
 }
 
-export default function DatePicker({
-  className,
-  date,
-  setDate,
-  placeholder = 'Pick a date',
-}: DatePickerProps) {
+export default function DatePicker({ className, date, setDate, placeholder = 'Pick a date' }: DatePickerProps) {
   return (
     <div className={cn('relative grid gap-2', className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant={'outline'}
-            className={cn(
-              'w-full justify-start text-left font-normal',
-              !date && 'text-muted-foreground',
-            )}
+            className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground')}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date ? (

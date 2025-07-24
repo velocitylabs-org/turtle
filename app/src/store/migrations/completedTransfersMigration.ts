@@ -1,7 +1,7 @@
-import { CompletedTransferV0 } from '@/models/transfer'
+import type { CompletedTransferV0 } from '@/models/transfer'
 import { STORE_VERSIONS } from './constants'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: any
 export const migrateCompletedTransfers = (persistedState: any, version: number) => {
   if (version === STORE_VERSIONS.COMPLETED_TRANSFERS) return persistedState
 

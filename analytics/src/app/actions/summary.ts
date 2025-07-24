@@ -1,5 +1,5 @@
 'use server'
-import { startOfWeek, startOfMonth, subMonths, format, addDays, startOfDay } from 'date-fns'
+import { addDays, format, startOfDay, startOfMonth, startOfWeek, subMonths } from 'date-fns'
 import { defaultTransactionLimit } from '@/constants'
 import Transaction from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
@@ -119,15 +119,11 @@ export async function getSummaryData() {
     const transactionData = await getAllTransactionData()
 
     const totalVolumeUsd = volumeResult[0]?.total || 0
-    const successRate =
-      totalTransactions > 0 ? (successfulTransactions / totalTransactions) * 100 : 0
-    const avgTransactionValue =
-      successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
+    const successRate = totalTransactions > 0 ? (successfulTransactions / totalTransactions) * 100 : 0
+    const avgTransactionValue = successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
     // Apply the schema to each transaction
-    const serializedRecentTransactions = recentTransactions.map(transaction =>
-      transactionView.parse(transaction),
-    )
+    const serializedRecentTransactions = recentTransactions.map(transaction => transactionView.parse(transaction))
 
     return {
       totalVolumeUsd,

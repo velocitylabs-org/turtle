@@ -1,4 +1,4 @@
-import { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
+import type { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
 import { clickWalletConnectButton, selectChain } from './helpers'
 
 const seed = Cypress.env('seed')

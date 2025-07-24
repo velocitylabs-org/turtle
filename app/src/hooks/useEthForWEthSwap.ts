@@ -1,12 +1,11 @@
 import { captureException } from '@sentry/nextjs'
-import { Context, environment, toPolkadot } from '@snowbridge/api'
-import { Environment, EthereumTokens, Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
-import { Signer } from 'ethers'
+import { type Context, environment, toPolkadot } from '@snowbridge/api'
+import { type Chain, type Environment, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
-import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { NotificationSeverity } from '@/models/notification'
-import { convertAmount, toHuman } from '../utils/transfer'
+import { convertAmount, toHuman } from '@/utils/transfer'
 
 interface Params {
   env: Environment
@@ -20,12 +19,6 @@ interface Params {
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
 const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
-  const { balance: tokenBalance } = useBalance({
-    env,
-    chain,
-    token: tokenAmount?.token ?? undefined,
-    address: owner,
-  })
   const [ethBalance, setEthBalance] = useState<number | undefined>()
   const [isSwapping, SetIsSwapping] = useState<boolean>(false)
 
@@ -49,15 +42,14 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
         .then(x => toHuman(x, EthereumTokens.ETH))
       setEthBalance(balance)
     } catch (error) {
-      if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-        captureException(error)
+      if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
     }
   }, [chain?.network, owner, tokenAmount, context])
 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
     fetchEthBalance()
-  }, [fetchEthBalance, tokenBalance])
+  }, [fetchEthBalance])
 
   const swapEthtoWEth = useCallback(
     async (signer: Signer, amount: number) => {
@@ -78,12 +70,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
 
       try {
         await toPolkadot
-          .depositWeth(
-            context,
-            signer,
-            tokenAmount!.token!.address,
-            convertAmount(amount, EthereumTokens.ETH),
-          )
+          .depositWeth(context, signer, tokenAmount!.token!.address, convertAmount(amount, EthereumTokens.ETH))
           .then(x => x.wait())
 
         SetIsSwapping(false)
@@ -96,8 +83,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
           message: 'Failed to swap ETH for wETH',
           severity: NotificationSeverity.Error,
         })
-        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-          captureException(error)
+        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
       } finally {
         SetIsSwapping(false)
       }

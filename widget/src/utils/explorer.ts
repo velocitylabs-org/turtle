@@ -1,5 +1,5 @@
 import { AssetHub, KusamaAssetHub } from '@velocitylabs-org/turtle-registry'
-import { StoredTransfer } from '@/models/transfer'
+import type { StoredTransfer } from '@/models/transfer'
 
 const EXPLORERS = {
   // Ethereum
@@ -44,8 +44,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
         return getCustomExplorerLink(name, sender)
       }
 
-      if (chainId === AssetHub.chainId)
-        return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${id}`
+      if (chainId === AssetHub.chainId) return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${id}`
 
       // Default Polkadot network explorer link:
       return `${removeURLSlash(EXPLORERS.subscan_polkadot)}/account/${sender}?tab=xcm_transfer`
@@ -62,8 +61,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
         return getCustomExplorerLink(name, sender)
       }
 
-      if (chainId === KusamaAssetHub.chainId)
-        return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${id}`
+      if (chainId === KusamaAssetHub.chainId) return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${id}`
 
       // Default Polkadot network explorer link:
       return `${removeURLSlash(EXPLORERS.subscan_kusama)}/account/${sender}?tab=xcm_transfer`

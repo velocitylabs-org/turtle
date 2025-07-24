@@ -11,7 +11,10 @@
     "prebuild": "node script/generateEnv.cjs",
     "build": "pnpm run prebuild && tsc -b && tsc-alias",
     "watch": "pnpm run prebuild && tsc --watch & tsc-alias -w",
-    "lint": "eslint ."
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "format-check": "biome format ."
   },
   "exports": {
     ".": {
@@ -23,17 +26,9 @@
     "@velocitylabs-org/turtle-assets": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/js": "^9.19.0",
-    "@velocitylabs-org/turtle-eslint-config": "workspace:*",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "dotenv": "^16.4.5",
-    "eslint": "^9.25.1",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.14.0",
-    "prettier": "^3.5.3",
     "tsc-alias": "^1.8.16"
   },
   "peerDependencies": {

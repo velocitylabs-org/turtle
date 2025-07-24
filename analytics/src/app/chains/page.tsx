@@ -1,20 +1,18 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useQueryState, parseAsStringLiteral } from 'nuqs'
-import React, { useState, useEffect } from 'react'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
+import { useEffect, useState } from 'react'
 import { getChainSankeyData, getChainsData } from '@/app/actions/chains'
-import ChainsActivityTable from '@/components/ChainsActivityTable'
 import ChainSankeyGraph from '@/components/ChainSankeyGraph'
+import ChainsActivityTable from '@/components/ChainsActivityTable'
 import ErrorPanel from '@/components/ErrorPanel'
 import TitleToggle from '@/components/TitleToggle'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { GraphType, relayChain } from '@/constants'
+import { type GraphType, relayChain } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 
-const graphTypeQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault(
-  'volume',
-)
+const graphTypeQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
 
 export default function ChainsPage() {
   const [chainUid, setChainUid] = useQueryState('chainUid', { defaultValue: relayChain.uid })

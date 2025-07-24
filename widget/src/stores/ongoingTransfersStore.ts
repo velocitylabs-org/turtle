@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { AmountInfo, StoredTransfer } from '@/models/transfer'
+import type { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { STORE_VERSIONS } from './migrations/constants'
 import { migrateOngoingTransfers } from './migrations/ongoingTransfersMigration'
 
@@ -43,9 +43,7 @@ export const useOngoingTransfersStore = create<State>()(
         }
 
         set(state => {
-          const transferExists = state.transfers.some(
-            transfer => transfer.id === persistableTransfer.id,
-          )
+          const transferExists = state.transfers.some(transfer => transfer.id === persistableTransfer.id)
 
           if (transferExists) {
             return {
@@ -90,7 +88,7 @@ export const useOngoingTransfersStore = create<State>()(
         set(state => {
           return {
             transfers: state.transfers.map(transfer => {
-              if (transfer.id == id) {
+              if (transfer.id === id) {
                 transfer.progress = 100
               }
               return transfer

@@ -1,13 +1,12 @@
-import Image from 'next/image'
 import { cn } from '@velocitylabs-org/turtle-ui'
+import Image from 'next/image'
 import { ArrowRight } from './assets/arrow-right'
 
 const bridgeTx = [
   {
     fromChain: {
       name: 'ethereum',
-      logoURI:
-        'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+      logoURI: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
     },
     fromToken: {
       name: 'usdc',
@@ -33,8 +32,7 @@ const bridgeTx = [
     },
     toChain: {
       name: 'ethereum',
-      logoURI:
-        'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+      logoURI: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
     },
     toToken: {
       name: 'weth',
@@ -71,9 +69,7 @@ export const TokenExchange = () => {
                 width={32}
                 className="hidden rounded-full bg-white sm:inline"
               />
-              <p className="font-sans text-lg font-extrabold uppercase sm:text-2xl">
-                {fromToken.name}
-              </p>
+              <p className="font-sans text-lg font-extrabold uppercase sm:text-2xl">{fromToken.name}</p>
             </div>
             <ArrowRight className="h-3 w-3" />
             <div className="flex items-center space-x-1">
@@ -84,9 +80,7 @@ export const TokenExchange = () => {
                 width={32}
                 className="hidden rounded-full bg-white sm:inline"
               />
-              <p className="font-sans text-lg font-extrabold uppercase sm:text-2xl">
-                {toToken.name}
-              </p>
+              <p className="font-sans text-lg font-extrabold uppercase sm:text-2xl">{toToken.name}</p>
             </div>
             <div className="relative h-8 w-8 sm:h-12 sm:w-12">
               <Image

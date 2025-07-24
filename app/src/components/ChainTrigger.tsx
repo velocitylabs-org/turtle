@@ -1,7 +1,7 @@
-import { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
-import { Tooltip, cn } from '@velocitylabs-org/turtle-ui'
+import type { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
+import { cn, Tooltip } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
-import { ChangeEvent, ReactNode, RefObject, useCallback } from 'react'
+import { type ChangeEvent, type ReactNode, type RefObject, useCallback } from 'react'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar } from 'wagmi'
 import useLookupName from '@/hooks/useLookupName'
@@ -40,8 +40,7 @@ export default function ChainTrigger({
 }: ChainTriggerProps) {
   // wallet and ens
   const addressLookup = useLookupName(value?.network, walletAddress?.toLowerCase())
-  const convertedAddress =
-    walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
+  const convertedAddress = walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
   const displayableAddress = truncateAddress(convertedAddress)
   const accountName = addressLookup ?? displayableAddress
 
@@ -78,10 +77,7 @@ export default function ChainTrigger({
         data-cy="chain-select-trigger"
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
-          <div
-            className={cn('flex shrink-0 items-center gap-1', !disabled && 'cursor-pointer')}
-            onClick={handleClick}
-          >
+          <div className={cn('flex shrink-0 items-center gap-1', !disabled && 'cursor-pointer')} onClick={handleClick}>
             {value ? (
               <>
                 <Image
@@ -104,12 +100,7 @@ export default function ChainTrigger({
               </>
             )}
             {(!manualRecipientInput?.enabled || manualRecipientInput?.address) && (
-              <ChevronDown
-                strokeWidth={0.2}
-                height={6}
-                width={14}
-                className="ml-1.5 mr-1 shrink-0"
-              />
+              <ChevronDown strokeWidth={0.2} height={6} width={14} className="ml-1.5 mr-1 shrink-0" />
             )}
           </div>
 
@@ -138,7 +129,6 @@ export default function ChainTrigger({
                   error && 'text-turtle-error',
                 )}
                 placeholder="Address"
-                autoFocus
                 value={manualRecipientInput.address}
                 onChange={handleManualRecipientChange}
                 onClick={e => e.stopPropagation()}

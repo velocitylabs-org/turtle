@@ -1,13 +1,13 @@
 import { Context, contextConfigFor, environment, status } from '@snowbridge/api'
 import {
-  Environment,
-  rpcConnectionAsHttps,
   AssetHub,
   BridgeHub,
+  Environment,
   Polkadot,
+  rpcConnectionAsHttps,
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
 } from '@velocitylabs-org/turtle-registry'
-import { SnowbridgeStatus } from '@/models/snowbridge'
+import type { SnowbridgeStatus } from '@/models/snowbridge'
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -56,9 +56,7 @@ export function toSnowbridgeNetwork(env: Environment): string {
   }
 }
 
-export async function getSnowBridgeEtimatedTransferDuration(
-  snowbridgeCtx: Context,
-): Promise<SnowbridgeStatus> {
+export async function getSnowBridgeEtimatedTransferDuration(snowbridgeCtx: Context): Promise<SnowbridgeStatus> {
   const bridgeStatus = await status.bridgeStatusInfo(snowbridgeCtx)
   return {
     toEthereum: bridgeStatus.toEthereum.latencySeconds,

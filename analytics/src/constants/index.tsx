@@ -1,4 +1,4 @@
-import { REGISTRY, Ethereum, Polkadot } from '@velocitylabs-org/turtle-registry'
+import { Ethereum, Polkadot, REGISTRY } from '@velocitylabs-org/turtle-registry'
 
 export const primaryColor = '#00FF29'
 

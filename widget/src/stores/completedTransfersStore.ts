@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { AmountInfo, CompletedTransfer } from '@/models/transfer'
+import type { AmountInfo, CompletedTransfer } from '@/models/transfer'
 import { migrateCompletedTransfers } from './migrations/completedTransfersMigration'
 import { STORE_VERSIONS } from './migrations/constants'
 
@@ -35,9 +35,7 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
 
         set(state => {
           // Check if the newCompletedTransfer already exists in the local store
-          const transferExists = state.completedTransfers.some(
-            transfer => transfer.id === persistableTransfer.id,
-          )
+          const transferExists = state.completedTransfers.some(transfer => transfer.id === persistableTransfer.id)
 
           if (transferExists) return { completedTransfers: state.completedTransfers }
 

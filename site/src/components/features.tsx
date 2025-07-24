@@ -1,9 +1,9 @@
-import { FeatureCard, TurtleFeatures } from './card'
 import chains from '../../public/chains.png'
-import turtle from '../../public/turtle.png'
+import chart from '../../public/chart.png'
 import locker from '../../public/locker.png'
 import record from '../../public/record.png'
-import chart from '../../public/chart.png'
+import turtle from '../../public/turtle.png'
+import { FeatureCard, type TurtleFeatures } from './card'
 
 export default function Features() {
   const mainFeatures = [
@@ -19,8 +19,7 @@ export default function Features() {
     },
     {
       title: 'Unified Experience',
-      description:
-        'Transfer any token anywhere. Turtle is your go-to app for cross-chain transfers.',
+      description: 'Transfer any token anywhere. Turtle is your go-to app for cross-chain transfers.',
       icon: record,
     },
   ] satisfies TurtleFeatures
@@ -47,24 +46,14 @@ export default function Features() {
       <div className="mx-auto my-0 max-w-[1600px] items-center justify-center">
         <div className="grid grid-cols-1 gap-10 p-5 md:grid-cols-2 xl:grid-cols-3">
           {mainFeatures.map((feature, index) => (
-            <FeatureCard
-              key={index}
-              feature={feature}
-              featuresListlength={mainFeatures.length}
-              index={index}
-            />
+            <FeatureCard key={index} feature={feature} featuresListlength={mainFeatures.length} index={index} />
           ))}
         </div>
 
         {/* 2nd grid features */}
         <div className="grid grid-cols-1 gap-10 p-5 md:grid-cols-2">
           {secondaryFeatures.map((feature, index) => (
-            <FeatureCard
-              key={index}
-              feature={feature}
-              featuresListlength={secondaryFeatures.length}
-              index={index}
-            />
+            <FeatureCard key={index} feature={feature} featuresListlength={secondaryFeatures.length} index={index} />
           ))}
         </div>
       </div>

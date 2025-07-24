@@ -108,6 +108,4 @@ const config =
       )
     : nextConfig
 
-export default withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true', openAnalyzer: true })(
-  config,
-)
+export default withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true', openAnalyzer: true })(config)

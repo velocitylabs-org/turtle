@@ -1,7 +1,6 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import React from 'react'
 import { getTokensData } from '@/app/actions/tokens'
 import ErrorPanel from '@/components/ErrorPanel'
 import TokensActivityTable from '@/components/TokensActivityTable'

@@ -1,11 +1,9 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
-import { Token } from '@velocitylabs-org/turtle-registry'
-import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
-import { CheckCircle, X, DollarSign, Ban, CircleHelp } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral, parseAsIsoDate } from 'nuqs'
-import React from 'react'
+import { Ban, CheckCircle, CircleHelp, DollarSign, X } from 'lucide-react'
+import { parseAsIsoDate, parseAsStringLiteral, useQueryState } from 'nuqs'
 import { getTransactionsData } from '@/app/actions/transactions'
 import DatePicker from '@/components/DatePicker'
 import ErrorPanel from '@/components/ErrorPanel'
@@ -16,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { chains, defaultTransactionLimit, tokens } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import { TxStatus } from '@/models/Transaction'
+import type { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -32,20 +30,12 @@ const originOptions = [
 ]
 
 // Using 'all' as default to represent null (no filter)
-const statusFilterParser = parseAsStringLiteral([
-  'succeeded',
-  'failed',
-  'undefined',
-  'all',
-] as const).withDefault('all')
+const statusFilterParser = parseAsStringLiteral(['succeeded', 'failed', 'undefined', 'all'] as const).withDefault('all')
 const emptyDefaultString = { defaultValue: '' }
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useQueryState('sourceChain', emptyDefaultString)
-  const [destinationChainUid, setDestinationChainUid] = useQueryState(
-    'destChain',
-    emptyDefaultString,
-  )
+  const [destinationChainUid, setDestinationChainUid] = useQueryState('destChain', emptyDefaultString)
   const [sourceTokenId, setSourceTokenId] = useQueryState('sourceToken', emptyDefaultString)
   const [destinationTokenId, setDestinationTokenId] = useQueryState('destToken', emptyDefaultString)
   const [statusFilterRaw, setStatusFilterRaw] = useQueryState('status', statusFilterParser)
@@ -185,9 +175,7 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
-                      onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded')
-                      }
+                      onClick={() => setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded')}
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">succeeded</span>
@@ -196,9 +184,7 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
-                      onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')
-                      }
+                      onClick={() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')}
                     >
                       <Ban className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">failed</span>
@@ -207,9 +193,7 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
-                      onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined')
-                      }
+                      onClick={() => setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined')}
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">undefined</span>

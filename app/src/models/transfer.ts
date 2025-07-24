@@ -1,9 +1,9 @@
-import { TRouterPlan } from '@paraspell/xcm-router'
-import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
-import { Direction } from '@/services/transfer'
-import { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
-import { FromParachainTrackingResult } from './subscan'
+import type { TRouterPlan } from '@paraspell/xcm-router'
+import type { toEthereum, toPolkadot } from '@snowbridge/api'
+import type { Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
+import type { Direction } from '@/services/transfer'
+import type { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
+import type { FromParachainTrackingResult } from './subscan'
 
 export interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
