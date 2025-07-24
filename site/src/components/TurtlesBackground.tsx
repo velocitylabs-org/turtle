@@ -1,15 +1,18 @@
 import { cn } from '@velocitylabs-org/turtle-ui'
+import AnalyticData from '@/components/AnalyticData'
 
 interface TurtlesBackgroundProps {
   header?: string
   blurredBackground?: boolean
   whiteWaves?: boolean
+  initialVolume: number | undefined
 }
 
 export const TurtlesBackground = ({
   header,
   blurredBackground = false,
   whiteWaves = false,
+  initialVolume,
 }: TurtlesBackgroundProps) => {
   const fill = whiteWaves ? '255,255,255' : '191,218,220'
 
@@ -21,12 +24,13 @@ export const TurtlesBackground = ({
           blurredBackground && 'blur-lg',
         )}
       >
-        <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center">
-          {header && (
+        <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center ">
+          <div className="m-[4vw] flex-col items-center justify-center">
             <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
               {header}
             </h1>
-          )}
+            <AnalyticData initialVolume={initialVolume} />
+          </div>
         </div>
       </div>
 
