@@ -1,11 +1,6 @@
 name: Lint and Format
 
 on:
-  push:
-    branches:
-      - "**"
-    paths:
-      - "**"
   pull_request:
     branches:
       - "**"
