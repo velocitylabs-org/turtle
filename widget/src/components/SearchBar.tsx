@@ -17,7 +17,7 @@ export default function SearchBar({ placeholder, value, onChange }: SearchBarPro
       <input
         type="text"
         value={value}
-        onChange={e => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full rounded-md border-0 bg-transparent text-sm placeholder:text-turtle-level5 focus:border-0 focus:outline-none"
       />

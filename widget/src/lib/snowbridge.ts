@@ -1,22 +1,22 @@
 import { Context, contextConfigFor, environment, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import {
-  Chain,
-  Token,
-  isAssetHub,
-  rpcConnectionAsHttps,
   AssetHub,
   BridgeHub,
-  Polkadot,
-  EthereumTokens,
-  PolkadotTokens,
-  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
-  getTokenPrice,
+  type Chain,
   Environment,
+  EthereumTokens,
+  getTokenPrice,
+  isAssetHub,
+  Polkadot,
+  PolkadotTokens,
+  rpcConnectionAsHttps,
+  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { Fee } from '@/hooks/useFees'
-import { SnowbridgeContext } from '@/models/snowbridge'
-import { AmountInfo } from '@/models/transfer'
-import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
+import type { Fee } from '@/hooks/useFees'
+import type { SnowbridgeContext } from '@/models/snowbridge'
+import type { AmountInfo } from '@/models/transfer'
+import { Direction, safeConvertAmount, toHuman } from '@/utils/transfer'
 
 /**
  * Given an app Environment, return the adequate Snowbridge Api Environment scheme.
@@ -116,7 +116,7 @@ export const getFeeEstimate = async (
           context.registry,
           token.address,
         )
-        .then(x => x.totalFeeInDot)
+        .then((x) => x.totalFeeInDot)
       const feeTokenInDollars = (await getTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
 
       return {
@@ -170,9 +170,7 @@ export const getFeeEstimate = async (
             gateway: context.gateway(),
             bridgeHub: await context.bridgeHub(),
             assetHub: await context.assetHub(),
-            destParachain: isAssetHub(destinationChain)
-              ? undefined
-              : await context.parachain(destinationChain.chainId),
+            destParachain: isAssetHub(destinationChain) ? undefined : await context.parachain(destinationChain.chainId),
           },
           tx,
         )
@@ -215,5 +213,5 @@ export const getFeeEstimate = async (
 export const findValidationError = (
   validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
 ): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
-  return validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
+  return validation.logs.find((log) => log.kind === toPolkadotV2.ValidationKind.Error)
 }

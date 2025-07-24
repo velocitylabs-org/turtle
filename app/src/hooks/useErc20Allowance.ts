@@ -1,8 +1,8 @@
 import { captureException } from '@sentry/nextjs'
-import { Context, toPolkadot } from '@snowbridge/api'
+import { type Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
-import { Network, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
-import { Signer } from 'ethers'
+import { EthereumTokens, type Network, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { convertAmount, toHuman } from '../utils/transfer'
@@ -42,8 +42,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
 
     try {
       setLoading(true)
-      const fetchedAllowance = (await assetStatusInfo(context, tokenAmount.token.address, owner))
-        .tokenGatewayAllowance
+      const fetchedAllowance = (await assetStatusInfo(context, tokenAmount.token.address, owner)).tokenGatewayAllowance
       setAllowance(toHuman(fetchedAllowance, tokenAmount.token))
       refetchFees()
     } catch (error) {
@@ -53,7 +52,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       setLoading(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [network, owner, tokenAmount, context])
+  }, [network, owner, tokenAmount, context, refetchFees])
 
   // Reactively fetch the erc20 spend allowance when the relevant form fields change
   useEffect(() => {
@@ -85,8 +84,8 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
             // USDT first need, to revoke the current allowance, before setting the new one.
             await toPolkadot
               .approveTokenSpend(context, signer, tokenAmount!.token!.address, 0n)
-              .then(x => x.wait())
-              .then(_ => fetchAllowance())
+              .then((x) => x.wait())
+              .then((_) => fetchAllowance())
           }
         }
 
@@ -97,8 +96,8 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
             tokenAmount!.token!.address,
             convertAmount(tokenAmount!.amount, tokenAmount!.token),
           )
-          .then(x => x.wait())
-          .then(_ => fetchAllowance())
+          .then((x) => x.wait())
+          .then((_) => fetchAllowance())
 
         setApproving(false)
         addNotification({
@@ -110,8 +109,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
           message: 'Failed to approve ERC-20 spend',
           severity: NotificationSeverity.Error,
         })
-        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-          captureException(error)
+        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
         setApproving(false)
       }
     },

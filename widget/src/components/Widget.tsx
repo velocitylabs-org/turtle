@@ -5,9 +5,9 @@ import SubstrateWalletModal from '@/components/SubstrateWalletModal'
 import TransferForm from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { Providers } from '@/providers'
-import { ConfigProvider, ConfigRegistryType } from '@/providers/ConfigProviders'
+import { ConfigProvider, type ConfigRegistryType } from '@/providers/ConfigProviders'
 import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
-import { generateWidgetTheme, WidgetTheme } from '@/utils/theme'
+import { generateWidgetTheme, type WidgetTheme } from '@/utils/theme'
 import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
 
 export type TransferTab = 'New' | 'History'
@@ -16,7 +16,7 @@ export type TransferTabOptions = TransferTab
 const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigRegistryType }) => {
   useMemo(() => generateWidgetTheme(theme), [theme])
 
-  const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
+  const ongoingTransfers = useOngoingTransfersStore((state) => state.transfers)
   const { completedTransfers } = useCompletedTransfers()
 
   const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
@@ -30,8 +30,7 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
         <ConfigProvider registry={registry ?? { chains: [], tokens: [] }}>
           <div className="m-4 flex flex-col items-center justify-center p-6">
             <div className="relative">
-              {(ongoingTransfers.length > 0 ||
-                (completedTransfers && completedTransfers.length > 0)) && (
+              {(ongoingTransfers.length > 0 || (completedTransfers && completedTransfers.length > 0)) && (
                 <div
                   className="absolute -top-5 right-8 z-30 max-w-[90vw] rounded-lg bg-turtle-background"
                   onClick={() => setNewTransferInit(newTransferInit === 'New' ? 'History' : 'New')}
@@ -44,11 +43,7 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
                       </div>
                     )}
                     <div>
-                      {isHistoryTabSelected ? (
-                        <ArrowLeft className="h-4 w-4" />
-                      ) : (
-                        <History className="h-4 w-4" />
-                      )}
+                      {isHistoryTabSelected ? <ArrowLeft className="h-4 w-4" /> : <History className="h-4 w-4" />}
                     </div>
                   </div>
                 </div>
@@ -59,17 +54,11 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
                 <Suspense
                   fallback={
                     <HistoryLoaderSkeleton
-                      length={
-                        ongoingTransfers.length +
-                        (completedTransfers ? completedTransfers.length : 0)
-                      }
+                      length={ongoingTransfers.length + (completedTransfers ? completedTransfers.length : 0)}
                     />
                   }
                 >
-                  <TransfersHistory
-                    ongoingTransfers={ongoingTransfers}
-                    completedTransfers={completedTransfers ?? []}
-                  />
+                  <TransfersHistory ongoingTransfers={ongoingTransfers} completedTransfers={completedTransfers ?? []} />
                 </Suspense>
               )}
             </div>

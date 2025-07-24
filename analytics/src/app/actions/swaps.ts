@@ -227,7 +227,7 @@ export async function getSwapsData() {
     const swapsPercentageOfTransactions = (successfulSwaps * 100) / transactionsSinceSwaps
 
     // Ensure all values are serializable because actions can only return plain objects
-    const recentSwaps = rawRecentSwaps.map(swap => swapView.parse(swap))
+    const recentSwaps = rawRecentSwaps.map((swap) => swapView.parse(swap))
 
     return {
       swapsTotalVolume,

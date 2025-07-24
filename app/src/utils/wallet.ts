@@ -57,5 +57,4 @@ export const getWalletWeight = (name: Wallet | string, window?: Window): number 
   return WALLET_CONFIGS[name as Wallet]?.weight ?? 5
 }
 
-export const capitalizeFirstLetter = (text: string): string =>
-  text.charAt(0).toUpperCase() + text.slice(1)
+export const capitalizeFirstLetter = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1)

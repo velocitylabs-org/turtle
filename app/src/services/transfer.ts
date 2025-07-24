@@ -1,4 +1,4 @@
-import { Chain, Network } from '@velocitylabs-org/turtle-registry'
+import type { Chain, Network } from '@velocitylabs-org/turtle-registry'
 
 /**
  * The direction of a transfer, i.e, from and to which network the tokens
@@ -20,11 +20,11 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   const dst = destination.network
 
   // Ethereum -> Polkadot
-  if (src == 'Ethereum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
+  if (src === 'Ethereum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
   // Ethereum -> Ethereum
-  if (src == 'Ethereum' && dst == 'Ethereum') return Direction.WithinEthereum
+  if (src === 'Ethereum' && dst === 'Ethereum') return Direction.WithinEthereum
   // Polkadot -> Ethereum
-  if (isAnyPolkadotNetwork(src) && dst == 'Ethereum') return Direction.ToEthereum
+  if (isAnyPolkadotNetwork(src) && dst === 'Ethereum') return Direction.ToEthereum
   // XCM
   if (isAnyPolkadotNetwork(src) && isAnyPolkadotNetwork(dst)) return Direction.WithinPolkadot
 

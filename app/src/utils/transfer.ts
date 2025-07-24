@@ -1,14 +1,14 @@
 import {
   AssetHub,
-  Chain,
+  type Chain,
   KusamaAssetHub,
-  Network,
-  Token,
-  TokenAmount,
+  type Network,
+  type Token,
+  type TokenAmount,
 } from '@velocitylabs-org/turtle-registry'
 import { ethers, JsonRpcSigner } from 'ethers'
-import { Sender } from '@/hooks/useTransfer'
-import { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
+import type { Sender } from '@/hooks/useTransfer'
+import type { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { isSameChain } from './routes'
 
@@ -166,8 +166,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
         return getCustomExplorerLink(name, sender)
       }
 
-      if (chainId === AssetHub.chainId)
-        return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${id}`
+      if (chainId === AssetHub.chainId) return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${id}`
 
       // Default Polkadot network explorer link:
       return `${removeURLSlash(EXPLORERS.subscan_polkadot)}/account/${sender}?tab=xcm_transfer`
@@ -184,8 +183,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
         return getCustomExplorerLink(name, sender)
       }
 
-      if (chainId === KusamaAssetHub.chainId)
-        return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${id}`
+      if (chainId === KusamaAssetHub.chainId) return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${id}`
 
       // Default Polkadot network explorer link:
       return `${removeURLSlash(EXPLORERS.subscan_kusama)}/account/${sender}?tab=xcm_transfer`
@@ -249,10 +247,7 @@ export function getDurationEstimate(direction: Direction): string {
   }
 }
 
-export function toAmountInfo(
-  tokenAmount?: TokenAmount | null,
-  usdPrice?: number | null,
-): AmountInfo | null {
+export function toAmountInfo(tokenAmount?: TokenAmount | null, usdPrice?: number | null): AmountInfo | null {
   if (!tokenAmount || !tokenAmount.amount || !tokenAmount.token || !usdPrice) return null
 
   return {
@@ -293,7 +288,7 @@ export const orderTransfersByDate = (transfers: CompletedTransfer[]) =>
 export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
   const orderedTransfersByDate = orderTransfersByDate(transfers)
   return Object.keys(orderedTransfersByDate)
-    .map(date => {
+    .map((date) => {
       return { date, transfers: orderedTransfersByDate[date] }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -307,16 +302,13 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfer is outdated.
  */
-export const startedTooLongAgo = (
-  transfer: StoredTransfer,
-  thresholdInHours = { xcm: 0.5, bridge: 6 },
-) => {
+export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcm: 0.5, bridge: 6 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const timeBuffer =
     direction === Direction.WithinPolkadot
       ? thresholdInHours.xcm * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
-  return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
+  return Date.now() - new Date(transfer.date).getTime() > timeBuffer
 }
 
 type SwapProperties = {
@@ -337,9 +329,7 @@ type CompleteSwap = SwapWithChains & Required<SwapProperties>
  * @param transfer - The transfer to check
  * @returns if the transfer is a swap
  */
-export const isSwap = <T extends SwapProperties>(
-  transfer: T,
-): transfer is T & Required<SwapProperties> => {
+export const isSwap = <T extends SwapProperties>(transfer: T): transfer is T & Required<SwapProperties> => {
   return (
     !!transfer.destinationToken &&
     !!transfer.destinationAmount &&
@@ -353,9 +343,7 @@ export const isSwap = <T extends SwapProperties>(
  * @param transfer - The transfer to check.
  * @returns A boolean.
  */
-export const isSameChainSwap = <T extends SwapWithChains>(
-  transfer: T,
-): transfer is T & CompleteSwap => {
+export const isSameChainSwap = <T extends SwapWithChains>(transfer: T): transfer is T & CompleteSwap => {
   return isSwap(transfer) && isSameChain(transfer.sourceChain, transfer.destChain)
 }
 
@@ -365,8 +353,6 @@ export const isSameChainSwap = <T extends SwapWithChains>(
  * @param transfer - The transfer to check.
  * @returns A boolean.
  */
-export const isSwapWithTransfer = <T extends SwapWithChains>(
-  transfer: T,
-): transfer is T & CompleteSwap => {
+export const isSwapWithTransfer = <T extends SwapWithChains>(transfer: T): transfer is T & CompleteSwap => {
   return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }

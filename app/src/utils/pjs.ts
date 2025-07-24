@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { ISubmittableResult } from '@polkadot/types/types'
-import { OnChainBaseEvents } from '@/models/transfer'
+import type { ISubmittableResult } from '@polkadot/types/types'
+import type { OnChainBaseEvents } from '@/models/transfer'
 
 /**
  * Processes blockchain events and handles extrinsic success or failure.
@@ -10,8 +10,7 @@ import { OnChainBaseEvents } from '@/models/transfer'
  * @returns - An object containing the messageHash, the messageId and the exitCallBack boolean.
  */
 export const extractPjsEvents = (result: ISubmittableResult): OnChainBaseEvents | undefined => {
-  const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } =
-    result
+  const { txHash, status, events, isError, internalError, isCompleted, dispatchError, txIndex } = result
   // check for execution errors
   if (isError || internalError) throw new Error('Transfer failed')
 
@@ -35,8 +34,7 @@ export const extractPjsEvents = (result: ISubmittableResult): OnChainBaseEvents 
     const blockNumber: string | undefined =
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       'blockNumber' in result ? (result.blockNumber as any).toJSON() : undefined
-    const extrinsicIndex: string | undefined =
-      blockNumber && txIndex ? `${blockNumber}-${txIndex}` : undefined
+    const extrinsicIndex: string | undefined = blockNumber && txIndex ? `${blockNumber}-${txIndex}` : undefined
 
     let messageHash: string | undefined
     let messageId: string | undefined

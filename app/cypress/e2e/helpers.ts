@@ -1,4 +1,4 @@
-import { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
+import type { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
 
 const DAPP_NAME = 'turtle'
 
@@ -16,7 +16,7 @@ export const Alice = {
 export const waitForAuthRequest = (timeout = 10000) =>
   cy.waitUntil(
     () =>
-      cy.getTxRequests().then(req => {
+      cy.getTxRequests().then((req) => {
         return Object.entries(req).length > 0
       }),
     {
@@ -27,13 +27,7 @@ export const waitForAuthRequest = (timeout = 10000) =>
 export const selectChain = (type: 'source' | 'dest', chainName: string) => {
   const index = type === 'source' ? 0 : 1
   cy.get('[data-cy="chain-select-trigger"]').eq(index).should('exist').click()
-  cy.get('[data-cy="chain-select"]')
-    .eq(index)
-    .get('ul')
-    .should('be.visible')
-    .find('li')
-    .contains(chainName)
-    .click()
+  cy.get('[data-cy="chain-select"]').eq(index).get('ul').should('be.visible').find('li').contains(chainName).click()
 }
 
 export const ensureSelectedChainContains = (type: 'source' | 'dest', chainName: string) => {
@@ -43,12 +37,7 @@ export const ensureSelectedChainContains = (type: 'source' | 'dest', chainName: 
 
 export const selectToken = (symbol: string) => {
   cy.get('[data-cy="token-select-trigger"]').should('exist').click()
-  cy.get('[data-cy="token-select"]')
-    .get('ul')
-    .should('be.visible')
-    .find('li')
-    .contains(symbol)
-    .click()
+  cy.get('[data-cy="token-select"]').get('ul').should('be.visible').find('li').contains(symbol).click()
 }
 
 export const ensureSelectedTokenContains = (symbol: string) => {
@@ -85,7 +74,7 @@ export const connectPJSWallet = (type: 'source' | 'dest') => {
   clickWalletConnectButton(type)
   cy.contains('Polkadot.js').click() // select extension
 
-  cy.getAuthRequests().then(authRequests => {
+  cy.getAuthRequests().then((authRequests) => {
     const requests = Object.values(authRequests)
     // we should have 1 connection request to the wallet
     cy.wrap(requests.length).should('eq', 1)

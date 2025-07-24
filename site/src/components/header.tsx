@@ -9,7 +9,7 @@ export default function Header() {
         <p className="turtle-text-shadow text-[2rem] font-medium text-white">Turtle</p>
       </Link>
 
-      <a href="https://app.turtle.cool" target="_blank">
+      <a href="https://app.turtle.cool" target="_blank" rel="noopener">
         <nav>
           <ul className="items-center space-x-6">
             <li>

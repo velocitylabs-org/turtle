@@ -2,20 +2,16 @@ import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import {
-  CompletedTransfer,
-  OngoingTransferWithDirection,
-  StoredTransfer,
+  type CompletedTransfer,
+  type OngoingTransferWithDirection,
+  type StoredTransfer,
   TxStatus,
-  TxTrackingResult,
+  type TxTrackingResult,
 } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink } from '@/utils/transfer'
-import {
-  findMatchingTransfer,
-  getTransferStatus,
-  isCompletedTransfer,
-} from '@/utils/transferTracking'
+import { findMatchingTransfer, getTransferStatus, isCompletedTransfer } from '@/utils/transferTracking'
 import useCompletedTransfers from './useCompletedTransfers'
 import useEnvironment from './useEnvironment'
 import useNotification from './useNotification'
@@ -35,7 +31,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
   const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
     return ongoingTransfers
-      .map(t => {
+      .map((t) => {
         const direction = resolveDirection(t.sourceChain, t.destChain)
         return {
           id: t.id,
@@ -54,12 +50,11 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
           }),
         }
       })
-      .filter(t => t.direction !== Direction.WithinPolkadot)
+      .filter((t) => t.direction !== Direction.WithinPolkadot)
   }
 
   const fetchTransfers = useCallback(async () => {
-    const formattedTransfers: OngoingTransferWithDirection[] =
-      formatTransfersWithDirection(ongoingTransfers)
+    const formattedTransfers: OngoingTransferWithDirection[] = formatTransfersWithDirection(ongoingTransfers)
     if (!formattedTransfers.length) return
 
     try {
@@ -78,7 +73,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
     } finally {
       setLoading(false)
     }
-  }, [env, ongoingTransfers])
+  }, [env, ongoingTransfers, formatTransfersWithDirection])
 
   const ongoingTransfersRef = useRef(ongoingTransfers)
 
@@ -100,7 +95,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
   // update ongoing and completed transfers
   useEffect(() => {
-    ongoingTransfers.forEach(ongoing => {
+    ongoingTransfers.forEach((ongoing) => {
       if (transfers && 'error' in transfers) return
 
       const foundTransfer = findMatchingTransfer(transfers, ongoing)
@@ -108,20 +103,14 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
       if (foundTransfer) {
         // Update transfer status
         const status = getTransferStatus(foundTransfer)
-        setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
+        setStatusMessages((prev) => ({ ...prev, [ongoing.id]: status }))
 
         // Look for a subscan trackingUniqueId for any XCM or AH to ETH transfers,
         // to eventually update ongoing transfer store
         const trackingUniqueId =
-          'uniqueId' in foundTransfer && foundTransfer.uniqueId.length
-            ? foundTransfer.uniqueId
-            : undefined
+          'uniqueId' in foundTransfer && foundTransfer.uniqueId.length ? foundTransfer.uniqueId : undefined
 
-        if (
-          ongoing.sourceChain.network === 'Polkadot' &&
-          trackingUniqueId &&
-          !ongoing.uniqueTrackingId
-        ) {
+        if (ongoing.sourceChain.network === 'Polkadot' && trackingUniqueId && !ongoing.uniqueTrackingId) {
           updateUniqueId(ongoing.id, trackingUniqueId)
         }
 

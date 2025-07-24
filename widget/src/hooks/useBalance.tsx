@@ -1,5 +1,5 @@
-import { getAssetBalance, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
-import { Chain, Token, Balance, Environment } from '@velocitylabs-org/turtle-registry'
+import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import type { Balance, Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
@@ -72,12 +72,9 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
       switch (chain.network) {
         case 'Ethereum': {
           fetchedBalance =
-            getNativeToken(chain).id === token.id
-              ? (await fetchEthBalance()).data
-              : (await fetchErc20Balance()).data
+            getNativeToken(chain).id === token.id ? (await fetchEthBalance()).data : (await fetchErc20Balance()).data
 
-          if (fetchedBalance)
-            fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString() // override formatted value
+          if (fetchedBalance) fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString() // override formatted value
           break
         }
 

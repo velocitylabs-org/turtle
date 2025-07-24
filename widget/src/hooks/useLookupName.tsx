@@ -1,4 +1,4 @@
-import { Network } from '@velocitylabs-org/turtle-registry'
+import type { Network } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 
 import { lookupName } from '@/utils/transfer'
@@ -24,7 +24,7 @@ const useLookupName = (network?: Network, address?: string) => {
   useEffect(() => {
     fetchName()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [network, address])
+  }, [fetchName])
 
   return accountName
 }

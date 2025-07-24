@@ -7,9 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "@velocitylabs-org/turtle-analytics",
-    "@velocitylabs-org/turtle-app",
-    "@velocitylabs-org/turtle-site"
-  ]
+  "ignore": ["@velocitylabs-org/turtle-analytics", "@velocitylabs-org/turtle-app", "@velocitylabs-org/turtle-site"]
 }

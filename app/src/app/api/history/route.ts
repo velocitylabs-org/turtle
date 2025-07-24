@@ -3,12 +3,12 @@ export const dynamic = 'force-dynamic' // Always run dynamically
 export const revalidate = 30 // Keep cache for 2 minutes
 export const maxDuration = 90 // Timout adter
 
-import { Environment } from '@velocitylabs-org/turtle-registry'
+import type { Environment } from '@velocitylabs-org/turtle-registry'
 import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { getEnvironment } from '@/context/snowbridge'
 import { ongoingTransfersSchema } from '@/models/api-schemas'
-import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfer'
+import type { OngoingTransfers, OngoingTransferWithDirection } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { environmentFromStr } from '@/store/environmentStore'
 import { getErrorMessage, trackTransfers } from '@/utils/transferTracking'
@@ -26,7 +26,7 @@ const getCachedTransferHistory = unstable_cache(
         withinPolkadot: [], // XCM transfer: Parachain to AH, AH to Parachain, Parachain to Parachain, etc
       }
 
-      ongoingTransfers.map(transfer => {
+      ongoingTransfers.map((transfer) => {
         switch (transfer.direction) {
           case Direction.ToEthereum: {
             transfers.toEthereum.push(transfer)

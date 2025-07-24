@@ -1,4 +1,4 @@
-import { CompletedTransferV0 } from '@/models/transfer'
+import type { CompletedTransferV0 } from '@/models/transfer'
 import { STORE_VERSIONS } from './constants'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,7 +8,7 @@ export const migrateCompletedTransfers = (persistedState: any, version: number) 
   if (version === 0) {
     const oldTransfers = persistedState as { completedTransfers: CompletedTransferV0[] }
 
-    const migratedTransfers = oldTransfers.completedTransfers.map(transfer => ({
+    const migratedTransfers = oldTransfers.completedTransfers.map((transfer) => ({
       id: transfer.id,
       result: transfer.result,
       sourceChain: transfer.sourceChain,

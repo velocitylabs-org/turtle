@@ -2,12 +2,8 @@ import { useEffect, useRef } from 'react'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useNotification from '@/hooks/useNotification'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
-import { StoredTransfer } from '@/models/transfer'
-import {
-  getOcelloidsAgentApi,
-  getSubscribableTransfers,
-  xcmOcceloidsSubscribe,
-} from '@/utils/ocelloids'
+import type { StoredTransfer } from '@/models/transfer'
+import { getOcelloidsAgentApi, getSubscribableTransfers, xcmOcceloidsSubscribe } from '@/utils/ocelloids'
 
 const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
   const { remove, updateStatus } = useOngoingTransfers()
@@ -27,14 +23,7 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
       for (const t of xcmTransfers) {
         if (!subscribedTransfers.has(t.id)) {
           try {
-            await xcmOcceloidsSubscribe(
-              xcmAgent,
-              t,
-              remove,
-              addCompletedTransfer,
-              updateStatus,
-              addNotification,
-            )
+            await xcmOcceloidsSubscribe(xcmAgent, t, remove, addCompletedTransfer, updateStatus, addNotification)
             subscribedTransfers.add(t.id)
           } catch (error) {
             console.error('Error subscribing to transfer:', t, error)
@@ -50,15 +39,15 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
     fetchAgentAndSubscribe()
 
     return () => {
-      const activeIds = xcmTransfers.map(t => t.id)
+      const activeIds = xcmTransfers.map((t) => t.id)
 
-      subscribedTransfers.forEach(id => {
+      subscribedTransfers.forEach((id) => {
         if (!activeIds.includes(id)) {
           subscribedTransfers.delete(id)
         }
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [xcmTransfers])
+  }, [xcmTransfers, fetchAgentAndSubscribe])
 }
 export default useOcelloidsSubscribe

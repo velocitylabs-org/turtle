@@ -1,7 +1,7 @@
 import { captureException } from '@sentry/nextjs'
 import { useEffect } from 'react'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink, startedTooLongAgo } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
@@ -14,7 +14,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
   const { addNotification } = useNotification()
 
   useEffect(() => {
-    ongoingTransfers.forEach(ongoing => {
+    ongoingTransfers.forEach((ongoing) => {
       if (startedTooLongAgo(ongoing)) {
         const explorerLink = getExplorerLink(ongoing)
 
@@ -54,7 +54,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ongoingTransfers])
+  }, [ongoingTransfers, addCompletedTransfer, addNotification, remove])
 }
 
 export default useOngoingTransfersCleaner

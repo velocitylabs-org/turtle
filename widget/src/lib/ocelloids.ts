@@ -1,7 +1,7 @@
-import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { Moonbeam, Network } from '@velocitylabs-org/turtle-registry'
-import { NotificationSeverity, Notification } from '@/models/notification'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type AnyJson, type OcelloidsAgentApi, OcelloidsClient, type xcm } from '@sodazone/ocelloids-client'
+import { Moonbeam, type Network } from '@velocitylabs-org/turtle-registry'
+import { type Notification, NotificationSeverity } from '@/models/notification'
+import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
 import { OCELLOIDS_API_Key } from '@/utils/consts'
 import { getExplorerLink } from '@/utils/explorer'
@@ -28,9 +28,7 @@ export const OCELLOIDS_API_KEY = OCELLOIDS_API_Key || ''
 // It prevents opening socket for local swaps
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
   transfers.filter(
-    t =>
-      resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot &&
-      !isSameChainSwap(t),
+    (t) => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot && !isSameChainSwap(t),
   )
 
 export const initOcelloidsClient = (API_KEY: string) => {
@@ -40,15 +38,13 @@ export const initOcelloidsClient = (API_KEY: string) => {
   })
 }
 
-export const getOcelloidsAgentApi = async (): Promise<
-  OcelloidsAgentApi<xcm.XcmInputs> | undefined
-> => {
+export const getOcelloidsAgentApi = async (): Promise<OcelloidsAgentApi<xcm.XcmInputs> | undefined> => {
   try {
     const OCLD_ClIENT = initOcelloidsClient(OCELLOIDS_API_KEY)
 
     await OCLD_ClIENT.health()
       .then(() => {})
-      .catch(error => {
+      .catch((error) => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
         // captureException(errorMsg, error) - Sentry
@@ -93,7 +89,7 @@ export const xcmOcceloidsSubscribe = async (
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
       getSubscription(sourceChain.chainId, destChain.chainId, sourceChain.network),
       {
-        onMessage: msg => {
+        onMessage: (msg) => {
           const {
             type,
             origin: { event, extrinsicHash },
@@ -160,12 +156,12 @@ export const xcmOcceloidsSubscribe = async (
             }
           }
         },
-        onAuthError: error => console.log('Auth Error', error),
-        onError: error => {
+        onAuthError: (error) => console.log('Auth Error', error),
+        onError: (error) => {
           console.log('Ocelloids WebSocket Error', error)
           // captureException(error, { extra: { ocelloids: 'WebSocket Error' } }) - Sentry
         },
-        onClose: event => console.log('WebSocket Closed', event.reason),
+        onClose: (event) => console.log('WebSocket Closed', event.reason),
       },
       {
         onSubscriptionCreated: () => {},
@@ -331,11 +327,7 @@ const getEvmTxHashFromEvent = (event: AnyJson): string | undefined => {
  * @param extrinsicHash - The extrinsicHash to be returned if the EVM transaction exception is not met.
  * @returns The EVM transaction hash or the extrinsic hash.
  */
-const getTxHashFromEvent = (
-  event: AnyJson,
-  sourceChainId: number,
-  extrinsicHash?: `0x${string}`,
-) => {
+const getTxHashFromEvent = (event: AnyJson, sourceChainId: number, extrinsicHash?: `0x${string}`) => {
   const evmTxHashFromEvent = getEvmTxHashFromEvent(event)
   if (sourceChainId === Moonbeam.chainId && evmTxHashFromEvent) return evmTxHashFromEvent
   return extrinsicHash

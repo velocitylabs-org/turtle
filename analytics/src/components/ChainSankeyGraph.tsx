@@ -1,7 +1,7 @@
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
-import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Select from '@/components/Select'
-import { chains, GraphType, primaryColor } from '@/constants'
+import { chains, type GraphType, primaryColor } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
@@ -24,21 +24,15 @@ interface ChainPathGraphProps {
   loading: boolean
 }
 
-export default function ChainSankeyGraph({
-  data,
-  type,
-  selectedChain,
-  setChainUid,
-  loading,
-}: ChainPathGraphProps) {
+export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid, loading }: ChainPathGraphProps) {
   const isMobile = useIsMobile()
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
-  const flowData = data?.map(item => ({ ...item, from: `${item.from}-origin` }))
+  const flowData = data?.map((item) => ({ ...item, from: `${item.from}-origin` }))
 
-  const chainOptions = chains.map(chain => ({
+  const chainOptions = chains.map((chain) => ({
     value: chain.uid,
     label: chain.name,
     logoURI: getSrcFromLogo(chain),
@@ -57,13 +51,13 @@ export default function ChainSankeyGraph({
       return Math.max(baseMinHeight, minHeight)
     }
 
-    const targets = Array.from(new Set(flowData.map(d => d.to)))
+    const targets = Array.from(new Set(flowData.map((d) => d.to)))
     const nodeCount = targets.length
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
     return Math.max(baseMinHeight, minHeight)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowData, loading])
+  }, [flowData, loading, dimensions.height])
 
   useLayoutEffect(() => {
     if (containerRef.current) {
@@ -101,7 +95,7 @@ export default function ChainSankeyGraph({
     }
 
     if (containerRef.current && typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(entries => {
+      resizeObserver = new ResizeObserver((entries) => {
         const newWidth = entries[0].contentRect.width
         if (newWidth !== previousWidth) {
           previousWidth = newWidth
@@ -120,11 +114,10 @@ export default function ChainSankeyGraph({
       window.removeEventListener('resize', handleWindowResize)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [dimensions.width, dynamicHeight])
 
   useEffect(() => {
-    if (!flowData || !svgRef.current || dimensions.width === 0 || flowData?.length === 0 || loading)
-      return
+    if (!flowData || !svgRef.current || dimensions.width === 0 || flowData?.length === 0 || loading) return
 
     const svg = svgRef.current
     while (svg.firstChild) {
@@ -133,35 +126,27 @@ export default function ChainSankeyGraph({
 
     const width = dimensions.width - 30
     const height = dimensions.height
-    const margin = isMobile
-      ? { top: 5, right: 15, bottom: 0, left: -10 }
-      : { top: 5, right: 50, bottom: 20, left: 0 }
+    const margin = isMobile ? { top: 5, right: 15, bottom: 0, left: -10 } : { top: 5, right: 50, bottom: 20, left: 0 }
     const nodeSize = 28
     let maxValue = 0
-    flowData.forEach(d => {
+    flowData.forEach((d) => {
       maxValue = Math.max(maxValue, d.size)
     })
 
-    const { nodes, sourceNode, totalHeight } = createNodes(
-      flowData,
-      margin,
-      width,
-      nodeSize,
-      selectedChain,
-    )
+    const { nodes, sourceNode, totalHeight } = createNodes(flowData, margin, width, nodeSize, selectedChain)
 
     const requiredHeight = totalHeight + margin.bottom
     if (requiredHeight > height) {
       svg.setAttribute('height', requiredHeight.toString())
     }
     const nodeMap = new Map<string, Node>()
-    nodes.forEach(node => nodeMap.set(node.id, node))
+    nodes.forEach((node) => nodeMap.set(node.id, node))
     nodeMap.set(`${selectedChain}-origin`, sourceNode)
     const links = createLinks(flowData, nodeMap, selectedChain, maxValue, nodeSize, width)
     createSvgDefsElements(svg, nodeSize)
 
     const pathElements = new Map<string, SVGElement>()
-    links.forEach(link => {
+    links.forEach((link) => {
       const path = createSvgElement(
         'path',
         {
@@ -198,11 +183,7 @@ export default function ChainSankeyGraph({
       weightText.setAttribute('font-size', '12px')
       svg.appendChild(rightLabelGroup)
     }
-    function removeHoverEffect(
-      percentText: SVGElement,
-      nameText: SVGElement,
-      weightText: SVGElement,
-    ) {
+    function removeHoverEffect(percentText: SVGElement, nameText: SVGElement, weightText: SVGElement) {
       percentText.setAttribute('font-size', '12px')
       percentText.setAttribute('fill', '#666')
 
@@ -211,11 +192,11 @@ export default function ChainSankeyGraph({
       weightText.setAttribute('font-size', '10px')
     }
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       const nodeGroup = renderNode(svg, node, nodeSize)
 
       if (node.id !== `${selectedChain}-origin`) {
-        const nodeLink = links.find(link => link.target === node.id)
+        const nodeLink = links.find((link) => link.target === node.id)
         if (nodeLink) {
           const nodeWeight = nodeLink.value
           const percentage = (nodeWeight / totalWeight) * 100
@@ -247,7 +228,7 @@ export default function ChainSankeyGraph({
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowData, dimensions, isMobile, loading])
+  }, [flowData, dimensions, isMobile, loading, selectedChain, type])
 
   const noDataAvailable = useMemo(() => {
     if (loading) return false
@@ -264,15 +245,12 @@ export default function ChainSankeyGraph({
           transition: `height 300ms ${easeOutQuart}`,
         }}
       >
-        <div
-          className="absolute flex"
-          style={{ left: isMobile ? '0' : '20px', top: '13px', zIndex: 10 }}
-        >
+        <div className="absolute flex" style={{ left: isMobile ? '0' : '20px', top: '13px', zIndex: 10 }}>
           <div style={{ width: isMobile ? '145px' : '150px' }}>
             <Select
               options={chainOptions}
               selected={selectedChain}
-              onChange={val => setChainUid(val as string)}
+              onChange={(val) => setChainUid(val as string)}
               placeholder="Source chain"
               showBadge={false}
               loading={loading}
@@ -454,8 +432,8 @@ function createNodes(
   }
 
   totalHeight = Math.max(margin.top + nodeSize, margin.top)
-  const targets = Array.from(new Set(flowData.map(d => d.to)))
-  targets.forEach(id => {
+  const targets = Array.from(new Set(flowData.map((d) => d.to)))
+  targets.forEach((id) => {
     const chain = chainsByUid[id]
     const logoURI = chain ? getSrcFromLogo(chain) : ''
     const nodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
@@ -484,7 +462,7 @@ function createLinks(
 ): Link[] {
   const links: Link[] = []
 
-  flowData.forEach(d => {
+  flowData.forEach((d) => {
     if (d.from !== `${selectedChain}-origin`) return
 
     const source = nodeMap.get(d.from)!

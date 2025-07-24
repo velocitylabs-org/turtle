@@ -1,1 +1,1 @@
-export const DWELLIR_KEY = "%%DWELLIR_KEY%%";
+export const DWELLIR_KEY = '%%DWELLIR_KEY%%'

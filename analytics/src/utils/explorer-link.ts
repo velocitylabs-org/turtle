@@ -1,5 +1,5 @@
 import { chainsByUid } from '@velocitylabs-org/turtle-registry'
-import { TxDetailView } from '@/models/tx-detail-view'
+import type { TxDetailView } from '@/models/tx-detail-view'
 
 export default function getExplorerLink(tx: TxDetailView): string | undefined {
   const sourceCHain = chainsByUid[tx.sourceChainUid]

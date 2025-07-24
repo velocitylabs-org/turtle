@@ -1,15 +1,12 @@
-import { environment, historyV2 as history } from '@snowbridge/api'
+import { type environment, historyV2 as history } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
-import { FromParachainTrackingResult } from '@/models/subscan'
-import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
+import type { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
+import type { FromParachainTrackingResult } from '@/models/subscan'
+import type { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { trackXcm } from './subscan'
 
-export const trackTransfers = async (
-  env: environment.SnowbridgeEnvironment,
-  ongoingTransfers: OngoingTransfers,
-) => {
+export const trackTransfers = async (env: environment.SnowbridgeEnvironment, ongoingTransfers: OngoingTransfers) => {
   const transfers: TxTrackingResult[] = []
   const { toPolkadot, toEthereum, withinPolkadot } = ongoingTransfers
 
@@ -46,9 +43,7 @@ export const trackTransfers = async (
  * @returns - The transfer timestamp in milliseconds.
  */
 const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
-  'info' in txTrackingResult
-    ? txTrackingResult.info.when.getTime()
-    : txTrackingResult.originBlockTimestamp
+  'info' in txTrackingResult ? txTrackingResult.info.when.getTime() : txTrackingResult.originBlockTimestamp
 
 /**
  * Provides the current transfer status based on the transfer direction.
@@ -66,16 +61,13 @@ const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
  */
 export function getTransferStatus(transferResult: TxTrackingResult) {
   // Checks if the tracked AH to Ethereum transfer comes from Snowbridge API.
-  const isAhToEthTransfer =
-    'info' in transferResult && transferResult.info.destinationParachain == undefined
+  const isAhToEthTransfer = 'info' in transferResult && transferResult.info.destinationParachain === undefined
 
   // Checks if the tracked XCM transfer comes from Subscan API.
   const isXCMTransfer = 'destEventIndex' in transferResult && !('info' in transferResult)
 
-  if (isAhToEthTransfer)
-    return getTransferStatusFromParachain(transferResult as FromAhToEthTrackingResult)
-  if (isXCMTransfer)
-    return getTransferStatusFromParachain(transferResult as FromParachainTrackingResult)
+  if (isAhToEthTransfer) return getTransferStatusFromParachain(transferResult as FromAhToEthTrackingResult)
+  if (isXCMTransfer) return getTransferStatusFromParachain(transferResult as FromParachainTrackingResult)
   // Retrieves the status of a transfer from Eth to a Parachain/AH (from Snowbridge API)
   return getTransferStatusToPolkadot(transferResult as FromEthTrackingResult)
 }
@@ -93,21 +85,17 @@ export function getTransferStatusFromParachain(
 ) {
   /** Bridge Hub Channel Message Delivered */
   const isBHChannelMsgDelivered =
-    'bridgeHubChannelDelivered' in transferResult &&
-    transferResult.bridgeHubChannelDelivered?.success
+    'bridgeHubChannelDelivered' in transferResult && transferResult.bridgeHubChannelDelivered?.success
 
-  const isBHXcmDelivered =
-    'bridgeHubXcmDelivered' in transferResult && transferResult.bridgeHubXcmDelivered?.success
+  const isBHXcmDelivered = 'bridgeHubXcmDelivered' in transferResult && transferResult.bridgeHubXcmDelivered?.success
   /** Destination chain is Ethereum in XCM transfer*/
-  const isDestChainEthereum =
-    'destChain' in transferResult && transferResult.destChain === 'ethereum'
+  const isDestChainEthereum = 'destChain' in transferResult && transferResult.destChain === 'ethereum'
   /** Transfer just submitted from AH */
   const isBridgeTransferSubmitted = 'submitted' in transferResult
 
   switch (transferResult.status) {
     case TransferStatus.Pending:
-      if (isBHChannelMsgDelivered || isBHXcmDelivered || isDestChainEthereum)
-        return 'Arriving at Ethereum'
+      if (isBHChannelMsgDelivered || isBHXcmDelivered || isDestChainEthereum) return 'Arriving at Ethereum'
       if (isBridgeTransferSubmitted) return 'Arriving at Bridge Hub'
       // Default when the above conditions are not met
       return 'Pending'
@@ -156,10 +144,7 @@ export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingRes
  * @returns - `true` if the transfer has either completed or failed, otherwise `false` if it is still pending.
  */
 export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
-  return (
-    txTrackingResult.status === TransferStatus.Complete ||
-    txTrackingResult.status === TransferStatus.Failed
-  )
+  return txTrackingResult.status === TransferStatus.Complete || txTrackingResult.status === TransferStatus.Failed
 }
 
 /**
@@ -175,31 +160,23 @@ export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
  * @param ongoingTransfer - The ongoing transfer stored in the user's local storage.
  * @returns - The matching transfer from the explorer history list, or `undefined` if no match is found.
  */
-export const findMatchingTransfer = (
-  transfers: TxTrackingResult[],
-  ongoingTransfer: StoredTransfer,
-) =>
-  transfers.find(transfer => {
+export const findMatchingTransfer = (transfers: TxTrackingResult[], ongoingTransfer: StoredTransfer) =>
+  transfers.find((transfer) => {
     if ('submitted' in transfer) {
-      if (
-        resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum'
-      ) {
+      if (resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum') {
         return (
           transfer.id === ongoingTransfer.parachainMessageId ||
-          ('extrinsic_hash' in transfer.submitted &&
-            transfer.submitted.extrinsic_hash === ongoingTransfer.id)
+          ('extrinsic_hash' in transfer.submitted && transfer.submitted.extrinsic_hash === ongoingTransfer.id)
         )
       } else {
         return (
           transfer.id === ongoingTransfer.id ||
-          ('transactionHash' in transfer.submitted &&
-            transfer.submitted.transactionHash === ongoingTransfer.id)
+          ('transactionHash' in transfer.submitted && transfer.submitted.transactionHash === ongoingTransfer.id)
         )
       }
     }
 
-    if (ongoingTransfer.crossChainMessageHash)
-      return transfer.messageHash === ongoingTransfer.crossChainMessageHash
+    if (ongoingTransfer.crossChainMessageHash) return transfer.messageHash === ongoingTransfer.crossChainMessageHash
 
     if (ongoingTransfer.sourceChainExtrinsicIndex)
       return transfer.extrinsicIndex === ongoingTransfer.sourceChainExtrinsicIndex

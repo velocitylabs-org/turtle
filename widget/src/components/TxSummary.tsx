@@ -1,12 +1,12 @@
-import { TokenAmount } from '@velocitylabs-org/turtle-registry'
-import { LoadingIcon, cn } from '@velocitylabs-org/turtle-ui'
+import type { TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { cn, LoadingIcon } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
 import { ExclamationMark } from '@/assets/svg/ExclamationMark'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 import { AMOUNT_VS_FEE_RATIO } from '@/utils/consts'
-import { toAmountInfo, Direction, formatAmount, toHuman } from '@/utils/transfer'
+import { Direction, formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import { colors } from '../../tailwind.config'
 import Delayed from './Delayed'
 
@@ -57,9 +57,7 @@ const TxSummary = ({
       return (
         <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary']} />
-          <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">
-            Loading fees
-          </div>
+          <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">Loading fees</div>
           <Delayed millis={7000}>
             <div className="animate-slide-up-soft mt-1 text-center text-xs text-turtle-secondary">
               Sorry that it&apos;s taking so long. Hang on or try again
@@ -69,11 +67,9 @@ const TxSummary = ({
       )
     }
 
-    const isAmountTooLow =
-      transferAmount && transferAmount.inDollars < (fees?.inDollars ?? 0) * AMOUNT_VS_FEE_RATIO
+    const isAmountTooLow = transferAmount && transferAmount.inDollars < (fees?.inDollars ?? 0) * AMOUNT_VS_FEE_RATIO
 
-    const isBridgeTransfer =
-      direction === Direction.ToEthereum || direction === Direction.ToPolkadot
+    const isBridgeTransfer = direction === Direction.ToEthereum || direction === Direction.ToPolkadot
 
     const exceedsTransferableBalanceInFees = !!(
       exceedsTransferableBalance &&
@@ -94,9 +90,7 @@ const TxSummary = ({
       <div className={cn('tx-summary p-0 pt-0', className)}>
         <div className="pt-3">
           <div className="relative my-4 flex max-w-3xl flex-col gap-3 rounded-lg border bg-white p-3 shadow-sm">
-            <div className="absolute -top-2.5 left-2.5 bg-white px-1 text-sm text-turtle-level5">
-              Summary
-            </div>
+            <div className="absolute -top-2.5 left-2.5 bg-white px-1 text-sm text-turtle-level5">Summary</div>
             <div className="flex items-center justify-between space-x-4 py-2">
               {fees && (
                 <div className="flex items-center gap-2">
@@ -110,9 +104,7 @@ const TxSummary = ({
                         {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
                       </span>
                       {fees.inDollars > 0 && (
-                        <span className="text-xs text-gray-400">
-                          ${formatAmount(fees.inDollars)}
-                        </span>
+                        <span className="text-xs text-gray-400">${formatAmount(fees.inDollars)}</span>
                       )}
                     </div>
                   </div>
@@ -141,13 +133,10 @@ const TxSummary = ({
                       <p className="text-xs text-gray-500">Bridging fee</p>
                       <div className="flex flex-col items-baseline gap-0.5">
                         <span className="text-sm font-medium">
-                          {formatAmount(toHuman(bridgingFee.amount, bridgingFee.token))}{' '}
-                          {bridgingFee.token.symbol}
+                          {formatAmount(toHuman(bridgingFee.amount, bridgingFee.token))} {bridgingFee.token.symbol}
                         </span>
                         {bridgingFee.inDollars > 0 && (
-                          <span className="text-xs text-gray-400">
-                            ${formatAmount(bridgingFee.inDollars)}
-                          </span>
+                          <span className="text-xs text-gray-400">${formatAmount(bridgingFee.inDollars)}</span>
                         )}
                       </div>
                     </div>
@@ -224,12 +213,7 @@ function displayWarningMessage(params: {
     if (!canPayFees) {
       return (
         <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-          <ExclamationMark
-            width={16}
-            height={16}
-            fill={colors['turtle-foreground']}
-            className="mr-2"
-          />
+          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
           <span>You don&apos;t have enough {fees.token.symbol}</span>
         </div>
       )
@@ -242,12 +226,7 @@ function displayWarningMessage(params: {
           onClick={applyTransferableBalance}
           className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs"
         >
-          <ExclamationMark
-            width={16}
-            height={16}
-            fill={colors['turtle-foreground']}
-            className="mr-2"
-          />
+          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
           <span>
             We need some of that {fees.token.symbol} to pay fees
             <span className="ml-1 underline"> Ok</span>
@@ -261,12 +240,7 @@ function displayWarningMessage(params: {
     if (!canPayAdditionalFees) {
       return (
         <div className="mx-auto flex w-fit items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-          <ExclamationMark
-            width={16}
-            height={16}
-            fill={colors['turtle-foreground']}
-            className="mr-2"
-          />
+          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
           <span>You don&apos;t have enough {bridgingFee.token.symbol}</span>
         </div>
       )
@@ -279,12 +253,7 @@ function displayWarningMessage(params: {
           onClick={applyTransferableBalance}
           className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs"
         >
-          <ExclamationMark
-            width={16}
-            height={16}
-            fill={colors['turtle-foreground']}
-            className="mr-2"
-          />
+          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
           <span>
             We need some of that {bridgingFee.token.symbol} to pay fees
             <span className="ml-1 underline"> Ok</span>
@@ -300,12 +269,7 @@ function displayWarningMessage(params: {
         // className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] border border-turtle-secondary-dark-40 bg-turtle-secondary-transparent p-2"
         className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-turtle-secondary-dark bg-turtle-secondary-transparent px-2 py-1 text-xs"
       >
-        <ExclamationMark
-          width={16}
-          height={16}
-          fill={colors['turtle-secondary-dark']}
-          className="mr-2"
-        />
+        <ExclamationMark width={16} height={16} fill={colors['turtle-secondary-dark']} className="mr-2" />
         <div className="text-xs">The amount is a bit too low to justify the fees</div>
       </div>
     )

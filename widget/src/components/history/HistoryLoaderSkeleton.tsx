@@ -58,7 +58,7 @@ const SkeletonCard = () => {
 const HistoryLoaderSkeleton = ({ length }: { length: number }) => {
   return (
     <div className="z-20 flex max-h-[70vh] max-w-[90vw] flex-col gap-1 overflow-auto rounded-2xl border bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
-      {Array.from({ length }, (_, i) => i + 1).map(idx => (
+      {Array.from({ length }, (_, i) => i + 1).map((idx) => (
         <SkeletonCard key={idx} />
       ))}
     </div>

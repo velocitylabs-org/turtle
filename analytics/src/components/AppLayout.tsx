@@ -3,12 +3,12 @@ import { cn } from '@velocitylabs-org/turtle-ui'
 import { Menu } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
 import NavigationMenu from '@/components/NavigationMenu'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
-import { routes, RouteItem } from '@/constants/routes'
+import { type RouteItem, routes } from '@/constants/routes'
 import useIsMobile from '@/hooks/useMobile'
 
 const headerHeight = 75
@@ -41,8 +41,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
 
   const activeRoute = routes.find(
     (route: RouteItem) =>
-      route.href === pathname ||
-      (route.href === '/tx-detail' && pathname?.startsWith('/tx-detail/')),
+      route.href === pathname || (route.href === '/tx-detail' && pathname?.startsWith('/tx-detail/')),
   )
   const onNavItemClicked = (isActive: boolean, externalLink: boolean) => {
     if (isActive) return
@@ -50,14 +49,14 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
       start() // Show loading bar
     }
     if (isMobile) {
-      setIsSidebarOpen(prev => !prev)
+      setIsSidebarOpen((prev) => !prev)
     }
   }
 
   return (
     <div className="relative h-full bg-muted/40">
       {/* Mobile Navigation */}
-      <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={open => setIsSidebarOpen(open)}>
+      <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={(open) => setIsSidebarOpen(open)}>
         <SheetContent side="left" className="w-72 bg-background/95 p-0 backdrop-blur-sm">
           <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} pathname={pathname} />
         </SheetContent>
@@ -74,12 +73,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Main Content */}
-      <main
-        className={cn(
-          'min-h-screen bg-muted transition-all duration-300',
-          isSidebarOpen ? 'md:ml-64' : 'md:ml-0',
-        )}
-      >
+      <main className={cn('min-h-screen bg-muted transition-all duration-300', isSidebarOpen ? 'md:ml-64' : 'md:ml-0')}>
         <header
           className="sticky top-0 z-40 flex items-center justify-between border-b-[1px] border-muted px-4 backdrop-blur backdrop-filter md:px-8"
           style={{ height: headerHeight }}
@@ -89,15 +83,13 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
               variant="outline"
               size="icon"
               className="mr-4 flex"
-              onClick={() => setIsSidebarOpen(prev => !prev)}
+              onClick={() => setIsSidebarOpen((prev) => !prev)}
             >
               <Menu className="h-4 w-4" />
             </Button>
             <div className="flex flex-col">
               <h1 className="text-3xl font-bold tracking-tight">{activeRoute?.label}</h1>
-              <span className="relative -top-[2px] block text-[12px] md:hidden">
-                {nowFormatted}
-              </span>
+              <span className="relative -top-[2px] block text-[12px] md:hidden">{nowFormatted}</span>
             </div>
           </div>
           <span className="hidden text-sm text-muted-foreground md:block">{nowFormatted}</span>

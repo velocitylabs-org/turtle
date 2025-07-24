@@ -5,8 +5,7 @@ import dbConnect from '@/utils/db-connect'
 import { validateApiRequest } from '@/utils/validate-api-request'
 
 function corsHeaders(response: NextResponse, origin?: string | null) {
-  const allowedOrigins =
-    process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
+  const allowedOrigins = process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map((o) => o.trim()) || []
 
   if (origin && allowedOrigins.includes(origin)) {
     response.headers.set('Access-Control-Allow-Origin', origin)

@@ -6,9 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "format-check": "biome format ."
   },
   "dependencies": {
     "@radix-ui/react-dialog": "1.1.4",
@@ -34,24 +35,12 @@
     "zod": "^3.25.30"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@tanstack/eslint-plugin-query": "^5.74.7",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
-    "eslint": "^9",
-    "eslint-config-next": "15.1.7",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-tsdoc": "^0.3.0",
-    "eslint-plugin-unused-imports": "^4.1.4",
     "postcss": "^8",
-    "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
   }

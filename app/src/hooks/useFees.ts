@@ -1,19 +1,14 @@
-import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getOriginFeeDetails, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
+import { type Chain, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
-import {
-  getNativeToken,
-  getParaSpellNode,
-  getParaspellToken,
-  isChainSupportingToken,
-} from '@/utils/paraspellTransfer'
+import { getNativeToken, getParaSpellNode, getParaspellToken, isChainSupportingToken } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
@@ -41,8 +36,7 @@ const useFees = (
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
-  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
-    useSnowbridgeContext()
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
   const { addNotification } = useNotification()
   const env = useEnvironment()
   const { balance: feeBalance } = useBalance({
@@ -118,13 +112,12 @@ const useFees = (
             })
 
             // if the bridging fee is the same as the execution fee, sum them both before checking the user can pay for it all.
-            const toPay =
-              fees?.token === bridgeFeeToken ? BigInt(fees.amount) + bridgeFee : bridgeFee
+            const toPay = fees?.token === bridgeFeeToken ? BigInt(fees.amount) + bridgeFee : bridgeFee
 
             // if the dotBalance is not available, we act as if it's ok. This prevents a delay
             // in the UI showing the error label for insufficient fee balance, which is particularly
             // noticable when switching chains.
-            setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
+            setCanPayAdditionalFees(dotBalance === undefined || toPay < (dotBalance?.value ?? 0))
           }
           break
         }
@@ -203,18 +196,21 @@ const useFees = (
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    env,
     sourceChain,
     destinationChain,
     token?.id,
     snowbridgeContext,
-    addNotification,
     senderAddress,
     recipientAddress,
     amount,
     dotBalance,
     feeBalance,
     destToken,
+    snowbridgeContextError,
+    token,
+    fees.amount,
+    fees?.token,
+    isSnowbridgeContextLoading,
   ])
 
   useEffect(() => {

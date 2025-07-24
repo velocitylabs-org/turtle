@@ -1,5 +1,5 @@
 import { Ban, CheckCircle, CircleHelp } from 'lucide-react'
-import { TxStatus } from '@/models/Transaction'
+import type { TxStatus } from '@/models/Transaction'
 
 interface TransactionStatusIndicatorProps {
   status: TxStatus

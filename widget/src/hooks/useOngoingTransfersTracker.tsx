@@ -4,7 +4,7 @@ import { Environment } from '@velocitylabs-org/turtle-registry'
 import { useEffect, useState } from 'react'
 import { getEnvironment } from '@/lib/snowbridge'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
 import { getExplorerLink } from '@/utils/explorer'
 import {
@@ -34,7 +34,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
     isLoading: loading,
     error: trackingError,
   } = useQuery({
-    queryKey: ['ongoing-transfers', ongoingTransfers.map(t => t.id)],
+    queryKey: ['ongoing-transfers', ongoingTransfers.map((t) => t.id)],
     queryFn: async () => {
       const env = getEnvironment(Environment.Mainnet)
       const formattedTransfers = getFormattedOngoingTransfers(ongoingTransfers)
@@ -53,7 +53,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   useEffect(() => {
     if (!transfers) return
 
-    ongoingTransfers.forEach(ongoing => {
+    ongoingTransfers.forEach((ongoing) => {
       if ('error' in transfers) return
 
       const foundTransfer = findMatchingTransfer(transfers, ongoing)
@@ -61,7 +61,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
       if (foundTransfer) {
         // Update transfer status
         const status = getTransferStatus(foundTransfer)
-        setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
+        setStatusMessages((prev) => ({ ...prev, [ongoing.id]: status }))
 
         if (isCompletedTransfer(foundTransfer)) {
           updateProgress(ongoing.id)
@@ -107,7 +107,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification])
+  }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateProgress])
 
   return {
     transfers: transfers ?? [],

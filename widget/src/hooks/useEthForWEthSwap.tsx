@@ -1,6 +1,6 @@
-import { Context, environment, toPolkadot } from '@snowbridge/api'
-import { Chain, Environment, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
-import { Signer } from 'ethers'
+import { type Context, environment, toPolkadot } from '@snowbridge/api'
+import { type Chain, type Environment, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
@@ -45,7 +45,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
       const balance = await context
         .ethereum()
         .getBalance(owner)
-        .then(x => toHuman(x, EthereumTokens.ETH))
+        .then((x) => toHuman(x, EthereumTokens.ETH))
       setEthBalance(balance)
     } catch (error) {
       // if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
@@ -57,7 +57,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
     fetchEthBalance()
-  }, [fetchEthBalance, tokenBalance])
+  }, [fetchEthBalance])
 
   const swapEthtoWEth = useCallback(
     async (signer: Signer, amount: number) => {
@@ -79,13 +79,8 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
 
       try {
         await toPolkadot
-          .depositWeth(
-            context,
-            signer,
-            tokenAmount!.token!.address,
-            convertAmount(amount, EthereumTokens.ETH),
-          )
-          .then(x => x.wait())
+          .depositWeth(context, signer, tokenAmount!.token!.address, convertAmount(amount, EthereumTokens.ETH))
+          .then((x) => x.wait())
 
         setIsSwapping(false)
         addNotification({

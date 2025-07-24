@@ -1,6 +1,6 @@
-import { Chain, chainsByUid, Token, tokensById } from '@velocitylabs-org/turtle-registry'
+import { type Chain, chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { CompletedTransfer } from '@/models/transfer'
+import type { CompletedTransfer } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
 import { formatTransfersByDate } from '@/utils/transfer'
 import TransactionDialog from './TransactionDialog'

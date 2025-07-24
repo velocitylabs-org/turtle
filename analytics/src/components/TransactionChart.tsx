@@ -1,17 +1,16 @@
 'use client'
-import React from 'react'
 import {
   Bar,
+  CartesianGrid,
   ComposedChart,
   Line,
-  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  TooltipProps,
+  type TooltipProps,
   XAxis,
   YAxis,
 } from 'recharts'
-import { GraphType, primaryColor } from '@/constants'
+import { type GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
 
 const chartColor = primaryColor
@@ -24,7 +23,7 @@ interface TransactionChartProps {
 
 export default function TransactionChart({ data, type, timeRange }: TransactionChartProps) {
   const formattedData = data
-    .map(item => {
+    .map((item) => {
       let dateStr: string
       const date = new Date(item.timestamp)
 
@@ -47,7 +46,7 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
         timestamp: item.timestamp,
       }
     })
-    .filter(item => item !== null)
+    .filter((item) => item !== null)
 
   return (
     <div className="h-[300px] w-full">
@@ -62,7 +61,7 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
             interval={0}
           />
           <YAxis
-            tickFormatter={value => (type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value)}
+            tickFormatter={(value) => (type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value)}
             tickLine={false}
             axisLine={false}
             tickMargin={10}

@@ -1,5 +1,5 @@
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
-import { Signer } from '@polkadot/types/types'
+import type { Signer } from '@polkadot/types/types'
 import { create } from 'zustand'
 
 export interface SubstrateAccount extends InjectedAccount {
@@ -21,7 +21,7 @@ interface State {
 }
 
 // TODO: Add persistence of the account in local storage. It's easy with Zustand.
-export const useSubstrateWalletStore = create<State>(set => ({
+export const useSubstrateWalletStore = create<State>((set) => ({
   // State
   account: null,
   evmAccount: null,
@@ -29,8 +29,8 @@ export const useSubstrateWalletStore = create<State>(set => ({
   type: 'Substrate',
 
   // Actions
-  setAccount: account => set({ account }),
-  setEvmAccount: account => set({ evmAccount: account }),
-  setModalOpen: isOpen => set({ modalOpen: isOpen }),
-  setType: type => set({ type }),
+  setAccount: (account) => set({ account }),
+  setEvmAccount: (account) => set({ evmAccount: account }),
+  setModalOpen: (isOpen) => set({ modalOpen: isOpen }),
+  setType: (type) => set({ type }),
 }))

@@ -1,5 +1,5 @@
 'use client'
-import { Token } from '@velocitylabs-org/turtle-registry'
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import React from 'react'
@@ -61,15 +61,12 @@ export default function Select({
     onChange('')
   }
 
-  const selectedOption = options.find(opt => opt.value === selected)
+  const selectedOption = options.find((opt) => opt.value === selected)
   const showClearButton = !disabled && allowClear && selected && !loading
 
   return (
     <div className={cn('relative', className)}>
-      <Popover
-        open={disabled ? false : open}
-        onOpenChange={disabled || loading ? undefined : setOpen}
-      >
+      <Popover open={disabled ? false : open} onOpenChange={disabled || loading ? undefined : setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant={minimal ? 'ghost' : 'outline'}
@@ -96,16 +93,13 @@ export default function Select({
                 >
                   <div className="flex items-center">
                     {showImageInBadge &&
-                      renderImage(
-                        selectedOption?.logoURI as string,
-                        selectedOption?.originLogoURI as string,
-                      )}
+                      renderImage(selectedOption?.logoURI as string, selectedOption?.originLogoURI as string)}
                     <span>{selectedOption?.label || selected}</span>
                     {showClearButton && (
                       <span
                         role="button"
                         className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation()
                           handleClear()
                         }}
@@ -118,10 +112,7 @@ export default function Select({
               ) : (
                 <div className="flex items-center">
                   {showImageInBadge &&
-                    renderImage(
-                      selectedOption?.logoURI as string,
-                      selectedOption?.originLogoURI as string,
-                    )}
+                    renderImage(selectedOption?.logoURI as string, selectedOption?.originLogoURI as string)}
                   <span>{selectedOption?.label || selected}</span>
                 </div>
               )}
@@ -138,24 +129,18 @@ export default function Select({
               ) : (
                 <div className="overflow-hidden p-1 text-foreground">
                   <div className="max-h-64 overflow-auto">
-                    {options.map(option => (
+                    {options.map((option) => (
                       <div
                         key={option.value}
                         className={cn(
                           'relative flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none',
                           selected === option.value ? 'bg-accent text-accent-foreground' : '',
-                          !disabled &&
-                            'cursor-pointer hover:bg-accent hover:text-accent-foreground',
+                          !disabled && 'cursor-pointer hover:bg-accent hover:text-accent-foreground',
                           disabled && 'cursor-not-allowed opacity-50',
                         )}
                         onClick={() => !disabled && handleSelect(option.value)}
                       >
-                        <Check
-                          className={cn(
-                            'h-4 w-4',
-                            selected === option.value ? 'opacity-100' : 'opacity-0',
-                          )}
-                        />
+                        <Check className={cn('h-4 w-4', selected === option.value ? 'opacity-100' : 'opacity-0')} />
                         {renderImage(option.logoURI as string, option?.originLogoURI as string)}
                         {option.label}
                       </div>

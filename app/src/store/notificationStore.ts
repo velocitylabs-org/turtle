@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Notification } from '@/models/notification'
+import type { Notification } from '@/models/notification'
 
 interface State {
   // State
@@ -10,14 +10,14 @@ interface State {
   removeNotification: (id: number) => void
 }
 
-export const useNotificationStore = create<State>(set => ({
+export const useNotificationStore = create<State>((set) => ({
   notifications: [],
-  addNotification: notification =>
-    set(state => ({
+  addNotification: (notification) =>
+    set((state) => ({
       notifications: [...state.notifications, { ...notification, id: Date.now() }],
     })),
-  removeNotification: id =>
-    set(state => ({
-      notifications: state.notifications.filter(n => n.id !== id),
+  removeNotification: (id) =>
+    set((state) => ({
+      notifications: state.notifications.filter((n) => n.id !== id),
     })),
 }))

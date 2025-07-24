@@ -1,5 +1,5 @@
-import { TMultiLocation } from '@paraspell/sdk'
-import { Chain, Token, TokenAmount, ManualRecipient } from '@velocitylabs-org/turtle-registry'
+import type { TMultiLocation } from '@paraspell/sdk'
+import type { Chain, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { z } from 'zod'
 
 const originSchema = z.discriminatedUnion('type', [
@@ -32,12 +32,12 @@ export const chainSchema: z.ZodType<Chain> = z.object({
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({
-  token: tokenSchema.nullable().refine(val => val !== null, { message: 'Token is required' }),
+  token: tokenSchema.nullable().refine((val) => val !== null, { message: 'Token is required' }),
   amount: z
     .number()
     .gt(0, 'Amount must be larger than 0')
     .nullable()
-    .refine(val => val !== null, { message: 'Required', path: ['amount'] }),
+    .refine((val) => val !== null, { message: 'Required', path: ['amount'] }),
 })
 
 export const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
@@ -46,15 +46,13 @@ export const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
 })
 
 export const schema = z.object({
-  sourceChain: chainSchema
-    .nullable()
-    .refine(val => val !== null, { message: 'Source chain is required' }),
-  destinationChain: chainSchema.refine(val => val !== null, {
+  sourceChain: chainSchema.nullable().refine((val) => val !== null, { message: 'Source chain is required' }),
+  destinationChain: chainSchema.refine((val) => val !== null, {
     message: 'Destination chain is required',
   }),
   sourceTokenAmount: tokenAmountSchema,
   destinationTokenAmount: z.object({
-    token: tokenSchema.nullable().refine(val => val !== null, { message: 'Token is required' }),
+    token: tokenSchema.nullable().refine((val) => val !== null, { message: 'Token is required' }),
     amount: z.number().nullable(),
   }),
   manualRecipient: manualRecipientSchema,

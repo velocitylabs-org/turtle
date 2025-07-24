@@ -1,7 +1,7 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
-import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral } from 'nuqs'
+import { Activity, CircleCheckBig, DollarSign, Repeat } from 'lucide-react'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
@@ -11,7 +11,7 @@ import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { defaultTransactionLimit, GraphType, TimePeriodType } from '@/constants'
+import { defaultTransactionLimit, type GraphType, type TimePeriodType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
 
@@ -39,17 +39,12 @@ const periodConfig = {
 } as const
 
 const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
-const timePeriodQueryDefault = parseAsStringLiteral([
+const timePeriodQueryDefault = parseAsStringLiteral(['last-6-months', 'last-month', 'this-week'] as const).withDefault(
   'last-6-months',
-  'last-month',
-  'this-week',
-] as const).withDefault('last-6-months')
+)
 
 export default function HomeDashboardPage() {
-  const [transactionGraphType, setTransactionGraphType] = useQueryState(
-    'transactionsBy',
-    togglesQueryDefault,
-  )
+  const [transactionGraphType, setTransactionGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
 
@@ -121,7 +116,7 @@ export default function HomeDashboardPage() {
               <TitleToggle
                 options={toggleOptions}
                 value={transactionGraphType}
-                onChange={value => setTransactionGraphType(value as GraphType)}
+                onChange={(value) => setTransactionGraphType(value as GraphType)}
                 className="ml-3"
               />
             </CardTitle>
@@ -134,7 +129,7 @@ export default function HomeDashboardPage() {
                     label: config.label,
                   }))}
                   selected={timePeriod}
-                  onChange={val => setTimePeriod(val as TimePeriodType)}
+                  onChange={(val) => setTimePeriod(val as TimePeriodType)}
                   showBadge={false}
                   minimal
                   className="w-[100px] !text-black"
@@ -163,7 +158,7 @@ export default function HomeDashboardPage() {
               <TitleToggle
                 options={toggleOptions}
                 value={tokensGraphType}
-                onChange={value => setTokensGraphType(value as GraphType)}
+                onChange={(value) => setTokensGraphType(value as GraphType)}
                 className="ml-3"
               />
             </CardTitle>
@@ -176,12 +171,8 @@ export default function HomeDashboardPage() {
               </div>
             ) : (
               <TopTokensChart
-                data={
-                  tokensGraphType === 'volume' ? data?.topTokensByVolume : data?.topTokensByCount
-                }
-                total={
-                  tokensGraphType === 'volume' ? data?.totalVolumeUsd : data?.totalTransactions
-                }
+                data={tokensGraphType === 'volume' ? data?.topTokensByVolume : data?.topTokensByCount}
+                total={tokensGraphType === 'volume' ? data?.totalVolumeUsd : data?.totalTransactions}
                 type={tokensGraphType}
               />
             )}
@@ -195,10 +186,7 @@ export default function HomeDashboardPage() {
             <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
           </CardHeader>
           <CardContent>
-            <RecentTransactionsTable
-              transactions={data?.recentTransactions || []}
-              isLoading={isLoading}
-            />
+            <RecentTransactionsTable transactions={data?.recentTransactions || []} isLoading={isLoading} />
           </CardContent>
         </Card>
       </div>

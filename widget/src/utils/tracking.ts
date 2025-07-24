@@ -1,18 +1,15 @@
-import { environment, historyV2 as history } from '@snowbridge/api'
+import { type environment, historyV2 as history } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { FromParaToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
-import {
-  TxTrackingResult,
-  StoredTransfer,
+import type { FromEthTrackingResult, FromParaToEthTrackingResult } from '@/models/snowbridge'
+import type {
   OngoingTransfers,
   OngoingTransferWithDirection,
+  StoredTransfer,
+  TxTrackingResult,
 } from '@/models/transfer'
 import { Direction, resolveDirection } from './transfer'
 
-export const trackTransfers = async (
-  env: environment.SnowbridgeEnvironment,
-  ongoingTransfers: OngoingTransfers,
-) => {
+export const trackTransfers = async (env: environment.SnowbridgeEnvironment, ongoingTransfers: OngoingTransfers) => {
   const transfers: TxTrackingResult[] = []
   const { toPolkadot, toEthereum } = ongoingTransfers
 
@@ -41,8 +38,7 @@ export const trackTransfers = async (
  * @param txTrackingResult - A transfer tracking response from the Snowbridge API.
  * @returns - The transfer timestamp in milliseconds.
  */
-const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
-  txTrackingResult.info.when.getTime()
+const getTransferTimestamp = (txTrackingResult: TxTrackingResult) => txTrackingResult.info.when.getTime()
 
 /**
  * Finds a matching ongoingTransfer stored in the user's local storage within the tracking explorer/history transfer list (Subscan, Snowbridge history, etc.).
@@ -51,22 +47,17 @@ const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
  * @param ongoingTransfer - The ongoing transfer stored in the user's local storage.
  * @returns - The matching transfer from the explorer history list, or `undefined` if no match is found.
  */
-export const findMatchingTransfer = (
-  transfers: TxTrackingResult[],
-  ongoingTransfer: StoredTransfer,
-) =>
-  transfers.find(transfer => {
+export const findMatchingTransfer = (transfers: TxTrackingResult[], ongoingTransfer: StoredTransfer) =>
+  transfers.find((transfer) => {
     if (resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum') {
       return (
         transfer.id === ongoingTransfer.parachainMessageId ||
-        ('extrinsic_hash' in transfer.submitted &&
-          transfer.submitted.extrinsic_hash === ongoingTransfer.id)
+        ('extrinsic_hash' in transfer.submitted && transfer.submitted.extrinsic_hash === ongoingTransfer.id)
       )
     } else {
       return (
         transfer.id === ongoingTransfer.id ||
-        ('transactionHash' in transfer.submitted &&
-          transfer.submitted.transactionHash === ongoingTransfer.id)
+        ('transactionHash' in transfer.submitted && transfer.submitted.transactionHash === ongoingTransfer.id)
       )
     }
   })
@@ -84,11 +75,9 @@ export const findMatchingTransfer = (
  */
 export function getTransferStatus(transferResult: TxTrackingResult) {
   // Checks if the tracked AH to Ethereum transfer comes from Snowbridge API.
-  const isParachainToEthTransfer =
-    'info' in transferResult && transferResult.info.destinationParachain == undefined
+  const isParachainToEthTransfer = 'info' in transferResult && transferResult.info.destinationParachain === undefined
 
-  if (isParachainToEthTransfer)
-    return getTransferStatusFromParachain(transferResult as FromParaToEthTrackingResult)
+  if (isParachainToEthTransfer) return getTransferStatusFromParachain(transferResult as FromParaToEthTrackingResult)
   // Retrieves the status of a transfer from Eth to a Parachain/AH (from Snowbridge API)
   return getTransferStatusToPolkadot(transferResult as FromEthTrackingResult)
 }
@@ -103,8 +92,7 @@ export function getTransferStatus(transferResult: TxTrackingResult) {
 export function getTransferStatusFromParachain(transferResult: FromParaToEthTrackingResult) {
   /** Bridge Hub Channel Message Delivered */
   const isBHChannelMsgDelivered =
-    'bridgeHubChannelDelivered' in transferResult &&
-    transferResult.bridgeHubChannelDelivered?.success
+    'bridgeHubChannelDelivered' in transferResult && transferResult.bridgeHubChannelDelivered?.success
 
   /** Transfer just submitted from AH */
   const isBridgeTransferSubmitted = 'submitted' in transferResult
@@ -160,17 +148,12 @@ export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingRes
  * @returns - `true` if the transfer has either completed or failed, otherwise `false` if it is still pending.
  */
 export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
-  return (
-    txTrackingResult.status === TransferStatus.Complete ||
-    txTrackingResult.status === TransferStatus.Failed
-  )
+  return txTrackingResult.status === TransferStatus.Complete || txTrackingResult.status === TransferStatus.Failed
 }
 
-const formatTransfersWithDirection = (
-  ongoingTransfers: StoredTransfer[],
-): OngoingTransferWithDirection[] => {
+const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]): OngoingTransferWithDirection[] => {
   return ongoingTransfers
-    .map(t => {
+    .map((t) => {
       const direction = resolveDirection(t.sourceChain, t.destChain)
       return {
         id: t.id,
@@ -193,7 +176,7 @@ const formatTransfersWithDirection = (
       //   direction
       // }
     })
-    .filter(t => t.direction !== Direction.WithinPolkadot)
+    .filter((t) => t.direction !== Direction.WithinPolkadot)
 }
 
 export const getFormattedOngoingTransfers = (ongoingTransfers: StoredTransfer[]) => {
@@ -205,7 +188,7 @@ export const getFormattedOngoingTransfers = (ongoingTransfers: StoredTransfer[])
   const formattedTransfers = formatTransfersWithDirection(ongoingTransfers)
   if (!formattedTransfers.length) return transfers
 
-  formattedTransfers.forEach(transfer => {
+  formattedTransfers.forEach((transfer) => {
     switch (transfer.direction) {
       case Direction.ToEthereum: {
         transfers.toEthereum.push(transfer)

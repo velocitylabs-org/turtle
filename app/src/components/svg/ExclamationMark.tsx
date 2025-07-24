@@ -1,23 +1,13 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import { colors } from '../../../tailwind.config'
 
 interface ExclamationMarkProps extends ComponentPropsWithoutRef<'svg'> {
   fill?: string
 }
 
-export default function ExclamationMark({
-  fill = colors['turtle-primary-dark'],
-  ...props
-}: ExclamationMarkProps) {
+export default function ExclamationMark({ fill = colors['turtle-primary-dark'], ...props }: ExclamationMarkProps) {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"

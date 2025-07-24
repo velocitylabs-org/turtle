@@ -3,7 +3,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { CircleCheckBig, DollarSign, Percent, Repeat } from 'lucide-react'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import React from 'react'
 import { getSwapsData } from '@/app/actions/swaps'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentSwapsTable from '@/components/RecentSwapsTable'
@@ -12,7 +11,7 @@ import SwapPairsGraph from '@/components/SwapPairsGraph'
 import TitleToggle from '@/components/TitleToggle'
 import TokensActivityTable from '@/components/TokensActivityTable'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { defaultTransactionLimit, GraphType } from '@/constants'
+import { defaultTransactionLimit, type GraphType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
 
@@ -23,10 +22,7 @@ const toggleOptions = [
 const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
 
 export default function SwapsPage() {
-  const [topSwapsGraphType, setTopSwapsGraphType] = useQueryState(
-    'transactionsBy',
-    togglesQueryDefault,
-  )
+  const [topSwapsGraphType, setTopSwapsGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
   const { data, isLoading, error } = useQuery({
     queryKey: ['swaps'],
     queryFn: getSwapsData,
@@ -48,9 +44,7 @@ export default function SwapsPage() {
   }
 
   const topSwapsPairs =
-    topSwapsGraphType === 'volume'
-      ? data?.swapPairsByVolume || []
-      : data?.swapPairsByTransactions || []
+    topSwapsGraphType === 'volume' ? data?.swapPairsByVolume || [] : data?.swapPairsByTransactions || []
 
   return (
     <div>
@@ -98,7 +92,7 @@ export default function SwapsPage() {
               <TitleToggle
                 options={toggleOptions}
                 value={topSwapsGraphType}
-                onChange={value => setTopSwapsGraphType(value as GraphType)}
+                onChange={(value) => setTopSwapsGraphType(value as GraphType)}
                 className="ml-3"
               />
             </CardTitle>

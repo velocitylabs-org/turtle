@@ -1,4 +1,4 @@
-name: Lint and Prettier
+name: Lint and Format
 
 on:
   push:
@@ -13,8 +13,8 @@ on:
       - "**"
 
 jobs:
-  run-lint-prettier:
-    name: Run lint and prettier
+  run-lint-format:
+    name: Run Biome lint and format check
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -41,7 +41,7 @@ jobs:
         with:
           node-version: 20.10.0
 
-      # ESLint and Prettier must be in `package.json`
+      # Biome must be in `package.json`
       - name: Install pnpm
         run: npm install -g pnpm
 
@@ -57,5 +57,5 @@ jobs:
       - name: Running linter
         run: pnpm run lint
 
-      - name: Running Prettier check
+      - name: Running format check
         run: pnpm run format-check

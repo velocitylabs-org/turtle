@@ -1,4 +1,4 @@
-import { StoredTransferV0 } from '@/models/transfer'
+import type { StoredTransferV0 } from '@/models/transfer'
 import { STORE_VERSIONS } from './constants'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,7 +8,7 @@ export const migrateOngoingTransfers = (persistedState: any, version: number) =>
   if (version === 0) {
     const oldTransfers = persistedState as { transfers: StoredTransferV0[] }
 
-    const migratedTransfers = oldTransfers.transfers.map(transfer => ({
+    const migratedTransfers = oldTransfers.transfers.map((transfer) => ({
       // Copy all fields from RawTransfer
       id: transfer.id,
       sourceChain: transfer.sourceChain,

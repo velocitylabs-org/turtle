@@ -1,4 +1,4 @@
-import { TransferStatus } from '@snowbridge/api/dist/history'
+import type { TransferStatus } from '@snowbridge/api/dist/history'
 
 export type Status = 'pending' | 'relayed' | 'success' | 'failed'
 
