@@ -6,6 +6,13 @@
     "useIgnoreFile": true,
     "defaultBranch": "main"
   },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
