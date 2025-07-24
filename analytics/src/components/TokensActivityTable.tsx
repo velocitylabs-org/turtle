@@ -116,7 +116,7 @@ export default function TokensActivityTable({
             <TableHead>
               <SortableColumnHeader
                 column="totalTransactions"
-                label="Transactions"
+                label="Swaps"
                 currentSortColumn={sortColumn}
                 currentSortDirection={sortDirection}
                 onSort={handleSort}

@@ -1,5 +1,24 @@
 # @velocitylabs-org/turtle-registry
 
+## 0.0.7
+
+### Patch Changes
+
+- 12e7cdc: Version bump
+- 98fdc39: Fix MAX button flow and amount
+
+## 0.0.6
+
+### Patch Changes
+
+- f130090: Added readme to the package
+
+## 0.0.5
+
+### Patch Changes
+
+- c7cf6ce: Implemented important selector strategy for the widget along with scoping the preflight from tailwind with postcss-nested
+
 ## 0.0.4
 
 ### Patch Changes

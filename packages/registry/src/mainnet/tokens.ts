@@ -7,6 +7,7 @@ import ethereumLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
 import hydraLogo from "@velocitylabs-org/turtle-assets/logos/hydra.svg";
 import ibtcLogo from "@velocitylabs-org/turtle-assets/logos/ibtc.svg";
 import interlayLogo from "@velocitylabs-org/turtle-assets/logos/interlay.svg";
+import kusamaLogo from "@velocitylabs-org/turtle-assets/logos/kusama.svg";
 import moonbeamLogo from "@velocitylabs-org/turtle-assets/logos/moonbeam.svg";
 import mythLogo from "@velocitylabs-org/turtle-assets/logos/myth.svg";
 import pepeLogo from "@velocitylabs-org/turtle-assets/logos/pepe.svg";
@@ -24,8 +25,9 @@ import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
 
+import { Token } from "@/types";
 import { parachain, snowbridgeWrapped } from "../helpers";
-import { Token } from "../types";
+
 // Tokens
 export const EthereumTokens = {
   ETH: {
@@ -776,5 +778,22 @@ export const PolkadotTokens = {
     },
     coingeckoId: "mythos",
     origin: parachain(3369),
+  },
+
+  KSM: {
+    id: "ksm",
+    name: "Kusama",
+    symbol: "KSM",
+    logoURI: kusamaLogo,
+    decimals: 12,
+    address: "",
+    multilocation: {
+      parents: 1,
+      interior: {
+        Here: null,
+      },
+    },
+    coingeckoId: "kusama",
+    origin: parachain(0),
   },
 } as const satisfies Record<string, Token>;

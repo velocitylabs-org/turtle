@@ -58,7 +58,7 @@ export async function getSummaryData() {
         )
         .lean(),
 
-      // Top 2 tokens by volume
+      // Top 3 tokens by volume
       Transaction.aggregate([
         {
           $match: {
@@ -74,7 +74,7 @@ export async function getSummaryData() {
           },
         },
         { $sort: { volume: -1 } },
-        { $limit: 2 },
+        { $limit: 3 },
         {
           $project: {
             _id: 0,
@@ -86,7 +86,7 @@ export async function getSummaryData() {
         },
       ]),
 
-      // Top 2 tokens by transaction count
+      // Top 3 tokens by transaction count
       Transaction.aggregate([
         {
           $match: {
@@ -102,7 +102,7 @@ export async function getSummaryData() {
           },
         },
         { $sort: { count: -1 } },
-        { $limit: 2 },
+        { $limit: 3 },
         {
           $project: {
             _id: 0,

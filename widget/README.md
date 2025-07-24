@@ -24,6 +24,7 @@ We aim to provide a **unified experience** for transferring tokens anywhere.
 
 Note - Turtle Widget is currently in alpha and subject to breaking changes as development continues.
 You may be using the latest alpha version, which can differ from the coming stable release.
+**Supported React versions** >= 19.0.0
 
 ```sh
 pnpm install @velocitylabs-org/turtle-widget
@@ -252,3 +253,12 @@ export default Home
 - success, warning, error (+ dark/light variants, ...)
 - dialogOverlayRgb, dialogOverlayOpacity
 - noteWarn
+
+
+## Integration Support
+
+If you're planning to integrate our widget, please contact the Velocity team first, we offer personalized support to ensure a smooth setup.
+
+Email: ops@velocitylabs.org <br />
+Twitter/X: @TurtlecoolApp <br />
+Telegram: t.me/velocitylabs/137 <br />

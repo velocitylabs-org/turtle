@@ -12,7 +12,9 @@ import {
   Mythos,
   Phala,
   Polimec,
-  RelayChain,
+  Polkadot,
+  KusamaAssetHub,
+  Kusama,
 } from "./chains";
 import { routes } from "./routes";
 import { EthereumTokens, PolkadotTokens } from "./tokens";
@@ -24,7 +26,7 @@ export const MainnetRegistry: Registry = {
   chains: [
     Ethereum,
     AssetHub,
-    RelayChain,
+    Polkadot,
     Bifrost,
     Mythos,
     Hydration,
@@ -35,6 +37,8 @@ export const MainnetRegistry: Registry = {
     Polimec,
     Centrifuge,
     Astar,
+    Kusama,
+    KusamaAssetHub,
   ],
   tokens: [
     EthereumTokens.ETH,
@@ -43,8 +47,13 @@ export const MainnetRegistry: Registry = {
     EthereumTokens.USDC,
     PolkadotTokens.USDC,
     EthereumTokens.USDT,
-    PolkadotTokens.USDT,
     EthereumTokens.WSTETH,
+    EthereumTokens.MYTH,
+    EthereumTokens.TON,
+    EthereumTokens.SHIB,
+    EthereumTokens.PEPE,
+
+    PolkadotTokens.USDT,
     EthereumTokens.TBTC,
     PolkadotTokens.DOT,
     EthereumTokens.DAI,
@@ -58,12 +67,9 @@ export const MainnetRegistry: Registry = {
     PolkadotTokens.PLMC,
     PolkadotTokens.VDOT,
     PolkadotTokens.IBTC,
-    EthereumTokens.MYTH,
     PolkadotTokens.MYTH,
     PolkadotTokens.HDX,
-    EthereumTokens.TON,
-    EthereumTokens.SHIB,
-    EthereumTokens.PEPE,
+    PolkadotTokens.KSM,
   ],
   routes,
   assetUid: new Map([

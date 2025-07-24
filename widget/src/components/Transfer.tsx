@@ -173,7 +173,7 @@ const Transfer: FC = () => {
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
   const disableMaxBtnInPolkadotNetwork =
-    sourceChain?.network === 'Polkadot' &&
+    (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&
     (!destinationWallet?.sender || !destinationTokenAmount?.token)
 
   const shouldDisableMaxButton =

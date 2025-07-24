@@ -28,9 +28,10 @@ export const getTransferTokens = (
 ): Token[] => {
   if (!sourceChain) return []
 
-  const filteredTokens = allowedTokens
-    ? MainnetRegistry.tokens.filter(token => allowedTokens.includes(token.id))
-    : MainnetRegistry.tokens
+  const filteredTokens =
+    Array.isArray(allowedTokens) && allowedTokens.length > 0
+      ? MainnetRegistry.tokens.filter(token => allowedTokens.includes(token.id))
+      : MainnetRegistry.tokens
 
   return filteredTokens.filter(token =>
     MainnetRegistry.routes.some(
@@ -60,15 +61,19 @@ export const isTokenAvailableForSourceChain = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
+  allowedTokens?: Token['id'][] | undefined,
 ): boolean => {
   if (!sourceChain || !token) return false
-  return getTransferTokens(sourceChain, destinationChain ?? null).some(t => t.id === token.id)
+  return getTransferTokens(sourceChain, destinationChain ?? null, allowedTokens).some(
+    t => t.id === token.id,
+  )
 }
 
 export const getAllowedSourceChains = (allowedChains?: Chain['uid'][]): Chain[] => {
-  const filteredChains = allowedChains
-    ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
-    : MainnetRegistry.chains
+  const filteredChains =
+    Array.isArray(allowedChains) && allowedChains.length > 0
+      ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
+      : MainnetRegistry.chains
 
   // Filters all chains by available routes
   const transferSourceChains = filteredChains.filter(chain =>
@@ -102,9 +107,10 @@ export const getAllowedDestinationChains = (
 ): Chain[] => {
   if (!sourceChain || !sourceToken) return []
 
-  const filteredChains = allowedChains
-    ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
-    : MainnetRegistry.chains
+  const filteredChains =
+    Array.isArray(allowedChains) && allowedChains.length > 0
+      ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
+      : MainnetRegistry.chains
 
   // Filters all chains by selected source chain, selected token and available routes
   const transferDestinationChains = filteredChains.filter(c =>

@@ -7,6 +7,7 @@ import {
   getTNode,
   TCurrencyCore,
   TDryRunResult,
+  TEcosystemType,
   TNodeDotKsmWithRelayChains,
   TNodeWithRelayChains,
   type TPapiTransaction,
@@ -18,6 +19,7 @@ import {
   Environment,
   EthereumTokens,
   REGISTRY,
+  Network,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
 
@@ -138,6 +140,7 @@ export const getTransferableAmount = async (
   sourceToken: Token,
   recipient: string,
   sender: string,
+  userBalance: bigint,
   wssEndpoint?: string,
 ): Promise<bigint> => {
   const sourceChainNode = getParaSpellNode(sourceChain)
@@ -151,7 +154,7 @@ export const getTransferableAmount = async (
     .from(sourceChainNode as TNodeDotKsmWithRelayChains)
     .to(destinationChainNode)
     // Pass a dummy amount
-    .currency({ ...currencyId, amount: 1000n })
+    .currency({ ...currencyId, amount: userBalance })
     .address(recipient)
     .senderAddress(sender)
     .getTransferableAmount()
@@ -175,11 +178,12 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
 }
 
-export const getRelayNode = (env: Environment): 'polkadot' => {
-  switch (env) {
-    case Environment.Mainnet:
+export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
+  switch (network) {
+    case 'Polkadot':
       return 'polkadot'
-
+    case 'Kusama':
+      return 'kusama'
     default:
       throw new Error('Cannot find relay node. Unsupported environment')
   }
@@ -189,7 +193,6 @@ export const getRelayNode = (env: Environment): 'polkadot' => {
  * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
  */
 export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TCurrencyCore {
-  // Edge Cases. Myth multilocation is not supported by Paraspell.
   if (token.id === EthereumTokens.MYTH.id)
     return node ? { symbol: getTokenSymbol(node, token) } : { symbol: token.symbol }
 
@@ -199,17 +202,25 @@ export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TC
   return { symbol: token.symbol }
 }
 
+/**
+ * Convert a Turtle 'network' value to a ParaSpell 'TEcosystemType'
+ * @param network
+ * @returns the matching paraspell value
+ */
+export function toPsEcosystem(network: Network): TEcosystemType {
+  return network.toLowerCase() as TEcosystemType
+}
+
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const env = Environment.Mainnet
-
-  const relay = getRelayNode(env)
+  const relay = getRelayNode(chain.network)
   const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode) throw Error(`Native Token for ${chain.uid} not found`)
+  if (!chainNode)
+    throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
-  const token = REGISTRY[env].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
 }
@@ -217,7 +228,7 @@ export function getNativeToken(chain: Chain): Token {
 export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
-    : getTNode(chain.chainId, 'polkadot')
+    : getTNode(chain.chainId, toPsEcosystem(chain.network))
 }
 
 /**

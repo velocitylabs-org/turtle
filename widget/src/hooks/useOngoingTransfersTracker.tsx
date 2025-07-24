@@ -1,8 +1,11 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useQuery } from '@tanstack/react-query'
+import { Environment } from '@velocitylabs-org/turtle-registry'
 import { useEffect, useState } from 'react'
+import { getEnvironment } from '@/lib/snowbridge'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { updateTransferMetrics } from '@/utils/analytics.ts'
 import { getExplorerLink } from '@/utils/explorer'
 import {
   findMatchingTransfer,
@@ -33,8 +36,9 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   } = useQuery({
     queryKey: ['ongoing-transfers', ongoingTransfers.map(t => t.id)],
     queryFn: async () => {
+      const env = getEnvironment(Environment.Mainnet)
       const formattedTransfers = getFormattedOngoingTransfers(ongoingTransfers)
-      return trackTransfers(formattedTransfers)
+      return trackTransfers(env, formattedTransfers)
     },
     refetchInterval: REVALIDATE,
     staleTime: REVALIDATE,
@@ -62,13 +66,13 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
         if (isCompletedTransfer(foundTransfer)) {
           updateProgress(ongoing.id)
           const explorerLink = getExplorerLink(ongoing)
+          const failed = foundTransfer.status === TransferStatus.Failed
 
           // Move from ongoing to done
           remove(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,
-            result:
-              foundTransfer.status === TransferStatus.Failed ? TxStatus.Failed : TxStatus.Succeeded,
+            result: failed ? TxStatus.Failed : TxStatus.Succeeded,
             sourceToken: ongoing.sourceToken,
             destinationToken: ongoing.destinationToken,
             sourceChain: ongoing.sourceChain,
@@ -90,6 +94,15 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             severity: NotificationSeverity.Success,
             dismissible: true,
           })
+
+          // Analytics tx are created with successful status by default, we only update for failed ones
+          if (failed) {
+            updateTransferMetrics({
+              txHashId: ongoing.id,
+              status: TxStatus.Failed,
+              environment: ongoing.environment,
+            })
+          }
         }
       }
     })
