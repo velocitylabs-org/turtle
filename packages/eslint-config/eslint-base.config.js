@@ -43,6 +43,7 @@ export default tseslint.config(
       'react/react-in-jsx-scope': ['off'],
       'react/button-has-type': 'error',
       'react/prop-types': 'off',
+      "@typescript-eslint/no-require-imports": "off",
       'import/order': [
         'error',
         {

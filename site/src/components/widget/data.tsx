@@ -1,3 +1,25 @@
+export const headerButtons = [
+  {
+    label: 'Swap',
+    icon: '',
+  },
+  {
+    label: 'Bridging',
+    icon: '',
+  },
+  {
+    label: 'XCM Transfers',
+    icon: '',
+  },
+  {
+    label: 'Full Ecosystem Compatibility',
+    icon: '',
+  },
+  {
+    label: 'Customizable',
+  },
+]
+
 export const features = [
   {
     title: 'Seamless Interactions',

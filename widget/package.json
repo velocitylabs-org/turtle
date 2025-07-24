@@ -73,6 +73,7 @@
     "@velocitylabs-org/turtle-eslint-config": "workspace:*",
     "@velocitylabs-org/turtle-registry": "workspace:*",
     "@velocitylabs-org/turtle-ui": "workspace:*",
+    "@velocitylabs-org/turtle-tailwind-config": "workspace:*",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.20.1",

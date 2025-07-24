@@ -4,6 +4,7 @@ import { cn } from '@velocitylabs-org/turtle-ui'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import { dazzed } from '@/components/fonts/fonts'
+import { Analytics } from '@vercel/analytics/react'
 
 export const metadata: Metadata = {
   title: 'Turtle',
@@ -22,6 +23,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
+          <Analytics />
         </main>
       </body>
     </html>

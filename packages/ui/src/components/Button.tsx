@@ -1,22 +1,10 @@
 import { ReactNode } from 'react'
 import { cn } from '@/helpers'
-import { Sizes } from '../types/global'
+import { PolymorphicComponentProps, Sizes } from '../types/global'
 import { LoadingIcon } from './LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 export type ButtonType = 'button' | 'submit' | 'reset'
-
-type AsProp<T extends React.ElementType> = {
-  as?: T
-}
-
-type PropsToOmit<T extends React.ElementType, P> = keyof (AsProp<T> & P)
-
-type PolymorphicComponentProps<
-  T extends React.ElementType,
-  Props = object,
-> = React.PropsWithChildren<Props & AsProp<T>> &
-  Omit<React.ComponentPropsWithoutRef<T>, PropsToOmit<T, Props>>
 
 export type ButtonProps<T extends React.ElementType = 'button'> = PolymorphicComponentProps<
   T,

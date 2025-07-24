@@ -1,12 +1,12 @@
 'use client'
 import { Token, Chain, tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Dispatch, SetStateAction } from 'react'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
 import { TabOptions } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-import { colors } from '../../../tailwind.config'
 import ArrowRight from '../svg/ArrowRight'
 import OngoingTransferDialog from './OngoingTransferDialog'
 

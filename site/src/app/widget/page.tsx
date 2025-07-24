@@ -3,6 +3,8 @@
 import { TurtlesBackground } from '@/components/TurtlesBackground'
 import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
+import { headerButtons } from '@/components/widget/data'
+import { XXXLarge } from '@velocitylabs-org/turtle-ui'
 // @ts-ignore
 import hljs from '@highlightjs/cdn-assets/es/core.min.js'
 // @ts-ignore
@@ -44,15 +46,31 @@ export default function Widget() {
 
   return (
     <>
-      <section className="relative flex h-[100vh] flex-col items-center justify-center">
+      <section className="relative flex min-h-[110vh] flex-col items-center justify-center">
         <TurtlesBackground blurredBackground whiteWaves />
-        <div className="top-50 absolute z-0 max-w-[656px]">
-          <div className="rounded-4xl border border-black bg-white p-8">
-            <h1 className="text-hero-xl font-bold leading-none">Turtle Widget</h1>
-            <h2 className="text-h-sub font-bold">1 min setup.</h2>
-            <h3 className="text-section-title">The whole polkadot in your dApp</h3>
+        <div className="absolute top-20 z-0 rounded-4xl border border-black bg-white lg:w-[656px]">
+          <div>
+            <div className="flex max-w-[375px] flex-col gap-20 p-8">
+              <XXXLarge className="leading-none">Turtle Widget</XXXLarge>
+              <div className="flex flex-col gap-10">
+                <h2 className="text-section-title">The whole polkadot in your dApp</h2>
+                <p className="text-lg">
+                  Effortless Integration · Unified In-App Experience · Customizable to Your Brand
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {headerButtons.map((button) => (
+                    <Button variant="outline" size="sm" key={button.label}>
+                      <p className="text-sm">{button.label}</p>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* <TurtleWidget /> */}
           </div>
-          {/* <TurtleWidget /> */}
+        </div>
+        <div className="z-10 flex flex-col items-center justify-center">
+          <p className="text-lg text-white">Start Integrating</p>
         </div>
       </section>
       <section className="flex min-h-[100vh] flex-col items-center gap-20 bg-white pb-48 lg:pb-96">
