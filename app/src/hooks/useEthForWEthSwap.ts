@@ -5,7 +5,7 @@ import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
 import { NotificationSeverity } from '@/models/notification'
-import { convertAmount, toHuman } from '../utils/transfer'
+import { convertAmount, toHuman } from '@/utils/transfer'
 
 interface Params {
   env: Environment
