@@ -57,9 +57,9 @@ function BoltIcon() {
       <path
         d="M4.88899 12.5155L16.8 1L13.6 10.625H18.7635C19.213 10.625 19.4342 11.172 19.111 11.4845L7.2 23L10.4 13.375H5.23652C4.78699 13.375 4.5658 12.828 4.88899 12.5155Z"
         stroke="#001B04"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   )

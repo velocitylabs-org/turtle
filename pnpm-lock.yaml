@@ -362,6 +362,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.18.0
         version: 7.18.0(eslint@8.57.1)(typescript@5.8.3)
+      '@velocitylabs-org/turtle-tailwind-config':
+        specifier: workspace:*
+        version: link:../packages/tailwind-config
       '@velocitylabs-org/turtle-typescript-config':
         specifier: workspace:*
         version: link:../packages/typescript-config
@@ -525,6 +528,8 @@ importers:
         specifier: ^1.8.16
         version: 1.8.16
 
+  packages/tailwind-config: {}
+
   packages/typescript-config: {}
 
   packages/ui:
@@ -605,6 +610,9 @@ importers:
 
   site:
     dependencies:
+      '@highlightjs/cdn-assets':
+        specifier: ^11.11.1
+        version: 11.11.1
       '@number-flow/react':
         specifier: ^0.5.10
         version: 0.5.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -626,6 +634,9 @@ importers:
       framer-motion:
         specifier: ^11.1.9
         version: 11.18.2(@emotion/is-prop-valid@1.2.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      highlight.js:
+        specifier: ^11.11.1
+        version: 11.11.1
       next:
         specifier: 14.2.15
         version: 14.2.15(@babel/core@7.27.4)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -651,6 +662,9 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.3.7(@types/react@18.3.23)
+      '@velocitylabs-org/turtle-tailwind-config':
+        specifier: workspace:*
+        version: link:../packages/tailwind-config
       '@velocitylabs-org/turtle-typescript-config':
         specifier: workspace:*
         version: link:../packages/typescript-config
@@ -847,6 +861,9 @@ importers:
       '@velocitylabs-org/turtle-registry':
         specifier: workspace:*
         version: link:../packages/registry
+      '@velocitylabs-org/turtle-tailwind-config':
+        specifier: workspace:*
+        version: link:../packages/tailwind-config
       '@velocitylabs-org/turtle-ui':
         specifier: workspace:*
         version: link:../packages/ui
@@ -1835,6 +1852,10 @@ packages:
     resolution: {integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==}
     peerDependencies:
       react: '>= 16 || ^19.0.0-rc'
+
+  '@highlightjs/cdn-assets@11.11.1':
+    resolution: {integrity: sha512-VEPdHzwelZ12hEX18BHduqxMZGolcUsrbeokHYxOUIm8X2+M7nx5QPtPeQgRxR9XjhdLv4/7DD5BWOlSrJ3k7Q==}
+    engines: {node: '>=12.0.0'}
 
   '@hookform/resolvers@3.9.0':
     resolution: {integrity: sha512-bU0Gr4EepJ/EQsH/IwEzYLsT/PEj5C0ynLQ4m+GSHS+xKH4TfSelhluTgOaoc4kA5s7eCsQbM4wvZLzELmWzUg==}
@@ -8628,6 +8649,10 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
 
+  highlight.js@11.11.1:
+    resolution: {integrity: sha512-Xwwo44whKBVCYoliBQwaPvtd/2tYFkRQtXDWj1nackaV2JPXx3L0+Jvd8/qCJ2p+ML0/XVkJ2q+Mr+UVdpJK5w==}
+    engines: {node: '>=12.0.0'}
+
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
 
@@ -12781,7 +12806,7 @@ snapshots:
 
   '@acala-network/contracts@4.3.4': {}
 
-  '@acala-network/eth-providers@2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.1))(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@acala-network/eth-providers@2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/contracts': 4.3.4
@@ -12841,7 +12866,7 @@ snapshots:
   '@acala-network/sdk@4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@acala-network/eth-providers': 2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.1))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@acala-network/eth-providers': 2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@acala-network/sdk-core': 4.1.14(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@polkadot/api': 16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       axios: 0.24.0
@@ -14249,6 +14274,8 @@ snapshots:
   '@heroicons/react@2.2.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
+
+  '@highlightjs/cdn-assets@11.11.1': {}
 
   '@hookform/resolvers@3.9.0(react-hook-form@7.53.0(react@19.0.0))':
     dependencies:
@@ -15774,7 +15801,7 @@ snapshots:
   : dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/app-util': 4.1.8-14
-      '@acala-network/eth-providers': 2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.1))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@acala-network/eth-providers': 2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@acala-network/sdk': 4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/sdk-core': 4.1.14(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/sdk-swap': 4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -15841,7 +15868,7 @@ snapshots:
   : dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/app-util': 4.1.8-14
-      '@acala-network/eth-providers': 2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.1))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@acala-network/eth-providers': 2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@acala-network/sdk': 4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/sdk-core': 4.1.14(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/sdk-swap': 4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.6(@acala-network/api@6.2.0(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.3(@polkadot/util@13.5.3))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -25908,6 +25935,8 @@ snapshots:
       function-bind: 1.1.2
 
   he@1.2.0: {}
+
+  highlight.js@11.11.1: {}
 
   hmac-drbg@1.0.1:
     dependencies:

@@ -1,6 +1,4 @@
-'use client'
-
-import { TurtlesBackground } from '@/components/TurtlesBackground'
+import TurtlesBackground from '@/components/TurtlesBackground'
 import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { headerButtons } from '@/components/widget/data'
@@ -12,8 +10,8 @@ import bash from '@highlightjs/cdn-assets/es/languages/bash.min.js'
 // @ts-ignore
 import typescript from '@highlightjs/cdn-assets/es/languages/typescript.min.js'
 import '@highlightjs/cdn-assets/styles/github.min.css'
-import { useEffect } from 'react'
 import { developerIntegrationGuide, features } from '@/components/widget/data'
+import getAnalyticsData from '@/actions/analytics'
 
 hljs.registerLanguage('bash', bash)
 hljs.registerLanguage('typescript', typescript)
@@ -39,15 +37,19 @@ const Divider = () => {
   return <div className="border-gray border-b" />
 }
 
-export default function Widget() {
-  useEffect(() => {
-    hljs.highlightAll()
-  }, [])
+export default async function Widget() {
+  const analyticsData = await getAnalyticsData()
+
+  hljs.highlightAll()
 
   return (
     <>
       <section className="relative flex min-h-[110vh] flex-col items-center justify-center">
-        <TurtlesBackground blurredBackground whiteWaves />
+        <TurtlesBackground
+          blurredBackground
+          whiteWaves
+          initialVolume={analyticsData?.totalVolumeUsd}
+        />
         <div className="absolute top-20 z-0 rounded-4xl border border-black bg-white lg:w-[656px]">
           <div>
             <div className="flex max-w-[375px] flex-col gap-20 p-8">

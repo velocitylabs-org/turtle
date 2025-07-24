@@ -8,7 +8,7 @@ interface TurtlesBackgroundProps {
   initialVolume: number | undefined
 }
 
-export const TurtlesBackground = ({
+const TurtlesBackground = ({
   header,
   blurredBackground = false,
   whiteWaves = false,
@@ -60,3 +60,5 @@ export const TurtlesBackground = ({
     </>
   )
 }
+
+export default TurtlesBackground
