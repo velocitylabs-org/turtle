@@ -80,7 +80,7 @@ export const Button = <T extends React.ElementType = 'button'>({
 
   return (
     <Component
-      type={type === 'submit' ? 'submit' : type === 'reset' ? 'reset' : 'button'}
+      type={type}
       tabIndex={0}
       className={classNames}
       onClick={onClick}
