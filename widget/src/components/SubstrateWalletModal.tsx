@@ -286,7 +286,7 @@ function Footer() {
   )
 }
 
-// Prevent initial animation on component mount to avoid visual glitches.
+// Prevent initial animation on the component mount to avoid visual glitches.
 // Animations are only triggered after the modal opens for a smoother user experience.
 function TransitionControl({ setEnableTranslateAnimation }: { setEnableTranslateAnimation: (v: boolean) => void }) {
   useEffect(() => {
