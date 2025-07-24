@@ -18,7 +18,7 @@ import type { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
-const chainOptions = chains.map((chain) => ({
+const chainOptions = chains.map(chain => ({
   value: chain.uid,
   label: chain.name,
   logoURI: getSrcFromLogo(chain),
@@ -54,7 +54,7 @@ export default function TransactionsPage() {
         originLogoURI,
       }
     })
-    .filter((token) => !!token.originLogoURI)
+    .filter(token => !!token.originLogoURI)
 
   const tokenDestinationOptions = tokens
     .map((token: Token) => {
@@ -66,7 +66,7 @@ export default function TransactionsPage() {
         originLogoURI,
       }
     })
-    .filter((token) => !!token.originLogoURI)
+    .filter(token => !!token.originLogoURI)
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -215,7 +215,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={sourceChainUid}
-                    onChange={(val) => setSourceChainUid(val as string)}
+                    onChange={val => setSourceChainUid(val as string)}
                     placeholder="Source Chain"
                   />
                 </div>
@@ -223,7 +223,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenSourceOptions}
                     selected={sourceTokenId}
-                    onChange={(val) => setSourceTokenId(val as string)}
+                    onChange={val => setSourceTokenId(val as string)}
                     placeholder="Source Token"
                     disabled={!sourceChainUid}
                   />
@@ -232,7 +232,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={(val) => {
+                    onChange={val => {
                       setDestinationChainUid(val as string)
                       if (!val) {
                         setDestinationTokenId('')
@@ -245,7 +245,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenDestinationOptions}
                     selected={destinationTokenId}
-                    onChange={(val) => setDestinationTokenId(val as string)}
+                    onChange={val => setDestinationTokenId(val as string)}
                     placeholder="Destination Token"
                     disabled={!destinationChainUid}
                   />
@@ -254,7 +254,7 @@ export default function TransactionsPage() {
                   <Select
                     options={originOptions}
                     selected={origin}
-                    onChange={(val) => setOrigin(val as string)}
+                    onChange={val => setOrigin(val as string)}
                     placeholder="Origin"
                   />
                 </div>

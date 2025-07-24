@@ -28,7 +28,7 @@ function NavigationMenu({ routes, onNavItemClicked, title = 'Overview', pathname
         <h2 className="mb-2 px-4 text-xs font-semibold tracking-tight">{title}</h2>
         <div className="space-y-1">
           {routes.map(
-            (route) =>
+            route =>
               route.leftNavigation && (
                 <Link
                   key={route.href}

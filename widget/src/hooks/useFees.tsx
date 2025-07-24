@@ -58,7 +58,7 @@ const useFees = (
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
-  const env = useEnvironmentStore((state) => state.current)
+  const env = useEnvironmentStore(state => state.current)
 
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token) {

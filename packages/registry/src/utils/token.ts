@@ -23,7 +23,7 @@ export const getTokenPrice = async (token: Token): Promise<TokenPrice | null> =>
 
 export function getTokenByMultilocation(multilocation: TMultiLocation): Token | undefined {
   // If turtle doesn't support the token it won't be found
-  return MainnetRegistry.tokens.find((token) => deepEqual(token.multilocation, multilocation))
+  return MainnetRegistry.tokens.find(token => deepEqual(token.multilocation, multilocation))
 }
 
 export function isSameToken(token1: Token, token2: Token): boolean {

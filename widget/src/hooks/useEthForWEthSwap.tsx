@@ -38,7 +38,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
       const balance = await context
         .ethereum()
         .getBalance(owner)
-        .then((x) => toHuman(x, EthereumTokens.ETH))
+        .then(x => toHuman(x, EthereumTokens.ETH))
       setEthBalance(balance)
     } catch (error) {
       // if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
@@ -73,7 +73,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
       try {
         await toPolkadot
           .depositWeth(context, signer, tokenAmount!.token!.address, convertAmount(amount, EthereumTokens.ETH))
-          .then((x) => x.wait())
+          .then(x => x.wait())
 
         setIsSwapping(false)
         addNotification({

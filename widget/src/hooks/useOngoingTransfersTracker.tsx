@@ -34,7 +34,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
     isLoading: loading,
     error: trackingError,
   } = useQuery({
-    queryKey: ['ongoing-transfers', ongoingTransfers.map((t) => t.id)],
+    queryKey: ['ongoing-transfers', ongoingTransfers.map(t => t.id)],
     queryFn: async () => {
       const env = getEnvironment(Environment.Mainnet)
       const formattedTransfers = getFormattedOngoingTransfers(ongoingTransfers)
@@ -53,7 +53,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   useEffect(() => {
     if (!transfers) return
 
-    ongoingTransfers.forEach((ongoing) => {
+    ongoingTransfers.forEach(ongoing => {
       if ('error' in transfers) return
 
       const foundTransfer = findMatchingTransfer(transfers, ongoing)
@@ -61,7 +61,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
       if (foundTransfer) {
         // Update transfer status
         const status = getTransferStatus(foundTransfer)
-        setStatusMessages((prev) => ({ ...prev, [ongoing.id]: status }))
+        setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
 
         if (isCompletedTransfer(foundTransfer)) {
           updateProgress(ongoing.id)

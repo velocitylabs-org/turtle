@@ -16,10 +16,10 @@ const serializeFeeAmount = (fees: AmountInfo): AmountInfo => ({
 
 export const useCompletedTransfersStore = create<CompletedTxState>()(
   persist(
-    (set) => ({
+    set => ({
       completedTransfers: [],
 
-      addCompletedTransfer: (newCompletedTransfer) => {
+      addCompletedTransfer: newCompletedTransfer => {
         if (!newCompletedTransfer) return
 
         // needed to not run into bigint persistence issues
@@ -31,9 +31,9 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
           }),
         }
 
-        set((state) => {
+        set(state => {
           // Check if the newCompletedTransfer already exists in the local store
-          const transferExists = state.completedTransfers.some((transfer) => transfer.id === persistableTransfer.id)
+          const transferExists = state.completedTransfers.some(transfer => transfer.id === persistableTransfer.id)
 
           if (transferExists) return { completedTransfers: state.completedTransfers }
 
@@ -46,7 +46,7 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
     {
       name: 'turtle-completed-transactions',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ completedTransfers: state.completedTransfers }),
+      partialize: state => ({ completedTransfers: state.completedTransfers }),
       version: STORE_VERSIONS.COMPLETED_TRANSFERS,
       migrate: migrateCompletedTransfers,
     },

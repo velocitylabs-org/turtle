@@ -86,7 +86,7 @@ export default function SubstrateWalletModal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen, fetchExtensions, setSelectedExtension])
 
-  const filteredAccounts = accounts.filter((account) =>
+  const filteredAccounts = accounts.filter(account =>
     type === 'SubstrateEVM' ? account.type === 'ethereum' : ['sr25519', 'ed25519'].includes(account.type ?? ''),
   )
 
@@ -130,7 +130,7 @@ export default function SubstrateWalletModal() {
   )
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={(open) => (open ? openModal() : closeModal())}>
+    <Dialog open={isModalOpen} onOpenChange={open => (open ? openModal() : closeModal())}>
       <DialogContent
         className="m-auto max-h-[85vh] max-w-[90vw] rounded-4xl focus:outline-none min-[460px]:max-w-[24rem]"
         hideCloseButton={false}
@@ -200,7 +200,7 @@ export default function SubstrateWalletModal() {
                     {/* Added wrapper div */}
                     {[...extensions]
                       .sort((a, b) => getWalletWeight(a.name, window) - getWalletWeight(b.name, window))
-                      .map((extension) => (
+                      .map(extension => (
                         <Button
                           key={extension.name}
                           className='flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover="true"]:bg-[#f6f6f6] data-[hover="true"]:opacity-100'
@@ -235,7 +235,7 @@ export default function SubstrateWalletModal() {
               <motion.div key="accountsView" {...accountsViewTransitions} className="flex w-full flex-1 flex-col">
                 {filteredAccounts.length > 0 ? (
                   <div className="flex flex-1 flex-col gap-2">
-                    {filteredAccounts.map((account) => (
+                    {filteredAccounts.map(account => (
                       <Button
                         key={account.address}
                         className='flex min-h-12 w-full items-center justify-between rounded-[12px] border-0 bg-[#fafafa] p-4 data-[hover="true"]:bg-[#f6f6f6] data-[hover="true"]:opacity-100'

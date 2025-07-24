@@ -29,7 +29,7 @@ export default function DatePicker({ className, date, setDate, placeholder = 'Pi
                 <span
                   role="button"
                   className="ml-2 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation()
                     setDate(null)
                   }}

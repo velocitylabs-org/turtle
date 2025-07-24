@@ -9,13 +9,13 @@ interface State {
   switchTo: (environment: Environment) => void
 }
 
-export const useEnvironmentStore = create<State>((set) => ({
+export const useEnvironmentStore = create<State>(set => ({
   // State
   current: Environment.Mainnet,
 
   // Actions
-  switchTo: (environment) =>
-    set((_) => ({
+  switchTo: environment =>
+    set(_ => ({
       current: environment,
     })),
 }))

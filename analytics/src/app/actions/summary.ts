@@ -123,7 +123,7 @@ export async function getSummaryData() {
     const avgTransactionValue = successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
     // Apply the schema to each transaction
-    const serializedRecentTransactions = recentTransactions.map((transaction) => transactionView.parse(transaction))
+    const serializedRecentTransactions = recentTransactions.map(transaction => transactionView.parse(transaction))
 
     return {
       totalVolumeUsd,
@@ -292,8 +292,8 @@ function fillMissingDaysInWeek(
     currentDate = addDays(currentDate, 1)
   }
 
-  return allDays.map((day) => {
-    const existingData = data.find((item) => item.timestamp === day.formattedDate)
+  return allDays.map(day => {
+    const existingData = data.find(item => item.timestamp === day.formattedDate)
 
     // If data exists for this day, use it, otherwise, use zero values
     return (

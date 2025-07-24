@@ -21,7 +21,7 @@ export default function OngoingTransfers({
   setSelectedTab,
   hasCompletedTransfers,
 }: OngoingTransfersProps) {
-  const ongoingTransfers = useOngoingTransfersStore((state) => state.transfers).sort(
+  const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
   const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
@@ -35,7 +35,7 @@ export default function OngoingTransfers({
         <div className="my-20">
           <div className="xl-letter-spacing self-center text-center text-3xl text-turtle-foreground">Ongoing</div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
-            {ongoingTransfers.map((tx) => {
+            {ongoingTransfers.map(tx => {
               const transfer = {
                 ...tx,
                 sourceToken: tokensById[tx.sourceToken.id] as Token,

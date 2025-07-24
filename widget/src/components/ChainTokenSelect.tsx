@@ -88,7 +88,7 @@ export default function ChainTokenSelect({
 
   // Filter the options based on search
   const filteredChainOptions = useMemo(() => {
-    return chainProps.options.filter((option) => option.name.toLowerCase().includes(chainSearch.toLowerCase()))
+    return chainProps.options.filter(option => option.name.toLowerCase().includes(chainSearch.toLowerCase()))
   }, [chainProps.options, chainSearch])
 
   const sortedAndFilteredChainOptions = useMemo(() => {
@@ -98,7 +98,7 @@ export default function ChainTokenSelect({
   }, [filteredChainOptions, chainProps.orderBySelected, chainProps.value?.uid])
 
   const filteredTokenOptions = useMemo(() => {
-    return tokenProps.options.filter((option) => option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()))
+    return tokenProps.options.filter(option => option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()))
   }, [tokenProps.options, tokenSearch])
   // Sort the options by priority token and then by selected token
   const sortedAndFilteredTokenOptions = useMemo(() => {
@@ -292,8 +292,8 @@ const TokenAmountInput = ({
               placeholder={amount?.placeholder ?? 'Amount'}
               value={amount?.value ?? ''}
               onChange={handleAmountChange}
-              onClick={(e) => e.stopPropagation()}
-              onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
+              onClick={e => e.stopPropagation()}
+              onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
             />
             {inDollars && (
               <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
@@ -340,7 +340,7 @@ const ChainList = ({
       <SearchBar placeholder="Search" value={searchString} onChange={setSearchString} />
       <div className="max-h-[15rem] overflow-y-auto">
         <ul className="flex flex-col">
-          {options.map((option) => (
+          {options.map(option => (
             <li
               key={option.uid}
               className={cn(
@@ -395,7 +395,7 @@ const TokenList = ({
       <SearchBar placeholder="Search" value={searchString} onChange={setSearchString} />
       <div className="max-h-[15rem] overflow-y-auto">
         <ul className="flex flex-col">
-          {options.map((option) => (
+          {options.map(option => (
             <li
               key={option.id}
               className={cn(

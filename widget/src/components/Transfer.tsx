@@ -294,7 +294,7 @@ const Transfer: FC = () => {
                       }}
                       amountProps={{
                         value: tokenField.value?.amount ?? null,
-                        onChange: (amount) => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                        onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: sourceTokenAmountErrorMessage,
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
@@ -347,7 +347,7 @@ const Transfer: FC = () => {
                     }}
                     tokenProps={{
                       value: tokenField.value?.token ?? null,
-                      onChange: (token) => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                      onChange: token => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
                       options: destinationTokenOptions,
                       error: errors.destinationTokenAmount?.token?.message,
                       clearable: true,
@@ -357,7 +357,7 @@ const Transfer: FC = () => {
                     }}
                     amountProps={{
                       value: destinationTokenAmount?.amount ?? null,
-                      onChange: (amount) => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                      onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
                       placeholder: receiveAmountPlaceholder,
                       disabled: true,

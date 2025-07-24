@@ -8,7 +8,7 @@ export const migrateCompletedTransfers = (persistedState: any, version: number) 
   if (version === 0) {
     const oldTransfers = persistedState as { completedTransfers: CompletedTransferV0[] }
 
-    const migratedTransfers = oldTransfers.completedTransfers.map((transfer) => ({
+    const migratedTransfers = oldTransfers.completedTransfers.map(transfer => ({
       id: transfer.id,
       result: transfer.result,
       sourceChain: transfer.sourceChain,

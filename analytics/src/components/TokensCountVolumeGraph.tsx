@@ -66,7 +66,7 @@ export default function TokensCountVolumeGraph({ data, loading }: TokensCountVol
   }
 
   // Format data for the scatter chart
-  const formattedData = data.map((token) => ({
+  const formattedData = data.map(token => ({
     x: token.totalTransactions,
     y: token.totalVolume,
     tokenId: token.tokenId,
@@ -91,7 +91,7 @@ export default function TokensCountVolumeGraph({ data, loading }: TokensCountVol
             type="number"
             dataKey="y"
             name="Volume"
-            tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+            tickFormatter={value => `$${(value / 1000).toFixed(0)}k`}
             tickLine={false}
             axisLine={false}
             tickMargin={10}

@@ -20,7 +20,7 @@ export const chainsByUid = MainnetRegistry.chains.reduce<Record<string, Chain>>(
 }, {})
 
 export const SNOWBRIDGE_MAINNET_PARACHAIN_URLS = Object.fromEntries(
-  SNOWBRIDGE_MAINNET_PARACHAINS.map((chain) => [chain.chainId.toString(), rpcConnectionAsHttps(chain.rpcConnection)]),
+  SNOWBRIDGE_MAINNET_PARACHAINS.map(chain => [chain.chainId.toString(), rpcConnectionAsHttps(chain.rpcConnection)]),
 )
 
 export function getAssetUid(env: Environment, chainId: string, tokenId: string): LocalAssetUid | undefined {

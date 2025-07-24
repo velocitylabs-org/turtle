@@ -92,7 +92,7 @@ export default function SwapsPage() {
               <TitleToggle
                 options={toggleOptions}
                 value={topSwapsGraphType}
-                onChange={(value) => setTopSwapsGraphType(value as GraphType)}
+                onChange={value => setTopSwapsGraphType(value as GraphType)}
                 className="ml-3"
               />
             </CardTitle>

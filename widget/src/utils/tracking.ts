@@ -48,7 +48,7 @@ const getTransferTimestamp = (txTrackingResult: TxTrackingResult) => txTrackingR
  * @returns - The matching transfer from the explorer history list, or `undefined` if no match is found.
  */
 export const findMatchingTransfer = (transfers: TxTrackingResult[], ongoingTransfer: StoredTransfer) =>
-  transfers.find((transfer) => {
+  transfers.find(transfer => {
     if (resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum') {
       return (
         transfer.id === ongoingTransfer.parachainMessageId ||
@@ -153,7 +153,7 @@ export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
 
 const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]): OngoingTransferWithDirection[] => {
   return ongoingTransfers
-    .map((t) => {
+    .map(t => {
       const direction = resolveDirection(t.sourceChain, t.destChain)
       return {
         id: t.id,
@@ -176,7 +176,7 @@ const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]): Ongoi
       //   direction
       // }
     })
-    .filter((t) => t.direction !== Direction.WithinPolkadot)
+    .filter(t => t.direction !== Direction.WithinPolkadot)
 }
 
 export const getFormattedOngoingTransfers = (ongoingTransfers: StoredTransfer[]) => {
@@ -188,7 +188,7 @@ export const getFormattedOngoingTransfers = (ongoingTransfers: StoredTransfer[])
   const formattedTransfers = formatTransfersWithDirection(ongoingTransfers)
   if (!formattedTransfers.length) return transfers
 
-  formattedTransfers.forEach((transfer) => {
+  formattedTransfers.forEach(transfer => {
     switch (transfer.direction) {
       case Direction.ToEthereum: {
         transfers.toEthereum.push(transfer)

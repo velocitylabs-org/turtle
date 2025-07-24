@@ -24,7 +24,7 @@ export default function TitleToggle({ options, value, defaultValue, onChange, cl
   const currentValue = value !== undefined ? value : internalValue
 
   useEffect(() => {
-    const activeIndex = options.findIndex((option) => option.value === currentValue)
+    const activeIndex = options.findIndex(option => option.value === currentValue)
     const activeButton = buttonsRef.current[activeIndex]
 
     if (activeButton) {
@@ -54,7 +54,7 @@ export default function TitleToggle({ options, value, defaultValue, onChange, cl
       {options.map((option, index) => (
         <button
           key={option.value}
-          ref={(el) => {
+          ref={el => {
             buttonsRef.current[index] = el
           }}
           onClick={() => handleClick(option.value)}

@@ -16,7 +16,7 @@ export const Alice = {
 export const waitForAuthRequest = (timeout = 10000) =>
   cy.waitUntil(
     () =>
-      cy.getTxRequests().then((req) => {
+      cy.getTxRequests().then(req => {
         return Object.entries(req).length > 0
       }),
     {
@@ -74,7 +74,7 @@ export const connectPJSWallet = (type: 'source' | 'dest') => {
   clickWalletConnectButton(type)
   cy.contains('Polkadot.js').click() // select extension
 
-  cy.getAuthRequests().then((authRequests) => {
+  cy.getAuthRequests().then(authRequests => {
     const requests = Object.values(authRequests)
     // we should have 1 connection request to the wallet
     cy.wrap(requests.length).should('eq', 1)

@@ -2,8 +2,8 @@ import { useCompletedTransfersStore } from '@/stores/completedTransfersStore'
 import useStore from './useStore'
 
 const useCompletedTransfers = () => {
-  const completedTransfers = useStore(useCompletedTransfersStore, (state) => state.completedTransfers)
-  const addCompletedTransfer = useCompletedTransfersStore((state) => state.addCompletedTransfer)
+  const completedTransfers = useStore(useCompletedTransfersStore, state => state.completedTransfers)
+  const addCompletedTransfer = useCompletedTransfersStore(state => state.addCompletedTransfer)
 
   return { completedTransfers, addCompletedTransfer }
 }

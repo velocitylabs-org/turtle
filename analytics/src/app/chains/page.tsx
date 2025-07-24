@@ -69,7 +69,7 @@ export default function ChainsPage() {
                 { value: 'count', label: 'Count' },
               ]}
               value={graphType}
-              onChange={(value) => setGraphType(value as GraphType)}
+              onChange={value => setGraphType(value as GraphType)}
               className="ml-3"
             />
           </CardTitle>
@@ -85,7 +85,7 @@ export default function ChainsPage() {
               data={chainCurrentSankeyData}
               type={graphType}
               selectedChain={chainUid}
-              setChainUid={(chainUid) => setChainUid(chainUid)}
+              setChainUid={chainUid => setChainUid(chainUid)}
               loading={loadingSankeyData}
             />
           )}

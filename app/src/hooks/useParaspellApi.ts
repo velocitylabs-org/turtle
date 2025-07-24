@@ -189,7 +189,7 @@ const useParaspellApi = () => {
           handleSendError(params.sender, error, setStatus, event.txHash.toString(), params.environment)
         }
       },
-      error: (callbackError) => {
+      error: callbackError => {
         if (callbackError instanceof InvalidTxError) {
           console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
           handleSendError(params.sender, callbackError, setStatus)
@@ -265,7 +265,7 @@ const useParaspellApi = () => {
           handleSendError(params.sender, error, setStatus, event.txHash.toString(), params.environment)
         }
       },
-      error: (callbackError) => {
+      error: callbackError => {
         handleSendError(params.sender, callbackError, setStatus)
       },
       complete: () => console.log('The first swap transaction is complete'),
@@ -318,7 +318,7 @@ const useParaspellApi = () => {
 
     const txSuccessful =
       txEvent.type === 'finalized' &&
-      txEvent.events.some((event) => event.type === 'System' && event.value.type === 'ExtrinsicSuccess')
+      txEvent.events.some(event => event.type === 'System' && event.value.type === 'ExtrinsicSuccess')
 
     if (!txSuccessful) {
       captureException(new Error('Swap failed'), { extra: { transfer } })
@@ -410,7 +410,7 @@ const useParaspellApi = () => {
   const addToOngoingTransfers = async (transferToStore: StoredTransfer, onComplete?: () => void): Promise<void> => {
     // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
     // and unlocking the UI by resetting the form back to 'Idle'.
-    await new Promise((resolve) =>
+    await new Promise(resolve =>
       setTimeout(() => {
         addOrUpdate(transferToStore)
         onComplete?.()

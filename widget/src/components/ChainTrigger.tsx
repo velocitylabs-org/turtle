@@ -131,7 +131,7 @@ export default function ChainTrigger({
                 placeholder="Address"
                 value={manualRecipientInput.address}
                 onChange={handleManualRecipientChange}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 data-cy="manual-address-input"
               />
             </>

@@ -82,7 +82,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
             // USDT first need, to revoke the current allowance, before setting the new one.
             await toPolkadot
               .approveTokenSpend(context, signer, tokenAmount!.token!.address, 0n)
-              .then((x) => x.wait())
+              .then(x => x.wait())
               .then(() => fetchAllowance())
           }
         }
@@ -94,7 +94,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
             tokenAmount!.token!.address,
             convertAmount(tokenAmount!.amount, tokenAmount!.token),
           )
-          .then((x) => x.wait())
+          .then(x => x.wait())
           .then(() => fetchAllowance())
 
         setApproving(false)

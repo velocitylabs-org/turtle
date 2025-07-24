@@ -116,7 +116,7 @@ export const getFeeEstimate = async (
           context.registry,
           token.address,
         )
-        .then((x) => x.totalFeeInDot)
+        .then(x => x.totalFeeInDot)
       const feeTokenInDollars = (await getTokenPrice(PolkadotTokens.DOT))?.usd ?? 0
 
       return {
@@ -213,5 +213,5 @@ export const getFeeEstimate = async (
 export const findValidationError = (
   validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
 ): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
-  return validation.logs.find((log) => log.kind === toPolkadotV2.ValidationKind.Error)
+  return validation.logs.find(log => log.kind === toPolkadotV2.ValidationKind.Error)
 }

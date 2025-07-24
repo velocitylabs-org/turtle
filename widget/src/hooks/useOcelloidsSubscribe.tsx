@@ -47,9 +47,9 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
     fetchAgentAndSubscribe()
 
     return () => {
-      const activeIds = xcmTransfers.map((t) => t.id)
+      const activeIds = xcmTransfers.map(t => t.id)
 
-      subscribedTransfers.forEach((id) => {
+      subscribedTransfers.forEach(id => {
         if (!activeIds.includes(id)) {
           subscribedTransfers.delete(id)
         }

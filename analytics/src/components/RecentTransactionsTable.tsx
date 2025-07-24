@@ -45,7 +45,7 @@ export default function RecentTransactionsTable({ transactions, isLoading }: Rec
               </TableCell>
             </TableRow>
           ) : (
-            transactions.map((tx) => (
+            transactions.map(tx => (
               <TableRow key={tx._id} className="hover:bg-muted/50">
                 <Link
                   href={`/tx-detail/${tx._id}`}

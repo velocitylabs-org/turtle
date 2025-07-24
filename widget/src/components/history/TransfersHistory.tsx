@@ -29,7 +29,7 @@ const TransfersHistory = ({
         <>
           {ongoingTransfers.length > 0 && (
             <div>
-              {ongoingTransfers.map((tx) => (
+              {ongoingTransfers.map(tx => (
                 <OngoingTransferDialog key={tx.id} transfer={tx} status={statusMessages[tx.id]} />
               ))}
             </div>
@@ -37,7 +37,7 @@ const TransfersHistory = ({
 
           {completedTransfers.length > 0 && (
             <div>
-              {completedTransfers.map((tx) => (
+              {completedTransfers.map(tx => (
                 <CompletedTransferDialog key={tx.id} tx={tx} />
               ))}
             </div>

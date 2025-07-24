@@ -158,7 +158,7 @@ function Calendar({
             onPrevClick={onPrevClick}
           />
         ),
-        CaptionLabel: (props) => (
+        CaptionLabel: props => (
           <CaptionLabel
             showYearSwitcher={showYearSwitcher}
             navView={navView}
@@ -233,7 +233,7 @@ function Nav({
   const handlePreviousClick = useCallback(() => {
     if (!previousMonth) return
     if (navView === 'years') {
-      setDisplayYears((prev) => ({
+      setDisplayYears(prev => ({
         from: prev.from - (prev.to - prev.from + 1),
         to: prev.to - (prev.to - prev.from + 1),
       }))
@@ -247,7 +247,7 @@ function Nav({
   const handleNextClick = useCallback(() => {
     if (!nextMonth) return
     if (navView === 'years') {
-      setDisplayYears((prev) => ({
+      setDisplayYears(prev => ({
         from: prev.from + (prev.to - prev.from + 1),
         to: prev.to + (prev.to - prev.from + 1),
       }))
@@ -312,7 +312,7 @@ function CaptionLabel({
       className="h-7 w-full truncate text-sm font-medium"
       variant="ghost"
       size="sm"
-      onClick={() => setNavView((prev) => (prev === 'days' ? 'years' : 'days'))}
+      onClick={() => setNavView(prev => (prev === 'days' ? 'years' : 'days'))}
     >
       {navView === 'days' ? children : `${displayYears.from} - ${displayYears.to}`}
     </Button>

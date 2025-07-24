@@ -18,7 +18,7 @@ const useSnowbridgeContext = () => {
     },
     staleTime: 43200000, // 12 hours in milliseconds
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   })
 
   return { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError }

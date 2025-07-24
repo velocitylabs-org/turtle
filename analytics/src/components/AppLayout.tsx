@@ -49,14 +49,14 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
       start() // Show loading bar
     }
     if (isMobile) {
-      setIsSidebarOpen((prev) => !prev)
+      setIsSidebarOpen(prev => !prev)
     }
   }
 
   return (
     <div className="relative h-full bg-muted/40">
       {/* Mobile Navigation */}
-      <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={(open) => setIsSidebarOpen(open)}>
+      <Sheet open={isMobile ? isSidebarOpen : false} onOpenChange={open => setIsSidebarOpen(open)}>
         <SheetContent side="left" className="w-72 bg-background/95 p-0 backdrop-blur-sm">
           <NavigationMenu routes={routes} onNavItemClicked={onNavItemClicked} pathname={pathname} />
         </SheetContent>
@@ -79,12 +79,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
           style={{ height: headerHeight }}
         >
           <div className="flex items-center">
-            <Button
-              variant="outline"
-              size="icon"
-              className="mr-4 flex"
-              onClick={() => setIsSidebarOpen((prev) => !prev)}
-            >
+            <Button variant="outline" size="icon" className="mr-4 flex" onClick={() => setIsSidebarOpen(prev => !prev)}>
               <Menu className="h-4 w-4" />
             </Button>
             <div className="flex flex-col">

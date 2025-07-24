@@ -22,12 +22,12 @@ const serializeFeeAmount = (fees: AmountInfo): AmountInfo => ({
 
 export const useOngoingTransfersStore = create<State>()(
   persist(
-    (set) => ({
+    set => ({
       // State
       transfers: [],
 
       // Actions
-      addOrUpdate: (newOngoingTransfer) => {
+      addOrUpdate: newOngoingTransfer => {
         if (!newOngoingTransfer) return
 
         const persistableTransfer = {
@@ -40,12 +40,12 @@ export const useOngoingTransfersStore = create<State>()(
         }
 
         console.log('Adding or updating transfer', persistableTransfer)
-        set((state) => {
-          const transferExists = state.transfers.some((transfer) => transfer.id === persistableTransfer.id)
+        set(state => {
+          const transferExists = state.transfers.some(transfer => transfer.id === persistableTransfer.id)
 
           if (transferExists) {
             return {
-              transfers: state.transfers.map((transfer) =>
+              transfers: state.transfers.map(transfer =>
                 transfer.id === persistableTransfer.id ? persistableTransfer : transfer,
               ),
             }
@@ -59,8 +59,8 @@ export const useOngoingTransfersStore = create<State>()(
 
       updateUniqueId: (id: string, uniqueTrackingId: string) => {
         if (!id || !uniqueTrackingId) return
-        set((state) => ({
-          transfers: state.transfers.map((transfer) =>
+        set(state => ({
+          transfers: state.transfers.map(transfer =>
             transfer.id === id ? { ...transfer, uniqueTrackingId } : transfer,
           ),
         }))
@@ -68,8 +68,8 @@ export const useOngoingTransfersStore = create<State>()(
 
       updateStatus: (id: string) => {
         if (!id) return
-        set((state) => ({
-          transfers: state.transfers.map((transfer) =>
+        set(state => ({
+          transfers: state.transfers.map(transfer =>
             transfer.id === id
               ? {
                   ...transfer,
@@ -81,10 +81,10 @@ export const useOngoingTransfersStore = create<State>()(
         }))
       },
 
-      remove: (id) => {
+      remove: id => {
         if (!id) return
-        set((state) => ({
-          transfers: state.transfers.filter((transfer) => transfer.id !== id),
+        set(state => ({
+          transfers: state.transfers.filter(transfer => transfer.id !== id),
         }))
       },
     }),

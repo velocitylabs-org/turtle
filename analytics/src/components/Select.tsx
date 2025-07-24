@@ -61,7 +61,7 @@ export default function Select({
     onChange('')
   }
 
-  const selectedOption = options.find((opt) => opt.value === selected)
+  const selectedOption = options.find(opt => opt.value === selected)
   const showClearButton = !disabled && allowClear && selected && !loading
 
   return (
@@ -99,7 +99,7 @@ export default function Select({
                       <span
                         role="button"
                         className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation()
                           handleClear()
                         }}
@@ -129,7 +129,7 @@ export default function Select({
               ) : (
                 <div className="overflow-hidden p-1 text-foreground">
                   <div className="max-h-64 overflow-auto">
-                    {options.map((option) => (
+                    {options.map(option => (
                       <div
                         key={option.value}
                         className={cn(

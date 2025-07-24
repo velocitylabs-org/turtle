@@ -151,12 +151,12 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
 
   let tokenSymbol: string | undefined
   if (sourceChain === 'Moonbeam') {
-    tokenSymbol = supportedAssets.find((a) => {
+    tokenSymbol = supportedAssets.find(a => {
       const lowered = a.toLowerCase()
       const stripped = lowered.startsWith('xc') ? lowered.slice(2) : lowered
       return stripped === token.symbol.toLowerCase()
     })
-  } else tokenSymbol = supportedAssets.find((a) => a.toLowerCase() === token.symbol.toLowerCase())
+  } else tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
 
   if (!tokenSymbol) console.error(`Token symbol not found: ${token.symbol} on ${sourceChain}`)
   // captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`)) - Sentry
@@ -199,7 +199,7 @@ export function getNativeToken(chain: Chain): Token {
   if (!chainNode) throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
-  const token = REGISTRY[Environment.Mainnet].tokens.find((t) => t.symbol === symbol) // TODO handle duplicate symbols
+  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
 }

@@ -116,7 +116,7 @@ export default function HomeDashboardPage() {
               <TitleToggle
                 options={toggleOptions}
                 value={transactionGraphType}
-                onChange={(value) => setTransactionGraphType(value as GraphType)}
+                onChange={value => setTransactionGraphType(value as GraphType)}
                 className="ml-3"
               />
             </CardTitle>
@@ -129,7 +129,7 @@ export default function HomeDashboardPage() {
                     label: config.label,
                   }))}
                   selected={timePeriod}
-                  onChange={(val) => setTimePeriod(val as TimePeriodType)}
+                  onChange={val => setTimePeriod(val as TimePeriodType)}
                   showBadge={false}
                   minimal
                   className="w-[100px] !text-black"
@@ -158,7 +158,7 @@ export default function HomeDashboardPage() {
               <TitleToggle
                 options={toggleOptions}
                 value={tokensGraphType}
-                onChange={(value) => setTokensGraphType(value as GraphType)}
+                onChange={value => setTokensGraphType(value as GraphType)}
                 className="ml-3"
               />
             </CardTitle>

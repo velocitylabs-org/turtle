@@ -16,7 +16,7 @@ export type TransferTabOptions = TransferTab
 const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigRegistryType }) => {
   useMemo(() => generateWidgetTheme(theme), [theme])
 
-  const ongoingTransfers = useOngoingTransfersStore((state) => state.transfers)
+  const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const { completedTransfers } = useCompletedTransfers()
 
   const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')

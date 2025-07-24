@@ -12,7 +12,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const nextConfig = {
   // Related to this issue: https://github.com/vercel/next.js/issues/56887
   ...(!isProduction && { outputFileTracingRoot: '/' }),
-  webpack: (config) => {
+  webpack: config => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     config.experiments = { asyncWebAssembly: true, topLevelAwait: true, layers: true }
 

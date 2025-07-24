@@ -28,7 +28,7 @@ export const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE |
 // It prevents opening socket for local swaps
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
   transfers.filter(
-    (t) => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot && !isSameChainSwap(t),
+    t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot && !isSameChainSwap(t),
   )
 
 export const initOcelloidsClient = (API_KEY: string) => {
@@ -44,7 +44,7 @@ export const getOcelloidsAgentApi = async (): Promise<OcelloidsAgentApi<xcm.XcmI
 
     await OCLD_ClIENT.health()
       .then(() => {})
-      .catch((error) => {
+      .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
         captureException(errorMsg, error)
@@ -88,7 +88,7 @@ export const xcmOcceloidsSubscribe = async (
     const ws = await ocelloidsAgentApi.subscribe<xcm.XcmMessagePayload>(
       getSubscription(sourceChain.chainId, destChain.chainId, sourceChain.network),
       {
-        onMessage: (msg) => {
+        onMessage: msg => {
           const {
             type,
             origin: { event, extrinsicHash },
@@ -152,12 +152,12 @@ export const xcmOcceloidsSubscribe = async (
             }
           }
         },
-        onAuthError: (error) => console.log('Auth Error', error),
-        onError: (error) => {
+        onAuthError: error => console.log('Auth Error', error),
+        onError: error => {
           console.log('Ocelloids WebSocket Error', error)
           captureException(error, { extra: { ocelloids: 'WebSocket Error' } })
         },
-        onClose: (event) => console.log('WebSocket Closed', event.reason),
+        onClose: event => console.log('WebSocket Closed', event.reason),
       },
       {
         onSubscriptionCreated: () => {},

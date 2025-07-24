@@ -39,7 +39,7 @@ export function LogoImg({ logoURI, className, size, imgClassName }: LogoImgProps
         src={logoURI}
         alt={logoURI}
         className={cn('h-full w-full object-cover', imgClassName)}
-        onError={(e) => {
+        onError={e => {
           ;(e.target as HTMLImageElement).style.display = 'none'
         }}
       />

@@ -46,4 +46,4 @@ export const formatOngoingTransferDate = (date: string | Date): string => {
   })
 }
 
-export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+export const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))

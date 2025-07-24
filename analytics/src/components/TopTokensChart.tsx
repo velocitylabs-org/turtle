@@ -18,7 +18,7 @@ export default function TopTokensChart({ data = [], type, total = 0 }: TopTokens
   const typeVolume = type === 'volume'
   const isMobile = useIsMobile()
 
-  const formattedData = data.map((item) => {
+  const formattedData = data.map(item => {
     const value = typeVolume ? (item.volume ?? 0) : (item.count ?? 0)
 
     return {
@@ -57,7 +57,7 @@ export default function TopTokensChart({ data = [], type, total = 0 }: TopTokens
             outerRadius={100}
             dataKey="value"
             nameKey="name"
-            label={(props) => (isMobile ? props.name : <PieLabel {...props} />)}
+            label={props => (isMobile ? props.name : <PieLabel {...props} />)}
           >
             {formattedData.map((_, index) => (
               <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />

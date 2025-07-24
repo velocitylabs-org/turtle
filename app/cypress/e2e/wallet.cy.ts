@@ -28,7 +28,7 @@ describe('test cypress-polkadot-wallet plugin', () => {
     clickWalletConnectButton('source')
     cy.contains('Polkadot.js').click() // select extension
 
-    cy.getAuthRequests().then((authRequests) => {
+    cy.getAuthRequests().then(authRequests => {
       const requests = Object.values(authRequests)
       // we should have 1 connection request to the wallet
       cy.wrap(requests.length).should('eq', 1)

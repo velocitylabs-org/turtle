@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { type TxStatus, txStatusOptions } from '@/models/Transaction'
 
 const txDetailViewSchema = z.object({
-  _id: z.any().transform((id) => id?.toString() || ''),
+  _id: z.any().transform(id => id?.toString() || ''),
   txHashId: z.string(),
   sourceTokenId: z.string(),
   sourceTokenAmount: z.number(),
@@ -23,7 +23,7 @@ const txDetailViewSchema = z.object({
   txDate: z
     .date()
     .or(z.string())
-    .transform((date) => (date instanceof Date ? date.toISOString() : date)),
+    .transform(date => (date instanceof Date ? date.toISOString() : date)),
   hostedOn: z.string(),
   isSwap: z.boolean(),
   status: z.enum(txStatusOptions) as z.ZodType<TxStatus>,

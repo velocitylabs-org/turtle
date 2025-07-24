@@ -32,7 +32,7 @@ describe('Transfer', () => {
   it('convert input amount to based back to humans', () => {
     const inputs = [1, 10000, 123, 0.35]
 
-    inputs.forEach((x) => {
+    inputs.forEach(x => {
       expect(toHuman(safeConvertAmount(x, EthereumTokens.WETH)!, EthereumTokens.WETH)).toBe(x)
     })
   })

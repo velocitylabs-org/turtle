@@ -288,7 +288,7 @@ export const orderTransfersByDate = (transfers: CompletedTransfer[]) =>
 export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
   const orderedTransfersByDate = orderTransfersByDate(transfers)
   return Object.keys(orderedTransfersByDate)
-    .map((date) => {
+    .map(date => {
       return { date, transfers: orderedTransfersByDate[date] }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

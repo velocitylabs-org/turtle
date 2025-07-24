@@ -46,7 +46,7 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
               </TableCell>
             </TableRow>
           ) : (
-            swaps.map((swap) => (
+            swaps.map(swap => (
               <TableRow key={swap._id} className="hover:bg-muted/50">
                 <Link
                   href={`/tx-detail/${swap._id}`}

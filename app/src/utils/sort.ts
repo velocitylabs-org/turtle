@@ -18,7 +18,7 @@ export const reorderOptionsBySelectedItem = <T>(options: T[], key: string, selec
   }
 
   const reorderedOptions: T[] = []
-  options.forEach((option) => {
+  options.forEach(option => {
     const uniqueId = getValue<T>(option, key)
     if (uniqueId === selectedId) reorderedOptions.unshift(option)
     else reorderedOptions.push(option)

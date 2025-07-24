@@ -4,5 +4,5 @@
  */
 
 export default {
-  '**/*.{js,jsx,ts,tsx,json,mjs,cjs}': (stagedFiles) => [`biome check --write ${stagedFiles.join(' ')}`],
+  '**/*.{js,jsx,ts,tsx,json,mjs,cjs}': stagedFiles => [`biome check --write ${stagedFiles.join(' ')}`],
 }

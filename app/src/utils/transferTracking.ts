@@ -161,7 +161,7 @@ export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
  * @returns - The matching transfer from the explorer history list, or `undefined` if no match is found.
  */
 export const findMatchingTransfer = (transfers: TxTrackingResult[], ongoingTransfer: StoredTransfer) =>
-  transfers.find((transfer) => {
+  transfers.find(transfer => {
     if ('submitted' in transfer) {
       if (resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum') {
         return (

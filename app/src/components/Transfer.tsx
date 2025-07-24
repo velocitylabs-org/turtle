@@ -244,7 +244,7 @@ export default function Transfer() {
 
   const swapEthToWEthButton = useMemo(
     () => ({
-      onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then((_) => fetchBalance()),
+      onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ => fetchBalance()),
       label: `Swap the difference`,
     }),
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
@@ -293,7 +293,7 @@ export default function Transfer() {
                       }}
                       amountProps={{
                         value: tokenField.value?.amount ?? null,
-                        onChange: (amount) => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                        onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: sourceTokenAmountErrorMessage,
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
@@ -346,7 +346,7 @@ export default function Transfer() {
                     }}
                     tokenProps={{
                       value: tokenField.value?.token ?? null,
-                      onChange: (token) => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                      onChange: token => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
                       options: destinationTokenOptions,
                       error: errors.destinationTokenAmount?.token?.message,
                       clearable: true,
@@ -356,7 +356,7 @@ export default function Transfer() {
                     }}
                     amountProps={{
                       value: destinationTokenAmount?.amount ?? null,
-                      onChange: (amount) => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                      onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
                       placeholder: receiveAmountPlaceholder,
                       disabled: true,

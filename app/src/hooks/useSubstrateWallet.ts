@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react'
 import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
 
 const useSubstrateWallet = () => {
-  const substrateAccount = useSubstrateWalletStore((state) => state.account)
-  const setSubstrateAccount = useSubstrateWalletStore((state) => state.setAccount)
-  const evmAccount = useSubstrateWalletStore((state) => state.evmAccount)
-  const setEvmAccount = useSubstrateWalletStore((state) => state.setEvmAccount)
-  const isModalOpen = useSubstrateWalletStore((state) => state.modalOpen)
-  const setModalOpen = useSubstrateWalletStore((state) => state.setModalOpen)
-  const type = useSubstrateWalletStore((state) => state.type)
-  const setType = useSubstrateWalletStore((state) => state.setType)
+  const substrateAccount = useSubstrateWalletStore(state => state.account)
+  const setSubstrateAccount = useSubstrateWalletStore(state => state.setAccount)
+  const evmAccount = useSubstrateWalletStore(state => state.evmAccount)
+  const setEvmAccount = useSubstrateWalletStore(state => state.setEvmAccount)
+  const isModalOpen = useSubstrateWalletStore(state => state.modalOpen)
+  const setModalOpen = useSubstrateWalletStore(state => state.setModalOpen)
+  const type = useSubstrateWalletStore(state => state.type)
+  const setType = useSubstrateWalletStore(state => state.setType)
 
   /** The extensions that are available to connect to. Must be fetched manually. */
   const [extensions, setExtensions] = useState<InjectedExtension[]>([])
@@ -50,7 +50,7 @@ const useSubstrateWallet = () => {
       if (selectedExtension) {
         try {
           setLoading(true)
-          unsubscribe = selectedExtension.accounts.subscribe((injectedAccounts) => {
+          unsubscribe = selectedExtension.accounts.subscribe(injectedAccounts => {
             setAccounts(injectedAccounts)
             setLoading(false)
           })

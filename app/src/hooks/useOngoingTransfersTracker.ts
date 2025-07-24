@@ -22,7 +22,7 @@ type Message = string
 
 const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
   return ongoingTransfers
-    .map((t) => {
+    .map(t => {
       const direction = resolveDirection(t.sourceChain, t.destChain)
       return {
         id: t.id,
@@ -41,7 +41,7 @@ const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
         }),
       }
     })
-    .filter((t) => t.direction !== Direction.WithinPolkadot)
+    .filter(t => t.direction !== Direction.WithinPolkadot)
 }
 
 const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
@@ -95,7 +95,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
 
   // update ongoing and completed transfers
   useEffect(() => {
-    ongoingTransfers.forEach((ongoing) => {
+    ongoingTransfers.forEach(ongoing => {
       if (transfers && 'error' in transfers) return
 
       const foundTransfer = findMatchingTransfer(transfers, ongoing)
@@ -103,7 +103,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
       if (foundTransfer) {
         // Update transfer status
         const status = getTransferStatus(foundTransfer)
-        setStatusMessages((prev) => ({ ...prev, [ongoing.id]: status }))
+        setStatusMessages(prev => ({ ...prev, [ongoing.id]: status }))
 
         // Look for a subscan trackingUniqueId for any XCM or AH to ETH transfers,
         // to eventually update ongoing transfer store

@@ -43,7 +43,7 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  const environment = useEnvironmentStore((state) => state.current)
+  const environment = useEnvironmentStore(state => state.current)
   const { addNotification } = useNotificationStore()
   const {
     control,
@@ -367,7 +367,7 @@ const useTransferForm = () => {
   }, [tokenId, setValue, sourceTokenAmount?.token])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
-    (data) => {
+    data => {
       const { sourceChain, destinationChain, sourceTokenAmount, destinationTokenAmount, manualRecipient } = data
       const recipient = getRecipientAddress(manualRecipient, destinationWallet)
       const sourceAmount = sourceTokenAmount

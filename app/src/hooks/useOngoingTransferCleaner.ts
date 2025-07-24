@@ -14,7 +14,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
   const { addNotification } = useNotification()
 
   useEffect(() => {
-    ongoingTransfers.forEach((ongoing) => {
+    ongoingTransfers.forEach(ongoing => {
       if (startedTooLongAgo(ongoing)) {
         const explorerLink = getExplorerLink(ongoing)
 

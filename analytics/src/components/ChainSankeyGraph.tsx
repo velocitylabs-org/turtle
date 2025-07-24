@@ -30,9 +30,9 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
-  const flowData = data?.map((item) => ({ ...item, from: `${item.from}-origin` }))
+  const flowData = data?.map(item => ({ ...item, from: `${item.from}-origin` }))
 
-  const chainOptions = chains.map((chain) => ({
+  const chainOptions = chains.map(chain => ({
     value: chain.uid,
     label: chain.name,
     logoURI: getSrcFromLogo(chain),
@@ -51,7 +51,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       return Math.max(baseMinHeight, minHeight)
     }
 
-    const targets = Array.from(new Set(flowData.map((d) => d.to)))
+    const targets = Array.from(new Set(flowData.map(d => d.to)))
     const nodeCount = targets.length
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
@@ -95,7 +95,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     }
 
     if (containerRef.current && typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver((entries) => {
+      resizeObserver = new ResizeObserver(entries => {
         const newWidth = entries[0].contentRect.width
         if (newWidth !== previousWidth) {
           previousWidth = newWidth
@@ -129,7 +129,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     const margin = isMobile ? { top: 5, right: 15, bottom: 0, left: -10 } : { top: 5, right: 50, bottom: 20, left: 0 }
     const nodeSize = 28
     let maxValue = 0
-    flowData.forEach((d) => {
+    flowData.forEach(d => {
       maxValue = Math.max(maxValue, d.size)
     })
 
@@ -140,13 +140,13 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       svg.setAttribute('height', requiredHeight.toString())
     }
     const nodeMap = new Map<string, Node>()
-    nodes.forEach((node) => nodeMap.set(node.id, node))
+    nodes.forEach(node => nodeMap.set(node.id, node))
     nodeMap.set(`${selectedChain}-origin`, sourceNode)
     const links = createLinks(flowData, nodeMap, selectedChain, maxValue, nodeSize, width)
     createSvgDefsElements(svg, nodeSize)
 
     const pathElements = new Map<string, SVGElement>()
-    links.forEach((link) => {
+    links.forEach(link => {
       const path = createSvgElement(
         'path',
         {
@@ -192,11 +192,11 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       weightText.setAttribute('font-size', '10px')
     }
 
-    nodes.forEach((node) => {
+    nodes.forEach(node => {
       const nodeGroup = renderNode(svg, node, nodeSize)
 
       if (node.id !== `${selectedChain}-origin`) {
-        const nodeLink = links.find((link) => link.target === node.id)
+        const nodeLink = links.find(link => link.target === node.id)
         if (nodeLink) {
           const nodeWeight = nodeLink.value
           const percentage = (nodeWeight / totalWeight) * 100
@@ -250,7 +250,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
             <Select
               options={chainOptions}
               selected={selectedChain}
-              onChange={(val) => setChainUid(val as string)}
+              onChange={val => setChainUid(val as string)}
               placeholder="Source chain"
               showBadge={false}
               loading={loading}
@@ -432,8 +432,8 @@ function createNodes(
   }
 
   totalHeight = Math.max(margin.top + nodeSize, margin.top)
-  const targets = Array.from(new Set(flowData.map((d) => d.to)))
-  targets.forEach((id) => {
+  const targets = Array.from(new Set(flowData.map(d => d.to)))
+  targets.forEach(id => {
     const chain = chainsByUid[id]
     const logoURI = chain ? getSrcFromLogo(chain) : ''
     const nodeY = Math.max(margin.top + nodeSize, totalHeight + nodeSize / 2)
@@ -462,7 +462,7 @@ function createLinks(
 ): Link[] {
   const links: Link[] = []
 
-  flowData.forEach((d) => {
+  flowData.forEach(d => {
     if (d.from !== `${selectedChain}-origin`) return
 
     const source = nodeMap.get(d.from)!

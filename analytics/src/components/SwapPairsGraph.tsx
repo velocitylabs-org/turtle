@@ -98,7 +98,7 @@ export default function SwapPairsGraph({ data = [], loading, type, totalVolume, 
             dataKey="displayValue"
             nameKey="pairName"
             labelLine={false}
-            label={(props) => <SwapPairLabel {...props} />}
+            label={props => <SwapPairLabel {...props} />}
           >
             {formattedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.fill} />

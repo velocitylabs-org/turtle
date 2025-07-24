@@ -10,14 +10,14 @@ interface State {
   removeNotification: (id: number) => void
 }
 
-export const useNotificationStore = create<State>((set) => ({
+export const useNotificationStore = create<State>(set => ({
   notifications: [],
-  addNotification: (notification) =>
-    set((state) => ({
+  addNotification: notification =>
+    set(state => ({
       notifications: [...state.notifications, { ...notification, id: Date.now() }],
     })),
-  removeNotification: (id) =>
-    set((state) => ({
-      notifications: state.notifications.filter((n) => n.id !== id),
+  removeNotification: id =>
+    set(state => ({
+      notifications: state.notifications.filter(n => n.id !== id),
     })),
 }))

@@ -276,7 +276,7 @@ const useTransferForm = () => {
   ])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
-    (data) => {
+    data => {
       const { sourceChain, destinationChain, sourceTokenAmount, destinationTokenAmount, manualRecipient } = data
       const recipient = getRecipientAddress(manualRecipient, destinationWallet)
       const sourceAmount = sourceTokenAmount

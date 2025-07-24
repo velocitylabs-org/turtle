@@ -26,7 +26,7 @@ const getCachedTransferHistory = unstable_cache(
         withinPolkadot: [], // XCM transfer: Parachain to AH, AH to Parachain, Parachain to Parachain, etc
       }
 
-      ongoingTransfers.map((transfer) => {
+      ongoingTransfers.map(transfer => {
         switch (transfer.direction) {
           case Direction.ToEthereum: {
             transfers.toEthereum.push(transfer)
