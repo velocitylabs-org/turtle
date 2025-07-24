@@ -10,12 +10,11 @@ The `main` branch refers to the last stable version of <a href="https://app.turt
 
 ## Code Guidelines
 
-This project uses recommended ESLint and Typescript rules to ensure coding good practices.
+This project uses recommended Biome and Typescript rules to ensure coding good practices.
 
 We've setup linters and formatters to help catch errors and improve the development experience:
 
-- [Prettier](https://prettier.io/) – ensures that code is formatted in a readable way.
-- [ESLint](https://eslint.org/) — checks code for antipatterns as well as formatting.
+- [Biome](https://biomejs.dev/) – ensures that code is formatted in a readable way and checks code for antipatterns as well as formatting
 
 **All modifications** must be made in a **pull-request** to solicit feedback from other contributors.
 

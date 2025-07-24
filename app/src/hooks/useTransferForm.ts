@@ -55,6 +55,7 @@ const useTransferForm = () => {
     trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
+    // biome-ignore lint/suspicious/noExplicitAny: any
     resolver: zodResolver(schema as any),
     mode: 'onChange',
     delayError: 3000,
@@ -412,7 +413,6 @@ const useTransferForm = () => {
   useEffect(() => {
     if (tokenId)
       setValue('sourceTokenAmount', { token: sourceTokenAmount?.token ?? null, amount: null }, { shouldValidate: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, setValue, sourceTokenAmount?.token])
 
   return {

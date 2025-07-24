@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-namespace
 import { Slot } from '@radix-ui/react-slot'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { cva, type VariantProps } from 'class-variance-authority'

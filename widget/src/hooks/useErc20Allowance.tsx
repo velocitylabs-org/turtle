@@ -49,7 +49,6 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [network, owner, tokenAmount, context, refetchFees])
 
   // Reactively fetch the erc20 spend allowance when the relevant form fields change

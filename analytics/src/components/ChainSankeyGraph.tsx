@@ -56,7 +56,6 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
     return Math.max(baseMinHeight, minHeight)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flowData, loading, dimensions.height])
 
   useLayoutEffect(() => {
@@ -113,7 +112,6 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       }
       window.removeEventListener('resize', handleWindowResize)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dimensions.width, dynamicHeight])
 
   useEffect(() => {
@@ -227,7 +225,6 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
         }
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flowData, dimensions, isMobile, loading, selectedChain, type])
 
   const noDataAvailable = useMemo(() => {

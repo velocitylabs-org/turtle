@@ -46,7 +46,7 @@
         "useTemplate": "error"
       },
       "suspicious": {
-        "noExplicitAny": "off",
+        "noExplicitAny": "error",
         "noArrayIndexKey": "off",
         "noConfusingVoidType": "off"
       },

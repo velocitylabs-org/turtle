@@ -53,7 +53,6 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
         captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ongoingTransfers, addCompletedTransfer, addNotification, remove])
 }
 

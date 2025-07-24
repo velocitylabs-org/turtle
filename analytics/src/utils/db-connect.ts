@@ -1,8 +1,11 @@
+// biome-ignore lint/correctness/noUnusedImports: we are actually using this import
+import mongoose, { type Mongoose } from 'mongoose'
 import Transaction from '@/models/Transaction'
 
 declare global {
-  // eslint-disable-next-line no-var
-  var mongoose: any // This must be a var and not a let/const
+  // biome-ignore lint/suspicious/noRedeclare: mongoose needs to be declared this way
+  // biome-ignore lint/suspicious/noExplicitAny: any
+  var mongoose: any // This must be a `var` and not a `let / const`
 }
 
 let cached = global.mongoose
@@ -25,7 +28,7 @@ export default async function dbConnect() {
     const opts = {
       bufferCommands: false,
     }
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then(mongoose => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose: Mongoose) => {
       return mongoose
     })
   }

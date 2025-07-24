@@ -269,7 +269,6 @@ const getBorder = (result: TransferResult) => {
   }
 }
 
-/* eslint-disable react-refresh/only-export-components */
 export const getSVGColor = (result: TransferResult) => {
   switch (result) {
     case TxStatus.Undefined:

@@ -56,11 +56,9 @@ export const createTransferTx = async (params: TransferParams, wssEndpoint?: str
  * @param params - The transfer parameters
  * @returns - A Promise that resolves to the tx hash.
  */
-export const moonbeamTransfer = async (
-  params: TransferParams,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  viemClient: any,
-): Promise<string> => {
+
+// biome-ignore lint/suspicious/noExplicitAny: any
+export const moonbeamTransfer = async (params: TransferParams, viemClient: any): Promise<string> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)

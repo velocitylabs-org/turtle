@@ -55,11 +55,12 @@ export const createTransferTx = async (params: TransferParams, wssEndpoint?: str
  * Submits a moonbeam xcm transaction using Paraspell EvmBuilder.
  *
  * @param params - The transfer parameters
+ * @param viemClient
  * @returns - A Promise that resolves to the tx hash.
  */
 export const moonbeamTransfer = async (
   params: TransferParams,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: any
   viemClient: any,
 ): Promise<string> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params

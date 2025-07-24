@@ -23,7 +23,6 @@ const useLookupName = (network?: Network, address?: string) => {
 
   useEffect(() => {
     fetchName()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchName])
 
   return accountName

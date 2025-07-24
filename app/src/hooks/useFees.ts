@@ -191,8 +191,6 @@ const useFees = (
     } finally {
       setLoading(false)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sourceChain,
     destinationChain,
@@ -206,7 +204,7 @@ const useFees = (
     destToken,
     snowbridgeContextError,
     token,
-    fees.amount,
+    fees?.amount,
     fees?.token,
     isSnowbridgeContextLoading,
   ])

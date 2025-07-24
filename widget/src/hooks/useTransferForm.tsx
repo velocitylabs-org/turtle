@@ -53,7 +53,7 @@ const useTransferForm = () => {
     trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: any
     resolver: zodResolver(schema as any),
     mode: 'onChange',
     delayError: 3000,
@@ -204,7 +204,6 @@ const useTransferForm = () => {
       setValue('destinationChain', newValue)
       trigger()
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setValue, trigger],
   )
 
@@ -281,7 +280,6 @@ const useTransferForm = () => {
   // validate recipient address
   useEffect(() => {
     setManualRecipientError(isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualRecipient.address, destinationChain, manualRecipient.enabled, manualRecipient])
 
   // validate token amount
@@ -363,7 +361,6 @@ const useTransferForm = () => {
   useEffect(() => {
     if (tokenId)
       setValue('sourceTokenAmount', { token: sourceTokenAmount?.token ?? null, amount: null }, { shouldValidate: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, setValue, sourceTokenAmount?.token])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(

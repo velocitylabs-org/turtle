@@ -40,7 +40,7 @@ const getTransferProgress = (date: Date, direction: Direction, shouldStartProgre
   return Math.min(progress + 1, 90)
 }
 
-const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => {
+export default function useTransferProgress(transfer: StoredTransfer, direction: Direction) {
   const transferDate = transfer.finalizedAt ? transfer.finalizedAt : transfer.date
   const shouldStartProgress = !!(
     direction !== Direction.WithinPolkadot ||
@@ -78,5 +78,3 @@ const useTransferProgress = (transfer: StoredTransfer, direction: Direction) => 
 
   return progress
 }
-
-export default useTransferProgress

@@ -1,7 +1,7 @@
 import type { StoredTransferV0 } from '@/models/transfer'
 import { STORE_VERSIONS } from './constants'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: any
 export const migrateOngoingTransfers = (persistedState: any, version: number) => {
   if (version === STORE_VERSIONS.ONGOING_TRANSFERS) return persistedState
 

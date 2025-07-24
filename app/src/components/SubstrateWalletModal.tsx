@@ -83,7 +83,6 @@ export default function SubstrateWalletModal() {
 
     fetch()
     // We just need to run this effect when isModalOpen
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen, fetchExtensions, setSelectedExtension])
 
   const filteredAccounts = accounts.filter(account =>

@@ -32,7 +32,7 @@ export const extractPjsEvents = (result: ISubmittableResult): OnChainBaseEvents 
     if (!extrinsicSuccess) throw new Error(`'ExtrinsicSuccess' event not found`)
 
     const blockNumber: string | undefined =
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // biome-ignore lint/suspicious/noExplicitAny: any
       'blockNumber' in result ? (result.blockNumber as any).toJSON() : undefined
     const extrinsicIndex: string | undefined = blockNumber && txIndex ? `${blockNumber}-${txIndex}` : undefined
 
@@ -47,17 +47,17 @@ export const extractPjsEvents = (result: ISubmittableResult): OnChainBaseEvents 
       }
       // Get messageHash from xcmpQueue pallet (ex: AH to ETH)
       if (method === 'XcmpMessageSent' && section === 'xcmpQueue' && 'messageHash' in data) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: any
         messageHash = (data.messageHash as any).toString()
       }
       // Get messageId from xcmPallet pallet (ex: Relay Chain to AH)
       if (method === 'Sent' && section === 'xcmPallet' && 'messageId' in data) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: any
         messageId = (data.messageId as any).toString()
       }
       // Get messageId from polkadotXcm pallet (ex: AH to Relay Chain or ETH)
       if (method === 'Sent' && section === 'polkadotXcm' && 'messageId' in data) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: any
         messageId = (data.messageId as any).toString()
       }
       // Get BatchCompleted from utility pallet for Non local swap

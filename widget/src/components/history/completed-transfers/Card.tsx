@@ -11,7 +11,6 @@ import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import { colors } from '../../../../tailwind.config'
 import { getSVGColor } from './Dialog'
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const getStatusIcon = (status: TransferResult) => {
   switch (status) {
     case TxStatus.Failed:

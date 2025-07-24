@@ -106,7 +106,6 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
         }
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transfers, addCompletedTransfer, remove, ongoingTransfers, addNotification, updateProgress])
 
   return {

@@ -5,7 +5,7 @@ import { EthereumTokens, type Network, type TokenAmount } from '@velocitylabs-or
 import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
-import { convertAmount, toHuman } from '../utils/transfer'
+import { convertAmount, toHuman } from '@/utils/transfer'
 import useNotification from './useNotification'
 
 interface Params {
@@ -51,7 +51,6 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [network, owner, tokenAmount, context, refetchFees])
 
   // Reactively fetch the erc20 spend allowance when the relevant form fields change
