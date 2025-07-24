@@ -52,6 +52,16 @@ export default {
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
     },
   },
 }
