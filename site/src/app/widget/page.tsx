@@ -2,10 +2,10 @@ import TurtlesBackground from '@/components/TurtlesBackground'
 import { Body, Button, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { headerButtons } from '@/components/widget/data'
-import { XXXLarge } from '@velocitylabs-org/turtle-ui'
+import { XXXLarge, Large } from '@velocitylabs-org/turtle-ui'
 import { developerIntegrationGuide, features } from '@/components/widget/data'
-import getAnalyticsData from '@/actions/analytics'
 import CodeBit from '@/components/widget/CodeBit'
+import Networks from '@/components/widget/Networks'
 
 const SectionInnerContainer = ({
   children,
@@ -29,18 +29,12 @@ const Divider = () => {
 }
 
 export default async function Widget() {
-  const analyticsData = await getAnalyticsData()
-
   return (
     <>
       <section className="relative flex min-h-[110vh] flex-col items-center justify-center">
-        <TurtlesBackground
-          blurredBackground
-          whiteWaves
-          initialVolume={analyticsData?.totalVolumeUsd}
-        />
-        <div className="absolute top-20 z-0 rounded-4xl border border-black bg-white lg:w-[656px]">
-          <div>
+        <TurtlesBackground blurredBackground whiteWaves initialVolume={undefined} />
+        <div className="absolute top-20 z-0 flex flex-col gap-14">
+          <div className="rounded-4xl border border-black bg-white lg:w-[656px]">
             <div className="flex max-w-[375px] flex-col gap-20 p-8">
               <XXXLarge className="leading-none">Turtle Widget</XXXLarge>
               <div className="flex flex-col gap-10">
@@ -51,6 +45,7 @@ export default async function Widget() {
                 <div className="flex flex-wrap gap-2">
                   {headerButtons.map((button) => (
                     <Button variant="outline" size="sm" key={button.label}>
+                      <Image src={button.icon} alt={button.label} width={24} height={24} />
                       <p className="text-sm">{button.label}</p>
                     </Button>
                   ))}
@@ -59,9 +54,9 @@ export default async function Widget() {
             </div>
             {/* <TurtleWidget /> */}
           </div>
-        </div>
-        <div className="z-10 flex flex-col items-center justify-center">
-          <p className="text-lg text-white">Start Integrating</p>
+          <div className="z-10 flex flex-col items-center justify-center">
+            <p className="text-lg text-white">Start Integrating</p>
+          </div>
         </div>
       </section>
       <section className="flex min-h-[100vh] flex-col items-center gap-20 bg-white pb-48 lg:pb-96">
@@ -80,7 +75,7 @@ export default async function Widget() {
           <ul className="flex flex-col gap-8">
             {features.map((feature) => (
               <li className="flex flex-col gap-2" key={feature.title}>
-                <h4 className="text-xl font-bold leading-none">{feature.title}</h4>
+                <Large>{feature.title}</Large>
                 <ul className="ml-6 list-disc">
                   {feature.listItems.map((item) => (
                     <li key={item}>
@@ -102,7 +97,8 @@ export default async function Widget() {
           <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer heading="🌐 Compatible Networks & Tokens">
-          <Body>An ever expanding Network</Body>
+          <Body>An ever expanding network</Body>
+          <Networks />
           <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer heading="🙋 Questions or Feedback?">

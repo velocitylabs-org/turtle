@@ -16,6 +16,20 @@ export const XXXLarge = <T extends React.ElementType = 'h1'>({
   )
 }
 
+export const Large = <T extends React.ElementType = 'h4'>({
+  children,
+  as,
+  className,
+  ...rest
+}: PolymorphicComponentProps<T>) => {
+  const Component = as || 'h4'
+  return (
+    <Component className={cn('text-xl font-bold leading-none', className)} {...rest}>
+      {children}
+    </Component>
+  )
+}
+
 export const Body = <T extends React.ElementType = 'p'>({
   children,
   as,

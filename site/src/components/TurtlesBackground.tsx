@@ -29,7 +29,7 @@ const TurtlesBackground = ({
             <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
               {header}
             </h1>
-            <AnalyticData initialVolume={initialVolume} />
+            {initialVolume && <AnalyticData initialVolume={initialVolume} />}
           </div>
         </div>
       </div>

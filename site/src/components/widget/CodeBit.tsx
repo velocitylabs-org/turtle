@@ -1,5 +1,6 @@
 'use client'
 
+import { Large } from '@velocitylabs-org/turtle-ui'
 // @ts-ignore
 import hljs from '@highlightjs/cdn-assets/es/core.min.js'
 // @ts-ignore
@@ -18,8 +19,8 @@ const CodeBit = ({ guide }: { guide: { title: string; language: string; code: st
   }, [])
 
   return (
-    <li className="flex flex-col gap-4 rounded-3xl text-xl font-bold" key={guide.title}>
-      <p>{guide.title}</p>
+    <li className="flex flex-col gap-4 rounded-3xl" key={guide.title}>
+      <Large>{guide.title}</Large>
       <pre className="theme-github turtle-foreground rounded-3xl border border-turtle-foreground pb-4 pt-4">
         <code className={`language-${guide.language} font-mono text-sm`}>{guide.code}</code>
       </pre>

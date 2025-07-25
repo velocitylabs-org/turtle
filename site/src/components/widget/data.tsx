@@ -1,22 +1,29 @@
+import SwapIcon from '@velocitylabs-org/turtle-assets/icons/swap.svg'
+import ThunderIcon from '@velocitylabs-org/turtle-assets/icons/thunder.svg'
+import TransferIcon from '@velocitylabs-org/turtle-assets/icons/transfer.svg'
+import CheckIcon from '@velocitylabs-org/turtle-assets/icons/check.svg'
+import CustomizeIcon from '@velocitylabs-org/turtle-assets/icons/customize.svg'
+
 export const headerButtons = [
   {
     label: 'Swap',
-    icon: '',
+    icon: SwapIcon,
   },
   {
     label: 'Bridging',
-    icon: '',
+    icon: ThunderIcon,
   },
   {
     label: 'XCM Transfers',
-    icon: '',
+    icon: TransferIcon,
   },
   {
     label: 'Full Ecosystem Compatibility',
-    icon: '',
+    icon: CheckIcon,
   },
   {
     label: 'Customizable',
+    icon: CustomizeIcon,
   },
 ]
 
@@ -56,7 +63,7 @@ const code = `
 
   function Home() {
     return (
-      <div className="flex h-screen w-screen items-center justify-center">
+      <div className="">
           <Widget />
       </div>
     )

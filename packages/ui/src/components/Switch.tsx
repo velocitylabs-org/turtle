@@ -16,14 +16,6 @@ interface SwitchProps {
 
 const Switch = forwardRef<HTMLDivElement, SwitchProps>(
   ({ checked, onChange, label, disabled, className }, ref) => {
-    const onClick = () => {
-      if (disabled) {
-        return
-      }
-
-      onChange(!checked)
-    }
-
     return (
       <div ref={ref} className={cn('flex items-center gap-2', className)}>
         <button
@@ -36,7 +28,7 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
           role="switch"
           aria-checked={checked}
           disabled={disabled}
-          onClick={onClick}
+          onClick={() => !disabled && onChange(!checked)}
         >
           <span
             className={cn(
