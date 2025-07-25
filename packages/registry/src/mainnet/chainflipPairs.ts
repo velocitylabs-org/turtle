@@ -1,6 +1,6 @@
 import { Chain, Token } from "@/types";
-import { EthereumTokens, PolkadotTokens } from "./tokens";
 import { AssetHub, Ethereum, Polkadot } from "./chains";
+import { EthereumTokens, PolkadotTokens } from "./tokens";
 
 export type ChainflipSwapPair = [Token, Token];
 export type ChainflipSwapRoute = {
