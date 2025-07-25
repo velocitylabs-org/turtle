@@ -1,7 +1,6 @@
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Skeleton } from '@/components/ui/skeleton'
-
-import { colors } from '../../../tailwind.config'
 
 const SkeletonAddresses = () => {
   return (

@@ -1,4 +1,4 @@
-import { colors } from 'tailwind.config'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import SearchIcon from './svg/SearchIcon'
 
 interface SearchBarProps {

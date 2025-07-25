@@ -1,3 +1,4 @@
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Fail } from '@/assets/svg/Fail'
@@ -8,7 +9,6 @@ import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
-import { colors } from '../../../../tailwind.config'
 import { getSVGColor } from './Dialog'
 
 // eslint-disable-next-line react-refresh/only-export-components
