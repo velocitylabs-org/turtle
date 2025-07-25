@@ -1,20 +1,11 @@
 import TurtlesBackground from '@/components/TurtlesBackground'
-import { Button, cn } from '@velocitylabs-org/turtle-ui'
+import { Body, Button, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { headerButtons } from '@/components/widget/data'
 import { XXXLarge } from '@velocitylabs-org/turtle-ui'
-// @ts-ignore
-import hljs from '@highlightjs/cdn-assets/es/core.min.js'
-// @ts-ignore
-import bash from '@highlightjs/cdn-assets/es/languages/bash.min.js'
-// @ts-ignore
-import typescript from '@highlightjs/cdn-assets/es/languages/typescript.min.js'
-import '@highlightjs/cdn-assets/styles/github.min.css'
 import { developerIntegrationGuide, features } from '@/components/widget/data'
 import getAnalyticsData from '@/actions/analytics'
-
-hljs.registerLanguage('bash', bash)
-hljs.registerLanguage('typescript', typescript)
+import CodeBit from '@/components/widget/CodeBit'
 
 const SectionInnerContainer = ({
   children,
@@ -26,7 +17,7 @@ const SectionInnerContainer = ({
   heading: string
 }) => {
   return (
-    <div className={cn('flex flex-col gap-8 lg:w-[865px]', className)}>
+    <div className={cn('flex flex-col gap-8 px-6 lg:w-[640px]', className)}>
       <h3 className="text-section-title font-bold leading-none">{heading}</h3>
       {children}
     </div>
@@ -39,8 +30,6 @@ const Divider = () => {
 
 export default async function Widget() {
   const analyticsData = await getAnalyticsData()
-
-  hljs.highlightAll()
 
   return (
     <>
@@ -77,13 +66,13 @@ export default async function Widget() {
       </section>
       <section className="flex min-h-[100vh] flex-col items-center gap-20 bg-white pb-48 lg:pb-96">
         <SectionInnerContainer className="mt-24" heading="🐢 What is the Turtle app?">
-          <p>
+          <Body>
             The Turtle app is a seamless cross-chain token transfer solution designed to simplify
             and streamline the movement of digital assets across different blockchain networks. By
             abstracting away the technical complexities typically involved in bridging tokens,
             Turtle provides users with a frictionless experience, eliminating the need for manual
             routing, multiple wallet approvals, or switching between interfaces.
-          </p>
+          </Body>
           <Image src="/networks.jpg" alt="Turtle app" width={865} height={400} />
           <Divider />
         </SectionInnerContainer>
@@ -95,7 +84,7 @@ export default async function Widget() {
                 <ul className="ml-6 list-disc">
                   {feature.listItems.map((item) => (
                     <li key={item}>
-                      <p className="text-sm">{item}</p>
+                      <Body>{item}</Body>
                     </li>
                   ))}
                 </ul>
@@ -104,28 +93,21 @@ export default async function Widget() {
           </ul>
           <Divider />
         </SectionInnerContainer>
-        <SectionInnerContainer heading="💻  Developer Integration Guide">
-          <ol className="ml-6 flex list-decimal flex-col gap-8">
+        <SectionInnerContainer heading="💻  Developer Integration Guide" className="max-w-full">
+          <ol className="flex list-decimal flex-col gap-8 md:ml-6">
             {developerIntegrationGuide.map((guide) => (
-              <li className="flex flex-col gap-4 rounded-3xl text-xl font-bold" key={guide.title}>
-                <p>{guide.title}</p>
-                <pre className="theme-github turtle-foreground rounded-3xl border border-turtle-foreground pb-4 pt-4">
-                  <code className={`language-${guide.language} font-mono text-sm`}>
-                    {guide.code}
-                  </code>
-                </pre>
-              </li>
+              <CodeBit key={guide.title} guide={guide} />
             ))}
           </ol>
           <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer heading="🌐 Compatible Networks & Tokens">
-          <p>An Ever-Expanding Network</p>
+          <Body>An ever expanding Network</Body>
           <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer heading="🙋 Questions or Feedback?">
-          <p>Need help integrating or have questions?</p>
-          <div className="flex gap-4">
+          <Body>Need help integrating or have questions?</Body>
+          <div className="flex flex-wrap gap-4">
             <Button
               size="lg"
               as="a"

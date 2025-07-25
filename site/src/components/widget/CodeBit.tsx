@@ -1,0 +1,30 @@
+'use client'
+
+// @ts-ignore
+import hljs from '@highlightjs/cdn-assets/es/core.min.js'
+// @ts-ignore
+import bash from '@highlightjs/cdn-assets/es/languages/bash.min.js'
+// @ts-ignore
+import typescript from '@highlightjs/cdn-assets/es/languages/typescript.min.js'
+import '@highlightjs/cdn-assets/styles/github.min.css'
+import { useEffect } from 'react'
+
+hljs.registerLanguage('bash', bash)
+hljs.registerLanguage('typescript', typescript)
+
+const CodeBit = ({ guide }: { guide: { title: string; language: string; code: string } }) => {
+  useEffect(() => {
+    hljs.highlightAll()
+  }, [])
+
+  return (
+    <li className="flex flex-col gap-4 rounded-3xl text-xl font-bold" key={guide.title}>
+      <p>{guide.title}</p>
+      <pre className="theme-github turtle-foreground rounded-3xl border border-turtle-foreground pb-4 pt-4">
+        <code className={`language-${guide.language} font-mono text-sm`}>{guide.code}</code>
+      </pre>
+    </li>
+  )
+}
+
+export default CodeBit

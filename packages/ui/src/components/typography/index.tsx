@@ -23,7 +23,7 @@ export const Body = <T extends React.ElementType = 'p'>({
 }: PolymorphicComponentProps<T>) => {
   const Component = as || 'p'
   return (
-    <Component className="text-base" {...rest}>
+    <Component className="text-base leading-[1.4]" {...rest}>
       {children}
     </Component>
   )
