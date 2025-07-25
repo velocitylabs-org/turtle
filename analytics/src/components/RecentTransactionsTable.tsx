@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { TransactionView } from '@/models/transaction-view'
+import { formatDate } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
 import { TokenChainDisplay } from './TokenChainDisplay'
 import { TransactionStatusIndicator } from './TransactionStatusIndicator'
@@ -97,11 +98,7 @@ export default function RecentTransactionsTable({
                   </TableCell>
                   <TableCell>
                     <div className="text-xs">
-                      {new Date(tx.txDate).toLocaleString('en-GB', {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                        hour12: false,
-                      })}
+                      {formatDate(tx.txDate)}
                     </div>
                   </TableCell>
                   <TableCell>
