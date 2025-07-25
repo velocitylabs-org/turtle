@@ -312,11 +312,15 @@ const useParaspellApi = () => {
   }
 
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
-    // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
-    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
-      throw new Error('Swap transfer did not completed - Batch failed')
-
-    return
+    if (isSwapWithTransfer(transfer) && transfer.sourceChain.supportExecuteExtrinsic) {
+      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess) {
+        throw new Error('Swap transfer did not completed - Execute function not successful')
+      }
+    } else {
+      // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
+      if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
+        throw new Error('Swap transfer did not completed - Batch failed')
+    }
   }
 
   const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {

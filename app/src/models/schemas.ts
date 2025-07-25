@@ -29,6 +29,7 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   walletType: z.enum(['EVM', 'Substrate', 'SubstrateEVM']),
   destinationFeeDOT: z.string().optional(),
   rpcConnection: z.string().optional(),
+  supportExecuteExtrinsic: z.boolean().optional(),
 })
 
 export const tokenAmountSchema: z.ZodType<TokenAmount> = z.object({

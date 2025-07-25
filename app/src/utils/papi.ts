@@ -27,6 +27,8 @@ export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined 
     let messageHash: string | undefined
     let messageId: string | undefined
     let isBatchCompleted: boolean | undefined
+    let isExecuteAttemptCompleted: boolean | undefined
+    let isExtrinsicSuccess: boolean | undefined
 
     events.forEach(({ type: section, value: { type: method, value: data } }) => {
       // Get messageHash from parachainSystem pallet (ex: DOT from Hydra to Bifrost )
@@ -50,14 +52,29 @@ export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined 
         messageId = data.message_id.asHex()
       }
 
+      if (section === 'PolkadotXcm' && method === 'Attempted' && 'outcome' in data) {
+        isExecuteAttemptCompleted = data.outcome.type === 'Complete'
+      }
+
       if (section === 'Utility' && method === 'BatchCompleted') {
         isBatchCompleted = true
+      }
+
+      if (section === 'System' && method === 'ExtrinsicSuccess') {
+        isExtrinsicSuccess = true
       }
     })
 
     if (!messageHash && !messageId && !extrinsicIndex)
       throw new Error('MessageHash, MessageId and ExtrinsicIndex are all missing')
 
-    return { messageHash, messageId, extrinsicIndex, isBatchCompleted }
+    return {
+      messageHash,
+      messageId,
+      extrinsicIndex,
+      isBatchCompleted,
+      isExtrinsicSuccess,
+      isExecuteAttemptCompleted,
+    }
   }
 }
