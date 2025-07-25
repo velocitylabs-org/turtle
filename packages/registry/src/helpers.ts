@@ -1,4 +1,4 @@
-import { Chain, Origin } from "./types";
+import { Chain, Origin, TokenStandard } from "./types";
 
 export function rpcConnectionAsHttps(rpc?: string): string {
   if (!rpc) return "";
@@ -20,6 +20,13 @@ export function snowbridgeWrapped(): Origin {
   return {
     type: "Ethereum",
     bridge: "Snowbridge",
+  };
+}
+
+export function ethereumOrigin(standard: TokenStandard): Origin {
+  return {
+    type: "Ethereum",
+    standard,
   };
 }
 

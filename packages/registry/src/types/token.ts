@@ -22,8 +22,10 @@ export interface Token {
 
 // The supported bridges. Each bridge will have it's own wrapped version of a token
 export type Bridge = "Snowbridge" | "Other";
+export type TokenStandard = "Native" | "ERC20"; // keep it future proof - Ex: "SPL" Solana Standard
 
 // The origin of a token
 export type Origin =
+  | { type: "Ethereum"; standard: TokenStandard }
   | { type: "Ethereum"; bridge: Bridge }
   | { type: "Polkadot"; paraId: number };
