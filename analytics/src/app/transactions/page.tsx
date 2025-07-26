@@ -1,5 +1,7 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
+import polimecLogo from "@velocitylabs-org/turtle-assets/logos/polimec.svg";
+import turtleLogo from "@velocitylabs-org/turtle-assets/logos/turtle.svg";
 import { Token } from '@velocitylabs-org/turtle-registry'
 import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
@@ -27,8 +29,8 @@ const chainOptions = chains.map(chain => ({
 }))
 
 const originOptions = [
-  { value: 'https://app.turtle.cool', label: 'Turtle' },
-  { value: 'https://app.polimec.org', label: 'Polimec' },
+  { value: 'https://app.turtle.cool', label: 'Turtle', logoURI: turtleLogo.src },
+  { value: 'https://app.polimec.org', label: 'Polimec', logoURI : polimecLogo.src},
 ]
 
 // Using 'all' as default to represent null (no filter)
