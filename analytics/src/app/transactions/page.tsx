@@ -170,7 +170,10 @@ export default function TransactionsPage() {
       </div>
       <div className="mt-4 space-y-4">
         <Card>
-          <CardContent className="p-6">
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 pt-0">
             <div className="flex flex-col gap-4">
               {/* Date pickers section */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
