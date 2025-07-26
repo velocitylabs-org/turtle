@@ -157,7 +157,7 @@ export default function Select({
                           )}
                         />
                         {option.logoURI && renderImage(option.logoURI as string, option?.originLogoURI as string)}
-                        {option.label}
+                        <span className="pr-3">{option.label}</span>
                       </div>
                     ))}
                   </div>
