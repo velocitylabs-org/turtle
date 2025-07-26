@@ -173,7 +173,7 @@ export default function TransactionDetailPage() {
                   <div className="text-sm">
                     {formatDate(transaction.txDate)}
                   </div>
-                  <div className="text-sm">
+                  <div className="text-sm text-muted-foreground">
                     {formatDateAgo(transaction.txDate)}
                   </div>
                 </div>

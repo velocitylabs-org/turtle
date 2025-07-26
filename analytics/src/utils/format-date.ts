@@ -1,39 +1,69 @@
+import { differenceInYears, differenceInMonths, differenceInDays, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns'
+
 export function formatDate(date: string) {
   return `${new Date(date).toISOString().replace('T', ' ').substring(0, 16)} (UTC)`
 }
 
 export function formatDateAgo(date: string) {
+  // Both dates will be compared in UTC time
   const now = new Date()
   const past = new Date(date)
-  const diffMs = now.getTime() - past.getTime()
-  const diffSecs = Math.floor(diffMs / 1000)
-  const diffMins = Math.floor(diffSecs / 60)
-  const diffHours = Math.floor(diffMins / 60)
-  const diffDays = Math.floor(diffHours / 24)
-
-  if (diffDays > 0) {
-    const remainingHours = diffHours % 24
-    if (remainingHours > 0) {
-      return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ${remainingHours} ${remainingHours === 1 ? 'hr' : 'hrs'} ago`
+  
+  const years = differenceInYears(now, past)
+  const months = differenceInMonths(now, past)
+  const days = differenceInDays(now, past)
+  const hours = differenceInHours(now, past)
+  const minutes = differenceInMinutes(now, past)
+  const seconds = differenceInSeconds(now, past)
+  
+  // Years with months
+  if (years > 0) {
+    const remainingMonths = months - (years * 12)
+    if (remainingMonths > 0) {
+      return `${years} ${years === 1 ? 'year' : 'years'} ${remainingMonths} ${remainingMonths === 1 ? 'month' : 'months'} ago`
     }
-    return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`
   }
-
-  if (diffHours > 0) {
-    const remainingMins = diffMins % 60
-    if (remainingMins > 0) {
-      return `${diffHours} ${diffHours === 1 ? 'hr' : 'hrs'} ${remainingMins} ${remainingMins === 1 ? 'min' : 'mins'} ago`
+  
+  // Months with days
+  if (months > 0) {
+    // Calculate the date X months ago and then find remaining days
+    const monthsAgo = new Date(now)
+    monthsAgo.setMonth(monthsAgo.getMonth() - months)
+    const remainingDays = differenceInDays(monthsAgo, past)
+    if (remainingDays > 0) {
+      return `${months} ${months === 1 ? 'month' : 'months'} ${remainingDays} ${remainingDays === 1 ? 'day' : 'days'} ago`
     }
-    return `${diffHours} ${diffHours === 1 ? 'hr' : 'hrs'} ago`
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`
   }
-
-  if (diffMins > 0) {
-    return `${diffMins} ${diffMins === 1 ? 'min' : 'mins'} ago`
+  
+  // Days with hours
+  if (days > 0) {
+    const remainingHours = hours - (days * 24)
+    if (remainingHours > 0 && days < 30) {
+      return `${days} ${days === 1 ? 'day' : 'days'} ${remainingHours} ${remainingHours === 1 ? 'hr' : 'hrs'} ago`
+    }
+    return `${days} ${days === 1 ? 'day' : 'days'} ago`
   }
-
-  if (diffSecs > 0) {
-    return `${diffSecs} ${diffSecs === 1 ? 'sec' : 'secs'} ago`
+  
+  // Hours with minutes
+  if (hours > 0) {
+    const remainingMinutes = minutes - (hours * 60)
+    if (remainingMinutes > 0) {
+      return `${hours} ${hours === 1 ? 'hr' : 'hrs'} ${remainingMinutes} ${remainingMinutes === 1 ? 'min' : 'mins'} ago`
+    }
+    return `${hours} ${hours === 1 ? 'hr' : 'hrs'} ago`
   }
-
+  
+  // Minutes
+  if (minutes > 0) {
+    return `${minutes} ${minutes === 1 ? 'min' : 'mins'} ago`
+  }
+  
+  // Seconds
+  if (seconds > 0) {
+    return `${seconds} ${seconds === 1 ? 'sec' : 'secs'} ago`
+  }
+  
   return 'just now'
 }
