@@ -62,24 +62,46 @@ const code = `
   import Widget from '@velocitylabs-org/turtle-widget'
 
   function Home() {
+    const theme = {
+      primary: '#DBB3B1', // HexColor
+      dialogOverlayRgb: '219, 179, 177', // RGBColor
+      dialogOverlayOpacity: 0.5, // number
+    } satisfies WidgetTheme
+
+    const registry = {
+      chains: ['polkadot', 'hydration'],
+      tokens: ['dot', 'usdc', 'usdt'],
+    } satisfies ConfigRegistryType
+
+
     return (
       <div className="">
-          <Widget />
+          <Widget theme={theme} registry={registry} />
       </div>
     )
   }
     
   export default Home`
 
-export const developerIntegrationGuide = [
+export const developerIntegrationGuide: {
+  title: string
+  code?: string
+  language?: string
+  description?: string
+}[] = [
   {
     title: '1. Install',
-    code: `pnpm install @velocitylabs-org/turtle-widget`,
+    code: `  pnpm install @velocitylabs-org/turtle-widget`,
     language: 'bash',
   },
   {
     title: '2. Import',
     code: code,
     language: 'typescript',
+  },
+  {
+    title: '3. Test',
+    description:
+      'Run the widget, for more information on how to setup the widget, see the documentation.',
   },
 ]

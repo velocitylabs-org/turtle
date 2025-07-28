@@ -1,5 +1,6 @@
 import TurtlesBackground from '@/components/TurtlesBackground'
 import { Body, Button, cn } from '@velocitylabs-org/turtle-ui'
+import WidgetWrapper from '@/components/widget/WidgetWrapper'
 import Image from 'next/image'
 import { headerButtons } from '@/components/widget/data'
 import { XXXLarge, Large } from '@velocitylabs-org/turtle-ui'
@@ -52,7 +53,7 @@ export default async function Widget() {
                 </div>
               </div>
             </div>
-            {/* <TurtleWidget /> */}
+            <WidgetWrapper />
           </div>
           <div className="z-10 flex flex-col items-center justify-center">
             <p className="text-lg text-white">Start Integrating</p>
