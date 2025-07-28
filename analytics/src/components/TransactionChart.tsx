@@ -58,8 +58,8 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
             tickLine={false}
             axisLine={false}
             tickMargin={10}
-            tick={{ fontSize: timeRange === 'last-month' ? 13 : 15 }}
-            interval={0}
+            tick={{ fontSize: timeRange === 'last-month' ? 12 : 15 }}
+            interval={timeRange === 'last-month' ? 1 : 0}
           />
           <YAxis
             tickFormatter={value => (type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value)}

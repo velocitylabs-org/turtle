@@ -7,7 +7,8 @@ import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 const svgNs = 'http://www.w3.org/2000/svg'
-const hoverColor = '#00CC20'
+const hoverColor = '#000000'
+const segmentHoverColor = '#00CC20'
 const easeOutQuart = 'cubic-bezier(.165, .84, .44, 1)'
 
 interface ChainFlowData {
@@ -588,7 +589,7 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
     'stop',
     {
       offset: '0%',
-      'stop-color': hoverColor,
+      'stop-color': segmentHoverColor,
       'stop-opacity': '0.5',
     },
     hoverGradient,
@@ -598,7 +599,7 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
     'stop',
     {
       offset: '85%',
-      'stop-color': hoverColor,
+      'stop-color': segmentHoverColor,
       'stop-opacity': '0.5',
     },
     hoverGradient,
@@ -608,7 +609,7 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
     'stop',
     {
       offset: '100%',
-      'stop-color': hoverColor,
+      'stop-color': segmentHoverColor,
       'stop-opacity': '0',
     },
     hoverGradient,
