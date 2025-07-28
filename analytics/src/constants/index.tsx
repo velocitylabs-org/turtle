@@ -28,4 +28,5 @@ export const statusColors = {
   succeeded: { hex: '#22c55e', className: 'green-500' },
   failed: { hex: '#ef4444', className: 'red-500' },
   undefined: { hex: '#eab308', className: 'yellow-500' },
+  ongoing: { hex: '#3b82f6', className: 'blue-500' },
 }
