@@ -35,7 +35,7 @@ export default async function Widget() {
       <section className="relative flex min-h-[110vh] flex-col items-center justify-center">
         <TurtlesBackground blurredBackground whiteWaves initialVolume={undefined} />
         <div className="absolute top-20 z-0 flex flex-col gap-14">
-          <div className="rounded-4xl border border-black bg-white lg:w-[656px]">
+          <div className="relative translate-x-[-25%] transform rounded-4xl border border-black bg-white lg:w-[656px]">
             <div className="flex max-w-[375px] flex-col gap-20 p-8">
               <XXXLarge className="leading-none">Turtle Widget</XXXLarge>
               <div className="flex flex-col gap-10">
@@ -53,7 +53,9 @@ export default async function Widget() {
                 </div>
               </div>
             </div>
-            <WidgetWrapper />
+            <div className="absolute top-0 translate-x-[75%]">
+              <WidgetWrapper />
+            </div>
           </div>
           <div className="z-10 flex flex-col items-center justify-center">
             <p className="text-lg text-white">Start Integrating</p>
