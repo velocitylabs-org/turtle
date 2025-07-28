@@ -156,7 +156,8 @@ export default function Select({
                             selected === option.value ? 'opacity-100' : 'opacity-0',
                           )}
                         />
-                        {option.logoURI && renderImage(option.logoURI as string, option?.originLogoURI as string)}
+                        {option.logoURI &&
+                          renderImage(option.logoURI as string, option?.originLogoURI as string)}
                         <span className="pr-3">{option.label}</span>
                       </div>
                     ))}

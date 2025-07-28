@@ -6,7 +6,10 @@ interface TransactionStatusIndicatorProps {
   logoOnly?: boolean
 }
 
-export function TransactionStatusIndicator({ status, logoOnly = false }: TransactionStatusIndicatorProps) {
+export function TransactionStatusIndicator({
+  status,
+  logoOnly = false,
+}: TransactionStatusIndicatorProps) {
   const getStatusIcon = () => {
     switch (status) {
       case 'succeeded':

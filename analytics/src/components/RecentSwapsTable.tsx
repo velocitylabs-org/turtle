@@ -109,9 +109,7 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <div className="text-sm">
-                        {formatDate(swap.txDate)}
-                      </div>
+                      <div className="text-sm">{formatDate(swap.txDate)}</div>
                       <div className="text-sm text-muted-foreground">
                         {formatDateAgo(swap.txDate)}
                       </div>

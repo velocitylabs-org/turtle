@@ -707,7 +707,10 @@ function truncateLabel(label: string, maxLength: number = 11) {
     if (words.length > 1) {
       // Get the first word + first letter of later words + dot
       const firstWord = words[0]
-      const otherInitials = words.slice(1).map(word => word.charAt(0).toUpperCase()).join('')
+      const otherInitials = words
+        .slice(1)
+        .map(word => word.charAt(0).toUpperCase())
+        .join('')
       return `${firstWord} ${otherInitials}.`
     }
     // If it's a single long word, truncate it

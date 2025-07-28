@@ -97,7 +97,7 @@ export default function RecentTransactionsTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-xs flex-col flex">
+                    <div className="flex flex-col text-xs">
                       <div>{formatDate(tx.txDate)}</div>
                       <div className="text-muted-foreground">{formatDateAgo(tx.txDate)}</div>
                     </div>

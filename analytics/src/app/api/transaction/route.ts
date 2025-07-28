@@ -99,7 +99,7 @@ export async function PATCH(request: Request) {
     }
 
     await dbConnect()
-    
+
     // First, find the existing transaction to check its current status
     const existingTransaction = await Transaction.findOne({ txHashId })
     if (!existingTransaction) {

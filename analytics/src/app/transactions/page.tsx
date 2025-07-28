@@ -1,9 +1,9 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
-import ethLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
-import polimecLogo from "@velocitylabs-org/turtle-assets/logos/polimec.svg";
-import polkadotLogo from "@velocitylabs-org/turtle-assets/logos/polkadot.svg";
-import turtleLogo from "@velocitylabs-org/turtle-assets/logos/turtle.svg";
+import ethLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
+import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
+import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
+import turtleLogo from '@velocitylabs-org/turtle-assets/logos/turtle.svg'
 import { Token } from '@velocitylabs-org/turtle-registry'
 import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
@@ -29,16 +29,18 @@ const repeatedTokenSymbolMapUri: { [key: string]: string } = {
   'usdt.e': ethLogo.src,
   'usdc.e': ethLogo.src,
   'myth.e': ethLogo.src,
-  'usdt': polkadotLogo.src,
-  'usdc': polkadotLogo.src,
-  'myth.p': polkadotLogo.src
+  usdt: polkadotLogo.src,
+  usdc: polkadotLogo.src,
+  'myth.p': polkadotLogo.src,
 }
 
-const chainOptions = chains.map(chain => ({
-  value: chain.uid,
-  label: chain.name,
-  logoURI: getSrcFromLogo(chain),
-})).sort((a, b) => a.label.localeCompare(b.label))
+const chainOptions = chains
+  .map(chain => ({
+    value: chain.uid,
+    label: chain.name,
+    logoURI: getSrcFromLogo(chain),
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label))
 
 const tokenOptions = tokens
   .map((token: Token) => {
@@ -55,7 +57,7 @@ const tokenOptions = tokens
 
 const originOptions = [
   { value: 'https://app.turtle.cool', label: 'Turtle', logoURI: turtleLogo.src },
-  { value: 'https://app.polimec.org', label: 'Polimec', logoURI : polimecLogo.src},
+  { value: 'https://app.polimec.org', label: 'Polimec', logoURI: polimecLogo.src },
 ]
 
 // Using 'all' as default to represent null (no filter)
@@ -82,7 +84,10 @@ export default function TransactionsPage() {
   const [toDate, setToDate] = useQueryState('toDate', parseAsIsoDate)
   const [origin, setOrigin] = useQueryState('origin', emptyDefaultString)
   const [senderAddress, setSenderAddress] = useQueryState('senderAddress', emptyDefaultString)
-  const [recipientAddress, setRecipientAddress] = useQueryState('recipientAddress', emptyDefaultString)
+  const [recipientAddress, setRecipientAddress] = useQueryState(
+    'recipientAddress',
+    emptyDefaultString,
+  )
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -264,14 +269,14 @@ export default function TransactionsPage() {
                   <Input
                     placeholder="Sender Address"
                     value={senderAddress}
-                    onChange={(e) => setSenderAddress(e.target.value)}
+                    onChange={e => setSenderAddress(e.target.value)}
                   />
                 </div>
                 <div>
                   <Input
                     placeholder="Recipient Address"
                     value={recipientAddress}
-                    onChange={(e) => setRecipientAddress(e.target.value)}
+                    onChange={e => setRecipientAddress(e.target.value)}
                   />
                 </div>
               </div>

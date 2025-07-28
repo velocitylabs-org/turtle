@@ -63,7 +63,8 @@ export default function TransactionDetailPage() {
   const sourceChain = chainsByUid[transaction.sourceChainUid]
   const destinationChain = chainsByUid[transaction.destinationChainUid]
   const sourceToken = transaction.sourceTokenId && tokensById[transaction.sourceTokenId]
-  const destinationToken = transaction.destinationTokenId && tokensById[transaction.destinationTokenId]
+  const destinationToken =
+    transaction.destinationTokenId && tokensById[transaction.destinationTokenId]
   const feesToken = tokensById[transaction.feesTokenId]
   const bridgingFeeToken = tokensById[transaction.bridgingFeeTokenId || '']
   const explorerLinks = getExplorerLinks(transaction)
@@ -113,7 +114,11 @@ export default function TransactionDetailPage() {
                   chainUid={transaction.sourceChainUid}
                   size={35}
                 />
-                {sourceToken && <span className="text-center text-sm text-muted-foreground">{sourceToken.symbol}</span>}
+                {sourceToken && (
+                  <span className="text-center text-sm text-muted-foreground">
+                    {sourceToken.symbol}
+                  </span>
+                )}
               </div>
               {transaction.isSwap && transaction.destinationTokenAmount && (
                 <>
@@ -130,7 +135,11 @@ export default function TransactionDetailPage() {
                       chainUid={transaction.destinationChainUid}
                       size={35}
                     />
-                    {destinationToken && <span className="text-center text-sm text-muted-foreground">{destinationToken.symbol}</span>}
+                    {destinationToken && (
+                      <span className="text-center text-sm text-muted-foreground">
+                        {destinationToken.symbol}
+                      </span>
+                    )}
                   </div>
                 </>
               )}
@@ -154,25 +163,27 @@ export default function TransactionDetailPage() {
                 <span className="text-sm text-muted-foreground">Status</span>
                 <div className="flex flex-row items-center">
                   <Badge
-                  className="text-white mr-2"
-                  style={{ background: statusColors[transaction.status].hex }}
+                    className="mr-2 text-white"
+                    style={{ background: statusColors[transaction.status].hex }}
                   >
-                  {transaction.status}
+                    {transaction.status}
                   </Badge>
-                  <TransactionStatusIndicator status={transaction.status} logoOnly /></div>
+                  <TransactionStatusIndicator status={transaction.status} logoOnly />
                 </div>
+              </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Origin</span>
                 <div className="flex items-center gap-1">
-                  <ExternalLinkButton name={transaction.hostedOn.replace('https://', '')} url={transaction.hostedOn} />
+                  <ExternalLinkButton
+                    name={transaction.hostedOn.replace('https://', '')}
+                    url={transaction.hostedOn}
+                  />
                 </div>
               </div>
-              <div className="flex items-top justify-between">
+              <div className="items-top flex justify-between">
                 <span className="text-sm text-muted-foreground">Date</span>
                 <div className="flex flex-col items-end">
-                  <div className="text-sm">
-                    {formatDate(transaction.txDate)}
-                  </div>
+                  <div className="text-sm">{formatDate(transaction.txDate)}</div>
                   <div className="text-sm text-muted-foreground">
                     {formatDateAgo(transaction.txDate)}
                   </div>
@@ -223,7 +234,9 @@ export default function TransactionDetailPage() {
                   <span className="text-sm">{feesToken.symbol}</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium">{transaction.feesTokenAmount} {feesToken.symbol}</div>
+                  <div className="text-sm font-medium">
+                    {transaction.feesTokenAmount} {feesToken.symbol}
+                  </div>
                   <div className="text-xs text-muted-foreground">
                     ${formatUSD(transaction.feesTokenAmountUsd)} USD
                   </div>
@@ -285,7 +298,7 @@ export default function TransactionDetailPage() {
 function ExternalLinkButton({ name, url }: { name: string; url: string }) {
   return (
     <Button variant="link" onClick={() => window.open(url, '_blank')} className="p-0" size="sm">
-      <span className="text-sm ml-1">{name}</span>
+      <span className="ml-1 text-sm">{name}</span>
       <Link2 className="h-2 w-2" />
     </Button>
   )
@@ -320,13 +333,17 @@ function AddressDisplay({
         <Button
           variant={isCopied ? null : 'ghost'}
           size="icon"
-          className="h-7 w-7 relative overflow-hidden"
+          className="relative h-7 w-7 overflow-hidden"
           onClick={handleCopy}
         >
-          <div className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isCopied ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}>
+          <div
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isCopied ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+          >
             <Check className="h-3 w-3 text-green-500" />
           </div>
-          <div className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isCopied ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}>
+          <div
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isCopied ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+          >
             <Copy className="h-3 w-3" />
           </div>
         </Button>

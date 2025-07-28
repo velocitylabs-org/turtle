@@ -3,7 +3,7 @@ export default function formatUSD(
   options: { minimumFractionDigits?: number; maximumFractionDigits?: number } = {},
 ) {
   if (amount === undefined || amount === null) return ''
-  
+
   // Handle very small numbers
   if (amount > 0 && amount < 0.1) {
     // Find the first non-zero digit position
@@ -18,7 +18,7 @@ export default function formatUSD(
       })
     }
   }
-  
+
   const defaultOptions = {
     minimumFractionDigits: 0,
     maximumFractionDigits: 1,
