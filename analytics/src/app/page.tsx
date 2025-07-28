@@ -31,10 +31,10 @@ const periodConfig = {
     timeRange: 'last-month',
     label: 'Last month',
   },
-  'this-week': {
-    dataKey: 'thisWeekData',
-    timeRange: 'this-week',
-    label: 'This week',
+  'last-week': {
+    dataKey: 'lastWeekData',
+    timeRange: 'last-week',
+    label: 'Last week',
   },
 } as const
 
@@ -42,7 +42,7 @@ const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).w
 const timePeriodQueryDefault = parseAsStringLiteral([
   'last-6-months',
   'last-month',
-  'this-week',
+  'last-week',
 ] as const).withDefault('last-6-months')
 
 export default function HomeDashboardPage() {
@@ -113,8 +113,8 @@ export default function HomeDashboardPage() {
           description="Successful transactions only"
         />
       </div>
-      <div className="mt-4 grid gap-4 lg:grid-cols-7">
-        <Card className="col-span-full lg:col-span-4">
+      <div className="mt-4 grid gap-4 lg:grid-cols-10">
+        <Card className="col-span-full lg:col-span-6">
           <CardHeader>
             <CardTitle>
               Transactions by
@@ -156,7 +156,7 @@ export default function HomeDashboardPage() {
             )}
           </CardContent>
         </Card>
-        <Card className="col-span-full lg:col-span-3">
+        <Card className="col-span-full lg:col-span-4">
           <CardHeader>
             <CardTitle>
               Top tokens by

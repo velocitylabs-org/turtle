@@ -20,7 +20,7 @@ export const tokens = REGISTRY.mainnet.tokens
 
 export type GraphType = 'volume' | 'count'
 
-export type TimePeriodType = 'last-6-months' | 'last-month' | 'this-week'
+export type TimePeriodType = 'last-6-months' | 'last-month' | 'last-week'
 
 export const swapsStartingDate = new Date('2023-04-29')
 

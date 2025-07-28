@@ -1,5 +1,5 @@
 'use server'
-import { startOfWeek, startOfMonth, subMonths, format, addDays, startOfDay } from 'date-fns'
+import { startOfMonth, subMonths, format, addDays, startOfDay, subDays } from 'date-fns'
 import { defaultTransactionLimit } from '@/constants'
 import Transaction from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
@@ -152,7 +152,7 @@ async function getAllTransactionData() {
   const sixMonthsAgo = subMonths(now, 6)
   const currentMonthStart = startOfMonth(now)
   const lastMonthStart = startOfMonth(subMonths(now, 1))
-  const thisWeekStart = startOfWeek(now)
+  const sevenDaysAgo = subDays(startOfDay(now), 7)
   const todayStart = startOfDay(now)
 
   // Get all data in a single aggregation
@@ -232,12 +232,12 @@ async function getAllTransactionData() {
           },
         ],
 
-        // This week data grouped by day (excluding current day)
-        thisWeekData: [
+        // Last 7 days data grouped by day (excluding current day)
+        lastWeekData: [
           {
             $match: {
               txDate: {
-                $gte: thisWeekStart,
+                $gte: sevenDaysAgo,
                 $lt: todayStart,
               },
             },
@@ -268,20 +268,20 @@ async function getAllTransactionData() {
     },
   ])
 
-  const { sixMonthsData, lastMonthData, thisWeekData: rawThisWeekData } = aggregationResult[0]
+  const { sixMonthsData, lastMonthData, lastWeekData: rawLastWeekData } = aggregationResult[0]
 
-  // Ensure all days of the week are included for weekly data (excluding today)
-  const completeThisWeekData = fillMissingDaysInWeek(rawThisWeekData, thisWeekStart, todayStart)
+  // Ensure all 7 previous days are included (excluding today)
+  const completeLastSevenDaysData = fillMissingDays(rawLastWeekData, sevenDaysAgo, todayStart)
 
   return {
     sixMonthsData,
     lastMonthData,
-    thisWeekData: completeThisWeekData,
+    lastWeekData: completeLastSevenDaysData,
   }
 }
 
-// Helper function to fill in missing days in a week
-function fillMissingDaysInWeek(
+// Helper function to fill in missing days in a date range
+function fillMissingDays(
   data: { timestamp: string; volumeUsd: number; count: number }[],
   startDate: Date,
   endDate: Date,
