@@ -26,6 +26,12 @@ const explorers: Record<string, ExplorerConfig> = {
     txPath: '/extrinsic/',
     addressPath: '/account/',
   },
+  subscanHydration: {
+    name: 'Hydration',
+    baseUrl: 'https://hydration.subscan.io',
+    txPath: '/extrinsic/',
+    addressPath: '/account/',
+  },
   subscanKusama: {
     name: 'Subscan',
     baseUrl: 'https://kusama.subscan.io',
@@ -56,6 +62,7 @@ export default function getExplorerLinks(tx: TxDetailView): ExplorerLinks[] | un
   const { network, walletType, name } = sourceChain
   const { senderAddress, txHashId, status } = tx
   const isSucceeded = status === 'succeeded'
+  const isWithinHydration = tx.sourceChainUid === 'hydration' && tx.destinationChainUid === 'hydration'
 
   function buildHashLink(config: ExplorerConfig, txHash: string): ExplorerLinks {
     return {
@@ -71,6 +78,15 @@ export default function getExplorerLinks(tx: TxDetailView): ExplorerLinks[] | un
     return {
       name: config.name,
       url: isSubscan ? `${baseUrl}?tab=xcm_transfer` : baseUrl,
+    }
+  }
+
+  function buildHydrationLink(config: ExplorerConfig, address: string): ExplorerLinks {
+    const baseUrl = `${config.baseUrl}${config.addressPath}${address}`
+
+    return {
+      name: config.name,
+      url: `${baseUrl}?tab=transfer`
     }
   }
 
@@ -107,6 +123,12 @@ export default function getExplorerLinks(tx: TxDetailView): ExplorerLinks[] | un
           ? buildHashLink(explorers.moonscan, txHashId)
           : buildAddressLink(explorers.moonscan, senderAddress)
         return [moonscanLink, getXcscanLink()]
+      }
+
+      if (isWithinHydration) {
+        const subscanLink = buildAddressLink(explorers.subscanPolkadot, senderAddress)
+        const hydrationLink = buildHydrationLink(explorers.subscanHydration, senderAddress)
+        return [subscanLink, hydrationLink]
       }
 
       const subscanLink = buildAddressLink(explorers.subscanPolkadot, senderAddress)
