@@ -338,12 +338,12 @@ const useParaspellApi = () => {
   }
 
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
+    // By default, swaps are submitted using the Execute extrinsic from PolkadotXcm pallet.
     if (isSwapWithTransfer(transfer) && transfer.sourceChain.supportExecuteExtrinsic) {
-      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess) {
+      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess)
         throw new Error('Swap transfer did not complete - Execute function not successful')
-      }
     } else {
-      // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
+      // Fallback to the BatchAll extinsic from utility pallet
       if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
         throw new Error('Swap transfer did not complete - Batch failed')
     }
