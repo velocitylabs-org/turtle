@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { TransactionView } from '@/models/transaction-view'
+import { formatDate, formatDateAgo } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
 import { TokenChainDisplay } from './TokenChainDisplay'
 import { TransactionStatusIndicator } from './TransactionStatusIndicator'
@@ -96,12 +97,9 @@ export default function RecentTransactionsTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-xs">
-                      {new Date(tx.txDate).toLocaleString('en-GB', {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                        hour12: false,
-                      })}
+                    <div className="flex flex-col text-xs">
+                      <div>{formatDate(tx.txDate)}</div>
+                      <div className="text-muted-foreground">{formatDateAgo(tx.txDate)}</div>
                     </div>
                   </TableCell>
                   <TableCell>

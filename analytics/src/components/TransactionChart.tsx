@@ -19,7 +19,7 @@ const chartColor = primaryColor
 interface TransactionChartProps {
   data: { timestamp: string; volumeUsd: number; count: number }[]
   type: GraphType
-  timeRange: 'last-6-months' | 'last-month' | 'this-week'
+  timeRange: 'last-6-months' | 'last-month' | 'last-week'
 }
 
 export default function TransactionChart({ data, type, timeRange }: TransactionChartProps) {
@@ -34,7 +34,7 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
       } else if (timeRange === 'last-month') {
         // Format for last month view (YYYY-MM-DD) - show day number
         dateStr = date.getDate().toString()
-      } else if (timeRange === 'this-week') {
+      } else if (timeRange === 'last-week') {
         // Format for this week view (YYYY-MM-DD) - show day name
         dateStr = date.toLocaleDateString('en-US', { weekday: 'short' })
       } else {
@@ -58,8 +58,8 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
             tickLine={false}
             axisLine={false}
             tickMargin={10}
-            tick={{ fontSize: timeRange === 'last-month' ? 13 : 15 }}
-            interval={0}
+            tick={{ fontSize: timeRange === 'last-month' ? 12 : 15 }}
+            interval={timeRange === 'last-month' ? 1 : 0}
           />
           <YAxis
             tickFormatter={value => (type === 'volume' ? `$${(value / 1000).toFixed(0)}k` : value)}
@@ -85,7 +85,7 @@ const CustomTooltip = ({
   timeRange,
 }: TooltipProps<number, string> & {
   type: GraphType
-  timeRange: 'last-6-months' | 'last-month' | 'this-week'
+  timeRange: 'last-6-months' | 'last-month' | 'last-week'
 }) => {
   if (!active || !payload || !payload.length) {
     return null
@@ -105,7 +105,7 @@ const CustomTooltip = ({
     displayLabel = date.toLocaleDateString('en-US', { month: 'long' })
   }
 
-  if (timeRange === 'this-week' && timestamp) {
+  if (timeRange === 'last-week' && timestamp) {
     const day = date.getDate()
     const suffix = getDaySuffix(day)
     const weekday = date.toLocaleDateString('en-US', { weekday: 'long' })

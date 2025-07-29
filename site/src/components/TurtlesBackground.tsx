@@ -1,11 +1,9 @@
-import AnalyticData from '@/components/AnalyticData'
-
 export default function TurtlesBackground({
   header,
-  initialVolume,
+  children,
 }: {
   header: string
-  initialVolume: number | undefined
+  children: React.ReactNode
 }) {
   return (
     <div className="absolute top-0 z-0">
@@ -15,7 +13,7 @@ export default function TurtlesBackground({
             <h1 className="turtle-text-shadow m-0 text-center text-[11vw] leading-[100%] text-white sm:text-[9vw] 3xl:text-[10rem]">
               {header}
             </h1>
-            <AnalyticData initialVolume={initialVolume} />
+            {children}
           </div>
         </div>
       </div>
