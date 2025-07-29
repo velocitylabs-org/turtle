@@ -1,8 +1,8 @@
-import { Chain, chainflipSwapPairs, Token } from '@velocitylabs-org/turtle-registry'
+import { Chain, chainflipRoutes, Token } from '@velocitylabs-org/turtle-registry'
 
 /** returns all Chainflip allowed source chains for a swap. */
 export const getChainflipSwapSourceChains = () => {
-  return chainflipSwapPairs.map(route => route.from)
+  return chainflipRoutes.map(route => route.from)
 }
 
 /** returns all Chainflip allowed source tokens for a swap. */
@@ -11,7 +11,7 @@ export const getChainflipSwapSourceTokens = (sourceChain: Chain) => {
 
   const tokensSet = new Set<Token>()
 
-  chainflipSwapPairs
+  chainflipRoutes
     .filter(route => route.from.chainId === sourceChain.chainId)
     .map(route => route.pairs.map(([token, _]) => tokensSet.add(token)))
 
@@ -24,7 +24,7 @@ export const getChainflipSwapDestChains = (sourceChain: Chain, sourceToken: Toke
 
   const chainsSet = new Set<Chain>()
 
-  chainflipSwapPairs.forEach(route => {
+  chainflipRoutes.forEach(route => {
     if (
       route.from.chainId === sourceChain.chainId &&
       route.pairs.some(([token, _]) => token.id === sourceToken.id)
@@ -45,7 +45,7 @@ export const getChainflipSwapDestTokens = (
   if (!sourceChain || !sourceToken || !destinationChain) return []
 
   const tokensSet = new Set<Token>()
-  const route = chainflipSwapPairs.find(
+  const route = chainflipRoutes.find(
     route =>
       route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
   )

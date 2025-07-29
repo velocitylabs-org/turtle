@@ -18,24 +18,6 @@ import {
 } from "./chains";
 import { EthereumTokens, PolkadotTokens } from "./tokens";
 
-export const chainflipRoutes: Route[] = [
-  // Chainflip only support tokens Swaps.
-  // No token is needed in the route
-  // TBC if this is needed
-  {
-    from: Ethereum.uid,
-    to: AssetHub.uid,
-    sdk: "ChainflipApi",
-    tokens: [],
-  },
-  {
-    from: Ethereum.uid,
-    to: Polkadot.uid,
-    sdk: "ChainflipApi",
-    tokens: [],
-  },
-];
-
 export const routes: Route[] = [
   // Ethereum -> Polkadot
   {
@@ -643,5 +625,4 @@ export const routes: Route[] = [
     sdk: "ParaSpellApi",
     tokens: [PolkadotTokens.KSM.id],
   },
-  ...chainflipRoutes,
 ];

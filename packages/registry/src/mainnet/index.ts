@@ -2,4 +2,4 @@ export * from "./chains";
 export * from "./mainnet";
 export * from "./routes";
 export * from "./tokens";
-export * from "./chainflipPairs";
+export * from "./chainflip";
