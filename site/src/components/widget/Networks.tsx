@@ -2,9 +2,7 @@
 
 import { useState } from 'react'
 import { Body, Switch, Large, Icon } from '@velocitylabs-org/turtle-ui'
-import acalaLogo from '@velocitylabs-org/turtle-assets/logos/acala.svg'
-import Image from 'next/image'
-import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { tokensById, chainsByUid, Chain, Token } from '@velocitylabs-org/turtle-registry'
 
 const Networks = () => {
   const [visible, setVisible] = useState('Chains')
@@ -20,15 +18,21 @@ const Networks = () => {
   }
 
   const TableRow = ({ item }: { item: Chain | Token }) => {
-    const id = visible === 'Chains' ? item.uid : item.id
+    const id = 'uid' in item ? item.uid : item.id
 
     return (
       <div className="flex items-center justify-between" key={id}>
         <div className="flex items-center gap-6">
-          <Icon src={item.logoURI.src} alt={item.name} width={32} height={32} />
+          <Icon
+            src={typeof item.logoURI === 'string' ? item.logoURI : item.logoURI.src}
+            width={32}
+            height={32}
+          />
           <div className="flex flex-col">
             <p className="text-sm font-bold">{item.name}</p>
-            {item.symbol && <p className="text-sm text-turtle-level6">{item.symbol}</p>}
+            {'symbol' in item && item.symbol && (
+              <p className="text-sm text-turtle-level6">{item.symbol}</p>
+            )}
           </div>
         </div>
         <p className="text-sm">{id}</p>
@@ -50,7 +54,7 @@ const Networks = () => {
         </header>
         <div className="flex max-h-[350px] flex-col gap-8 overflow-y-auto">
           {items.map((item) => (
-            <TableRow key={item.uid} item={item} />
+            <TableRow key={'uid' in item ? item.uid : item.id} item={item} />
           ))}
         </div>
       </section>
