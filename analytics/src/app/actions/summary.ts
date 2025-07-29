@@ -117,7 +117,7 @@ export async function getSummaryData() {
 
     // Get transaction data for all time periods
     const transactionData = await getAllTransactionData()
-    
+
     // Get top tokens data (normal and flattened)
     const topTokensData = await getAllTopTokensData()
 
@@ -377,7 +377,11 @@ async function getAllTransactionData() {
 
   // Ensure all 7 previous days are included (excluding today) for both normal and flattened
   const completeNormalLastWeekData = fillMissingDays(result.lastWeekData, sevenDaysAgo, todayStart)
-  const completeFlattenedLastWeekData = fillMissingDays(result.flattenedLastWeekData, sevenDaysAgo, todayStart)
+  const completeFlattenedLastWeekData = fillMissingDays(
+    result.flattenedLastWeekData,
+    sevenDaysAgo,
+    todayStart,
+  )
 
   return {
     normal: {
@@ -389,7 +393,7 @@ async function getAllTransactionData() {
       sixMonthsData: result.flattenedSixMonthsData,
       lastMonthData: result.flattenedLastMonthData,
       lastWeekData: completeFlattenedLastWeekData,
-    }
+    },
   }
 }
 
@@ -548,6 +552,6 @@ async function getAllTopTokensData() {
     flattened: {
       topTokensByVolume: result.flattenedTopTokensByVolume,
       topTokensByCount: result.flattenedTopTokensByCount,
-    }
+    },
   }
 }
