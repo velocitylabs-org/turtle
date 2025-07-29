@@ -1,6 +1,7 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import { cn } from '@velocitylabs-org/turtle-ui'
+import { Checkbox } from '@velocitylabs-org/turtle-ui'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
 import { useQueryState, parseAsStringLiteral, parseAsBoolean } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
@@ -12,7 +13,6 @@ import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import { defaultTransactionLimit, GraphType, TimePeriodType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
@@ -46,7 +46,7 @@ const timePeriodQueryDefault = parseAsStringLiteral([
   'last-month',
   'last-week',
 ] as const).withDefault('last-6-months')
-const booleanWithDefault = parseAsBoolean.withDefault(false)
+const booleanDefaultTrue = parseAsBoolean.withDefault(true)
 
 export default function HomeDashboardPage() {
   const [transactionGraphType, setTransactionGraphType] = useQueryState(
@@ -55,10 +55,7 @@ export default function HomeDashboardPage() {
   )
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
-  const [transactionsFlattened, setTransactionsFlattened] = useQueryState(
-    'transactionsFlattened',
-    booleanWithDefault,
-  )
+  const [outliers, setOutliers] = useQueryState('outliers', booleanDefaultTrue)
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
@@ -71,7 +68,7 @@ export default function HomeDashboardPage() {
 
   const getTransactionData = () => {
     const dataTimeframeKey = periodConfig[timePeriod].dataKey
-    const dataKey = transactionsFlattened ? 'flattened' : 'normal'
+    const dataKey = outliers ? 'normal' : 'flattened'
     return data?.transactionData ? data.transactionData[dataKey]?.[dataTimeframeKey] || [] : []
   }
 
@@ -139,10 +136,10 @@ export default function HomeDashboardPage() {
                 />
               </div>
               <CheckboxLabel
-                id="transactions-flattened"
-                label="Flattened"
-                checked={transactionsFlattened}
-                onCheckedChange={setTransactionsFlattened}
+                id="outliers"
+                label="Outliers"
+                checked={outliers}
+                onCheckedChange={setOutliers}
                 className="ml-0"
                 tooltip="Filter out high-value transactions > $50k"
               />

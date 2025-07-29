@@ -1,7 +1,7 @@
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
-import { cn } from '@velocitylabs-org/turtle-ui'
 import { Check } from 'lucide-react'
 import React from 'react'
+import { cn } from '@/helpers'
 
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
