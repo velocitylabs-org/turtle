@@ -30,9 +30,10 @@ import { ethereumOrigin, parachain } from "../helpers";
 
 type BaseTokens = Record<string, Omit<Token, "id" | "origin">>;
 
+// Add doc
 export const getEthereumTokens = <T extends BaseTokens>(
   sharedTokenBase: T,
-  suffix = "e",
+  suffix = "e"
 ): {
   [K in keyof T]: Token;
 } => {
@@ -48,7 +49,7 @@ export const getEthereumTokens = <T extends BaseTokens>(
       } as Token;
       return acc;
     },
-    {} as { [K in keyof T]: Token },
+    {} as { [K in keyof T]: Token }
   );
 };
 
@@ -419,84 +420,6 @@ export const sharedTokenBase: BaseTokens = {
 // Tokens
 export const EthereumTokens = {
   ...getEthereumTokens(sharedTokenBase),
-
-  // ETH: {
-  //   id: "eth",
-  //   ...sharedTokenBase.ETH,
-  //   origin: ethereumOrigin("Native"),
-  // },
-
-  // USDC: {
-  //   id: "usdc.e",
-  //   ...sharedTokenBase.USDC,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // DAI: {
-  //   id: "dai.e",
-  //   ...sharedTokenBase.DAI,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // USDT: {
-  //   id: "usdt.e",
-  //   ...sharedTokenBase.USDT,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // WETH: {
-  //   id: "weth.e",
-  //   ...sharedTokenBase.WETH,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // VETH: {
-  //   id: "veth.e",
-  //   ...sharedTokenBase.VETH,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // WBTC: {
-  //   id: "wbtc.e",
-  //   ...sharedTokenBase.WBTC,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // MYTH: {
-  //   id: "myth.e",
-  //   ...sharedTokenBase.MYTH,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // SHIB: {
-  //   id: "shib.e",
-  //   ...sharedTokenBase.SHIB,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // PEPE: {
-  //   id: "pepe.e",
-  //   ...sharedTokenBase.PEPE,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // TON: {
-  //   id: "ton.e",
-  //   ...sharedTokenBase.TON,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // WSTETH: {
-  //   id: "wsteth.e",
-  //   ...sharedTokenBase.WSTETH,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
-
-  // TBTC: {
-  //   id: "tbtc.e",
-  //   ...sharedTokenBase.TBTC,
-  //   origin: ethereumOrigin("ERC20"),
-  // },
 } as const satisfies Record<string, Token>;
 
 export const PolkadotTokens = {
