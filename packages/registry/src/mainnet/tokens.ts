@@ -875,10 +875,4 @@ export const PolkadotTokens = {
     origin: parachain(0),
   },
 
-  // Snowbridge-wrapped Tokens
-  // USDC_SB: {
-  //   ...TokensBase.USDC,
-  //   id: "usdc.sb",
-  //   origin: snowbridgeWrapped(),
-  // },
 } as const satisfies Record<string, Token>;
