@@ -2,7 +2,6 @@
 
 import { Environment } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
-import { TxStatus } from '@/models/transfer'
 import {
   ANALYTICS_DASHBOARD_BASE_URL,
   isProduction,
@@ -93,7 +92,7 @@ export async function trackTransferMetrics({
 
     txDate: date.toISOString(),
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
-    status: TxStatus.Succeeded,
+    status: 'ongoing',
     isSwap,
   }
 

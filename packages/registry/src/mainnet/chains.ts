@@ -47,6 +47,7 @@ export const AssetHub: Chain = {
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
   rpcConnection: `wss://api-asset-hub-polkadot.n.dwellir.com/${DWELLIR_KEY}`,
+  supportExecuteExtrinsic: true,
 };
 
 export const BridgeHub: Chain = {
@@ -82,6 +83,7 @@ export const Hydration: Chain = {
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
   rpcConnection: `wss://api-hydration.n.dwellir.com/${DWELLIR_KEY}`,
+  supportExecuteExtrinsic: true,
 };
 
 export const Phala: Chain = {
