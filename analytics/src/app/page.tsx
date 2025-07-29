@@ -146,6 +146,7 @@ export default function HomeDashboardPage() {
                 checked={transactionsFlattened}
                 onCheckedChange={setTransactionsFlattened}
                 className="ml-0"
+                tooltip="Filter out high-value transactions > $50k"
               />
             </CardTitle>
             <CardDescription>
@@ -197,6 +198,7 @@ export default function HomeDashboardPage() {
                 checked={tokensFlattened}
                 onCheckedChange={setTokensFlattened}
                 className="ml-0"
+                tooltip="Filter out high-value transactions > $50k"
               />
             </CardTitle>
             <CardDescription>With highest successful transaction</CardDescription>
@@ -242,11 +244,19 @@ interface CheckboxLabelProps {
   checked: boolean
   onCheckedChange: (checked: boolean) => void
   className?: string
+  tooltip?: string
 }
 
-function CheckboxLabel({ id, label, checked, onCheckedChange, className }: CheckboxLabelProps) {
+function CheckboxLabel({
+  id,
+  label,
+  checked,
+  onCheckedChange,
+  className,
+  tooltip,
+}: CheckboxLabelProps) {
   return (
-    <div className={cn('ml-4 flex items-center space-x-2', className)}>
+    <div className={cn('ml-4 flex items-center space-x-2', className)} title={tooltip}>
       <Checkbox
         id={id}
         checked={checked}
