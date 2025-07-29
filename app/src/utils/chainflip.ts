@@ -1,12 +1,12 @@
 import { Chain, chainflipRoutes, Token } from '@velocitylabs-org/turtle-registry'
 
 /** returns all Chainflip allowed source chains for a swap. */
-export const getChainflipSwapSourceChains = () => {
+export const getChainflipSwapSourceChains = (): Chain[] => {
   return chainflipRoutes.map(route => route.from)
 }
 
 /** returns all Chainflip allowed source tokens for a swap. */
-export const getChainflipSwapSourceTokens = (sourceChain: Chain) => {
+export const getChainflipSwapSourceTokens = (sourceChain: Chain): Token[] => {
   if (!sourceChain) return []
 
   const tokensSet = new Set<Token>()
@@ -19,7 +19,7 @@ export const getChainflipSwapSourceTokens = (sourceChain: Chain) => {
 }
 
 /** returns all Chainflip allowed destination chains for a swap. */
-export const getChainflipSwapDestChains = (sourceChain: Chain, sourceToken: Token) => {
+export const getChainflipSwapDestChains = (sourceChain: Chain, sourceToken: Token): Chain[] => {
   if (!sourceChain || !sourceToken) return []
 
   const chainsSet = new Set<Chain>()
@@ -41,7 +41,7 @@ export const getChainflipSwapDestTokens = (
   sourceChain: Chain,
   sourceToken: Token,
   destinationChain: Chain | null,
-) => {
+): Token[] => {
   if (!sourceChain || !sourceToken || !destinationChain) return []
 
   const tokensSet = new Set<Token>()
