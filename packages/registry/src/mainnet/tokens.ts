@@ -874,5 +874,4 @@ export const PolkadotTokens = {
     coingeckoId: "kusama",
     origin: parachain(0),
   },
-
 } as const satisfies Record<string, Token>;
