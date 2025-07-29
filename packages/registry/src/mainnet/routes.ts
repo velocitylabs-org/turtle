@@ -28,8 +28,6 @@ export const routes: Route[] = [
       EthereumTokens.ETH.id,
       EthereumTokens.WETH.id,
       EthereumTokens.WBTC.id,
-      // EthereumTokens.USDC.id, // now Supported by Chainflip
-      // EthereumTokens.USDT.id, // now Supported by Chainflip
       EthereumTokens.DAI.id,
       EthereumTokens.WSTETH.id,
       EthereumTokens.TBTC.id,
