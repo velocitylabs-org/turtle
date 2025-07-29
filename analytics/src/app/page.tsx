@@ -59,7 +59,6 @@ export default function HomeDashboardPage() {
     'transactionsFlattened',
     booleanWithDefault,
   )
-  const [tokensFlattened, setTokensFlattened] = useQueryState('tokensFlattened', booleanWithDefault)
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
@@ -77,9 +76,8 @@ export default function HomeDashboardPage() {
   }
 
   const getTopTokensData = () => {
-    const dataKey = tokensFlattened ? 'flattened' : 'normal'
     const tokensType = tokensGraphType === 'volume' ? 'topTokensByVolume' : 'topTokensByCount'
-    return data?.topTokensData ? data.topTokensData[dataKey]?.[tokensType] || [] : []
+    return data?.topTokensData ? data.topTokensData[tokensType] || [] : []
   }
 
   const summaryData = data || {
@@ -192,14 +190,6 @@ export default function HomeDashboardPage() {
                   className="ml-3"
                 />
               </div>
-              <CheckboxLabel
-                id="tokens-flattened"
-                label="Flattened"
-                checked={tokensFlattened}
-                onCheckedChange={setTokensFlattened}
-                className="ml-0"
-                tooltip="Filter out high-value transactions > $50k"
-              />
             </CardTitle>
             <CardDescription>With highest successful transaction</CardDescription>
           </CardHeader>

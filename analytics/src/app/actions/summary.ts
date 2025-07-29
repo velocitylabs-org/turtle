@@ -117,8 +117,6 @@ export async function getSummaryData() {
 
     // Get transaction data for all time periods
     const transactionData = await getAllTransactionData()
-
-    // Get top tokens data (normal and flattened)
     const topTokensData = await getAllTopTokensData()
 
     const totalVolumeUsd = volumeResult[0]?.total || 0
@@ -427,131 +425,66 @@ function fillMissingDays(
   })
 }
 
-// Function to get top tokens data (normal and flattened)
 async function getAllTopTokensData() {
-  const aggregationResult = await Transaction.aggregate([
-    {
-      $match: {
-        status: 'succeeded',
+  const [topTokensByVolume, topTokensByCount] = await Promise.all([
+    // Top tokens by volume
+    Transaction.aggregate([
+      {
+        $match: {
+          status: 'succeeded',
+        },
       },
-    },
-    {
-      $facet: {
-        // Normal top tokens by volume
-        topTokensByVolume: [
-          {
-            $group: {
-              _id: '$sourceTokenId',
-              symbol: { $first: '$sourceTokenSymbol' },
-              name: { $first: '$sourceTokenName' },
-              volume: { $sum: '$sourceTokenAmountUsd' },
-            },
-          },
-          { $sort: { volume: -1 } },
-          { $limit: 3 },
-          {
-            $project: {
-              _id: 0,
-              id: '$_id',
-              symbol: 1,
-              name: 1,
-              volume: 1,
-            },
-          },
-        ],
-
-        // Normal top tokens by count
-        topTokensByCount: [
-          {
-            $group: {
-              _id: '$sourceTokenId',
-              symbol: { $first: '$sourceTokenSymbol' },
-              name: { $first: '$sourceTokenName' },
-              count: { $sum: 1 },
-            },
-          },
-          { $sort: { count: -1 } },
-          { $limit: 3 },
-          {
-            $project: {
-              _id: 0,
-              id: '$_id',
-              symbol: 1,
-              name: 1,
-              count: 1,
-            },
-          },
-        ],
-
-        // Flattened top tokens by volume (filtering out transactions > threshold)
-        flattenedTopTokensByVolume: [
-          {
-            $match: {
-              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
-            },
-          },
-          {
-            $group: {
-              _id: '$sourceTokenId',
-              symbol: { $first: '$sourceTokenSymbol' },
-              name: { $first: '$sourceTokenName' },
-              volume: { $sum: '$sourceTokenAmountUsd' },
-            },
-          },
-          { $sort: { volume: -1 } },
-          { $limit: 3 },
-          {
-            $project: {
-              _id: 0,
-              id: '$_id',
-              symbol: 1,
-              name: 1,
-              volume: 1,
-            },
-          },
-        ],
-
-        // Flattened top tokens by count (filtering out transactions > threshold)
-        flattenedTopTokensByCount: [
-          {
-            $match: {
-              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
-            },
-          },
-          {
-            $group: {
-              _id: '$sourceTokenId',
-              symbol: { $first: '$sourceTokenSymbol' },
-              name: { $first: '$sourceTokenName' },
-              count: { $sum: 1 },
-            },
-          },
-          { $sort: { count: -1 } },
-          { $limit: 3 },
-          {
-            $project: {
-              _id: 0,
-              id: '$_id',
-              symbol: 1,
-              name: 1,
-              count: 1,
-            },
-          },
-        ],
+      {
+        $group: {
+          _id: '$sourceTokenId',
+          symbol: { $first: '$sourceTokenSymbol' },
+          name: { $first: '$sourceTokenName' },
+          volume: { $sum: '$sourceTokenAmountUsd' },
+        },
       },
-    },
+      { $sort: { volume: -1 } },
+      { $limit: 3 },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          symbol: 1,
+          name: 1,
+          volume: 1,
+        },
+      },
+    ]),
+    // Top tokens by count
+    Transaction.aggregate([
+      {
+        $match: {
+          status: 'succeeded',
+        },
+      },
+      {
+        $group: {
+          _id: '$sourceTokenId',
+          symbol: { $first: '$sourceTokenSymbol' },
+          name: { $first: '$sourceTokenName' },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1 } },
+      { $limit: 3 },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          symbol: 1,
+          name: 1,
+          count: 1,
+        },
+      },
+    ]),
   ])
 
-  const result = aggregationResult[0]
-
   return {
-    normal: {
-      topTokensByVolume: result.topTokensByVolume,
-      topTokensByCount: result.topTokensByCount,
-    },
-    flattened: {
-      topTokensByVolume: result.flattenedTopTokensByVolume,
-      topTokensByCount: result.flattenedTopTokensByCount,
-    },
+    topTokensByVolume,
+    topTokensByCount,
   }
 }
