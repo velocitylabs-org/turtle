@@ -46,7 +46,6 @@ export const chainflipRoutes: ChainflipRoute[] = [
       [PolkadotTokens.USDC, EthereumTokens.USDT],
       [PolkadotTokens.USDT, EthereumTokens.ETH],
       [PolkadotTokens.USDT, EthereumTokens.USDC],
-      [PolkadotTokens.USDT, EthereumTokens.USDC],
     ],
   },
   {
