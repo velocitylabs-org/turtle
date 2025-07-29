@@ -1,6 +1,6 @@
 'use server'
 import { startOfMonth, subMonths, format, addDays, startOfDay, subDays } from 'date-fns'
-import { defaultTransactionLimit } from '@/constants'
+import { defaultTransactionLimit, volumePeakThreshold } from '@/constants'
 import Transaction from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
@@ -117,6 +117,9 @@ export async function getSummaryData() {
 
     // Get transaction data for all time periods
     const transactionData = await getAllTransactionData()
+    
+    // Get top tokens data (normal and flattened)
+    const topTokensData = await getAllTopTokensData()
 
     const totalVolumeUsd = volumeResult[0]?.total || 0
     const successRate =
@@ -137,6 +140,7 @@ export async function getSummaryData() {
       recentTransactions: serializedRecentTransactions,
       topTokensByVolume,
       topTokensByCount,
+      topTokensData,
       transactionData,
     }
   } catch (e) {
@@ -155,7 +159,7 @@ async function getAllTransactionData() {
   const sevenDaysAgo = subDays(startOfDay(now), 7)
   const todayStart = startOfDay(now)
 
-  // Get all data in a single aggregation
+  // Get all data using a single facet aggregation
   const aggregationResult = await Transaction.aggregate([
     {
       $match: {
@@ -264,19 +268,128 @@ async function getAllTransactionData() {
             },
           },
         ],
+
+        // Flattened six-month data (filtering out transactions > 50000)
+        flattenedSixMonthsData: [
+          {
+            $match: {
+              txDate: {
+                $lt: currentMonthStart,
+              },
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m',
+                  date: '$txDate',
+                },
+              },
+              volumeUsd: { $sum: '$sourceTokenAmountUsd' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          {
+            $project: {
+              _id: 0,
+              timestamp: '$_id',
+              volumeUsd: 1,
+              count: 1,
+            },
+          },
+        ],
+
+        // Flattened last month data (filtering out transactions > 50000)
+        flattenedLastMonthData: [
+          {
+            $match: {
+              txDate: {
+                $gte: lastMonthStart,
+                $lt: todayStart,
+              },
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$txDate',
+                },
+              },
+              volumeUsd: { $sum: '$sourceTokenAmountUsd' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          {
+            $project: {
+              _id: 0,
+              timestamp: '$_id',
+              volumeUsd: 1,
+              count: 1,
+            },
+          },
+        ],
+
+        // Flattened last 7 days data (filtering out transactions > 50000)
+        flattenedLastWeekData: [
+          {
+            $match: {
+              txDate: {
+                $gte: sevenDaysAgo,
+                $lt: todayStart,
+              },
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$txDate',
+                },
+              },
+              volumeUsd: { $sum: '$sourceTokenAmountUsd' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          {
+            $project: {
+              _id: 0,
+              timestamp: '$_id',
+              volumeUsd: 1,
+              count: 1,
+            },
+          },
+        ],
       },
     },
   ])
 
-  const { sixMonthsData, lastMonthData, lastWeekData: rawLastWeekData } = aggregationResult[0]
+  const result = aggregationResult[0]
 
-  // Ensure all 7 previous days are included (excluding today)
-  const completeLastSevenDaysData = fillMissingDays(rawLastWeekData, sevenDaysAgo, todayStart)
+  // Ensure all 7 previous days are included (excluding today) for both normal and flattened
+  const completeNormalLastWeekData = fillMissingDays(result.lastWeekData, sevenDaysAgo, todayStart)
+  const completeFlattenedLastWeekData = fillMissingDays(result.flattenedLastWeekData, sevenDaysAgo, todayStart)
 
   return {
-    sixMonthsData,
-    lastMonthData,
-    lastWeekData: completeLastSevenDaysData,
+    normal: {
+      sixMonthsData: result.sixMonthsData,
+      lastMonthData: result.lastMonthData,
+      lastWeekData: completeNormalLastWeekData,
+    },
+    flattened: {
+      sixMonthsData: result.flattenedSixMonthsData,
+      lastMonthData: result.flattenedLastMonthData,
+      lastWeekData: completeFlattenedLastWeekData,
+    }
   }
 }
 
@@ -308,4 +421,133 @@ function fillMissingDays(
       }
     )
   })
+}
+
+// Function to get top tokens data (normal and flattened)
+async function getAllTopTokensData() {
+  const aggregationResult = await Transaction.aggregate([
+    {
+      $match: {
+        status: 'succeeded',
+      },
+    },
+    {
+      $facet: {
+        // Normal top tokens by volume
+        topTokensByVolume: [
+          {
+            $group: {
+              _id: '$sourceTokenId',
+              symbol: { $first: '$sourceTokenSymbol' },
+              name: { $first: '$sourceTokenName' },
+              volume: { $sum: '$sourceTokenAmountUsd' },
+            },
+          },
+          { $sort: { volume: -1 } },
+          { $limit: 3 },
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              symbol: 1,
+              name: 1,
+              volume: 1,
+            },
+          },
+        ],
+
+        // Normal top tokens by count
+        topTokensByCount: [
+          {
+            $group: {
+              _id: '$sourceTokenId',
+              symbol: { $first: '$sourceTokenSymbol' },
+              name: { $first: '$sourceTokenName' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { count: -1 } },
+          { $limit: 3 },
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              symbol: 1,
+              name: 1,
+              count: 1,
+            },
+          },
+        ],
+
+        // Flattened top tokens by volume (filtering out transactions > threshold)
+        flattenedTopTokensByVolume: [
+          {
+            $match: {
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
+            },
+          },
+          {
+            $group: {
+              _id: '$sourceTokenId',
+              symbol: { $first: '$sourceTokenSymbol' },
+              name: { $first: '$sourceTokenName' },
+              volume: { $sum: '$sourceTokenAmountUsd' },
+            },
+          },
+          { $sort: { volume: -1 } },
+          { $limit: 3 },
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              symbol: 1,
+              name: 1,
+              volume: 1,
+            },
+          },
+        ],
+
+        // Flattened top tokens by count (filtering out transactions > threshold)
+        flattenedTopTokensByCount: [
+          {
+            $match: {
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
+            },
+          },
+          {
+            $group: {
+              _id: '$sourceTokenId',
+              symbol: { $first: '$sourceTokenSymbol' },
+              name: { $first: '$sourceTokenName' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { count: -1 } },
+          { $limit: 3 },
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              symbol: 1,
+              name: 1,
+              count: 1,
+            },
+          },
+        ],
+      },
+    },
+  ])
+
+  const result = aggregationResult[0]
+
+  return {
+    normal: {
+      topTokensByVolume: result.topTokensByVolume,
+      topTokensByCount: result.topTokensByCount,
+    },
+    flattened: {
+      topTokensByVolume: result.flattenedTopTokensByVolume,
+      topTokensByCount: result.flattenedTopTokensByCount,
+    }
+  }
 }

@@ -1,7 +1,8 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral } from 'nuqs'
+import { useQueryState, parseAsStringLiteral, parseAsBoolean } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
@@ -11,6 +12,7 @@ import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { defaultTransactionLimit, GraphType, TimePeriodType } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
@@ -44,6 +46,7 @@ const timePeriodQueryDefault = parseAsStringLiteral([
   'last-month',
   'last-week',
 ] as const).withDefault('last-6-months')
+const booleanWithDefault = parseAsBoolean.withDefault(false)
 
 export default function HomeDashboardPage() {
   const [transactionGraphType, setTransactionGraphType] = useQueryState(
@@ -52,7 +55,11 @@ export default function HomeDashboardPage() {
   )
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
-
+  const [transactionsFlattened, setTransactionsFlattened] = useQueryState(
+    'transactionsFlattened',
+    booleanWithDefault,
+  )
+  const [tokensFlattened, setTokensFlattened] = useQueryState('tokensFlattened', booleanWithDefault)
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
@@ -64,8 +71,15 @@ export default function HomeDashboardPage() {
   }
 
   const getTransactionData = () => {
-    const dataKey = periodConfig[timePeriod].dataKey
-    return data?.transactionData?.[dataKey] || []
+    const dataTimeframeKey = periodConfig[timePeriod].dataKey
+    const dataKey = transactionsFlattened ? 'flattened' : 'normal'
+    return data?.transactionData ? data.transactionData[dataKey]?.[dataTimeframeKey] || [] : []
+  }
+
+  const getTopTokensData = () => {
+    const dataKey = tokensFlattened ? 'flattened' : 'normal'
+    const tokensType = tokensGraphType === 'volume' ? 'topTokensByVolume' : 'topTokensByCount'
+    return data?.topTokensData ? data.topTokensData[dataKey]?.[tokensType] || [] : []
   }
 
   const summaryData = data || {
@@ -116,13 +130,22 @@ export default function HomeDashboardPage() {
       <div className="mt-4 grid gap-4 lg:grid-cols-10">
         <Card className="col-span-full lg:col-span-6">
           <CardHeader>
-            <CardTitle>
-              Transactions by
-              <TitleToggle
-                options={toggleOptions}
-                value={transactionGraphType}
-                onChange={value => setTransactionGraphType(value as GraphType)}
-                className="ml-3"
+            <CardTitle className="flex w-full items-center justify-between">
+              <div className="flex items-center">
+                Transactions by
+                <TitleToggle
+                  options={toggleOptions}
+                  value={transactionGraphType}
+                  onChange={value => setTransactionGraphType(value as GraphType)}
+                  className="ml-3"
+                />
+              </div>
+              <CheckboxLabel
+                id="transactions-flattened"
+                label="Flattened"
+                checked={transactionsFlattened}
+                onCheckedChange={setTransactionsFlattened}
+                className="ml-0"
               />
             </CardTitle>
             <CardDescription>
@@ -158,13 +181,22 @@ export default function HomeDashboardPage() {
         </Card>
         <Card className="col-span-full lg:col-span-4">
           <CardHeader>
-            <CardTitle>
-              Top tokens by
-              <TitleToggle
-                options={toggleOptions}
-                value={tokensGraphType}
-                onChange={value => setTokensGraphType(value as GraphType)}
-                className="ml-3"
+            <CardTitle className="flex w-full items-center justify-between">
+              <div className="flex items-center">
+                Top tokens by
+                <TitleToggle
+                  options={toggleOptions}
+                  value={tokensGraphType}
+                  onChange={value => setTokensGraphType(value as GraphType)}
+                  className="ml-3"
+                />
+              </div>
+              <CheckboxLabel
+                id="tokens-flattened"
+                label="Flattened"
+                checked={tokensFlattened}
+                onCheckedChange={setTokensFlattened}
+                className="ml-0"
               />
             </CardTitle>
             <CardDescription>With highest successful transaction</CardDescription>
@@ -176,9 +208,7 @@ export default function HomeDashboardPage() {
               </div>
             ) : (
               <TopTokensChart
-                data={
-                  tokensGraphType === 'volume' ? data?.topTokensByVolume : data?.topTokensByCount
-                }
+                data={getTopTokensData()}
                 total={
                   tokensGraphType === 'volume' ? data?.totalVolumeUsd : data?.totalTransactions
                 }
@@ -202,6 +232,32 @@ export default function HomeDashboardPage() {
           </CardContent>
         </Card>
       </div>
+    </div>
+  )
+}
+
+interface CheckboxLabelProps {
+  id: string
+  label: string
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+  className?: string
+}
+
+function CheckboxLabel({ id, label, checked, onCheckedChange, className }: CheckboxLabelProps) {
+  return (
+    <div className={cn('ml-4 flex items-center space-x-2', className)}>
+      <Checkbox
+        id={id}
+        checked={checked}
+        onCheckedChange={checked => onCheckedChange(checked === true)}
+      />
+      <label
+        htmlFor={id}
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        {label}
+      </label>
     </div>
   )
 }

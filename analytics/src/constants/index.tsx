@@ -30,3 +30,5 @@ export const statusColors = {
   undefined: { hex: '#eab308', className: 'yellow-500' },
   ongoing: { hex: '#3b82f6', className: 'blue-500' },
 }
+
+export const volumePeakThreshold = 50000
