@@ -47,4 +47,3 @@ export async function getTxList(page: number = 1) {
     throw error
   }
 }
-

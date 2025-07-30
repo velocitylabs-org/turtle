@@ -208,7 +208,7 @@ export async function getSwapsData() {
       swapsActivity,
       swapPairsByVolume,
       swapPairsByTransactions,
-      totalSwaps
+      totalSwaps,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))

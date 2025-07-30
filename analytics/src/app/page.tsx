@@ -66,7 +66,12 @@ export default function HomeDashboardPage() {
     queryFn: getSummaryData,
   })
 
-  const { data: dataList, isLoading: isInitialLoadingList, isFetching: isFetchingList, error: errorList } = useQuery({
+  const {
+    data: dataList,
+    isLoading: isInitialLoadingList,
+    isFetching: isFetchingList,
+    error: errorList,
+  } = useQuery({
     queryKey: ['transactionList', currentPage],
     queryFn: () => getTxList(currentPage),
     placeholderData: keepPreviousData,
@@ -79,7 +84,7 @@ export default function HomeDashboardPage() {
     successRate: 0,
     totalRecentTransactions: 0,
   }
-  
+
   const { PaginationComponent } = usePagination({
     totalItems: summaryData.totalTransactions,
     itemsPerPage: transactionsPerPage,
@@ -89,7 +94,7 @@ export default function HomeDashboardPage() {
 
   const loading = isLoading || isFetchingList
   useShowLoadingBar(loading)
-  const commonError = error || errorList as Error
+  const commonError = error || (errorList as Error)
 
   if (commonError && !loading) {
     return <ErrorPanel error={commonError} />
@@ -240,9 +245,12 @@ export default function HomeDashboardPage() {
               transactions={dataList?.txList || []}
               isLoading={isInitialLoadingList}
             />
-            {!isInitialLoadingList &&
-              <PaginationComponent className={cn('mt-7', isFetchingList && 'pointer-events-none')} />}
-          </CardContent>  
+            {!isInitialLoadingList && (
+              <PaginationComponent
+                className={cn('mt-7', isFetchingList && 'pointer-events-none')}
+              />
+            )}
+          </CardContent>
         </Card>
       </div>
     </div>

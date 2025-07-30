@@ -36,7 +36,12 @@ export default function SwapsPage() {
     queryFn: getSwapsData,
   })
 
-  const { data: dataList, isLoading: isInitialLoadingList, isFetching: isFetchingList, error: errorList } = useQuery({
+  const {
+    data: dataList,
+    isLoading: isInitialLoadingList,
+    isFetching: isFetchingList,
+    error: errorList,
+  } = useQuery({
     queryKey: ['swapList', currentPage],
     queryFn: () => getSwapList(currentPage),
     placeholderData: keepPreviousData,
@@ -61,7 +66,7 @@ export default function SwapsPage() {
 
   const loading = isLoading || isFetchingList
   useShowLoadingBar(loading)
-  const commonError = error || errorList as Error
+  const commonError = error || (errorList as Error)
 
   if (commonError && !loading) {
     return <ErrorPanel error={commonError} />
@@ -154,7 +159,11 @@ export default function SwapsPage() {
           </CardHeader>
           <CardContent>
             <RecentSwapsTable swaps={dataList?.swapList || []} isLoading={isInitialLoadingList} />
-            {!isInitialLoadingList && <PaginationComponent className={cn('mt-7', isFetchingList && 'pointer-events-none')} />}
+            {!isInitialLoadingList && (
+              <PaginationComponent
+                className={cn('mt-7', isFetchingList && 'pointer-events-none')}
+              />
+            )}
           </CardContent>
         </Card>
       </div>
