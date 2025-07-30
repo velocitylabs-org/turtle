@@ -15,7 +15,6 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { wagmiConfig } from '@/providers/config'
 import { ConfigContext } from '@/providers/ConfigProviders'
-import { useEnvironmentStore } from '@/stores/environmentStore'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { getRecipientAddress, isValidRecipient } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
@@ -43,7 +42,6 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  const environment = useEnvironmentStore(state => state.current)
   const { addNotification } = useNotificationStore()
   const {
     control,
@@ -99,7 +97,6 @@ const useTransferForm = () => {
     loading: loadingBalance,
     fetchBalance,
   } = useBalance({
-    env: environment,
     chain: sourceChain,
     token: sourceTokenAmount?.token ?? undefined,
     address: sourceWallet?.sender?.address,
@@ -428,7 +425,6 @@ const useTransferForm = () => {
         return
 
       transfer({
-        environment,
         sender: sourceWallet.sender,
         sourceChain,
         destinationChain,
@@ -456,16 +452,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [
-      destinationWallet,
-      fees,
-      bridgingFee,
-      reset,
-      sourceWallet?.sender,
-      transfer,
-      environment,
-      addNotification,
-    ],
+    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   return {
@@ -475,9 +462,6 @@ const useTransferForm = () => {
     isValid: isFormValid,
     isValidating,
     handleSubmit: handleSubmit(onSubmit),
-
-    // Environment
-    environment,
 
     // Chain selection and related handlers
     sourceChain,
