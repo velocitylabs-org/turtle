@@ -1,7 +1,6 @@
 'use client'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { cn } from '@velocitylabs-org/turtle-ui'
-import { Checkbox } from '@velocitylabs-org/turtle-ui'
+import { cn, Checkbox } from '@velocitylabs-org/turtle-ui'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
 import { useQueryState, parseAsStringLiteral, parseAsBoolean, parseAsInteger } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
