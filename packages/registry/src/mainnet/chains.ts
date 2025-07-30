@@ -83,11 +83,7 @@ export const Hydration: Chain = {
   supportedAddressTypes: ["ss58"],
   walletType: "Substrate",
   rpcConnection: `wss://api-hydration.n.dwellir.com/${DWELLIR_KEY}`,
-<<<<<<< HEAD
-  allows1SigSendSwapSendFlow: true,
-=======
   supportExecuteExtrinsic: true,
->>>>>>> main
 };
 
 export const Phala: Chain = {

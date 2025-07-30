@@ -155,7 +155,7 @@ export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => {
   const chainsSupportingOneClickFlow = REGISTRY.mainnet.chains.filter(
-    chain => chain?.allows1SigSendSwapSendFlow,
+    chain => chain?.supportExecuteExtrinsic,
   )
 
   const chainsSupportingOneClickFlowAndHaveTradingPairOnDex = chainsSupportingOneClickFlow.filter(
@@ -185,7 +185,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   const dex = getDex(sourceChain)
   if (dex) return getDexTokens(dex)
 
-  if (!sourceChain.allows1SigSendSwapSendFlow) return []
+  if (!sourceChain.supportExecuteExtrinsic) return []
 
   const routeToDex = REGISTRY.mainnet.routes.find(
     route => route.from === sourceChain.uid && route.to === Hydration.uid,
@@ -214,7 +214,7 @@ export const getSwapsDestinationChains = (
   const chains: Chain[] = []
 
   const dex = getDex(sourceChain)
-  if (!dex && !sourceChain.allows1SigSendSwapSendFlow) return []
+  if (!dex && !sourceChain.supportExecuteExtrinsic) return []
 
   const tradeableTokens = getTradeableTokens('HydrationDex', sourceToken)
   if (tradeableTokens.length === 0) return []
@@ -250,7 +250,7 @@ export const getSwapsDestinationTokens = (
   if (!sourceChain || !sourceToken || !destinationChain) return []
 
   const dex = getDex(sourceChain)
-  if (!dex && !sourceChain.allows1SigSendSwapSendFlow) return []
+  if (!dex && !sourceChain.supportExecuteExtrinsic) return []
 
   // Check for tradeable tokens
   const tradeableTokens = getTradeableTokens('HydrationDex', sourceToken)
