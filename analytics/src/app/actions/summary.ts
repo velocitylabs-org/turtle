@@ -90,11 +90,10 @@ export async function getSummaryData() {
       ]),
     ])
 
-    // Get transaction data for all time periods and total recent transactions count
-    const [transactionData, topTokensData, totalRecentTransactions] = await Promise.all([
+    // Get transaction data for all time periods
+    const [transactionData, topTokensData] = await Promise.all([
       getAllTransactionData(),
       getAllTopTokensData(),
-      Transaction.countDocuments(),
     ])
 
     const totalVolumeUsd = volumeResult[0]?.total || 0
@@ -108,7 +107,6 @@ export async function getSummaryData() {
       totalTransactions,
       avgTransactionValue,
       successRate,
-      totalRecentTransactions,
       topTokensByVolume,
       topTokensByCount,
       topTokensData,
