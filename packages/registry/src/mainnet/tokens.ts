@@ -40,7 +40,7 @@ type BaseTokens = Record<string, Omit<Token, "id" | "origin">>;
  */
 export const getEthereumTokens = <T extends BaseTokens>(
   sharedTokenBase: T,
-  idSuffix = "e"
+  idSuffix = "e",
 ): {
   [K in keyof T]: Token;
 } => {
@@ -59,7 +59,7 @@ export const getEthereumTokens = <T extends BaseTokens>(
       } as Token;
       return acc;
     },
-    {} as { [K in keyof T]: Token }
+    {} as { [K in keyof T]: Token },
   );
 };
 
