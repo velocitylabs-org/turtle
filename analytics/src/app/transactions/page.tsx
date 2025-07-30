@@ -19,7 +19,7 @@ import SmallStatBox from '@/components/SmallStatBox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { chains, defaultTransactionLimit, tokens } from '@/constants'
+import { chains, transactionsPerPage, tokens } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
@@ -321,7 +321,7 @@ export default function TransactionsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent transactions</CardTitle>
-            <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
+            <CardDescription>Last {transactionsPerPage} transactions</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable transactions={transactions} isLoading={isLoading} />

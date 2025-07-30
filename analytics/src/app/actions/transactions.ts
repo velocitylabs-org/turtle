@@ -1,5 +1,5 @@
 'use server'
-import { defaultTransactionLimit } from '@/constants'
+import { transactionsPerPage } from '@/constants'
 import Transaction, { txStatusOptions } from '@/models/Transaction'
 import { TxStatus } from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
@@ -96,10 +96,10 @@ export async function getTransactionsData({
     }
 
     const [filteredTransactions, totalVolumeUsd, statusCounts] = await Promise.all([
-      // Retrieve the latest transactions, limiting results to defaultTransactionLimit
+      // Retrieve the latest transactions, limiting results to transactionsPerPage
       Transaction.find(query)
         .sort({ txDate: -1 })
-        .limit(defaultTransactionLimit)
+        .limit(transactionsPerPage)
         .select(
           [
             '_id',

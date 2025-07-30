@@ -8,7 +8,7 @@ export const loadingBarOpt = {
   waitingTime: 200,
 }
 
-export const defaultTransactionLimit = 20
+export const transactionsPerPage = 10
 
 // Chains
 export const chains = REGISTRY.mainnet.chains
