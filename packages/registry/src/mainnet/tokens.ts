@@ -30,21 +30,31 @@ import { ethereumOrigin, parachain } from "../helpers";
 
 type BaseTokens = Record<string, Omit<Token, "id" | "origin">>;
 
-// Add doc
+/**
+ * Generate a typed Ethereum token registry from a shared base.
+ * This maps the shared token list and dynamically adds both `id` and `origin` fields.
+ *
+ * @param sharedTokenBase - The shared token base, common to Ethereum and wrapped token registries.
+ * @param idSuffix - Optional suffix to append to the token ID (example: EthereumTokens.USDC.id === 'usdc.e').
+ * @returns A fully typed Ethereum token registry: Record<string, Token>
+ */
 export const getEthereumTokens = <T extends BaseTokens>(
   sharedTokenBase: T,
-  suffix = "e"
+  idSuffix = "e"
 ): {
   [K in keyof T]: Token;
 } => {
   return Object.entries(sharedTokenBase).reduce(
     (acc, [tokenKey, tokenValue]) => {
       acc[tokenKey as keyof T] = {
+        // Generate the token id and handle Eth exception
         id:
           tokenKey === "ETH"
             ? tokenKey.toLowerCase()
-            : `${tokenKey.toLowerCase()}.${suffix}`,
+            : `${tokenKey.toLowerCase()}.${idSuffix}`,
+        // Spread the token base data
         ...tokenValue,
+        // Generate the token origin (Native or ERC20)
         origin: ethereumOrigin(tokenKey === "ETH" ? "Native" : "ERC20"),
       } as Token;
       return acc;
@@ -53,6 +63,12 @@ export const getEthereumTokens = <T extends BaseTokens>(
   );
 };
 
+/**
+ * Shared base list of Ethereum tokens without `id` and `origin`.
+ *
+ * This base omits both `id` and `origin`, allowing them to be dynamically added via `getEthereumTokens()`
+ * It serves as a common source for both native Ethereum tokens and bridge-wrapped variants (example: Snowbridge wrapped tokens)
+ */
 export const sharedTokenBase: BaseTokens = {
   ETH: {
     name: "Ethereum",
