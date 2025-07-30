@@ -63,7 +63,11 @@ export default function RecentTransactionsTable({
                   href={`/detail/${tx._id}`}
                   className="contents cursor-pointer"
                   prefetch
-                  onClick={() => start()}
+                  onClick={() => {
+                    // Store current scroll position before navigating
+                    sessionStorage.setItem('previousPageScrollY', window.scrollY.toString())
+                    start()
+                  }}
                 >
                   <TableCell>
                     <div className="flex items-center">
