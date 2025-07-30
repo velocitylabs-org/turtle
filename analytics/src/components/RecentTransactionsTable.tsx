@@ -52,7 +52,7 @@ export default function RecentTransactionsTable({
             <TableRow key={1}>
               <TableCell colSpan={6} className="text-center">
                 <div className="flex h-[450px] items-center justify-center">
-                  <p>There are no recent transactions to display</p>
+                  <p>There are no transactions to display</p>
                 </div>
               </TableCell>
             </TableRow>

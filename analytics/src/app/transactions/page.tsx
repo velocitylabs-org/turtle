@@ -158,6 +158,12 @@ export default function TransactionsPage() {
     setCurrentPage(1)
   }
 
+  // Generic function to handle filter changes and reset page
+  const handleFilterChange = (filterUpdateFn: () => void) => {
+    setCurrentPage(1)
+    filterUpdateFn()
+  }
+
   if (error && !isLoading) {
     return <ErrorPanel error={error} />
   }
@@ -224,7 +230,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded')
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded'))
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
@@ -235,7 +241,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed'))
                       }
                     >
                       <Ban className="mr-1 h-4 w-4" />
@@ -246,7 +252,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined')
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined'))
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
@@ -257,7 +263,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'ongoing' ? 'bg-blue-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing')
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing'))
                       }
                     >
                       <RefreshCcw className="mr-1 h-4 w-4" />
@@ -269,7 +275,7 @@ export default function TransactionsPage() {
                   <Select
                     options={originOptions}
                     selected={origin}
-                    onChange={val => setOrigin(val as string)}
+                    onChange={val => handleFilterChange(() => setOrigin(val as string))}
                     placeholder="Origin"
                   />
                 </div>
@@ -277,23 +283,23 @@ export default function TransactionsPage() {
               {/* Date pickers and address inputs section */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <DatePicker date={fromDate} setDate={setFromDate} placeholder="From date" />
+                  <DatePicker date={fromDate} setDate={date => handleFilterChange(() => setFromDate(date))} placeholder="From date" />
                 </div>
                 <div>
-                  <DatePicker date={toDate} setDate={setToDate} placeholder="To date" />
+                  <DatePicker date={toDate} setDate={date => handleFilterChange(() => setToDate(date))} placeholder="To date" />
                 </div>
                 <div>
                   <Input
                     placeholder="Sender Address"
                     value={senderAddress}
-                    onChange={e => setSenderAddress(e.target.value)}
+                    onChange={e => handleFilterChange(() => setSenderAddress(e.target.value))}
                   />
                 </div>
                 <div>
                   <Input
                     placeholder="Recipient Address"
                     value={recipientAddress}
-                    onChange={e => setRecipientAddress(e.target.value)}
+                    onChange={e => handleFilterChange(() => setRecipientAddress(e.target.value))}
                   />
                 </div>
               </div>
@@ -303,7 +309,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={sourceChainUid}
-                    onChange={val => setSourceChainUid(val as string)}
+                    onChange={val => handleFilterChange(() => setSourceChainUid(val as string))}
                     placeholder="Source Chain"
                   />
                 </div>
@@ -311,7 +317,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenOptions}
                     selected={sourceTokenId}
-                    onChange={val => setSourceTokenId(val as string)}
+                    onChange={val => handleFilterChange(() => setSourceTokenId(val as string))}
                     placeholder="Source Token"
                   />
                 </div>
@@ -319,7 +325,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={val => setDestinationChainUid(val as string)}
+                    onChange={val => handleFilterChange(() => setDestinationChainUid(val as string))}
                     placeholder="Destination Chain"
                   />
                 </div>
@@ -327,7 +333,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenOptions}
                     selected={destinationTokenId}
-                    onChange={val => setDestinationTokenId(val as string)}
+                    onChange={val => handleFilterChange(() => setDestinationTokenId(val as string))}
                     placeholder="Destination Token"
                   />
                 </div>

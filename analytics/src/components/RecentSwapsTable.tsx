@@ -50,7 +50,7 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
             <TableRow key={1}>
               <TableCell colSpan={6} className="text-center">
                 <div className="flex h-[250px] items-center justify-center">
-                  <p>There are no recent transactions to display</p>
+                  <p>There are no transactions to display</p>
                 </div>
               </TableCell>
             </TableRow>
