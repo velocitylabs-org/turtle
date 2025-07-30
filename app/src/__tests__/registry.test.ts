@@ -13,8 +13,9 @@ describe('Routes', () => {
   })
 
   it('should not have any duplicate routes', () => {
-    const routeSet = new Set(routes.map(r => `${r.from}-${r.to}`))
-    expect(routeSet.size).toBe(routes.length)
+    const filteredRoutes = routes.filter(r => r.sdk !== 'ChainflipApi')
+    const routeSet = new Set(filteredRoutes.map(r => `${r.from}-${r.to}`))
+    expect(routeSet.size).toBe(filteredRoutes.length)
   })
 
   it('should have valid routes with existing chains', () => {

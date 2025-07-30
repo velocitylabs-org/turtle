@@ -26,12 +26,51 @@ import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
 
 import { Token } from "@/types";
-import { parachain, snowbridgeWrapped } from "../helpers";
+import { ethereumOrigin, parachain } from "../helpers";
 
-// Tokens
-export const EthereumTokens = {
+type BaseTokens = Record<string, Omit<Token, "id" | "origin">>;
+
+/**
+ * Generate a typed Ethereum token registry from a shared base.
+ * This maps the shared token list and dynamically adds both `id` and `origin` fields.
+ *
+ * @param sharedTokenBase - The shared token base, common to Ethereum and wrapped token registries.
+ * @param idSuffix - Optional suffix to append to the token ID (example: EthereumTokens.USDC.id === 'usdc.e').
+ * @returns A fully typed Ethereum token registry: Record<string, Token>
+ */
+export const getEthereumTokens = <T extends BaseTokens>(
+  sharedTokenBase: T,
+  idSuffix = "e",
+): {
+  [K in keyof T]: Token;
+} => {
+  return Object.entries(sharedTokenBase).reduce(
+    (acc, [tokenKey, tokenValue]) => {
+      acc[tokenKey as keyof T] = {
+        // Generate the token id and handle Eth exception
+        id:
+          tokenKey === "ETH"
+            ? tokenKey.toLowerCase()
+            : `${tokenKey.toLowerCase()}.${idSuffix}`,
+        // Spread the token base data
+        ...tokenValue,
+        // Generate the token origin (Native or ERC20)
+        origin: ethereumOrigin(tokenKey === "ETH" ? "Native" : "ERC20"),
+      } as Token;
+      return acc;
+    },
+    {} as { [K in keyof T]: Token },
+  );
+};
+
+/**
+ * Shared base list of Ethereum tokens without `id` and `origin`.
+ *
+ * This base omits both `id` and `origin`, allowing them to be dynamically added via `getEthereumTokens()`
+ * It serves as a common source for both native Ethereum tokens and bridge-wrapped variants (example: Snowbridge wrapped tokens)
+ */
+export const sharedTokenBase: BaseTokens = {
   ETH: {
-    id: "eth",
     name: "Ethereum",
     symbol: "ETH",
     logoURI: ethereumLogo,
@@ -50,12 +89,9 @@ export const EthereumTokens = {
       },
     },
     coingeckoId: "ethereum",
-    origin: snowbridgeWrapped(),
   },
 
-  // Snowbridge-wrapped USDC
   USDC: {
-    id: "usdc.e",
     name: "USDC",
     symbol: "USDC",
     logoURI: usdcLogo,
@@ -81,12 +117,10 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
     coingeckoId: "usd-coin",
   },
 
   DAI: {
-    id: "dai.e",
     name: "DAI",
     symbol: "DAI",
     logoURI: daiLogo,
@@ -112,11 +146,9 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
   },
 
   USDT: {
-    id: "usdt.e",
     name: "Tether",
     symbol: "USDT",
     logoURI: usdtLogo,
@@ -142,12 +174,9 @@ export const EthereumTokens = {
         ],
       },
     },
-
-    origin: snowbridgeWrapped(),
   },
 
   WETH: {
-    id: "weth.e",
     name: "Wrapped Ether",
     symbol: "wETH",
     logoURI: wethLogo,
@@ -174,11 +203,9 @@ export const EthereumTokens = {
       },
     },
     coingeckoId: "weth",
-    origin: snowbridgeWrapped(),
   },
 
   VETH: {
-    id: "veth.e",
     name: "Venus ETH",
     symbol: "vETH",
     logoURI: vethLogo,
@@ -204,11 +231,9 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
   },
 
   WBTC: {
-    id: "wbtc.e",
     name: "Wrapped Bitcoin",
     symbol: "WBTC",
     logoURI: wbtcLogo,
@@ -234,11 +259,9 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
   },
 
   MYTH: {
-    id: "myth.e",
     name: "Mythos",
     symbol: "MYTH",
     logoURI: mythLogo,
@@ -265,11 +288,9 @@ export const EthereumTokens = {
       },
     },
     coingeckoId: "mythos",
-    origin: snowbridgeWrapped(),
   },
 
   SHIB: {
-    id: "shib.e",
     name: "Shiba Inu",
     symbol: "SHIB",
     logoURI: shibLogo,
@@ -295,11 +316,9 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
   },
 
   PEPE: {
-    id: "pepe.e",
     name: "Pepe",
     symbol: "PEPE",
     logoURI: pepeLogo,
@@ -325,11 +344,9 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
   },
 
   TON: {
-    id: "ton.e",
     name: "Toncoin",
     symbol: "TON",
     logoURI: tonLogo,
@@ -356,11 +373,9 @@ export const EthereumTokens = {
       },
     },
     coingeckoId: "the-open-network",
-    origin: snowbridgeWrapped(),
   },
 
   WSTETH: {
-    id: "wsteth.e",
     name: "Lido wstETH",
     symbol: "WSTETH",
     logoURI: wstethLogo,
@@ -387,11 +402,9 @@ export const EthereumTokens = {
       },
     },
     coingeckoId: "bridged-wrapped-lido-staked-ether-scroll",
-    origin: snowbridgeWrapped(),
   },
 
   TBTC: {
-    id: "tbtc.e",
     name: "tBTC",
     symbol: "TBTC",
     logoURI: tbtcLogo,
@@ -417,8 +430,12 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
   },
+};
+
+// Tokens
+export const EthereumTokens = {
+  ...getEthereumTokens(sharedTokenBase),
 } as const satisfies Record<string, Token>;
 
 export const PolkadotTokens = {

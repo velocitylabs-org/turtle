@@ -36,7 +36,13 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
   }
 
   if (sourceChain.network === 'Polkadot' && token.origin.type === 'Ethereum') {
-    if (token.origin.bridge === 'Snowbridge') {
+    // When sourceChain is Polkadot and the token origin is 'Ethereum',
+    // we consider the token as a Snowbridge-wrapped token,
+    // as for now, we only support the Snowbridge Bridge.
+    if (
+      'standard' in token.origin ||
+      ('bridge' in token.origin && token.origin.bridge === 'Snowbridge')
+    ) {
       return {
         logoURI: snowbridgeLogo,
         text: `Snowbridge ${token.symbol}`,
