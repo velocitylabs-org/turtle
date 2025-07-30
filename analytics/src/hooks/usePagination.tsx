@@ -62,23 +62,25 @@ export function usePagination({
   const canGoNext = currentPage < totalPages
 
   const pageNumbers = useMemo(() => {
-    const delta = 2
+    const delta = 2 // Number of pages to show around current page
     const range: number[] = []
     const rangeWithDots: number[] = []
-    let l: number | undefined
+    let l: number | undefined // Track last processed page number
 
+    // Build array of page numbers to display
     for (let i = 1; i <= totalPages; i++) {
       if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
         range.push(i)
       }
     }
 
+    // Add dots where there are gaps in the sequence
     range.forEach(i => {
       if (l !== undefined) {
         if (i - l === 2) {
-          rangeWithDots.push(l + 1)
+          rangeWithDots.push(l + 1) // Fill single gap (no dots needed)
         } else if (i - l !== 1) {
-          rangeWithDots.push(-1)
+          rangeWithDots.push(-1) // Add dots indicator for larger gaps
         }
       }
       rangeWithDots.push(i)
