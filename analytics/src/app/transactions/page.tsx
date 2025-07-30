@@ -230,7 +230,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded'))
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded'),
+                        )
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
@@ -241,7 +243,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed'))
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed'),
+                        )
                       }
                     >
                       <Ban className="mr-1 h-4 w-4" />
@@ -252,7 +256,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined'))
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined'),
+                        )
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
@@ -263,7 +269,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'ongoing' ? 'bg-blue-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing'))
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing'),
+                        )
                       }
                     >
                       <RefreshCcw className="mr-1 h-4 w-4" />
@@ -283,10 +291,18 @@ export default function TransactionsPage() {
               {/* Date pickers and address inputs section */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <DatePicker date={fromDate} setDate={date => handleFilterChange(() => setFromDate(date))} placeholder="From date" />
+                  <DatePicker
+                    date={fromDate}
+                    setDate={date => handleFilterChange(() => setFromDate(date))}
+                    placeholder="From date"
+                  />
                 </div>
                 <div>
-                  <DatePicker date={toDate} setDate={date => handleFilterChange(() => setToDate(date))} placeholder="To date" />
+                  <DatePicker
+                    date={toDate}
+                    setDate={date => handleFilterChange(() => setToDate(date))}
+                    placeholder="To date"
+                  />
                 </div>
                 <div>
                   <Input
@@ -325,7 +341,9 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={val => handleFilterChange(() => setDestinationChainUid(val as string))}
+                    onChange={val =>
+                      handleFilterChange(() => setDestinationChainUid(val as string))
+                    }
                     placeholder="Destination Chain"
                   />
                 </div>
