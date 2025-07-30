@@ -44,7 +44,8 @@ function AnalyticDataClient({ initialVolume }: AnalyticDataProps) {
           <span className="mr-1 inline-flex items-center justify-center font-bold">
             <NumberFlow value={value} format={format} />
           </span>{' '}
-          Total funds moved in Turtle
+          <span className="hidden min-[550px]:inline">Total funds moved in Turtle</span>
+          <span className="inline min-[550px]:hidden">Total funds moved</span>
         </span>
       </div>
     </div>

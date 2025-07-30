@@ -1,10 +1,11 @@
 import mongoose from 'mongoose'
 
-export type TxStatus = 'succeeded' | 'failed' | 'undefined'
+export type TxStatus = 'succeeded' | 'failed' | 'undefined' | 'ongoing'
 export const txStatusOptions = [
   'succeeded',
   'failed',
   'undefined',
+  'ongoing',
 ] as const satisfies readonly TxStatus[]
 
 export interface TransactionModel {
