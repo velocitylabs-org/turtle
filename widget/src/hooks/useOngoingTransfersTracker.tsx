@@ -1,6 +1,7 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { getSbEnvironment } from '@/lib/snowbridge'
 import { NotificationSeverity } from '@/models/notification'
 import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
@@ -34,8 +35,9 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   } = useQuery({
     queryKey: ['ongoing-transfers', ongoingTransfers.map(t => t.id)],
     queryFn: async () => {
+      const env = getSbEnvironment('Polkadot')
       const formattedTransfers = getFormattedOngoingTransfers(ongoingTransfers)
-      return trackTransfers(formattedTransfers)
+      return trackTransfers(env, formattedTransfers)
     },
     refetchInterval: REVALIDATE,
     staleTime: REVALIDATE,
@@ -92,13 +94,10 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             dismissible: true,
           })
 
-          // Analytics tx are created with successful status by default, we only update for failed ones
-          if (failed) {
-            updateTransferMetrics({
-              txHashId: ongoing.id,
-              status: TxStatus.Failed,
-            })
-          }
+          updateTransferMetrics({
+            txHashId: ongoing.id,
+            status: failed ? TxStatus.Failed : TxStatus.Succeeded,
+          })
         }
       }
     })

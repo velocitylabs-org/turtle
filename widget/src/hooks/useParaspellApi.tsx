@@ -297,11 +297,16 @@ const useParaspellApi = () => {
   }
 
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
-    // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
-    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
-      throw new Error('Swap transfer did not completed - Batch failed')
-
-    return
+    // By default, swaps are submitted using the Execute extrinsic from PolkadotXcm pallet.
+    if (isSwapWithTransfer(transfer) && transfer.sourceChain.supportExecuteExtrinsic) {
+      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess) {
+        throw new Error('Swap transfer did not complete - Execute function not successful')
+      }
+    } else {
+      // Fallback to the BatchAll extinsic from utility pallet
+      if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
+        throw new Error('Swap transfer did not complete - Batch failed')
+    }
   }
 
   const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
@@ -331,7 +336,7 @@ const useParaspellApi = () => {
     removeOngoing(transfer.id)
     addCompletedTransfer({
       id: transfer.id,
-      result: TxStatus.Succeeded,
+      result: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
       sourceToken: transfer.sourceToken,
       destinationToken: transfer.destinationToken,
       sourceChain: transfer.sourceChain,
@@ -348,13 +353,10 @@ const useParaspellApi = () => {
       ...(explorerLink && { explorerLink }),
     } satisfies CompletedTransfer)
 
-    // Analytics tx are created with successful status by default, we only update for failed ones
-    if (!txSuccessful) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: TxStatus.Failed,
-      })
-    }
+    updateTransferMetrics({
+      txHashId: transfer.id,
+      status: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
+    })
   }
 
   const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {

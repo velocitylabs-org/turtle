@@ -11,7 +11,7 @@ export interface RouteItem {
 
 export const routes: RouteItem[] = [
   {
-    label: 'Dashboard',
+    label: 'Overview',
     icon: LayoutDashboard,
     leftNavigation: true,
     href: '/',

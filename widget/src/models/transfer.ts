@@ -147,4 +147,6 @@ export type OnChainBaseEvents = {
   messageId?: string
   extrinsicIndex?: string
   isBatchCompleted?: boolean
+  isExecuteAttemptCompleted?: boolean
+  isExtrinsicSuccess?: boolean
 }

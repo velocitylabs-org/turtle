@@ -1,15 +1,20 @@
-interface TurtlesBackgroundProps {
+export default function TurtlesBackground({
+  header,
+  children,
+}: {
   header: string
-}
-
-export const TurtlesBackground: React.FC<TurtlesBackgroundProps> = ({ header }) => {
+  children: React.ReactNode
+}) {
   return (
     <div className="absolute top-0 z-0">
-      <div className="turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/bg.png')] bg-cover bg-bottom">
-        <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center ">
-          <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
-            {header}
-          </h1>
+      <div className="turtle-background flex h-[78vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/bg.png')] bg-cover bg-bottom">
+        <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center">
+          <div className="m-[4vw] flex-col items-center justify-center">
+            <h1 className="turtle-text-shadow m-0 text-center text-[11vw] leading-[100%] text-white sm:text-[9vw] 3xl:text-[10rem]">
+              {header}
+            </h1>
+            {children}
+          </div>
         </div>
       </div>
       <div>

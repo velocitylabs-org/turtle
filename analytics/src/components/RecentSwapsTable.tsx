@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { SwapView } from '@/models/swap-view'
+import { formatDate, formatDateAgo } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
 import { TokenChainDisplay } from './TokenChainDisplay'
 import { TransactionStatusIndicator } from './TransactionStatusIndicator'
@@ -107,12 +108,11 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-xs">
-                      {new Date(swap.txDate).toLocaleString('en-GB', {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                        hour12: false,
-                      })}
+                    <div className="flex flex-col">
+                      <div className="text-sm">{formatDate(swap.txDate)}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {formatDateAgo(swap.txDate)}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>

@@ -7,7 +7,8 @@ import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
 const svgNs = 'http://www.w3.org/2000/svg'
-const hoverColor = '#00CC20'
+const hoverColor = '#000000'
+const segmentHoverColor = '#00CC20'
 const easeOutQuart = 'cubic-bezier(.165, .84, .44, 1)'
 
 interface ChainFlowData {
@@ -40,7 +41,7 @@ export default function ChainSankeyGraph({
 
   const chainOptions = chains.map((chain: Chain) => ({
     value: chain.uid,
-    label: chain.name,
+    label: truncateLabel(chain.name),
     logoURI: getSrcFromLogo(chain),
   }))
 
@@ -588,7 +589,7 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
     'stop',
     {
       offset: '0%',
-      'stop-color': hoverColor,
+      'stop-color': segmentHoverColor,
       'stop-opacity': '0.5',
     },
     hoverGradient,
@@ -598,7 +599,7 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
     'stop',
     {
       offset: '85%',
-      'stop-color': hoverColor,
+      'stop-color': segmentHoverColor,
       'stop-opacity': '0.5',
     },
     hoverGradient,
@@ -608,7 +609,7 @@ function createSvgDefsElements(svg: SVGSVGElement, nodeSize: number): void {
     'stop',
     {
       offset: '100%',
-      'stop-color': hoverColor,
+      'stop-color': segmentHoverColor,
       'stop-opacity': '0',
     },
     hoverGradient,
@@ -698,4 +699,22 @@ function formatPercentage(percentage: number): string {
   }
 
   return `${percentage.toFixed(2)}%`
+}
+
+function truncateLabel(label: string, maxLength: number = 11) {
+  if (label.length > maxLength) {
+    const words = label.split(' ')
+    if (words.length > 1) {
+      // Get the first word + first letter of later words + dot
+      const firstWord = words[0]
+      const otherInitials = words
+        .slice(1)
+        .map(word => word.charAt(0).toUpperCase())
+        .join('')
+      return `${firstWord} ${otherInitials}.`
+    }
+    // If it's a single long word, truncate it
+    return `${label.substring(0, maxLength)}...`
+  }
+  return label
 }

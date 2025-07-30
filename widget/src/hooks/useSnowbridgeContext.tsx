@@ -1,6 +1,5 @@
-import { assetsV2 } from '@snowbridge/api'
+import { assetRegistryFor } from '@snowbridge/registry'
 import { useQuery } from '@tanstack/react-query'
-
 import { getSnowBridgeContext } from '@/lib/snowbridge'
 import { SnowbridgeContext } from '@/models/snowbridge'
 
@@ -13,7 +12,7 @@ const useSnowbridgeContext = () => {
     queryKey: ['snowbridgeContext'],
     queryFn: async () => {
       const ctx = (await getSnowBridgeContext()) as SnowbridgeContext
-      ctx.registry = await assetsV2.buildRegistry(await assetsV2.fromContext(ctx))
+      ctx.registry = assetRegistryFor(ctx.config.environment)
 
       return ctx
     },

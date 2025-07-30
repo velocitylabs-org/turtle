@@ -1,4 +1,4 @@
-import { Context, environment, status } from '@snowbridge/api'
+import { Context, contextConfigFor, environment, status } from '@snowbridge/api'
 import {
   rpcConnectionAsHttps,
   AssetHub,
@@ -7,10 +7,7 @@ import {
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
   Network,
 } from '@velocitylabs-org/turtle-registry'
-import { AbstractProvider, AlchemyProvider } from 'ethers'
 import { SnowbridgeStatus } from '@/models/snowbridge'
-
-const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY || ''
 
 /**
  * Given a network, return the adequate Snowbridge Api Environment scheme.
@@ -38,30 +35,12 @@ export function getSbEnvironment(network: Network = 'Polkadot'): environment.Sno
   return env
 }
 
-export async function getContext(environment: environment.SnowbridgeEnvironment): Promise<Context> {
-  const { config, ethChainId, name } = environment
-  const ethereumProvider = new AlchemyProvider(ethChainId, ALCHEMY_API_KEY)
-  const ethChains: { [ethChainId: string]: string | AbstractProvider } = {}
-  ethChains[ethChainId.toString()] = ethereumProvider
+export async function getSnowBridgeContext(network: Network = 'Polkadot'): Promise<Context> {
+  const snowbridgeNetwork = toSnowbridgeNetwork(network)
+  if (!snowbridgeNetwork) throw new Error(`Snowbridge context not supported on ${network}`)
 
-  return new Context({
-    environment: name,
-    ethereum: {
-      beacon_url: config.BEACON_HTTP_API,
-      ethChainId,
-      ethChains: { '1': config.ETHEREUM_CHAINS[1](ALCHEMY_API_KEY) },
-    },
-    polkadot: {
-      assetHubParaId: config.ASSET_HUB_PARAID,
-      bridgeHubParaId: config.BRIDGE_HUB_PARAID,
-      relaychain: config.RELAY_CHAIN_URL,
-      parachains: config.PARACHAINS,
-    },
-    appContracts: {
-      gateway: config.GATEWAY_CONTRACT,
-      beefy: config.BEEFY_CONTRACT,
-    },
-  })
+  const config = contextConfigFor(snowbridgeNetwork)
+  return new Context(config)
 }
 
 /**
@@ -70,7 +49,7 @@ export async function getContext(environment: environment.SnowbridgeEnvironment)
  * @param network - The network in which the app is operating
  * @returns the corresponding network value that Snowbridge/api understands
  */
-export function toSnowbridgeNetwork(network: Network): string | undefined {
+export function toSnowbridgeNetwork(network: Network): 'polkadot_mainnet' | undefined {
   switch (network) {
     case 'Polkadot':
     case 'Ethereum':
@@ -78,10 +57,6 @@ export function toSnowbridgeNetwork(network: Network): string | undefined {
     default:
       return undefined
   }
-}
-
-export async function getSnowBridgeContext(network: Network = 'Polkadot'): Promise<Context> {
-  return await getContext(getSbEnvironment(network))
 }
 
 export async function getSnowBridgeEtimatedTransferDuration(
