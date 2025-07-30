@@ -1,19 +1,21 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 import { chainsByUid, tokensById } from '@velocitylabs-org/turtle-registry'
-import { ArrowRight, ExternalLink, Copy, Check, ChevronLeft } from 'lucide-react'
+import { ArrowRight, Check, ChevronLeft, Copy, Link2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { getTxDetail } from '@/app/actions/tx-detail'
 import ErrorPanel from '@/components/ErrorPanel'
 import { LogoImg } from '@/components/TokenAndOriginLogos'
 import { TokenChainDisplay } from '@/components/TokenChainDisplay'
+import { TransactionStatusIndicator } from '@/components/TransactionStatusIndicator'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { statusColors } from '@/constants'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import getExplorerLink from '@/utils/explorer-link'
+import getExplorerLinks from '@/utils/explorer-links'
+import { formatDate, formatDateAgo } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -60,12 +62,12 @@ export default function TransactionDetailPage() {
 
   const sourceChain = chainsByUid[transaction.sourceChainUid]
   const destinationChain = chainsByUid[transaction.destinationChainUid]
+  const sourceToken = transaction.sourceTokenId && tokensById[transaction.sourceTokenId]
+  const destinationToken =
+    transaction.destinationTokenId && tokensById[transaction.destinationTokenId]
   const feesToken = tokensById[transaction.feesTokenId]
   const bridgingFeeToken = tokensById[transaction.bridgingFeeTokenId || '']
-  const network = sourceChain.network
-  const isEthereum = network === 'Ethereum'
-
-  const explorerLink = getExplorerLink(transaction)
+  const explorerLinks = getExplorerLinks(transaction)
 
   return (
     <div>
@@ -106,11 +108,18 @@ export default function TransactionDetailPage() {
                   ${formatUSD(transaction.sourceTokenAmountUsd)}
                 </span>
               </div>
-              <TokenChainDisplay
-                tokenId={transaction.sourceTokenId}
-                chainUid={transaction.sourceChainUid}
-                size={35}
-              />
+              <div className="relative top-[7px] inline-flex flex-col">
+                <TokenChainDisplay
+                  tokenId={transaction.sourceTokenId}
+                  chainUid={transaction.sourceChainUid}
+                  size={35}
+                />
+                {sourceToken && (
+                  <span className="text-center text-sm text-muted-foreground">
+                    {sourceToken.symbol}
+                  </span>
+                )}
+              </div>
               {transaction.isSwap && transaction.destinationTokenAmount && (
                 <>
                   <ArrowRight className="h-5 w-5" />
@@ -120,11 +129,18 @@ export default function TransactionDetailPage() {
                       ${formatUSD(transaction.destinationTokenAmountUsd)}
                     </span>
                   </div>
-                  <TokenChainDisplay
-                    tokenId={transaction.destinationTokenId}
-                    chainUid={transaction.destinationChainUid}
-                    size={35}
-                  />
+                  <div className="relative top-[7px] inline-flex flex-col">
+                    <TokenChainDisplay
+                      tokenId={transaction.destinationTokenId}
+                      chainUid={transaction.destinationChainUid}
+                      size={35}
+                    />
+                    {destinationToken && (
+                      <span className="text-center text-sm text-muted-foreground">
+                        {destinationToken.symbol}
+                      </span>
+                    )}
+                  </div>
                 </>
               )}
             </h3>
@@ -140,37 +156,38 @@ export default function TransactionDetailPage() {
           <CardContent>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Swap</span>
+                <span className="text-sm">{transaction.isSwap ? 'Yes' : 'No'}</span>
+              </div>
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Status</span>
-                <Badge
-                  className="text-white"
-                  style={{ background: statusColors[transaction.status].hex }}
-                >
-                  {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                </Badge>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Date</span>
-                <span className="text-sm">{new Date(transaction.txDate).toLocaleString()}</span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Origin</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">{transaction.hostedOn.replace('https://', '')}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => window.open(transaction.hostedOn, '_blank')}
+                <div className="flex flex-row items-center">
+                  <Badge
+                    className="mr-2 text-white"
+                    style={{ background: statusColors[transaction.status].hex }}
                   >
-                    <ExternalLink size={14} />
-                  </Button>
+                    {transaction.status}
+                  </Badge>
+                  <TransactionStatusIndicator status={transaction.status} logoOnly />
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Swap</span>
-                <span className="text-sm">{transaction.isSwap ? 'Yes' : 'No'}</span>
+                <span className="text-sm text-muted-foreground">Origin</span>
+                <div className="flex items-center gap-1">
+                  <ExternalLinkButton
+                    name={transaction.hostedOn.replace('https://', '')}
+                    url={transaction.hostedOn}
+                  />
+                </div>
+              </div>
+              <div className="items-top flex justify-between">
+                <span className="text-sm text-muted-foreground">Date</span>
+                <div className="flex flex-col items-end">
+                  <div className="text-sm">{formatDate(transaction.txDate)}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {formatDateAgo(transaction.txDate)}
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -217,9 +234,11 @@ export default function TransactionDetailPage() {
                   <span className="text-sm">{feesToken.symbol}</span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium">{transaction.feesTokenAmount}</div>
+                  <div className="text-sm font-medium">
+                    {transaction.feesTokenAmount} {feesToken.symbol}
+                  </div>
                   <div className="text-xs text-muted-foreground">
-                    ${transaction.feesTokenAmountUsd.toLocaleString()}
+                    ${formatUSD(transaction.feesTokenAmountUsd)} USD
                   </div>
                 </div>
               </div>
@@ -255,19 +274,17 @@ export default function TransactionDetailPage() {
           </CardHeader>
           <CardContent>
             <AddressDisplay address={transaction.txHashId} onCopy={copyToClipboard} />
-            {explorerLink && (
+            {explorerLinks && (
               <div className="ml-[3px] mt-[15px] flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Explorer</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm">{isEthereum ? 'etherscan.io' : 'subscan.io'}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => window.open(explorerLink, '_blank')}
-                  >
-                    <ExternalLink size={14} />
-                  </Button>
+                <span className="text-sm text-muted-foreground">
+                  {explorerLinks.length > 1 ? 'Explorers' : 'Explorer'}
+                </span>
+                <div className="flex flex-col">
+                  {explorerLinks.map(explorer => (
+                    <div key={explorer.name} className="flex justify-end align-bottom">
+                      <ExternalLinkButton name={explorer.name} url={explorer.url} />
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -275,6 +292,15 @@ export default function TransactionDetailPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+function ExternalLinkButton({ name, url }: { name: string; url: string }) {
+  return (
+    <Button variant="link" onClick={() => window.open(url, '_blank')} className="p-0" size="sm">
+      <span className="ml-1 text-sm">{name}</span>
+      <Link2 className="h-2 w-2" />
+    </Button>
   )
 }
 
@@ -307,10 +333,19 @@ function AddressDisplay({
         <Button
           variant={isCopied ? null : 'ghost'}
           size="icon"
-          className="h-7 w-7"
+          className="relative h-7 w-7 overflow-hidden"
           onClick={handleCopy}
         >
-          {isCopied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
+          <div
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isCopied ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}
+          >
+            <Check className="h-3 w-3 text-green-500" />
+          </div>
+          <div
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isCopied ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+          >
+            <Copy className="h-3 w-3" />
+          </div>
         </Button>
       </div>
     </div>
