@@ -60,7 +60,7 @@ export default function RecentTransactionsTable({
             transactions.map(tx => (
               <TableRow key={tx._id} className="hover:bg-muted/50">
                 <Link
-                  href={`/tx-detail/${tx._id}`}
+                  href={`/detail/${tx._id}`}
                   className="contents cursor-pointer"
                   prefetch
                   onClick={() => start()}

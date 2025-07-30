@@ -42,7 +42,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   const activeRoute = routes.find(
     (route: RouteItem) =>
       route.href === pathname ||
-      (route.href === '/tx-detail' && pathname?.startsWith('/tx-detail/')),
+      (route.href === '/detail' && pathname?.startsWith('/detail/')),
   )
   const onNavItemClicked = (isActive: boolean, externalLink: boolean) => {
     if (isActive) return

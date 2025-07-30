@@ -58,7 +58,7 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
             swaps.map(swap => (
               <TableRow key={swap._id} className="hover:bg-muted/50">
                 <Link
-                  href={`/tx-detail/${swap._id}`}
+                  href={`/detail/${swap._id}`}
                   className="contents cursor-pointer"
                   prefetch
                   onClick={() => start()}
