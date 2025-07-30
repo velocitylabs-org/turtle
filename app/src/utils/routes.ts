@@ -9,6 +9,12 @@ import {
 } from '@velocitylabs-org/turtle-registry'
 
 import {
+  getChainflipSwapDestChains,
+  getChainflipSwapDestTokens,
+  getChainflipSwapSourceChains,
+  getChainflipSwapSourceTokens,
+} from './chainflip'
+import {
   getSwapsDestinationChains,
   getSwapsDestinationTokens,
   getSwapsSourceChains,
@@ -86,8 +92,9 @@ export const isTokenAvailableForSourceChain = (
 export const getAllowedSourceChains = (): Chain[] => {
   const transferSourceChains = getTransferSourceChains()
   const swapSourceChains = getSwapsSourceChains()
+  const chainflipswapSourceChains = getChainflipSwapSourceChains()
 
-  return deduplicate([...transferSourceChains, ...swapSourceChains])
+  return deduplicate([...transferSourceChains, ...swapSourceChains, ...chainflipswapSourceChains])
 }
 
 export const getAllowedSourceTokens = (
@@ -98,8 +105,9 @@ export const getAllowedSourceTokens = (
 
   const transferTokens = getTransferTokens(sourceChain, destinationChain)
   const swapTokens = getSwapsSourceTokens(sourceChain)
+  const chainflipSwapTokens = getChainflipSwapSourceTokens(sourceChain)
 
-  return deduplicate([...transferTokens, ...swapTokens])
+  return deduplicate([...transferTokens, ...swapTokens, ...chainflipSwapTokens])
 }
 
 export const getAllowedDestinationChains = (
@@ -110,8 +118,13 @@ export const getAllowedDestinationChains = (
 
   const transferDestinationChains = getTransferDestinationChains(sourceChain, sourceToken)
   const swapDestinationChains = getSwapsDestinationChains(sourceChain, sourceToken)
+  const chainflipSwapDestinationChains = getChainflipSwapDestChains(sourceChain, sourceToken)
 
-  return deduplicate([...transferDestinationChains, ...swapDestinationChains])
+  return deduplicate([
+    ...transferDestinationChains,
+    ...swapDestinationChains,
+    ...chainflipSwapDestinationChains,
+  ])
 }
 
 export const getAllowedDestinationTokens = (
@@ -126,8 +139,13 @@ export const getAllowedDestinationTokens = (
     getTransferTokens(sourceChain, destinationChain).some(t => isSameToken(t, sourceToken))
 
   const swapTokens = getSwapsDestinationTokens(sourceChain, sourceToken, destinationChain)
+  const chainFlipSwapTokens = getChainflipSwapDestTokens(sourceChain, sourceToken, destinationChain)
 
-  const allowedTokens = [...(includeSourceTokenForTransfer ? [sourceToken] : []), ...swapTokens]
+  const allowedTokens = [
+    ...(includeSourceTokenForTransfer ? [sourceToken] : []),
+    ...swapTokens,
+    ...chainFlipSwapTokens,
+  ]
 
   return deduplicate(allowedTokens)
 }
