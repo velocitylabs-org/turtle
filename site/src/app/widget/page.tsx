@@ -39,7 +39,7 @@ export default async function Widget() {
                 <div className="flex flex-col gap-20 lg:max-w-[375px]">
                   <XXXLarge className="leading-none">Turtle Widget</XXXLarge>
                   <div className="flex flex-col gap-10">
-                    <h2 className="text-section-title">The whole polkadot in your dApp</h2>
+                    <h2 className="text-section-title">All of Polkadot on your dApp in minutes</h2>
                     <p className="text-lg">
                       Effortless Integration · Unified In-App Experience · Customizable to Your
                       Brand
@@ -64,13 +64,13 @@ export default async function Widget() {
         </TurtlesBackground>
       </section>
       <section className="flex min-h-[100vh] flex-col items-center gap-20 bg-white pb-48 lg:pb-96">
-        <SectionInnerContainer className="mt-24" heading="🐢 What is the Turtle app?">
+        <SectionInnerContainer className="mt-24" heading="🐢 What is the Turtle Widget?">
           <Body>
-            The Turtle app is a seamless cross-chain token transfer solution designed to simplify
-            and streamline the movement of digital assets across different blockchain networks. By
-            abstracting away the technical complexities typically involved in bridging tokens,
-            Turtle provides users with a frictionless experience, eliminating the need for manual
-            routing, multiple wallet approvals, or switching between interfaces.
+            Turtle is a seamless cross-chain token-transfer solution that makes moving digital
+            assets between networks effortless. It abstracts away the technical complexities of
+            cross-chain functionality, giving developers an all-in-one tool so users can transfer
+            assets without leaving your dApp—and without the headache of integrating multiple
+            interoperability providers.
           </Body>
           <Image src="/networks.jpg" alt="Turtle app" width={865} height={400} />
           <Divider />

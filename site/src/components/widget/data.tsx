@@ -32,14 +32,14 @@ export const features = [
     title: 'Seamless Interactions',
     listItems: [
       'Bridging, XCM transfers, swaps — all from within your own product UI and focused on your use case',
-      'Upcoming: fiat-to-crypto onramps, 1-click bridge & swaps, 1-click swaps within Polkadot, and more.',
+      'Upcoming: Fiat onramps, Native X-Chain Swaps from Ethereum, Arbitrum and Solana',
     ],
   },
   {
     title: 'Customizable & Configurable',
     listItems: [
-      'Match your brand with themes, layouts, and styling options.',
-      'Define default tokens, chains, and flows to align with your use case.',
+      'Match your brand with themes, layouts, and styling options',
+      'Define default tokens, chains, and flows to align with your use case',
     ],
   },
   {
@@ -48,7 +48,9 @@ export const features = [
   },
   {
     title: 'Wide Ecosystem Support',
-    listItems: ['Support across all major Polkadot parachains & Ethereum through Snowbridge'],
+    listItems: [
+      'Native support for all major Polkadot parachains and Ethereum. Powered by ParaSpell and Snowbridge',
+    ],
   },
   {
     title: 'Data Dashboard',
