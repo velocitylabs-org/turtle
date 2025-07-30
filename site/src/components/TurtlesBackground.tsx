@@ -6,6 +6,7 @@ interface TurtlesBackgroundProps {
   blurredBackground?: boolean
   whiteWaves?: boolean
   initialVolume: number | undefined
+  children?: React.ReactNode
 }
 
 const TurtlesBackground = ({
@@ -13,6 +14,7 @@ const TurtlesBackground = ({
   blurredBackground = false,
   whiteWaves = false,
   initialVolume,
+  children,
 }: TurtlesBackgroundProps) => {
   const fill = whiteWaves ? '255,255,255' : '191,218,220'
 
@@ -20,17 +22,27 @@ const TurtlesBackground = ({
     <>
       <div
         className={cn(
-          'turtle-background flex h-[80vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url("/bg.png")] bg-cover bg-bottom',
+          'turtle-background flex min-h-[100vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url("/bg.png")] bg-cover bg-bottom',
           blurredBackground && 'blur-lg',
         )}
       >
-        <div className="turtle-dark-overlay flex w-screen flex-col items-center justify-center ">
-          <div className="m-[4vw] flex-col items-center justify-center">
-            <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
-              {header}
-            </h1>
-            {initialVolume && <AnalyticData initialVolume={initialVolume} />}
-          </div>
+        <div
+          className={cn(
+            'turtle-dark-overlay flex w-screen flex-1 flex-col items-center justify-center',
+            children && 'pb-30',
+          )}
+        >
+          {(header || initialVolume) && (
+            <div className="m-[4vw] flex-col items-center justify-center">
+              {header && (
+                <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
+                  {header}
+                </h1>
+              )}
+              {initialVolume && <AnalyticData initialVolume={initialVolume} />}
+            </div>
+          )}
+          {children}
         </div>
       </div>
 

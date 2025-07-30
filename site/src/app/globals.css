@@ -36,8 +36,8 @@
 
     --radius: 0.5rem;
 
-    --letter-spacing-xs: -0.04em;
-    --letter-spacing-sm: -0.03em;
+    --letter-spacing-xs: -0.0265rem;
+    --letter-spacing-sm: 0.06rem;
   }
 
   .dark {
@@ -181,4 +181,12 @@ input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.turtle-wrapper > div:first-of-type {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.turtle-wrapper .rounded-2xl {
+  box-shadow: -8px -8px 0px 0px rgba(0, 0, 0, 0.1);
 }

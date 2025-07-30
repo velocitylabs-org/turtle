@@ -625,6 +625,9 @@ importers:
       '@types/node':
         specifier: '>=20.16.15'
         version: 22.15.31
+      '@velocitylabs-org/turtle-assets':
+        specifier: workspace:*
+        version: link:../packages/assets
       '@velocitylabs-org/turtle-registry':
         specifier: workspace:*
         version: link:../packages/registry
