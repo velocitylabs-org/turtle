@@ -22,7 +22,7 @@ export interface Chain {
   /** Optional parameter for parachains only. Used for AT API transfers. */
   rpcConnection?: string;
   /** Optional parameter for Polkadot chains only to signal if they support 'execute' function. Used to signal that this chain allows to Send Swap Send with 1 signature */
-  allows1SigSendSwapSendFlow?: boolean;
+  supportExecuteExtrinsic?: boolean;
 }
 
 export type Network = "Ethereum" | "Polkadot" | "Kusama";

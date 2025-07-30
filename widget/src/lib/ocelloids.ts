@@ -239,14 +239,11 @@ const updateTransferStatus = (
       dismissible: true,
     })
 
-    // Analytics tx are created with successful status by default, we only update for failed ones
-    if (status !== TxStatus.Succeeded) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: status,
-        environment: transfer.environment,
-      })
-    }
+    updateTransferMetrics({
+      txHashId: transfer.id,
+      status,
+      environment: transfer.environment,
+    })
 
     if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
       console.log(new Error(`Ocelloids tracking error:${message}`))

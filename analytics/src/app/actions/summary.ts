@@ -1,6 +1,6 @@
 'use server'
-import { startOfWeek, startOfMonth, subMonths, format, addDays, startOfDay } from 'date-fns'
-import { defaultTransactionLimit } from '@/constants'
+import { startOfMonth, subMonths, format, addDays, startOfDay, subDays } from 'date-fns'
+import { defaultTransactionLimit, volumePeakThreshold } from '@/constants'
 import Transaction from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
@@ -117,6 +117,7 @@ export async function getSummaryData() {
 
     // Get transaction data for all time periods
     const transactionData = await getAllTransactionData()
+    const topTokensData = await getAllTopTokensData()
 
     const totalVolumeUsd = volumeResult[0]?.total || 0
     const successRate =
@@ -137,6 +138,7 @@ export async function getSummaryData() {
       recentTransactions: serializedRecentTransactions,
       topTokensByVolume,
       topTokensByCount,
+      topTokensData,
       transactionData,
     }
   } catch (e) {
@@ -152,10 +154,10 @@ async function getAllTransactionData() {
   const sixMonthsAgo = subMonths(now, 6)
   const currentMonthStart = startOfMonth(now)
   const lastMonthStart = startOfMonth(subMonths(now, 1))
-  const thisWeekStart = startOfWeek(now)
+  const sevenDaysAgo = subDays(startOfDay(now), 7)
   const todayStart = startOfDay(now)
 
-  // Get all data in a single aggregation
+  // Get all data using a single facet aggregation
   const aggregationResult = await Transaction.aggregate([
     {
       $match: {
@@ -232,14 +234,115 @@ async function getAllTransactionData() {
           },
         ],
 
-        // This week data grouped by day (excluding current day)
-        thisWeekData: [
+        // Last 7 days data grouped by day (excluding current day)
+        lastWeekData: [
           {
             $match: {
               txDate: {
-                $gte: thisWeekStart,
+                $gte: sevenDaysAgo,
                 $lt: todayStart,
               },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$txDate',
+                },
+              },
+              volumeUsd: { $sum: '$sourceTokenAmountUsd' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          {
+            $project: {
+              _id: 0,
+              timestamp: '$_id',
+              volumeUsd: 1,
+              count: 1,
+            },
+          },
+        ],
+
+        // Flattened six-month data (filtering out transactions > 50000)
+        flattenedSixMonthsData: [
+          {
+            $match: {
+              txDate: {
+                $lt: currentMonthStart,
+              },
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m',
+                  date: '$txDate',
+                },
+              },
+              volumeUsd: { $sum: '$sourceTokenAmountUsd' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          {
+            $project: {
+              _id: 0,
+              timestamp: '$_id',
+              volumeUsd: 1,
+              count: 1,
+            },
+          },
+        ],
+
+        // Flattened last month data (filtering out transactions > 50000)
+        flattenedLastMonthData: [
+          {
+            $match: {
+              txDate: {
+                $gte: lastMonthStart,
+                $lt: todayStart,
+              },
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: {
+                  format: '%Y-%m-%d',
+                  date: '$txDate',
+                },
+              },
+              volumeUsd: { $sum: '$sourceTokenAmountUsd' },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          {
+            $project: {
+              _id: 0,
+              timestamp: '$_id',
+              volumeUsd: 1,
+              count: 1,
+            },
+          },
+        ],
+
+        // Flattened last 7 days data (filtering out transactions > 50000)
+        flattenedLastWeekData: [
+          {
+            $match: {
+              txDate: {
+                $gte: sevenDaysAgo,
+                $lt: todayStart,
+              },
+              sourceTokenAmountUsd: { $lte: volumePeakThreshold },
             },
           },
           {
@@ -268,20 +371,32 @@ async function getAllTransactionData() {
     },
   ])
 
-  const { sixMonthsData, lastMonthData, thisWeekData: rawThisWeekData } = aggregationResult[0]
+  const result = aggregationResult[0]
 
-  // Ensure all days of the week are included for weekly data (excluding today)
-  const completeThisWeekData = fillMissingDaysInWeek(rawThisWeekData, thisWeekStart, todayStart)
+  // Ensure all 7 previous days are included (excluding today) for both normal and flattened
+  const completeNormalLastWeekData = fillMissingDays(result.lastWeekData, sevenDaysAgo, todayStart)
+  const completeFlattenedLastWeekData = fillMissingDays(
+    result.flattenedLastWeekData,
+    sevenDaysAgo,
+    todayStart,
+  )
 
   return {
-    sixMonthsData,
-    lastMonthData,
-    thisWeekData: completeThisWeekData,
+    normal: {
+      sixMonthsData: result.sixMonthsData,
+      lastMonthData: result.lastMonthData,
+      lastWeekData: completeNormalLastWeekData,
+    },
+    flattened: {
+      sixMonthsData: result.flattenedSixMonthsData,
+      lastMonthData: result.flattenedLastMonthData,
+      lastWeekData: completeFlattenedLastWeekData,
+    },
   }
 }
 
-// Helper function to fill in missing days in a week
-function fillMissingDaysInWeek(
+// Helper function to fill in missing days in a date range
+function fillMissingDays(
   data: { timestamp: string; volumeUsd: number; count: number }[],
   startDate: Date,
   endDate: Date,
@@ -308,4 +423,68 @@ function fillMissingDaysInWeek(
       }
     )
   })
+}
+
+async function getAllTopTokensData() {
+  const [topTokensByVolume, topTokensByCount] = await Promise.all([
+    // Top tokens by volume
+    Transaction.aggregate([
+      {
+        $match: {
+          status: 'succeeded',
+        },
+      },
+      {
+        $group: {
+          _id: '$sourceTokenId',
+          symbol: { $first: '$sourceTokenSymbol' },
+          name: { $first: '$sourceTokenName' },
+          volume: { $sum: '$sourceTokenAmountUsd' },
+        },
+      },
+      { $sort: { volume: -1 } },
+      { $limit: 3 },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          symbol: 1,
+          name: 1,
+          volume: 1,
+        },
+      },
+    ]),
+    // Top tokens by count
+    Transaction.aggregate([
+      {
+        $match: {
+          status: 'succeeded',
+        },
+      },
+      {
+        $group: {
+          _id: '$sourceTokenId',
+          symbol: { $first: '$sourceTokenSymbol' },
+          name: { $first: '$sourceTokenName' },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1 } },
+      { $limit: 3 },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          symbol: 1,
+          name: 1,
+          count: 1,
+        },
+      },
+    ]),
+  ])
+
+  return {
+    topTokensByVolume,
+    topTokensByCount,
+  }
 }

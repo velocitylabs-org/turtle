@@ -1,7 +1,9 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
+import { cn } from '@velocitylabs-org/turtle-ui'
+import { Checkbox } from '@velocitylabs-org/turtle-ui'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral } from 'nuqs'
+import { useQueryState, parseAsStringLiteral, parseAsBoolean } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
@@ -31,10 +33,10 @@ const periodConfig = {
     timeRange: 'last-month',
     label: 'Last month',
   },
-  'this-week': {
-    dataKey: 'thisWeekData',
-    timeRange: 'this-week',
-    label: 'This week',
+  'last-week': {
+    dataKey: 'lastWeekData',
+    timeRange: 'last-week',
+    label: 'Last week',
   },
 } as const
 
@@ -42,8 +44,9 @@ const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).w
 const timePeriodQueryDefault = parseAsStringLiteral([
   'last-6-months',
   'last-month',
-  'this-week',
+  'last-week',
 ] as const).withDefault('last-6-months')
+const booleanDefaultTrue = parseAsBoolean.withDefault(true)
 
 export default function HomeDashboardPage() {
   const [transactionGraphType, setTransactionGraphType] = useQueryState(
@@ -52,7 +55,7 @@ export default function HomeDashboardPage() {
   )
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
-
+  const [outliers, setOutliers] = useQueryState('outliers', booleanDefaultTrue)
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
@@ -64,8 +67,14 @@ export default function HomeDashboardPage() {
   }
 
   const getTransactionData = () => {
-    const dataKey = periodConfig[timePeriod].dataKey
-    return data?.transactionData?.[dataKey] || []
+    const dataTimeframeKey = periodConfig[timePeriod].dataKey
+    const dataKey = outliers ? 'normal' : 'flattened'
+    return data?.transactionData ? data.transactionData[dataKey]?.[dataTimeframeKey] || [] : []
+  }
+
+  const getTopTokensData = () => {
+    const tokensType = tokensGraphType === 'volume' ? 'topTokensByVolume' : 'topTokensByCount'
+    return data?.topTokensData ? data.topTokensData[tokensType] || [] : []
   }
 
   const summaryData = data || {
@@ -113,16 +122,26 @@ export default function HomeDashboardPage() {
           description="Successful transactions only"
         />
       </div>
-      <div className="mt-4 grid gap-4 lg:grid-cols-7">
-        <Card className="col-span-full lg:col-span-4">
+      <div className="mt-4 grid gap-4 lg:grid-cols-10">
+        <Card className="col-span-full lg:col-span-6">
           <CardHeader>
-            <CardTitle>
-              Transactions by
-              <TitleToggle
-                options={toggleOptions}
-                value={transactionGraphType}
-                onChange={value => setTransactionGraphType(value as GraphType)}
-                className="ml-3"
+            <CardTitle className="flex w-full items-center justify-between">
+              <div className="flex items-center">
+                Transactions by
+                <TitleToggle
+                  options={toggleOptions}
+                  value={transactionGraphType}
+                  onChange={value => setTransactionGraphType(value as GraphType)}
+                  className="ml-3"
+                />
+              </div>
+              <CheckboxLabel
+                id="outliers"
+                label="Outliers"
+                checked={outliers}
+                onCheckedChange={setOutliers}
+                className="ml-0"
+                tooltip="Filter out high-value transactions > $50k"
               />
             </CardTitle>
             <CardDescription>
@@ -156,16 +175,18 @@ export default function HomeDashboardPage() {
             )}
           </CardContent>
         </Card>
-        <Card className="col-span-full lg:col-span-3">
+        <Card className="col-span-full lg:col-span-4">
           <CardHeader>
-            <CardTitle>
-              Top tokens by
-              <TitleToggle
-                options={toggleOptions}
-                value={tokensGraphType}
-                onChange={value => setTokensGraphType(value as GraphType)}
-                className="ml-3"
-              />
+            <CardTitle className="flex w-full items-center justify-between">
+              <div className="flex items-center">
+                Top tokens by
+                <TitleToggle
+                  options={toggleOptions}
+                  value={tokensGraphType}
+                  onChange={value => setTokensGraphType(value as GraphType)}
+                  className="ml-3"
+                />
+              </div>
             </CardTitle>
             <CardDescription>With highest successful transaction</CardDescription>
           </CardHeader>
@@ -176,9 +197,7 @@ export default function HomeDashboardPage() {
               </div>
             ) : (
               <TopTokensChart
-                data={
-                  tokensGraphType === 'volume' ? data?.topTokensByVolume : data?.topTokensByCount
-                }
+                data={getTopTokensData()}
                 total={
                   tokensGraphType === 'volume' ? data?.totalVolumeUsd : data?.totalTransactions
                 }
@@ -202,6 +221,40 @@ export default function HomeDashboardPage() {
           </CardContent>
         </Card>
       </div>
+    </div>
+  )
+}
+
+interface CheckboxLabelProps {
+  id: string
+  label: string
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+  className?: string
+  tooltip?: string
+}
+
+function CheckboxLabel({
+  id,
+  label,
+  checked,
+  onCheckedChange,
+  className,
+  tooltip,
+}: CheckboxLabelProps) {
+  return (
+    <div className={cn('ml-4 flex items-center space-x-2', className)} title={tooltip}>
+      <Checkbox
+        id={id}
+        checked={checked}
+        onCheckedChange={checked => onCheckedChange(checked === true)}
+      />
+      <label
+        htmlFor={id}
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        {label}
+      </label>
     </div>
   )
 }

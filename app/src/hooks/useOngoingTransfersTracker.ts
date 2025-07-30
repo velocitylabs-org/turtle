@@ -156,14 +156,11 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
             dismissible: true,
           })
 
-          // Analytics tx are created with successful status by default, we only update for failed ones
-          if (failed) {
-            updateTransferMetrics({
-              txHashId: ongoing.id,
-              status: TxStatus.Failed,
-              environment: ongoing.environment,
-            })
-          }
+          updateTransferMetrics({
+            txHashId: ongoing.id,
+            status: failed ? TxStatus.Failed : TxStatus.Succeeded,
+            environment: ongoing.environment,
+          })
         }
       } else {
         // ongoing transfer not found. This means it is more than 2 weeks old.
