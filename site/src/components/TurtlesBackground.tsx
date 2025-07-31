@@ -1,11 +1,9 @@
 import { cn } from '@velocitylabs-org/turtle-ui'
-import AnalyticData from '@/components/AnalyticData'
 
 interface TurtlesBackgroundProps {
   header?: string
   blurredBackground?: boolean
   whiteWaves?: boolean
-  initialVolume: number | undefined
   children?: React.ReactNode
 }
 
@@ -21,8 +19,8 @@ const TurtlesBackground = ({
     <>
       <div
         className={cn(
-          'turtle-background flex min-h-[100vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url("/bg.png")] bg-cover bg-bottom',
-          blurredBackground && 'blur-lg',
+          'turtle-background flex min-h-[78vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url("/bg.png")] bg-cover bg-bottom',
+          blurredBackground && 'min-h-[100vh] blur-lg',
         )}
       >
         <div
@@ -31,14 +29,14 @@ const TurtlesBackground = ({
             children && 'pb-30',
           )}
         >
-          {header && (
-            <div className="m-[4vw] flex-col items-center justify-center">
-              <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
+          <div className="m-[4vw] flex-col items-center justify-center">
+            {header && (
+              <h1 className="turtle-text-shadow m-0 text-center text-[11vw] leading-[100%] text-white sm:text-[9vw] 3xl:text-[10rem]">
                 {header}
               </h1>
-            </div>
-          )}
-          {children}
+            )}
+            {children}
+          </div>
         </div>
       </div>
 
