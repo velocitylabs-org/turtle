@@ -1,9 +1,7 @@
 'use client'
 
-import { Environment } from '@velocitylabs-org/turtle-registry'
-import type { TransferParams } from '@/hooks/useTransfer'
-import { TxStatus } from '@/models/transfer'
-import { ANALYTICS_DASHBOARD_BASE_URL, ANALYTICS_WIDGET_AUTH_TOKEN, isProduction } from '@/utils/consts'
+import { TransferParams } from '@/hooks/useTransfer'
+import { ANALYTICS_DASHBOARD_BASE_URL, isProduction, ANALYTICS_WIDGET_AUTH_TOKEN } from '@/utils/consts'
 import { toHuman } from '@/utils/transfer'
 
 interface TransferMetric {
@@ -25,7 +23,7 @@ export async function trackTransferMetrics({
   date,
   isSwap = false,
 }: TransferMetric) {
-  if (transferParams.environment !== Environment.Mainnet || !isProduction || !txId) {
+  if (!isProduction || !txId) {
     return
   }
 
@@ -87,7 +85,7 @@ export async function trackTransferMetrics({
 
     txDate: date.toISOString(),
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
-    status: TxStatus.Succeeded,
+    status: 'ongoing',
     isSwap,
   }
 
@@ -129,11 +127,10 @@ export async function trackTransferMetrics({
 interface TrackTransferMetricsParams {
   txHashId: string
   status: string
-  environment: string
 }
 
-export async function updateTransferMetrics({ txHashId, status, environment }: TrackTransferMetricsParams) {
-  if (environment !== Environment.Mainnet || !isProduction || !txHashId || !status) {
+export async function updateTransferMetrics({ txHashId, status }: TrackTransferMetricsParams) {
+  if (!isProduction || !txHashId || !status) {
     return
   }
 

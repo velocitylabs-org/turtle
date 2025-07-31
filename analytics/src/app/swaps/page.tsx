@@ -1,9 +1,11 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { cn } from '@velocitylabs-org/turtle-ui'
 import { CircleCheckBig, DollarSign, Percent, Repeat } from 'lucide-react'
-import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { getSwapsData } from '@/app/actions/swaps'
+import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
+import React from 'react'
+import { getSwapList, getSwapsData } from '@/app/actions/swaps'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentSwapsTable from '@/components/RecentSwapsTable'
 import SmallStatBox from '@/components/SmallStatBox'
@@ -11,7 +13,8 @@ import SwapPairsGraph from '@/components/SwapPairsGraph'
 import TitleToggle from '@/components/TitleToggle'
 import TokensActivityTable from '@/components/TokensActivityTable'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { defaultTransactionLimit, type GraphType } from '@/constants'
+import { transactionsPerPage, GraphType } from '@/constants'
+import { usePagination } from '@/hooks/usePagination'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
 
@@ -20,27 +23,50 @@ const toggleOptions = [
   { value: 'count', label: 'Count' },
 ]
 const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
+const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function SwapsPage() {
+  const [currentPage, setCurrentPage] = useQueryState('swapPage', pageQueryDefault)
   const [topSwapsGraphType, setTopSwapsGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
   const { data, isLoading, error } = useQuery({
     queryKey: ['swaps'],
     queryFn: getSwapsData,
   })
 
-  useShowLoadingBar(isLoading)
-  if (error && !isLoading) {
-    return <ErrorPanel error={error} />
-  }
+  const {
+    data: dataList,
+    isLoading: isInitialLoadingList,
+    isFetching: isFetchingList,
+    error: errorList,
+  } = useQuery({
+    queryKey: ['swapList', currentPage],
+    queryFn: () => getSwapList(currentPage),
+    placeholderData: keepPreviousData,
+  })
 
   const swapsSummaryData = data || {
     swapsTotalVolume: 0,
     successfulSwaps: 0,
     swapsSuccessRate: 0,
     swapsPercentageOfTransactions: 0,
-    recentSwaps: 0,
     swapPairsByVolume: [],
     swapPairsByTransactions: [],
+    totalSwaps: 0,
+  }
+
+  const { PaginationComponent } = usePagination({
+    totalItems: swapsSummaryData.totalSwaps,
+    itemsPerPage: transactionsPerPage,
+    currentPage,
+    onPageChange: setCurrentPage,
+  })
+
+  const loading = isLoading || isFetchingList
+  useShowLoadingBar(loading)
+  const commonError = error || (errorList as Error)
+
+  if (commonError && !loading) {
+    return <ErrorPanel error={commonError} />
   }
 
   const topSwapsPairs =
@@ -123,11 +149,14 @@ export default function SwapsPage() {
       <div className="mt-4">
         <Card>
           <CardHeader>
-            <CardTitle>Recent swaps</CardTitle>
-            <CardDescription>Last {defaultTransactionLimit} swaps</CardDescription>
+            <CardTitle>Swap list</CardTitle>
+            <CardDescription>Showing {transactionsPerPage} swaps per page</CardDescription>
           </CardHeader>
           <CardContent>
-            <RecentSwapsTable swaps={data?.recentSwaps || []} isLoading={isLoading} />
+            <RecentSwapsTable swaps={dataList?.swapList || []} isLoading={isInitialLoadingList} />
+            {!isInitialLoadingList && (
+              <PaginationComponent className={cn('mt-7', isFetchingList && 'pointer-events-none')} />
+            )}
           </CardContent>
         </Card>
       </div>

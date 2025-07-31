@@ -1,24 +1,24 @@
-import type { TDryRunNodeResult } from '@paraspell/sdk'
+import { TDryRunNodeResult } from '@paraspell/sdk'
 import { getTokenPrice, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import type { TxEvent } from 'polkadot-api'
 import { InvalidTxError } from 'polkadot-api'
-import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
-import { type Config, useConnectorClient } from 'wagmi'
+import type { TxEvent } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
+import { Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { createRouterPlan } from '@/lib/paraspell/swap'
 import {
   createTransferTx,
-  type DryRunResult,
   dryRun,
+  DryRunResult,
   isExistentialDepositMetAfterTransfer,
   moonbeamTransfer,
 } from '@/lib/paraspell/transfer'
 import { extractPapiEvent } from '@/lib/polkadot/papi'
 import { NotificationSeverity } from '@/models/notification'
-import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
+import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
 import { wagmiConfig } from '@/providers/config'
-import type { SubstrateAccount } from '@/stores/substrateWalletStore'
+import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics.ts'
 import { wait } from '@/utils/datetime'
@@ -27,7 +27,7 @@ import { isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/tra
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import type { Sender, Status, TransferParams } from './useTransfer'
+import { Sender, Status, TransferParams } from './useTransfer'
 
 const useParaspellApi = () => {
   const { addNotification } = useNotification()
@@ -68,7 +68,6 @@ const useParaspellApi = () => {
       sourceAmount: params.sourceAmount.toString(),
       recipient: params.recipient,
       date,
-      environment: params.environment,
       bridgingFee: params.bridgingFee,
       fees: params.fees,
       status: `Submitting to ${params.sourceChain.name}`,
@@ -145,7 +144,6 @@ const useParaspellApi = () => {
           sourceAmount: params.sourceAmount.toString(),
           recipient: params.recipient,
           date,
-          environment: params.environment,
           bridgingFee: params.bridgingFee,
           fees: params.fees,
           status: `Submitting to ${params.sourceChain.name}`,
@@ -165,7 +163,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString(), params.environment)
+          handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
       },
       error: callbackError => {
@@ -219,7 +217,6 @@ const useParaspellApi = () => {
           destinationAmount: params.destinationAmount?.toString(),
           recipient: params.recipient,
           date,
-          environment: params.environment,
           fees: params.fees,
           bridgingFee: params.bridgingFee,
           status: `Submitting to ${params.sourceChain.name}`,
@@ -241,7 +238,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash?.toString(), params.environment)
+          handleSendError(params.sender, error, setStatus, event.txHash?.toString())
         }
       },
       error: callbackError => {
@@ -285,11 +282,16 @@ const useParaspellApi = () => {
   }
 
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
-    // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
-    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
-      throw new Error('Swap transfer did not completed - Batch failed')
-
-    return
+    // By default, swaps are submitted using the Execute extrinsic from PolkadotXcm pallet.
+    if (isSwapWithTransfer(transfer) && transfer.sourceChain.supportExecuteExtrinsic) {
+      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess) {
+        throw new Error('Swap transfer did not complete - Execute function not successful')
+      }
+    } else {
+      // Fallback to the BatchAll extinsic from utility pallet
+      if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
+        throw new Error('Swap transfer did not complete - Batch failed')
+    }
   }
 
   const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
@@ -317,7 +319,7 @@ const useParaspellApi = () => {
     removeOngoing(transfer.id)
     addCompletedTransfer({
       id: transfer.id,
-      result: TxStatus.Succeeded,
+      result: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
       sourceToken: transfer.sourceToken,
       destinationToken: transfer.destinationToken,
       sourceChain: transfer.sourceChain,
@@ -334,14 +336,10 @@ const useParaspellApi = () => {
       ...(explorerLink && { explorerLink }),
     } satisfies CompletedTransfer)
 
-    // Analytics tx are created with successful status by default, we only update for failed ones
-    if (!txSuccessful) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: TxStatus.Failed,
-        environment: transfer.environment,
-      })
-    }
+    updateTransferMetrics({
+      txHashId: transfer.id,
+      status: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
+    })
   }
 
   const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
@@ -426,7 +424,6 @@ const useParaspellApi = () => {
       updateTransferMetrics({
         txHashId: txId,
         status: TxStatus.Failed,
-        environment: environment,
       })
     }
   }

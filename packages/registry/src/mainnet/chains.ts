@@ -7,15 +7,15 @@ import centrifugeLogo from '@velocitylabs-org/turtle-assets/logos/cfg.svg'
 import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import hydraLogo from '@velocitylabs-org/turtle-assets/logos/hydra.svg'
 import interlayLogo from '@velocitylabs-org/turtle-assets/logos/interlay.svg'
-import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import kusamaAhLogo from '@velocitylabs-org/turtle-assets/logos/kusama-ah.svg'
+import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import mythosLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
 import phalaLogo from '@velocitylabs-org/turtle-assets/logos/phala.svg'
 import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import { DWELLIR_KEY } from '../constants'
-import type { Chain } from '../types'
+import { Chain } from '@/types'
 
 export const Ethereum: Chain = {
   uid: 'ethereum',
@@ -47,6 +47,7 @@ export const AssetHub: Chain = {
   supportedAddressTypes: ['ss58'],
   walletType: 'Substrate',
   rpcConnection: `wss://api-asset-hub-polkadot.n.dwellir.com/${DWELLIR_KEY}`,
+  supportExecuteExtrinsic: true,
 }
 
 export const BridgeHub: Chain = {
@@ -82,6 +83,7 @@ export const Hydration: Chain = {
   supportedAddressTypes: ['ss58'],
   walletType: 'Substrate',
   rpcConnection: `wss://api-hydration.n.dwellir.com/${DWELLIR_KEY}`,
+  supportExecuteExtrinsic: true,
 }
 
 export const Phala: Chain = {

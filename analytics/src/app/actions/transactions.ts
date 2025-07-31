@@ -1,6 +1,7 @@
 'use server'
-import { defaultTransactionLimit } from '@/constants'
-import Transaction, { type TxStatus, txStatusOptions } from '@/models/Transaction'
+import { transactionsPerPage } from '@/constants'
+import Transaction, { txStatusOptions } from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
@@ -14,6 +15,9 @@ type TransactionFilters = {
   startDate?: Date
   endDate?: Date
   hostedOn?: string
+  senderAddress?: string
+  recipientAddress?: string
+  page: number
 }
 
 export async function getTransactionsData({
@@ -25,39 +29,44 @@ export async function getTransactionsData({
   startDate,
   endDate,
   hostedOn,
+  senderAddress,
+  recipientAddress,
+  page = 1,
 }: TransactionFilters) {
   try {
     await dbConnect()
 
     interface MongoQuery {
-      sourceChainUid?: { $regex: RegExp }
-      destinationChainUid?: { $regex: RegExp }
-      sourceTokenId?: { $regex: RegExp }
-      destinationTokenId?: { $regex: RegExp }
+      sourceChainUid?: string
+      destinationChainUid?: string
+      sourceTokenId?: string
+      destinationTokenId?: string
       status?: TxStatus
       txDate?: {
         $gte?: Date
         $lte?: Date
       }
       hostedOn?: { $regex: RegExp }
+      senderAddress?: string
+      recipientAddress?: string
     }
 
     const query: MongoQuery = {}
 
     if (sourceChainUid) {
-      query.sourceChainUid = { $regex: new RegExp(sourceChainUid, 'i') }
+      query.sourceChainUid = sourceChainUid
     }
 
     if (destinationChainUid) {
-      query.destinationChainUid = { $regex: new RegExp(destinationChainUid, 'i') }
+      query.destinationChainUid = destinationChainUid
     }
 
     if (sourceTokenId) {
-      query.sourceTokenId = { $regex: new RegExp(sourceTokenId, 'i') }
+      query.sourceTokenId = sourceTokenId
     }
 
     if (destinationTokenId) {
-      query.destinationTokenId = { $regex: new RegExp(destinationTokenId, 'i') }
+      query.destinationTokenId = destinationTokenId
     }
 
     if (status) {
@@ -80,11 +89,20 @@ export async function getTransactionsData({
       }
     }
 
+    if (senderAddress) {
+      query.senderAddress = senderAddress
+    }
+
+    if (recipientAddress) {
+      query.recipientAddress = recipientAddress
+    }
+
     const [filteredTransactions, totalVolumeUsd, statusCounts] = await Promise.all([
-      // Retrieve the latest transactions, limiting results to defaultTransactionLimit
+      // Retrieve the transactions, limiting results to transactionsPerPage and page number
       Transaction.find(query)
         .sort({ txDate: -1 })
-        .limit(defaultTransactionLimit)
+        .skip((page - 1) * transactionsPerPage)
+        .limit(transactionsPerPage)
         .select(
           [
             '_id',
@@ -123,6 +141,7 @@ export async function getTransactionsData({
       succeeded: number
       failed: number
       undefined: number
+      ongoing: number
       total: number
       [key: string]: number
     }
@@ -142,6 +161,7 @@ export async function getTransactionsData({
         succeeded: 0,
         failed: 0,
         undefined: 0,
+        ongoing: 0,
         total: 0,
       },
     )
@@ -157,6 +177,7 @@ export async function getTransactionsData({
         succeededCount: statusMap.succeeded,
         failedCount: statusMap.failed,
         undefinedCount: statusMap.undefined,
+        ongoingCount: statusMap.ongoing,
       },
     }
   } catch (e) {

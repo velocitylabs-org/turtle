@@ -1,9 +1,15 @@
 'use client'
-import { useQuery } from '@tanstack/react-query'
-import { chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
-import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
-import { Ban, CheckCircle, CircleHelp, DollarSign, X } from 'lucide-react'
-import { parseAsIsoDate, parseAsStringLiteral, useQueryState } from 'nuqs'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import ethLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
+import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
+import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
+import turtleLogo from '@velocitylabs-org/turtle-assets/logos/turtle.svg'
+import { Token } from '@velocitylabs-org/turtle-registry'
+import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { getOriginBadge, cn } from '@velocitylabs-org/turtle-ui'
+import { CheckCircle, X, DollarSign, Ban, CircleHelp, RefreshCcw } from 'lucide-react'
+import { useQueryState, parseAsStringLiteral, parseAsInteger, parseAsIsoDate } from 'nuqs'
+import React from 'react'
 import { getTransactionsData } from '@/app/actions/transactions'
 import DatePicker from '@/components/DatePicker'
 import ErrorPanel from '@/components/ErrorPanel'
@@ -12,26 +18,59 @@ import Select from '@/components/Select'
 import SmallStatBox from '@/components/SmallStatBox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { chains, defaultTransactionLimit, tokens } from '@/constants'
+import { Input } from '@/components/ui/input'
+import { chains, transactionsPerPage, tokens } from '@/constants'
+import { usePagination } from '@/hooks/usePagination'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import type { TxStatus } from '@/models/Transaction'
+import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
-const chainOptions = chains.map(chain => ({
-  value: chain.uid,
-  label: chain.name,
-  logoURI: getSrcFromLogo(chain),
-}))
+const repeatedTokenSymbolMapUri: { [key: string]: string } = {
+  'usdt.e': ethLogo.src,
+  'usdc.e': ethLogo.src,
+  'myth.e': ethLogo.src,
+  usdt: polkadotLogo.src,
+  usdc: polkadotLogo.src,
+  'myth.p': polkadotLogo.src,
+}
+
+const chainOptions = chains
+  .map(chain => ({
+    value: chain.uid,
+    label: chain.name,
+    logoURI: getSrcFromLogo(chain),
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label))
+
+const tokenOptions = tokens
+  .map((token: Token) => {
+    const { logoURI } = getLogoAndOriginURI(token.id)
+    const originLogoURI = repeatedTokenSymbolMapUri[token.id]
+    return {
+      value: token.id,
+      label: token.symbol,
+      logoURI,
+      originLogoURI,
+    }
+  })
+  .sort((a, b) => a.label.localeCompare(b.label))
 
 const originOptions = [
-  { value: 'https://app.turtle.cool', label: 'Turtle' },
-  { value: 'https://app.polimec.org', label: 'Polimec' },
+  { value: 'https://app.turtle.cool', label: 'Turtle', logoURI: turtleLogo.src },
+  { value: 'https://app.polimec.org', label: 'Polimec', logoURI: polimecLogo.src },
 ]
 
 // Using 'all' as default to represent null (no filter)
-const statusFilterParser = parseAsStringLiteral(['succeeded', 'failed', 'undefined', 'all'] as const).withDefault('all')
+const statusFilterParser = parseAsStringLiteral([
+  'succeeded',
+  'failed',
+  'undefined',
+  'ongoing',
+  'all',
+] as const).withDefault('all')
 const emptyDefaultString = { defaultValue: '' }
+const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useQueryState('sourceChain', emptyDefaultString)
@@ -43,32 +82,11 @@ export default function TransactionsPage() {
   const [fromDate, setFromDate] = useQueryState('fromDate', parseAsIsoDate)
   const [toDate, setToDate] = useQueryState('toDate', parseAsIsoDate)
   const [origin, setOrigin] = useQueryState('origin', emptyDefaultString)
+  const [senderAddress, setSenderAddress] = useQueryState('senderAddress', emptyDefaultString)
+  const [recipientAddress, setRecipientAddress] = useQueryState('recipientAddress', emptyDefaultString)
+  const [currentPage, setCurrentPage] = useQueryState('filterPage', pageQueryDefault)
 
-  const tokenSourceOptions = tokens
-    .map((token: Token) => {
-      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, sourceChainUid)
-      return {
-        value: token.id,
-        label: token.symbol,
-        logoURI,
-        originLogoURI,
-      }
-    })
-    .filter(token => !!token.originLogoURI)
-
-  const tokenDestinationOptions = tokens
-    .map((token: Token) => {
-      const { logoURI, originLogoURI } = getLogoAndOriginURI(token.id, destinationChainUid)
-      return {
-        value: token.id,
-        label: token.symbol,
-        logoURI,
-        originLogoURI,
-      }
-    })
-    .filter(token => !!token.originLogoURI)
-
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, isFetching } = useQuery({
     queryKey: [
       'transactions',
       sourceChainUid,
@@ -79,6 +97,9 @@ export default function TransactionsPage() {
       fromDate,
       toDate,
       origin,
+      senderAddress,
+      recipientAddress,
+      currentPage,
     ],
     queryFn: () =>
       getTransactionsData({
@@ -90,9 +111,13 @@ export default function TransactionsPage() {
         startDate: fromDate || undefined,
         endDate: toDate || undefined,
         hostedOn: origin.length > 0 ? origin : undefined,
+        senderAddress: senderAddress.length > 0 ? senderAddress : undefined,
+        recipientAddress: recipientAddress.length > 0 ? recipientAddress : undefined,
+        page: currentPage,
       }),
+    placeholderData: keepPreviousData,
   })
-  useShowLoadingBar(isLoading)
+
   const transactions = data?.transactions || []
   const summaryData = data?.summary || {
     totalVolumeUsd: 0,
@@ -100,7 +125,18 @@ export default function TransactionsPage() {
     succeededCount: 0,
     failedCount: 0,
     undefinedCount: 0,
+    ongoingCount: 0,
   }
+
+  const { PaginationComponent } = usePagination({
+    totalItems: summaryData.totalTransactions,
+    itemsPerPage: transactionsPerPage,
+    currentPage,
+    onPageChange: setCurrentPage,
+  })
+
+  const loading = isLoading || isFetching
+  useShowLoadingBar(loading)
 
   const resetFilters = () => {
     setStatusFilterRaw('all')
@@ -111,6 +147,15 @@ export default function TransactionsPage() {
     setFromDate(null)
     setToDate(null)
     setOrigin('')
+    setSenderAddress('')
+    setRecipientAddress('')
+    setCurrentPage(1)
+  }
+
+  // Generic function to handle filter changes and reset page
+  const handleFilterChange = (filterUpdateFn: () => void) => {
+    setCurrentPage(1)
+    filterUpdateFn()
   }
 
   if (error && !isLoading) {
@@ -156,11 +201,14 @@ export default function TransactionsPage() {
       </div>
       <div className="mt-4 space-y-4">
         <Card>
-          <CardContent className="p-6">
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 pt-0">
             <div className="flex flex-col gap-4">
-              {/* Date pickers section */}
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="flex items-center gap-2">
+              {/* Status filters and Origin selector */}
+              <div className="flex flex-col gap-4 md:flex-row md:items-center">
+                <div className="flex flex-1 items-center gap-2">
                   <div className="flex flex-shrink-0 items-center p-2">
                     <button
                       className="rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -175,7 +223,9 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
-                      onClick={() => setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded')}
+                      onClick={() =>
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded'))
+                      }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">succeeded</span>
@@ -184,7 +234,9 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
-                      onClick={() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')}
+                      onClick={() =>
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed'))
+                      }
                     >
                       <Ban className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">failed</span>
@@ -193,69 +245,98 @@ export default function TransactionsPage() {
                       variant="outline"
                       size="sm"
                       className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
-                      onClick={() => setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined')}
+                      onClick={() =>
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined'))
+                      }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
                       <span className="hidden capitalize lg:inline">undefined</span>
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`flex-1 ${statusFilter === 'ongoing' ? 'bg-blue-100' : ''}`}
+                      onClick={() =>
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing'))
+                      }
+                    >
+                      <RefreshCcw className="mr-1 h-4 w-4" />
+                      <span className="hidden capitalize lg:inline">ongoing</span>
+                    </Button>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-1">
-                    <DatePicker date={fromDate} setDate={setFromDate} placeholder="From date" />
-                  </div>
-                  <div className="col-span-1">
-                    <DatePicker date={toDate} setDate={setToDate} placeholder="To date" />
-                  </div>
+                <div className="w-full md:w-48">
+                  <Select
+                    options={originOptions}
+                    selected={origin}
+                    onChange={val => handleFilterChange(() => setOrigin(val as string))}
+                    placeholder="Origin"
+                  />
+                </div>
+              </div>
+              {/* Date pickers and address inputs section */}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <DatePicker
+                    date={fromDate}
+                    setDate={date => handleFilterChange(() => setFromDate(date))}
+                    placeholder="From date"
+                  />
+                </div>
+                <div>
+                  <DatePicker
+                    date={toDate}
+                    setDate={date => handleFilterChange(() => setToDate(date))}
+                    placeholder="To date"
+                  />
+                </div>
+                <div>
+                  <Input
+                    placeholder="Sender Address"
+                    value={senderAddress}
+                    onChange={e => handleFilterChange(() => setSenderAddress(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Input
+                    placeholder="Recipient Address"
+                    value={recipientAddress}
+                    onChange={e => handleFilterChange(() => setRecipientAddress(e.target.value))}
+                  />
                 </div>
               </div>
               {/* Chain and token selectors */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <Select
                     options={chainOptions}
                     selected={sourceChainUid}
-                    onChange={val => setSourceChainUid(val as string)}
+                    onChange={val => handleFilterChange(() => setSourceChainUid(val as string))}
                     placeholder="Source Chain"
                   />
                 </div>
                 <div>
                   <Select
-                    options={tokenSourceOptions}
+                    options={tokenOptions}
                     selected={sourceTokenId}
-                    onChange={val => setSourceTokenId(val as string)}
+                    onChange={val => handleFilterChange(() => setSourceTokenId(val as string))}
                     placeholder="Source Token"
-                    disabled={!sourceChainUid}
                   />
                 </div>
                 <div>
                   <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={val => {
-                      setDestinationChainUid(val as string)
-                      if (!val) {
-                        setDestinationTokenId('')
-                      }
-                    }}
+                    onChange={val => handleFilterChange(() => setDestinationChainUid(val as string))}
                     placeholder="Destination Chain"
                   />
                 </div>
                 <div>
                   <Select
-                    options={tokenDestinationOptions}
+                    options={tokenOptions}
                     selected={destinationTokenId}
-                    onChange={val => setDestinationTokenId(val as string)}
+                    onChange={val => handleFilterChange(() => setDestinationTokenId(val as string))}
                     placeholder="Destination Token"
-                    disabled={!destinationChainUid}
-                  />
-                </div>
-                <div>
-                  <Select
-                    options={originOptions}
-                    selected={origin}
-                    onChange={val => setOrigin(val as string)}
-                    placeholder="Origin"
                   />
                 </div>
               </div>
@@ -264,11 +345,12 @@ export default function TransactionsPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Recent transactions</CardTitle>
-            <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
+            <CardTitle>Transaction list</CardTitle>
+            <CardDescription>Showing {transactionsPerPage} transactions per page</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable transactions={transactions} isLoading={isLoading} />
+            {!isLoading && <PaginationComponent className={cn('mt-7', isFetching && 'pointer-events-none')} />}
           </CardContent>
         </Card>
       </div>
@@ -276,9 +358,9 @@ export default function TransactionsPage() {
   )
 }
 
-function getLogoAndOriginURI(tokenId: string, chainUid: string) {
+function getLogoAndOriginURI(tokenId: string, chainUid?: string) {
   const token = tokensById[tokenId]
-  const chain = chainsByUid[chainUid]
+  const chain = chainsByUid[chainUid || '']
   const tokenURI = getSrcFromLogo(token)
   const originBadge = getOriginBadge(token, chain)
   const originBadgeURI = originBadge && getSrcFromLogo(originBadge)

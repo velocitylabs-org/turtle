@@ -4,14 +4,14 @@ import type { FromParachainTrackingResult, Status, SubscanTransferResponse } fro
 import type { OngoingTransferWithDirection } from '@/models/transfer'
 
 export const trackXcm = async (
-  env: environment.SnowbridgeEnvironment,
+  sbEnv: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransferWithDirection[],
 ) => {
   try {
     const xcmTransfers: FromParachainTrackingResult[] = []
     const subscanKey = process.env.NEXT_PUBLIC_SUBSCAN_KEY
     if (!subscanKey) throw Error('Missing Subscan Key')
-    const relaychain = subscan.createApi(env.config.RELAY_CHAIN_URL, subscanKey)
+    const relaychain = subscan.createApi(sbEnv.config.RELAY_CHAIN_URL, subscanKey)
 
     for (const transfer of ongoingTransfers) {
       const { crossChainMessageHash, sourceChainExtrinsicIndex } = transfer

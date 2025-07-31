@@ -5,23 +5,16 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  type TCurrencyCore,
-  type TDryRunResult,
-  type TEcosystemType,
-  type TNodeDotKsmWithRelayChains,
-  type TNodeWithRelayChains,
+  TCurrencyCore,
+  TDryRunResult,
+  TEcosystemType,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import {
-  type Chain,
-  Environment,
-  EthereumTokens,
-  type Network,
-  REGISTRY,
-  type Token,
-} from '@velocitylabs-org/turtle-registry'
-import type { TransferParams } from '@/hooks/useTransfer'
+import { Chain, Token, EthereumTokens, REGISTRY, Network } from '@velocitylabs-org/turtle-registry'
+import { TransferParams } from '@/hooks/useTransfer'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -60,7 +53,7 @@ export const createTransferTx = async (params: TransferParams, wssEndpoint?: str
  */
 export const moonbeamTransfer = async (
   params: TransferParams,
-  // biome-ignore lint/suspicious/noExplicitAny: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   viemClient: any,
 ): Promise<string> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
@@ -204,12 +197,12 @@ export function toPsEcosystem(network: Network): TEcosystemType {
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const relay = getRelayNode(chain.network)
-  const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode) throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
+  const ecosystem = toPsEcosystem(chain.network)
+  const chainNode = getTNode(chain.chainId, ecosystem)
+  if (!chainNode) throw Error(`ChainNode with id ${chain.uid} not found in ${ecosystem}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
-  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  const token = REGISTRY.tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
 }

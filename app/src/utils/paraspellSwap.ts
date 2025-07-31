@@ -1,15 +1,14 @@
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
 import {
-  type Chain,
-  Environment,
-  getTokenByMultilocation,
+  Chain,
+  Token,
   Hydration,
-  isSameToken,
   REGISTRY,
-  type Token,
+  getTokenByMultilocation,
+  isSameToken,
 } from '@velocitylabs-org/turtle-registry'
-import type { TransferParams } from '@/hooks/useTransfer'
-import type { SubstrateAccount } from '@/store/substrateWalletStore'
+import { TransferParams } from '@/hooks/useTransfer'
+import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { isSameChain } from '@/utils/routes'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
@@ -50,7 +49,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     .slippagePct(slippagePct)
     .senderAddress(senderAddress)
     .recipientAddress(recipient)
-    // biome-ignore lint/suspicious/noExplicitAny: <any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .signer(account.pjsSigner as any)
     .buildTransactions()
 
@@ -171,13 +170,13 @@ export const getSwapsDestinationChains = (sourceChain: Chain | null, sourceToken
   chains.push(sourceChain)
 
   // get transfer routes we can reach from the source chain
-  const routes = REGISTRY[Environment.Mainnet].routes.filter(route => route.from === sourceChain.uid)
+  const routes = REGISTRY.routes.filter(route => route.from === sourceChain.uid)
 
   // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
     if (route.tokens.some(routeTokenId => tradeableTokens.some(tradeableToken => tradeableToken.id === routeTokenId))) {
       // lookup destination chain and add it to the list
-      const destinationChain = REGISTRY[Environment.Mainnet].chains.find(chain => chain.uid === route.to)
+      const destinationChain = REGISTRY.chains.find(chain => chain.uid === route.to)
       if (destinationChain) chains.push(destinationChain)
     }
   })
@@ -202,9 +201,7 @@ export const getSwapsDestinationTokens = (
   if (isSameChain(sourceChain, destinationChain)) return tradeableTokens
 
   // Check if we can reach the destination chain
-  const route = REGISTRY[Environment.Mainnet].routes.find(
-    route => route.from === sourceChain.uid && route.to === destinationChain.uid,
-  )
+  const route = REGISTRY.routes.find(route => route.from === sourceChain.uid && route.to === destinationChain.uid)
   if (!route) return []
 
   const tradeableAndTransferableTokens = tradeableTokens.filter(tradeableToken =>

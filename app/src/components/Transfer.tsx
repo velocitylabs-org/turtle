@@ -108,7 +108,6 @@ export default function Transfer() {
     canPayFees,
     canPayAdditionalFees,
     transferStatus,
-    environment,
     sourceTokenAmountError,
     manualRecipientError,
     isBalanceAvailable,
@@ -138,7 +137,6 @@ export default function Transfer() {
     swapEthtoWEth,
     isSwapping: isSwappingEthForWEth,
   } = useEthForWEthSwap({
-    env: environment,
     context: snowbridgeContext,
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,

@@ -1,13 +1,13 @@
-import { type Context, environment, toPolkadot } from '@snowbridge/api'
-import { type Chain, type Environment, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
-import type { Signer } from 'ethers'
+import { Context, environment, toPolkadot } from '@snowbridge/api'
+import { Chain, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
+import { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
+import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { NotificationSeverity } from '@/models/notification'
 import { convertAmount, toHuman } from '@/utils/transfer'
 
 interface Params {
-  env: Environment
   context?: Context
   chain?: Chain | null
   tokenAmount: TokenAmount | null
@@ -16,8 +16,13 @@ interface Params {
 
 /** Hook to swap ETH for wETH */
 // TODO: refactor this hook. Add wagmi eth balance fetching. Improve wETH token check. Hook 'useErc20Balance' is never used in the functions.
-const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) => {
+const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
   const { addNotification } = useNotification()
+  const { balance: tokenBalance } = useBalance({
+    chain,
+    token: tokenAmount?.token ?? undefined,
+    address: owner,
+  })
   const [ethBalance, setEthBalance] = useState<number | undefined>()
   const [isSwapping, setIsSwapping] = useState<boolean>(false)
 
@@ -50,14 +55,13 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
   // Reactively fetch the eth balance when the relevant form fields change
   useEffect(() => {
     fetchEthBalance()
-  }, [fetchEthBalance])
+  }, [fetchEthBalance, tokenBalance])
 
   const swapEthtoWEth = useCallback(
     async (signer: Signer, amount: number) => {
       setIsSwapping(true)
 
       if (
-        !env ||
         !context ||
         chain?.network !== 'Ethereum' ||
         !owner ||
@@ -92,7 +96,7 @@ const useEthForWEthSwap = ({ env, chain, tokenAmount, owner, context }: Params) 
         setIsSwapping(false)
       }
     },
-    [env, chain?.network, tokenAmount, context, ethBalance, owner, addNotification],
+    [chain?.network, tokenAmount, context, ethBalance, owner, addNotification],
   )
 
   return { ethBalance, swapEthtoWEth, isSwapping }

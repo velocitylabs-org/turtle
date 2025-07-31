@@ -1,8 +1,10 @@
 'use client'
 import Link from 'next/link'
+import React from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { SwapView } from '@/models/swap-view'
+import { SwapView } from '@/models/swap-view'
+import { formatDate, formatDateAgo } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
 import { TokenChainDisplay } from './TokenChainDisplay'
 import { TransactionStatusIndicator } from './TransactionStatusIndicator'
@@ -41,19 +43,14 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
             <TableRow key={1}>
               <TableCell colSpan={6} className="text-center">
                 <div className="flex h-[250px] items-center justify-center">
-                  <p>There are no recent transactions to display</p>
+                  <p>There are no transactions to display</p>
                 </div>
               </TableCell>
             </TableRow>
           ) : (
             swaps.map(swap => (
               <TableRow key={swap._id} className="hover:bg-muted/50">
-                <Link
-                  href={`/tx-detail/${swap._id}`}
-                  className="contents cursor-pointer"
-                  prefetch
-                  onClick={() => start()}
-                >
+                <Link href={`/detail/${swap._id}`} className="contents cursor-pointer" prefetch onClick={() => start()}>
                   <TableCell>
                     <div className="flex items-center">
                       <TokenChainDisplay tokenId={swap.sourceTokenId} chainUid={swap.sourceChainUid} />
@@ -87,12 +84,9 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-xs">
-                      {new Date(swap.txDate).toLocaleString('en-GB', {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                        hour12: false,
-                      })}
+                    <div className="flex flex-col">
+                      <div className="text-sm">{formatDate(swap.txDate)}</div>
+                      <div className="text-sm text-muted-foreground">{formatDateAgo(swap.txDate)}</div>
                     </div>
                   </TableCell>
                   <TableCell>

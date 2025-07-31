@@ -1,5 +1,5 @@
 'use client'
-import type { Token } from '@velocitylabs-org/turtle-registry'
+import { Token } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import React from 'react'
@@ -141,8 +141,8 @@ export default function Select({
                         onClick={() => !disabled && handleSelect(option.value)}
                       >
                         <Check className={cn('h-4 w-4', selected === option.value ? 'opacity-100' : 'opacity-0')} />
-                        {renderImage(option.logoURI as string, option?.originLogoURI as string)}
-                        {option.label}
+                        {option.logoURI && renderImage(option.logoURI as string, option?.originLogoURI as string)}
+                        <span className="pr-3">{option.label}</span>
                       </div>
                     ))}
                   </div>

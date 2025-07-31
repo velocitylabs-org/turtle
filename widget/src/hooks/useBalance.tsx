@@ -1,26 +1,20 @@
-import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
-import type { Balance, Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
+import { getAssetBalance, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { Chain, Token, Balance } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
 import { toHuman } from '@/utils/transfer'
 
 interface UseBalanceParams {
-  env: Environment
   chain?: Chain | null
   token?: Token
   address?: string
 }
 
-export async function getBalance(
-  env: Environment,
-  chain: Chain,
-  token: Token,
-  address: string,
-): Promise<Balance | undefined> {
+export async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
   const node = getParaSpellNode(chain)
   if (!node) throw new Error('Node not found')
-  const currency = getCurrencyId(env, node, chain.uid, token)
+  const currency = getCurrencyId(node, chain.uid, token)
 
   const balance =
     (await getAssetBalance({
@@ -39,7 +33,7 @@ export async function getBalance(
 }
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
-const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
+const useBalance = ({ chain, token, address }: UseBalanceParams) => {
   const [balance, setBalance] = useState<Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
@@ -63,7 +57,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
     // chain or for another token while fetching the new one.
     setBalance(undefined)
 
-    if (!env || !chain || !token || !address) return
+    if (!chain || !token || !address) return
 
     try {
       setLoading(true)
@@ -80,7 +74,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
 
         case 'Polkadot':
         case 'Kusama': {
-          fetchedBalance = await getBalance(env, chain, token, address)
+          fetchedBalance = await getBalance(chain, token, address)
           break
         }
 
@@ -95,7 +89,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-  }, [env, chain, address, fetchErc20Balance, fetchEthBalance, token])
+  }, [chain, address, fetchErc20Balance, fetchEthBalance, token])
 
   useEffect(() => {
     fetchBalance()

@@ -1,8 +1,8 @@
-import type { Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
-import type { JsonRpcSigner } from 'ethers'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
-import type { AmountInfo } from '@/models/transfer'
-import type { SubstrateAccount } from '@/stores/substrateWalletStore'
+import { AmountInfo } from '@/models/transfer'
+import { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { resolveSdk } from '@/utils/routes'
 import useParaspellApi from './useParaspellApi'
 import useSnowbridgeApi from './useSnowbridgeApi'
@@ -12,7 +12,6 @@ export type Sender = JsonRpcSigner | SubstrateAccount
 export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'
 
 export interface TransferParams {
-  environment: Environment // TODO: remove this
   sender: Sender
   sourceChain: Chain
   sourceToken: Token

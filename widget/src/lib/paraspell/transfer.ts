@@ -4,23 +4,15 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  type TCurrencyCore,
-  type TDryRunResult,
-  type TEcosystemType,
-  type TNodeDotKsmWithRelayChains,
-  type TNodeWithRelayChains,
-  type TPapiTransaction,
+  TCurrencyCore,
+  TDryRunResult,
+  TEcosystemType,
+  TNodeDotKsmWithRelayChains,
+  TNodeWithRelayChains,
+  TPapiTransaction,
 } from '@paraspell/sdk'
-import {
-  type Chain,
-  Environment,
-  EthereumTokens,
-  getAssetUid,
-  type Network,
-  REGISTRY,
-  type Token,
-} from '@velocitylabs-org/turtle-registry'
-import type { TransferParams } from '@/hooks/useTransfer'
+import { Chain, Token, getAssetUid, REGISTRY, EthereumTokens, Network } from '@velocitylabs-org/turtle-registry'
+import { TransferParams } from '@/hooks/useTransfer'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -54,11 +46,14 @@ export const createTransferTx = async (params: TransferParams, wssEndpoint?: str
  * Submits a moonbeam xcm transaction using Paraspell EvmBuilder.
  *
  * @param params - The transfer parameters
+ * @param viemClient
  * @returns - A Promise that resolves to the tx hash.
  */
-
-// biome-ignore lint/suspicious/noExplicitAny: any
-export const moonbeamTransfer = async (params: TransferParams, viemClient: any): Promise<string> => {
+export const moonbeamTransfer = async (
+  params: TransferParams,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  viemClient: any,
+): Promise<string> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
@@ -162,17 +157,6 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
 }
 
-export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
-  switch (network) {
-    case 'Polkadot':
-      return 'polkadot'
-    case 'Kusama':
-      return 'kusama'
-    default:
-      throw new Error('Cannot find relay node. Unsupported environment')
-  }
-}
-
 /**
  * Get the ParaSpell currency id in the form of `TCurrencyCore`.
  *
@@ -180,24 +164,19 @@ export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
  * default to the token symbol.
  *
  * */
-export function getCurrencyId(
-  env: Environment,
-  node: TNodeWithRelayChains,
-  chainId: string,
-  token: Token,
-): TCurrencyCore {
-  return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
+export function getCurrencyId(node: TNodeWithRelayChains, chainId: string, token: Token): TCurrencyCore {
+  return getAssetUid(chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
 }
 
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const relay = getRelayNode(chain.network)
-  const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode) throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
+  const ecosystem = toPsEcosystem(chain.network)
+  const chainNode = getTNode(chain.chainId, ecosystem)
+  if (!chainNode) throw Error(`ChainNode with id ${chain.uid} not found in ${ecosystem}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
-  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  const token = REGISTRY.tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
 }

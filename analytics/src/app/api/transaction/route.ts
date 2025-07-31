@@ -92,6 +92,27 @@ export async function PATCH(request: Request) {
     }
 
     await dbConnect()
+
+    // First, find the existing transaction to check its current status
+    const existingTransaction = await Transaction.findOne({ txHashId })
+    if (!existingTransaction) {
+      return corsHeaders(NextResponse.json({ error: 'Transaction not found' }, { status: 404 }), origin)
+    }
+
+    // Don't update if the new status is 'succeeded' it means it was updated manually before
+    if (existingTransaction.status === 'succeeded') {
+      return corsHeaders(
+        NextResponse.json(
+          {
+            message: 'Transaction status not updated - success status preserved',
+            currentStatus: existingTransaction.status,
+          },
+          { status: 200 },
+        ),
+        origin,
+      )
+    }
+
     const updatedTransaction = await Transaction.findOneAndUpdate(
       { txHashId },
       { status },

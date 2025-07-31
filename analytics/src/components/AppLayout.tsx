@@ -3,12 +3,12 @@ import { cn } from '@velocitylabs-org/turtle-ui'
 import { Menu } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
 import NavigationMenu from '@/components/NavigationMenu'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
-import { type RouteItem, routes } from '@/constants/routes'
+import { routes, RouteItem } from '@/constants/routes'
 import useIsMobile from '@/hooks/useMobile'
 
 const headerHeight = 75
@@ -40,8 +40,7 @@ export default function AppLayout({ children }: DashboardLayoutProps) {
   }, [])
 
   const activeRoute = routes.find(
-    (route: RouteItem) =>
-      route.href === pathname || (route.href === '/tx-detail' && pathname?.startsWith('/tx-detail/')),
+    (route: RouteItem) => route.href === pathname || (route.href === '/detail' && pathname?.startsWith('/detail/')),
   )
   const onNavItemClicked = (isActive: boolean, externalLink: boolean) => {
     if (isActive) return

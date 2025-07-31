@@ -1,6 +1,6 @@
-import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getAssetBalance, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import type { Balance, Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
+import { Chain, Token, Balance } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 
@@ -8,14 +8,13 @@ import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/par
 import { toHuman } from '@/utils/transfer'
 
 interface UseBalanceParams {
-  env: Environment
   chain?: Chain | null
   token?: Token
   address?: string
 }
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
-const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
+const useBalance = ({ chain, token, address }: UseBalanceParams) => {
   const [balance, setBalance] = useState<Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
   // Wagmi token balance
@@ -39,7 +38,7 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
     // chain or for another token while fetching the new one.
     setBalance(undefined)
 
-    if (!env || !chain || !token || !address) return
+    if (!chain || !token || !address) return
 
     try {
       setLoading(true)
@@ -77,7 +76,8 @@ const useBalance = ({ env, chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-  }, [env, chain, address, token?.id, fetchErc20Balance, fetchEthBalance, token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chain, address, token?.id, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {
     fetchBalance()

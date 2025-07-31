@@ -103,7 +103,6 @@ const useSnowbridgeApi = () => {
       destinationChain,
       recipient,
       sourceAmount,
-      environment,
       fees,
       bridgingFee,
       onComplete,
@@ -155,7 +154,6 @@ const useSnowbridgeApi = () => {
         sourceAmount: sourceAmount.toString(),
         recipient,
         date,
-        environment,
         fees,
         bridgingFee,
       } satisfies StoredTransfer)

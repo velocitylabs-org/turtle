@@ -1,23 +1,23 @@
-import { type environment, historyV2 as history } from '@snowbridge/api'
+import { environment, historyV2 as history } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import type { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
-import type { FromParachainTrackingResult } from '@/models/subscan'
-import type { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
+import { FromAhToEthTrackingResult, FromEthTrackingResult } from '@/models/snowbridge'
+import { FromParachainTrackingResult } from '@/models/subscan'
+import { OngoingTransfers, StoredTransfer, TxTrackingResult } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { trackXcm } from './subscan'
 
-export const trackTransfers = async (env: environment.SnowbridgeEnvironment, ongoingTransfers: OngoingTransfers) => {
+export const trackTransfers = async (sbEnv: environment.SnowbridgeEnvironment, ongoingTransfers: OngoingTransfers) => {
   const transfers: TxTrackingResult[] = []
   const { toPolkadot, toEthereum, withinPolkadot } = ongoingTransfers
 
   for (const transfer of toPolkadot) {
-    const tx = await history.toPolkadotTransferById(env.config.GRAPHQL_API_URL, transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+    const tx = await history.toPolkadotTransferById(sbEnv.config.GRAPHQL_API_URL, transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
     if (tx) transfers.push(tx)
   }
 
   for (const transfer of toEthereum) {
     const tx = await history.toEthereumTransferById(
-      env.config.GRAPHQL_API_URL,
+      sbEnv.config.GRAPHQL_API_URL,
       transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
     )
     if (tx) transfers.push(tx)
@@ -25,7 +25,7 @@ export const trackTransfers = async (env: environment.SnowbridgeEnvironment, ong
 
   // Keep as back-up in case Ocelloids does not support a transfer path
   if (withinPolkadot.length) {
-    const xcmTx = await trackXcm(env, withinPolkadot)
+    const xcmTx = await trackXcm(sbEnv, withinPolkadot)
     console.log('Whithin Polkadot transfers:', xcmTx.length)
     transfers.push(...xcmTx)
   }
@@ -61,7 +61,7 @@ const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
  */
 export function getTransferStatus(transferResult: TxTrackingResult) {
   // Checks if the tracked AH to Ethereum transfer comes from Snowbridge API.
-  const isAhToEthTransfer = 'info' in transferResult && transferResult.info.destinationParachain === undefined
+  const isAhToEthTransfer = 'info' in transferResult && transferResult.info.destinationParachain == undefined
 
   // Checks if the tracked XCM transfer comes from Subscan API.
   const isXCMTransfer = 'destEventIndex' in transferResult && !('info' in transferResult)

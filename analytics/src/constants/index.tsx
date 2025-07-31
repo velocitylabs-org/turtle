@@ -8,19 +8,19 @@ export const loadingBarOpt = {
   waitingTime: 200,
 }
 
-export const defaultTransactionLimit = 20
+export const transactionsPerPage = 10
 
 // Chains
-export const chains = REGISTRY.mainnet.chains
+export const chains = REGISTRY.chains
 export const ethereumChain = Ethereum
 export const relayChain = Polkadot
 
 // Tokens
-export const tokens = REGISTRY.mainnet.tokens
+export const tokens = REGISTRY.tokens
 
 export type GraphType = 'volume' | 'count'
 
-export type TimePeriodType = 'last-6-months' | 'last-month' | 'this-week'
+export type TimePeriodType = 'last-6-months' | 'last-month' | 'last-week'
 
 export const swapsStartingDate = new Date('2023-04-29')
 
@@ -28,4 +28,7 @@ export const statusColors = {
   succeeded: { hex: '#22c55e', className: 'green-500' },
   failed: { hex: '#ef4444', className: 'red-500' },
   undefined: { hex: '#eab308', className: 'yellow-500' },
+  ongoing: { hex: '#3b82f6', className: 'blue-500' },
 }
+
+export const volumePeakThreshold = 50000

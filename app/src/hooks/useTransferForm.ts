@@ -1,19 +1,12 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  type Chain,
-  Ethereum,
-  type ManualRecipient,
-  type Token,
-  type TokenAmount,
-} from '@velocitylabs-org/turtle-registry'
+import { Chain, Ethereum, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { type SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
-import useEnvironment from '@/hooks/useEnvironment'
 import { useOutputAmount } from '@/hooks/useOutputAmount'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
@@ -43,7 +36,6 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
   const { addNotification } = useNotification()
 
@@ -55,7 +47,6 @@ const useTransferForm = () => {
     trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
-    // biome-ignore lint/suspicious/noExplicitAny: any
     resolver: zodResolver(schema as any),
     mode: 'onChange',
     delayError: 3000,
@@ -87,7 +78,7 @@ const useTransferForm = () => {
   } = useFees(
     sourceChain,
     destinationChain,
-    sourceTokenAmountError === '' ? sourceTokenAmount?.token : null,
+    sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
     sourceTokenAmount?.amount,
     sourceWallet?.sender?.address,
     getRecipientAddress(manualRecipient, destinationWallet),
@@ -99,7 +90,6 @@ const useTransferForm = () => {
     loading: loadingBalance,
     fetchBalance,
   } = useBalance({
-    env: environment,
     chain: sourceChain,
     token: sourceTokenAmount?.token ?? undefined,
     address: sourceWallet?.sender?.address,
@@ -300,7 +290,6 @@ const useTransferForm = () => {
         return
 
       transfer({
-        environment,
         sender: sourceWallet.sender,
         sourceChain,
         destinationChain,
@@ -326,13 +315,13 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, environment, addNotification],
+    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   // validate recipient address
   useEffect(() => {
     setManualRecipientError(isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address')
-  }, [manualRecipient.address, destinationChain, manualRecipient.enabled, manualRecipient])
+  }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
   // validate token amount
   useEffect(() => {
@@ -413,7 +402,8 @@ const useTransferForm = () => {
   useEffect(() => {
     if (tokenId)
       setValue('sourceTokenAmount', { token: sourceTokenAmount?.token ?? null, amount: null }, { shouldValidate: true })
-  }, [tokenId, setValue, sourceTokenAmount?.token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenId, setValue])
 
   return {
     control,
@@ -442,10 +432,9 @@ const useTransferForm = () => {
     canPayFees,
     canPayAdditionalFees,
     transferStatus,
-    environment,
     sourceTokenAmountError,
     manualRecipientError,
-    isBalanceAvailable: balanceData?.value !== undefined,
+    isBalanceAvailable: balanceData?.value != undefined,
     loadingBalance,
     balanceData,
     fetchBalance,

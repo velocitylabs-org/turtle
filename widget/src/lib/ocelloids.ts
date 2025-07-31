@@ -65,6 +65,7 @@ export const getOcelloidsAgentApi = async (): Promise<OcelloidsAgentApi<xcm.XcmI
  * @param transfer - The stored transfer.
  * @param remove - A callback function to remove the transfer once completed.
  * @param addCompletedTransfer - A callback function to add an ongoing transfer to the completed storage.
+ * @param updateStatus
  * @param addNotification - A callback function to add a notification.
  *
  * It creates a WebSocket connection to listen for XCM events for the provided transfer
@@ -73,6 +74,7 @@ export const getOcelloidsAgentApi = async (): Promise<OcelloidsAgentApi<xcm.XcmI
  * - Closes the WebSocket connection once the transfer is processed.
  * - Handles execution and connection errors.
  *
+ * @param updateProgress
  */
 export const xcmOcceloidsSubscribe = async (
   ocelloidsAgentApi: OcelloidsAgentApi<xcm.XcmInputs>,
@@ -235,14 +237,10 @@ const updateTransferStatus = (
       dismissible: true,
     })
 
-    // Analytics tx are created with successful status by default, we only update for failed ones
-    if (status !== TxStatus.Succeeded) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: status,
-        environment: transfer.environment,
-      })
-    }
+    updateTransferMetrics({
+      txHashId: transfer.id,
+      status,
+    })
 
     if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
       console.log(new Error(`Ocelloids tracking error:${message}`))
