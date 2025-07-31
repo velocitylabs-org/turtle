@@ -10,15 +10,14 @@ import typescript from '@highlightjs/cdn-assets/es/languages/typescript.min.js'
 import '@highlightjs/cdn-assets/styles/github.min.css'
 import { useEffect } from 'react'
 
-hljs.registerLanguage('bash', bash)
-hljs.registerLanguage('typescript', typescript)
-
 const CodeBit = ({
   guide,
 }: {
   guide: { title: string; language?: string; code?: string; description?: string }
 }) => {
   useEffect(() => {
+    hljs.registerLanguage('bash', bash)
+    hljs.registerLanguage('typescript', typescript)
     hljs.highlightAll()
   }, [])
 

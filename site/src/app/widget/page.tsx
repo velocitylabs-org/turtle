@@ -57,7 +57,7 @@ export default function Widget() {
                   </div>
                 </div>
               </div>
-              <div className="relative -mt-16 md:ml-[-15%] md:mt-0">
+              <div className="relative -mt-16 w-full md:ml-[-15%] md:mt-0 md:w-auto">
                 <WidgetWrapper />
               </div>
             </div>

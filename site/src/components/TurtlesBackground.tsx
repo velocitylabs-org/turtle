@@ -29,7 +29,7 @@ const TurtlesBackground = ({
             children && 'pb-30',
           )}
         >
-          <div className="m-[4vw] flex-col items-center justify-center">
+          <div className="m-[4vw] items-center">
             {header && (
               <h1 className="turtle-text-shadow m-0 text-center text-[11vw] leading-[100%] text-white sm:text-[9vw] 3xl:text-[10rem]">
                 {header}
