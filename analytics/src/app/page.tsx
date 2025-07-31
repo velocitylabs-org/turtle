@@ -1,10 +1,10 @@
 'use client'
-import { useQuery } from '@tanstack/react-query'
-import { cn } from '@velocitylabs-org/turtle-ui'
-import { Checkbox } from '@velocitylabs-org/turtle-ui'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import { cn, Checkbox } from '@velocitylabs-org/turtle-ui'
 import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral, parseAsBoolean } from 'nuqs'
+import { useQueryState, parseAsStringLiteral, parseAsBoolean, parseAsInteger } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
+import { getTxList } from '@/app/actions/tx-list'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentTransactionsTable from '@/components/RecentTransactionsTable'
 import Select from '@/components/Select'
@@ -13,7 +13,8 @@ import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { defaultTransactionLimit, GraphType, TimePeriodType } from '@/constants'
+import { transactionsPerPage, GraphType, TimePeriodType } from '@/constants'
+import { usePagination } from '@/hooks/usePagination'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
 
@@ -47,6 +48,7 @@ const timePeriodQueryDefault = parseAsStringLiteral([
   'last-week',
 ] as const).withDefault('last-6-months')
 const booleanDefaultTrue = parseAsBoolean.withDefault(true)
+const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function HomeDashboardPage() {
   const [transactionGraphType, setTransactionGraphType] = useQueryState(
@@ -56,14 +58,45 @@ export default function HomeDashboardPage() {
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
   const [outliers, setOutliers] = useQueryState('outliers', booleanDefaultTrue)
+  const [currentPage, setCurrentPage] = useQueryState('page', pageQueryDefault)
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummaryData,
   })
 
-  useShowLoadingBar(isLoading)
-  if (error && !isLoading) {
-    return <ErrorPanel error={error} />
+  const {
+    data: dataList,
+    isLoading: isInitialLoadingList,
+    isFetching: isFetchingList,
+    error: errorList,
+  } = useQuery({
+    queryKey: ['transactionList', currentPage],
+    queryFn: () => getTxList(currentPage),
+    placeholderData: keepPreviousData,
+  })
+
+  const summaryData = data || {
+    totalVolumeUsd: 0,
+    totalTransactions: 0,
+    avgTransactionValue: 0,
+    successRate: 0,
+    totalRecentTransactions: 0,
+  }
+
+  const { PaginationComponent } = usePagination({
+    totalItems: summaryData.totalTransactions,
+    itemsPerPage: transactionsPerPage,
+    currentPage,
+    onPageChange: setCurrentPage,
+  })
+
+  const loading = isLoading || isFetchingList
+  useShowLoadingBar(loading)
+  const commonError = error || (errorList as Error)
+
+  if (commonError && !loading) {
+    return <ErrorPanel error={commonError} />
   }
 
   const getTransactionData = () => {
@@ -75,13 +108,6 @@ export default function HomeDashboardPage() {
   const getTopTokensData = () => {
     const tokensType = tokensGraphType === 'volume' ? 'topTokensByVolume' : 'topTokensByCount'
     return data?.topTokensData ? data.topTokensData[tokensType] || [] : []
-  }
-
-  const summaryData = data || {
-    totalVolumeUsd: 0,
-    totalTransactions: 0,
-    avgTransactionValue: 0,
-    successRate: 0,
   }
 
   return (
@@ -210,14 +236,19 @@ export default function HomeDashboardPage() {
       <div className="mt-4">
         <Card>
           <CardHeader>
-            <CardTitle>Recent transactions</CardTitle>
-            <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
+            <CardTitle>Transaction list</CardTitle>
+            <CardDescription>Showing {transactionsPerPage} transactions per page</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable
-              transactions={data?.recentTransactions || []}
-              isLoading={isLoading}
+              transactions={dataList?.txList || []}
+              isLoading={isInitialLoadingList}
             />
+            {!isInitialLoadingList && (
+              <PaginationComponent
+                className={cn('mt-7', isFetchingList && 'pointer-events-none')}
+              />
+            )}
           </CardContent>
         </Card>
       </div>

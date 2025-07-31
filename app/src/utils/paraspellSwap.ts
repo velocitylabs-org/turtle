@@ -2,7 +2,6 @@ import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
 import {
   Chain,
   Token,
-  Environment,
   Hydration,
   REGISTRY,
   getTokenByMultilocation,
@@ -231,9 +230,7 @@ export const getSwapsDestinationChains = (
       )
     ) {
       // lookup destination chain and add it to the list
-      const destinationChain = REGISTRY[Environment.Mainnet].chains.find(
-        chain => chain.uid === route.to,
-      )
+      const destinationChain = REGISTRY.mainnet.chains.find(chain => chain.uid === route.to)
       if (destinationChain) chains.push(destinationChain)
     }
   })

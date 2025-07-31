@@ -1,4 +1,4 @@
-import { chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { Chain, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
 import Select from '@/components/Select'
 import { chains, GraphType, primaryColor } from '@/constants'
@@ -39,7 +39,7 @@ export default function ChainSankeyGraph({
 
   const flowData = data?.map(item => ({ ...item, from: `${item.from}-origin` }))
 
-  const chainOptions = chains.map(chain => ({
+  const chainOptions = chains.map((chain: Chain) => ({
     value: chain.uid,
     label: truncateLabel(chain.name),
     logoURI: getSrcFromLogo(chain),
