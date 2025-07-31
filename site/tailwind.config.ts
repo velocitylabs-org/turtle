@@ -6,7 +6,6 @@ const prefix = 'turtle'
 
 const config: Config = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     '../packages/ui/src/**/*.{ts,tsx,js,jsx}',
@@ -20,7 +19,6 @@ const config: Config = {
       fontSize: {
         'section-title': '2rem',
         'h-sub': '3.5rem',
-        'hero-xl': '6.625rem',
       },
       lineHeight: {
         '12': '3.5rem',

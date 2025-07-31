@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Body, Switch, Large, Icon } from '@velocitylabs-org/turtle-ui'
+import { Body, Switch, Large, Icon, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { tokensById, chainsByUid, Chain, Token } from '@velocitylabs-org/turtle-registry'
 
 const Networks = () => {
@@ -21,7 +21,10 @@ const Networks = () => {
     const id = 'uid' in item ? item.uid : item.id
 
     return (
-      <div className="flex items-center justify-between" key={id}>
+      <div
+        className="flex items-center justify-between px-6 py-4 hover:bg-turtle-secondary-light"
+        key={id}
+      >
         <div className="flex items-center gap-6">
           <Icon
             src={typeof item.logoURI === 'string' ? item.logoURI : item.logoURI.src}
@@ -47,12 +50,14 @@ const Networks = () => {
         <Switch checked={visible === 'Tokens'} onChange={handleVisibleChange} />
         <Body className={visible === 'Tokens' ? 'font-bold' : ''}>Tokens</Body>
       </div>
-      <section className="flex flex-col gap-6 rounded-3xl border border-turtle-foreground p-6">
-        <header className="flex justify-between">
+      <section className="flex flex-col rounded-3xl border border-turtle-foreground">
+        <header className="flex justify-between p-6">
           <Large>All {visible}</Large>
-          <Large>ID</Large>
+          <Tooltip content="Turtle Global ID">
+            <Large>ID</Large>
+          </Tooltip>
         </header>
-        <div className="flex max-h-[350px] flex-col gap-8 overflow-y-auto">
+        <div className="flex max-h-[350px] flex-col overflow-y-auto">
           {items.map((item) => (
             <TableRow key={'uid' in item ? item.uid : item.id} item={item} />
           ))}

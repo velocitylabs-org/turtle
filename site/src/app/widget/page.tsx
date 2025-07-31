@@ -105,6 +105,20 @@ export default async function Widget() {
           <Networks />
           <Divider />
         </SectionInnerContainer>
+        <SectionInnerContainer heading="💚 Testimonials">
+          <Image
+            src="/testimonials-1.jpg"
+            alt="Turtle widget testimonials 1"
+            width={640}
+            height={80}
+          />
+          <Image
+            src="/testimonials-2.jpg"
+            alt="Turtle widget testimonials 2"
+            width={640}
+            height={80}
+          />
+        </SectionInnerContainer>
         <SectionInnerContainer heading="🙋 Questions or Feedback?">
           <Body>Need help integrating or have questions?</Body>
           <div className="flex flex-wrap gap-4">
@@ -116,7 +130,7 @@ export default async function Widget() {
             >
               📖 Read the docs
             </Button>
-            <Button size="lg" as="a" href="mailto:support@velocitylabs.org">
+            <Button size="lg" as="a" href="https://t.me/c/velocitylabs/137" target="_blank">
               💬 Talk to our team
             </Button>
           </div>
