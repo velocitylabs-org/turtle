@@ -41,8 +41,10 @@ export default function Widget() {
                 <div className="flex flex-col gap-20 lg:max-w-[375px]">
                   <LargeHeading className="leading-none">Turtle Widget</LargeHeading>
                   <div className="flex flex-col gap-10">
-                    <h2 className="text-section-title">All of Polkadot on your dApp in minutes</h2>
-                    <p className="text-lg">
+                    <h2 className="text-section-title leading-none">
+                      All of Polkadot on your dApp in minutes
+                    </h2>
+                    <p className="text-lg leading-none">
                       Effortless Integration · Unified In-App Experience · Customizable to Your
                       Brand
                     </p>

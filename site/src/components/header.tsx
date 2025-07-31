@@ -17,7 +17,7 @@ export default function Header() {
           Turtle
         </p>
         {isWidget && (
-          <div className="hidden">
+          <div className="hidden md:block">
             <Button
               variant="outline"
               size="sm"
