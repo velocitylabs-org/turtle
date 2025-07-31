@@ -69,7 +69,9 @@ export const Button = <T extends React.ElementType = 'button'>({
   ...rest
 }: ButtonProps<T>) => {
   const classNames = cn(
-    'relative flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0 cursor-pointer',
+    'relative flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0',
+    (as === 'button' || as === 'a') && 'cursor-pointer',
+    disabled && 'cursor-not-allowed',
     sizeHeights[size],
     paddingX[size],
     styles[variant],

@@ -13,7 +13,7 @@ export default function Header() {
     <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={40} />
-        <p className="turtle-text-shadow hidden text-[2rem] font-medium text-white sm:block sm:block">
+        <p className="turtle-text-shadow hidden text-[2rem] font-medium text-white sm:block">
           Turtle
         </p>
         {isWidget && (

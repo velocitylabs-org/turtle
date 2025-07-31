@@ -1,4 +1,4 @@
-import { Body, Button, cn, XXXLarge, Large } from '@velocitylabs-org/turtle-ui'
+import { Body, Button, cn, LargeHeading, Large } from '@velocitylabs-org/turtle-ui'
 import CallToAction from '@/components/widget/CallToAction'
 import TurtlesBackground from '@/components/TurtlesBackground'
 import WidgetWrapper from '@/components/widget/WidgetWrapper'
@@ -11,13 +11,15 @@ const SectionInnerContainer = ({
   children,
   className,
   heading,
+  id,
 }: {
   children: React.ReactNode
   className?: string
   heading: string
+  id?: string
 }) => {
   return (
-    <div className={cn('flex flex-col gap-8 px-6 lg:w-[640px]', className)}>
+    <div id={id} className={cn('flex flex-col gap-8 px-6 lg:w-[640px]', className)}>
       <h3 className="text-section-title font-bold leading-none">{heading}</h3>
       {children}
     </div>
@@ -32,12 +34,12 @@ export default function Widget() {
   return (
     <>
       <section className="relative flex flex-col items-center">
-        <TurtlesBackground blurredBackground={false} whiteWaves>
+        <TurtlesBackground blurredBackground whiteWaves>
           <div className="mt-16 flex flex-col gap-14 p-6 md:mt-0 md:p-0">
             <div className="relative flex flex-col items-center md:translate-x-[7.5%] md:flex-row">
               <div className="flex rounded-4xl border border-black bg-white p-8 pb-24 md:pb-8 lg:w-[656px]">
                 <div className="flex flex-col gap-20 lg:max-w-[375px]">
-                  <XXXLarge className="leading-none">Turtle Widget</XXXLarge>
+                  <LargeHeading className="leading-none">Turtle Widget</LargeHeading>
                   <div className="flex flex-col gap-10">
                     <h2 className="text-section-title">All of Polkadot on your dApp in minutes</h2>
                     <p className="text-lg">
@@ -46,7 +48,7 @@ export default function Widget() {
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {headerButtons.map((button) => (
-                        <Button variant="outline" size="sm" key={button.label}>
+                        <Button variant="outline" size="sm" key={button.label} as="span">
                           <Image src={button.icon} alt={button.label} width={24} height={24} />
                           <p className="text-sm">{button.label}</p>
                         </Button>
@@ -64,7 +66,11 @@ export default function Widget() {
         </TurtlesBackground>
       </section>
       <section className="flex min-h-[100vh] flex-col items-center gap-20 bg-white pb-48 lg:pb-96">
-        <SectionInnerContainer className="mt-24" heading="🐢 What is the Turtle Widget?">
+        <SectionInnerContainer
+          id="what-is-turtle-widget"
+          className="mt-24"
+          heading="🐢 What is the Turtle Widget?"
+        >
           <Body>
             Turtle is a seamless cross-chain token-transfer solution that makes moving digital
             assets between networks effortless. It abstracts away the technical complexities of

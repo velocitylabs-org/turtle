@@ -41,7 +41,7 @@ export default {
     extend: {
       colors,
       fontSize: {
-        xxxlarge: 'clamp(3.5rem, 2.4966rem + 4.5872vw, 6.625rem)',
+        'large-heading': 'clamp(3.5rem, 2.4966rem + 4.5872vw, 6.625rem)',
       },
       backgroundColor: {
         'btn-disabled': colors[`${prefix}-primary`],

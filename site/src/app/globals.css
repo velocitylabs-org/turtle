@@ -191,3 +191,15 @@ input[type='number']::-webkit-inner-spin-button {
 .widget-loader {
   box-shadow: -8px -8px 0px 0px rgba(0, 0, 0, 0.1);
 }
+
+.turtle-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/bg.png') center/cover no-repeat;
+  transform: scale(1.1); /* prevents edges from showing blur cutoff */
+}
+
+.turtle-background-blurred::before {
+  filter: blur(12px);
+}

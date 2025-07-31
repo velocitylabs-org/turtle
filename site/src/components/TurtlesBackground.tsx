@@ -19,8 +19,8 @@ const TurtlesBackground = ({
     <>
       <div
         className={cn(
-          'turtle-background flex min-h-[78vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url("/bg.png")] bg-cover bg-bottom',
-          blurredBackground && 'min-h-[100vh] blur-lg',
+          'turtle-background relative flex min-h-[130vh] w-screen flex-col items-center justify-center overflow-hidden bg-cover bg-bottom',
+          blurredBackground && 'turtle-background-blurred',
         )}
       >
         <div
