@@ -1,14 +1,14 @@
 'use client'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import ethLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import turtleLogo from '@velocitylabs-org/turtle-assets/logos/turtle.svg'
 import { Token } from '@velocitylabs-org/turtle-registry'
 import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
-import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
+import { getOriginBadge, cn } from '@velocitylabs-org/turtle-ui'
 import { CheckCircle, X, DollarSign, Ban, CircleHelp, RefreshCcw } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral, parseAsIsoDate } from 'nuqs'
+import { useQueryState, parseAsStringLiteral, parseAsInteger, parseAsIsoDate } from 'nuqs'
 import React from 'react'
 import { getTransactionsData } from '@/app/actions/transactions'
 import DatePicker from '@/components/DatePicker'
@@ -19,7 +19,8 @@ import SmallStatBox from '@/components/SmallStatBox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { chains, defaultTransactionLimit, tokens } from '@/constants'
+import { chains, transactionsPerPage, tokens } from '@/constants'
+import { usePagination } from '@/hooks/usePagination'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
@@ -69,6 +70,7 @@ const statusFilterParser = parseAsStringLiteral([
   'all',
 ] as const).withDefault('all')
 const emptyDefaultString = { defaultValue: '' }
+const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useQueryState('sourceChain', emptyDefaultString)
@@ -88,8 +90,9 @@ export default function TransactionsPage() {
     'recipientAddress',
     emptyDefaultString,
   )
+  const [currentPage, setCurrentPage] = useQueryState('filterPage', pageQueryDefault)
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, isFetching } = useQuery({
     queryKey: [
       'transactions',
       sourceChainUid,
@@ -102,6 +105,7 @@ export default function TransactionsPage() {
       origin,
       senderAddress,
       recipientAddress,
+      currentPage,
     ],
     queryFn: () =>
       getTransactionsData({
@@ -115,9 +119,11 @@ export default function TransactionsPage() {
         hostedOn: origin.length > 0 ? origin : undefined,
         senderAddress: senderAddress.length > 0 ? senderAddress : undefined,
         recipientAddress: recipientAddress.length > 0 ? recipientAddress : undefined,
+        page: currentPage,
       }),
+    placeholderData: keepPreviousData,
   })
-  useShowLoadingBar(isLoading)
+
   const transactions = data?.transactions || []
   const summaryData = data?.summary || {
     totalVolumeUsd: 0,
@@ -127,6 +133,16 @@ export default function TransactionsPage() {
     undefinedCount: 0,
     ongoingCount: 0,
   }
+
+  const { PaginationComponent } = usePagination({
+    totalItems: summaryData.totalTransactions,
+    itemsPerPage: transactionsPerPage,
+    currentPage,
+    onPageChange: setCurrentPage,
+  })
+
+  const loading = isLoading || isFetching
+  useShowLoadingBar(loading)
 
   const resetFilters = () => {
     setStatusFilterRaw('all')
@@ -139,6 +155,13 @@ export default function TransactionsPage() {
     setOrigin('')
     setSenderAddress('')
     setRecipientAddress('')
+    setCurrentPage(1)
+  }
+
+  // Generic function to handle filter changes and reset page
+  const handleFilterChange = (filterUpdateFn: () => void) => {
+    setCurrentPage(1)
+    filterUpdateFn()
   }
 
   if (error && !isLoading) {
@@ -207,7 +230,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded')
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded'),
+                        )
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
@@ -218,7 +243,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed')
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed'),
+                        )
                       }
                     >
                       <Ban className="mr-1 h-4 w-4" />
@@ -229,7 +256,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined')
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined'),
+                        )
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
@@ -240,7 +269,9 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'ongoing' ? 'bg-blue-100' : ''}`}
                       onClick={() =>
-                        setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing')
+                        handleFilterChange(() =>
+                          setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing'),
+                        )
                       }
                     >
                       <RefreshCcw className="mr-1 h-4 w-4" />
@@ -252,7 +283,7 @@ export default function TransactionsPage() {
                   <Select
                     options={originOptions}
                     selected={origin}
-                    onChange={val => setOrigin(val as string)}
+                    onChange={val => handleFilterChange(() => setOrigin(val as string))}
                     placeholder="Origin"
                   />
                 </div>
@@ -260,23 +291,31 @@ export default function TransactionsPage() {
               {/* Date pickers and address inputs section */}
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <DatePicker date={fromDate} setDate={setFromDate} placeholder="From date" />
+                  <DatePicker
+                    date={fromDate}
+                    setDate={date => handleFilterChange(() => setFromDate(date))}
+                    placeholder="From date"
+                  />
                 </div>
                 <div>
-                  <DatePicker date={toDate} setDate={setToDate} placeholder="To date" />
+                  <DatePicker
+                    date={toDate}
+                    setDate={date => handleFilterChange(() => setToDate(date))}
+                    placeholder="To date"
+                  />
                 </div>
                 <div>
                   <Input
                     placeholder="Sender Address"
                     value={senderAddress}
-                    onChange={e => setSenderAddress(e.target.value)}
+                    onChange={e => handleFilterChange(() => setSenderAddress(e.target.value))}
                   />
                 </div>
                 <div>
                   <Input
                     placeholder="Recipient Address"
                     value={recipientAddress}
-                    onChange={e => setRecipientAddress(e.target.value)}
+                    onChange={e => handleFilterChange(() => setRecipientAddress(e.target.value))}
                   />
                 </div>
               </div>
@@ -286,7 +325,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={sourceChainUid}
-                    onChange={val => setSourceChainUid(val as string)}
+                    onChange={val => handleFilterChange(() => setSourceChainUid(val as string))}
                     placeholder="Source Chain"
                   />
                 </div>
@@ -294,7 +333,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenOptions}
                     selected={sourceTokenId}
-                    onChange={val => setSourceTokenId(val as string)}
+                    onChange={val => handleFilterChange(() => setSourceTokenId(val as string))}
                     placeholder="Source Token"
                   />
                 </div>
@@ -302,7 +341,9 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={val => setDestinationChainUid(val as string)}
+                    onChange={val =>
+                      handleFilterChange(() => setDestinationChainUid(val as string))
+                    }
                     placeholder="Destination Chain"
                   />
                 </div>
@@ -310,7 +351,7 @@ export default function TransactionsPage() {
                   <Select
                     options={tokenOptions}
                     selected={destinationTokenId}
-                    onChange={val => setDestinationTokenId(val as string)}
+                    onChange={val => handleFilterChange(() => setDestinationTokenId(val as string))}
                     placeholder="Destination Token"
                   />
                 </div>
@@ -320,11 +361,14 @@ export default function TransactionsPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Recent transactions</CardTitle>
-            <CardDescription>Last {defaultTransactionLimit} transactions</CardDescription>
+            <CardTitle>Transaction list</CardTitle>
+            <CardDescription>Showing {transactionsPerPage} transactions per page</CardDescription>
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable transactions={transactions} isLoading={isLoading} />
+            {!isLoading && (
+              <PaginationComponent className={cn('mt-7', isFetching && 'pointer-events-none')} />
+            )}
           </CardContent>
         </Card>
       </div>
