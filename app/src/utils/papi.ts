@@ -4,7 +4,6 @@ import { OnChainBaseEvents } from '@/models/transfer'
 export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined => {
   // Wait until block is finalized or in a best block state
   if (event.type === 'finalized' || (event.type === 'txBestBlocksState' && event.found)) {
-    console.log(event.events)
     // Verify transaction hash
     if (!event.txHash) throw new Error('Failed to generate the transaction hash')
     // Handle execution and extrinsic errors
