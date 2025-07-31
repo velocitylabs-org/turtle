@@ -157,24 +157,19 @@ export const getSwapsSourceChains = (): Chain[] => {
     chain => chain?.supportExecuteExtrinsic,
   )
 
-  const chainsSupportingOneClickFlowAndHaveTradingPairOnDex = chainsSupportingOneClickFlow.filter(
-    chain => {
-      const route = REGISTRY.routes.find(
-        route => route.from === chain.uid && route.to === Hydration.uid,
-      )
-      if (!route) return false
+  const oneClickChains = chainsSupportingOneClickFlow.filter(chain => {
+    const route = REGISTRY.routes.find(
+      route => route.from === chain.uid && route.to === Hydration.uid,
+    )
+    if (!route) return false
 
-      const isTradingPairCompatible = getDexPairs('HydrationDex').some(pair =>
-        pair.some(token => route.tokens.includes(token.id)),
-      )
-      return isTradingPairCompatible
-    },
-  )
+    const isTradingPairCompatible = getDexPairs('HydrationDex').some(pair =>
+      pair.some(token => route.tokens.includes(token.id)),
+    )
+    return isTradingPairCompatible
+  })
 
-  return deduplicate(
-    getSupportedDexChains(),
-    ...chainsSupportingOneClickFlowAndHaveTradingPairOnDex,
-  )
+  return deduplicate(getSupportedDexChains(), ...oneClickChains)
 }
 
 /** returns all allowed source tokens for a swap. */
