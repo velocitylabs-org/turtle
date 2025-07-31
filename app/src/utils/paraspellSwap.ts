@@ -153,13 +153,13 @@ export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
 
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => {
-  const chainsSupportingOneClickFlow = REGISTRY.mainnet.chains.filter(
+  const chainsSupportingOneClickFlow = REGISTRY.chains.filter(
     chain => chain?.supportExecuteExtrinsic,
   )
 
   const chainsSupportingOneClickFlowAndHaveTradingPairOnDex = chainsSupportingOneClickFlow.filter(
     chain => {
-      const route = REGISTRY.mainnet.routes.find(
+      const route = REGISTRY.routes.find(
         route => route.from === chain.uid && route.to === Hydration.uid,
       )
       if (!route) return false
@@ -186,7 +186,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
 
   if (!sourceChain.supportExecuteExtrinsic) return []
 
-  const routeToDex = REGISTRY.mainnet.routes.find(
+  const routeToDex = REGISTRY.routes.find(
     route => route.from === sourceChain.uid && route.to === Hydration.uid,
   )
   if (!routeToDex) return []
@@ -198,7 +198,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
   )
 
   const tokensWithTradingPair = tokenIdsWithTradingPair
-    .map(tokenId => REGISTRY.mainnet.tokens.find(token => token.id === tokenId))
+    .map(tokenId => REGISTRY.tokens.find(token => token.id === tokenId))
     .filter((token): token is Token => token !== undefined)
 
   return tokensWithTradingPair
@@ -220,7 +220,7 @@ export const getSwapsDestinationChains = (
   chains.push(sourceChain)
 
   // get transfer routes we can reach from the dex
-  const routes = REGISTRY.mainnet.routes.filter(route => route.from === Hydration.uid)
+  const routes = REGISTRY.routes.filter(route => route.from === Hydration.uid)
 
   // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
@@ -230,7 +230,7 @@ export const getSwapsDestinationChains = (
       )
     ) {
       // lookup destination chain and add it to the list
-      const destinationChain = REGISTRY.mainnet.chains.find(chain => chain.uid === route.to)
+      const destinationChain = REGISTRY.chains.find(chain => chain.uid === route.to)
       if (destinationChain) chains.push(destinationChain)
     }
   })
@@ -255,7 +255,7 @@ export const getSwapsDestinationTokens = (
   if (isSameChain(Hydration, destinationChain)) return tradeableTokens
 
   // Check if we can reach the destination chain
-  const route = REGISTRY.mainnet.routes.find(
+  const route = REGISTRY.routes.find(
     route => route.from === Hydration.uid && route.to === destinationChain.uid,
   )
   if (!route) return []
