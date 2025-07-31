@@ -28,7 +28,7 @@ const Divider = () => {
   return <div className="border-gray border-b" />
 }
 
-export default async function Widget() {
+export default function Widget() {
   return (
     <>
       <section className="relative flex flex-col items-center">
