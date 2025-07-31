@@ -136,7 +136,7 @@ export default function Widget() {
             >
               📖 Read the docs
             </Button>
-            <Button size="lg" as="a" href="https://t.me/c/velocitylabs/137" target="_blank">
+            <Button size="lg" as="a" href="https://t.me/+AO4siPMIyjViMjg6" target="_blank">
               💬 Talk to our team
             </Button>
           </div>
