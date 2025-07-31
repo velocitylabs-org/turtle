@@ -32,7 +32,7 @@ export default async function Widget() {
   return (
     <>
       <section className="relative flex flex-col items-center">
-        <TurtlesBackground blurredBackground={false} whiteWaves initialVolume={undefined}>
+        <TurtlesBackground blurredBackground={false} whiteWaves>
           <div className="mt-16 flex flex-col gap-14 p-6 md:mt-0 md:p-0">
             <div className="relative flex flex-col items-center md:translate-x-[7.5%] md:flex-row">
               <div className="flex rounded-4xl border border-black bg-white p-8 pb-24 md:pb-8 lg:w-[656px]">

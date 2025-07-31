@@ -13,7 +13,6 @@ const TurtlesBackground = ({
   header,
   blurredBackground = false,
   whiteWaves = false,
-  initialVolume,
   children,
 }: TurtlesBackgroundProps) => {
   const fill = whiteWaves ? '255,255,255' : '191,218,220'
@@ -32,14 +31,11 @@ const TurtlesBackground = ({
             children && 'pb-30',
           )}
         >
-          {(header || initialVolume) && (
+          {header && (
             <div className="m-[4vw] flex-col items-center justify-center">
-              {header && (
-                <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
-                  {header}
-                </h1>
-              )}
-              {initialVolume && <AnalyticData initialVolume={initialVolume} />}
+              <h1 className="turtle-text-shadow m-[4vw] text-center text-[12vw] leading-[100%] text-white sm:text-[10vw] 3xl:text-[11rem]">
+                {header}
+              </h1>
             </div>
           )}
           {children}
