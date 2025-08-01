@@ -57,10 +57,5 @@
   },
   "peerDependencies": {
     "@types/node": ">=20.16.15"
-  },
-  "overrides": {
-    "@velocitylabs-org/turtle-widget": {
-      "@coinbase/wallet-sdk": "4.3.4"
-    }
   }
 }
