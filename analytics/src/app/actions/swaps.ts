@@ -1,5 +1,5 @@
 'use server'
-import { defaultTransactionLimit, swapsStartingDate } from '@/constants'
+import { transactionsPerPage, swapsStartingDate } from '@/constants'
 import swapView from '@/models/swap-view'
 import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
@@ -13,7 +13,6 @@ export async function getSwapsData() {
       swapsVolumeResult,
       totalSwaps,
       successfulSwaps,
-      rawRecentSwaps,
       transactionsSinceSwaps,
       swapsActivity,
       swapPairsByVolume,
@@ -35,31 +34,6 @@ export async function getSwapsData() {
 
       // Successful swaps count
       Transaction.countDocuments({ status: 'succeeded', isSwap: true }),
-
-      // Retrieve the latest swaps, limiting results to defaultTransactionLimit
-      Transaction.find({ isSwap: true })
-        .sort({ txDate: -1 })
-        .limit(defaultTransactionLimit)
-        .select(
-          [
-            '_id',
-            Transaction.schema.paths.txDate.path,
-            Transaction.schema.paths.sourceTokenId.path,
-            Transaction.schema.paths.sourceTokenSymbol.path,
-            Transaction.schema.paths.sourceTokenAmount.path,
-            Transaction.schema.paths.sourceTokenAmountUsd.path,
-            Transaction.schema.paths.sourceChainUid.path,
-            Transaction.schema.paths.sourceChainName.path,
-            Transaction.schema.paths.destinationTokenId.path,
-            Transaction.schema.paths.destinationTokenSymbol.path,
-            Transaction.schema.paths.destinationTokenAmount.path,
-            Transaction.schema.paths.destinationTokenAmountUsd.path,
-            Transaction.schema.paths.destinationChainUid.path,
-            Transaction.schema.paths.destinationChainName.path,
-            Transaction.schema.paths.status.path,
-          ].join(' '),
-        )
-        .lean(),
 
       // Transactions since swaps
       Transaction.countDocuments({ txDate: { $gt: swapsStartingDate }, status: 'succeeded' }),
@@ -226,18 +200,58 @@ export async function getSwapsData() {
     const swapsSuccessRate = totalSwaps > 0 ? (successfulSwaps / totalSwaps) * 100 : 0
     const swapsPercentageOfTransactions = (successfulSwaps * 100) / transactionsSinceSwaps
 
-    // Ensure all values are serializable because actions can only return plain objects
-    const recentSwaps = rawRecentSwaps.map(swap => swapView.parse(swap))
-
     return {
       swapsTotalVolume,
       successfulSwaps,
       swapsSuccessRate,
-      recentSwaps,
       swapsPercentageOfTransactions,
       swapsActivity,
       swapPairsByVolume,
       swapPairsByTransactions,
+      totalSwaps,
+    }
+  } catch (e) {
+    const error = e instanceof Error ? e : new Error(String(e))
+    await captureServerError(error)
+    throw error
+  }
+}
+
+export async function getSwapList(page: number = 1) {
+  try {
+    await dbConnect()
+
+    // Retrieve the latest transactions with pagination
+    const rawRecentSwaps = await Transaction.find({ isSwap: true })
+      .sort({ txDate: -1 })
+      .skip((page - 1) * transactionsPerPage)
+      .limit(transactionsPerPage)
+      .select(
+        [
+          '_id',
+          Transaction.schema.paths.txDate.path,
+          Transaction.schema.paths.sourceTokenId.path,
+          Transaction.schema.paths.sourceTokenSymbol.path,
+          Transaction.schema.paths.sourceTokenAmount.path,
+          Transaction.schema.paths.sourceTokenAmountUsd.path,
+          Transaction.schema.paths.sourceChainUid.path,
+          Transaction.schema.paths.sourceChainName.path,
+          Transaction.schema.paths.destinationTokenId.path,
+          Transaction.schema.paths.destinationTokenSymbol.path,
+          Transaction.schema.paths.destinationTokenAmount.path,
+          Transaction.schema.paths.destinationTokenAmountUsd.path,
+          Transaction.schema.paths.destinationChainUid.path,
+          Transaction.schema.paths.destinationChainName.path,
+          Transaction.schema.paths.status.path,
+        ].join(' '),
+      )
+      .lean()
+
+    // Ensure all values are serializable because actions can only return plain objects
+    const recentSwaps = rawRecentSwaps.map(swap => swapView.parse(swap))
+
+    return {
+      swapList: recentSwaps,
     }
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e))

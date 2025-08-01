@@ -1,8 +1,7 @@
 'use server'
 import { startOfMonth, subMonths, format, addDays, startOfDay, subDays } from 'date-fns'
-import { defaultTransactionLimit, volumePeakThreshold } from '@/constants'
+import { volumePeakThreshold } from '@/constants'
 import Transaction from '@/models/Transaction'
-import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
 
@@ -14,7 +13,6 @@ export async function getSummaryData() {
       volumeResult,
       totalTransactions,
       successfulTransactions,
-      recentTransactions,
       topTokensByVolume,
       topTokensByCount,
     ] = await Promise.all([
@@ -34,29 +32,6 @@ export async function getSummaryData() {
 
       // Successful transactions count
       Transaction.countDocuments({ status: 'succeeded' }),
-
-      // Retrieve the latest transactions, limiting results to defaultTransactionLimit
-      Transaction.find()
-        .sort({ txDate: -1 })
-        .limit(defaultTransactionLimit)
-        .select(
-          [
-            '_id',
-            Transaction.schema.paths.txDate.path,
-            Transaction.schema.paths.sourceTokenId.path,
-            Transaction.schema.paths.sourceTokenSymbol.path,
-            Transaction.schema.paths.sourceTokenAmount.path,
-            Transaction.schema.paths.sourceTokenAmountUsd.path,
-            Transaction.schema.paths.sourceChainUid.path,
-            Transaction.schema.paths.sourceChainName.path,
-            Transaction.schema.paths.destinationTokenId.path,
-            Transaction.schema.paths.destinationTokenSymbol.path,
-            Transaction.schema.paths.destinationChainUid.path,
-            Transaction.schema.paths.destinationChainName.path,
-            Transaction.schema.paths.status.path,
-          ].join(' '),
-        )
-        .lean(),
 
       // Top 3 tokens by volume
       Transaction.aggregate([
@@ -116,8 +91,10 @@ export async function getSummaryData() {
     ])
 
     // Get transaction data for all time periods
-    const transactionData = await getAllTransactionData()
-    const topTokensData = await getAllTopTokensData()
+    const [transactionData, topTokensData] = await Promise.all([
+      getAllTransactionData(),
+      getAllTopTokensData(),
+    ])
 
     const totalVolumeUsd = volumeResult[0]?.total || 0
     const successRate =
@@ -125,17 +102,11 @@ export async function getSummaryData() {
     const avgTransactionValue =
       successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
-    // Apply the schema to each transaction
-    const serializedRecentTransactions = recentTransactions.map(transaction =>
-      transactionView.parse(transaction),
-    )
-
     return {
       totalVolumeUsd,
       totalTransactions,
       avgTransactionValue,
       successRate,
-      recentTransactions: serializedRecentTransactions,
       topTokensByVolume,
       topTokensByCount,
       topTokensData,

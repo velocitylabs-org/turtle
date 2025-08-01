@@ -110,7 +110,7 @@ export async function PATCH(request: Request) {
     }
 
     // Don't update if the new status is 'succeeded' it means it was updated manually before
-    if (status === 'succeeded') {
+    if (existingTransaction.status === 'succeeded') {
       return corsHeaders(
         NextResponse.json(
           {

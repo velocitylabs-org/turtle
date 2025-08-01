@@ -69,6 +69,20 @@ export default function TransactionDetailPage() {
   const bridgingFeeToken = tokensById[transaction.bridgingFeeTokenId || '']
   const explorerLinks = getExplorerLinks(transaction)
 
+  function handleBackNavigation() {
+    // Check if there's a stored scroll position from the referrer
+    const storedScrollY = sessionStorage.getItem('previousPageScrollY')
+    router.back()
+
+    // Restore scroll position after navigation
+    if (storedScrollY) {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(storedScrollY))
+        sessionStorage.removeItem('previousPageScrollY')
+      }, 100)
+    }
+  }
+
   return (
     <div>
       <Card>
@@ -77,7 +91,7 @@ export default function TransactionDetailPage() {
             variant="ghost"
             size="icon"
             className="absolute left-4 top-[-7px] h-8 w-8"
-            onClick={() => router.back()}
+            onClick={handleBackNavigation}
           >
             <ChevronLeft className="!h-[24px] !w-[24px]" />
           </Button>
