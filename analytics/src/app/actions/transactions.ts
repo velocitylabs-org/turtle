@@ -1,7 +1,6 @@
 'use server'
 import { transactionsPerPage } from '@/constants'
-import Transaction, { txStatusOptions } from '@/models/Transaction'
-import { TxStatus } from '@/models/Transaction'
+import Transaction, { type TxStatus, txStatusOptions } from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'

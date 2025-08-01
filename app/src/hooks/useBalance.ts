@@ -1,6 +1,6 @@
-import { getAssetBalance, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, Token, Balance } from '@velocitylabs-org/turtle-registry'
+import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 

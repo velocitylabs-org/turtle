@@ -1,22 +1,22 @@
 import { Context, contextConfigFor, environment, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import {
-  Chain,
-  Token,
-  isAssetHub,
-  rpcConnectionAsHttps,
   AssetHub,
   BridgeHub,
-  Polkadot,
+  type Chain,
   EthereumTokens,
-  PolkadotTokens,
-  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
   getTokenPrice,
-  Network,
+  isAssetHub,
+  type Network,
+  Polkadot,
+  PolkadotTokens,
+  rpcConnectionAsHttps,
+  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { Fee } from '@/hooks/useFees'
-import { SnowbridgeContext } from '@/models/snowbridge'
-import { AmountInfo } from '@/models/transfer'
-import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
+import type { Fee } from '@/hooks/useFees'
+import type { SnowbridgeContext } from '@/models/snowbridge'
+import type { AmountInfo } from '@/models/transfer'
+import { Direction, safeConvertAmount, toHuman } from '@/utils/transfer'
 
 /**
  * Given a network, return the adequate Snowbridge Api Environment scheme.

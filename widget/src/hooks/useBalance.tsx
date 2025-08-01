@@ -1,5 +1,5 @@
-import { getAssetBalance, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
-import { Chain, Token, Balance } from '@velocitylabs-org/turtle-registry'
+import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'

@@ -5,16 +5,16 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  TCurrencyCore,
-  TDryRunResult,
-  TEcosystemType,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
+  type TCurrencyCore,
+  type TDryRunResult,
+  type TEcosystemType,
+  type TNodeDotKsmWithRelayChains,
+  type TNodeWithRelayChains,
   type TPapiTransaction,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, Token, EthereumTokens, REGISTRY, Network } from '@velocitylabs-org/turtle-registry'
-import { TransferParams } from '@/hooks/useTransfer'
+import { type Chain, EthereumTokens, type Network, REGISTRY, type Token } from '@velocitylabs-org/turtle-registry'
+import type { TransferParams } from '@/hooks/useTransfer'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 

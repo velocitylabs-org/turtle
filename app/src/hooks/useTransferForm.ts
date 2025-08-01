@@ -1,9 +1,15 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Chain, Ethereum, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import {
+  type Chain,
+  Ethereum,
+  type ManualRecipient,
+  type Token,
+  type TokenAmount,
+} from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { type SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'

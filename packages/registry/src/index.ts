@@ -1,7 +1,7 @@
+import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from '@/mainnet'
 import { rpcConnectionAsHttps } from './helpers'
 import { MainnetRegistry } from './mainnet'
-import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from '@/mainnet'
-import { Chain, LocalAssetUid, Token } from './types'
+import type { Chain, LocalAssetUid, Token } from './types'
 
 const SNOWBRIDGE_MAINNET_PARACHAINS = [AssetHub, BridgeHub, Moonbeam, Bifrost, Hydration, Mythos]
 
@@ -25,8 +25,8 @@ export function getAssetUid(chainId: string, tokenId: string): LocalAssetUid | u
   return REGISTRY.assetUid.get(chainId)?.get(tokenId)
 }
 
-export * from './helpers'
-export * from './utils'
-export * from './types'
 export * from './constants'
+export * from './helpers'
 export * from './mainnet'
+export * from './types'
+export * from './utils'

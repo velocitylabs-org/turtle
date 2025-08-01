@@ -1,24 +1,24 @@
-import { TDryRunNodeResult } from '@paraspell/sdk'
+import type { TDryRunNodeResult } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { InvalidTxError, TxEvent } from 'polkadot-api'
-import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
-import { Config, useConnectorClient } from 'wagmi'
+import { InvalidTxError, type TxEvent } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
+import { type Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
-import { SubstrateAccount } from '@/store/substrateWalletStore'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { extractPapiEvent } from '@/utils/papi'
 import { createRouterPlan } from '@/utils/paraspellSwap'
 import {
   createTransferTx,
+  type DryRunResult,
   dryRun,
-  DryRunResult,
   isExistentialDepositMetAfterTransfer,
   moonbeamTransfer,
 } from '@/utils/paraspellTransfer'
@@ -26,7 +26,7 @@ import { getExplorerLink, isSameChainSwap, isSwapWithTransfer, txWasCancelled } 
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { Sender, Status, TransferParams } from './useTransfer'
+import type { Sender, Status, TransferParams } from './useTransfer'
 
 const useParaspellApi = () => {
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()

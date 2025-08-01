@@ -4,15 +4,22 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  TCurrencyCore,
-  TDryRunResult,
-  TEcosystemType,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
-  TPapiTransaction,
+  type TCurrencyCore,
+  type TDryRunResult,
+  type TEcosystemType,
+  type TNodeDotKsmWithRelayChains,
+  type TNodeWithRelayChains,
+  type TPapiTransaction,
 } from '@paraspell/sdk'
-import { Chain, Token, getAssetUid, REGISTRY, EthereumTokens, Network } from '@velocitylabs-org/turtle-registry'
-import { TransferParams } from '@/hooks/useTransfer'
+import {
+  type Chain,
+  EthereumTokens,
+  getAssetUid,
+  type Network,
+  REGISTRY,
+  type Token,
+} from '@velocitylabs-org/turtle-registry'
+import type { TransferParams } from '@/hooks/useTransfer'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 

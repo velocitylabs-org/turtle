@@ -1,24 +1,24 @@
-import { TDryRunNodeResult } from '@paraspell/sdk'
+import type { TDryRunNodeResult } from '@paraspell/sdk'
 import { getTokenPrice, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { InvalidTxError } from 'polkadot-api'
 import type { TxEvent } from 'polkadot-api'
-import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
-import { Config, useConnectorClient } from 'wagmi'
+import { InvalidTxError } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
+import { type Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { createRouterPlan } from '@/lib/paraspell/swap'
 import {
   createTransferTx,
+  type DryRunResult,
   dryRun,
-  DryRunResult,
   isExistentialDepositMetAfterTransfer,
   moonbeamTransfer,
 } from '@/lib/paraspell/transfer'
 import { extractPapiEvent } from '@/lib/polkadot/papi'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { wagmiConfig } from '@/providers/config'
-import { SubstrateAccount } from '@/stores/substrateWalletStore'
+import type { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics.ts'
 import { wait } from '@/utils/datetime'
@@ -27,7 +27,7 @@ import { isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/tra
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { Sender, Status, TransferParams } from './useTransfer'
+import type { Sender, Status, TransferParams } from './useTransfer'
 
 const useParaspellApi = () => {
   const { addNotification } = useNotification()

@@ -1,9 +1,9 @@
-import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getOriginFeeDetails, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
+import { type Chain, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'

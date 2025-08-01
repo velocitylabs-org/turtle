@@ -1,14 +1,14 @@
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
 import {
-  Chain,
-  Token,
-  Hydration,
-  REGISTRY,
+  type Chain,
   getTokenByMultilocation,
+  Hydration,
   isSameToken,
+  REGISTRY,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { TransferParams } from '@/hooks/useTransfer'
-import { SubstrateAccount } from '@/store/substrateWalletStore'
+import type { TransferParams } from '@/hooks/useTransfer'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { isSameChain } from '@/utils/routes'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'

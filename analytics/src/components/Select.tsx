@@ -1,5 +1,5 @@
 'use client'
-import { Token } from '@velocitylabs-org/turtle-registry'
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import React from 'react'

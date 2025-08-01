@@ -1,13 +1,13 @@
 import { Context, contextConfigFor, environment, status } from '@snowbridge/api'
 import {
-  rpcConnectionAsHttps,
   AssetHub,
   BridgeHub,
+  type Network,
   Polkadot,
+  rpcConnectionAsHttps,
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
-  Network,
 } from '@velocitylabs-org/turtle-registry'
-import { SnowbridgeStatus } from '@/models/snowbridge'
+import type { SnowbridgeStatus } from '@/models/snowbridge'
 
 /**
  * Given a network, return the adequate Snowbridge Api Environment scheme.

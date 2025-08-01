@@ -7,15 +7,15 @@ import centrifugeLogo from '@velocitylabs-org/turtle-assets/logos/cfg.svg'
 import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import hydraLogo from '@velocitylabs-org/turtle-assets/logos/hydra.svg'
 import interlayLogo from '@velocitylabs-org/turtle-assets/logos/interlay.svg'
-import kusamaAhLogo from '@velocitylabs-org/turtle-assets/logos/kusama-ah.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
+import kusamaAhLogo from '@velocitylabs-org/turtle-assets/logos/kusama-ah.svg'
 import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import mythosLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
 import phalaLogo from '@velocitylabs-org/turtle-assets/logos/phala.svg'
 import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
+import type { Chain } from '@/types'
 import { DWELLIR_KEY } from '../constants'
-import { Chain } from '@/types'
 
 export const Ethereum: Chain = {
   uid: 'ethereum',
