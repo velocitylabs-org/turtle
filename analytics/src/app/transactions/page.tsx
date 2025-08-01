@@ -8,7 +8,6 @@ import { chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-re
 import { cn, getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import { Ban, CheckCircle, CircleHelp, DollarSign, RefreshCcw, X } from 'lucide-react'
 import { parseAsInteger, parseAsIsoDate, parseAsStringLiteral, useQueryState } from 'nuqs'
-import React from 'react'
 import { getTransactionsData } from '@/app/actions/transactions'
 import DatePicker from '@/components/DatePicker'
 import ErrorPanel from '@/components/ErrorPanel'

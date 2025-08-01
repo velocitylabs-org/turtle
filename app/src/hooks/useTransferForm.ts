@@ -53,6 +53,7 @@ const useTransferForm = () => {
     trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
+    // biome-ignore lint/suspicious/noExplicitAny: schema
     resolver: zodResolver(schema as any),
     mode: 'onChange',
     delayError: 3000,
@@ -84,6 +85,7 @@ const useTransferForm = () => {
   } = useFees(
     sourceChain,
     destinationChain,
+    // biome-ignore lint/suspicious/noDoubleEquals: sourceTokenAmountError
     sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
     sourceTokenAmount?.amount,
     sourceWallet?.sender?.address,
@@ -440,6 +442,7 @@ const useTransferForm = () => {
     transferStatus,
     sourceTokenAmountError,
     manualRecipientError,
+    // biome-ignore lint/suspicious/noDoubleEquals: isBalanceAvailable
     isBalanceAvailable: balanceData?.value != undefined,
     loadingBalance,
     balanceData,

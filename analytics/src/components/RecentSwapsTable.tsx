@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import React from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { SwapView } from '@/models/swap-view'

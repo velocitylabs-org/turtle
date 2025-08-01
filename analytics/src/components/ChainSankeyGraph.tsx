@@ -1,5 +1,5 @@
 import { type Chain, chainsByUid } from '@velocitylabs-org/turtle-registry'
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Select from '@/components/Select'
 import { chains, type GraphType, primaryColor } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
@@ -58,7 +58,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
 
     return Math.max(baseMinHeight, minHeight)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowData, loading])
+  }, [flowData, loading, dimensions.height])
 
   useLayoutEffect(() => {
     if (containerRef.current) {
@@ -71,6 +71,7 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
   }, [dynamicHeight])
 
   // Monitor and update graph when container width changes to ensure a responsive layout
+  // biome-ignore lint/correctness/useExhaustiveDependencies: dimension.height
   useEffect(() => {
     let resizeObserver: ResizeObserver | null = null
     let previousWidth = containerRef.current?.clientWidth || 0
@@ -114,7 +115,6 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
       }
       window.removeEventListener('resize', handleWindowResize)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -228,7 +228,6 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
         }
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flowData, dimensions, isMobile, loading])
 
   const noDataAvailable = useMemo(() => {

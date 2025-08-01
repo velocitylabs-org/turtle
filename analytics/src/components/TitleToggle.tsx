@@ -54,8 +54,8 @@ export default function TitleToggle({ options, value, defaultValue, onChange, cl
       {options.map((option, index) => (
         <button
           key={option.value}
-          ref={el => {
-            buttonsRef.current[index] = el
+          ref={_el => {
+            buttonsRef.current[index] = _el
           }}
           onClick={() => handleClick(option.value)}
           className={cn(

@@ -113,6 +113,7 @@ const useFees = (
             // if the dotBalance is not available, we act as if it's ok. This prevents a delay
             // in the UI showing the error label for insufficient fee balance, which is particularly
             // noticable when switching chains.
+            // biome-ignore lint/suspicious/noDoubleEquals: dotBalance
             setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
           }
           break

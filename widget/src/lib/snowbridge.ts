@@ -214,5 +214,6 @@ export const getFeeEstimate = async (
 export const findValidationError = (
   validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
 ): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
+  // biome-ignore lint/suspicious/noDoubleEquals: log.kind
   return validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
 }

@@ -61,6 +61,7 @@ const getTransferTimestamp = (txTrackingResult: TxTrackingResult) =>
  */
 export function getTransferStatus(transferResult: TxTrackingResult) {
   // Checks if the tracked AH to Ethereum transfer comes from Snowbridge API.
+  // biome-ignore lint/suspicious/noDoubleEquals: destinationParachain
   const isAhToEthTransfer = 'info' in transferResult && transferResult.info.destinationParachain == undefined
 
   // Checks if the tracked XCM transfer comes from Subscan API.
