@@ -195,6 +195,10 @@ input[type='number']::-webkit-inner-spin-button {
   filter: blur(12px);
 }
 
+.turtle-wrapper .bg-black\/70 {
+  filter: blur(120px);
+}
+
 @media (max-width: 640px) {
   .turtle-wrapper form.rounded-2xl:first-of-type,
   .widget-loader {
