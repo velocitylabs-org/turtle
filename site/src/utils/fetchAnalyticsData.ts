@@ -12,6 +12,7 @@ export default async function fetchAnalyticsData(): Promise<AnalyticsData | null
         'Content-Type': 'application/json',
         Authorization: process.env.AUTH_TOKEN || '',
       },
+      next: { revalidate: 60 },
     })
 
     if (!response.ok) {

@@ -6,10 +6,10 @@ import getAnalyticsData from '@/actions/analytics'
 import { QueryProvider } from '@/providers/queryProvider'
 
 const format = {
-  style: 'currency',
-  currency: 'USD',
-  trailingZeroDisplay: 'stripIfInteger',
+  style: 'decimal',
+  minimumFractionDigits: 0,
   maximumFractionDigits: 1,
+  trailingZeroDisplay: 'stripIfInteger',
 } as const
 
 interface AnalyticDataProps {
@@ -41,7 +41,7 @@ function AnalyticDataClient({ initialVolume }: AnalyticDataProps) {
       <div className="flex items-center gap-2 rounded-[40px] border border-black bg-turtle-primary px-6 py-3">
         <div className="flex-col items-center justify-center text-[16px] text-black md:text-[18px] lg:text-[20px]">
           <div className="text-center text-[28px] font-bold sm:text-[32px]">
-            <NumberFlow value={value} format={format} />
+            <NumberFlow value={value} format={format} prefix="$" />
           </div>
           <div className="relative top-[-5px] text-[18px] leading-tight sm:text-[20px]">
             Funds moved through Turtle
