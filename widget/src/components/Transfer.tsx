@@ -2,7 +2,7 @@ import { Balance, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-r
 import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
-import { FC, useMemo } from 'react'
+import { FC, use, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import { AlertIcon } from '@/assets/svg/AlertIcon'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
@@ -11,6 +11,7 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 
+import { ConfigContext } from '@/providers/ConfigProviders'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
@@ -88,7 +89,6 @@ const Transfer: FC = () => {
     isValid,
     isValidating,
     handleSubmit,
-    environment,
     sourceChain,
     destinationChain,
     handleSourceChainChange,
@@ -121,6 +121,8 @@ const Transfer: FC = () => {
     applyTransferableBalance,
   } = useTransferForm()
 
+  const { allowedChains, allowedTokens } = use(ConfigContext)
+
   const {
     allowance: erc20SpendAllowance,
     loading: allowanceLoading,
@@ -139,7 +141,6 @@ const Transfer: FC = () => {
     swapEthtoWEth,
     isSwapping: isSwappingEthForWEth,
   } = useEthForWEthSwap({
-    env: environment,
     context: snowbridgeContext,
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,
@@ -170,7 +171,7 @@ const Transfer: FC = () => {
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
   const disableMaxBtnInPolkadotNetwork =
-    sourceChain?.network === 'Polkadot' &&
+    (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&
     (!destinationWallet?.sender || !destinationTokenAmount?.token)
 
   const shouldDisableMaxButton =
@@ -223,16 +224,16 @@ const Transfer: FC = () => {
     !isLoadingOutputAmount &&
     !exceedsTransferableBalance
 
-  const sourceChainOptions = getAllowedSourceChains()
+  const sourceChainOptions = useMemo(() => getAllowedSourceChains(allowedChains), [allowedChains])
 
   const destinationChainOptions = useMemo(
-    () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null),
-    [sourceChain, sourceTokenAmount?.token],
+    () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null, allowedChains),
+    [sourceChain, sourceTokenAmount?.token, allowedChains],
   )
 
   const sourceTokenOptions = useMemo(
-    () => getAllowedSourceTokens(sourceChain, destinationChain),
-    [sourceChain, destinationChain],
+    () => getAllowedSourceTokens(sourceChain, destinationChain, allowedTokens),
+    [sourceChain, destinationChain, allowedTokens],
   )
 
   const destinationTokenOptions = useMemo(

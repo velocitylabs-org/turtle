@@ -2,12 +2,9 @@
 
 import { captureException } from '@sentry/nextjs'
 
-import { Environment } from '@velocitylabs-org/turtle-registry'
-
 import storeAnalyticsTransaction from '@/app/actions/store-transactions'
 import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
 import { TransferParams } from '@/hooks/useTransfer'
-import { TxStatus } from '@/models/transfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 
@@ -30,7 +27,7 @@ export async function trackTransferMetrics({
   date,
   isSwap = false,
 }: TransferMetric) {
-  if (transferParams.environment !== Environment.Mainnet || !isProduction || !txId) {
+  if (!isProduction || !txId) {
     return
   }
 
@@ -92,9 +89,9 @@ export async function trackTransferMetrics({
     destinationChainName: transferParams.destinationChain.name,
     destinationChainNetwork: transferParams.destinationChain.network,
 
-    txDate: date,
+    txDate: date.toISOString(),
     hostedOn: typeof window !== 'undefined' ? window.location.origin : '',
-    status: TxStatus.Succeeded,
+    status: 'ongoing',
     isSwap,
   }
 
@@ -112,15 +109,10 @@ export async function trackTransferMetrics({
 interface TrackTransferMetricsParams {
   txHashId: string
   status: string
-  environment: string
 }
 
-export async function updateTransferMetrics({
-  txHashId,
-  status,
-  environment,
-}: TrackTransferMetricsParams) {
-  if (environment !== Environment.Mainnet || !isProduction || !txHashId || !status) {
+export async function updateTransferMetrics({ txHashId, status }: TrackTransferMetricsParams) {
+  if (!isProduction || !txHashId || !status) {
     return
   }
 

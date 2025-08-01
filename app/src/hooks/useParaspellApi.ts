@@ -77,7 +77,6 @@ const useParaspellApi = () => {
       sourceAmount: params.sourceAmount.toString(),
       recipient: params.recipient,
       date,
-      environment: params.environment,
       bridgingFee: params.bridgingFee,
       fees: params.fees,
       status: `Submitting to ${params.sourceChain.name}`,
@@ -181,7 +180,6 @@ const useParaspellApi = () => {
           sourceAmount: params.sourceAmount.toString(),
           recipient: params.recipient,
           date,
-          environment: params.environment,
           bridgingFee: params.bridgingFee,
           fees: params.fees,
           status: `Submitting to ${params.sourceChain.name}`,
@@ -201,13 +199,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(
-            params.sender,
-            error,
-            setStatus,
-            event.txHash.toString(),
-            params.environment,
-          )
+          handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
       },
       error: callbackError => {
@@ -262,7 +254,6 @@ const useParaspellApi = () => {
           destinationAmount: params.destinationAmount?.toString(),
           recipient: params.recipient,
           date,
-          environment: params.environment,
           fees: params.fees,
           bridgingFee: params.bridgingFee,
           status: `Submitting to ${params.sourceChain.name}`,
@@ -284,19 +275,13 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(
-            params.sender,
-            error,
-            setStatus,
-            event.txHash.toString(),
-            params.environment,
-          )
+          handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
       },
       error: callbackError => {
         handleSendError(params.sender, callbackError, setStatus)
       },
-      complete: () => console.log('The first swap transaction is complete'),
+      complete: () => console.log('The swap transaction is complete'),
     })
 
     setStatus('Sending')
@@ -338,11 +323,15 @@ const useParaspellApi = () => {
   }
 
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
-    // Swap + XCM Transfer are handled with the BatchAll extinsic from utility pallet
-    if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
-      throw new Error('Swap transfer did not completed - Batch failed')
-
-    return
+    // By default, swaps are submitted using the Execute extrinsic from PolkadotXcm pallet.
+    if (isSwapWithTransfer(transfer) && transfer.sourceChain.supportExecuteExtrinsic) {
+      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess)
+        throw new Error('Swap transfer did not complete - Execute function not successful')
+    } else {
+      // Fallback to the BatchAll extinsic from utility pallet
+      if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
+        throw new Error('Swap transfer did not complete - Batch failed')
+    }
   }
 
   const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
@@ -385,14 +374,10 @@ const useParaspellApi = () => {
       ...(explorerLink && { explorerLink }),
     } satisfies CompletedTransfer)
 
-    // Analytics tx are created with successful status by default, we only update for failed ones
-    if (!txSuccessful) {
-      updateTransferMetrics({
-        txHashId: transfer.id,
-        status: TxStatus.Failed,
-        environment: transfer.environment,
-      })
-    }
+    updateTransferMetrics({
+      txHashId: transfer.id,
+      status: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
+    })
   }
 
   const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
@@ -430,7 +415,11 @@ const useParaspellApi = () => {
       }
     } catch (e: unknown) {
       if (e instanceof Error && e.message.includes('DryRunApi is not available'))
-        return { type: 'Unsupported', origin: { success: false, failureReason: e.message } }
+        return {
+          type: 'Unsupported',
+          origin: { success: false, failureReason: e.message },
+          hops: [],
+        }
 
       return {
         type: 'Supported',
@@ -438,6 +427,7 @@ const useParaspellApi = () => {
           success: false,
           failureReason: (e as Error).message,
         },
+        hops: [],
       }
     }
   }
@@ -462,7 +452,6 @@ const useParaspellApi = () => {
     e: unknown,
     setStatus: (status: Status) => void,
     txId?: string,
-    environment?: string,
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
@@ -477,11 +466,10 @@ const useParaspellApi = () => {
       severity: NotificationSeverity.Error,
     })
 
-    if (txId && environment) {
+    if (txId) {
       updateTransferMetrics({
         txHashId: txId,
         status: TxStatus.Failed,
-        environment: environment,
       })
     }
   }

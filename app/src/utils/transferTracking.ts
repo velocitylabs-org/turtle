@@ -7,19 +7,20 @@ import { resolveDirection } from '@/services/transfer'
 import { trackXcm } from './subscan'
 
 export const trackTransfers = async (
-  env: environment.SnowbridgeEnvironment,
+  sbEnv: environment.SnowbridgeEnvironment,
   ongoingTransfers: OngoingTransfers,
 ) => {
   const transfers: TxTrackingResult[] = []
   const { toPolkadot, toEthereum, withinPolkadot } = ongoingTransfers
 
   for (const transfer of toPolkadot) {
-    const tx = await history.toPolkadotTransferById(transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
+    const tx = await history.toPolkadotTransferById(sbEnv.config.GRAPHQL_API_URL, transfer.id) // must be {messageId_eq: "${id}", OR: {txHash_eq: "${id}"}
     if (tx) transfers.push(tx)
   }
 
   for (const transfer of toEthereum) {
     const tx = await history.toEthereumTransferById(
+      sbEnv.config.GRAPHQL_API_URL,
       transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
     )
     if (tx) transfers.push(tx)
@@ -27,7 +28,7 @@ export const trackTransfers = async (
 
   // Keep as back-up in case Ocelloids does not support a transfer path
   if (withinPolkadot.length) {
-    const xcmTx = await trackXcm(env, withinPolkadot)
+    const xcmTx = await trackXcm(sbEnv, withinPolkadot)
     console.log('Whithin Polkadot transfers:', xcmTx.length)
     transfers.push(...xcmTx)
   }

@@ -1,8 +1,9 @@
 'use client'
 import React from 'react'
 import {
-  Area,
-  AreaChart,
+  Bar,
+  ComposedChart,
+  Line,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
@@ -18,7 +19,7 @@ const chartColor = primaryColor
 interface TransactionChartProps {
   data: { timestamp: string; volumeUsd: number; count: number }[]
   type: GraphType
-  timeRange: 'last-6-months' | 'last-month' | 'this-week'
+  timeRange: 'last-6-months' | 'last-month' | 'last-week'
 }
 
 export default function TransactionChart({ data, type, timeRange }: TransactionChartProps) {
@@ -33,7 +34,7 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
       } else if (timeRange === 'last-month') {
         // Format for last month view (YYYY-MM-DD) - show day number
         dateStr = date.getDate().toString()
-      } else if (timeRange === 'this-week') {
+      } else if (timeRange === 'last-week') {
         // Format for this week view (YYYY-MM-DD) - show day name
         dateStr = date.toLocaleDateString('en-US', { weekday: 'short' })
       } else {
@@ -51,19 +52,13 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={formattedData} margin={{ top: 10, left: 30, right: 25, bottom: 10 }}>
-          <defs>
-            <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={chartColor} stopOpacity={0.8} />
-              <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
-            </linearGradient>
-          </defs>
+        <ComposedChart data={formattedData} margin={{ top: 10, left: 30, right: 25, bottom: 10 }}>
           <XAxis
             dataKey="date"
             tickLine={false}
             axisLine={false}
             tickMargin={10}
-            tick={{ fontSize: timeRange === 'last-month' ? 14 : 15 }}
+            tick={{ fontSize: timeRange === 'last-month' ? 12 : 15 }}
             interval={timeRange === 'last-month' ? 1 : 0}
           />
           <YAxis
@@ -74,14 +69,9 @@ export default function TransactionChart({ data, type, timeRange }: TransactionC
           />
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <Tooltip content={<CustomTooltip type={type} timeRange={timeRange} />} />
-          <Area
-            type="monotone"
-            dataKey="value"
-            stroke={chartColor}
-            fillOpacity={1}
-            fill="url(#colorVolume)"
-          />
-        </AreaChart>
+          <Bar dataKey="value" fill={chartColor} minPointSize={1} />
+          <Line type="monotone" dataKey="value" stroke="grey" strokeWidth={1} dot={false} />
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   )
@@ -95,7 +85,7 @@ const CustomTooltip = ({
   timeRange,
 }: TooltipProps<number, string> & {
   type: GraphType
-  timeRange: 'last-6-months' | 'last-month' | 'this-week'
+  timeRange: 'last-6-months' | 'last-month' | 'last-week'
 }) => {
   if (!active || !payload || !payload.length) {
     return null
@@ -115,7 +105,7 @@ const CustomTooltip = ({
     displayLabel = date.toLocaleDateString('en-US', { month: 'long' })
   }
 
-  if (timeRange === 'this-week' && timestamp) {
+  if (timeRange === 'last-week' && timestamp) {
     const day = date.getDate()
     const suffix = getDaySuffix(day)
     const weekday = date.toLocaleDateString('en-US', { weekday: 'long' })

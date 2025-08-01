@@ -24,6 +24,7 @@ We aim to provide a **unified experience** for transferring tokens anywhere.
 
 Note - Turtle Widget is currently in alpha and subject to breaking changes as development continues.
 You may be using the latest alpha version, which can differ from the coming stable release.
+**Supported React versions** >= 19.0.0
 
 ```sh
 pnpm install @velocitylabs-org/turtle-widget
@@ -113,6 +114,83 @@ function Home() {
 export default Home
 ```
 
+## ⛓️ Chain and Token Configuration
+
+You can customize the Chains and Tokens you want to show in your widget instance. It works by passing the `registry` configuration. It defaults to using all chains & tokens supported by the [Turtle App](https://app.turtle.cool/) otherwise.
+
+Here’s how to configure it:
+
+```tsx
+import type { ConfigRegistryType } from '@velocitylabs-org/turtle-widget'
+
+const registry = {
+  chains: ['polkadot', 'hydration'],
+  tokens: ['dot', 'usdc', 'usdt'],
+} satisfies ConfigRegistryType
+```
+
+Pass it as a prop to the `<Widget />` component:
+
+```tsx
+<Widget registry={registry} />
+```
+
+If you leave the `chains` or `tokens` arrays empty, all chains and tokens will be shown by default.
+
+✅ Available Values:
+
+#### Chains ids
+
+```cpp
+ethereum // Ethereum
+polkadot-assethub // Asset Hub
+polkadot // Relay Chain
+polkadot-bridgehub // BridgeHub
+bifrost // Bifrost
+hydration // Hydration
+phala // Phala
+moonbeam // Moonbeam
+interlay // Interlay
+acala // Acala
+polimec // Polimec
+centrifuge // Centrifuge
+astar // Astar
+mythos // Mythos
+```
+
+#### Tokens ids
+
+```tsx
+eth // Ethereum
+usdc.e // USD Coin (bridged)
+dai.e // DAI (bridged)
+usdt.e // Tether (bridged)
+weth.e // Wrapped Ether (bridged)
+veth.e // vEther
+wbtc.e // Wrapped Bitcoin (bridged)
+myth.e // Mythos (bridged)
+shib.e // Shiba Inu (bridged)
+pepe.e // Pepe (bridged)
+ton.e // Toncoin (bridged)
+wsteth.e // Wrapped Staked Ether (bridged)
+tbtc.e // tBTC (bridged)
+aca // Acala
+astr // Astar
+bnc // Bifrost Native Coin
+cfg // Centrifuge
+hdx // HydraDX
+usdc // USD Coin
+usdt // Tether
+glmr // Moonbeam (GLMR)
+pha // Phala
+intr // Interlay
+dot // Polkadot
+vdot // Voucher DOT
+ibtc // InterBTC
+plmc // Polimec
+myth.p // Mythos (native or parachain)
+```
+
 ## 🎨 Theme configuration
 
 The Turtle widget supports full theme customization.
@@ -120,24 +198,27 @@ You can pass a theme prop to `<Widget />` to override default styles like colors
 
 > ⚠️ Note: The Turtle Widget bundles its own Tailwind CSS, but it's not sandboxed. Global styles from your app (e.g., `.your-wrapper p { ... }`) may still affect it. This allows for advanced customization, but be cautious with _aggressive_ global CSS.
 
-🧩 Types
+🧩 Type
 
 ```tsx
 import type { WidgetTheme } from '@velocitylabs-org/turtle-widget'
 ```
 
-### 🧑‍💻 Usage with Next.js
+### 🧑‍💻 Custom configuration usage with Next.js
 
 ```tsx
 'use client'
 
 import dynamic from 'next/dynamic'
-import type { WidgetTheme } from '@velocitylabs-org/turtle-widget'
+import type { WidgetTheme, ConfigRegistryType } from '@velocitylabs-org/turtle-widget'
 
-const Widget = dynamic<{ theme?: WidgetTheme }>(() => import('@velocitylabs-org/turtle-widget'), {
-  loading: () => <div>Loading Turtle Widget...</div>,
-  ssr: false,
-})
+const Widget = dynamic<{ theme?: WidgetTheme; registry?: ConfigRegistryType }>(
+  () => import('@velocitylabs-org/turtle-widget'),
+  {
+    loading: () => <div>Loading Turtle Widget...</div>,
+    ssr: false,
+  },
+)
 
 const theme = {
   primary: '#DBB3B1', // HexColor
@@ -146,10 +227,15 @@ const theme = {
   //...
 } satisfies WidgetTheme
 
+const registry = {
+  chains: ['polkadot', 'hydration'],
+  tokens: ['dot', 'usdc', 'usdt'],
+} satisfies ConfigRegistryType
+
 function Home() {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <Widget theme={theme} />
+      <Widget theme={theme} registry={registry} />
     </div>
   )
 }
@@ -157,7 +243,7 @@ function Home() {
 export default Home
 ```
 
-### Available theme keys:
+### ✅ Available theme keys:
 
 - primary, primaryDark, primaryLight
 - secondary, secondaryDark, secondaryLight, secondary50, secondaryTransparent (...)
@@ -167,3 +253,12 @@ export default Home
 - success, warning, error (+ dark/light variants, ...)
 - dialogOverlayRgb, dialogOverlayOpacity
 - noteWarn
+
+
+## Integration Support
+
+If you're planning to integrate our widget, please contact the Velocity team first, we offer personalized support to ensure a smooth setup.
+
+Email: ops@velocitylabs.org <br />
+Twitter/X: @TurtlecoolApp <br />
+Telegram: t.me/velocitylabs/137 <br />

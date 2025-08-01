@@ -113,7 +113,6 @@ export default function Transfer() {
     canPayFees,
     canPayAdditionalFees,
     transferStatus,
-    environment,
     sourceTokenAmountError,
     manualRecipientError,
     isBalanceAvailable,
@@ -143,7 +142,6 @@ export default function Transfer() {
     swapEthtoWEth,
     isSwapping: isSwappingEthForWEth,
   } = useEthForWEthSwap({
-    env: environment,
     context: snowbridgeContext,
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,
@@ -209,7 +207,7 @@ export default function Transfer() {
     !exceedsTransferableBalance
 
   const disableMaxBtnInPolkadotNetwork =
-    sourceChain?.network === 'Polkadot' &&
+    (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&
     (!destinationWallet?.sender || !destinationTokenAmount?.token)
 
   const shouldDisableMaxButton =

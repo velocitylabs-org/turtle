@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
-import validateRequest from '@/utils/validate-request'
+import { validateApiRequest, validateWidgetRequest } from '@/utils/validate-api-request'
 
 function corsHeaders(response: NextResponse, origin?: string | null) {
   const allowedOrigins =
@@ -13,7 +13,7 @@ function corsHeaders(response: NextResponse, origin?: string | null) {
   }
 
   response.headers.set('Access-Control-Allow-Credentials', 'true')
-  response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS, PATCH')
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   return response
 }
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   const origin = request.headers.get('origin')
   const data = await request.json()
   try {
-    if (!validateRequest(request)) {
+    if (!validateApiRequest(request) && !validateWidgetRequest(request)) {
       await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
@@ -85,7 +85,7 @@ export async function PATCH(request: Request) {
   const origin = request.headers.get('origin')
   const data = await request.json()
   try {
-    if (!validateRequest(request)) {
+    if (!validateApiRequest(request) && !validateWidgetRequest(request)) {
       await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }
@@ -99,6 +99,30 @@ export async function PATCH(request: Request) {
     }
 
     await dbConnect()
+
+    // First, find the existing transaction to check its current status
+    const existingTransaction = await Transaction.findOne({ txHashId })
+    if (!existingTransaction) {
+      return corsHeaders(
+        NextResponse.json({ error: 'Transaction not found' }, { status: 404 }),
+        origin,
+      )
+    }
+
+    // Don't update if the new status is 'succeeded' it means it was updated manually before
+    if (existingTransaction.status === 'succeeded') {
+      return corsHeaders(
+        NextResponse.json(
+          {
+            message: 'Transaction status not updated - success status preserved',
+            currentStatus: existingTransaction.status,
+          },
+          { status: 200 },
+        ),
+        origin,
+      )
+    }
+
     const updatedTransaction = await Transaction.findOneAndUpdate(
       { txHashId },
       { status },

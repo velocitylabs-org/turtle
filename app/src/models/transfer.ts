@@ -1,6 +1,6 @@
 import { TRouterPlan } from '@paraspell/xcm-router'
 import { toEthereum, toPolkadot } from '@snowbridge/api'
-import { Chain, Environment, Token } from '@velocitylabs-org/turtle-registry'
+import { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { Direction } from '@/services/transfer'
 import { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
 import { FromParachainTrackingResult } from './subscan'
@@ -27,8 +27,6 @@ export interface StoredTransfer extends RawTransfer {
   destinationAmount?: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
-  // Contextual
-  environment: Environment // to access context
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
@@ -49,7 +47,6 @@ export interface StoredTransferV0 extends RawTransferV0 {
   amount: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
-  environment: Environment // to access context
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
   // A subscan unique Id shared accross chains to track ongoing transfers
   uniqueTrackingId?: string
@@ -154,4 +151,6 @@ export type OnChainBaseEvents = {
   messageId?: string
   extrinsicIndex?: string
   isBatchCompleted?: boolean
+  isExtrinsicSuccess?: boolean
+  isExecuteAttemptCompleted?: boolean
 }

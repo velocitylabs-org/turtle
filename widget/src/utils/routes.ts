@@ -15,41 +15,29 @@ import {
 } from '@/lib/paraspell/swap'
 
 /** Deduplicates a list of items based on their uid/id property. Used for chains and tokens. */
-const deduplicate = <T extends { uid?: string; id?: string }>(items: T[]): T[] => {
-  const itemMap = new Map(items.map(item => [item.uid || item.id, item]))
+export const deduplicate = <T extends { uid?: string; id?: string }>(
+  items: T[],
+  ...moreItems: T[]
+): T[] => {
+  const combinedItems = [...items, ...moreItems]
+  const itemMap = new Map(combinedItems.map(item => [item.uid || item.id, item]))
   return Array.from(itemMap.values())
-}
-
-/** Filters all chains by available routes. */
-export const getTransferSourceChains = (): Chain[] => {
-  return MainnetRegistry.chains.filter(chain =>
-    MainnetRegistry.routes.some(route => route.from === chain.uid),
-  )
-}
-
-/** Filters all chains by selected source chain, selected token and available routes */
-export const getTransferDestinationChains = (
-  sourceChain: Chain | null,
-  token: Token | null,
-): Chain[] => {
-  if (!sourceChain || !token) return []
-
-  return MainnetRegistry.chains.filter(c =>
-    MainnetRegistry.routes.some(
-      route =>
-        route.from === sourceChain.uid && route.tokens.includes(token.id) && route.to === c.uid,
-    ),
-  )
 }
 
 /** Filters all tokens by selected source chain and available routes */
 export const getTransferTokens = (
   sourceChain: Chain | null,
   destinationChain: Chain | null,
+  allowedTokens?: Token['id'][] | undefined,
 ): Token[] => {
   if (!sourceChain) return []
 
-  return MainnetRegistry.tokens.filter(token =>
+  const filteredTokens =
+    Array.isArray(allowedTokens) && allowedTokens.length > 0
+      ? MainnetRegistry.tokens.filter(token => allowedTokens.includes(token.id))
+      : MainnetRegistry.tokens
+
+  return filteredTokens.filter(token =>
     MainnetRegistry.routes.some(
       route =>
         route.from === sourceChain.uid &&
@@ -77,14 +65,28 @@ export const isTokenAvailableForSourceChain = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
   token?: Token | null,
+  allowedTokens?: Token['id'][] | undefined,
 ): boolean => {
   if (!sourceChain || !token) return false
-  return getTransferTokens(sourceChain, destinationChain ?? null).some(t => t.id === token.id)
+  return getTransferTokens(sourceChain, destinationChain ?? null, allowedTokens).some(
+    t => t.id === token.id,
+  )
 }
 
-export const getAllowedSourceChains = (): Chain[] => {
-  const transferSourceChains = getTransferSourceChains()
-  const swapSourceChains = getSwapsSourceChains()
+export const getAllowedSourceChains = (allowedChains?: Chain['uid'][]): Chain[] => {
+  const filteredChains =
+    Array.isArray(allowedChains) && allowedChains.length > 0
+      ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
+      : MainnetRegistry.chains
+
+  // Filters all chains by available routes
+  const transferSourceChains = filteredChains.filter(chain =>
+    MainnetRegistry.routes.some(route => route.from === chain.uid),
+  )
+
+  const swapSourceChains = allowedChains
+    ? getSwapsSourceChains().filter(chain => allowedChains.includes(chain.uid))
+    : getSwapsSourceChains()
 
   return deduplicate([...transferSourceChains, ...swapSourceChains])
 }
@@ -92,10 +94,11 @@ export const getAllowedSourceChains = (): Chain[] => {
 export const getAllowedSourceTokens = (
   sourceChain: Chain | null,
   destinationChain: Chain | null,
+  allowedTokens?: Token['id'][] | undefined,
 ): Token[] => {
   if (!sourceChain) return []
 
-  const transferTokens = getTransferTokens(sourceChain, destinationChain)
+  const transferTokens = getTransferTokens(sourceChain, destinationChain, allowedTokens)
   const swapTokens = getSwapsSourceTokens(sourceChain)
 
   return deduplicate([...transferTokens, ...swapTokens])
@@ -104,10 +107,24 @@ export const getAllowedSourceTokens = (
 export const getAllowedDestinationChains = (
   sourceChain: Chain | null,
   sourceToken: Token | null,
+  allowedChains?: Chain['uid'][],
 ): Chain[] => {
   if (!sourceChain || !sourceToken) return []
 
-  const transferDestinationChains = getTransferDestinationChains(sourceChain, sourceToken)
+  const filteredChains =
+    Array.isArray(allowedChains) && allowedChains.length > 0
+      ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
+      : MainnetRegistry.chains
+
+  // Filters all chains by selected source chain, selected token and available routes
+  const transferDestinationChains = filteredChains.filter(c =>
+    MainnetRegistry.routes.some(
+      route =>
+        route.from === sourceChain.uid &&
+        route.tokens.includes(sourceToken.id) &&
+        route.to === c.uid,
+    ),
+  )
   const swapDestinationChains = getSwapsDestinationChains(sourceChain, sourceToken)
 
   return deduplicate([...transferDestinationChains, ...swapDestinationChains])

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
-import validateRequest from '@/utils/validate-request'
+import { validateApiRequest } from '@/utils/validate-api-request'
 
 function corsHeaders(response: NextResponse, origin?: string | null) {
   const allowedOrigins =
@@ -34,7 +34,7 @@ export async function OPTIONS(request: Request) {
 export async function GET(request: Request) {
   const origin = request.headers.get('origin')
   try {
-    if (!validateRequest(request)) {
+    if (!validateApiRequest(request)) {
       await captureServerError(new Error('Forbidden 403'))
       return corsHeaders(NextResponse.json({ message: 'Forbidden' }, { status: 403 }))
     }

@@ -1,9 +1,7 @@
 'use client'
-import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
-import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
-import { Ban, CheckCircle, CircleHelp } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
-import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
+import { useLoadingBar } from 'react-top-loading-bar'
 import {
   Table,
   TableBody,
@@ -12,10 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { TxStatus } from '@/models/Transaction'
 import { TransactionView } from '@/models/transaction-view'
+import { formatDate, formatDateAgo } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
-import { getSrcFromLogo } from '@/utils/get-src-from-logo'
+import { TokenChainDisplay } from './TokenChainDisplay'
+import { TransactionStatusIndicator } from './TransactionStatusIndicator'
 
 interface RecentTransactionsTableProps {
   transactions: TransactionView[]
@@ -26,6 +25,8 @@ export default function RecentTransactionsTable({
   transactions,
   isLoading,
 }: RecentTransactionsTableProps) {
+  const { start } = useLoadingBar()
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -50,57 +51,65 @@ export default function RecentTransactionsTable({
           ) : transactions.length === 0 ? (
             <TableRow key={1}>
               <TableCell colSpan={6} className="text-center">
-                <div className="flex h-[250px] items-center justify-center">
-                  <p>There are no recent transactions to display</p>
+                <div className="flex h-[450px] items-center justify-center">
+                  <p>There are no transactions to display</p>
                 </div>
               </TableCell>
             </TableRow>
           ) : (
-            transactions.map((tx, i) => (
-              <TableRow key={`${tx.txDate}${i}`}>
-                <TableCell>
-                  <div className="flex items-center">
-                    <TokenChainDisplay tokenId={tx.sourceTokenId} chainUid={tx.sourceChainUid} />
-                    <div className="ml-2 flex flex-col">
-                      <span className="font-medium">{tx.sourceTokenSymbol}</span>
-                      <span className="text-xs text-muted-foreground">{tx.sourceChainName}</span>
+            transactions.map(tx => (
+              <TableRow key={tx._id} className="hover:bg-muted/50">
+                <Link
+                  href={`/detail/${tx._id}`}
+                  className="contents cursor-pointer"
+                  prefetch
+                  onClick={() => {
+                    // Store current scroll position before navigating
+                    sessionStorage.setItem('previousPageScrollY', window.scrollY.toString())
+                    start()
+                  }}
+                >
+                  <TableCell>
+                    <div className="flex items-center">
+                      <TokenChainDisplay tokenId={tx.sourceTokenId} chainUid={tx.sourceChainUid} />
+                      <div className="ml-2 flex flex-col">
+                        <span className="font-medium">{tx.sourceTokenSymbol}</span>
+                        <span className="text-xs text-muted-foreground">{tx.sourceChainName}</span>
+                      </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-col">
-                    <span>{tx.sourceTokenAmount}</span>
-                    <span className="text-xs text-muted-foreground">
-                      (${formatUSD(tx.sourceTokenAmountUsd)})
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <TokenChainDisplay
-                      tokenId={tx.destinationTokenId}
-                      chainUid={tx.destinationChainUid}
-                    />
-                    <div className="ml-2 flex flex-col">
-                      <span className="font-medium">{tx.destinationTokenSymbol}</span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span>{tx.sourceTokenAmount}</span>
                       <span className="text-xs text-muted-foreground">
-                        {tx.destinationChainName}
+                        (${formatUSD(tx.sourceTokenAmountUsd)})
                       </span>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="text-xs">
-                    {new Date(tx.txDate).toLocaleString('en-GB', {
-                      dateStyle: 'short',
-                      timeStyle: 'short',
-                      hour12: false,
-                    })}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <TransactionStatusIndicator status={tx.status} />
-                </TableCell>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      <TokenChainDisplay
+                        tokenId={tx.destinationTokenId}
+                        chainUid={tx.destinationChainUid}
+                      />
+                      <div className="ml-2 flex flex-col">
+                        <span className="font-medium">{tx.destinationTokenSymbol}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {tx.destinationChainName}
+                        </span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-col text-xs">
+                      <div>{formatDate(tx.txDate)}</div>
+                      <div className="text-muted-foreground">{formatDateAgo(tx.txDate)}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <TransactionStatusIndicator status={tx.status} />
+                  </TableCell>
+                </Link>
               </TableRow>
             ))
           )}
@@ -108,52 +117,4 @@ export default function RecentTransactionsTable({
       </Table>
     </div>
   )
-}
-
-interface TransactionStatusIndicatorProps {
-  status: TxStatus
-}
-
-function TransactionStatusIndicator({ status }: TransactionStatusIndicatorProps) {
-  switch (status) {
-    case 'succeeded':
-      return (
-        <div className="flex flex-col items-center">
-          <CheckCircle className="mr-1 h-4 w-4 text-green-500" />
-          <span className="text-xs capitalize">{status}</span>
-        </div>
-      )
-    case 'failed':
-      return (
-        <div className="flex flex-col items-center">
-          <Ban className="mr-1 h-4 w-4 text-red-500" />
-          <span className="text-xs capitalize">{status}</span>
-        </div>
-      )
-    case 'undefined':
-      return (
-        <div className="flex flex-col items-center">
-          <CircleHelp className="mr-1 h-4 w-4 text-yellow-500" />
-          <span className="text-xs capitalize">{status}</span>
-        </div>
-      )
-    default:
-      return null
-  }
-}
-
-interface TokenChainDisplayProps {
-  tokenId: string
-  chainUid: string
-  size?: number
-}
-
-export function TokenChainDisplay({ tokenId, chainUid, size = 28 }: TokenChainDisplayProps) {
-  const token = tokensById[tokenId]
-  const sourceChain = chainsByUid[chainUid]
-  const originBadge = getOriginBadge(token, sourceChain)
-  const originBadgeURI = originBadge && getSrcFromLogo(originBadge)
-  const tokenURI = getSrcFromLogo(token)
-
-  return <TokenAndOriginLogos tokenURI={tokenURI} originURI={originBadgeURI} size={size} />
 }

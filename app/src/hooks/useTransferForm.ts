@@ -13,7 +13,6 @@ import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
-import useEnvironment from '@/hooks/useEnvironment'
 import { useOutputAmount } from '@/hooks/useOutputAmount'
 import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
@@ -43,7 +42,6 @@ const initValues: FormInputs = {
 }
 
 const useTransferForm = () => {
-  const environment = useEnvironment()
   const { transfer, transferStatus } = useTransfer()
   const { addNotification } = useNotification()
 
@@ -98,7 +96,6 @@ const useTransferForm = () => {
     loading: loadingBalance,
     fetchBalance,
   } = useBalance({
-    env: environment,
     chain: sourceChain,
     token: sourceTokenAmount?.token ?? undefined,
     address: sourceWallet?.sender?.address,
@@ -241,7 +238,7 @@ const useTransferForm = () => {
     )
       return
 
-    if (sourceChain.network === 'Polkadot') {
+    if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
       if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken)
         return
 
@@ -254,6 +251,7 @@ const useTransferForm = () => {
         sourceTokenAmount.token,
         recipient,
         sourceWallet.sender.address,
+        balanceData.value,
       )
 
       setValue(
@@ -321,7 +319,6 @@ const useTransferForm = () => {
         return
 
       transfer({
-        environment,
         sender: sourceWallet.sender,
         sourceChain,
         destinationChain,
@@ -349,16 +346,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [
-      destinationWallet,
-      fees,
-      bridgingFee,
-      reset,
-      sourceWallet?.sender,
-      transfer,
-      environment,
-      addNotification,
-    ],
+    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   // validate recipient address
@@ -488,7 +476,6 @@ const useTransferForm = () => {
     canPayFees,
     canPayAdditionalFees,
     transferStatus,
-    environment,
     sourceTokenAmountError,
     manualRecipientError,
     isBalanceAvailable: balanceData?.value != undefined,

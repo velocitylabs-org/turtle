@@ -2,7 +2,7 @@
   "name": "@velocitylabs-org/turtle-widget",
   "description": "Turtle Widget – Seamless, trustless cross-chain transfers made easy.",
   "private": false,
-  "version": "0.0.14",
+  "version": "0.0.16",
   "type": "module",
   "module": "./dist/turtle-widget.js",
   "exports": {
@@ -30,8 +30,8 @@
   "dependencies": {
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
-    "@paraspell/sdk": "^10.4.8",
-    "@paraspell/xcm-router": "^10.4.8",
+    "@paraspell/sdk": "^10.10.10",
+    "@paraspell/xcm-router": "^10.10.10",
     "@polkadot/api": "^15.9.2",
     "@polkadot/extension-dapp": "^0.58.4",
     "@polkadot/extension-inject": "^0.58.8",
@@ -41,14 +41,16 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@reown/appkit": "^1.6.8",
     "@reown/appkit-adapter-wagmi": "^1.6.8",
-    "@snowbridge/api": "^0.1.44",
-    "@snowbridge/contract-types": "^0.1.44",
-    "@sodazone/ocelloids-client": "^2.4.5",
+    "@snowbridge/api": "^0.1.69",
+    "@snowbridge/base-types": "^0.1.69",
+    "@snowbridge/contract-types": "^0.1.69",
+    "@snowbridge/registry": "^0.1.69",
+    "@sodazone/ocelloids-client": "^2.5.2",
     "@tanstack/react-query": "^5.66.9",
     "@wagmi/core": "^2.16.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "ethers": "^6.13.5",
+    "ethers": "^6.15.0",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
     "polkadot-api": "^1.13.1",
@@ -87,6 +89,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "postcss": "^8",
+    "postcss-nested": "^7.0.2",
     "prettier": "^3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "rimraf": "^6.0.1",
@@ -100,11 +103,19 @@
     "vite-plugin-wasm": "^3.4.1"
   },
   "peerDependencies": {
-    "@paraspell/sdk": "^8.13.1",
+    "@paraspell/sdk": "^10.10.4",
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/util": "^13.3.1",
     "@types/node": ">=20.16.15",
-    "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": false
+    },
+    "react-dom": {
+      "optional": false
+    }
   }
 }
