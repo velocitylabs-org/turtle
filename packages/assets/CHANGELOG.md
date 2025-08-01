@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-assets
 
+## 0.0.5
+
+### Patch Changes
+
+- 0a49f85: refactor: Drop Environment type
+
 ## 0.0.4
 
 ### Patch Changes

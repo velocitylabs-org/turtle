@@ -1,5 +1,16 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.0.9
+
+### Patch Changes
+
+- 356a12b: Added readme
+- 0a49f85: refactor: Drop Environment type
+- Updated dependencies [0a49f85]
+- Updated dependencies [cfe83db]
+  - @velocitylabs-org/turtle-registry@0.0.8
+  - @velocitylabs-org/turtle-assets@0.0.5
+
 ## 0.0.8
 
 ### Patch Changes
