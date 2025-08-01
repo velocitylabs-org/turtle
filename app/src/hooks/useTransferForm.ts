@@ -20,6 +20,12 @@ import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
+import {
+  getChainflipAsset,
+  getChainflipChain,
+  isChainflipSwap,
+  meetChainflipMinSwapAmount,
+} from '@/utils/chainflip'
 import { getTransferableAmount } from '@/utils/paraspellTransfer'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
@@ -72,6 +78,7 @@ const useTransferForm = () => {
   const destToken = useWatch({ control, name: 'destinationTokenAmount.token' })
 
   const [sourceTokenAmountError, setSourceTokenAmountError] = useState<string>('') // validation on top of zod
+  const [minSwapAmoutError, setMinSwapAmoutError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
@@ -86,7 +93,7 @@ const useTransferForm = () => {
   } = useFees(
     sourceChain,
     destinationChain,
-    sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
+    sourceTokenAmountError == '' && minSwapAmoutError == '' ? sourceTokenAmount?.token : null,
     sourceTokenAmount?.amount,
     sourceWallet?.sender?.address,
     getRecipientAddress(manualRecipient, destinationWallet),
@@ -131,6 +138,7 @@ const useTransferForm = () => {
   const isFormValid =
     isValidZodSchema &&
     !sourceTokenAmountError &&
+    !minSwapAmoutError &&
     !manualRecipientError &&
     sourceWallet?.isConnected &&
     !loadingBalance &&
@@ -383,6 +391,38 @@ const useTransferForm = () => {
     else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
 
+  // validate chainflip source token minimum amount to swap
+  useEffect(() => {
+    const validateChainflipSwap = async () => {
+      if (
+        !sourceChain ||
+        !destinationChain ||
+        !sourceToken ||
+        !destToken ||
+        !sourceTokenAmount?.amount
+      ) {
+        setMinSwapAmoutError('')
+        return
+      }
+
+      if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destToken)) {
+        const srcChain = await getChainflipChain(sourceChain)
+        if (!srcChain) return
+        const srcAsset = await getChainflipAsset(sourceToken, srcChain)
+        if (!srcAsset) return
+
+        const formatAmount = safeConvertAmount(sourceTokenAmount.amount, sourceToken)
+        if (formatAmount && !meetChainflipMinSwapAmount(formatAmount, srcAsset)) {
+          const minimumAmount = toHuman(BigInt(srcAsset.minimumSwapAmount), sourceToken)
+          setMinSwapAmoutError(
+            `Minimum swap amount: ${minimumAmount} ${sourceToken.symbol.toUpperCase()}`,
+          )
+        } else setMinSwapAmoutError('')
+      }
+    }
+    validateChainflipSwap()
+  }, [sourceChain, destinationChain, sourceToken, destToken, sourceTokenAmount?.amount])
+
   // Unlike canPayFees and canPayAdditionalFees, which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
   // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
   const exceedsTransferableBalance = useMemo(() => {
@@ -491,6 +531,7 @@ const useTransferForm = () => {
     transferStatus,
     environment,
     sourceTokenAmountError,
+    minSwapAmoutError,
     manualRecipientError,
     isBalanceAvailable: balanceData?.value != undefined,
     loadingBalance,
