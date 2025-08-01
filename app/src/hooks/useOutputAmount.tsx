@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { AmountInfo } from '@/models/transfer'
-import { getExchangeOutputAmount } from '@/utils/paraspellSwap'
+import { getChainflipQuote, isChainflipSwap } from '@/utils/chainflip'
+import { DEX_TO_CHAIN_MAP, getExchangeOutputAmount } from '@/utils/paraspellSwap'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
@@ -45,16 +46,30 @@ export function useOutputAmount({
         return null
 
       try {
+        // Swaps
         if (!isSameToken(sourceToken, destinationToken)) {
-          // Swap
-          const output = await getExchangeOutputAmount(
-            sourceChain,
-            destinationChain,
-            sourceToken,
-            destinationToken,
-            amount,
-          )
-          return output
+          // Paraspell swap (HydrationDex)
+          if (sourceChain === DEX_TO_CHAIN_MAP.HydrationDex) {
+            const output = await getExchangeOutputAmount(
+              sourceChain,
+              destinationChain,
+              sourceToken,
+              destinationToken,
+              amount,
+            )
+            return output
+          }
+          // Chainflip swap
+          if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken)) {
+            const quoteRequest = await getChainflipQuote(
+              sourceChain,
+              destinationChain,
+              sourceToken,
+              destinationToken,
+              amount,
+            )
+            return quoteRequest ? BigInt(quoteRequest.egressAmount) : null
+          }
         }
 
         // Normal transfer

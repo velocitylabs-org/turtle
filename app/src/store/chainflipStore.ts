@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { SwapSDK, SwapSDKOptions } from '@chainflip/sdk/swap'
+import { create } from 'zustand'
 
 interface ChainflipSdk {
   sdk: SwapSDK | null
