@@ -1,6 +1,6 @@
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { Token , Chain } from '@velocitylabs-org/turtle-registry'
+import { Token, Chain } from '@velocitylabs-org/turtle-registry'
 import { getChainflipQuote, isChainflipSwap } from '@/utils/chainflip'
 
 interface UseChainflipQuoteParams {
