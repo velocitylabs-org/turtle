@@ -119,7 +119,7 @@ export const getChainflipQuote = async (
       console.log('chainflipErrorMsg:', chainflipErrorMsg)
     }
 
-    return null
+    return null // Or throw an error ?
   }
 }
 

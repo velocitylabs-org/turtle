@@ -1,5 +1,5 @@
 import { Chain, Token } from "@/types";
-import { AssetHub, Ethereum, Polkadot } from "./chains";
+import { AssetHub, Ethereum } from "./chains";
 import { EthereumTokens, PolkadotTokens } from "./tokens";
 
 export type ChainflipSwapPair = [Token, Token];
@@ -25,15 +25,16 @@ export const chainflipRoutes: ChainflipRoute[] = [
       [EthereumTokens.USDT, PolkadotTokens.USDT],
     ],
   },
-  {
-    from: Ethereum,
-    to: Polkadot,
-    pairs: [
-      [EthereumTokens.ETH, PolkadotTokens.DOT],
-      [EthereumTokens.USDC, PolkadotTokens.DOT], // TBC
-      [EthereumTokens.USDT, PolkadotTokens.DOT], // TBC
-    ],
-  },
+  // TBC: Soon deprecated
+  // {
+  //   from: Ethereum,
+  //   to: Polkadot,
+  //   pairs: [
+  //     [EthereumTokens.ETH, PolkadotTokens.DOT],
+  //     [EthereumTokens.USDC, PolkadotTokens.DOT],
+  //     [EthereumTokens.USDT, PolkadotTokens.DOT],
+  //   ],
+  // },
   {
     from: AssetHub,
     to: Ethereum,
@@ -49,13 +50,14 @@ export const chainflipRoutes: ChainflipRoute[] = [
       [PolkadotTokens.USDT, EthereumTokens.USDT],
     ],
   },
-  {
-    from: Polkadot,
-    to: Ethereum,
-    pairs: [
-      [PolkadotTokens.DOT, EthereumTokens.ETH],
-      [PolkadotTokens.DOT, EthereumTokens.USDC],
-      [PolkadotTokens.DOT, EthereumTokens.USDT],
-    ],
-  },
+  // TBC: Soon deprecated
+  // {
+  //   from: Polkadot,
+  //   to: Ethereum,
+  //   pairs: [
+  //     [PolkadotTokens.DOT, EthereumTokens.ETH],
+  //     [PolkadotTokens.DOT, EthereumTokens.USDC],
+  //     [PolkadotTokens.DOT, EthereumTokens.USDT],
+  //   ],
+  // },
 ];
