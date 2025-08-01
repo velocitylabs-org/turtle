@@ -223,7 +223,7 @@ export default function TxSummary({
           </ul>
 
           {canPayFees && !exceedsTransferableBalance && isAmountTooLow && (
-            <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
+            <div className="bg-turtle-secondary-transparent my-4 flex flex-row items-center justify-center rounded-[8px] p-2">
               <ExclamationMark
                 width={20}
                 height={20}
