@@ -6,10 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write .",
-    "format-check": "biome format ."
+    "prepare": "cd .. && husky install analytics/.husky"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "1.1.4",
@@ -23,6 +20,7 @@
     "babel-plugin-react-compiler": "19.1.0-rc.1",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
+    "husky": "^9.1.7",
     "lucide-react": "^0.454.0",
     "mongoose": "^8.14.0",
     "next": "15.2.4",

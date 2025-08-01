@@ -49,8 +49,5 @@ jobs:
         env:
           DISABLE_SENTRY: true
         run: pnpm run build
-      - name: Running linter
-        run: pnpm run lint
-
-      - name: Running format check
-        run: pnpm run format-check
+      - name: Running lint and format check
+        run: turbo run format-and-lint

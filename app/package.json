@@ -6,12 +6,8 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
     "test": "jest --transformIgnorePatterns \"node_modules/(?!@toolz/allow)/\"",
     "test:watch": "jest --watch",
-    "format": "biome format --write .",
-    "format-check": "biome format .",
     "prepare": "husky",
     "cypress:open": "cypress open"
   },

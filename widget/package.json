@@ -22,11 +22,7 @@
   "scripts": {
     "dev": "vite",
     "build": "rimraf dist && tsc -b && vite build",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
     "start": "vite preview",
-    "format": "biome format --write .",
-    "format-check": "biome format .",
     "prepare": "husky"
   },
   "dependencies": {

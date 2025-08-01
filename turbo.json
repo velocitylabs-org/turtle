@@ -26,14 +26,8 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {
-      "dependsOn": ["^lint"],
-      "cache": false
-    },
-    "format": {
-      "cache": false
-    },
-    "format-check": {
+    "//#format-and-lint": {},
+    "//#format-and-lint:fix": {
       "cache": false
     },
     "test": {

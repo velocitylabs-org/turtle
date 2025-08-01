@@ -6,12 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "format": "biome format --write .",
-    "format-check": "biome format .",
     "prepare": "cd .. && husky install site/.husky"
   },
   "dependencies": {
