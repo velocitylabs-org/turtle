@@ -202,7 +202,6 @@ const useTransferForm = () => {
       setValue('destinationChain', newValue)
       trigger()
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setValue],
   )
 
@@ -279,7 +278,6 @@ const useTransferForm = () => {
   // validate recipient address
   useEffect(() => {
     setManualRecipientError(isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
   // validate token amount
@@ -361,7 +359,6 @@ const useTransferForm = () => {
   useEffect(() => {
     if (tokenId)
       setValue('sourceTokenAmount', { token: sourceTokenAmount?.token ?? null, amount: null }, { shouldValidate: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, setValue])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(

@@ -190,8 +190,6 @@ const useFees = (
     } finally {
       setLoading(false)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sourceChain,
     destinationChain,

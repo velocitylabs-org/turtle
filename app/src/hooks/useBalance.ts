@@ -76,7 +76,6 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, address, token?.id, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {

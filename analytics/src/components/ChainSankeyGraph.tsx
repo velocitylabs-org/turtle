@@ -57,7 +57,6 @@ export default function ChainSankeyGraph({ data, type, selectedChain, setChainUi
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
     return Math.max(baseMinHeight, minHeight)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flowData, loading, dimensions.height])
 
   useLayoutEffect(() => {

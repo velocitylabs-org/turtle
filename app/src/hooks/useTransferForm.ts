@@ -410,7 +410,6 @@ const useTransferForm = () => {
   useEffect(() => {
     if (tokenId)
       setValue('sourceTokenAmount', { token: sourceTokenAmount?.token ?? null, amount: null }, { shouldValidate: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenId, setValue])
 
   return {
