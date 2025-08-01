@@ -1,34 +1,36 @@
-import clsx from 'clsx'
 import { ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
-import { Sizes } from '../types/global'
+import { cn } from '@/helpers'
+import { PolymorphicComponentProps, Sizes } from '../types/global'
 import { LoadingIcon } from './LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
 export type ButtonType = 'button' | 'submit' | 'reset'
 
-export interface ButtonProps {
-  /** Text shown inside the button. */
-  label?: string
-  /** Function to call when the button is clicked. */
-  onClick?: () => void
-  /** Additional classes to apply to the button. */
-  className?: string
-  /** Whether the button is disabled (non-interactive). */
-  disabled?: boolean
-  /** Whether the button is in a loading state. */
-  loading?: boolean
-  /** The variant determines the preset color and style of the button. */
-  variant?: ButtonVariant
-  /** The size of the button. */
-  size?: Sizes
-  /** A custom icon to be displayed instead of the spinner */
-  icon?: ReactNode
-  /** Content to be rendered inside the button. It will replace the label. */
-  children?: ReactNode
-  /** The type of the button. */
-  type?: ButtonType
-}
+export type ButtonProps<T extends React.ElementType = 'button'> = PolymorphicComponentProps<
+  T,
+  {
+    /** Text shown inside the button. */
+    label?: string
+    /** Function to call when the button is clicked. */
+    onClick?: () => void
+    /** Additional classes to apply to the button. */
+    className?: string
+    /** Whether the button is disabled (non-interactive). */
+    disabled?: boolean
+    /** Whether the button is in a loading state. */
+    loading?: boolean
+    /** The variant determines the preset color and style of the button. */
+    variant?: ButtonVariant
+    /** The size of the button. */
+    size?: Sizes
+    /** A custom icon to be displayed instead of the spinner */
+    icon?: ReactNode
+    /** Content to be rendered inside the button. It will replace the label. */
+    children?: ReactNode
+    /** The type of the button. */
+    type?: ButtonType
+  }
+>
 
 const styles = {
   primary: 'bg-turtle-primary border border-black disabled:opacity-30',
@@ -52,32 +54,35 @@ const paddingX: Record<Sizes, string> = {
   lg: 'px-5',
 }
 
-export const Button = ({
+export const Button = <T extends React.ElementType = 'button'>({
+  as,
   children,
   className,
   type = 'button',
   variant = 'primary',
+  size = 'md',
   disabled,
   onClick,
-  size,
   loading,
   label,
   icon = <LoadingIcon className="mr-3 animate-spin" size={size} />,
   ...rest
-}: ButtonProps) => {
-  const classNames = twMerge(
-    clsx(
-      'relative w-full flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0 cursor-pointer',
-      sizeHeights[size],
-      paddingX[size],
-      styles[variant],
-      className,
-    ),
+}: ButtonProps<T>) => {
+  const classNames = cn(
+    'relative flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0',
+    (as === 'button' || as === 'a') && 'cursor-pointer',
+    disabled && 'cursor-not-allowed',
+    sizeHeights[size],
+    paddingX[size],
+    styles[variant],
+    className,
   )
 
+  const Component = as || 'button'
+
   return (
-    <button
-      type={type === 'submit' ? 'submit' : type === 'reset' ? 'reset' : 'button'}
+    <Component
+      type={type}
       tabIndex={0}
       className={classNames}
       onClick={onClick}
@@ -92,6 +97,6 @@ export const Button = ({
       )}
 
       {!loading && (children || label)}
-    </button>
+    </Component>
   )
 }

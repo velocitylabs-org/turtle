@@ -1,9 +1,9 @@
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
-import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
@@ -130,7 +130,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
           />
         </div>
         {status === TxStatus.Failed && (
-          <div className="flex items-center justify-between rounded-lg bg-turtle-error-10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
+          <div className="bg-turtle-error-10 flex items-center justify-between rounded-lg p-2 text-xs font-normal leading-3 text-turtle-error-dark">
             <div>
               <span className="mr-1 font-semibold">Oops!</span>This transaction failed
             </div>

@@ -14,8 +14,7 @@ export default async function Home() {
         </TurtlesBackground>
       </section>
 
-      {/* Features section */}
-      <section className="features relative z-40 mt-[-20px] bg-info pb-36 pt-20 md:pb-72 lg:pb-96">
+      <section className="relative z-40 mt-[-20px] bg-info pb-36 pt-20 md:pb-72 lg:pb-96">
         <Features />
       </section>
     </>

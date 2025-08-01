@@ -1,0 +1,8 @@
+{
+  "name": "@velocitylabs-org/turtle-tailwind-config",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./index.js"
+  }
+}
