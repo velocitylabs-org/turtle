@@ -1,17 +1,16 @@
 'use client'
-import React from 'react'
 import {
   Bar,
+  CartesianGrid,
   ComposedChart,
   Line,
-  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  TooltipProps,
+  type TooltipProps,
   XAxis,
   YAxis,
 } from 'recharts'
-import { GraphType, primaryColor } from '@/constants'
+import { type GraphType, primaryColor } from '@/constants'
 import formatUSD from '@/utils/format-USD'
 
 const chartColor = primaryColor

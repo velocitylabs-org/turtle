@@ -1,7 +1,7 @@
-import Features from '@/components/features'
-import TurtlesBackground from '@/components/TurtlesBackground'
 import getAnalyticsData from '@/actions/analytics'
 import AnalyticData from '@/components/AnalyticData'
+import Features from '@/components/features'
+import TurtlesBackground from '@/components/TurtlesBackground'
 
 export default async function Home() {
   const analyticsData = await getAnalyticsData()

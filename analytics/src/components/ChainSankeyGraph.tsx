@@ -1,7 +1,7 @@
-import { Chain, chainsByUid } from '@velocitylabs-org/turtle-registry'
-import React, { useRef, useEffect, useLayoutEffect, useState, useMemo } from 'react'
+import { type Chain, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Select from '@/components/Select'
-import { chains, GraphType, primaryColor } from '@/constants'
+import { chains, type GraphType, primaryColor } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
@@ -25,13 +25,7 @@ interface ChainPathGraphProps {
   loading: boolean
 }
 
-export default function ChainSankeyGraph({
-  data,
-  type,
-  selectedChain,
-  setChainUid,
-  loading,
-}: ChainPathGraphProps) {
+export default function ChainSankeyGraph({ data, type, selectedChain, setChainUid, loading }: ChainPathGraphProps) {
   const isMobile = useIsMobile()
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -63,8 +57,7 @@ export default function ChainSankeyGraph({
     const minHeight = topMargin + nodeCount * (nodeSize + nodePadding) + bottomMargin
 
     return Math.max(baseMinHeight, minHeight)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flowData, loading])
+  }, [flowData, loading, dimensions.height])
 
   useLayoutEffect(() => {
     if (containerRef.current) {
@@ -77,6 +70,7 @@ export default function ChainSankeyGraph({
   }, [dynamicHeight])
 
   // Monitor and update graph when container width changes to ensure a responsive layout
+  // biome-ignore lint/correctness/useExhaustiveDependencies: dimension.height
   useEffect(() => {
     let resizeObserver: ResizeObserver | null = null
     let previousWidth = containerRef.current?.clientWidth || 0
@@ -120,12 +114,10 @@ export default function ChainSankeyGraph({
       }
       window.removeEventListener('resize', handleWindowResize)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    if (!flowData || !svgRef.current || dimensions.width === 0 || flowData?.length === 0 || loading)
-      return
+    if (!flowData || !svgRef.current || dimensions.width === 0 || flowData?.length === 0 || loading) return
 
     const svg = svgRef.current
     while (svg.firstChild) {
@@ -134,22 +126,14 @@ export default function ChainSankeyGraph({
 
     const width = dimensions.width - 30
     const height = dimensions.height
-    const margin = isMobile
-      ? { top: 5, right: 15, bottom: 0, left: -10 }
-      : { top: 5, right: 50, bottom: 20, left: 0 }
+    const margin = isMobile ? { top: 5, right: 15, bottom: 0, left: -10 } : { top: 5, right: 50, bottom: 20, left: 0 }
     const nodeSize = 28
     let maxValue = 0
     flowData.forEach(d => {
       maxValue = Math.max(maxValue, d.size)
     })
 
-    const { nodes, sourceNode, totalHeight } = createNodes(
-      flowData,
-      margin,
-      width,
-      nodeSize,
-      selectedChain,
-    )
+    const { nodes, sourceNode, totalHeight } = createNodes(flowData, margin, width, nodeSize, selectedChain)
 
     const requiredHeight = totalHeight + margin.bottom
     if (requiredHeight > height) {
@@ -199,11 +183,7 @@ export default function ChainSankeyGraph({
       weightText.setAttribute('font-size', '12px')
       svg.appendChild(rightLabelGroup)
     }
-    function removeHoverEffect(
-      percentText: SVGElement,
-      nameText: SVGElement,
-      weightText: SVGElement,
-    ) {
+    function removeHoverEffect(percentText: SVGElement, nameText: SVGElement, weightText: SVGElement) {
       percentText.setAttribute('font-size', '12px')
       percentText.setAttribute('fill', '#666')
 
@@ -247,7 +227,6 @@ export default function ChainSankeyGraph({
         }
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flowData, dimensions, isMobile, loading])
 
   const noDataAvailable = useMemo(() => {
@@ -265,10 +244,7 @@ export default function ChainSankeyGraph({
           transition: `height 300ms ${easeOutQuart}`,
         }}
       >
-        <div
-          className="absolute flex"
-          style={{ left: isMobile ? '0' : '20px', top: '13px', zIndex: 10 }}
-        >
+        <div className="absolute flex" style={{ left: isMobile ? '0' : '20px', top: '13px', zIndex: 10 }}>
           <div style={{ width: isMobile ? '145px' : '150px' }}>
             <Select
               options={chainOptions}

@@ -1,8 +1,8 @@
 import { LoadingIcon, TokenLogo } from '@velocitylabs-org/turtle-ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import Account from '@/components/Account'
-import { StoredTransfer } from '@/models/transfer'
+import type { StoredTransfer } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import { colors } from '../../../../tailwind.config'
@@ -15,12 +15,7 @@ const OngoingTransfer: FC<{
     <div className="hover:bg-turtle-secondary-light-50 mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <LoadingIcon
-            className="mr-2 animate-spin"
-            size="md"
-            strokeWidth={5}
-            color={colors['turtle-secondary']}
-          />
+          <LoadingIcon className="mr-2 animate-spin" size="md" strokeWidth={5} color={colors['turtle-secondary']} />
           <div className="flex items-center text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
             {isSwap(transfer) ? (
               <span className="flex items-center gap-1">
@@ -43,10 +38,7 @@ const OngoingTransfer: FC<{
               height={16}
               className="h-[16px] rounded-full border border-turtle-secondary-dark bg-turtle-background"
             />
-            <ArrowRight
-              className="h-[0.45rem] w-[0.45rem]"
-              fill={colors['turtle-secondary-dark']}
-            />
+            <ArrowRight className="h-[0.45rem] w-[0.45rem]" fill={colors['turtle-secondary-dark']} />
             <img
               src={transfer.destChain.logoURI as string}
               alt="Destination Chain"
@@ -56,9 +48,7 @@ const OngoingTransfer: FC<{
             />
           </div>
         </div>
-        <p className="text-right text-sm text-turtle-secondary">
-          {formatOngoingTransferDate(transfer.date)}
-        </p>
+        <p className="text-right text-sm text-turtle-secondary">{formatOngoingTransferDate(transfer.date)}</p>
       </div>
       <div className="flex items-center">
         <Account

@@ -1,7 +1,7 @@
-import { Context, toPolkadot } from '@snowbridge/api'
+import { type Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
-import { Network, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
-import { Signer } from 'ethers'
+import { EthereumTokens, type Network, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { convertAmount, toHuman } from '@/utils/transfer'
@@ -40,8 +40,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
 
     try {
       setLoading(true)
-      const fetchedAllowance = (await assetStatusInfo(context, tokenAmount.token.address, owner))
-        .tokenGatewayAllowance
+      const fetchedAllowance = (await assetStatusInfo(context, tokenAmount.token.address, owner)).tokenGatewayAllowance
       setAllowance(toHuman(fetchedAllowance, tokenAmount.token))
       refetchFees()
     } catch (error) {
@@ -50,8 +49,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [network, owner, tokenAmount, context])
+  }, [network, owner, tokenAmount, context, refetchFees])
 
   // Reactively fetch the erc20 spend allowance when the relevant form fields change
   useEffect(() => {

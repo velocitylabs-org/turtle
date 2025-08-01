@@ -62,8 +62,7 @@ export default function getExplorerLinks(tx: TxDetailView): ExplorerLinks[] | un
   const { network, walletType, name } = sourceChain
   const { senderAddress, txHashId, status } = tx
   const isSucceeded = status === 'succeeded'
-  const isWithinHydration =
-    tx.sourceChainUid === 'hydration' && tx.destinationChainUid === 'hydration'
+  const isWithinHydration = tx.sourceChainUid === 'hydration' && tx.destinationChainUid === 'hydration'
 
   function buildHashLink(config: ExplorerConfig, txHash: string): ExplorerLinks {
     return {

@@ -1,16 +1,8 @@
 'use client'
 import Link from 'next/link'
-import React from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { TransactionView } from '@/models/transaction-view'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import type { TransactionView } from '@/models/transaction-view'
 import { formatDate, formatDateAgo } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
 import { TokenChainDisplay } from './TokenChainDisplay'
@@ -21,10 +13,7 @@ interface RecentTransactionsTableProps {
   isLoading: boolean
 }
 
-export default function RecentTransactionsTable({
-  transactions,
-  isLoading,
-}: RecentTransactionsTableProps) {
+export default function RecentTransactionsTable({ transactions, isLoading }: RecentTransactionsTableProps) {
   const { start } = useLoadingBar()
 
   return (
@@ -81,22 +70,15 @@ export default function RecentTransactionsTable({
                   <TableCell>
                     <div className="flex flex-col">
                       <span>{tx.sourceTokenAmount}</span>
-                      <span className="text-xs text-muted-foreground">
-                        (${formatUSD(tx.sourceTokenAmountUsd)})
-                      </span>
+                      <span className="text-xs text-muted-foreground">(${formatUSD(tx.sourceTokenAmountUsd)})</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <TokenChainDisplay
-                        tokenId={tx.destinationTokenId}
-                        chainUid={tx.destinationChainUid}
-                      />
+                      <TokenChainDisplay tokenId={tx.destinationTokenId} chainUid={tx.destinationChainUid} />
                       <div className="ml-2 flex flex-col">
                         <span className="font-medium">{tx.destinationTokenSymbol}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {tx.destinationChainName}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{tx.destinationChainName}</span>
                       </div>
                     </div>
                   </TableCell>

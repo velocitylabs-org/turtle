@@ -50,11 +50,7 @@ export const colors = {
 }
 
 const config: import('tailwindcss').Config = {
-  content: [
-    './index.html',
-    './src/**/*.{ts,tsx,js,jsx}',
-    '../packages/ui/src/**/*.{ts,tsx,js,jsx}',
-  ],
+  content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}', '../packages/ui/src/**/*.{ts,tsx,js,jsx}'],
   important: '.turtle-wrapper',
   theme: {
     extend: {
@@ -71,8 +67,7 @@ const config: import('tailwindcss').Config = {
       },
       backgroundColor: {
         'btn-disabled': colors[`${prefix}-primary`],
-        'dialog-overlay':
-          'rgba(var(--turtle-dialog-overlay-rgb), var(--turtle-dialog-overlay-opacity))',
+        'dialog-overlay': 'rgba(var(--turtle-dialog-overlay-rgb), var(--turtle-dialog-overlay-opacity))',
       },
       keyframes: {
         'accordion-down': {

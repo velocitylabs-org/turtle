@@ -1,11 +1,8 @@
-import { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
+import type { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { isValidAddressType } from '@/utils/address'
 
-const useManualRecipientValidation = (
-  manualRecipient: ManualRecipientInput,
-  destinationChain?: Chain,
-) => {
+const useManualRecipientValidation = (manualRecipient: ManualRecipientInput, destinationChain?: Chain) => {
   const [error, setError] = useState<string>('')
 
   const validate = useCallback(() => {
@@ -25,7 +22,7 @@ const useManualRecipientValidation = (
 
   useEffect(() => {
     validate()
-  }, [manualRecipient.address, destinationChain, manualRecipient.enabled, validate])
+  }, [validate])
 
   return { error }
 }

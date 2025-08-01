@@ -1,8 +1,8 @@
 import { captureException } from '@sentry/nextjs'
-import { AnyJson, OcelloidsAgentApi, OcelloidsClient, xcm } from '@sodazone/ocelloids-client'
-import { Moonbeam, Network } from '@velocitylabs-org/turtle-registry'
-import { Notification, NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type AnyJson, type OcelloidsAgentApi, OcelloidsClient, type xcm } from '@sodazone/ocelloids-client'
+import { Moonbeam, type Network } from '@velocitylabs-org/turtle-registry'
+import { type Notification, NotificationSeverity } from '@/models/notification'
+import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink, isSameChainSwap } from './transfer'
@@ -28,9 +28,7 @@ export const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE |
 // It prevents opening socket for local swaps
 export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
   transfers.filter(
-    t =>
-      resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot &&
-      !isSameChainSwap(t),
+    t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot && !isSameChainSwap(t),
   )
 
 export const initOcelloidsClient = (API_KEY: string) => {
@@ -40,9 +38,7 @@ export const initOcelloidsClient = (API_KEY: string) => {
   })
 }
 
-export const getOcelloidsAgentApi = async (): Promise<
-  OcelloidsAgentApi<xcm.XcmInputs> | undefined
-> => {
+export const getOcelloidsAgentApi = async (): Promise<OcelloidsAgentApi<xcm.XcmInputs> | undefined> => {
   try {
     const OCLD_ClIENT = initOcelloidsClient(OCELLOIDS_API_KEY)
 
@@ -69,6 +65,7 @@ export const getOcelloidsAgentApi = async (): Promise<
  * @param transfer - The stored transfer.
  * @param remove - A callback function to remove the transfer once completed.
  * @param addCompletedTransfer - A callback function to add an ongoing transfer to the completed storage.
+ * @param updateStatus
  * @param addNotification - A callback function to add a notification.
  *
  * It creates a WebSocket connection to listen for XCM events for the provided transfer
@@ -317,11 +314,7 @@ const getEvmTxHashFromEvent = (event: AnyJson): string | undefined => {
  * @param extrinsicHash - The extrinsicHash to be returned if the EVM transaction exception is not met.
  * @returns The EVM transaction hash or the extrinsic hash.
  */
-const getTxHashFromEvent = (
-  event: AnyJson,
-  sourceChainId: number,
-  extrinsicHash?: `0x${string}`,
-) => {
+const getTxHashFromEvent = (event: AnyJson, sourceChainId: number, extrinsicHash?: `0x${string}`) => {
   const evmTxHashFromEvent = getEvmTxHashFromEvent(event)
   if (sourceChainId === Moonbeam.chainId && evmTxHashFromEvent) return evmTxHashFromEvent
   return extrinsicHash

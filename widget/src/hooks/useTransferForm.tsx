@@ -1,20 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  Chain,
-  ManualRecipient,
-  TokenAmount,
-  Token,
+  type Chain,
   Ethereum,
+  type ManualRecipient,
+  type Token,
+  type TokenAmount,
 } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { use, useCallback, useEffect, useMemo, useState } from 'react'
-import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { type SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
 import { getTransferableAmount } from '@/lib/paraspell/transfer'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
-import { wagmiConfig } from '@/providers/config'
 import { ConfigContext } from '@/providers/ConfigProviders'
+import { wagmiConfig } from '@/providers/config'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { getRecipientAddress, isValidRecipient } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
@@ -51,7 +51,7 @@ const useTransferForm = () => {
     trigger,
     formState: { errors, isValid: isValidZodSchema, isValidating },
   } = useForm<FormInputs>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: schema
     resolver: zodResolver(schema as any),
     mode: 'onChange',
     delayError: 3000,
@@ -86,6 +86,7 @@ const useTransferForm = () => {
   } = useFees(
     sourceChain,
     destinationChain,
+    // biome-ignore lint/suspicious/noDoubleEquals: sourceTokenAmountError
     sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
     sourceTokenAmount?.amount,
     sourceWallet?.sender?.address,
@@ -107,10 +108,7 @@ const useTransferForm = () => {
     destinationChain,
     sourceToken,
     destinationToken: destToken,
-    amount:
-      sourceAmount && sourceToken
-        ? safeConvertAmount(sourceAmount, sourceToken)?.toString()
-        : undefined,
+    amount: sourceAmount && sourceToken ? safeConvertAmount(sourceAmount, sourceToken)?.toString() : undefined,
     fees,
   })
 
@@ -148,14 +146,7 @@ const useTransferForm = () => {
       isRouteAllowed(sourceChain, destinationChain) &&
       isRouteAllowed(destinationChain, sourceChain, sourceTokenAmount)
     )
-  }, [
-    destinationChain,
-    sourceChain,
-    sourceTokenAmount,
-    destinationTokenAmount,
-    isValidating,
-    transferStatus,
-  ])
+  }, [destinationChain, sourceChain, sourceTokenAmount, destinationTokenAmount, isValidating, transferStatus])
 
   const handleSourceChainChange = useCallback(
     async (newValue: Chain | null) => {
@@ -181,12 +172,7 @@ const useTransferForm = () => {
 
       if (
         !isSameDestination &&
-        isTokenAvailableForSourceChain(
-          newValue,
-          destinationChain,
-          sourceTokenAmount?.token,
-          allowedTokens,
-        )
+        isTokenAvailableForSourceChain(newValue, destinationChain, sourceTokenAmount?.token, allowedTokens)
       ) {
         // Update the source chain here to prevent triggering unexpected states, e.g., the useFees hook.
         setValue('sourceChain', newValue)
@@ -216,7 +202,6 @@ const useTransferForm = () => {
       setValue('destinationChain', newValue)
       trigger()
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setValue],
   )
 
@@ -244,11 +229,9 @@ const useTransferForm = () => {
       return
 
     if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
-      if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken)
-        return
+      if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) return
 
-      const recipient =
-        getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
+      const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
 
       const transferableAmount = await getTransferableAmount(
         sourceChain,
@@ -264,9 +247,7 @@ const useTransferForm = () => {
         {
           token: sourceTokenAmount.token,
           // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(
-            formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer'),
-          ),
+          amount: Number(formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer')),
         },
         { shouldValidate: true },
       )
@@ -296,10 +277,7 @@ const useTransferForm = () => {
 
   // validate recipient address
   useEffect(() => {
-    setManualRecipientError(
-      isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address',
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setManualRecipientError(isValidRecipient(manualRecipient, destinationChain) ? '' : 'Invalid Address')
   }, [manualRecipient.address, destinationChain, sourceChain, manualRecipient.enabled])
 
   // validate token amount
@@ -375,35 +353,17 @@ const useTransferForm = () => {
         { shouldValidate: true },
       )
     }
-  }, [
-    exceedsTransferableBalance,
-    sourceTokenAmount?.token,
-    bridgingFee,
-    fees,
-    balanceData,
-    setValue,
-  ])
+  }, [exceedsTransferableBalance, sourceTokenAmount?.token, bridgingFee, fees, balanceData, setValue])
 
   // reset token amount
   useEffect(() => {
     if (tokenId)
-      setValue(
-        'sourceTokenAmount',
-        { token: sourceTokenAmount?.token ?? null, amount: null },
-        { shouldValidate: true },
-      )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      setValue('sourceTokenAmount', { token: sourceTokenAmount?.token ?? null, amount: null }, { shouldValidate: true })
   }, [tokenId, setValue])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
     data => {
-      const {
-        sourceChain,
-        destinationChain,
-        sourceTokenAmount,
-        destinationTokenAmount,
-        manualRecipient,
-      } = data
+      const { sourceChain, destinationChain, sourceTokenAmount, destinationTokenAmount, manualRecipient } = data
       const recipient = getRecipientAddress(manualRecipient, destinationWallet)
       const sourceAmount = sourceTokenAmount
         ? safeConvertAmount(sourceTokenAmount.amount, sourceTokenAmount.token)
@@ -445,9 +405,7 @@ const useTransferForm = () => {
           })
 
           setTimeout(() => {
-            document
-              .getElementById('ongoing-txs')
-              ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            document.getElementById('ongoing-txs')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }, 500)
         },
       })
@@ -489,6 +447,7 @@ const useTransferForm = () => {
     isLoadingOutputAmount,
 
     // Balance related
+    // biome-ignore lint/suspicious/noDoubleEquals: balanceData?.value
     isBalanceAvailable: balanceData?.value != undefined,
     balanceData,
     loadingBalance,

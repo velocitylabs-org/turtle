@@ -1,11 +1,6 @@
 name: Unit Tests
 
 on:
-  push:
-    branches:
-      - "**"
-    paths:
-      - "app/**"
   pull_request:
     branches:
       - "**"

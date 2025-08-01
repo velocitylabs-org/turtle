@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import Header from '@/components/header'
-import Footer from '@/components/footer'
 import { dazzed } from '@/components/fonts/fonts'
+import Footer from '@/components/footer'
+import Header from '@/components/header'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,9 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="turtleTheme" className="h-full bg-turtle-secondary">
-      <body
-        className={cn(dazzed.variable, inter.className, ' h-full bg-turtle-secondary font-dazzed')}
-      >
+      <body className={cn(dazzed.variable, inter.className, ' h-full bg-turtle-secondary font-dazzed')}>
         <main className="h-full flex-1">
           <Header />
           {children}

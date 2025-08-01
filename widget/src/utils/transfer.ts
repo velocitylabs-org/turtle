@@ -1,7 +1,7 @@
-import { Chain, Network, TokenAmount, Token } from '@velocitylabs-org/turtle-registry'
+import type { Chain, Network, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { ethers, JsonRpcSigner } from 'ethers'
-import { Sender } from '@/hooks/useTransfer'
-import { AmountInfo, StoredTransfer } from '@/models/transfer'
+import type { Sender } from '@/hooks/useTransfer'
+import type { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { isSameChain } from '@/utils/routes'
 
 export type FormatLength = 'Short' | 'Long' | 'Longer'
@@ -130,11 +130,11 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   const dst = destination.network
 
   // Ethereum -> Polkadot
-  if (src == 'Ethereum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
+  if (src === 'Ethereum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
   // Ethereum -> Ethereum
-  if (src == 'Ethereum' && dst == 'Ethereum') return Direction.WithinEthereum
+  if (src === 'Ethereum' && dst === 'Ethereum') return Direction.WithinEthereum
   // Polkadot -> Ethereum
-  if (isAnyPolkadotNetwork(src) && dst == 'Ethereum') return Direction.ToEthereum
+  if (isAnyPolkadotNetwork(src) && dst === 'Ethereum') return Direction.ToEthereum
   // XCM
   if (isAnyPolkadotNetwork(src) && isAnyPolkadotNetwork(dst)) return Direction.WithinPolkadot
 
@@ -144,10 +144,7 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
 export function isAnyPolkadotNetwork(network: Network): boolean {
   return network === 'Polkadot' || network === 'Kusama'
 }
-export function toAmountInfo(
-  tokenAmount?: TokenAmount | null,
-  usdPrice?: number | null,
-): AmountInfo | null {
+export function toAmountInfo(tokenAmount?: TokenAmount | null, usdPrice?: number | null): AmountInfo | null {
   if (!tokenAmount || !tokenAmount.amount || !tokenAmount.token || !usdPrice) return null
 
   return {
@@ -182,16 +179,13 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfer is outdated.
  */
-export const startedTooLongAgo = (
-  transfer: StoredTransfer,
-  thresholdInHours = { xcm: 0.5, bridge: 6 },
-) => {
+export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcm: 0.5, bridge: 6 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const timeBuffer =
     direction === Direction.WithinPolkadot
       ? thresholdInHours.xcm * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
-  return new Date().getTime() - new Date(transfer.date).getTime() > timeBuffer
+  return Date.now() - new Date(transfer.date).getTime() > timeBuffer
 }
 
 type SwapProperties = {
@@ -212,9 +206,7 @@ type CompleteSwap = SwapWithChains & Required<SwapProperties>
  * @param transfer - The transfer to check
  * @returns if the transfer is a swap
  */
-export const isSwap = <T extends SwapProperties>(
-  transfer: T,
-): transfer is T & Required<SwapProperties> => {
+export const isSwap = <T extends SwapProperties>(transfer: T): transfer is T & Required<SwapProperties> => {
   return (
     !!transfer.destinationToken &&
     !!transfer.destinationAmount &&
@@ -228,9 +220,7 @@ export const isSwap = <T extends SwapProperties>(
  * @param transfer - The transfer to check.
  * @returns A boolean.
  */
-export const isSameChainSwap = <T extends SwapWithChains>(
-  transfer: T,
-): transfer is T & CompleteSwap => {
+export const isSameChainSwap = <T extends SwapWithChains>(transfer: T): transfer is T & CompleteSwap => {
   return isSwap(transfer) && isSameChain(transfer.sourceChain, transfer.destChain)
 }
 
@@ -240,8 +230,6 @@ export const isSameChainSwap = <T extends SwapWithChains>(
  * @param transfer - The transfer to check.
  * @returns A boolean.
  */
-export const isSwapWithTransfer = <T extends SwapWithChains>(
-  transfer: T,
-): transfer is T & CompleteSwap => {
+export const isSwapWithTransfer = <T extends SwapWithChains>(transfer: T): transfer is T & CompleteSwap => {
   return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }

@@ -1,5 +1,5 @@
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { FC } from 'react'
+import type { FC } from 'react'
 
 interface ProgressBarProps {
   progress: number

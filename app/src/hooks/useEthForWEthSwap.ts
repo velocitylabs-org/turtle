@@ -1,12 +1,12 @@
 import { captureException } from '@sentry/nextjs'
-import { Context, environment, toPolkadot } from '@snowbridge/api'
-import { EthereumTokens, Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
-import { Signer } from 'ethers'
+import { type Context, environment, toPolkadot } from '@snowbridge/api'
+import { type Chain, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
 import { NotificationSeverity } from '@/models/notification'
-import { convertAmount, toHuman } from '../utils/transfer'
+import { convertAmount, toHuman } from '@/utils/transfer'
 
 interface Params {
   context?: Context
@@ -47,8 +47,7 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
         .then(x => toHuman(x, EthereumTokens.ETH))
       setEthBalance(balance)
     } catch (error) {
-      if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-        captureException(error)
+      if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
     }
   }, [chain?.network, owner, tokenAmount, context])
 
@@ -75,12 +74,7 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
 
       try {
         await toPolkadot
-          .depositWeth(
-            context,
-            signer,
-            tokenAmount!.token!.address,
-            convertAmount(amount, EthereumTokens.ETH),
-          )
+          .depositWeth(context, signer, tokenAmount!.token!.address, convertAmount(amount, EthereumTokens.ETH))
           .then(x => x.wait())
 
         SetIsSwapping(false)
@@ -93,8 +87,7 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
           message: 'Failed to swap ETH for wETH',
           severity: NotificationSeverity.Error,
         })
-        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-          captureException(error)
+        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
       } finally {
         SetIsSwapping(false)
       }

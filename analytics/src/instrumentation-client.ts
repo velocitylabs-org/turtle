@@ -1,4 +1,4 @@
-import { init, captureRouterTransitionStart } from '@sentry/nextjs'
+import { captureRouterTransitionStart, init } from '@sentry/nextjs'
 
 const isProduction = process.env.NODE_ENV === 'production'
 

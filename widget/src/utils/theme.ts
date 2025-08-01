@@ -83,21 +83,17 @@ export function generateWidgetTheme(theme?: WidgetTheme) {
   if (theme.secondary) root.style.setProperty(`--${key}-secondary`, theme.secondary)
   if (theme.secondaryDark) root.style.setProperty(`--${key}-secondary-dark`, theme.secondaryDark)
   if (theme.secondaryLight) root.style.setProperty(`--${key}-secondary-light`, theme.secondaryLight)
-  if (theme.secondaryTransparent)
-    root.style.setProperty(`--${key}-secondary-transparent`, theme.secondaryTransparent)
+  if (theme.secondaryTransparent) root.style.setProperty(`--${key}-secondary-transparent`, theme.secondaryTransparent)
   if (theme.secondary50) root.style.setProperty(`--${key}-secondary-50`, theme.secondary50)
-  if (theme.secondaryDark40)
-    root.style.setProperty(`--${key}-secondary-dark-40`, theme.secondaryDark40)
-  if (theme.secondaryLight50)
-    root.style.setProperty(`--${key}-secondary-light-50`, theme.secondaryLight50)
+  if (theme.secondaryDark40) root.style.setProperty(`--${key}-secondary-dark-40`, theme.secondaryDark40)
+  if (theme.secondaryLight50) root.style.setProperty(`--${key}-secondary-light-50`, theme.secondaryLight50)
 
   // Tertiary colors
   if (theme.tertiary) root.style.setProperty(`--${key}-tertiary`, theme.tertiary)
   if (theme.tertiaryDark) root.style.setProperty(`--${key}-tertiary-dark`, theme.tertiaryDark)
   if (theme.tertiaryLight) root.style.setProperty(`--${key}-tertiary-light`, theme.tertiaryLight)
   if (theme.tertiary70) root.style.setProperty(`--${key}-tertiary-70`, theme.tertiary70)
-  if (theme.tertiaryDark60)
-    root.style.setProperty(`--${key}-tertiary-dark-60`, theme.tertiaryDark60)
+  if (theme.tertiaryDark60) root.style.setProperty(`--${key}-tertiary-dark-60`, theme.tertiaryDark60)
 
   // Background and foreground
   if (theme.background) root.style.setProperty(`--${key}-background`, theme.background)
@@ -126,8 +122,7 @@ export function generateWidgetTheme(theme?: WidgetTheme) {
   if (theme.error10) root.style.setProperty(`--${key}-error-10`, theme.error10)
 
   // Dialog overlay
-  if (theme.dialogOverlayRgb)
-    root.style.setProperty(`--${key}-dialog-overlay-rgb`, theme.dialogOverlayRgb)
+  if (theme.dialogOverlayRgb) root.style.setProperty(`--${key}-dialog-overlay-rgb`, theme.dialogOverlayRgb)
   if (theme.dialogOverlayOpacity)
     root.style.setProperty(`--${key}-dialog-overlay-opacity`, theme.dialogOverlayOpacity.toString())
 

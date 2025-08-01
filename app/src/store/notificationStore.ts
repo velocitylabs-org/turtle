@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Notification } from '@/models/notification'
+import type { Notification } from '@/models/notification'
 
 interface State {
   // State

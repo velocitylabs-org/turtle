@@ -16,7 +16,7 @@ export default function GlobalError({ error }: ErrorProps) {
   }, [error])
 
   return (
-    <html>
+    <html lang="en">
       <body className="w-full">
         {/* background */}
         <Image

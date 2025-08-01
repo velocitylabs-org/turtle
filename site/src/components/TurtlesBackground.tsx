@@ -1,10 +1,4 @@
-export default function TurtlesBackground({
-  header,
-  children,
-}: {
-  header: string
-  children: React.ReactNode
-}) {
+export default function TurtlesBackground({ header, children }: { header: string; children: React.ReactNode }) {
   return (
     <div className="absolute top-0 z-0">
       <div className="turtle-background flex h-[78vh] w-screen flex-col items-center justify-center overflow-hidden bg-[url('/bg.png')] bg-cover bg-bottom">
@@ -28,10 +22,7 @@ export default function TurtlesBackground({
             shapeRendering="auto"
           >
             <defs>
-              <path
-                id="gentle-wave"
-                d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
-              />
+              <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
             </defs>
             <g className="parallax">
               <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(191,218,220,0.85" />

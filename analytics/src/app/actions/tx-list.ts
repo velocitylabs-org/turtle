@@ -34,9 +34,7 @@ export async function getTxList(page: number = 1) {
       .lean()
 
     // Apply the schema to each transaction
-    const serializedRecentTransactions = recentTransactions.map(transaction =>
-      transactionView.parse(transaction),
-    )
+    const serializedRecentTransactions = recentTransactions.map(transaction => transactionView.parse(transaction))
 
     return {
       txList: serializedRecentTransactions,

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import type * as React from 'react'
 import ReownProvider from './ReownProvider'
 
 export function Providers({ children }: { children: React.ReactNode }) {

@@ -22,8 +22,7 @@ export default function ErrorPanel({ error }: ErrorProps) {
         </div>
         <h1 className="text-3xl font-bold tracking-tighter sm:text-xl">Something went wrong</h1>
         <p className="text-muted-foreground">
-          We can not load the data you requested. This might be due to a network issue or a problem
-          with our servers.
+          We can not load the data you requested. This might be due to a network issue or a problem with our servers.
         </p>
         <div className="flex justify-center">
           <Button onClick={() => window.location.reload()} variant="outline" className="px-8">

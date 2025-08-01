@@ -1,11 +1,11 @@
 import {
-  Chain,
-  Token,
+  type Chain,
   isSameToken,
-  TokenAmount,
-  Route,
-  TransferSDK,
   MainnetRegistry,
+  type Route,
+  type Token,
+  type TokenAmount,
+  type TransferSDK,
 } from '@velocitylabs-org/turtle-registry'
 import {
   getSwapsDestinationChains,
@@ -47,11 +47,9 @@ export const getTransferTokens = (
 export const isRouteAllowed = (fromChain: Chain, toChain: Chain, tokenAmount?: TokenAmount) => {
   const routes = MainnetRegistry.routes
 
-  if (tokenAmount && tokenAmount.token) {
+  if (tokenAmount?.token) {
     const { id } = tokenAmount.token
-    return routes.some(
-      r => r.from === fromChain.uid && r.to === toChain.uid && r.tokens.includes(id),
-    )
+    return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid && r.tokens.includes(id))
   } else {
     return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid)
   }
@@ -64,9 +62,7 @@ export const isTokenAvailableForSourceChain = (
   allowedTokens?: Token['id'][] | undefined,
 ): boolean => {
   if (!sourceChain || !token) return false
-  return getTransferTokens(sourceChain, destinationChain ?? null, allowedTokens).some(
-    t => t.id === token.id,
-  )
+  return getTransferTokens(sourceChain, destinationChain ?? null, allowedTokens).some(t => t.id === token.id)
 }
 
 export const getAllowedSourceChains = (allowedChains?: Chain['uid'][]): Chain[] => {
@@ -115,10 +111,7 @@ export const getAllowedDestinationChains = (
   // Filters all chains by selected source chain, selected token and available routes
   const transferDestinationChains = filteredChains.filter(c =>
     MainnetRegistry.routes.some(
-      route =>
-        route.from === sourceChain.uid &&
-        route.tokens.includes(sourceToken.id) &&
-        route.to === c.uid,
+      route => route.from === sourceChain.uid && route.tokens.includes(sourceToken.id) && route.to === c.uid,
     ),
   )
   const swapDestinationChains = getSwapsDestinationChains(sourceChain, sourceToken)
@@ -152,22 +145,13 @@ export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
   return chain1.uid === chain2.uid
 }
 
-export const isSamePolkadotChain = (
-  sourceChain?: Chain | null,
-  destinationChain?: Chain | null,
-): boolean => {
+export const isSamePolkadotChain = (sourceChain?: Chain | null, destinationChain?: Chain | null): boolean => {
   return Boolean(
-    sourceChain &&
-      destinationChain &&
-      isSameChain(sourceChain, destinationChain) &&
-      sourceChain.network === 'Polkadot',
+    sourceChain && destinationChain && isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot',
   )
 }
 
-export const resolveSdk = (
-  sourceChain?: Chain | null,
-  destinationChain?: Chain | null,
-): TransferSDK | undefined => {
+export const resolveSdk = (sourceChain?: Chain | null, destinationChain?: Chain | null): TransferSDK | undefined => {
   if (!sourceChain || !destinationChain) return
 
   return isSamePolkadotChain(sourceChain, destinationChain)

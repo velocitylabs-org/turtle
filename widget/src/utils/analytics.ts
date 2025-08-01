@@ -1,11 +1,7 @@
 'use client'
 
-import { TransferParams } from '@/hooks/useTransfer'
-import {
-  ANALYTICS_DASHBOARD_BASE_URL,
-  isProduction,
-  ANALYTICS_WIDGET_AUTH_TOKEN,
-} from '@/utils/consts'
+import type { TransferParams } from '@/hooks/useTransfer'
+import { ANALYTICS_DASHBOARD_BASE_URL, ANALYTICS_WIDGET_AUTH_TOKEN, isProduction } from '@/utils/consts'
 import { toHuman } from '@/utils/transfer'
 
 interface TransferMetric {
@@ -56,9 +52,7 @@ export async function trackTransferMetrics({
     destinationTokenSymbol: transferParams.destinationToken.symbol,
 
     destinationTokenAmount,
-    destinationTokenAmountUsd: destinationTokenAmount
-      ? destinationTokenAmount * destinationTokenUSDValue
-      : undefined,
+    destinationTokenAmountUsd: destinationTokenAmount ? destinationTokenAmount * destinationTokenUSDValue : undefined,
     destinationTokenUSDValue: destinationTokenUSDValue,
     destinationTokenAmountRaw: transferParams.destinationAmount?.toString(),
 

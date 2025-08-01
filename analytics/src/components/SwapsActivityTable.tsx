@@ -1,17 +1,10 @@
 'use client'
 import { tokensById } from '@velocitylabs-org/turtle-registry'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral } from 'nuqs'
-import React, { useMemo } from 'react'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
+import { useMemo } from 'react'
 import { LogoImg } from '@/components/TokenAndOriginLogos'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -44,15 +37,9 @@ const sortDirectionsOptions = ['asc', 'desc'] as const
 const sortColumnQueryDefault = parseAsStringLiteral(sortColumnOptions).withDefault('outgoingVolume')
 const sortDirectionQueryDefault = parseAsStringLiteral(sortDirectionsOptions).withDefault('desc')
 
-export default function SwapsActivityTable({
-  tokens: initialTokens,
-  isLoading,
-}: TokensActivityTable) {
+export default function SwapsActivityTable({ tokens: initialTokens, isLoading }: TokensActivityTable) {
   const [sortColumn, setSortColumn] = useQueryState('sortColumn', sortColumnQueryDefault)
-  const [sortDirection, setSortDirection] = useQueryState(
-    'sortDirection',
-    sortDirectionQueryDefault,
-  )
+  const [sortDirection, setSortDirection] = useQueryState('sortDirection', sortDirectionQueryDefault)
 
   const tokens = useMemo(() => {
     if (isLoading || initialTokens.length === 0) return initialTokens
@@ -184,10 +171,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
     return (
       <TableRow key={0}>
         <TableCell colSpan={5} className="text-center">
-          <div
-            className="flex items-center justify-center"
-            style={{ height: 'calc(100vh - 300px)' }}
-          >
+          <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 300px)' }}>
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           </div>
         </TableCell>
@@ -199,10 +183,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
     return (
       <TableRow key={1}>
         <TableCell colSpan={5} className="text-center">
-          <div
-            className="flex items-center justify-center"
-            style={{ height: 'calc(100vh - 300px)' }}
-          >
+          <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 300px)' }}>
             <p>There are no recent tokens activity to display</p>
           </div>
         </TableCell>

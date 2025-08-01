@@ -1,8 +1,7 @@
 'use client'
-import React from 'react'
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, type TooltipProps } from 'recharts'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
-import { GraphType } from '@/constants'
+import type { GraphType } from '@/constants'
 import formatPercentage from '@/utils/format-percentage'
 import formatUSD from '@/utils/format-USD'
 import getTypeBadge from '@/utils/get-type-badge'
@@ -28,13 +27,7 @@ interface SwapPairsGraphProps {
 const colors = ['#2e4afb', '#22c55e', '#f59e0b', '#9eadc5']
 const minimumFragmentPercentage = 1.5 // Minimum percentage threshold to ensure pie chart segments are visible
 
-export default function SwapPairsGraph({
-  data = [],
-  loading,
-  type,
-  totalVolume,
-  totalSwaps,
-}: SwapPairsGraphProps) {
+export default function SwapPairsGraph({ data = [], loading, type, totalVolume, totalSwaps }: SwapPairsGraphProps) {
   if (loading) {
     return (
       <div className="flex h-[320px] w-full items-center justify-center">
@@ -148,7 +141,7 @@ function SwapPairLabel({ sourceTokenId, destinationTokenId, x, y, cx, cy }: Swap
   const angle = Math.atan2(y - cy, x - cx)
 
   // Calculate distance from the center
-  const distance = Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2))
+  const distance = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2)
   const padding = 16 // Adjust this value to control how far labels are from the pie
   const newDistance = distance + padding
 

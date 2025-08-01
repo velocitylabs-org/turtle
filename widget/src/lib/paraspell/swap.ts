@@ -1,14 +1,14 @@
 import { getExchangeAssets, RouterBuilder } from '@paraspell/xcm-router'
 import {
-  Chain,
-  Token,
-  isSameToken,
+  type Chain,
   getTokenByMultilocation,
   Hydration,
+  isSameToken,
   REGISTRY,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { TransferParams } from '@/hooks/useTransfer'
-import { SubstrateAccount } from '@/stores/substrateWalletStore'
+import type { TransferParams } from '@/hooks/useTransfer'
+import type { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { isSameChain } from '@/utils/routes'
 import { getParaSpellNode, getParaspellToken } from './transfer'
@@ -25,23 +25,14 @@ export const DEX_TO_CHAIN_MAP = {
 export type Dex = keyof typeof DEX_TO_CHAIN_MAP
 
 export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
-  const {
-    sourceChain,
-    destinationChain,
-    sourceToken,
-    destinationToken,
-    sourceAmount,
-    recipient,
-    sender,
-  } = params
+  const { sourceChain, destinationChain, sourceToken, destinationToken, sourceAmount, recipient, sender } = params
 
   const senderAddress = await getSenderAddress(sender)
   const account = params.sender as SubstrateAccount
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
 
-  if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer failed: chain id not found.')
+  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
   if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
     throw new Error('Transfer failed: Ethereum is not supported.')
 
@@ -58,7 +49,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     .slippagePct(slippagePct)
     .senderAddress(senderAddress)
     .recipientAddress(recipient)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: pjsSigner
     .signer(account.pjsSigner as any)
     .buildTransactions()
 
@@ -75,8 +66,7 @@ export const getExchangeOutputAmount = async (
 ): Promise<bigint> => {
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
-  if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer failed: chain id not found.')
+  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
   if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
     throw new Error('Transfer failed: Ethereum is not supported.')
 
@@ -124,10 +114,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
 }
 
 /** returns all allowed destination chains for a swap. Only supports 1-signature flows at the moment. */
-export const getSwapsDestinationChains = (
-  sourceChain: Chain | null,
-  sourceToken: Token | null,
-): Chain[] => {
+export const getSwapsDestinationChains = (sourceChain: Chain | null, sourceToken: Token | null): Chain[] => {
   if (!sourceChain || !sourceToken) return []
   const chains: Chain[] = []
 
@@ -175,9 +162,7 @@ export const getSwapsDestinationTokens = (
   if (isSameChain(sourceChain, destinationChain)) return dexTokensWithoutSourceToken
 
   // if destination chain is different, filter tokens by routes
-  const route = REGISTRY.routes.find(
-    route => route.from === sourceChain.uid && route.to === destinationChain.uid,
-  )
+  const route = REGISTRY.routes.find(route => route.from === sourceChain.uid && route.to === destinationChain.uid)
   if (!route) return []
 
   return dexTokensWithoutSourceToken.filter(token => route.tokens.includes(token.id))

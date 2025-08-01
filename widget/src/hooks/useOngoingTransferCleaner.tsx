@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
 import { getExplorerLink } from '@/utils/explorer'
 import { startedTooLongAgo } from '@/utils/transfer'
@@ -52,8 +52,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
         // captureException(new Error('Transfer tracking failed'), { extra: { ongoing } }) - Sentry
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ongoingTransfers])
+  }, [ongoingTransfers, addCompletedTransfer, addNotification, remove])
 }
 
 export default useOngoingTransfersCleaner

@@ -30,7 +30,7 @@ const WALLET_CONFIGS: Record<Wallet, WalletConfig> = {
 }
 
 const isNovaWallet = (window?: Window): boolean => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: any
   return !!(window && (window as any).walletExtension?.isNovaWallet === true)
 }
 
@@ -49,6 +49,7 @@ export const getWalletLogo = (name: Wallet | string, window?: Window): string =>
 /**
  * Get the weight of a wallet which used to sort the wallets deterministically.
  * @param name - The extension name of the wallet.
+ * @param window
  * @returns The weight of the wallet.
  */
 export const getWalletWeight = (name: Wallet | string, window?: Window): number => {
@@ -57,5 +58,4 @@ export const getWalletWeight = (name: Wallet | string, window?: Window): number 
   return WALLET_CONFIGS[name as Wallet]?.weight ?? 5
 }
 
-export const capitalizeFirstLetter = (text: string): string =>
-  text.charAt(0).toUpperCase() + text.slice(1)
+export const capitalizeFirstLetter = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1)

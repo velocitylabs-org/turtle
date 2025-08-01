@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { chainsByUid, tokensById } from '@velocitylabs-org/turtle-registry'
 import { ArrowRight, Check, ChevronLeft, Copy, Link2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { getTxDetail } from '@/app/actions/tx-detail'
 import ErrorPanel from '@/components/ErrorPanel'
 import { LogoImg } from '@/components/TokenAndOriginLogos'
@@ -63,8 +63,7 @@ export default function TransactionDetailPage() {
   const sourceChain = chainsByUid[transaction.sourceChainUid]
   const destinationChain = chainsByUid[transaction.destinationChainUid]
   const sourceToken = transaction.sourceTokenId && tokensById[transaction.sourceTokenId]
-  const destinationToken =
-    transaction.destinationTokenId && tokensById[transaction.destinationTokenId]
+  const destinationToken = transaction.destinationTokenId && tokensById[transaction.destinationTokenId]
   const feesToken = tokensById[transaction.feesTokenId]
   const bridgingFeeToken = tokensById[transaction.bridgingFeeTokenId || '']
   const explorerLinks = getExplorerLinks(transaction)
@@ -97,20 +96,12 @@ export default function TransactionDetailPage() {
           </Button>
           <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border px-2 py-1">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
-              <LogoImg
-                logoURI={getSrcFromLogo(sourceChain)}
-                size={25}
-                className="border border-black"
-              />
+              <LogoImg logoURI={getSrcFromLogo(sourceChain)} size={25} className="border border-black" />
               <div className="text-xs sm:text-sm">{sourceChain.name}</div>
             </div>
             <ArrowRight className="h-4 w-4" />
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
-              <LogoImg
-                logoURI={getSrcFromLogo(destinationChain)}
-                size={25}
-                className="border border-black"
-              />
+              <LogoImg logoURI={getSrcFromLogo(destinationChain)} size={25} className="border border-black" />
               <div className="text-xs sm:text-sm">{destinationChain.name}</div>
             </div>
           </div>
@@ -128,11 +119,7 @@ export default function TransactionDetailPage() {
                   chainUid={transaction.sourceChainUid}
                   size={35}
                 />
-                {sourceToken && (
-                  <span className="text-center text-sm text-muted-foreground">
-                    {sourceToken.symbol}
-                  </span>
-                )}
+                {sourceToken && <span className="text-center text-sm text-muted-foreground">{sourceToken.symbol}</span>}
               </div>
               {transaction.isSwap && transaction.destinationTokenAmount && (
                 <>
@@ -150,9 +137,7 @@ export default function TransactionDetailPage() {
                       size={35}
                     />
                     {destinationToken && (
-                      <span className="text-center text-sm text-muted-foreground">
-                        {destinationToken.symbol}
-                      </span>
+                      <span className="text-center text-sm text-muted-foreground">{destinationToken.symbol}</span>
                     )}
                   </div>
                 </>
@@ -176,10 +161,7 @@ export default function TransactionDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Status</span>
                 <div className="flex flex-row items-center">
-                  <Badge
-                    className="mr-2 text-white"
-                    style={{ background: statusColors[transaction.status].hex }}
-                  >
+                  <Badge className="mr-2 text-white" style={{ background: statusColors[transaction.status].hex }}>
                     {transaction.status}
                   </Badge>
                   <TransactionStatusIndicator status={transaction.status} logoOnly />
@@ -188,19 +170,14 @@ export default function TransactionDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Origin</span>
                 <div className="flex items-center gap-1">
-                  <ExternalLinkButton
-                    name={transaction.hostedOn.replace('https://', '')}
-                    url={transaction.hostedOn}
-                  />
+                  <ExternalLinkButton name={transaction.hostedOn.replace('https://', '')} url={transaction.hostedOn} />
                 </div>
               </div>
               <div className="items-top flex justify-between">
                 <span className="text-sm text-muted-foreground">Date</span>
                 <div className="flex flex-col items-end">
                   <div className="text-sm">{formatDate(transaction.txDate)}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {formatDateAgo(transaction.txDate)}
-                  </div>
+                  <div className="text-sm text-muted-foreground">{formatDateAgo(transaction.txDate)}</div>
                 </div>
               </div>
             </div>
@@ -240,20 +217,14 @@ export default function TransactionDetailPage() {
               <div className="text-sm text-muted-foreground">Execution</div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <LogoImg
-                    logoURI={getSrcFromLogo(feesToken)}
-                    size={24}
-                    className="border border-black"
-                  />
+                  <LogoImg logoURI={getSrcFromLogo(feesToken)} size={24} className="border border-black" />
                   <span className="text-sm">{feesToken.symbol}</span>
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-medium">
                     {transaction.feesTokenAmount} {feesToken.symbol}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    ${formatUSD(transaction.feesTokenAmountUsd)} USD
-                  </div>
+                  <div className="text-xs text-muted-foreground">${formatUSD(transaction.feesTokenAmountUsd)} USD</div>
                 </div>
               </div>
               {bridgingFeeToken && (
@@ -261,17 +232,11 @@ export default function TransactionDetailPage() {
                   <div className="text-sm text-muted-foreground">Bridging</div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <LogoImg
-                        logoURI={getSrcFromLogo(bridgingFeeToken)}
-                        size={24}
-                        className="border border-black"
-                      />
+                      <LogoImg logoURI={getSrcFromLogo(bridgingFeeToken)} size={24} className="border border-black" />
                       <span className="text-sm">{bridgingFeeToken.symbol}</span>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-medium">
-                        {transaction.bridgingFeeTokenAmount}
-                      </div>
+                      <div className="text-sm font-medium">{transaction.bridgingFeeTokenAmount}</div>
                       <div className="text-xs text-muted-foreground">
                         ${transaction.bridgingFeeTokenAmountUsd?.toLocaleString()}
                       </div>
@@ -318,13 +283,7 @@ function ExternalLinkButton({ name, url }: { name: string; url: string }) {
   )
 }
 
-function AddressDisplay({
-  address,
-  onCopy,
-}: {
-  address: string
-  onCopy: (address: string) => void
-}) {
+function AddressDisplay({ address, onCopy }: { address: string; onCopy: (address: string) => void }) {
   const [isCopied, setIsCopied] = useState(false)
 
   const truncateAddress = (addr: string) => {
@@ -340,9 +299,7 @@ function AddressDisplay({
 
   return (
     <div className="flex items-center justify-between rounded-md bg-slate-50 p-2">
-      <span className="truncate font-mono text-sm text-muted-foreground">
-        {truncateAddress(address)}
-      </span>
+      <span className="truncate font-mono text-sm text-muted-foreground">{truncateAddress(address)}</span>
       <div className="flex gap-2">
         <Button
           variant={isCopied ? null : 'ghost'}

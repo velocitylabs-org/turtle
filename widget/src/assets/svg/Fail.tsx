@@ -1,18 +1,11 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import { colors } from '../../../tailwind.config'
 
 export const Fail = ({
   fill = colors['turtle-error'],
   ...props
 }: ComponentPropsWithoutRef<'svg'> & { fill?: string }) => (
-  <svg
-    width="40"
-    height="40"
-    viewBox="0 0 40 40"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

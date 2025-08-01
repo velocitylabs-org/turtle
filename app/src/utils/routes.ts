@@ -1,11 +1,11 @@
 import {
-  TransferSDK,
-  Route,
-  MainnetRegistry,
-  Chain,
-  Token,
-  TokenAmount,
+  type Chain,
   isSameToken,
+  MainnetRegistry,
+  type Route,
+  type Token,
+  type TokenAmount,
+  type TransferSDK,
 } from '@velocitylabs-org/turtle-registry'
 
 import {
@@ -23,31 +23,22 @@ const deduplicate = <T extends { uid?: string; id?: string }>(items: T[]): T[] =
 
 /** Filters all chains by available routes. */
 export const getTransferSourceChains = (): Chain[] => {
-  return MainnetRegistry.chains.filter(chain =>
-    MainnetRegistry.routes.some(route => route.from === chain.uid),
-  )
+  return MainnetRegistry.chains.filter(chain => MainnetRegistry.routes.some(route => route.from === chain.uid))
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
-export const getTransferDestinationChains = (
-  sourceChain: Chain | null,
-  token: Token | null,
-): Chain[] => {
+export const getTransferDestinationChains = (sourceChain: Chain | null, token: Token | null): Chain[] => {
   if (!sourceChain || !token) return []
 
   return MainnetRegistry.chains.filter(c =>
     MainnetRegistry.routes.some(
-      route =>
-        route.from === sourceChain.uid && route.tokens.includes(token.id) && route.to === c.uid,
+      route => route.from === sourceChain.uid && route.tokens.includes(token.id) && route.to === c.uid,
     ),
   )
 }
 
 /** Filters all tokens by selected source chain and available routes */
-export const getTransferTokens = (
-  sourceChain: Chain | null,
-  destinationChain: Chain | null,
-): Token[] => {
+export const getTransferTokens = (sourceChain: Chain | null, destinationChain: Chain | null): Token[] => {
   if (!sourceChain) return []
 
   return MainnetRegistry.tokens.filter(token =>
@@ -64,11 +55,9 @@ export const getTransferTokens = (
 export const isRouteAllowed = (fromChain: Chain, toChain: Chain, tokenAmount?: TokenAmount) => {
   const routes = MainnetRegistry.routes
 
-  if (tokenAmount && tokenAmount.token) {
+  if (tokenAmount?.token) {
     const { id } = tokenAmount.token
-    return routes.some(
-      r => r.from === fromChain.uid && r.to === toChain.uid && r.tokens.includes(id),
-    )
+    return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid && r.tokens.includes(id))
   }
 
   return routes.some(r => r.from === fromChain.uid && r.to === toChain.uid)
@@ -90,10 +79,7 @@ export const getAllowedSourceChains = (): Chain[] => {
   return deduplicate([...transferSourceChains, ...swapSourceChains])
 }
 
-export const getAllowedSourceTokens = (
-  sourceChain: Chain | null,
-  destinationChain: Chain | null,
-): Token[] => {
+export const getAllowedSourceTokens = (sourceChain: Chain | null, destinationChain: Chain | null): Token[] => {
   if (!sourceChain) return []
 
   const transferTokens = getTransferTokens(sourceChain, destinationChain)
@@ -102,10 +88,7 @@ export const getAllowedSourceTokens = (
   return deduplicate([...transferTokens, ...swapTokens])
 }
 
-export const getAllowedDestinationChains = (
-  sourceChain: Chain | null,
-  sourceToken: Token | null,
-): Chain[] => {
+export const getAllowedDestinationChains = (sourceChain: Chain | null, sourceToken: Token | null): Chain[] => {
   if (!sourceChain || !sourceToken) return []
 
   const transferDestinationChains = getTransferDestinationChains(sourceChain, sourceToken)
@@ -140,16 +123,12 @@ export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
   return chain1.uid === chain2.uid
 }
 
-export const resolveSdk = (
-  sourceChain?: Chain | null,
-  destinationChain?: Chain | null,
-): TransferSDK | undefined => {
+export const resolveSdk = (sourceChain?: Chain | null, destinationChain?: Chain | null): TransferSDK | undefined => {
   if (!sourceChain || !destinationChain) {
     return
   }
 
-  const isSamePolkadotChain =
-    isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
+  const isSamePolkadotChain = isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
 
   return isSamePolkadotChain ? 'ParaSpellApi' : getRoute(sourceChain, destinationChain)?.sdk
 }
