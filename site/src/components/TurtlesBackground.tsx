@@ -19,24 +19,17 @@ const TurtlesBackground = ({
     <>
       <div
         className={cn(
-          'turtle-background relative flex min-h-[120vh] w-screen flex-col items-center justify-center overflow-hidden bg-cover bg-bottom',
+          'turtle-background relative h-[160vh] w-screen overflow-hidden md:h-[120vh]',
           blurredBackground && 'turtle-background-blurred',
         )}
       >
-        <div
-          className={cn(
-            'turtle-dark-overlay flex w-screen flex-1 flex-col items-center justify-center',
-            children && 'pb-30',
+        <div className="pb-30 relative z-50 mx-[4vw] my-[7rem] flex flex-col items-center">
+          {header && (
+            <h1 className="turtle-text-shadow relative m-0 text-center text-[11vw] leading-[100%] text-white sm:text-[9vw] 3xl:text-[10rem]">
+              {header}
+            </h1>
           )}
-        >
-          <div className="m-[4vw] items-center">
-            {header && (
-              <h1 className="turtle-text-shadow m-0 text-center text-[11vw] leading-[100%] text-white sm:text-[9vw] 3xl:text-[10rem]">
-                {header}
-              </h1>
-            )}
-            {children}
-          </div>
+          {children}
         </div>
       </div>
 

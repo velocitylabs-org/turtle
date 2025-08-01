@@ -33,14 +33,14 @@ const Divider = () => {
 export default function Widget() {
   return (
     <>
-      <section className="relative flex flex-col items-center">
+      <section className="relative">
         <TurtlesBackground blurredBackground whiteWaves>
-          <div className="mt-16 flex flex-col gap-14 p-6 md:mt-0 md:p-0">
+          <div className="flex flex-col gap-14">
             <div className="relative flex flex-col items-center md:translate-x-[7.5%] md:flex-row">
               <div className="flex rounded-4xl border border-black bg-white p-8 pb-24 md:pb-8 lg:w-[656px]">
-                <div className="flex flex-col gap-20 lg:max-w-[375px]">
+                <div className="flex flex-col gap-10 md:gap-20 lg:max-w-[375px]">
                   <LargeHeading className="leading-none">Turtle Widget</LargeHeading>
-                  <div className="flex flex-col gap-10">
+                  <div className="flex flex-col gap-5 md:gap-10">
                     <h2 className="text-section-title leading-none">
                       All of Polkadot on your dApp in minutes
                     </h2>

@@ -87,16 +87,6 @@
     letter-spacing: var(--letter-spacing-sm);
   }
 
-  .turtle-dark-overlay {
-    background-color: rgba(0, 0, 0, 0.3);
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    z-index: 1;
-  }
-
   h1.turtle-text-shadow {
     text-shadow: #000000cc 0px 4px 44px;
   }
@@ -189,7 +179,7 @@ input[type='number']::-webkit-inner-spin-button {
 }
 .turtle-wrapper form.rounded-2xl:first-of-type,
 .widget-loader {
-  box-shadow: -8px -8px 0px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: -8px 8px 8px 0px rgba(0, 27, 4, 0.1);
 }
 
 .turtle-background::before {
@@ -203,4 +193,11 @@ input[type='number']::-webkit-inner-spin-button {
 
 .turtle-background-blurred::before {
   filter: blur(12px);
+}
+
+@media (max-width: 640px) {
+  .turtle-wrapper form.rounded-2xl:first-of-type,
+  .widget-loader {
+    box-shadow: -8px -8px 8px 0px rgba(0, 0, 0, 0.1);
+  }
 }

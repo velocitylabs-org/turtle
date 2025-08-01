@@ -32,7 +32,7 @@ export default function Header() {
       <nav>
         <ul className="flex items-center gap-2">
           <li>
-            <Link className="text-white" href={isWidget ? '/' : '/widget'}>
+            <Link className="turtle-text-shadow text-white" href={isWidget ? '/' : '/widget'}>
               {isWidget ? 'Discover Turtle' : 'Discover the widget'}
             </Link>
           </li>

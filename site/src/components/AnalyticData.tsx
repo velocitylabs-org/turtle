@@ -37,7 +37,7 @@ function AnalyticDataClient({ initialVolume }: AnalyticDataProps) {
   const value = realTimeData?.totalVolumeUsd || initialVolume || 0
 
   return (
-    <div className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
+    <div className="relative my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
       <div className="flex items-center gap-2 rounded-full border border-black bg-turtle-primary px-4 py-2 md:px-5 md:py-3">
         <BoltIcon />
         <span className="text-[16px] text-black md:text-[18px] lg:text-[20px]">
