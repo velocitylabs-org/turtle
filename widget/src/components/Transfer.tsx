@@ -88,7 +88,6 @@ const Transfer: FC = () => {
     isValid,
     isValidating,
     handleSubmit,
-    environment,
     sourceChain,
     destinationChain,
     handleSourceChainChange,
@@ -141,7 +140,6 @@ const Transfer: FC = () => {
     swapEthtoWEth,
     isSwapping: isSwappingEthForWEth,
   } = useEthForWEthSwap({
-    env: environment,
     context: snowbridgeContext,
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,

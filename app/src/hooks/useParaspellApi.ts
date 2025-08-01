@@ -77,7 +77,6 @@ const useParaspellApi = () => {
       sourceAmount: params.sourceAmount.toString(),
       recipient: params.recipient,
       date,
-      environment: params.environment,
       bridgingFee: params.bridgingFee,
       fees: params.fees,
       status: `Submitting to ${params.sourceChain.name}`,
@@ -181,7 +180,6 @@ const useParaspellApi = () => {
           sourceAmount: params.sourceAmount.toString(),
           recipient: params.recipient,
           date,
-          environment: params.environment,
           bridgingFee: params.bridgingFee,
           fees: params.fees,
           status: `Submitting to ${params.sourceChain.name}`,
@@ -201,13 +199,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(
-            params.sender,
-            error,
-            setStatus,
-            event.txHash.toString(),
-            params.environment,
-          )
+          handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
       },
       error: callbackError => {
@@ -262,7 +254,6 @@ const useParaspellApi = () => {
           destinationAmount: params.destinationAmount?.toString(),
           recipient: params.recipient,
           date,
-          environment: params.environment,
           fees: params.fees,
           bridgingFee: params.bridgingFee,
           status: `Submitting to ${params.sourceChain.name}`,
@@ -284,13 +275,7 @@ const useParaspellApi = () => {
             })
           })
         } catch (error) {
-          handleSendError(
-            params.sender,
-            error,
-            setStatus,
-            event.txHash.toString(),
-            params.environment,
-          )
+          handleSendError(params.sender, error, setStatus, event.txHash.toString())
         }
       },
       error: callbackError => {
@@ -392,7 +377,6 @@ const useParaspellApi = () => {
     updateTransferMetrics({
       txHashId: transfer.id,
       status: txSuccessful ? TxStatus.Succeeded : TxStatus.Failed,
-      environment: transfer.environment,
     })
   }
 
@@ -468,7 +452,6 @@ const useParaspellApi = () => {
     e: unknown,
     setStatus: (status: Status) => void,
     txId?: string,
-    environment?: string,
   ) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
@@ -483,11 +466,10 @@ const useParaspellApi = () => {
       severity: NotificationSeverity.Error,
     })
 
-    if (txId && environment) {
+    if (txId) {
       updateTransferMetrics({
         txHashId: txId,
         status: TxStatus.Failed,
-        environment: environment,
       })
     }
   }

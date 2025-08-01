@@ -242,7 +242,6 @@ const updateTransferStatus = (
     updateTransferMetrics({
       txHashId: transfer.id,
       status,
-      environment: transfer.environment,
     })
 
     if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
