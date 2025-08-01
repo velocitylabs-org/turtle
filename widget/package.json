@@ -51,7 +51,7 @@
     "ethers": "^6.15.0",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
-    "polkadot-api": "^1.13.1",
+    "polkadot-api": "^1.8.4",
     "postcss-nesting": "^13.0.1",
     "react-hook-form": "^7.54.2",
     "tailwind-merge": "^3.0.1",

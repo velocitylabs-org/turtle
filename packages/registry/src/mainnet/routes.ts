@@ -1,4 +1,4 @@
-import type { Route } from '../types'
+import type { Route } from '@/types'
 import {
   Acala,
   AssetHub,
