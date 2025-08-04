@@ -6,11 +6,13 @@ import getAnalyticsData from '@/actions/analytics'
 import { QueryProvider } from '@/providers/queryProvider'
 
 const format = {
-  style: 'currency',
-  currency: 'USD',
-  trailingZeroDisplay: 'stripIfInteger',
+  style: 'decimal',
+  minimumFractionDigits: 0,
   maximumFractionDigits: 1,
+  trailingZeroDisplay: 'stripIfInteger',
 } as const
+
+const lastKnownVolume = 10123001
 
 interface AnalyticDataProps {
   initialVolume: number | undefined
@@ -34,14 +36,14 @@ function AnalyticDataClient({ initialVolume }: AnalyticDataProps) {
   })
 
   // Fallback to initialVolume when realTimeData is loading or unavailable to avoid empty state on first render
-  const value = realTimeData?.totalVolumeUsd || initialVolume || 0
+  const value = realTimeData?.totalVolumeUsd || initialVolume || lastKnownVolume
 
   return (
     <div className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
       <div className="flex items-center gap-2 rounded-[40px] border border-black bg-turtle-primary px-6 py-3">
         <div className="flex-col items-center justify-center text-[16px] text-black md:text-[18px] lg:text-[20px]">
           <div className="text-center text-[28px] font-bold sm:text-[32px]">
-            <NumberFlow value={value} format={format} />
+            <NumberFlow value={value} format={format} prefix="$" />
           </div>
           <div className="relative top-[-5px] text-[18px] leading-tight sm:text-[20px]">
             Funds moved through Turtle
