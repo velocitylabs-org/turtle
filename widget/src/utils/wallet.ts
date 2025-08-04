@@ -1,4 +1,4 @@
-import DefaultWalletLogo from '@/assets/svg/wallet.svg'
+import DefaultWalletLogo from '@velocitylabs-org/turtle-assets/icons/wallet.svg'
 import FearlessLogo from '@/assets/wallets-logo/fearless.svg'
 import NovaWalletLogo from '@/assets/wallets-logo/novawallet.svg'
 import PolkadotLogo from '@/assets/wallets-logo/polkadotjs.svg'

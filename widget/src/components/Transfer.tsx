@@ -1,3 +1,4 @@
+import WalletIcon from '@velocitylabs-org/turtle-assets/icons/wallet.svg'
 import { Balance, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
 import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
@@ -447,14 +448,7 @@ const Transfer: FC = () => {
               disabled={isApprovingErc20Spend}
               header="Approve ERC-20 token spend"
               text={`We first need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
-              image={
-                <img
-                  src={'./src/assets/svg/wallet.svg'}
-                  alt={'Wallet illustration'}
-                  width={64}
-                  height={64}
-                />
-              }
+              image={<img src={WalletIcon} alt={'Wallet illustration'} width={64} height={64} />}
               btn={approveAllowanceButton}
             />
           </motion.div>
@@ -478,14 +472,7 @@ const Transfer: FC = () => {
               disabled={isSwappingEthForWEth}
               header={'Swap ETH for wETH'}
               text={'Your wETH balance is insufficient but you got enough ETH.'}
-              image={
-                <img
-                  src={'./src/assets/svg/wallet.svg'}
-                  alt={'Wallet illustration'}
-                  width={64}
-                  height={64}
-                />
-              }
+              image={<img src={WalletIcon} alt={'Wallet illustration'} width={64} height={64} />}
               btn={swapEthToWEthButton}
             />
           </motion.div>
