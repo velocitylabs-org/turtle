@@ -404,7 +404,10 @@ const useTransferForm = () => {
           setMinSwapAmoutError(
             `Minimum swap amount: ${minimumAmount} ${sourceToken.symbol.toUpperCase()}`,
           )
-        } else setMinSwapAmoutError('')
+        return 
+      }
+      
+      setMinSwapAmountError('')
       }
     }
     validateChainflipSwap()
