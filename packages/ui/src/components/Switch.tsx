@@ -1,5 +1,5 @@
-import { cn } from '@velocitylabs-org/turtle-ui'
 import { forwardRef } from 'react'
+import { cn } from '@velocitylabs-org/turtle-ui'
 
 interface SwitchProps {
   /** The current state of the switch, true for on and false for off. */
@@ -28,7 +28,6 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
           role="switch"
           aria-checked={checked}
           disabled={disabled}
-          data-cy="switch"
           onClick={() => !disabled && onChange(!checked)}
         >
           <span
@@ -39,7 +38,7 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
           />
         </button>
         {label && (
-          <span className={cn('self-center text-sm', disabled ? 'text-turtle-level4' : '')}>
+          <span className={cn('self-center text-sm', disabled && 'text-turtle-level4')}>
             {label}
           </span>
         )}
@@ -50,4 +49,4 @@ const Switch = forwardRef<HTMLDivElement, SwitchProps>(
 
 Switch.displayName = 'Switch'
 
-export default Switch
+export { Switch }

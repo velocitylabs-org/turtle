@@ -1,4 +1,5 @@
 import { TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { LoadingIcon, cn } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
@@ -7,7 +8,6 @@ import useTokenPrice from '@/hooks/useTokenPrice'
 import { AmountInfo } from '@/models/transfer'
 import { AMOUNT_VS_FEE_RATIO } from '@/utils/consts'
 import { toAmountInfo, Direction, formatAmount, toHuman } from '@/utils/transfer'
-import { colors } from '../../tailwind.config'
 import Delayed from './Delayed'
 
 interface TxSummaryProps {
