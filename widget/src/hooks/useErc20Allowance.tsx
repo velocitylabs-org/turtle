@@ -32,6 +32,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       !tokenAmount.amount ||
       tokenAmount.amount <= 0 ||
       !tokenAmount.token ||
+      tokenAmount.token.id === 'eth' ||
       !owner
     ) {
       setAllowance(undefined)
