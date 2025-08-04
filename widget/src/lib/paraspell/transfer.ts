@@ -17,7 +17,6 @@ import {
   getAssetUid,
   REGISTRY,
   EthereumTokens,
-  Environment,
   Network,
 } from '@velocitylabs-org/turtle-registry'
 import { TransferParams } from '@/hooks/useTransfer'
@@ -174,17 +173,6 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
 }
 
-export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
-  switch (network) {
-    case 'Polkadot':
-      return 'polkadot'
-    case 'Kusama':
-      return 'kusama'
-    default:
-      throw new Error('Cannot find relay node. Unsupported environment')
-  }
-}
-
 /**
  * Get the ParaSpell currency id in the form of `TCurrencyCore`.
  *
@@ -193,24 +181,22 @@ export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
  *
  * */
 export function getCurrencyId(
-  env: Environment,
   node: TNodeWithRelayChains,
   chainId: string,
   token: Token,
 ): TCurrencyCore {
-  return getAssetUid(env, chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
+  return getAssetUid(chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
 }
 
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const relay = getRelayNode(chain.network)
-  const chainNode = getTNode(chain.chainId, relay)
-  if (!chainNode)
-    throw Error(`Can't find chain ${chain.uid} (id ${chain.chainId}) under the relay ${relay}`)
+  const ecosystem = toPsEcosystem(chain.network)
+  const chainNode = getTNode(chain.chainId, ecosystem)
+  if (!chainNode) throw Error(`ChainNode with id ${chain.uid} not found in ${ecosystem}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
-  const token = REGISTRY[Environment.Mainnet].tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
+  const token = REGISTRY.tokens.find(t => t.symbol === symbol) // TODO handle duplicate symbols
   if (!token) throw Error(`Native Token for ${chain.uid} not found`)
   return token
 }

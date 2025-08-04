@@ -18,7 +18,6 @@ import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { toHuman } from '@/utils/transfer'
 import useBalance from './useBalance'
-import useEnvironment from './useEnvironment'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
@@ -44,16 +43,13 @@ const useFees = (
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
     useSnowbridgeContext()
   const { addNotification } = useNotification()
-  const env = useEnvironment()
   const { balance: feeBalance } = useBalance({
-    env: env,
     chain: sourceChain,
     token: sourceChain ? getNativeToken(sourceChain) : undefined,
     address: senderAddress,
   })
 
   const { balance: dotBalance } = useBalance({
-    env: env,
     chain: sourceChain,
     token: isChainSupportingToken(sourceChain, PolkadotTokens.DOT) ? PolkadotTokens.DOT : undefined,
     address: senderAddress,
@@ -203,7 +199,6 @@ const useFees = (
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    env,
     sourceChain,
     destinationChain,
     token?.id,

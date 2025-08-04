@@ -52,7 +52,7 @@ export default function RecentTransactionsTable({
             <TableRow key={1}>
               <TableCell colSpan={6} className="text-center">
                 <div className="flex h-[450px] items-center justify-center">
-                  <p>There are no recent transactions to display</p>
+                  <p>There are no transactions to display</p>
                 </div>
               </TableCell>
             </TableRow>
@@ -60,10 +60,14 @@ export default function RecentTransactionsTable({
             transactions.map(tx => (
               <TableRow key={tx._id} className="hover:bg-muted/50">
                 <Link
-                  href={`/tx-detail/${tx._id}`}
+                  href={`/detail/${tx._id}`}
                   className="contents cursor-pointer"
                   prefetch
-                  onClick={() => start()}
+                  onClick={() => {
+                    // Store current scroll position before navigating
+                    sessionStorage.setItem('previousPageScrollY', window.scrollY.toString())
+                    start()
+                  }}
                 >
                   <TableCell>
                     <div className="flex items-center">
