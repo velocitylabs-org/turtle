@@ -12,7 +12,7 @@ const format = {
   trailingZeroDisplay: 'stripIfInteger',
 } as const
 
-const defaultVolume = 10123001
+const lastKnownVolume = 10123001
 
 interface AnalyticDataProps {
   initialVolume: number | undefined
@@ -36,7 +36,7 @@ function AnalyticDataClient({ initialVolume }: AnalyticDataProps) {
   })
 
   // Fallback to initialVolume when realTimeData is loading or unavailable to avoid empty state on first render
-  const value = realTimeData?.totalVolumeUsd || initialVolume || defaultVolume
+  const value = realTimeData?.totalVolumeUsd || initialVolume || lastKnownVolume
 
   return (
     <div className="relative z-50 my-[8vw] flex h-auto w-full flex-col items-center justify-center md:my-[6vw] lg:my-[4vw]">
