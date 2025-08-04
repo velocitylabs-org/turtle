@@ -114,7 +114,7 @@ export default function Transfer() {
     canPayAdditionalFees,
     transferStatus,
     sourceTokenAmountError,
-    minSwapAmoutError,
+    minSwapAmountError,
     manualRecipientError,
     isBalanceAvailable,
     loadingBalance,
@@ -262,14 +262,14 @@ export default function Transfer() {
 
   const sourceTokenAmountErrorMessage = useMemo(() => {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
-    if (minSwapAmoutError) return minSwapAmoutError
+    if (minSwapAmountError) return minSwapAmountError
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
     return undefined
   }, [
     errors.sourceTokenAmount?.amount?.message,
     sourceTokenAmountError,
-    minSwapAmoutError,
+    minSwapAmountError,
     exceedsTransferableBalance,
     fees,
   ])

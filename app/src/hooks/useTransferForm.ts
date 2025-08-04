@@ -76,7 +76,7 @@ const useTransferForm = () => {
   const destToken = useWatch({ control, name: 'destinationTokenAmount.token' })
 
   const [sourceTokenAmountError, setSourceTokenAmountError] = useState<string>('') // validation on top of zod
-  const [minSwapAmoutError, setMinSwapAmoutError] = useState<string>('') // validation on top of zod
+  const [minSwapAmountError, setMinSwapAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
@@ -91,7 +91,7 @@ const useTransferForm = () => {
   } = useFees(
     sourceChain,
     destinationChain,
-    sourceTokenAmountError == '' && minSwapAmoutError == '' ? sourceTokenAmount?.token : null,
+    sourceTokenAmountError == '' && minSwapAmountError == '' ? sourceTokenAmount?.token : null,
     sourceTokenAmount?.amount,
     sourceWallet?.sender?.address,
     getRecipientAddress(manualRecipient, destinationWallet),
@@ -135,7 +135,7 @@ const useTransferForm = () => {
   const isFormValid =
     isValidZodSchema &&
     !sourceTokenAmountError &&
-    !minSwapAmoutError &&
+    !minSwapAmountError &&
     !manualRecipientError &&
     sourceWallet?.isConnected &&
     !loadingBalance &&
@@ -388,7 +388,7 @@ const useTransferForm = () => {
         !destToken ||
         !sourceTokenAmount?.amount
       ) {
-        setMinSwapAmoutError('')
+        setMinSwapAmountError('')
         return
       }
 
@@ -401,13 +401,13 @@ const useTransferForm = () => {
         const formatAmount = safeConvertAmount(sourceTokenAmount.amount, sourceToken)
         if (formatAmount && !meetChainflipMinSwapAmount(formatAmount, srcAsset)) {
           const minimumAmount = toHuman(BigInt(srcAsset.minimumSwapAmount), sourceToken)
-          setMinSwapAmoutError(
+          setMinSwapAmountError(
             `Minimum swap amount: ${minimumAmount} ${sourceToken.symbol.toUpperCase()}`,
           )
-        return 
-      }
-      
-      setMinSwapAmountError('')
+          return
+        }
+
+        setMinSwapAmountError('')
       }
     }
     validateChainflipSwap()
@@ -520,7 +520,7 @@ const useTransferForm = () => {
     canPayAdditionalFees,
     transferStatus,
     sourceTokenAmountError,
-    minSwapAmoutError,
+    minSwapAmountError,
     manualRecipientError,
     isBalanceAvailable: balanceData?.value != undefined,
     loadingBalance,
