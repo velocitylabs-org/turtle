@@ -853,6 +853,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.24.0
         version: 8.34.0(eslint@9.28.0(jiti@2.4.2))(typescript@5.7.3)
+      '@velocitylabs-org/turtle-assets':
+        specifier: workspace:*
+        version: link:../packages/assets
       '@velocitylabs-org/turtle-eslint-config':
         specifier: workspace:*
         version: link:../packages/eslint-config
