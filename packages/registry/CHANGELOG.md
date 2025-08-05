@@ -1,5 +1,16 @@
 # @velocitylabs-org/turtle-registry
 
+## 0.0.8
+
+### Patch Changes
+
+- 0a49f85: refactor: Drop Environment type
+- cfe83db: fix: tracking the execute function correctly
+- Updated dependencies [2e0f581]
+- Updated dependencies [2e0f581]
+- Updated dependencies [0a49f85]
+  - @velocitylabs-org/turtle-assets@0.0.5
+
 ## 0.0.7
 
 ### Patch Changes
