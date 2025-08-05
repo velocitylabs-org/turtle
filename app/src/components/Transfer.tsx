@@ -6,19 +6,21 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
+import { useChainflipQuote } from '@/hooks/useChainflipQuote'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
+import { getChainflipDurationEstimate } from '@/utils/chainflip'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, safeConvertAmount } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
@@ -108,6 +110,7 @@ export default function Transfer() {
     destinationWallet,
     fees,
     bridgingFee,
+    chainflipFees,
     refetchFees,
     loadingFees,
     canPayFees,
@@ -147,6 +150,15 @@ export default function Transfer() {
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,
     owner: sourceWallet?.sender?.address,
+  })
+
+  const { chainflipQuote } = useChainflipQuote({
+    sourceChain,
+    destinationChain,
+    sourceToken: sourceTokenAmount?.token,
+    destinationToken: destinationTokenAmount?.token,
+    amount:
+      safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? '0',
   })
 
   const requiresErc20SpendApproval =
@@ -191,14 +203,16 @@ export default function Transfer() {
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
-  const durationEstimate = direction ? getDurationEstimate(direction) : undefined
+  const durationEstimate = direction
+    ? (getChainflipDurationEstimate(chainflipQuote) ?? getDurationEstimate(direction))
+    : undefined
 
   const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
 
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    fees &&
+    (fees || chainflipFees?.length) &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
@@ -481,6 +495,7 @@ export default function Transfer() {
             tokenAmount={sourceTokenAmount}
             fees={fees}
             bridgingFee={bridgingFee}
+            chainflipFees={chainflipFees}
             durationEstimate={durationEstimate}
             canPayFees={canPayFees}
             canPayAdditionalFees={canPayAdditionalFees}
