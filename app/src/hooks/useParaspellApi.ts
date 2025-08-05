@@ -57,7 +57,6 @@ const useParaspellApi = () => {
   ) => {
     await switchChain(config, { chainId: moonbeam.id })
     const hash = await evmTransferBuilderManager.transferTx(params, viemClient as Client)
-    setStatus('Signing')
 
     const senderAddress = await getSenderAddress(params.sender)
     const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
