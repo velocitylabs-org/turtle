@@ -85,8 +85,13 @@ class XcmTransferBuilderManager {
     }
   }
 
-  async getTransferableAmount(params: TransferParams) {
-    const builder = this.getBuilder(params)
+  async getTransferableAmount(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+    >,
+  ) {
+    const builder = this.getBuilder(params as TransferParams)
     return await (
       builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
     ).getTransferableAmount()

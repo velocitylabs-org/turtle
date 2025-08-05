@@ -14,7 +14,7 @@ import { mainnet } from 'viem/chains'
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
 import { useOutputAmount } from '@/hooks/useOutputAmount'
-import useTransfer, { TransferParams } from '@/hooks/useTransfer'
+import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
@@ -253,9 +253,7 @@ const useTransferForm = () => {
         sender: sourceWallet.sender,
         sourceAmount: balanceData.value,
       }
-      const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(
-        params as unknown as TransferParams,
-      )
+      const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
 
       setValue(
         'sourceTokenAmount',
