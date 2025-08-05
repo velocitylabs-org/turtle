@@ -20,7 +20,7 @@ cd my-new-package
   "description": "Describe your package here",
   "type": "module",
   "author": "Stefano Imparato <stefano@velocitylabs.org>", //only if you're me
-  // if applciable, in the case of configs, these are useless
+  // if applicable, in the case of configs, these are useless
   "scripts": {
     // tsc-alias might not be always necessary
     "build": "tsc -b && tsc-alias",
