@@ -37,10 +37,10 @@ const useTransfer = () => {
 
   // The entry point function which is exposed to the components
   const transfer = async (transferDetails: TransferParams) => {
-    const { sourceChain, destinationChain } = transferDetails
+    const { sourceChain, destinationChain, sourceToken, destinationToken } = transferDetails
     setStatus('Loading')
 
-    const sdk = resolveSdk(sourceChain, destinationChain)
+    const sdk = resolveSdk(sourceChain, destinationChain, sourceToken, destinationToken)
     if (!sdk) throw new Error('Route not supported')
 
     switch (sdk) {

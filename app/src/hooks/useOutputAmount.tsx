@@ -93,13 +93,7 @@ export function useOutputAmount({
 
   // The following hook (react-query) is used to fetch chainflip quote.
   // The quote defined the swap output amount.
-  const {
-    chainflipQuote,
-    isLoadingChainflipQuote,
-    isFetchingChainflipQuote,
-    // isErrorChainflipQuote,
-    // errorChainflipQuote,
-  } = useChainflipQuote({
+  const { chainflipQuote, isLoadingChainflipQuote, isFetchingChainflipQuote } = useChainflipQuote({
     sourceChain,
     destinationChain,
     sourceToken,

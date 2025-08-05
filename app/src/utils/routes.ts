@@ -13,6 +13,7 @@ import {
   getChainflipSwapDestTokens,
   getChainflipSwapSourceChains,
   getChainflipSwapSourceTokens,
+  isChainflipSwap,
 } from './chainflip'
 import {
   getSwapsDestinationChains,
@@ -165,13 +166,19 @@ export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
 export const resolveSdk = (
   sourceChain?: Chain | null,
   destinationChain?: Chain | null,
+  sourceToken?: Token | null,
+  destinationToken?: Token | null,
 ): TransferSDK | undefined => {
-  if (!sourceChain || !destinationChain) {
+  if (!sourceChain || !destinationChain || !sourceToken || !destinationToken) {
     return
   }
 
   const isSamePolkadotChain =
     isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
+  if (isSamePolkadotChain) return 'ParaSpellApi'
 
-  return isSamePolkadotChain ? 'ParaSpellApi' : getRoute(sourceChain, destinationChain)?.sdk
+  if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken))
+    return 'ChainflipApi'
+
+  return getRoute(sourceChain, destinationChain)?.sdk
 }
