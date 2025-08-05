@@ -2,7 +2,6 @@ import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
-import { TransferParams } from '@/hooks/useTransfer'
 import { AmountInfo } from '@/models/transfer'
 import xcmRouterBuilderManager from '@/services/xcmRouterBuilder'
 
@@ -53,11 +52,9 @@ export function useOutputAmount({
             destinationChain,
             sourceToken,
             destinationToken,
-            sourceAmount: amount,
+            sourceAmount: BigInt(amount),
           }
-          const output = await xcmRouterBuilderManager.getExchangeOutputAmount(
-            params as unknown as TransferParams,
-          )
+          const output = await xcmRouterBuilderManager.getExchangeOutputAmount(params)
           return output
         }
 

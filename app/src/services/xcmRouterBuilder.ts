@@ -85,9 +85,15 @@ class XcmRouterBuilderManager {
     }
   }
 
-  async getExchangeOutputAmount(params: TransferParams, exchange: Dex = 'HydrationDex') {
+  async getExchangeOutputAmount(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken' | 'sourceAmount'
+    >,
+    exchange: Dex = 'HydrationDex',
+  ) {
     try {
-      const builder = this.getBuilder(params, exchange)
+      const builder = this.getBuilder(params as TransferParams, exchange)
       const amountOut = await (builder as any).getBestAmountOut()
       return amountOut.amountOut
     } catch (error) {
