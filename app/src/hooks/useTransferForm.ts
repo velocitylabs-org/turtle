@@ -14,12 +14,12 @@ import { mainnet } from 'viem/chains'
 import { config } from '@/config'
 import useBalance from '@/hooks/useBalance'
 import { useOutputAmount } from '@/hooks/useOutputAmount'
-import useTransfer from '@/hooks/useTransfer'
+import useTransfer, { TransferParams } from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
+import xcmTransferBuilderManager from '@/services/xcmTransferBuilder'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
-import { getTransferableAmount } from '@/utils/paraspellTransfer'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import useFees from './useFees'
@@ -245,13 +245,16 @@ const useTransferForm = () => {
       const recipient =
         getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
 
-      const transferableAmount = await getTransferableAmount(
+      const params = {
         sourceChain,
         destinationChain,
-        sourceTokenAmount.token,
+        sourceToken: sourceTokenAmount.token,
         recipient,
-        sourceWallet.sender.address,
-        balanceData.value,
+        sender: sourceWallet.sender,
+        sourceAmount: balanceData.value,
+      }
+      const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(
+        params as unknown as TransferParams,
       )
 
       setValue(
