@@ -8,6 +8,7 @@ import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
+import { ChainflipFee, getFeeTokenFromAssetSymbol } from '@/utils/chainflip'
 import {
   getNativeToken,
   getParaSpellNode,
@@ -16,8 +17,9 @@ import {
 } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
-import { toHuman } from '@/utils/transfer'
+import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import useBalance from './useBalance'
+import { useChainflipQuote } from './useChainflipQuote'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
 // NOTE: when bridging from Parachain -> Ethereum, we have the local execution fees + the bridging fees.
@@ -37,6 +39,7 @@ const useFees = (
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
+  const [chainflipFees, setChainflipFees] = useState<ChainflipFee[] | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -55,6 +58,14 @@ const useFees = (
     address: senderAddress,
   })
 
+  const { chainflipQuote, isLoadingChainflipQuote, isFetchingChainflipQuote } = useChainflipQuote({
+    sourceChain,
+    destinationChain,
+    sourceToken: token,
+    destinationToken: destToken,
+    amount: safeConvertAmount(amount, token)?.toString() ?? '0',
+  })
+
   const fetchFees = useCallback(async () => {
     if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
@@ -62,7 +73,7 @@ const useFees = (
       return
     }
 
-    const sdk = resolveSdk(sourceChain, destinationChain)
+    const sdk = resolveSdk(sourceChain, destinationChain, token, destToken)
     if (!sdk) throw new Error('Route not supported')
 
     // TODO: this should be the fee token, not necessarily the native token.
@@ -180,12 +191,39 @@ const useFees = (
           break
         }
 
+        case 'ChainflipApi': {
+          if (!chainflipQuote) {
+            setFees(null)
+            setBridgingFee(null)
+            setChainflipFees(null)
+            break
+          }
+          setLoading(isLoadingChainflipQuote || isFetchingChainflipQuote)
+
+          const feesData: ChainflipFee[] = await Promise.all(
+            chainflipQuote.includedFees.map(async fee => {
+              const token = getFeeTokenFromAssetSymbol(fee.asset, fee.chain)
+              const feeTokenInDollars = (await getCachedTokenPrice(token))?.usd ?? 0
+              return {
+                amount: fee.amount,
+                token: token,
+                inDollars: feeTokenInDollars ? toHuman(fee.amount, token) * feeTokenInDollars : 0,
+                type: fee.type,
+              }
+            }),
+          )
+
+          setChainflipFees(feesData)
+          break
+        }
+
         default:
           throw new Error('Unsupported direction')
       }
     } catch (error) {
       setFees(null)
       setBridgingFee(null)
+      setChainflipFees(null)
       captureException(error)
       console.error('useFees > error is', error)
       // addNotification({
@@ -202,6 +240,9 @@ const useFees = (
     sourceChain,
     destinationChain,
     token?.id,
+    chainflipQuote,
+    isLoadingChainflipQuote,
+    isFetchingChainflipQuote,
     snowbridgeContext,
     addNotification,
     senderAddress,
@@ -216,7 +257,15 @@ const useFees = (
     fetchFees()
   }, [fetchFees])
 
-  return { fees, bridgingFee, loading, refetch: fetchFees, canPayFees, canPayAdditionalFees }
+  return {
+    fees,
+    bridgingFee,
+    loading,
+    refetch: fetchFees,
+    canPayFees,
+    canPayAdditionalFees,
+    chainflipFees,
+  }
 }
 
 export default useFees

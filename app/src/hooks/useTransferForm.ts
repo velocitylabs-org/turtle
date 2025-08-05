@@ -88,6 +88,7 @@ const useTransferForm = () => {
     bridgingFee,
     canPayAdditionalFees,
     refetch: refetchFees,
+    chainflipFees,
   } = useFees(
     sourceChain,
     destinationChain,
@@ -514,6 +515,7 @@ const useTransferForm = () => {
     destinationWallet,
     fees,
     bridgingFee,
+    chainflipFees,
     refetchFees,
     loadingFees,
     canPayFees,

@@ -1,8 +1,29 @@
 import { AssetData, ChainData, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
-import { Chain, chainflipRoutes, Token } from '@velocitylabs-org/turtle-registry'
+import {
+  Chain,
+  chainflipRoutes,
+  EthereumTokens,
+  PolkadotTokens,
+  Token,
+} from '@velocitylabs-org/turtle-registry'
+import { AmountInfo } from '@/models/transfer'
 import { useChainflipSdk } from '@/store/chainflipStore'
 
 /** TYPES */
+export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
+
+export type ChainflipChain =
+  | 'Ethereum'
+  | 'Polkadot'
+  | 'Assethub'
+  | 'Arbitrum'
+  | 'Bitcoin'
+  | 'Solana'
+
+export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
+
+export type ChainflipFee = { type: ChainflipFeeType } & AmountInfo
+
 type ChainflipError = {
   response?: {
     data?: {
@@ -105,6 +126,7 @@ export const getChainflipQuote = async (
       destChain: destChain.chain,
       destAsset: destAsset.symbol,
       isVaultSwap: isVaultSwapSupported(srcChain),
+      brokerCommissionBps: 0,
       amount,
     })
 
@@ -185,3 +207,32 @@ export const meetChainflipMinSwapAmount = (amount: string | bigint, asset: Asset
 /** Check if the source chain is supported for vault swap (Polkadot is not supported and uses the deposit address method) */
 export const isVaultSwapSupported = (sourceChain: ChainData): boolean =>
   sourceChain.chain !== 'Polkadot'
+
+export const getFeeTokenFromAssetSymbol = (
+  assetSymbol: AssetSymbol,
+  chain: ChainflipChain,
+): Token => {
+  if (chain === 'Ethereum') return EthereumTokens[assetSymbol]
+  return assetSymbol === 'USDC' ? PolkadotTokens.USDC : PolkadotTokens.DOT
+}
+
+export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
+  switch (feeType) {
+    case 'BROKER':
+      return 'Broker fee'
+    case 'NETWORK':
+      return 'Execution fee'
+    case 'INGRESS':
+      return 'Deposit fee'
+    case 'EGRESS':
+      return 'Broadcast fee'
+
+    default:
+      return 'Fee'
+  }
+}
+
+export const getChainflipDurationEstimate = (quote?: RegularQuote | null): string | null => {
+  if (!quote) return null
+  return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
+}
