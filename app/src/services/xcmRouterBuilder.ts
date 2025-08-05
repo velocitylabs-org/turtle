@@ -104,6 +104,7 @@ class XcmRouterBuilderManager {
 
   disconnect(params: TransferParams) {
     this.removeBuilder(params)
+    // TODO Router does not support .disconnect() yet but will be added in future updates
     return true
   }
 

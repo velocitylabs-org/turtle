@@ -69,6 +69,7 @@ class EvmTransferBuilderManager {
 
   async disconnect(params: TransferParams) {
     this.removeBuilder(params)
+    // TODO Evm builder does not support .disconnect() yet but will be added in future updates
     return true
   }
 
