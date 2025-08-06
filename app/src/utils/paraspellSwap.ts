@@ -1,14 +1,14 @@
 import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
 import {
-  Chain,
-  Token,
-  Hydration,
-  REGISTRY,
+  type Chain,
   getTokenByMultilocation,
+  Hydration,
   isSameToken,
+  REGISTRY,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { TransferParams } from '@/hooks/useTransfer'
-import { SubstrateAccount } from '@/store/substrateWalletStore'
+import type { TransferParams } from '@/hooks/useTransfer'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { deduplicate, isSameChain } from '@/utils/routes'
 import { getSenderAddress } from './address'
 import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
@@ -22,23 +22,14 @@ export const DEX_TO_CHAIN_MAP = {
 export type Dex = keyof typeof DEX_TO_CHAIN_MAP
 
 export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
-  const {
-    sourceChain,
-    destinationChain,
-    sourceToken,
-    destinationToken,
-    sourceAmount,
-    recipient,
-    sender,
-  } = params
+  const { sourceChain, destinationChain, sourceToken, destinationToken, sourceAmount, recipient, sender } = params
 
   const senderAddress = await getSenderAddress(sender)
   const account = params.sender as SubstrateAccount
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
 
-  if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer failed: chain id not found.')
+  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
   if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
     throw new Error('Transfer failed: Ethereum is not supported.')
 
@@ -55,7 +46,7 @@ export const createRouterPlan = async (params: TransferParams, slippagePct: stri
     .slippagePct(slippagePct)
     .senderAddress(senderAddress)
     .recipientAddress(recipient)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: any
     .signer(account.pjsSigner as any)
     .buildTransactions()
 
@@ -72,8 +63,7 @@ export const getExchangeOutputAmount = async (
 ): Promise<bigint> => {
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
-  if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer failed: chain id not found.')
+  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
   if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
     throw new Error('Transfer failed: Ethereum is not supported.')
 
@@ -153,14 +143,10 @@ export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
 
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => {
-  const chainsSupportingOneClickFlow = REGISTRY.chains.filter(
-    chain => chain?.supportExecuteExtrinsic,
-  )
+  const chainsSupportingOneClickFlow = REGISTRY.chains.filter(chain => chain?.supportExecuteExtrinsic)
 
   const oneClickChains = chainsSupportingOneClickFlow.filter(chain => {
-    const route = REGISTRY.routes.find(
-      route => route.from === chain.uid && route.to === Hydration.uid,
-    )
+    const route = REGISTRY.routes.find(route => route.from === chain.uid && route.to === Hydration.uid)
     if (!route) return false
 
     const isTradingPairCompatible = getDexPairs('HydrationDex').some(pair =>
@@ -181,9 +167,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
 
   if (!sourceChain.supportExecuteExtrinsic) return []
 
-  const routeToDex = REGISTRY.routes.find(
-    route => route.from === sourceChain.uid && route.to === Hydration.uid,
-  )
+  const routeToDex = REGISTRY.routes.find(route => route.from === sourceChain.uid && route.to === Hydration.uid)
   if (!routeToDex) return []
 
   const dexTokens = getDexPairs('HydrationDex')
@@ -200,10 +184,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
 }
 
 /** returns all allowed destination chains for a swap. */
-export const getSwapsDestinationChains = (
-  sourceChain: Chain | null,
-  sourceToken: Token | null,
-): Chain[] => {
+export const getSwapsDestinationChains = (sourceChain: Chain | null, sourceToken: Token | null): Chain[] => {
   if (!sourceChain || !sourceToken) return []
   const chains: Chain[] = []
 
@@ -219,11 +200,7 @@ export const getSwapsDestinationChains = (
 
   // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
-    if (
-      route.tokens.some(routeTokenId =>
-        tradeableTokens.some(tradeableToken => tradeableToken.id === routeTokenId),
-      )
-    ) {
+    if (route.tokens.some(routeTokenId => tradeableTokens.some(tradeableToken => tradeableToken.id === routeTokenId))) {
       // lookup destination chain and add it to the list
       const destinationChain = REGISTRY.chains.find(chain => chain.uid === route.to)
       if (destinationChain) chains.push(destinationChain)
@@ -250,9 +227,7 @@ export const getSwapsDestinationTokens = (
   if (isSameChain(Hydration, destinationChain)) return tradeableTokens
 
   // Check if we can reach the destination chain
-  const route = REGISTRY.routes.find(
-    route => route.from === Hydration.uid && route.to === destinationChain.uid,
-  )
+  const route = REGISTRY.routes.find(route => route.from === Hydration.uid && route.to === destinationChain.uid)
   if (!route) return []
 
   const tradeableAndTransferableTokens = tradeableTokens.filter(tradeableToken =>

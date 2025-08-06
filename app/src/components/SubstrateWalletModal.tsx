@@ -1,7 +1,7 @@
 'use client'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { Icon, Button, spinnerSize } from '@velocitylabs-org/turtle-ui'
+import { Button, Icon, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -63,10 +63,8 @@ export default function SubstrateWalletModal() {
   }
 
   const handleAccountSelect = async (account: InjectedAccount) => {
-    if (type === 'Substrate')
-      setSubstrateAccount({ ...account, pjsSigner: selectedExtension?.signer })
-    else if (type === 'SubstrateEVM')
-      setEvmAccount({ ...account, pjsSigner: selectedExtension?.signer })
+    if (type === 'Substrate') setSubstrateAccount({ ...account, pjsSigner: selectedExtension?.signer })
+    else if (type === 'SubstrateEVM') setEvmAccount({ ...account, pjsSigner: selectedExtension?.signer })
     closeModal()
   }
 
@@ -85,13 +83,10 @@ export default function SubstrateWalletModal() {
 
     fetch()
     // We just need to run this effect when isModalOpen
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen])
 
   const filteredAccounts = accounts.filter(account =>
-    type === 'SubstrateEVM'
-      ? account.type === 'ethereum'
-      : ['sr25519', 'ed25519'].includes(account.type ?? ''),
+    type === 'SubstrateEVM' ? account.type === 'ethereum' : ['sr25519', 'ed25519'].includes(account.type ?? ''),
   )
 
   const heightAnimationProps = useMemo(
@@ -142,8 +137,7 @@ export default function SubstrateWalletModal() {
           className: 'bg-black/70',
         }}
         closeButtonProps={{
-          className:
-            'top-[18px] right-[18px] focus:ring-0 hover:bg-gray-100 opacity-100 p-1 rounded-[10px]',
+          className: 'top-[18px] right-[18px] focus:ring-0 hover:bg-gray-100 opacity-100 p-1 rounded-[10px]',
           iconClassName: 'h-[18px] w-[18px]',
           iconStrokeWidth: 3,
         }}
@@ -151,11 +145,7 @@ export default function SubstrateWalletModal() {
         {/* Header */}
         <DialogHeader className="flex items-center justify-center rounded-t-4xl p-4">
           {currentView === 'accounts' && (
-            <motion.div
-              key={currentView}
-              {...headerElementAnimationProps}
-              className="absolute left-0"
-            >
+            <motion.div key={currentView} {...headerElementAnimationProps} className="absolute left-0">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
                 <span className="flex h-[29px] w-[29px] items-center justify-center rounded-[10px] p-[3px] opacity-100 hover:bg-gray-100">
                   <ChevronLeft className="h-5 w-5" strokeWidth={3} />
@@ -203,18 +193,12 @@ export default function SubstrateWalletModal() {
             )}
 
             {currentView === 'extensions' && !loading && (
-              <motion.div
-                key="extensionsView"
-                {...extensionsViewTransitions}
-                className="flex w-full flex-1 flex-col"
-              >
+              <motion.div key="extensionsView" {...extensionsViewTransitions} className="flex w-full flex-1 flex-col">
                 {extensions.length > 0 ? (
                   <div className="flex flex-1 flex-col gap-2">
                     {/* Added wrapper div */}
                     {[...extensions]
-                      .sort(
-                        (a, b) => getWalletWeight(a.name, window) - getWalletWeight(b.name, window),
-                      )
+                      .sort((a, b) => getWalletWeight(a.name, window) - getWalletWeight(b.name, window))
                       .map(extension => (
                         <Button
                           key={extension.name}
@@ -223,11 +207,7 @@ export default function SubstrateWalletModal() {
                           onClick={() => handleExtensionSelect(extension)}
                         >
                           <div className="flex items-center space-x-2 text-sm">
-                            <Icon
-                              src={getWalletLogo(extension.name, window)}
-                              width={40}
-                              height={40}
-                            />
+                            <Icon src={getWalletLogo(extension.name, window)} width={40} height={40} />
                             <span className="block max-w-[120px] truncate sm:max-w-[165px]">
                               {getWalletName(extension.name, window)}
                             </span>
@@ -239,14 +219,10 @@ export default function SubstrateWalletModal() {
                       ))}
                   </div>
                 ) : (
-                  <motion.div
-                    {...noItemsFoundTransitions}
-                    className="flex h-full w-full items-center justify-center"
-                  >
+                  <motion.div {...noItemsFoundTransitions} className="flex h-full w-full items-center justify-center">
                     <p className="text-center text-sm text-turtle-level6">
-                      <span className="font-bold">Oops! </span>No extensions detected. Please
-                      install a compatible wallet extension, such as Talisman, Subwallet, or
-                      Polkadot.js.
+                      <span className="font-bold">Oops! </span>No extensions detected. Please install a compatible
+                      wallet extension, such as Talisman, Subwallet, or Polkadot.js.
                     </p>
                   </motion.div>
                 )}
@@ -255,11 +231,7 @@ export default function SubstrateWalletModal() {
             )}
             {/* Show accounts */}
             {currentView === 'accounts' && !loading && (
-              <motion.div
-                key="accountsView"
-                {...accountsViewTransitions}
-                className="flex w-full flex-1 flex-col"
-              >
+              <motion.div key="accountsView" {...accountsViewTransitions} className="flex w-full flex-1 flex-col">
                 {filteredAccounts.length > 0 ? (
                   <div className="flex flex-1 flex-col gap-2">
                     {filteredAccounts.map(account => (
@@ -273,9 +245,7 @@ export default function SubstrateWalletModal() {
                           <span className="block max-w-[180px] truncate text-[13px] font-medium sm:max-w-[220px]">
                             {account.name || 'Unnamed Account'}
                           </span>
-                          <span className="text-xs text-turtle-level6">
-                            {truncateAddress(account.address)}
-                          </span>
+                          <span className="text-xs text-turtle-level6">{truncateAddress(account.address)}</span>
                         </div>
                         <span className="rounded-[5px] bg-turtle-primary-light px-[6px] py-[3px] text-[11px] font-bold text-turtle-primary-dark text-opacity-80">
                           CONNECT
@@ -284,13 +254,10 @@ export default function SubstrateWalletModal() {
                     ))}
                   </div>
                 ) : (
-                  <motion.div
-                    {...noItemsFoundTransitions}
-                    className="flex h-full w-full items-center justify-center"
-                  >
+                  <motion.div {...noItemsFoundTransitions} className="flex h-full w-full items-center justify-center">
                     <p className="text-center text-sm text-turtle-level6">
-                      <span className="font-bold">Oops! </span>No accounts available. Please connect
-                      an account to Turtle inside your wallet extension.
+                      <span className="font-bold">Oops! </span>No accounts available. Please connect an account to
+                      Turtle inside your wallet extension.
                     </p>
                   </motion.div>
                 )}
@@ -299,9 +266,7 @@ export default function SubstrateWalletModal() {
           </AnimatePresence>
         </motion.div>
       </DialogContent>
-      {isModalOpen && (
-        <TransitionControl setEnableTranslateAnimation={setEnableTranslateAnimation} />
-      )}
+      {isModalOpen && <TransitionControl setEnableTranslateAnimation={setEnableTranslateAnimation} />}
     </Dialog>
   )
 }
@@ -322,11 +287,7 @@ function Footer() {
 
 // Prevent initial animation on component mount to avoid visual glitches.
 // Animations are only triggered after the modal opens for a smoother user experience.
-function TransitionControl({
-  setEnableTranslateAnimation,
-}: {
-  setEnableTranslateAnimation: (v: boolean) => void
-}) {
+function TransitionControl({ setEnableTranslateAnimation }: { setEnableTranslateAnimation: (v: boolean) => void }) {
   useEffect(() => {
     setTimeout(() => setEnableTranslateAnimation(true), 400)
     return () => setEnableTranslateAnimation(false)

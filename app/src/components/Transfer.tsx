@@ -1,7 +1,7 @@
 'use client'
-import { Balance, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
-import { cn, Button, Switch } from '@velocitylabs-org/turtle-ui'
-import { Signer } from 'ethers'
+import { type Balance, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { Button, cn, Switch } from '@velocitylabs-org/turtle-ui'
+import type { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { useMemo } from 'react'
@@ -10,7 +10,7 @@ import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
-import { WalletInfo } from '@/hooks/useWallet'
+import type { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
 import {
   getAllowedDestinationChains,
@@ -24,8 +24,8 @@ import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
 import SendButton from './SendButton'
 import SubstrateWalletModal from './SubstrateWalletModal'
-import AlertIcon from './svg/AlertIcon'
 import SwapFromToChains from './SwapFromToChains'
+import AlertIcon from './svg/AlertIcon'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
 
@@ -57,12 +57,7 @@ const getSourceAmountPlaceholder = ({
   balanceData: Balance | undefined
 }): string => {
   if (loadingBalance) return 'Loading...'
-  if (
-    !sourceWallet ||
-    !sourceTokenAmount?.token ||
-    !sourceWallet.isConnected ||
-    !isBalanceAvailable
-  ) {
+  if (!sourceWallet || !sourceTokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable) {
     return 'Amount'
   }
   if (balanceData?.value === 0n) return 'No balance'
@@ -169,9 +164,7 @@ export default function Transfer() {
 
   // How much balance is missing considering the desired transfer amount
   const missingBalance =
-    sourceTokenAmount?.amount && balanceData
-      ? sourceTokenAmount.amount - Number(balanceData.formatted)
-      : 0
+    sourceTokenAmount?.amount && balanceData ? sourceTokenAmount.amount - Number(balanceData.formatted) : 0
 
   const amountPlaceholder = getSourceAmountPlaceholder({
     loadingBalance,
@@ -187,8 +180,7 @@ export default function Transfer() {
     destinationTokenAmount,
   })
 
-  const direction =
-    sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
+  const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
   const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
@@ -217,8 +209,7 @@ export default function Transfer() {
     transferStatus !== 'Idle' ||
     disableMaxBtnInPolkadotNetwork
 
-  const shouldDisplayTxSummary =
-    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+  const shouldDisplayTxSummary = sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -236,8 +227,7 @@ export default function Transfer() {
   )
 
   const destinationTokenOptions = useMemo(
-    () =>
-      getAllowedDestinationTokens(sourceChain, sourceTokenAmount?.token ?? null, destinationChain),
+    () => getAllowedDestinationTokens(sourceChain, sourceTokenAmount?.token ?? null, destinationChain),
     [sourceChain, sourceTokenAmount?.token, destinationChain],
   )
 
@@ -251,8 +241,7 @@ export default function Transfer() {
 
   const swapEthToWEthButton = useMemo(
     () => ({
-      onClick: () =>
-        swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ => fetchBalance()),
+      onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(_ => fetchBalance()),
       label: `Swap the difference`,
     }),
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
@@ -263,12 +252,7 @@ export default function Transfer() {
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
     return undefined
-  }, [
-    errors.sourceTokenAmount?.amount?.message,
-    sourceTokenAmountError,
-    exceedsTransferableBalance,
-    fees,
-  ])
+  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, exceedsTransferableBalance, fees])
 
   return (
     <>
@@ -307,8 +291,7 @@ export default function Transfer() {
                         }}
                         amountProps={{
                           value: tokenField.value?.amount ?? null,
-                          onChange: amount =>
-                            tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                          onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                           error: sourceTokenAmountErrorMessage,
                           placeholder: amountPlaceholder,
                           trailingAction: !sourceTokenAmount?.amount && (
@@ -361,8 +344,7 @@ export default function Transfer() {
                       }}
                       tokenProps={{
                         value: tokenField.value?.token ?? null,
-                        onChange: token =>
-                          tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                        onChange: token => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
                         options: destinationTokenOptions,
                         error: errors.destinationTokenAmount?.token?.message,
                         clearable: true,
@@ -372,8 +354,7 @@ export default function Transfer() {
                       }}
                       amountProps={{
                         value: destinationTokenAmount?.amount ?? null,
-                        onChange: amount =>
-                          tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                        onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: errors.destinationTokenAmount?.amount?.message,
                         placeholder: receiveAmountPlaceholder,
                         disabled: true,
@@ -390,9 +371,7 @@ export default function Transfer() {
                           onChange: handleManualRecipientChange,
                         },
                       }}
-                      disabled={
-                        transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token
-                      }
+                      disabled={transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token}
                       className="z-30"
                       floatingLabel="To"
                     />
@@ -423,10 +402,7 @@ export default function Transfer() {
             {/* Manual input warning */}
             <AnimatePresence>
               {manualRecipient.enabled && (
-                <motion.div
-                  className="flex items-center gap-1 self-center pt-1"
-                  {...manualInputAnimationProps}
-                >
+                <motion.div className="flex items-center gap-1 self-center pt-1" {...manualInputAnimationProps}>
                   <AlertIcon />
                   <span className="text-xs">Double check the address to avoid losing funds</span>
                 </motion.div>
@@ -438,10 +414,7 @@ export default function Transfer() {
         {/* ERC-20 Spend Approval */}
         <AnimatePresence>
           {requiresErc20SpendApproval && (
-            <motion.div
-              className="flex items-center gap-1 self-center pt-1"
-              {...approvalAnimationProps}
-            >
+            <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
               <ActionBanner
                 disabled={isApprovingErc20Spend}
                 header="Approve ERC-20 token spend"
@@ -456,10 +429,7 @@ export default function Transfer() {
         {/* ETH to wETH Conversion */}
         <AnimatePresence>
           {shouldDisplayEthToWEthSwap && (
-            <motion.div
-              className="flex items-center gap-1 self-center pt-1"
-              {...approvalAnimationProps}
-            >
+            <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
               <ActionBanner
                 disabled={isSwappingEthForWEth}
                 header="Swap ETH for wETH"

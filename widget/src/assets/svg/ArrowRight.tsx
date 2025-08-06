@@ -1,6 +1,5 @@
-import type { ComponentPropsWithoutRef } from 'react'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 export const ArrowRight = ({
   fill = colors['turtle-foreground'],

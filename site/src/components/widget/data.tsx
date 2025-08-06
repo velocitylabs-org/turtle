@@ -1,8 +1,8 @@
+import CheckIcon from '@velocitylabs-org/turtle-assets/icons/check.svg'
+import CustomizeIcon from '@velocitylabs-org/turtle-assets/icons/customize.svg'
 import SwapIcon from '@velocitylabs-org/turtle-assets/icons/swap.svg'
 import ThunderIcon from '@velocitylabs-org/turtle-assets/icons/thunder.svg'
 import TransferIcon from '@velocitylabs-org/turtle-assets/icons/transfer.svg'
-import CheckIcon from '@velocitylabs-org/turtle-assets/icons/check.svg'
-import CustomizeIcon from '@velocitylabs-org/turtle-assets/icons/customize.svg'
 
 export const headerButtons = [
   {
@@ -48,9 +48,7 @@ export const features = [
   },
   {
     title: 'Wide Ecosystem Support',
-    listItems: [
-      'Native support for all major Polkadot parachains and Ethereum. Powered by ParaSpell and Snowbridge',
-    ],
+    listItems: ['Native support for all major Polkadot parachains and Ethereum. Powered by ParaSpell and Snowbridge'],
   },
   {
     title: 'Data Dashboard',
@@ -67,12 +65,12 @@ const code = `
     const theme = {
       primary: '#DBB3B1', // HexColor
       dialogOverlayRgb: '219, 179, 177', // RGBColor
-      dialogOverlayOpacity: 0.5, // number
+      dialogOverlayOpacity: 0.5 // number
     } satisfies WidgetTheme
 
     const registry = {
       chains: ['polkadot', 'hydration'],
-      tokens: ['dot', 'usdc', 'usdt'],
+      tokens: ['dot', 'usdc', 'usdt']
     } satisfies ConfigRegistryType
 
 
@@ -103,7 +101,6 @@ export const developerIntegrationGuide: {
   },
   {
     title: '3. Test',
-    description:
-      'Run the widget, for more information on how to setup the widget, see the documentation.',
+    description: 'Run the widget, for more information on how to setup the widget, see the documentation.',
   },
 ]

@@ -1,6 +1,6 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { cn } from '@/helpers'
-import { PolymorphicComponentProps, Sizes } from '../types/global'
+import type { PolymorphicComponentProps, Sizes } from '@/types/global'
 import { LoadingIcon } from './LoadingIcon'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'update'
@@ -35,8 +35,7 @@ export type ButtonProps<T extends React.ElementType = 'button'> = PolymorphicCom
 const styles = {
   primary: 'bg-turtle-primary border border-black disabled:opacity-30',
   secondary: 'bg-turtle-secondary border border-black disabled:opacity-30',
-  outline:
-    'border border-turtle-level3 bg-transparent disabled:border-turtle-level3 disabled:opacity-30',
+  outline: 'border border-turtle-level3 bg-transparent disabled:border-turtle-level3 disabled:opacity-30',
   ghost: 'bg-transparent disabled:opacity-30',
   update:
     'border bg-turtle-secondary border border-turtle-secondary-dark text-turtle-secondary-dark disabled:opacity-100 disabled:bg-turtle-secondary-50 disabled:border-turtle-secondary-dark-40',
@@ -81,14 +80,7 @@ export const Button = <T extends React.ElementType = 'button'>({
   const Component = as || 'button'
 
   return (
-    <Component
-      type={type}
-      tabIndex={0}
-      className={classNames}
-      onClick={onClick}
-      disabled={disabled}
-      {...rest}
-    >
+    <Component type={type} tabIndex={0} className={classNames} onClick={onClick} disabled={disabled} {...rest}>
       {loading && (
         <div className="flex items-center">
           {icon && <span className="mr-3">{icon}</span>}

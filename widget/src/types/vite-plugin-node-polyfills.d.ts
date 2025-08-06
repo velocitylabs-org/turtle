@@ -1,6 +1,6 @@
 declare module 'vite-plugin-node-polyfills' {
   import type { Plugin } from 'vite'
-  
+
   interface NodePolyfillsOptions {
     include?: string[]
     exclude?: string[]
@@ -11,6 +11,6 @@ declare module 'vite-plugin-node-polyfills' {
     }
     protocolImports?: boolean
   }
-  
+
   export function nodePolyfills(options?: NodePolyfillsOptions): Plugin
 }
