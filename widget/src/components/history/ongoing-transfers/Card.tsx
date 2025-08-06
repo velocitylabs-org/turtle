@@ -1,3 +1,4 @@
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { LoadingIcon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import type { FC } from 'react'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
@@ -5,7 +6,6 @@ import Account from '@/components/Account'
 import type { StoredTransfer } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
-import { colors } from '../../../../tailwind.config'
 
 const OngoingTransfer: FC<{
   transfer: StoredTransfer

@@ -1,4 +1,4 @@
-import { colors } from '../../../tailwind.config'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import ArrowRight from '../svg/ArrowRight'
 import { Skeleton } from '../ui/skeleton'
 

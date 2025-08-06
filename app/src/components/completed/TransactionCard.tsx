@@ -1,9 +1,9 @@
-import { cn, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
-import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
+import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
-import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
@@ -31,7 +31,12 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
   const transferFailed = status === TxStatus.Failed
 
   return (
-    <div className={cn('flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4', getBorder(status))}>
+    <div
+      className={cn(
+        'flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
+        getBorder(status),
+      )}
+    >
       <div className="w-full space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex max-w-xs space-x-2 overflow-x-auto">
@@ -97,7 +102,12 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
             {formatHours(tx.date)}
           </div>
         </div>
-        <div className={cn('flex items-center justify-start space-x-4', transferFailed && 'text-turtle-error-dark')}>
+        <div
+          className={cn(
+            'flex items-center justify-start space-x-4',
+            transferFailed && 'text-turtle-error-dark',
+          )}
+        >
           <Account
             network={tx.sourceChain.network}
             addressType={tx.sourceChain.supportedAddressTypes?.at(0)}
@@ -107,7 +117,9 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
           />
           <ArrowRight
             className="h-3 w-3"
-            {...(transferFailed ? { fill: colors['turtle-secondary-dark'] } : { fill: colors['turtle-foreground'] })}
+            {...(transferFailed
+              ? { fill: colors['turtle-secondary-dark'] }
+              : { fill: colors['turtle-foreground'] })}
           />
           <Account
             network={tx.destChain.network}
@@ -118,11 +130,13 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
           />
         </div>
         {status === TxStatus.Failed && (
-          <div className="flex items-center justify-between rounded-lg bg-turtle-error-10 p-2 text-xs font-normal leading-3 text-turtle-error-dark">
+          <div className="bg-turtle-error-10 flex items-center justify-between rounded-lg p-2 text-xs font-normal leading-3 text-turtle-error-dark">
             <div>
               <span className="mr-1 font-semibold">Oops!</span>This transaction failed
             </div>
-            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">See more</span>
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
+              See more
+            </span>
           </div>
         )}
         {status === TxStatus.Undefined && (
@@ -130,7 +144,9 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
             <div>
               <span className="mr-1 font-semibold">Sorry!</span>We are not sure what happened{' '}
             </div>
-            <span className="text-xs font-normal leading-3 underline hover:text-turtle-foreground">See more</span>
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-foreground">
+              See more
+            </span>
           </div>
         )}
       </div>

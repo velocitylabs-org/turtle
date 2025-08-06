@@ -1,10 +1,10 @@
 'use client'
-import type { WalletType } from '@velocitylabs-org/turtle-registry'
+import { WalletType } from '@velocitylabs-org/turtle-registry'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import { motion } from 'framer-motion'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
-import { colors } from '../../tailwind.config'
 import Cross from './svg/Cross'
 
 interface WalletButtonProps {
@@ -22,10 +22,14 @@ const animationProps = {
 
 // Wallet button component that is intended to support connecting to various different networks based on its address type.
 export default function WalletButton({ walletType, className }: WalletButtonProps) {
-  const { disconnect: disconnectEvm, isConnected: evmIsConnected, openModal: openEvm } = useEvmWallet()
+  const {
+    disconnect: disconnectEvm,
+    isConnected: evmIsConnected,
+    openModal: openEvm,
+  } = useEvmWallet()
 
   const {
-    disconnectSubstrate,
+    disconnectSubstrate: disconnectSubstrate,
     isSubstrateConnected: substrateIsConnected,
     disconnectEvm: disconnectSubstrateEvm,
     isEvmConnected: substrateEvmIsConnected,

@@ -15,8 +15,12 @@ import {
 } from '@/lib/paraspell/swap'
 
 /** Deduplicates a list of items based on their uid/id property. Used for chains and tokens. */
-const deduplicate = <T extends { uid?: string; id?: string }>(items: T[]): T[] => {
-  const itemMap = new Map(items.map(item => [item.uid || item.id, item]))
+export const deduplicate = <T extends { uid?: string; id?: string }>(
+  items: T[],
+  ...moreItems: T[]
+): T[] => {
+  const combinedItems = [...items, ...moreItems]
+  const itemMap = new Map(combinedItems.map(item => [item.uid || item.id, item]))
   return Array.from(itemMap.values())
 }
 

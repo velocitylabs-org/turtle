@@ -1,16 +1,23 @@
-import { Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { TokenLogo, Icon } from '@velocitylabs-org/turtle-ui'
 import { useCallback } from 'react'
-import type { StoredTransfer } from '@/models/transfer'
+import { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, isSwap, toHuman } from '@/utils/transfer'
-import { colors } from '../../../tailwind.config'
 import Account from '../Account'
 import { SummaryRow } from '../completed/TransactionDialog'
 import ArrowRight from '../svg/ArrowRight'
 import ArrowUpRight from '../svg/ArrowUpRight'
 import TransferEstimate from '../TransferEstimate'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../ui/dialog'
 import OngoingTransfer from './OngoingTransfer'
 
 interface OngoingTransferDialogProps {
@@ -25,7 +32,9 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
   const sourceAmountHuman = toHuman(transfer.sourceAmount, transfer.sourceToken)
   const sourceAmountUSD = sourceAmountHuman * (transfer.sourceTokenUSDValue ?? 0)
 
-  const destinationAmountHuman = isSwap(transfer) ? toHuman(transfer.destinationAmount, transfer.destinationToken) : 0
+  const destinationAmountHuman = isSwap(transfer)
+    ? toHuman(transfer.destinationAmount, transfer.destinationToken)
+    : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
 
   const getStatus = useCallback(
@@ -49,7 +58,9 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
         <div>
           <DialogHeader className="flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border border-turtle-secondary-dark bg-turtle-secondary-light p-4">
             <DialogTitle className="sr-only">Ongoing transfer</DialogTitle>
-            <DialogDescription className="sr-only">Ongoing transfer status and details</DialogDescription>
+            <DialogDescription className="sr-only">
+              Ongoing transfer status and details
+            </DialogDescription>
             <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border border-turtle-secondary-dark bg-turtle-secondary-light px-2 py-1 text-turtle-secondary-dark">
               <div className="turtle-success-dark flex items-center justify-center space-x-1">
                 <Icon
@@ -74,13 +85,21 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
 
             <h3 className="xxl-letter-spacing text-turtle-secondary-dark' flex items-center justify-center space-x-3 text-lg leading-none sm:text-4xl">
               <span>{formatAmount(sourceAmountHuman, 'Long')}</span>
-              <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={35} />
+              <TokenLogo
+                token={transfer.sourceToken}
+                sourceChain={transfer.sourceChain}
+                size={35}
+              />
 
               {isSwap(transfer) && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
                   <span>{formatAmount(destinationAmountHuman, 'Long')}</span>
-                  <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={35} />
+                  <TokenLogo
+                    token={transfer.destinationToken}
+                    sourceChain={transfer.destChain}
+                    size={35}
+                  />
                 </>
               )}
             </h3>
@@ -88,10 +107,18 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
             {/* Update and progress bar */}
             <div className="!mb-[-10px] !mt-[-5px] block w-full gap-2 rounded-xl bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark">
               <div className="my-2 flex items-center justify-between">
-                <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
-                <p className="text-xs text-turtle-secondary">{formatOngoingTransferDate(transfer.date)}</p>
+                <p className="text-left font-bold text-turtle-secondary-dark">
+                  {getStatus(status)}
+                </p>
+                <p className="text-xs text-turtle-secondary">
+                  {formatOngoingTransferDate(transfer.date)}
+                </p>
               </div>
-              <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={true} />
+              <TransferEstimate
+                transfer={transfer}
+                direction={direction}
+                outlinedProgressBar={true}
+              />
             </div>
           </DialogHeader>
 
@@ -103,7 +130,9 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                 <ArrowRight className="h-3 w-3 rotate-90 sm:rotate-0" />
               </div>
               <div className="relative rounded-lg border border-turtle-level3 p-4 text-sm">
-                <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">Sender</div>
+                <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
+                  Sender
+                </div>
                 <Account
                   network={transfer.sourceChain.network}
                   addressType={transfer.sourceChain.supportedAddressTypes?.at(0)}
@@ -154,7 +183,10 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
               {transfer.bridgingFee && (
                 <SummaryRow
                   label="Bridging fee"
-                  amount={formatAmount(toHuman(transfer.bridgingFee.amount, transfer.bridgingFee.token), 'Long')}
+                  amount={formatAmount(
+                    toHuman(transfer.bridgingFee.amount, transfer.bridgingFee.token),
+                    'Long',
+                  )}
                   symbol={transfer.bridgingFee.token.symbol}
                   usdValue={formatAmount(transfer.bridgingFee.inDollars, 'Long')}
                 />
@@ -168,7 +200,8 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                   aria-label="View your completed transaction on block explorer"
                   className="!mt-4 mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 px-3 py-1.5 text-sm hover:text-turtle-level5"
                 >
-                  <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
+                  <p>View on Block Explorer</p>{' '}
+                  <ArrowUpRight className="hover:text-turtle-level5" />
                 </a>
               )}
             </div>

@@ -1,7 +1,8 @@
 import NumberFlow from '@number-flow/react'
-import type { Chain, ManualRecipientInput, Token } from '@velocitylabs-org/turtle-registry'
-import { Button, cn, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
-import { type ChangeEvent, type ReactNode, type RefObject, useMemo, useRef, useState } from 'react'
+import { Chain, ManualRecipientInput, Token } from '@velocitylabs-org/turtle-registry'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { Button, Tooltip, TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
+import { ChangeEvent, ReactNode, RefObject, useMemo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import ChevronDown from '@/assets/svg/ChevronDown'
 import { Cross } from '@/assets/svg/Cross'
@@ -9,7 +10,6 @@ import TokenIcon from '@/assets/svg/TokenIcon'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
-import { colors } from '../../tailwind.config'
 import ChainTrigger from './ChainTrigger'
 import Dropdown from './Dropdown'
 import SearchBar from './SearchBar'
@@ -88,7 +88,9 @@ export default function ChainTokenSelect({
 
   // Filter the options based on search
   const filteredChainOptions = useMemo(() => {
-    return chainProps.options.filter(option => option.name.toLowerCase().includes(chainSearch.toLowerCase()))
+    return chainProps.options.filter(option =>
+      option.name.toLowerCase().includes(chainSearch.toLowerCase()),
+    )
   }, [chainProps.options, chainSearch])
 
   const sortedAndFilteredChainOptions = useMemo(() => {
@@ -98,19 +100,28 @@ export default function ChainTokenSelect({
   }, [filteredChainOptions, chainProps.orderBySelected, chainProps.value?.uid])
 
   const filteredTokenOptions = useMemo(() => {
-    return tokenProps.options.filter(option => option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()))
+    return tokenProps.options.filter(option =>
+      option.symbol.toLowerCase().includes(tokenSearch.toLowerCase()),
+    )
   }, [tokenProps.options, tokenSearch])
   // Sort the options by priority token and then by selected token
   const sortedAndFilteredTokenOptions = useMemo(() => {
     let sorted = filteredTokenOptions
     // move priority token to the top if it exists
-    if (tokenProps.priorityToken) sorted = reorderOptionsBySelectedItem(sorted, 'id', tokenProps.priorityToken.id)
+    if (tokenProps.priorityToken)
+      sorted = reorderOptionsBySelectedItem(sorted, 'id', tokenProps.priorityToken.id)
 
     // move selected token to the top if it exists
-    if (tokenProps.orderBySelected) sorted = reorderOptionsBySelectedItem(sorted, 'id', tokenProps.value?.id)
+    if (tokenProps.orderBySelected)
+      sorted = reorderOptionsBySelectedItem(sorted, 'id', tokenProps.value?.id)
 
     return sorted
-  }, [filteredTokenOptions, tokenProps.orderBySelected, tokenProps.value?.id, tokenProps.priorityToken])
+  }, [
+    filteredTokenOptions,
+    tokenProps.orderBySelected,
+    tokenProps.value?.id,
+    tokenProps.priorityToken,
+  ])
 
   const handleChainSelect = (selectedChain: Chain) => {
     chainProps.onChange(selectedChain)
@@ -146,7 +157,10 @@ export default function ChainTokenSelect({
             disabled={disabled}
             onClick={handleDropdownTriggerClick}
             error={walletProps?.error}
-            className={cn('rounded-md rounded-bl-none rounded-br-none', amountProps?.error && 'border-b-0')}
+            className={cn(
+              'rounded-md rounded-bl-none rounded-br-none',
+              amountProps?.error && 'border-b-0',
+            )}
             triggerRef={triggerRef}
             walletAddress={walletProps?.address}
             manualRecipientInput={walletProps?.manualRecipientInput}
@@ -265,7 +279,10 @@ const TokenAmountInput = ({
           >
             {token.value ? (
               <>
-                <TokenLogo token={token.value} sourceChain={token.sourceChainToDetermineOriginBanner} />
+                <TokenLogo
+                  token={token.value}
+                  sourceChain={token.sourceChainToDetermineOriginBanner}
+                />
                 <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
                   {token.value.symbol}
                 </span>
@@ -294,10 +311,15 @@ const TokenAmountInput = ({
               onChange={handleAmountChange}
               onClick={e => e.stopPropagation()}
               onWheel={e => e.target instanceof HTMLElement && e.target.blur()}
+              autoFocus
             />
             {inDollars && (
               <div className={'animate-slide-up mt-[-3px] text-sm text-turtle-level4'}>
-                <NumberFlow value={Math.min(inDollars, maxDollars)} prefix="$" format={numberFlowFormat} />
+                <NumberFlow
+                  value={Math.min(inDollars, maxDollars)}
+                  prefix="$"
+                  format={numberFlowFormat}
+                />
               </div>
             )}
           </div>
@@ -345,7 +367,8 @@ const ChainList = ({
               key={option.uid}
               className={cn(
                 'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                selectedChain?.uid === option.uid && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                selectedChain?.uid === option.uid &&
+                  'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
               )}
               onClick={() => onSelect(option)}
             >
@@ -400,7 +423,8 @@ const TokenList = ({
               key={option.id}
               className={cn(
                 'flex cursor-pointer items-center justify-between px-3 py-3 hover:bg-turtle-level1',
-                selectedToken?.id === option.id && 'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
+                selectedToken?.id === option.id &&
+                  'bg-turtle-secondary-light hover:bg-turtle-secondary-light',
               )}
               onClick={() => onSelect(option)}
             >

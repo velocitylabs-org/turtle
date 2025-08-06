@@ -1,15 +1,16 @@
-import { type Balance, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
-import { Button, cn } from '@velocitylabs-org/turtle-ui'
-import type { Signer } from 'ethers'
+import WalletIcon from '@velocitylabs-org/turtle-assets/icons/wallet.svg'
+import { Balance, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
+import { Button, cn, Switch } from '@velocitylabs-org/turtle-ui'
+import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
-import { type FC, use, useMemo } from 'react'
+import { FC, use, useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import { AlertIcon } from '@/assets/svg/AlertIcon'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
-import type { WalletInfo } from '@/hooks/useWallet'
+import { WalletInfo } from '@/hooks/useWallet'
 
 import { ConfigContext } from '@/providers/ConfigProviders'
 import {
@@ -23,7 +24,6 @@ import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
 import SendButton from './SendButton'
 import { SwapChains as SwapFromToChains } from './SwapFromToChains'
-import Switch from './Switch'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
 
@@ -55,7 +55,12 @@ const getSourceAmountPlaceholder = ({
   balanceData: Balance | undefined
 }): string => {
   if (loadingBalance) return 'Loading...'
-  if (!sourceWallet || !sourceTokenAmount?.token || !sourceWallet.isConnected || !isBalanceAvailable) {
+  if (
+    !sourceWallet ||
+    !sourceTokenAmount?.token ||
+    !sourceWallet.isConnected ||
+    !isBalanceAvailable
+  ) {
     return 'Amount'
   }
   if (balanceData?.value === 0n) return 'No balance'
@@ -177,7 +182,8 @@ const Transfer: FC = () => {
     transferStatus !== 'Idle' ||
     disableMaxBtnInPolkadotNetwork
 
-  const shouldDisplayTxSummary = sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+  const shouldDisplayTxSummary =
+    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
@@ -195,9 +201,12 @@ const Transfer: FC = () => {
 
   // How much balance is missing considering the desired transfer amount
   const missingBalance =
-    sourceTokenAmount?.amount && balanceData ? sourceTokenAmount.amount - Number(balanceData.formatted) : 0
+    sourceTokenAmount?.amount && balanceData
+      ? sourceTokenAmount.amount - Number(balanceData.formatted)
+      : 0
 
-  const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
+  const direction =
+    sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
 
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
@@ -228,7 +237,8 @@ const Transfer: FC = () => {
   )
 
   const destinationTokenOptions = useMemo(
-    () => getAllowedDestinationTokens(sourceChain, sourceTokenAmount?.token ?? null, destinationChain),
+    () =>
+      getAllowedDestinationTokens(sourceChain, sourceTokenAmount?.token ?? null, destinationChain),
     [sourceChain, sourceTokenAmount?.token, destinationChain],
   )
 
@@ -242,7 +252,8 @@ const Transfer: FC = () => {
 
   const swapEthToWEthButton = useMemo(
     () => ({
-      onClick: () => swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(() => fetchBalance()),
+      onClick: () =>
+        swapEthtoWEth(sourceWallet?.sender as Signer, missingBalance).then(() => fetchBalance()),
       label: `Swap the difference`,
     }),
     [swapEthtoWEth, sourceWallet?.sender, missingBalance, fetchBalance],
@@ -253,7 +264,12 @@ const Transfer: FC = () => {
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
     return undefined
-  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, exceedsTransferableBalance, fees])
+  }, [
+    errors.sourceTokenAmount?.amount?.message,
+    sourceTokenAmountError,
+    exceedsTransferableBalance,
+    fees,
+  ])
 
   return (
     <form
@@ -292,7 +308,8 @@ const Transfer: FC = () => {
                       }}
                       amountProps={{
                         value: tokenField.value?.amount ?? null,
-                        onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                        onChange: amount =>
+                          tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: sourceTokenAmountErrorMessage,
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
@@ -345,7 +362,8 @@ const Transfer: FC = () => {
                     }}
                     tokenProps={{
                       value: tokenField.value?.token ?? null,
-                      onChange: token => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                      onChange: token =>
+                        tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
                       options: destinationTokenOptions,
                       error: errors.destinationTokenAmount?.token?.message,
                       clearable: true,
@@ -355,7 +373,8 @@ const Transfer: FC = () => {
                     }}
                     amountProps={{
                       value: destinationTokenAmount?.amount ?? null,
-                      onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                      onChange: amount =>
+                        tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
                       placeholder: receiveAmountPlaceholder,
                       disabled: true,
@@ -372,7 +391,9 @@ const Transfer: FC = () => {
                         onChange: handleManualRecipientChange,
                       },
                     }}
-                    disabled={transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token}
+                    disabled={
+                      transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token
+                    }
                     className="z-30"
                     floatingLabel="To"
                   />
@@ -403,7 +424,10 @@ const Transfer: FC = () => {
           {/* Manual input warning */}
           <AnimatePresence>
             {manualRecipient.enabled && (
-              <motion.div className="flex items-center gap-1 self-center pt-1" {...manualInputAnimationProps}>
+              <motion.div
+                className="flex items-center gap-1 self-center pt-1"
+                {...manualInputAnimationProps}
+              >
                 <AlertIcon />
                 <span className="text-xs">Double check the address to avoid losing funds</span>
               </motion.div>
@@ -415,12 +439,15 @@ const Transfer: FC = () => {
       {/* ERC-20 Spend Approval */}
       <AnimatePresence>
         {requiresErc20SpendApproval && (
-          <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
+          <motion.div
+            className="flex items-center gap-1 self-center pt-1"
+            {...approvalAnimationProps}
+          >
             <ActionBanner
               disabled={isApprovingErc20Spend}
               header="Approve ERC-20 token spend"
               text={`We first need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
-              image={<img src={'./src/assets/svg/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />}
+              image={<img src={WalletIcon} alt={'Wallet illustration'} width={64} height={64} />}
               btn={approveAllowanceButton}
             />
           </motion.div>
@@ -444,7 +471,7 @@ const Transfer: FC = () => {
               disabled={isSwappingEthForWEth}
               header={'Swap ETH for wETH'}
               text={'Your wETH balance is insufficient but you got enough ETH.'}
-              image={<img src={'./src/assets/svg/wallet.svg'} alt={'Wallet illustration'} width={64} height={64} />}
+              image={<img src={WalletIcon} alt={'Wallet illustration'} width={64} height={64} />}
               btn={swapEthToWEthButton}
             />
           </motion.div>

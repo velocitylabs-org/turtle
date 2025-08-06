@@ -1,16 +1,17 @@
-import { cn, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { TokenLogo, cn } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { Fail } from '@/assets/svg/Fail'
 import { Info } from '@/assets/svg/Info'
 import { Success } from '@/assets/svg/Success'
 import Account from '@/components/Account'
-import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
+import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
-import { colors } from '../../../../tailwind.config'
 import { getSVGColor } from './Dialog'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const getStatusIcon = (status: TransferResult) => {
   switch (status) {
     case TxStatus.Failed:
@@ -27,7 +28,12 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
   const transferFailed = status === TxStatus.Failed
 
   return (
-    <div className={cn('mb-2 space-y-2 rounded-2xl border p-3 hover:cursor-pointer', getBorder(status))}>
+    <div
+      className={cn(
+        'mb-2 space-y-2 rounded-2xl border p-3 hover:cursor-pointer',
+        getBorder(status),
+      )}
+    >
       <div className="w-full space-y-2 overflow-x-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -87,11 +93,21 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             </div>
           </div>
 
-          <div className={cn('flex-1 text-right text-sm', transferFailed ? 'text-turtle-error' : 'text-turtle-level5')}>
+          <div
+            className={cn(
+              'flex-1 text-right text-sm',
+              transferFailed ? 'text-turtle-error' : 'text-turtle-level5',
+            )}
+          >
             {formatOngoingTransferDate(tx.date)}
           </div>
         </div>
-        <div className={cn('flex items-center justify-start space-x-4', transferFailed && 'text-turtle-error-dark')}>
+        <div
+          className={cn(
+            'flex items-center justify-start space-x-4',
+            transferFailed && 'text-turtle-error-dark',
+          )}
+        >
           <Account
             network={tx.sourceChain.network}
             addressType={tx.sourceChain.supportedAddressTypes?.at(0)}
@@ -101,7 +117,9 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
           />
           <ArrowRight
             className="h-3 w-3"
-            {...(transferFailed ? { fill: colors['turtle-secondary-dark'] } : { fill: colors['turtle-foreground'] })}
+            {...(transferFailed
+              ? { fill: colors['turtle-secondary-dark'] }
+              : { fill: colors['turtle-foreground'] })}
           />
           <Account
             network={tx.destChain.network}
@@ -116,7 +134,9 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             <div>
               <span className="mr-1 font-semibold">Oops!</span>This transaction failed
             </div>
-            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">See more</span>
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-error">
+              See more
+            </span>
           </div>
         )}
         {status === TxStatus.Undefined && (
@@ -124,7 +144,9 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             <div>
               <span className="mr-1 font-semibold">Sorry!</span>We are not sure what happened{' '}
             </div>
-            <span className="text-xs font-normal leading-3 underline hover:text-turtle-background">See more</span>
+            <span className="text-xs font-normal leading-3 underline hover:text-turtle-background">
+              See more
+            </span>
           </div>
         )}
       </div>

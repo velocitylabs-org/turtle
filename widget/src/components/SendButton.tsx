@@ -1,16 +1,18 @@
-import { Button, type ButtonProps, type ButtonVariant, LoadingIcon } from '@velocitylabs-org/turtle-ui'
-import { type FC, type ReactNode, useEffect, useState } from 'react'
-import type { Status } from '@/hooks/useTransfer'
-import { colors } from '../../tailwind.config'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { ButtonVariant, LoadingIcon, ButtonProps, Button } from '@velocitylabs-org/turtle-ui'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import { Status } from '@/hooks/useTransfer'
 
 type SendButtonProps = ButtonProps & { status: Status }
 
 const SendButton: FC<SendButtonProps> = ({ status, disabled, ...props }) => {
-  const [{ label, icon, variant }, setProps] = useState<OverwritenProps>(getOverwrittenProps(status, props.label))
+  const [{ label, icon, variant }, setProps] = useState<OverwritenProps>(
+    getOverwrittenProps(status, props.label),
+  )
 
   useEffect(() => {
     setProps(getOverwrittenProps(status, props.label))
-  }, [status, props.label])
+  }, [status, disabled, props.label])
 
   return <Button {...props} variant={variant} disabled={disabled} label={label} icon={icon} />
 }
@@ -39,7 +41,9 @@ function getOverwrittenProps(status: Status, defaultLabel?: string): OverwritenP
     case 'Loading':
       return {
         label: status,
-        icon: <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary-dark']} />,
+        icon: (
+          <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary-dark']} />
+        ),
         variant: 'update',
       }
     case 'Validating':
@@ -57,12 +61,26 @@ function getOverwrittenProps(status: Status, defaultLabel?: string): OverwritenP
     case 'Sending':
       return {
         label: status,
-        icon: <LoadingIcon className="animate-spin" width={40} height={40} color={colors['turtle-secondary-dark']} />,
+        icon: (
+          <LoadingIcon
+            className="animate-spin"
+            width={40}
+            height={40}
+            color={colors['turtle-secondary-dark']}
+          />
+        ),
         variant: 'update',
       }
     default:
       return {
-        icon: <LoadingIcon className="animate-spin" width={40} height={40} color={colors['turtle-secondary-dark']} />,
+        icon: (
+          <LoadingIcon
+            className="animate-spin"
+            width={40}
+            height={40}
+            color={colors['turtle-secondary-dark']}
+          />
+        ),
         variant: 'update',
       }
   }

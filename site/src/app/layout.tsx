@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { dazzed } from '@/components/fonts/fonts'
-import Footer from '@/components/footer'
 import Header from '@/components/header'
-
-const inter = Inter({ subsets: ['latin'] })
+import Footer from '@/components/footer'
+import { dazzed } from '@/components/fonts/fonts'
+import { Analytics } from '@vercel/analytics/react'
 
 export const metadata: Metadata = {
   title: 'Turtle',
@@ -20,11 +18,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="turtleTheme" className="h-full bg-turtle-secondary">
-      <body className={cn(dazzed.variable, inter.className, ' h-full bg-turtle-secondary font-dazzed')}>
-        <main className="h-full flex-1">
+      <body className={cn(dazzed.variable, ' h-full bg-turtle-secondary font-dazzed')}>
+        <main className="h-full">
           <Header />
           {children}
           <Footer />
+          <Analytics />
         </main>
       </body>
     </html>

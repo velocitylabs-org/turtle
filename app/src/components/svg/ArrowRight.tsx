@@ -1,5 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
-import { colors } from '../../../tailwind.config'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { ComponentPropsWithoutRef } from 'react'
 
 interface ArrowRightProps extends ComponentPropsWithoutRef<'svg'> {
   fill?: string

@@ -1,11 +1,18 @@
-import type { ComponentPropsWithoutRef } from 'react'
-import { colors } from '../../../tailwind.config'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { ComponentPropsWithoutRef } from 'react'
 
 export const ExclamationMark = ({
   fill = colors['turtle-primary-dark'],
   ...props
 }: ComponentPropsWithoutRef<'svg'> & { fill?: string }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"

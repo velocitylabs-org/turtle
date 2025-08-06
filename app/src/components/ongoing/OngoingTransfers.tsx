@@ -1,12 +1,12 @@
 'use client'
-import { type Chain, chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
-import type { Dispatch, SetStateAction } from 'react'
+import { Token, Chain, tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { Dispatch, SetStateAction } from 'react'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
-import type { TabOptions } from '@/models/transfer'
+import { TabOptions } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-import { colors } from '../../../tailwind.config'
 import ArrowRight from '../svg/ArrowRight'
 import OngoingTransferDialog from './OngoingTransferDialog'
 
@@ -33,7 +33,9 @@ export default function OngoingTransfers({
     <div id="ongoing-txs">
       {ongoingTransfers && ongoingTransfers.length > 0 && (
         <div className="my-20">
-          <div className="xl-letter-spacing self-center text-center text-3xl text-turtle-foreground">Ongoing</div>
+          <div className="xl-letter-spacing self-center text-center text-3xl text-turtle-foreground">
+            Ongoing
+          </div>
           <div className="mt-8 flex w-full flex-col gap-2 rounded-[24px] border border-turtle-foreground bg-white p-[2.5rem] px-[1.5rem] py-[2rem] sm:p-[2.5rem]">
             {ongoingTransfers.map(tx => {
               const transfer = {
@@ -44,7 +46,13 @@ export default function OngoingTransfers({
                 destChain: chainsByUid[tx.destChain.uid] as Chain,
               }
 
-              return <OngoingTransferDialog key={tx.id} transfer={transfer} status={statusMessages[tx.id]} />
+              return (
+                <OngoingTransferDialog
+                  key={tx.id}
+                  transfer={transfer}
+                  status={statusMessages[tx.id]}
+                />
+              )
             })}
 
             {hasCompletedTransfers && (
@@ -54,7 +62,10 @@ export default function OngoingTransfers({
                 className="flex w-full flex-row items-center justify-center rounded-[8px] border border-turtle-level3 py-[8px] text-center text-lg text-turtle-foreground"
               >
                 <span>View completed transactions </span>
-                <ArrowRight className="mx-2 h-[1.3rem] w-[1.3rem]" fill={colors['turtle-foreground']} />
+                <ArrowRight
+                  className="mx-2 h-[1.3rem] w-[1.3rem]"
+                  fill={colors['turtle-foreground']}
+                />
               </button>
             )}
           </div>

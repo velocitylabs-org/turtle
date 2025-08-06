@@ -1,5 +1,5 @@
-import type { ComponentPropsWithoutRef } from 'react'
-import { colors } from '../../../tailwind.config'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
+import { ComponentPropsWithoutRef } from 'react'
 
 interface FailProps extends ComponentPropsWithoutRef<'svg'> {
   fill?: string
@@ -7,7 +7,14 @@ interface FailProps extends ComponentPropsWithoutRef<'svg'> {
 
 export default function Fail({ fill = colors['turtle-error'], ...props }: FailProps) {
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
