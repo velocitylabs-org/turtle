@@ -1,5 +1,5 @@
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { ComponentPropsWithoutRef } from 'react'
-import { colors } from '../../../tailwind.config'
 
 interface SwapProps extends ComponentPropsWithoutRef<'svg'> {
   fill?: string

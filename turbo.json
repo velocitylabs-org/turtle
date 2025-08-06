@@ -7,7 +7,6 @@
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "start": {
-      "dependsOn": ["^start"],
       "cache": false,
       "persistent": true
     },

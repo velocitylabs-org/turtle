@@ -1,4 +1,5 @@
 import { TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
@@ -7,7 +8,6 @@ import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { ChainflipFee, getFeeLabelFromType } from '@/utils/chainflip'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
-import { colors } from '../../tailwind.config'
 import Delayed from './Delayed'
 import ExclamationMark from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
@@ -257,7 +257,7 @@ export default function TxSummary({
           </ul>
 
           {canPayFees && !exceedsTransferableBalance && isAmountTooLow && (
-            <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
+            <div className="bg-turtle-secondary-transparent my-4 flex flex-row items-center justify-center rounded-[8px] p-2">
               <ExclamationMark
                 width={20}
                 height={20}

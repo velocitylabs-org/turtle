@@ -87,6 +87,7 @@
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
+    "@velocitylabs-org/turtle-tailwind-config": "workspace:*",
     "chai": "^5.1.2",
     "cypress": "^13.15.0",
     "dotenv": "^16.4.5",

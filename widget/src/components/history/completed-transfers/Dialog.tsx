@@ -1,3 +1,4 @@
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { TokenLogo, Icon, cn } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
@@ -14,7 +15,6 @@ import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
-import { colors } from '../../../../tailwind.config'
 import { CompletedTransferCard, getStatusIcon } from './Card'
 
 export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
