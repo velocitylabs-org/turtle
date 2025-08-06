@@ -255,223 +255,221 @@ export default function Transfer() {
   }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, exceedsTransferableBalance, fees])
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="z-20 flex w-[100vw] max-w-[90vw] flex-col gap-1 rounded-3xl border border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
-      >
-        <div className="flex flex-col gap-5">
-          <Controller
-            name="sourceChain"
-            control={control}
-            render={({ field: chainField }) => {
-              return (
-                <Controller
-                  name="sourceTokenAmount"
-                  control={control}
-                  render={({ field: tokenField }) => {
-                    return (
-                      <ChainTokenSelect
-                        chainProps={{
-                          ...chainField,
-                          onChange: handleSourceChainChange,
-                          options: sourceChainOptions,
-                          error: errors.sourceChain?.message,
-                          clearable: true,
-                          orderBySelected: true,
-                        }}
-                        tokenProps={{
-                          value: tokenField.value?.token ?? null,
-                          onChange: handleSourceTokenChange,
-                          options: sourceTokenOptions,
-                          sourceChainToDetermineOriginBanner: sourceChain,
-                          error: errors.sourceTokenAmount?.token?.message,
-                          clearable: true,
-                          orderBySelected: true,
-                        }}
-                        amountProps={{
-                          value: tokenField.value?.amount ?? null,
-                          onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                          error: sourceTokenAmountErrorMessage,
-                          placeholder: amountPlaceholder,
-                          trailingAction: !sourceTokenAmount?.amount && (
-                            <Button
-                              label="Max"
-                              size="sm"
-                              variant="outline"
-                              className="min-w-[40px]"
-                              onClick={handleMaxButtonClick}
-                              disabled={shouldDisableMaxButton}
-                            />
-                          ),
-                          tooltipContent: 'Max transferrable balance',
-                        }}
-                        walletProps={{
-                          address: sourceWallet?.sender?.address,
-                          walletButton: <WalletButton walletType={sourceChain?.walletType} />,
-                        }}
-                        disabled={transferStatus !== 'Idle'}
-                        className="z-40"
-                      />
-                    )
-                  }}
-                />
-              )
-            }}
-          />
-
-          {/* Swap source and destination chains */}
-          <SwapFromToChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
-
-          {/* Destination Chain */}
-          <Controller
-            name="destinationChain"
-            control={control}
-            render={({ field: chainField }) => {
-              return (
-                <Controller
-                  name="destinationTokenAmount"
-                  control={control}
-                  render={({ field: tokenField }) => (
+    <form
+      onSubmit={handleSubmit}
+      className="z-20 flex w-[100vw] max-w-[90vw] flex-col gap-1 rounded-3xl border border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+    >
+      <div className="flex flex-col gap-5">
+        <Controller
+          name="sourceChain"
+          control={control}
+          render={({ field: chainField }) => {
+            return (
+              <Controller
+                name="sourceTokenAmount"
+                control={control}
+                render={({ field: tokenField }) => {
+                  return (
                     <ChainTokenSelect
                       chainProps={{
                         ...chainField,
-                        onChange: handleDestinationChainChange,
-                        options: destinationChainOptions,
-                        error: errors.destinationChain?.message,
+                        onChange: handleSourceChainChange,
+                        options: sourceChainOptions,
+                        error: errors.sourceChain?.message,
                         clearable: true,
                         orderBySelected: true,
                       }}
                       tokenProps={{
                         value: tokenField.value?.token ?? null,
-                        onChange: token => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
-                        options: destinationTokenOptions,
-                        error: errors.destinationTokenAmount?.token?.message,
+                        onChange: handleSourceTokenChange,
+                        options: sourceTokenOptions,
+                        sourceChainToDetermineOriginBanner: sourceChain,
+                        error: errors.sourceTokenAmount?.token?.message,
                         clearable: true,
                         orderBySelected: true,
-                        sourceChainToDetermineOriginBanner: destinationChain,
-                        priorityToken: sourceTokenAmount?.token,
                       }}
                       amountProps={{
-                        value: destinationTokenAmount?.amount ?? null,
+                        value: tokenField.value?.amount ?? null,
                         onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
-                        error: errors.destinationTokenAmount?.amount?.message,
-                        placeholder: receiveAmountPlaceholder,
-                        disabled: true,
+                        error: sourceTokenAmountErrorMessage,
+                        placeholder: amountPlaceholder,
+                        trailingAction: !sourceTokenAmount?.amount && (
+                          <Button
+                            label="Max"
+                            size="sm"
+                            variant="outline"
+                            className="min-w-[40px]"
+                            onClick={handleMaxButtonClick}
+                            disabled={shouldDisableMaxButton}
+                          />
+                        ),
+                        tooltipContent: 'Max transferrable balance',
                       }}
                       walletProps={{
-                        address: destinationWallet?.sender?.address,
-                        error: manualRecipient.enabled ? manualRecipientError : '',
-                        walletButton: shouldDisplayRecipientWalletButton ? (
-                          <WalletButton walletType={destinationChain?.walletType} />
-                        ) : undefined,
-                        manualRecipientInput: {
-                          enabled: manualRecipient.enabled,
-                          address: manualRecipient.address,
-                          onChange: handleManualRecipientChange,
-                        },
+                        address: sourceWallet?.sender?.address,
+                        walletButton: <WalletButton walletType={sourceChain?.walletType} />,
                       }}
-                      disabled={transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token}
-                      className="z-30"
-                      floatingLabel="To"
+                      disabled={transferStatus !== 'Idle'}
+                      className="z-40"
                     />
-                  )}
-                />
-              )
-            }}
-          />
-        </div>
-
-        {destinationChain && (
-          <div className="flex flex-col gap-1">
-            {/* Switch between Wallet and Manual Input */}
-            <Controller
-              name="manualRecipient.enabled"
-              control={control}
-              render={({ field }) => (
-                <Switch
-                  {...field}
-                  checked={field.value}
-                  className="items-start pt-1"
-                  label="Send to a different address"
-                  disabled={transferStatus !== 'Idle'}
-                />
-              )}
-            />
-
-            {/* Manual input warning */}
-            <AnimatePresence>
-              {manualRecipient.enabled && (
-                <motion.div className="flex items-center gap-1 self-center pt-1" {...manualInputAnimationProps}>
-                  <AlertIcon />
-                  <span className="text-xs">Double check the address to avoid losing funds</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
-
-        {/* ERC-20 Spend Approval */}
-        <AnimatePresence>
-          {requiresErc20SpendApproval && (
-            <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
-              <ActionBanner
-                disabled={isApprovingErc20Spend}
-                header="Approve ERC-20 token spend"
-                text={`We need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
-                image={<Image src="/wallet.svg" alt="Wallet illustration" width={64} height={64} />}
-                btn={approveAllowanceButton}
+                  )
+                }}
               />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ETH to wETH Conversion */}
-        <AnimatePresence>
-          {shouldDisplayEthToWEthSwap && (
-            <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
-              <ActionBanner
-                disabled={isSwappingEthForWEth}
-                header="Swap ETH for wETH"
-                text="Your wETH balance is insufficient but you got enough ETH."
-                image={<Image src="/wallet.svg" alt="Wallet" width={64} height={64} />}
-                btn={swapEthToWEthButton}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {shouldDisplayTxSummary && (
-          <TxSummary
-            loading={loadingFees}
-            tokenAmount={sourceTokenAmount}
-            fees={fees}
-            bridgingFee={bridgingFee}
-            durationEstimate={durationEstimate}
-            canPayFees={canPayFees}
-            canPayAdditionalFees={canPayAdditionalFees}
-            direction={direction}
-            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-            exceedsTransferableBalance={exceedsTransferableBalance}
-            applyTransferableBalance={applyTransferableBalance}
-          />
-        )}
-
-        {/* Transfer Button */}
-        <SendButton
-          className="my-5 w-full"
-          label="Send"
-          size="lg"
-          variant="primary"
-          type="submit"
-          loading={transferStatus !== 'Idle'}
-          disabled={!isTransferAllowed}
-          status={transferStatus}
+            )
+          }}
         />
 
-        <Credits />
-        <SubstrateWalletModal />
-      </form>
-    </>
+        {/* Swap source and destination chains */}
+        <SwapFromToChains onClick={swapFromTo} disabled={!allowFromToSwap()} />
+
+        {/* Destination Chain */}
+        <Controller
+          name="destinationChain"
+          control={control}
+          render={({ field: chainField }) => {
+            return (
+              <Controller
+                name="destinationTokenAmount"
+                control={control}
+                render={({ field: tokenField }) => (
+                  <ChainTokenSelect
+                    chainProps={{
+                      ...chainField,
+                      onChange: handleDestinationChainChange,
+                      options: destinationChainOptions,
+                      error: errors.destinationChain?.message,
+                      clearable: true,
+                      orderBySelected: true,
+                    }}
+                    tokenProps={{
+                      value: tokenField.value?.token ?? null,
+                      onChange: token => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                      options: destinationTokenOptions,
+                      error: errors.destinationTokenAmount?.token?.message,
+                      clearable: true,
+                      orderBySelected: true,
+                      sourceChainToDetermineOriginBanner: destinationChain,
+                      priorityToken: sourceTokenAmount?.token,
+                    }}
+                    amountProps={{
+                      value: destinationTokenAmount?.amount ?? null,
+                      onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                      error: errors.destinationTokenAmount?.amount?.message,
+                      placeholder: receiveAmountPlaceholder,
+                      disabled: true,
+                    }}
+                    walletProps={{
+                      address: destinationWallet?.sender?.address,
+                      error: manualRecipient.enabled ? manualRecipientError : '',
+                      walletButton: shouldDisplayRecipientWalletButton ? (
+                        <WalletButton walletType={destinationChain?.walletType} />
+                      ) : undefined,
+                      manualRecipientInput: {
+                        enabled: manualRecipient.enabled,
+                        address: manualRecipient.address,
+                        onChange: handleManualRecipientChange,
+                      },
+                    }}
+                    disabled={transferStatus !== 'Idle' || !sourceChain || !sourceTokenAmount?.token}
+                    className="z-30"
+                    floatingLabel="To"
+                  />
+                )}
+              />
+            )
+          }}
+        />
+      </div>
+
+      {destinationChain && (
+        <div className="flex flex-col gap-1">
+          {/* Switch between Wallet and Manual Input */}
+          <Controller
+            name="manualRecipient.enabled"
+            control={control}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                checked={field.value}
+                className="items-start pt-1"
+                label="Send to a different address"
+                disabled={transferStatus !== 'Idle'}
+              />
+            )}
+          />
+
+          {/* Manual input warning */}
+          <AnimatePresence>
+            {manualRecipient.enabled && (
+              <motion.div className="flex items-center gap-1 self-center pt-1" {...manualInputAnimationProps}>
+                <AlertIcon />
+                <span className="text-xs">Double check the address to avoid losing funds</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* ERC-20 Spend Approval */}
+      <AnimatePresence>
+        {requiresErc20SpendApproval && (
+          <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
+            <ActionBanner
+              disabled={isApprovingErc20Spend}
+              header="Approve ERC-20 token spend"
+              text={`We need your approval to transfer this token from your wallet. ${shouldDisplayUsdtRevokeAllowance ? 'USDT requires revoking the current allowance before setting a new one.' : ''}`}
+              image={<Image src="/wallet.svg" alt="Wallet illustration" width={64} height={64} />}
+              btn={approveAllowanceButton}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ETH to wETH Conversion */}
+      <AnimatePresence>
+        {shouldDisplayEthToWEthSwap && (
+          <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
+            <ActionBanner
+              disabled={isSwappingEthForWEth}
+              header="Swap ETH for wETH"
+              text="Your wETH balance is insufficient but you got enough ETH."
+              image={<Image src="/wallet.svg" alt="Wallet" width={64} height={64} />}
+              btn={swapEthToWEthButton}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {shouldDisplayTxSummary && (
+        <TxSummary
+          loading={loadingFees}
+          tokenAmount={sourceTokenAmount}
+          fees={fees}
+          bridgingFee={bridgingFee}
+          durationEstimate={durationEstimate}
+          canPayFees={canPayFees}
+          canPayAdditionalFees={canPayAdditionalFees}
+          direction={direction}
+          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+          exceedsTransferableBalance={exceedsTransferableBalance}
+          applyTransferableBalance={applyTransferableBalance}
+        />
+      )}
+
+      {/* Transfer Button */}
+      <SendButton
+        className="my-5 w-full"
+        label="Send"
+        size="lg"
+        variant="primary"
+        type="submit"
+        loading={transferStatus !== 'Idle'}
+        disabled={!isTransferAllowed}
+        status={transferStatus}
+      />
+
+      <Credits />
+      <SubstrateWalletModal />
+    </form>
   )
 }

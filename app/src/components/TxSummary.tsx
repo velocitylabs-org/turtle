@@ -59,8 +59,8 @@ export default function TxSummary({
         <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
           <LoadingIcon
             className="animate-spin"
-            width={spinnerSize['lg']}
-            height={spinnerSize['lg']}
+            width={spinnerSize.lg}
+            height={spinnerSize.lg}
             color={colors['turtle-secondary']}
           />
           <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">Loading fees</div>

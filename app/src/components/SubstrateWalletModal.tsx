@@ -185,8 +185,8 @@ export default function SubstrateWalletModal() {
               >
                 <LoadingIcon
                   className="animate-spin"
-                  width={spinnerSize['lg']}
-                  height={spinnerSize['lg']}
+                  width={spinnerSize.lg}
+                  height={spinnerSize.lg}
                   color={colors['turtle-secondary']}
                 />
               </motion.div>
