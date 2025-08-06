@@ -13,6 +13,15 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.module.rules.push({
+        test: /HeartbeatWorker\.js$/,
+        use: 'null-loader', // or asset/source, depending on needs
+      })
+    }
+    return config
+  },
 }
 
 const config =
