@@ -1,6 +1,5 @@
-import { AssetHub, Bifrost, BridgeHub, Hydration, Moonbeam, Mythos } from '@/mainnet'
 import { rpcConnectionAsHttps } from './helpers'
-import { MainnetRegistry } from './mainnet'
+import { AssetHub, Bifrost, BridgeHub, Hydration, MainnetRegistry, Moonbeam, Mythos } from './mainnet'
 import type { Chain, LocalAssetUid, Token } from './types'
 
 const SNOWBRIDGE_MAINNET_PARACHAINS = [AssetHub, BridgeHub, Moonbeam, Bifrost, Hydration, Mythos]
