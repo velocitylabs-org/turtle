@@ -22,8 +22,8 @@ export const useChainflipQuote = ({
     data: chainflipQuote,
     isLoading: isLoadingChainflipQuote,
     isFetching: isFetchingChainflipQuote,
-    isError: isErrorChainflipQuote,
-    error: errorChainflipQuote,
+    isError: isChainflipQuoteError,
+    error: chainflipQuoteError,
   } = useQuery({
     queryKey: [
       'chainflip-quote',
@@ -49,8 +49,8 @@ export const useChainflipQuote = ({
           level: 'error',
           extra: { sourceChain, destinationChain, sourceToken, destinationToken, amount },
         })
-        console.error('Failed to get Chainflip quote:', error)
-        return null
+        console.log('Failed to get Chainflip quote:', error)
+        throw new Error(error as string)
       }
     },
     enabled:
@@ -68,7 +68,7 @@ export const useChainflipQuote = ({
     chainflipQuote,
     isLoadingChainflipQuote,
     isFetchingChainflipQuote,
-    isErrorChainflipQuote,
-    errorChainflipQuote,
+    isChainflipQuoteError,
+    chainflipQuoteError,
   }
 }

@@ -58,7 +58,12 @@ const useFees = (
     address: senderAddress,
   })
 
-  const { chainflipQuote, isLoadingChainflipQuote, isFetchingChainflipQuote } = useChainflipQuote({
+  const {
+    chainflipQuote,
+    isLoadingChainflipQuote,
+    isFetchingChainflipQuote,
+    isChainflipQuoteError,
+  } = useChainflipQuote({
     sourceChain,
     destinationChain,
     sourceToken: token,
@@ -192,7 +197,7 @@ const useFees = (
         }
 
         case 'ChainflipApi': {
-          if (!chainflipQuote) {
+          if (!chainflipQuote || isChainflipQuoteError) {
             setFees(null)
             setBridgingFee(null)
             setChainflipFees(null)
@@ -243,6 +248,7 @@ const useFees = (
     chainflipQuote,
     isLoadingChainflipQuote,
     isFetchingChainflipQuote,
+    isChainflipQuoteError,
     snowbridgeContext,
     addNotification,
     senderAddress,

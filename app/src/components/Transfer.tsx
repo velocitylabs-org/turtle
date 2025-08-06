@@ -152,7 +152,7 @@ export default function Transfer() {
     owner: sourceWallet?.sender?.address,
   })
 
-  const { chainflipQuote } = useChainflipQuote({
+  const { chainflipQuote, isChainflipQuoteError, chainflipQuoteError } = useChainflipQuote({
     sourceChain,
     destinationChain,
     sourceToken: sourceTokenAmount?.token,
@@ -234,7 +234,10 @@ export default function Transfer() {
     disableMaxBtnInPolkadotNetwork
 
   const shouldDisplayTxSummary =
-    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+    sourceTokenAmount?.token &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval &&
+    !isChainflipQuoteError
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -505,6 +508,23 @@ export default function Transfer() {
             applyTransferableBalance={applyTransferableBalance}
           />
         )}
+
+        {/* ETH to wETH Conversion */}
+        <AnimatePresence>
+          {isChainflipQuoteError && (
+            <motion.div
+              className="flex items-center gap-1 self-center pt-1"
+              {...approvalAnimationProps}
+            >
+              <ActionBanner
+                disabled={false}
+                header="Can't swap this pair for now."
+                text={`${chainflipQuoteError?.message} Please try a different pair.`}
+                image={<Image src="/wip.png" alt="Work in progress" width={64} height={64} />}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Transfer Button */}
         <SendButton

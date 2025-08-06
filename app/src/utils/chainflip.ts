@@ -138,10 +138,10 @@ export const getChainflipQuote = async (
     const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
 
     if (chainflipErrorMsg) {
-      console.log('chainflipErrorMsg:', chainflipErrorMsg)
+      throw formatChainflipErrorMsg(chainflipErrorMsg)
     }
 
-    return null // Or throw an error ?
+    throw error as Error
   }
 }
 
@@ -235,4 +235,11 @@ export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
 export const getChainflipDurationEstimate = (quote?: RegularQuote | null): string | null => {
   if (!quote) return null
   return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
+}
+
+export const formatChainflipErrorMsg = (errorMsg: string): string | null => {
+  if (!errorMsg) return null
+
+  const capitalized = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1)
+  return capitalized.endsWith('.') ? capitalized : `${capitalized}. `
 }
