@@ -39,7 +39,7 @@ const useFees = (
 ) => {
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
-  const [chainflipFees, setChainflipFees] = useState<ChainflipFee[] | null>(null)
+  const [chainflipFees, setChainflipFees] = useState<ChainflipFee[]>([])
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -75,6 +75,7 @@ const useFees = (
     if (!sourceChain || !destinationChain || !token || !destToken) {
       setFees(null)
       setBridgingFee(null)
+      setChainflipFees([])
       return
     }
 
@@ -88,6 +89,7 @@ const useFees = (
       // reset
       setBridgingFee(null)
       setCanPayAdditionalFees(true)
+      setChainflipFees([])
 
       switch (sdk) {
         case 'ParaSpellApi': {
@@ -146,6 +148,7 @@ const useFees = (
             setLoading(false)
             setFees(null)
             setBridgingFee(null)
+            setChainflipFees([])
             return
           }
 
@@ -200,7 +203,7 @@ const useFees = (
           if (!chainflipQuote || isChainflipQuoteError) {
             setFees(null)
             setBridgingFee(null)
-            setChainflipFees(null)
+            setChainflipFees([])
             break
           }
           setLoading(isLoadingChainflipQuote || isFetchingChainflipQuote)
@@ -228,7 +231,7 @@ const useFees = (
     } catch (error) {
       setFees(null)
       setBridgingFee(null)
-      setChainflipFees(null)
+      setChainflipFees([])
       captureException(error)
       console.error('useFees > error is', error)
       // addNotification({

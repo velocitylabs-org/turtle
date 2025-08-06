@@ -211,7 +211,7 @@ export default function Transfer() {
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    (fees || chainflipFees?.length) &&
+    (fees || chainflipFees.length > 0) &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&

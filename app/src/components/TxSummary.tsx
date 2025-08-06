@@ -16,7 +16,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
-  chainflipFees?: ChainflipFee[] | null
+  chainflipFees: ChainflipFee[]
   bridgingFee?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
@@ -54,7 +54,7 @@ export default function TxSummary({
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
-  if (!loading && !fees && !bridgingFee && !chainflipFees) return null
+  if (!loading && !fees && !bridgingFee && chainflipFees.length === 0) return null
 
   const renderContent = () => {
     if (loading) {
@@ -214,7 +214,7 @@ export default function TxSummary({
             )}
 
             {/* Chainflip fees */}
-            {chainflipFees?.length &&
+            {chainflipFees.length > 0 &&
               chainflipFees.map(fee => {
                 if (fee.amount.toString() === '0') return null
                 return (
@@ -257,7 +257,7 @@ export default function TxSummary({
           </ul>
 
           {canPayFees && !exceedsTransferableBalance && isAmountTooLow && (
-            <div className="bg-turtle-secondary-transparent my-4 flex flex-row items-center justify-center rounded-[8px] p-2">
+            <div className="my-4 flex flex-row items-center justify-center rounded-[8px] bg-turtle-secondary-transparent p-2">
               <ExclamationMark
                 width={20}
                 height={20}

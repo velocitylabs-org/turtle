@@ -216,7 +216,14 @@ export const getFeeTokenFromAssetSymbol = (
   chain: ChainflipChain,
 ): Token => {
   if (chain === 'Ethereum') return EthereumTokens[assetSymbol]
-  return assetSymbol === 'USDC' ? PolkadotTokens.USDC : PolkadotTokens.DOT
+  switch (assetSymbol) {
+    case 'USDC':
+      return PolkadotTokens.USDC
+    case 'USDT':
+      return PolkadotTokens.USDT
+    default:
+      return PolkadotTokens.DOT
+  }
 }
 
 export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
