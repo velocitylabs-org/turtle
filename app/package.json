@@ -15,6 +15,7 @@
     "cypress:open": "cypress open"
   },
   "dependencies": {
+    "@chainflip/sdk": "^1.10.0",
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@hookform/resolvers": "3.9.0",
     "@jest/globals": "^29.7.0",
