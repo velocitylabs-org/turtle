@@ -18,7 +18,7 @@ import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
-import xcmTransferBuilderManager from '@/services/xcmTransferBuilder'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
@@ -254,6 +254,7 @@ const useTransferForm = () => {
         sourceAmount: balanceData.value,
       }
       const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
+      if (!transferableAmount) return
 
       setValue(
         'sourceTokenAmount',

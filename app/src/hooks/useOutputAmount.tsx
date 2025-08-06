@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { AmountInfo } from '@/models/transfer'
-import xcmRouterBuilderManager from '@/services/xcmRouterBuilder'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
@@ -52,7 +52,7 @@ export function useOutputAmount({
             destinationChain,
             sourceToken,
             destinationToken,
-            sourceAmount: BigInt(amount),
+            sourceAmount: amount,
           }
           const output = await xcmRouterBuilderManager.getExchangeOutputAmount(params)
           return output

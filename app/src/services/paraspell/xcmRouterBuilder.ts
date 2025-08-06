@@ -4,6 +4,7 @@ import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { type Dex } from '@/utils/paraspellSwap'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof RouterBuilder>
 
@@ -88,8 +89,10 @@ class XcmRouterBuilderManager {
   async getExchangeOutputAmount(
     params: Pick<
       TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken' | 'sourceAmount'
-    >,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken'
+    > & {
+      sourceAmount: bigint | string
+    },
     exchange: Dex = 'HydrationDex',
   ) {
     try {
@@ -102,8 +105,8 @@ class XcmRouterBuilderManager {
     }
   }
 
-  disconnect(params: TransferParams) {
-    this.removeBuilder(params)
+  disconnect(params: TransferParams, exchange: Dex = 'HydrationDex') {
+    this.removeBuilder(params, exchange)
     // TODO Router does not support .disconnect() yet but will be added in future updates
     return true
   }
@@ -120,12 +123,13 @@ class XcmRouterBuilderManager {
 
 function txKey(params: TransferParams, exchange: Dex): string {
   const { sourceChain, destinationChain, sourceToken, destinationToken, sourceAmount } = params
+  const amount = toHuman(sourceAmount, sourceToken) // Convert large numeric amount to human-readable format to prevent long key strings
   return [
     sourceChain.uid,
     destinationChain.uid,
     sourceToken.id,
     destinationToken.id,
-    sourceAmount,
+    amount, // Source amount
     exchange,
   ].join('|')
 }

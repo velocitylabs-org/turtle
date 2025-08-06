@@ -6,6 +6,7 @@ import {
 } from '@paraspell/sdk'
 import { TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof Builder>
 
@@ -63,6 +64,17 @@ class XcmTransferBuilderManager {
     return existing ?? this.createBuilder(params)
   }
 
+  async createTransferTx(params: TransferParams) {
+    try {
+      const builder = this.getBuilder(params) as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
+      builder.senderAddress(params.sender.address)
+      return await builder.build()
+    } catch (error) {
+      console.error('Failed to create transfer tx: ', error)
+      throw error
+    }
+  }
+
   async isExistentialDepositMetAfterTransfer(params: TransferParams) {
     try {
       const builder = this.getBuilder(params)
@@ -91,21 +103,14 @@ class XcmTransferBuilderManager {
       'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
     >,
   ) {
-    const builder = this.getBuilder(params as TransferParams)
-    return await (
-      builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
-    ).getTransferableAmount()
-  }
-
-  async createTransferTx(params: TransferParams) {
     try {
-      const builder = this.getBuilder(params)
-      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>)
-        .senderAddress(params.sender.address)
-        .build()
+      const builder = this.getBuilder(params as TransferParams)
+      return await (
+        builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
+      ).getTransferableAmount()
     } catch (error) {
-      console.error('Failed to create transfer tx: ', error)
-      throw error
+      console.error('Failed to get transferable amount: ', error)
+      return null
     }
   }
 
@@ -134,14 +139,15 @@ class XcmTransferBuilderManager {
 function txKey(params: TransferParams): string {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
   const wssEndpoint = sourceChain.rpcConnection
+  const amount = toHuman(sourceAmount, sourceToken) // Convert large numeric amount to human-readable format to prevent long key strings
   return [
-    ...(wssEndpoint ? [wssEndpoint] : []),
     sourceChain.uid,
     destinationChain.uid,
     sourceToken.id,
-    sourceAmount,
+    amount, // Source amount
     recipient,
     sender.address,
+    ...(wssEndpoint ? [encodeURIComponent(wssEndpoint)] : []), // Encode URL to avoid delimiter conflicts
   ].join('|')
 }
 

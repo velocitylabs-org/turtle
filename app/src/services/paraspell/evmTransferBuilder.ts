@@ -2,6 +2,7 @@ import { EvmBuilder } from '@paraspell/sdk'
 import { type Client } from 'viem'
 import { TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof EvmBuilder>
 
@@ -85,7 +86,8 @@ class EvmTransferBuilderManager {
 
 function txKey(params: TransferParams): string {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
-  return [sourceChain.uid, destinationChain.uid, sourceToken.id, sourceAmount, recipient].join('|')
+  const amount = toHuman(sourceAmount, sourceToken) // Convert large numeric amount to human-readable format to prevent long key strings
+  return [sourceChain.uid, destinationChain.uid, sourceToken.id, amount, recipient].join('|')
 }
 
 const evmTransferBuilderManager = EvmTransferBuilderManager.getInstance()
