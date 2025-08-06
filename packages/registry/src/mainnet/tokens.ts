@@ -25,6 +25,7 @@ import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
 import ausdtLogo from "@velocitylabs-org/turtle-assets/logos/ausdt.svg";
+import gigadotLogo from "@velocitylabs-org/turtle-assets/logos/gigadot.svg";
 
 import { Token } from "@/types";
 import { parachain, snowbridgeWrapped } from "../helpers";
@@ -805,6 +806,33 @@ export const PolkadotTokens = {
       },
     },
     coingeckoId: "aave-usdt",
+    origin: parachain(2034),
+  },
+
+  GDOT: {
+    id: "gigadot",
+    name: "Gigadot",
+    symbol: "GDOT",
+    logoURI: gigadotLogo,
+    decimals: 18,
+    address: "",
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2034,
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: "0x34d5ffb83d14d82f87aaf2f13be895a3c814c2ad",
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: "gigadot",
     origin: parachain(2034),
   },
 

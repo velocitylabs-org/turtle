@@ -56,6 +56,7 @@ export const MainnetRegistry: Registry = {
     PolkadotTokens.USDT,
     PolkadotTokens.USDC,
     PolkadotTokens.AUSDT,
+    PolkadotTokens.GDOT,
     PolkadotTokens.DOT,
     EthereumTokens.DAI,
     PolkadotTokens.ACA,
