@@ -1,4 +1,4 @@
-import { AssetData, ChainData, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
+import { AssetData, ChainData, DCAQuote, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
 import {
   Chain,
   chainflipRoutes,
@@ -106,7 +106,7 @@ export const getChainflipQuote = async (
   destinationToken: Token,
   /** Amount in the source token's decimal base */
   amount: string,
-): Promise<RegularQuote | null> => {
+): Promise<RegularQuote | DCAQuote | null> => {
   const sdk = getChainflipSdk()
   if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const srcChain = await getChainflipChain(sourceChain)
@@ -131,9 +131,12 @@ export const getChainflipQuote = async (
     })
 
     //Find regular quote
-    const quote = quotes.find(quote => quote.type === 'REGULAR')
-    if (!quote) throw new Error('Chainflip quote not found.')
-    return quote
+    const regularQuote = quotes.find(quote => quote.type === 'REGULAR')
+    //Find DCA quote
+    const dcaQuote = quotes.find(quote => quote.type === 'DCA')
+    if (!regularQuote && !dcaQuote) throw new Error('Chainflip quote not found.')
+
+    return regularQuote ? regularQuote : (dcaQuote ?? null)
   } catch (error) {
     const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
 
