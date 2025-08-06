@@ -235,7 +235,9 @@ export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
   }
 }
 
-export const getChainflipDurationEstimate = (quote?: RegularQuote | null): string | null => {
+export const getChainflipDurationEstimate = (
+  quote?: RegularQuote | DCAQuote | null,
+): string | null => {
   if (!quote) return null
   return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
 }

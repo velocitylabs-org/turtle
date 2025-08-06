@@ -508,7 +508,7 @@ export default function Transfer() {
           />
         )}
 
-        {/* ETH to wETH Conversion */}
+        {/* Chainflip quote error */}
         <AnimatePresence>
           {isChainflipQuoteError && (
             <motion.div
