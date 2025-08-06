@@ -24,6 +24,7 @@ import vethLogo from "@velocitylabs-org/turtle-assets/logos/veth.svg";
 import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
+import ausdtLogo from "@velocitylabs-org/turtle-assets/logos/ausdt.svg";
 
 import { Token } from "@/types";
 import { parachain, snowbridgeWrapped } from "../helpers";
@@ -784,7 +785,7 @@ export const PolkadotTokens = {
     id: "ausdt",
     name: "Aave Hydrated USDT",
     symbol: "aUSDT",
-    logoURI: "https://s2.coinmarketcap.com/static/img/coins/64x64/5761.png",
+    logoURI: ausdtLogo,
     decimals: 6,
     address: "",
     multilocation: {
