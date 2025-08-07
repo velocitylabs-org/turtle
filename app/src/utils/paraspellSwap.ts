@@ -1,4 +1,4 @@
-import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
+import { getExchangePairs } from '@paraspell/xcm-router'
 import {
   type Chain,
   getTokenByMultilocation,
@@ -7,11 +7,7 @@ import {
   REGISTRY,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
-import type { TransferParams } from '@/hooks/useTransfer'
-import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { deduplicate, isSameChain } from '@/utils/routes'
-import { getSenderAddress } from './address'
-import { getParaSpellNode, getParaspellToken } from './paraspellTransfer'
 
 // We only support Hydration for now.
 /** contains all supported paraspell dexes mapped to the chain they run on */
@@ -20,67 +16,6 @@ export const DEX_TO_CHAIN_MAP = {
 } as const
 
 export type Dex = keyof typeof DEX_TO_CHAIN_MAP
-
-export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
-  const { sourceChain, destinationChain, sourceToken, destinationToken, sourceAmount, recipient, sender } = params
-
-  const senderAddress = await getSenderAddress(sender)
-  const account = params.sender as SubstrateAccount
-  const sourceChainFromId = getParaSpellNode(sourceChain)
-  const destinationChainFromId = getParaSpellNode(destinationChain)
-
-  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
-  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
-    throw new Error('Transfer failed: Ethereum is not supported.')
-
-  const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
-  const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
-
-  const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId)
-    .to(destinationChainFromId)
-    .exchange('HydrationDex')
-    .currencyFrom(currencyIdFrom)
-    .currencyTo(currencyTo)
-    .amount(sourceAmount)
-    .slippagePct(slippagePct)
-    .senderAddress(senderAddress)
-    .recipientAddress(recipient)
-    // biome-ignore lint/suspicious/noExplicitAny: any
-    .signer(account.pjsSigner as any)
-    .buildTransactions()
-
-  return routerPlan
-}
-
-export const getExchangeOutputAmount = async (
-  sourceChain: Chain,
-  destinationChain: Chain,
-  sourceToken: Token,
-  destinationToken: Token,
-  /** Amount in the source token's decimal base */
-  amount: string,
-): Promise<bigint> => {
-  const sourceChainFromId = getParaSpellNode(sourceChain)
-  const destinationChainFromId = getParaSpellNode(destinationChain)
-  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
-  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
-    throw new Error('Transfer failed: Ethereum is not supported.')
-
-  const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
-  const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
-
-  const amountOut = await RouterBuilder()
-    .from(sourceChainFromId)
-    .to(destinationChainFromId)
-    .exchange('HydrationDex')
-    .currencyFrom(currencyIdFrom)
-    .currencyTo(currencyTo)
-    .amount(amount)
-    .getBestAmountOut()
-
-  return amountOut.amountOut
-}
 
 /** returns all supported dex paraspell nodes */
 export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)

@@ -60,7 +60,7 @@ class EvmTransferBuilderManager {
 
   async transferTx(params: TransferParams, viemClient: Client) {
     try {
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      // biome-ignore lint/suspicious/noExplicitAny: any
       const builder = this.getBuilder(params) as any
       return await builder.signer(viemClient).build()
     } catch (error) {

@@ -4,24 +4,21 @@ import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import { InvalidTxError, type TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
+import type { Client } from 'viem'
 import { type Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
+import evmTransferBuilderManager from '@/services/paraspell/evmTransferBuilder'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { extractPapiEvent } from '@/utils/papi'
-import { createRouterPlan } from '@/utils/paraspellSwap'
-import {
-  createTransferTx,
-  type DryRunResult,
-  dryRun,
-  isExistentialDepositMetAfterTransfer,
-  moonbeamTransfer,
-} from '@/utils/paraspellTransfer'
+import type { DryRunResult } from '@/utils/paraspellTransfer'
 import { getExplorerLink, isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
@@ -49,7 +46,7 @@ const useParaspellApi = () => {
 
   const handleMoonbeamTransfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
     await switchChain(config, { chainId: moonbeam.id })
-    const hash = await moonbeamTransfer(params, viemClient)
+    const hash = await evmTransferBuilderManager.transferTx(params, viemClient as Client)
 
     const senderAddress = await getSenderAddress(params.sender)
     const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
@@ -83,6 +80,7 @@ const useParaspellApi = () => {
         destinationTokenUSDValue,
         date,
       })
+      evmTransferBuilderManager.disconnect(params)
     })
 
     setStatus('Idle')
@@ -96,7 +94,7 @@ const useParaspellApi = () => {
     // Validate the transfer
     setStatus('Validating')
 
-    const validationResult = await validateTransfer(params)
+    const validationResult = await validatePolkadotTransfer(params)
 
     const dryRunCapturePayload = {
       extra: {
@@ -133,12 +131,12 @@ const useParaspellApi = () => {
       }
 
       if (validationResult.origin.success && validationResult.destination?.success) {
-        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+        const isExistentialDepositMet = await xcmTransferBuilderManager.isExistentialDepositMetAfterTransfer(params)
         if (!isExistentialDepositMet) throw new Error('Transfer failed: existential deposit will not be met.')
       }
     }
 
-    const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
+    const tx = await xcmTransferBuilderManager.createTransferTx(params)
     setStatus('Signing')
 
     const polkadotSigner = getPolkadotSignerFromPjs(
@@ -182,9 +180,11 @@ const useParaspellApi = () => {
               destinationTokenUSDValue,
               date,
             })
+            xcmTransferBuilderManager.disconnect(params)
           })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          xcmTransferBuilderManager.disconnect(params)
         }
       },
       error: callbackError => {
@@ -193,8 +193,12 @@ const useParaspellApi = () => {
           handleSendError(params.sender, callbackError, setStatus)
         }
         handleSendError(params.sender, callbackError, setStatus)
+        xcmTransferBuilderManager.disconnect(params)
       },
-      complete: () => console.log('The transaction is complete'),
+      complete: () => {
+        console.log('The transaction is complete')
+        xcmTransferBuilderManager.disconnect(params)
+      },
     })
 
     setStatus('Sending')
@@ -210,7 +214,7 @@ const useParaspellApi = () => {
     const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
-    const routerPlan = await createRouterPlan(params)
+    const routerPlan = await xcmRouterBuilderManager.createRouterPlan(params)
 
     const firstTransaction = routerPlan.at(0)
     if (!firstTransaction) throw new Error('No steps in router plan')
@@ -257,15 +261,22 @@ const useParaspellApi = () => {
               date,
               isSwap: true,
             })
+            xcmRouterBuilderManager.disconnect(params)
           })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          await xcmRouterBuilderManager.disconnect(params)
         }
       },
-      error: callbackError => {
+      // biome-ignore lint/suspicious/noExplicitAny: any
+      error: (callbackError: any) => {
         handleSendError(params.sender, callbackError, setStatus)
+        xcmRouterBuilderManager.disconnect(params)
       },
-      complete: () => console.log('The swap transaction is complete'),
+      complete: () => {
+        console.log('The swap transaction is complete')
+        xcmRouterBuilderManager.disconnect(params)
+      },
     })
 
     setStatus('Sending')
@@ -371,9 +382,9 @@ const useParaspellApi = () => {
     return defaultDryRunMessage
   }
 
-  const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
+  const validatePolkadotTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
-      const result = await dryRun(params, params.sourceChain.rpcConnection)
+      const result = await xcmTransferBuilderManager.dryRun(params)
       if (!isDryRunApiSupported(result.origin) || (result.destination && !isDryRunApiSupported(result.destination))) {
         return {
           type: 'Unsupported',
