@@ -4,7 +4,7 @@ import {
   TNodeDotKsmWithRelayChains,
   TSendBaseOptionsWithSenderAddress,
 } from '@paraspell/sdk'
-import { TransferParams } from '@/hooks/useTransfer'
+import { Sender, TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 
@@ -25,7 +25,7 @@ class XcmTransferBuilderManager {
     return XcmTransferBuilderManager.instance
   }
 
-  createBuilder(params: TransferParams): TxBuilder {
+  createBuilder(params: Omit<TransferParams, 'sender'> & { sender: Sender | string }): TxBuilder {
     const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
     const wssEndpoint = sourceChain.rpcConnection
     const sourceChainNode = getParaSpellNode(sourceChain)
@@ -42,12 +42,13 @@ class XcmTransferBuilderManager {
 
     let builder: TxBuilder
     try {
+      const senderAddress = typeof sender === 'string' ? sender : sender.address
       builder = Builder(wssEndpoint)
         .from(sourceChainNode as TNodeDotKsmWithRelayChains)
         .to(destinationChainNode as TNodeDotKsmWithRelayChains)
         .currency({ ...currencyId, amount: sourceAmount })
         .address(recipient)
-        .senderAddress(sender.address)
+        .senderAddress(senderAddress)
 
       this.builders.set(key, builder)
     } catch (error) {
@@ -64,10 +65,14 @@ class XcmTransferBuilderManager {
     return existing ?? this.createBuilder(params)
   }
 
-  async createTransferTx(params: TransferParams) {
+  async createTransferTx(params: Omit<TransferParams, 'sender'> & { sender: Sender | string }) {
     try {
-      const builder = this.getBuilder(params) as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
-      builder.senderAddress(params.sender.address)
+      const builder = this.getBuilder(
+        params as TransferParams,
+      ) as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
+      const senderAddress =
+        typeof params.sender === 'string' ? params.sender : params.sender.address
+      builder.senderAddress(senderAddress)
       return await builder.build()
     } catch (error) {
       console.error('Failed to create transfer tx: ', error)
@@ -114,6 +119,41 @@ class XcmTransferBuilderManager {
     }
   }
 
+  // Origin and destination fees
+  async getXcmFee(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sourceAmount'
+    > & {
+      sender: Sender | string
+    },
+  ) {
+    try {
+      const builder = this.getBuilder(params as TransferParams)
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getXcmFee()
+    } catch (error) {
+      console.error('Failed to get transferable amount: ', error)
+      throw error
+    }
+  }
+
+  async getOriginXcmFee(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sourceAmount'
+    > & {
+      sender: Sender | string
+    },
+  ) {
+    try {
+      const builder = this.getBuilder(params as TransferParams)
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getOriginXcmFee()
+    } catch (error) {
+      console.error('Failed to get transferable amount: ', error)
+      throw error
+    }
+  }
+
   async disconnect(params: TransferParams) {
     try {
       const builder = this.getBuilder(params)
@@ -136,17 +176,18 @@ class XcmTransferBuilderManager {
   }
 }
 
-function txKey(params: TransferParams): string {
+function txKey(params: Omit<TransferParams, 'sender'> & { sender: Sender | string }): string {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
   const wssEndpoint = sourceChain.rpcConnection
   const amount = toHuman(sourceAmount, sourceToken) // Convert large numeric amount to human-readable format to prevent long key strings
+  const senderAddress = typeof sender === 'string' ? sender : sender.address
   return [
     sourceChain.uid,
     destinationChain.uid,
     sourceToken.id,
     amount, // Source amount
     recipient,
-    sender.address,
+    senderAddress,
     ...(wssEndpoint ? [encodeURIComponent(wssEndpoint)] : []), // Encode URL to avoid delimiter conflicts
   ].join('|')
 }
