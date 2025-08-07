@@ -6,19 +6,21 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
+import { useChainflipQuote } from '@/hooks/useChainflipQuote'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
+import { getChainflipDurationEstimate } from '@/utils/chainflip'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, safeConvertAmount } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
@@ -107,6 +109,7 @@ export default function Transfer() {
     destinationWallet,
     fees,
     bridgingFee,
+    chainflipFees,
     refetchFees,
     loadingFees,
     canPayFees,
@@ -146,6 +149,15 @@ export default function Transfer() {
     chain: sourceChain,
     tokenAmount: sourceTokenAmount,
     owner: sourceWallet?.sender?.address,
+  })
+
+  const { chainflipQuote, isChainflipQuoteError, chainflipQuoteError } = useChainflipQuote({
+    sourceChain,
+    destinationChain,
+    sourceToken: sourceTokenAmount?.token,
+    destinationToken: destinationTokenAmount?.token,
+    amount:
+      safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? '0',
   })
 
   const requiresErc20SpendApproval =
@@ -190,14 +202,16 @@ export default function Transfer() {
 
   const direction =
     sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
-  const durationEstimate = direction ? getDurationEstimate(direction) : undefined
+  const durationEstimate = direction
+    ? (getChainflipDurationEstimate(chainflipQuote) ?? getDurationEstimate(direction))
+    : undefined
 
   const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
 
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    fees &&
+    (fees || chainflipFees.length > 0) &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
@@ -219,7 +233,10 @@ export default function Transfer() {
     disableMaxBtnInPolkadotNetwork
 
   const shouldDisplayTxSummary =
-    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+    sourceTokenAmount?.token &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval &&
+    !isChainflipQuoteError
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -480,6 +497,7 @@ export default function Transfer() {
             tokenAmount={sourceTokenAmount}
             fees={fees}
             bridgingFee={bridgingFee}
+            chainflipFees={chainflipFees}
             durationEstimate={durationEstimate}
             canPayFees={canPayFees}
             canPayAdditionalFees={canPayAdditionalFees}
@@ -489,6 +507,23 @@ export default function Transfer() {
             applyTransferableBalance={applyTransferableBalance}
           />
         )}
+
+        {/* Chainflip quote error */}
+        <AnimatePresence>
+          {isChainflipQuoteError && (
+            <motion.div
+              className="flex items-center gap-1 self-center pt-1"
+              {...approvalAnimationProps}
+            >
+              <ActionBanner
+                disabled={false}
+                header="Can't swap this pair for now."
+                text={`${chainflipQuoteError?.message} Please try a different pair.`}
+                image={<Image src="/wip.png" alt="Work in progress" width={64} height={64} />}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Transfer Button */}
         <SendButton

@@ -100,8 +100,7 @@ export function useOutputAmount({
     chainflipQuote,
     isLoadingChainflipQuote,
     isFetchingChainflipQuote,
-    // isErrorChainflipQuote,
-    // errorChainflipQuote,
+    isChainflipQuoteError,
   } = useChainflipQuote({
     sourceChain,
     destinationChain,
@@ -114,12 +113,24 @@ export function useOutputAmount({
     if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
       return null
 
-    if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken)) {
+    if (
+      isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken) &&
+      !isChainflipQuoteError
+    ) {
       return chainflipQuote ? BigInt(chainflipQuote.egressAmount) : null
     }
 
     return data
-  }, [sourceChain, destinationChain, sourceToken, destinationToken, amount, chainflipQuote, data])
+  }, [
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+    chainflipQuote,
+    isChainflipQuoteError,
+    data,
+  ])
 
   return {
     outputAmount,
