@@ -81,7 +81,7 @@ const useTransferForm = () => {
       sourceToken: sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
       destinationToken: destToken,
       sourceTokenAmount: sourceTokenAmount?.amount,
-      senderAddress: sourceWallet?.sender?.address,
+      sender: sourceWallet?.sender,
       recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
     }),
     [
@@ -90,7 +90,7 @@ const useTransferForm = () => {
       sourceTokenAmountError,
       sourceTokenAmount?.token,
       sourceTokenAmount?.amount,
-      sourceWallet?.sender?.address,
+      sourceWallet?.sender,
       manualRecipient,
       destinationWallet,
       destToken,

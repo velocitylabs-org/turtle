@@ -4,7 +4,7 @@ import {
   TNodeDotKsmWithRelayChains,
   TSendBaseOptionsWithSenderAddress,
 } from '@paraspell/sdk'
-import { Sender, TransferParams } from '@/hooks/useTransfer'
+import { TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 
@@ -25,7 +25,7 @@ class XcmTransferBuilderManager {
     return XcmTransferBuilderManager.instance
   }
 
-  createBuilder(params: Omit<TransferParams, 'sender'> & { sender: Sender | string }): TxBuilder {
+  createBuilder(params: TransferParams): TxBuilder {
     const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
     const wssEndpoint = sourceChain.rpcConnection
     const sourceChainNode = getParaSpellNode(sourceChain)
@@ -42,7 +42,7 @@ class XcmTransferBuilderManager {
 
     let builder: TxBuilder
     try {
-      const senderAddress = typeof sender === 'string' ? sender : sender.address
+      const senderAddress = sender.address
       builder = Builder(wssEndpoint)
         .from(sourceChainNode as TNodeDotKsmWithRelayChains)
         .to(destinationChainNode as TNodeDotKsmWithRelayChains)
@@ -65,13 +65,12 @@ class XcmTransferBuilderManager {
     return existing ?? this.createBuilder(params)
   }
 
-  async createTransferTx(params: Omit<TransferParams, 'sender'> & { sender: Sender | string }) {
+  async createTransferTx(params: TransferParams) {
     try {
       const builder = this.getBuilder(
         params as TransferParams,
       ) as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
-      const senderAddress =
-        typeof params.sender === 'string' ? params.sender : params.sender.address
+      const senderAddress = params.sender.address
       builder.senderAddress(senderAddress)
       return await builder.build()
     } catch (error) {
@@ -123,10 +122,8 @@ class XcmTransferBuilderManager {
   async getXcmFee(
     params: Pick<
       TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sourceAmount'
-    > & {
-      sender: Sender | string
-    },
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+    >,
   ) {
     try {
       const builder = this.getBuilder(params as TransferParams)
@@ -140,10 +137,8 @@ class XcmTransferBuilderManager {
   async getOriginXcmFee(
     params: Pick<
       TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sourceAmount'
-    > & {
-      sender: Sender | string
-    },
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+    >,
   ) {
     try {
       const builder = this.getBuilder(params as TransferParams)
@@ -176,11 +171,11 @@ class XcmTransferBuilderManager {
   }
 }
 
-function txKey(params: Omit<TransferParams, 'sender'> & { sender: Sender | string }): string {
+function txKey(params: TransferParams): string {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
   const wssEndpoint = sourceChain.rpcConnection
   const amount = toHuman(sourceAmount, sourceToken) // Convert large numeric amount to human-readable format to prevent long key strings
-  const senderAddress = typeof sender === 'string' ? sender : sender.address
+  const senderAddress = sender.address
   return [
     sourceChain.uid,
     destinationChain.uid,

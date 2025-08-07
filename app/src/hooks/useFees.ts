@@ -3,6 +3,7 @@ import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
+import { Sender } from '@/hooks/useTransfer'
 import { NotificationSeverity } from '@/models/notification'
 import { AmountInfo } from '@/models/transfer'
 
@@ -32,7 +33,7 @@ interface UseFeesParams {
   destinationChain?: Chain | null
   sourceToken?: Token | null
   sourceTokenAmount?: number | null
-  senderAddress?: string
+  sender?: Sender | undefined
   recipientAddress?: string
   destinationToken?: Token | null
 }
@@ -44,7 +45,7 @@ const useFees = (params: UseFeesParams) => {
     sourceToken,
     destinationToken,
     sourceTokenAmount,
-    senderAddress,
+    sender,
     recipientAddress,
   } = params
   const [fees, setFees] = useState<AmountInfo | null>(null)
@@ -55,6 +56,7 @@ const useFees = (params: UseFeesParams) => {
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
     useSnowbridgeContext()
   const { addNotification } = useNotification()
+  const senderAddress = sender?.address
   const { balance: feeBalance } = useBalance({
     chain: sourceChain,
     token: sourceChain ? getNativeToken(sourceChain) : undefined,
@@ -120,7 +122,7 @@ const useFees = (params: UseFeesParams) => {
             destinationChain: destinationChain,
             sourceToken,
             sourceAmount: convertAmount(sourceTokenAmount, sourceToken),
-            sender: senderAddress,
+            sender,
             recipient: recipientAddress,
           })
 
