@@ -35,7 +35,7 @@
     "@reown/appkit-adapter-wagmi": "^1.6.9",
     "@sentry/nextjs": "^8.35.0",
     "@sentry/profiling-node": "^8.35.0",
-    "@snowbridge/api": "^0.1.69",
+    "@snowbridge/api": "0.1.69",
     "@snowbridge/base-types": "^0.1.69",
     "@snowbridge/contract-types": "^0.1.69",
     "@snowbridge/registry": "^0.1.69",
