@@ -27,7 +27,7 @@ export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
   | { origin: 'Polkadot'; fee: AmountInfo }
 
-export interface UseFeesParams {
+interface UseFeesParams {
   sourceChain: Chain | null
   destinationChain?: Chain | null
   sourceToken?: Token | null
