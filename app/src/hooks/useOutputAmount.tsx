@@ -4,8 +4,9 @@ import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { AmountInfo } from '@/models/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
-import { DEX_TO_CHAIN_MAP, getExchangeOutputAmount } from '@/utils/paraspellSwap'
+import { DEX_TO_CHAIN_MAP } from '@/utils/paraspellSwap'
 import { useChainflipQuote } from './useChainflipQuote'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
@@ -55,13 +56,15 @@ export function useOutputAmount({
           !isSameToken(sourceToken, destinationToken) &&
           sourceChain === DEX_TO_CHAIN_MAP.HydrationDex
         ) {
-          return await getExchangeOutputAmount(
+          const params = {
             sourceChain,
             destinationChain,
             sourceToken,
             destinationToken,
-            amount,
-          )
+            sourceAmount: amount,
+          }
+          const output = await xcmRouterBuilderManager.getExchangeOutputAmount(params)
+          return output
         }
 
         // Bridge & XCM transfers (Snowbridge & Paraspell)
