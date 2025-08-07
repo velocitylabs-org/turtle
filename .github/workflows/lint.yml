@@ -9,7 +9,7 @@ on:
 
 jobs:
   run-lint-format:
-    name: Run Biome lint and format check
+    name: Biome
     runs-on: ubuntu-latest
     defaults:
       run:
