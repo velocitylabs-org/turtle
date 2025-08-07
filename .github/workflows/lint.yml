@@ -50,4 +50,4 @@ jobs:
           DISABLE_SENTRY: true
         run: pnpm run build
       - name: Running lint and format check
-        run: turbo run format-and-lint
+        run: pnpm run format-and-lint
