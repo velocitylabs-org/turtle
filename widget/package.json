@@ -30,8 +30,8 @@
   "dependencies": {
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
-    "@paraspell/sdk": "^10.11.6",
-    "@paraspell/xcm-router": "^10.11.6",
+    "@paraspell/sdk": "10.11.6",
+    "@paraspell/xcm-router": "10.11.6",
     "@polkadot/api": "^15.9.2",
     "@polkadot/extension-dapp": "^0.58.4",
     "@polkadot/extension-inject": "^0.58.8",
