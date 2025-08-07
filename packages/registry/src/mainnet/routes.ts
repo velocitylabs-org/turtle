@@ -36,6 +36,7 @@ export const routes: Route[] = [
       EthereumTokens.TON.id,
       EthereumTokens.SHIB.id,
       EthereumTokens.PEPE.id,
+      EthereumTokens.AAVE.id,
     ],
   },
   {
@@ -54,7 +55,11 @@ export const routes: Route[] = [
     from: Ethereum.uid,
     to: Bifrost.uid,
     sdk: "SnowbridgeApi",
-    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
+    tokens: [
+      EthereumTokens.ETH.id,
+      EthereumTokens.WETH.id,
+      EthereumTokens.AAVE.id,
+    ],
   },
   {
     from: Ethereum.uid,
@@ -65,6 +70,7 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.WBTC.id,
+      EthereumTokens.AAVE.id,
     ],
   },
   {
@@ -83,6 +89,7 @@ export const routes: Route[] = [
       EthereumTokens.TON.id,
       EthereumTokens.SHIB.id,
       EthereumTokens.PEPE.id,
+      EthereumTokens.AAVE.id,
     ],
   },
 
@@ -195,6 +202,7 @@ export const routes: Route[] = [
       PolkadotTokens.USDC.id,
       PolkadotTokens.USDT.id,
       PolkadotTokens.DOT.id,
+      EthereumTokens.AAVE.id,
     ],
   },
   {
@@ -212,6 +220,7 @@ export const routes: Route[] = [
       EthereumTokens.ETH.id,
       EthereumTokens.WSTETH.id,
       EthereumTokens.TBTC.id,
+      EthereumTokens.AAVE.id,
     ],
   },
   {
@@ -254,7 +263,11 @@ export const routes: Route[] = [
     from: Bifrost.uid,
     to: Ethereum.uid,
     sdk: "ParaSpellApi",
-    tokens: [EthereumTokens.ETH.id, EthereumTokens.WETH.id],
+    tokens: [
+      EthereumTokens.ETH.id,
+      EthereumTokens.WETH.id,
+      EthereumTokens.AAVE.id,
+    ],
   },
   {
     from: Hydration.uid,
@@ -265,6 +278,7 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.WBTC.id,
+      EthereumTokens.AAVE.id,
     ],
   },
 
@@ -280,6 +294,7 @@ export const routes: Route[] = [
       EthereumTokens.WSTETH.id,
       EthereumTokens.ETH.id,
       EthereumTokens.TBTC.id,
+      EthereumTokens.AAVE.id,
     ],
   },
   {
@@ -344,6 +359,7 @@ export const routes: Route[] = [
       PolkadotTokens.DOT.id,
       PolkadotTokens.BNC.id,
       PolkadotTokens.VDOT.id,
+      EthereumTokens.AAVE.id,
     ],
   },
   {
@@ -451,6 +467,7 @@ export const routes: Route[] = [
       PolkadotTokens.DOT.id,
       PolkadotTokens.BNC.id,
       PolkadotTokens.VDOT.id,
+      EthereumTokens.AAVE.id,
     ],
   },
   {
