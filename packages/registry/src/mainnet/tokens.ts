@@ -26,6 +26,7 @@ import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
 import ausdtLogo from "@velocitylabs-org/turtle-assets/logos/ausdt.svg";
 import gigadotLogo from "@velocitylabs-org/turtle-assets/logos/gigadot.svg";
+import aaveLogo from "@velocitylabs-org/turtle-assets/logos/aave.svg";
 
 import { Token } from "@/types";
 import { parachain, snowbridgeWrapped } from "../helpers";
@@ -414,6 +415,36 @@ export const EthereumTokens = {
             AccountKey20: {
               network: null,
               key: "0x18084fba666a33d37592fa2633fd49a74dd93a88",
+            },
+          },
+        ],
+      },
+    },
+    origin: snowbridgeWrapped(),
+  },
+
+  AAVE: {
+    id: "aave.e",
+    name: "Aave",
+    symbol: "AAVE",
+    logoURI: aaveLogo,
+    decimals: 18,
+    address: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
             },
           },
         ],
@@ -851,5 +882,27 @@ export const PolkadotTokens = {
     },
     coingeckoId: "kusama",
     origin: parachain(0),
+  },
+
+  KSM_BRIDGED: {
+    id: "ksm-bridged",
+    name: "Kusama",
+    symbol: "KSM",
+    logoURI: kusamaLogo,
+    decimals: 12,
+    address: "",
+    multilocation: {
+      parents: 2,
+      interior: {
+        X1: [
+          {
+            GlobalConsensus: {
+              kusama: null,
+            },
+          },
+        ],
+      },
+    },
+    origin: parachain(1000),
   },
 } as const satisfies Record<string, Token>;

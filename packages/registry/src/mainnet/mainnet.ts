@@ -52,6 +52,7 @@ export const MainnetRegistry: Registry = {
     EthereumTokens.SHIB,
     EthereumTokens.PEPE,
     EthereumTokens.TBTC,
+    EthereumTokens.AAVE,
 
     PolkadotTokens.USDT,
     PolkadotTokens.USDC,
@@ -72,6 +73,7 @@ export const MainnetRegistry: Registry = {
     PolkadotTokens.MYTH,
     PolkadotTokens.HDX,
     PolkadotTokens.KSM,
+    PolkadotTokens.KSM_BRIDGED,
   ],
   routes,
   assetUid: new Map([
