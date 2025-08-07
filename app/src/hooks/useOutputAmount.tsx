@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { AmountInfo } from '@/models/transfer'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { DEX_TO_CHAIN_MAP } from '@/utils/paraspellSwap'
 import { useChainflipQuote } from './useChainflipQuote'
-import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
