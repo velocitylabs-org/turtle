@@ -4,7 +4,6 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { CircleCheckBig, DollarSign, Percent, Repeat } from 'lucide-react'
 import { parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
-import React from 'react'
 import { getSwapList, getSwapsData } from '@/app/actions/swaps'
 import ErrorPanel from '@/components/ErrorPanel'
 import RecentSwapsTable from '@/components/RecentSwapsTable'
@@ -13,7 +12,7 @@ import SwapPairsGraph from '@/components/SwapPairsGraph'
 import TitleToggle from '@/components/TitleToggle'
 import TokensActivityTable from '@/components/TokensActivityTable'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { transactionsPerPage, GraphType } from '@/constants'
+import { type GraphType, transactionsPerPage } from '@/constants'
 import { usePagination } from '@/hooks/usePagination'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
@@ -27,10 +26,7 @@ const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function SwapsPage() {
   const [currentPage, setCurrentPage] = useQueryState('swapPage', pageQueryDefault)
-  const [topSwapsGraphType, setTopSwapsGraphType] = useQueryState(
-    'transactionsBy',
-    togglesQueryDefault,
-  )
+  const [topSwapsGraphType, setTopSwapsGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
   const { data, isLoading, error } = useQuery({
     queryKey: ['swaps'],
     queryFn: getSwapsData,
@@ -73,9 +69,7 @@ export default function SwapsPage() {
   }
 
   const topSwapsPairs =
-    topSwapsGraphType === 'volume'
-      ? data?.swapPairsByVolume || []
-      : data?.swapPairsByTransactions || []
+    topSwapsGraphType === 'volume' ? data?.swapPairsByVolume || [] : data?.swapPairsByTransactions || []
 
   return (
     <div>
@@ -160,9 +154,7 @@ export default function SwapsPage() {
           <CardContent>
             <RecentSwapsTable swaps={dataList?.swapList || []} isLoading={isInitialLoadingList} />
             {!isInitialLoadingList && (
-              <PaginationComponent
-                className={cn('mt-7', isFetchingList && 'pointer-events-none')}
-              />
+              <PaginationComponent className={cn('mt-7', isFetchingList && 'pointer-events-none')} />
             )}
           </CardContent>
         </Card>

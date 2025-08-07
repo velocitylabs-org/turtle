@@ -1,14 +1,11 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 interface ArrowRightProps extends ComponentPropsWithoutRef<'svg'> {
   fill?: string
 }
 
-export default function ArrowRight({
-  fill = colors['turtle-foreground'],
-  ...props
-}: ArrowRightProps) {
+export default function ArrowRight({ fill = colors['turtle-foreground'], ...props }: ArrowRightProps) {
   return (
     <svg viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path

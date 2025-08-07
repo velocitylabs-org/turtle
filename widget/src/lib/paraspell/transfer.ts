@@ -4,22 +4,22 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  TCurrencyCore,
-  TDryRunResult,
-  TEcosystemType,
-  TNodeDotKsmWithRelayChains,
-  TNodeWithRelayChains,
-  TPapiTransaction,
+  type TCurrencyCore,
+  type TDryRunResult,
+  type TEcosystemType,
+  type TNodeDotKsmWithRelayChains,
+  type TNodeWithRelayChains,
+  type TPapiTransaction,
 } from '@paraspell/sdk'
 import {
-  Chain,
-  Token,
-  getAssetUid,
-  REGISTRY,
+  type Chain,
   EthereumTokens,
-  Network,
+  getAssetUid,
+  type Network,
+  REGISTRY,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { TransferParams } from '@/hooks/useTransfer'
+import type { TransferParams } from '@/hooks/useTransfer'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -30,17 +30,13 @@ export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
  * @param wssEndpoint - An optional wss chain endpoint to connect to a specific blockchain.
  * @returns - A Promise that resolves a submittable extrinsic transaction.
  */
-export const createTransferTx = async (
-  params: TransferParams,
-  wssEndpoint?: string,
-): Promise<TPapiTransaction> => {
+export const createTransferTx = async (params: TransferParams, wssEndpoint?: string): Promise<TPapiTransaction> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
 
   const sourceChainNode = getParaSpellNode(sourceChain)
   const destinationChainNode = getParaSpellNode(destinationChain)
 
-  if (!sourceChainNode || !destinationChainNode)
-    throw new Error('Transfer failed: chain id not found.')
+  if (!sourceChainNode || !destinationChainNode) throw new Error('Transfer failed: chain id not found.')
 
   const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
@@ -57,18 +53,18 @@ export const createTransferTx = async (
  * Submits a moonbeam xcm transaction using Paraspell EvmBuilder.
  *
  * @param params - The transfer parameters
+ * @param viemClient
  * @returns - A Promise that resolves to the tx hash.
  */
 export const moonbeamTransfer = async (
   params: TransferParams,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: viemClient
   viemClient: any,
 ): Promise<string> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
   const sourceChainFromId = getParaSpellNode(sourceChain)
   const destinationChainFromId = getParaSpellNode(destinationChain)
-  if (!sourceChainFromId || !destinationChainFromId)
-    throw new Error('Transfer failed: chain id not found.')
+  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
   const currencyId = getParaspellToken(sourceToken, sourceChainFromId)
 
   return EvmBuilder()
@@ -88,15 +84,11 @@ export const moonbeamTransfer = async (
  * @returns - A Promise that resolves a dry run result.
  * @throws - An error if the dry run api is not available.
  */
-export const dryRun = async (
-  params: TransferParams,
-  wssEndpoint?: string,
-): Promise<TDryRunResult> => {
+export const dryRun = async (params: TransferParams, wssEndpoint?: string): Promise<TDryRunResult> => {
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
   const sourceChainNode = getParaSpellNode(sourceChain)
   const destinationChainNode = getParaSpellNode(destinationChain)
-  if (!sourceChainNode || !destinationChainNode)
-    throw new Error('Dry Run failed: chain id not found.')
+  if (!sourceChainNode || !destinationChainNode) throw new Error('Dry Run failed: chain id not found.')
 
   const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
@@ -116,8 +108,7 @@ export const isExistentialDepositMetAfterTransfer = async (
   const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
   const sourceChainNode = getParaSpellNode(sourceChain)
   const destinationChainNode = getParaSpellNode(destinationChain)
-  if (!sourceChainNode || !destinationChainNode)
-    throw new Error('Dry Run failed: chain id not found.')
+  if (!sourceChainNode || !destinationChainNode) throw new Error('Dry Run failed: chain id not found.')
 
   const currencyId = getParaspellToken(sourceToken, sourceChainNode)
 
@@ -180,11 +171,7 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
  * default to the token symbol.
  *
  * */
-export function getCurrencyId(
-  node: TNodeWithRelayChains,
-  chainId: string,
-  token: Token,
-): TCurrencyCore {
+export function getCurrencyId(node: TNodeWithRelayChains, chainId: string, token: Token): TCurrencyCore {
   return getAssetUid(chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
 }
 

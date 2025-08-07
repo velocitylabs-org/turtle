@@ -1,15 +1,12 @@
 import { Ban, CheckCircle, CircleHelp, RefreshCcw } from 'lucide-react'
-import { TxStatus } from '@/models/Transaction'
+import type { TxStatus } from '@/models/Transaction'
 
 interface TransactionStatusIndicatorProps {
   status: TxStatus
   logoOnly?: boolean
 }
 
-export function TransactionStatusIndicator({
-  status,
-  logoOnly = false,
-}: TransactionStatusIndicatorProps) {
+export function TransactionStatusIndicator({ status, logoOnly = false }: TransactionStatusIndicatorProps) {
   const getStatusIcon = () => {
     switch (status) {
       case 'succeeded':

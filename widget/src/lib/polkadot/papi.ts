@@ -1,5 +1,5 @@
 import type { TxEvent } from 'polkadot-api'
-import { OnChainBaseEvents } from '@/models/transfer'
+import type { OnChainBaseEvents } from '@/models/transfer'
 
 export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined => {
   // Wait until block is finalized or in a best block state
@@ -32,11 +32,7 @@ export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined 
 
     events.forEach(({ type: section, value: { type: method, value: data } }) => {
       // Get messageHash from parachainSystem pallet (ex: DOT from Hydra to Bifrost )
-      if (
-        section === 'ParachainSystem' &&
-        method === 'UpwardMessageSent' &&
-        'message_hash' in data
-      ) {
+      if (section === 'ParachainSystem' && method === 'UpwardMessageSent' && 'message_hash' in data) {
         messageHash = data.message_hash.asHex()
       }
       // Get messageHash from xcmpQueue pallet (ex: BNC from Hydra to Bifrost)

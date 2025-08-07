@@ -1,6 +1,6 @@
 import { EvmBuilder } from '@paraspell/sdk'
-import { type Client } from 'viem'
-import { TransferParams } from '@/hooks/useTransfer'
+import type { Client } from 'viem'
+import type { TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 
@@ -60,6 +60,7 @@ class EvmTransferBuilderManager {
 
   async transferTx(params: TransferParams, viemClient: Client) {
     try {
+      // biome-ignore lint/suspicious/noExplicitAny: any
       const builder = this.getBuilder(params) as any
       return await builder.signer(viemClient).build()
     } catch (error) {

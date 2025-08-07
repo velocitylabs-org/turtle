@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 interface AlertIconProps extends ComponentPropsWithoutRef<'svg'> {
   fill?: string
@@ -6,14 +6,7 @@ interface AlertIconProps extends ComponentPropsWithoutRef<'svg'> {
 
 export default function AlertIcon({ fill = '#001B04', ...props }: AlertIconProps) {
   return (
-    <svg
-      width="17"
-      height="16"
-      viewBox="0 0 17 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"

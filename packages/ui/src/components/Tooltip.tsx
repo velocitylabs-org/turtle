@@ -1,10 +1,10 @@
 import {
   TooltipArrow,
-  Root as TooltipRoot,
+  TooltipContent,
   Portal as TooltipPortal,
   Provider as TooltipProvider,
+  Root as TooltipRoot,
   Trigger as TooltipTrigger,
-  TooltipContent,
 } from '@radix-ui/react-tooltip'
 import TooltipIcon from '@velocitylabs-org/turtle-assets/icons/tooltip-icon.svg'
 import { cn } from '@/helpers'
@@ -17,13 +17,7 @@ interface TooltipProps {
   children: React.ReactNode
 }
 
-export const Tooltip = ({
-  content,
-  className,
-  showIcon = true,
-  showArrow = true,
-  children,
-}: TooltipProps) => {
+export const Tooltip = ({ content, className, showIcon = true, showArrow = true, children }: TooltipProps) => {
   const iconSrc = typeof TooltipIcon === 'string' ? TooltipIcon : TooltipIcon.src
 
   return (

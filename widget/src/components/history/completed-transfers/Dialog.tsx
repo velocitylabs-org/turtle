@@ -1,5 +1,5 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { TokenLogo, Icon, cn } from '@velocitylabs-org/turtle-ui'
+import { cn, Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import Account from '@/components/Account'
@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { CompletedTransfer, TransferResult, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
 import { formatCompletedTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 
@@ -35,9 +35,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
           )}
         >
           <DialogTitle className="sr-only">Completed transfer</DialogTitle>
-          <DialogDescription className="sr-only">
-            Completed transfer status and details
-          </DialogDescription>
+          <DialogDescription className="sr-only">Completed transfer status and details</DialogDescription>
           <div
             className={cn(
               'm-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border px-2 py-1',
@@ -118,9 +116,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
               <ArrowRight className="h-3 w-3 rotate-90 sm:rotate-0" />
             </div>
             <div className="relative rounded-lg border border-turtle-level3 p-4 text-sm">
-              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
-                Sender
-              </div>
+              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">Sender</div>
               <Account
                 network={tx.sourceChain.network}
                 addressType={tx.sourceChain.supportedAddressTypes?.at(0)}
@@ -155,10 +151,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
               symbol={tx.sourceToken.symbol}
               usdValue={
                 typeof tx.sourceTokenUSDValue === 'number'
-                  ? formatAmount(
-                      toHuman(tx.sourceAmount, tx.sourceToken) * (tx.sourceTokenUSDValue ?? 0),
-                      'Long',
-                    )
+                  ? formatAmount(toHuman(tx.sourceAmount, tx.sourceToken) * (tx.sourceTokenUSDValue ?? 0), 'Long')
                   : undefined
               }
             />
@@ -172,8 +165,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
                 usdValue={
                   typeof tx.destinationTokenUSDValue === 'number'
                     ? formatAmount(
-                        toHuman(tx.destinationAmount, tx.destinationToken) *
-                          (tx.destinationTokenUSDValue ?? 0),
+                        toHuman(tx.destinationAmount, tx.destinationToken) * (tx.destinationTokenUSDValue ?? 0),
                         'Long',
                       )
                     : undefined
@@ -187,9 +179,7 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
               amount={formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}
               symbol={tx.fees.token.symbol}
               usdValue={
-                typeof tx.sourceTokenUSDValue === 'number'
-                  ? formatAmount(tx.fees.inDollars, 'Long')
-                  : undefined
+                typeof tx.sourceTokenUSDValue === 'number' ? formatAmount(tx.fees.inDollars, 'Long') : undefined
               }
             />
 
@@ -279,7 +269,6 @@ const getBorder = (result: TransferResult) => {
   }
 }
 
-/* eslint-disable react-refresh/only-export-components */
 export const getSVGColor = (result: TransferResult) => {
   switch (result) {
     case TxStatus.Undefined:

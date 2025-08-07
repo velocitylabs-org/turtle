@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface Option {
   value: string
@@ -16,13 +16,7 @@ interface SegmentedControlProps {
   className?: string
 }
 
-export default function TitleToggle({
-  options,
-  value,
-  defaultValue,
-  onChange,
-  className,
-}: SegmentedControlProps) {
+export default function TitleToggle({ options, value, defaultValue, onChange, className }: SegmentedControlProps) {
   const [internalValue, setInternalValue] = useState(value || defaultValue || options[0]?.value)
   const [indicatorPosition, setIndicatorPosition] = useState({ width: 0, left: 0 })
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([])
@@ -60,8 +54,8 @@ export default function TitleToggle({
       {options.map((option, index) => (
         <button
           key={option.value}
-          ref={el => {
-            buttonsRef.current[index] = el
+          ref={_el => {
+            buttonsRef.current[index] = _el
           }}
           onClick={() => handleClick(option.value)}
           className={cn(

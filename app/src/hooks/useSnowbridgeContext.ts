@@ -1,7 +1,7 @@
 import { assetRegistryFor } from '@snowbridge/registry'
 import { useQuery } from '@tanstack/react-query'
 import { getSnowBridgeContext } from '@/context/snowbridge'
-import { SnowbridgeContext } from '@/models/snowbridge'
+import type { SnowbridgeContext } from '@/models/snowbridge'
 
 const useSnowbridgeContext = () => {
   const {

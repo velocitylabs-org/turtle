@@ -1,9 +1,9 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
-import { TurtleIcon } from './assets/turtle-icon'
 import { Button } from '@velocitylabs-org/turtle-ui'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { TurtleIcon } from './assets/turtle-icon'
 
 export default function Header() {
   const pathname = usePathname()
@@ -13,16 +13,10 @@ export default function Header() {
     <header className="absolute inset-x-4 top-0 z-50 flex items-center justify-between py-4 sm:inset-x-10 sm:top-8 sm:py-0">
       <Link href="/" className="flex items-center space-x-2">
         <TurtleIcon size={40} />
-        <p className="turtle-text-shadow hidden text-[2rem] font-medium text-white sm:block">
-          Turtle
-        </p>
+        <p className="turtle-text-shadow hidden text-[2rem] font-medium text-white sm:block">Turtle</p>
         {isWidget && (
           <div className="hidden md:block">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-turtle-foreground bg-turtle-secondary text-white"
-            >
+            <Button variant="outline" size="sm" className="border-turtle-foreground bg-turtle-secondary text-white">
               Docs
             </Button>
           </div>
@@ -37,13 +31,7 @@ export default function Header() {
             </Link>
           </li>
           <li>
-            <Button
-              as="a"
-              href="https://app.turtle.cool"
-              target="_blank"
-              size="lg"
-              className="text-lg sm:text-xl"
-            >
+            <Button as="a" href="https://app.turtle.cool" target="_blank" size="lg" className="text-lg sm:text-xl">
               Transfer
             </Button>
           </li>

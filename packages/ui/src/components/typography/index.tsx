@@ -1,5 +1,5 @@
 import { cn } from '@/helpers'
-import { PolymorphicComponentProps } from '@/types/global'
+import type { PolymorphicComponentProps } from '@/types/global'
 
 // Temp name as Raissa defines typography properly
 export const LargeHeading = <T extends React.ElementType = 'h1'>({
@@ -30,11 +30,7 @@ export const Large = <T extends React.ElementType = 'h4'>({
   )
 }
 
-export const Body = <T extends React.ElementType = 'p'>({
-  children,
-  as,
-  ...rest
-}: PolymorphicComponentProps<T>) => {
+export const Body = <T extends React.ElementType = 'p'>({ children, as, ...rest }: PolymorphicComponentProps<T>) => {
   const Component = as || 'p'
   return (
     <Component className="text-base leading-[1.5]" {...rest}>

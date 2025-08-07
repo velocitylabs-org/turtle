@@ -1,8 +1,8 @@
 import { RouterBuilder } from '@paraspell/xcm-router'
-import { TransferParams } from '@/hooks/useTransfer'
-import { SubstrateAccount } from '@/store/substrateWalletStore'
+import type { TransferParams } from '@/hooks/useTransfer'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
-import { type Dex } from '@/utils/paraspellSwap'
+import type { Dex } from '@/utils/paraspellSwap'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 
@@ -28,8 +28,7 @@ class XcmRouterBuilderManager {
     const sourceChainFromId = getParaSpellNode(sourceChain)
     const destinationChainFromId = getParaSpellNode(destinationChain)
 
-    if (!sourceChainFromId || !destinationChainFromId)
-      throw new Error('Transfer failed: chain id not found.')
+    if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
     if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
       throw new Error('Transfer failed: Ethereum is not supported.')
 
@@ -44,6 +43,7 @@ class XcmRouterBuilderManager {
       builder = RouterBuilder()
         .from(sourceChainFromId)
         .to(destinationChainFromId)
+        // biome-ignore lint/suspicious/noExplicitAny: any
         .exchange(exchange as any)
         .currencyFrom(currencyIdFrom)
         .currencyTo(currencyTo)
@@ -64,20 +64,18 @@ class XcmRouterBuilderManager {
     return existing ?? this.createBuilder(params, exchange)
   }
 
-  async createRouterPlan(
-    params: TransferParams,
-    exchange: Dex = 'HydrationDex',
-    slippagePct: string = '1',
-  ) {
+  async createRouterPlan(params: TransferParams, exchange: Dex = 'HydrationDex', slippagePct: string = '1') {
     try {
       const account = params.sender as SubstrateAccount
       const senderAddress = await getSenderAddress(params.sender)
       const recipientAddress = params.recipient
+      // biome-ignore lint/suspicious/noExplicitAny: any
       const builder = this.getBuilder(params, exchange) as any
       return await builder
         .slippagePct(slippagePct)
         .senderAddress(senderAddress)
         .recipientAddress(recipientAddress)
+        // biome-ignore lint/suspicious/noExplicitAny: any
         .signer(account.pjsSigner as any)
         .buildTransactions()
     } catch (error) {
@@ -87,16 +85,14 @@ class XcmRouterBuilderManager {
   }
 
   async getExchangeOutputAmount(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken'
-    > & {
+    params: Pick<TransferParams, 'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken'> & {
       sourceAmount: bigint | string
     },
     exchange: Dex = 'HydrationDex',
   ) {
     try {
       const builder = this.getBuilder(params as TransferParams, exchange)
+      // biome-ignore lint/suspicious/noExplicitAny: any
       const amountOut = await (builder as any).getBestAmountOut()
       return amountOut.amountOut
     } catch (error) {

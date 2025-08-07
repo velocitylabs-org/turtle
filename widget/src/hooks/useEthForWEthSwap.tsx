@@ -1,6 +1,6 @@
-import { Context, environment, toPolkadot } from '@snowbridge/api'
-import { Chain, TokenAmount, EthereumTokens } from '@velocitylabs-org/turtle-registry'
-import { Signer } from 'ethers'
+import { type Context, environment, toPolkadot } from '@snowbridge/api'
+import { type Chain, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import type { Signer } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import useBalance from '@/hooks/useBalance'
 import useNotification from '@/hooks/useNotification'
@@ -76,12 +76,7 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
 
       try {
         await toPolkadot
-          .depositWeth(
-            context,
-            signer,
-            tokenAmount!.token!.address,
-            convertAmount(amount, EthereumTokens.ETH),
-          )
+          .depositWeth(context, signer, tokenAmount!.token!.address, convertAmount(amount, EthereumTokens.ETH))
           .then(x => x.wait())
 
         setIsSwapping(false)

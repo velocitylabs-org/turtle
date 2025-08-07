@@ -1,5 +1,5 @@
 'use server'
-import { transactionsPerPage, swapsStartingDate } from '@/constants'
+import { swapsStartingDate, transactionsPerPage } from '@/constants'
 import swapView from '@/models/swap-view'
 import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'

@@ -18,7 +18,7 @@ export default function NavBar() {
       <nav>
         <ul className="items-center space-x-6">
           <li>
-            <a href="https://turtle.cool" target="_blank" className="turtle-text-shadow text-white">
+            <a href="https://turtle.cool" target="_blank" className="turtle-text-shadow text-white" rel="noopener">
               About
             </a>
           </li>

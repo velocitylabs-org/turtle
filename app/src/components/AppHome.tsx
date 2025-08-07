@@ -5,7 +5,7 @@ import { useState } from 'react'
 import TabNavigation from '@/components/TabNavigation'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
-import { TabOptions } from '@/models/transfer'
+import type { TabOptions } from '@/models/transfer'
 import TransactionLoaderSkeleton from './completed/TransactionLoaderSkeleton'
 import OngoingTransfers from './ongoing/OngoingTransfers'
 

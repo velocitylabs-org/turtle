@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Token, getTokenPrice, TokenPriceResult } from '@velocitylabs-org/turtle-registry'
+import { getTokenPrice, type Token, type TokenPriceResult } from '@velocitylabs-org/turtle-registry'
 import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
 
 const useTokenPrice = (token?: Token | null): TokenPriceResult => {

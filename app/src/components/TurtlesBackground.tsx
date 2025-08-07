@@ -28,10 +28,7 @@ export default function TurtlesBackground() {
             shapeRendering="auto"
           >
             <defs>
-              <path
-                id="gentle-wave"
-                d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
-              />
+              <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
             </defs>
             <g className="parallax">
               <use xlinkHref="#gentle-wave" x="48" y="0" fill="rgba(191,218,220,0.7)" />

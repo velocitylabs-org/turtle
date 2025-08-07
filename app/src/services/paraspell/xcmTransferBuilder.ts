@@ -1,10 +1,10 @@
 import {
   Builder,
-  GeneralBuilder,
-  TNodeDotKsmWithRelayChains,
-  TSendBaseOptionsWithSenderAddress,
+  type GeneralBuilder,
+  type TNodeDotKsmWithRelayChains,
+  type TSendBaseOptionsWithSenderAddress,
 } from '@paraspell/sdk'
-import { TransferParams } from '@/hooks/useTransfer'
+import type { TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 
@@ -78,9 +78,7 @@ class XcmTransferBuilderManager {
   async isExistentialDepositMetAfterTransfer(params: TransferParams) {
     try {
       const builder = this.getBuilder(params)
-      return await (
-        builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
-      ).verifyEdOnDestination()
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).verifyEdOnDestination()
     } catch (error) {
       console.error('Failed to verify existential deposit: ', error)
       return false
@@ -105,9 +103,7 @@ class XcmTransferBuilderManager {
   ) {
     try {
       const builder = this.getBuilder(params as TransferParams)
-      return await (
-        builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>
-      ).getTransferableAmount()
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferableAmount()
     } catch (error) {
       console.error('Failed to get transferable amount: ', error)
       return null

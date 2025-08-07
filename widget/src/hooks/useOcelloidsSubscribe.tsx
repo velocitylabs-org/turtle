@@ -1,13 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import useNotification from '@/hooks/useNotification'
 import useOngoingTransfers from '@/hooks/useOngoingTransfers'
-import {
-  getOcelloidsAgentApi,
-  getSubscribableTransfers,
-  xcmOcceloidsSubscribe,
-} from '@/lib/ocelloids'
-import { StoredTransfer } from '@/models/transfer'
+import { getOcelloidsAgentApi, getSubscribableTransfers, xcmOcceloidsSubscribe } from '@/lib/ocelloids'
+import type { StoredTransfer } from '@/models/transfer'
 
 const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
   const { remove, updateStatus, updateProgress } = useOngoingTransfers()
@@ -17,7 +13,7 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
 
   const xcmTransfers = getSubscribableTransfers(ongoingTransfers)
 
-  const fetchAgentAndSubscribe = async () => {
+  const fetchAgentAndSubscribe = useCallback(async () => {
     if (xcmTransfers.length === 0) return
 
     try {
@@ -45,7 +41,7 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
     } catch (error) {
       console.error('Error during Ocelloids subscription:', error)
     }
-  }
+  }, [xcmTransfers, remove, addCompletedTransfer, updateStatus, addNotification, updateProgress])
 
   useEffect(() => {
     fetchAgentAndSubscribe()
@@ -59,7 +55,7 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
         }
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [xcmTransfers])
+  }, [xcmTransfers, fetchAgentAndSubscribe])
 }
+
 export default useOcelloidsSubscribe

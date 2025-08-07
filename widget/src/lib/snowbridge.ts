@@ -1,22 +1,22 @@
 import { Context, contextConfigFor, environment, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
 import {
-  Chain,
-  Token,
-  isAssetHub,
-  rpcConnectionAsHttps,
   AssetHub,
   BridgeHub,
-  Polkadot,
+  type Chain,
   EthereumTokens,
-  PolkadotTokens,
-  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
   getTokenPrice,
-  Network,
+  isAssetHub,
+  type Network,
+  Polkadot,
+  PolkadotTokens,
+  rpcConnectionAsHttps,
+  SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { Fee } from '@/hooks/useFees'
-import { SnowbridgeContext } from '@/models/snowbridge'
-import { AmountInfo } from '@/models/transfer'
-import { Direction, toHuman, safeConvertAmount } from '@/utils/transfer'
+import type { Fee } from '@/hooks/useFees'
+import type { SnowbridgeContext } from '@/models/snowbridge'
+import type { AmountInfo } from '@/models/transfer'
+import { Direction, safeConvertAmount, toHuman } from '@/utils/transfer'
 
 /**
  * Given a network, return the adequate Snowbridge Api Environment scheme.
@@ -71,10 +71,10 @@ export function toSnowbridgeNetwork(network: Network): string | undefined {
 /**
  * Estimates the gas cost for a given Ethereum transaction in both native token and USD value.
  *
- * @param tx - The contract transaction object.
+ * @param transfer
  * @param context - The Snowbridge context containing Ethereum API.
  * @param feeToken - The fee token.
- * @param nativeTokenUSDValue - The USD value of the fee token.
+ * @param feeTokenUSDValue
  * @returns An object containing the tx estimate gas fee in the fee token and its USD value.
  */
 export const estimateTransactionFees = async (
@@ -171,9 +171,7 @@ export const getFeeEstimate = async (
             gateway: context.gateway(),
             bridgeHub: await context.bridgeHub(),
             assetHub: await context.assetHub(),
-            destParachain: isAssetHub(destinationChain)
-              ? undefined
-              : await context.parachain(destinationChain.chainId),
+            destParachain: isAssetHub(destinationChain) ? undefined : await context.parachain(destinationChain.chainId),
           },
           tx,
         )
@@ -216,5 +214,6 @@ export const getFeeEstimate = async (
 export const findValidationError = (
   validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
 ): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
+  // biome-ignore lint/suspicious/noDoubleEquals: log.kind
   return validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
 }

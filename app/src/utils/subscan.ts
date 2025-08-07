@@ -1,7 +1,7 @@
-import { subscan, environment } from '@snowbridge/api'
+import { type environment, subscan } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
-import { SubscanTransferResponse, FromParachainTrackingResult, Status } from '@/models/subscan'
-import { OngoingTransferWithDirection } from '@/models/transfer'
+import type { FromParachainTrackingResult, Status, SubscanTransferResponse } from '@/models/subscan'
+import type { OngoingTransferWithDirection } from '@/models/transfer'
 
 export const trackXcm = async (
   sbEnv: environment.SnowbridgeEnvironment,
@@ -24,8 +24,7 @@ export const trackXcm = async (
       const body = {
         ...(crossChainMessageHash && { message_hash: crossChainMessageHash }),
         // Only fetch by ExtrinsicIndex if sourceChain is Relay chain & crossChainMessageHash is undefined
-        ...(!crossChainMessageHash &&
-          sourceChainExtrinsicIndex && { extrinsic_index: sourceChainExtrinsicIndex }),
+        ...(!crossChainMessageHash && sourceChainExtrinsicIndex && { extrinsic_index: sourceChainExtrinsicIndex }),
         row: 10,
       }
       const query = await relaychain.post('api/scan/xcm/list', body)

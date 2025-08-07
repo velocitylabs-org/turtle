@@ -1,16 +1,12 @@
-import {
-  getOriginFeeDetails,
-  getParaEthTransferFees,
-  TNodeDotKsmWithRelayChains,
-} from '@paraspell/sdk'
+import { getOriginFeeDetails, getParaEthTransferFees, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { useQuery } from '@tanstack/react-query'
-import { Chain, Token, PolkadotTokens } from '@velocitylabs-org/turtle-registry'
+import { type Chain, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { getCurrencyId, getNativeToken, getParaSpellNode } from '@/lib/paraspell/transfer'
 import { getFeeEstimate } from '@/lib/snowbridge'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 import { getPlaceholderAddress } from '@/utils/address'
 import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
 import { resolveSdk } from '@/utils/routes'
@@ -27,8 +23,7 @@ export type Fee =
 const getBridgeFeeToken = (destinationChain?: Chain | null): Token | null =>
   destinationChain?.network === 'Ethereum' ? PolkadotTokens.DOT : null
 
-const getFeeToken = (sourceChain?: Chain | null): Token | null =>
-  !sourceChain ? null : getNativeToken(sourceChain)
+const getFeeToken = (sourceChain?: Chain | null): Token | null => (!sourceChain ? null : getNativeToken(sourceChain))
 
 const useCachedBridgingFee = (bridgeFeeToken: Token | null) => {
   return useQuery({
@@ -54,8 +49,7 @@ const useFees = (
 
   const { price: tokenPrice } = useTokenPrice(feeToken)
   const { price: bridgeFeeTokenPrice } = useTokenPrice(bridgeFeeToken)
-  const { data: cachedBridgingFee, isLoading: isCachedBridgingFeeLoading } =
-    useCachedBridgingFee(bridgeFeeToken)
+  const { data: cachedBridgingFee, isLoading: isCachedBridgingFeeLoading } = useCachedBridgingFee(bridgeFeeToken)
 
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
@@ -63,8 +57,7 @@ const useFees = (
 
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
-  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
-    useSnowbridgeContext()
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
   const { addNotification } = useNotification()
 
   const fetchFees = useCallback(async () => {
@@ -123,8 +116,7 @@ const useFees = (
             })
 
             if (senderAddress) {
-              const balance =
-                (await getBalance(sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
+              const balance = (await getBalance(sourceChain, bridgeFeeToken, senderAddress))?.value ?? 0
               setCanPayAdditionalFees(bridgingFee < balance)
             }
           }
@@ -200,8 +192,6 @@ const useFees = (
     } finally {
       setLoading(false)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sourceChain,
     destinationChain,

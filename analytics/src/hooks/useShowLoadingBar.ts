@@ -10,5 +10,5 @@ export default function useShowLoadingBar(loading: boolean) {
       return
     }
     complete()
-  }, [loading])
+  }, [loading, complete, start])
 }

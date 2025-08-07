@@ -1,8 +1,8 @@
 'use client'
 
+import { type Chain, chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
+import { Body, Icon, Large, Switch, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { useState } from 'react'
-import { Body, Switch, Large, Icon, Tooltip } from '@velocitylabs-org/turtle-ui'
-import { tokensById, chainsByUid, Chain, Token } from '@velocitylabs-org/turtle-registry'
 
 const Networks = () => {
   const [visible, setVisible] = useState('Chains')
@@ -21,21 +21,12 @@ const Networks = () => {
     const id = 'uid' in item ? item.uid : item.id
 
     return (
-      <div
-        className="flex items-center justify-between px-6 py-4 hover:bg-turtle-secondary-light"
-        key={id}
-      >
+      <div className="flex items-center justify-between px-6 py-4 hover:bg-turtle-secondary-light" key={id}>
         <div className="flex items-center gap-6">
-          <Icon
-            src={typeof item.logoURI === 'string' ? item.logoURI : item.logoURI.src}
-            width={32}
-            height={32}
-          />
+          <Icon src={typeof item.logoURI === 'string' ? item.logoURI : item.logoURI.src} width={32} height={32} />
           <div className="flex flex-col">
             <p className="text-sm font-bold">{item.name}</p>
-            {'symbol' in item && item.symbol && (
-              <p className="text-sm text-turtle-level6">{item.symbol}</p>
-            )}
+            {'symbol' in item && item.symbol && <p className="text-sm text-turtle-level6">{item.symbol}</p>}
           </div>
         </div>
         <p className="text-sm">{id}</p>
@@ -58,7 +49,7 @@ const Networks = () => {
           </Tooltip>
         </header>
         <div className="flex max-h-[350px] flex-col overflow-y-auto">
-          {items.map((item) => (
+          {items.map(item => (
             <TableRow key={'uid' in item ? item.uid : item.id} item={item} />
           ))}
         </div>

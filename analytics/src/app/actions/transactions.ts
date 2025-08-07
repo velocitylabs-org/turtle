@@ -1,7 +1,6 @@
 'use server'
 import { transactionsPerPage } from '@/constants'
-import Transaction, { txStatusOptions } from '@/models/Transaction'
-import { TxStatus } from '@/models/Transaction'
+import Transaction, { type TxStatus, txStatusOptions } from '@/models/Transaction'
 import transactionView from '@/models/transaction-view'
 import captureServerError from '@/utils/capture-server-error'
 import dbConnect from '@/utils/db-connect'
@@ -123,10 +122,7 @@ export async function getTransactionsData({
         .lean(),
 
       // Calculate total volume
-      Transaction.aggregate([
-        { $match: query },
-        { $group: { _id: null, total: { $sum: '$sourceTokenAmountUsd' } } },
-      ]),
+      Transaction.aggregate([{ $match: query }, { $group: { _id: null, total: { $sum: '$sourceTokenAmountUsd' } } }]),
 
       // Get status counts
       Transaction.aggregate([
@@ -170,9 +166,7 @@ export async function getTransactionsData({
     )
 
     // Ensure all values are serializable because actions can only return plain objects
-    const serializedTransactions = filteredTransactions.map(transaction =>
-      transactionView.parse(transaction),
-    )
+    const serializedTransactions = filteredTransactions.map(transaction => transactionView.parse(transaction))
 
     return {
       transactions: serializedTransactions,
