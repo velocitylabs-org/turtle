@@ -482,7 +482,7 @@ export default function Transfer() {
               amount: { amount: 0.31, token: PolkadotTokens.HDX, inDollars: 0.0034 },
             },
             {
-              title: 'Execution Fees',
+              title: 'Swap Fees',
               chain: Hydration,
               amount: { amount: 0.2, token: PolkadotTokens.HDX, inDollars: 0.0022 },
             },
@@ -493,16 +493,14 @@ export default function Transfer() {
             },
           ]}
           receivingAmount={destinationTokenAmount}
-          bridgingFee={bridgingFee}
+          destChain={destinationChain}
           durationEstimate={durationEstimate}
-          canPayFees={canPayFees}
-          canPayAdditionalFees={canPayAdditionalFees}
-          direction={direction}
+          // canPayFees={canPayFees}
+          // canPayAdditionalFees={canPayAdditionalFees}
+          // direction={direction}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-          exceedsTransferableBalance={exceedsTransferableBalance}
-          applyTransferableBalance={applyTransferableBalance}
-          destinationChain={destinationChain}
-          destinationTokenAmount={destinationTokenAmount}
+          // exceedsTransferableBalance={exceedsTransferableBalance}
+          // applyTransferableBalance={applyTransferableBalance}
         />
 
         {/* Transfer Button */}
