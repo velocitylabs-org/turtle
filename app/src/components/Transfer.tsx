@@ -1,5 +1,12 @@
 'use client'
-import { Balance, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import {
+  AssetHub,
+  Balance,
+  EthereumTokens,
+  Hydration,
+  PolkadotTokens,
+  TokenAmount,
+} from '@velocitylabs-org/turtle-registry'
 import { cn, Button, Switch } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -218,7 +225,11 @@ export default function Transfer() {
     disableMaxBtnInPolkadotNetwork
 
   const shouldDisplayTxSummary =
-    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+    sourceTokenAmount?.token &&
+    sourceTokenAmount?.amount &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval &&
+    destinationChain
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -269,6 +280,25 @@ export default function Transfer() {
     exceedsTransferableBalance,
     fees,
   ])
+
+  //todo(victor|xony|nuno): use real fetched data instead of this mockup
+  const feesBreakdown = [
+    {
+      title: 'Execution Fees',
+      chain: Hydration,
+      amount: { amount: 0.31, token: PolkadotTokens.HDX, inDollars: 0.0034 },
+    },
+    {
+      title: 'Swap Fees',
+      chain: Hydration,
+      amount: { amount: 0.2, token: PolkadotTokens.HDX, inDollars: 0.0022 },
+    },
+    {
+      title: 'Delivery Fees',
+      chain: AssetHub,
+      amount: { amount: 0.15, token: PolkadotTokens.DOT, inDollars: 0.51 },
+    },
+  ]
 
   return (
     <>
@@ -371,11 +401,11 @@ export default function Transfer() {
                         priorityToken: sourceTokenAmount?.token,
                       }}
                       amountProps={{
-                        value: destinationTokenAmount?.amount ?? null,
+                        value: null,
                         onChange: amount =>
                           tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                         error: errors.destinationTokenAmount?.amount?.message,
-                        placeholder: receiveAmountPlaceholder,
+                        placeholder: '',
                         disabled: true,
                       }}
                       walletProps={{
@@ -402,7 +432,6 @@ export default function Transfer() {
             }}
           />
         </div>
-
         {destinationChain && (
           <div className="flex flex-col gap-1">
             {/* Switch between Wallet and Manual Input */}
@@ -434,7 +463,6 @@ export default function Transfer() {
             </AnimatePresence>
           </div>
         )}
-
         {/* ERC-20 Spend Approval */}
         <AnimatePresence>
           {requiresErc20SpendApproval && (
@@ -452,7 +480,6 @@ export default function Transfer() {
             </motion.div>
           )}
         </AnimatePresence>
-
         {/* ETH to wETH Conversion */}
         <AnimatePresence>
           {shouldDisplayEthToWEthSwap && (
@@ -471,21 +498,23 @@ export default function Transfer() {
           )}
         </AnimatePresence>
 
-        {shouldDisplayTxSummary && (
-          <TxSummary
-            loading={loadingFees}
-            tokenAmount={sourceTokenAmount}
-            fees={fees}
-            bridgingFee={bridgingFee}
-            durationEstimate={durationEstimate}
-            canPayFees={canPayFees}
-            canPayAdditionalFees={canPayAdditionalFees}
-            direction={direction}
-            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-            exceedsTransferableBalance={exceedsTransferableBalance}
-            applyTransferableBalance={applyTransferableBalance}
-          />
-        )}
+        <AnimatePresence>
+          {shouldDisplayTxSummary && (
+            <TxSummary
+              loading={loadingFees || !feesBreakdown || !destinationTokenAmount}
+              fees={feesBreakdown}
+              receivingAmount={destinationTokenAmount}
+              destChain={destinationChain}
+              durationEstimate={durationEstimate}
+              // canPayFees={canPayFees}
+              // canPayAdditionalFees={canPayAdditionalFees}
+              // direction={direction}
+              className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+              // exceedsTransferableBalance={exceedsTransferableBalance}
+              // applyTransferableBalance={applyTransferableBalance}
+            />
+          )}
+        </AnimatePresence>
 
         {/* Transfer Button */}
         <SendButton
@@ -498,7 +527,6 @@ export default function Transfer() {
           disabled={!isTransferAllowed}
           status={transferStatus}
         />
-
         <Credits />
         <SubstrateWalletModal />
       </form>

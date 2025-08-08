@@ -85,6 +85,7 @@
     "@types/react-dom": "19.0.4",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
+    "@velocitylabs-org/turtle-assets": "workspace:*",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "@velocitylabs-org/turtle-tailwind-config": "workspace:*",
     "chai": "^5.1.2",
