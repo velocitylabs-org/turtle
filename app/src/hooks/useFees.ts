@@ -110,14 +110,20 @@ const useFees = (params: UseFeesParams) => {
             sufficient: sufficientForXCM,
           } = originXcmFee
 
-          const feeToken = PolkadotTokens[feeCurrency! as keyof typeof PolkadotTokens]
+          if (!feeCurrency) throw new Error('Fee currency not available from XCM transfer builder')
+          if (!feeAmount) throw new Error('Fee amount not available from XCM transfer builder')
+
+          const feeToken = PolkadotTokens[feeCurrency as keyof typeof PolkadotTokens]
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
           setFees({
-            amount: feeAmount!,
+            amount: feeAmount,
             token: feeToken,
-            inDollars: feeTokenInDollars ? toHuman(feeAmount!, feeToken) * feeTokenInDollars : 0,
+            inDollars: feeTokenInDollars ? toHuman(feeAmount, feeToken) * feeTokenInDollars : 0,
           })
-          setCanPayFees(sufficientForXCM!)
+
+          if (sufficientForXCM !== undefined) {
+            setCanPayFees(sufficientForXCM)
+          }
 
           // The bridging fee when sending to Ethereum is paid in DOT
           if (destinationChain.network === 'Ethereum') {
