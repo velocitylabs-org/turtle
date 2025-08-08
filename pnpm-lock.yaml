@@ -368,6 +368,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^7.18.0
         version: 7.18.0(eslint@8.57.1)(typescript@5.8.3)
+      '@velocitylabs-org/turtle-assets':
+        specifier: workspace:*
+        version: link:../packages/assets
       '@velocitylabs-org/turtle-tailwind-config':
         specifier: workspace:*
         version: link:../packages/tailwind-config

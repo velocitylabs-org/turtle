@@ -471,21 +471,23 @@ export default function Transfer() {
           )}
         </AnimatePresence>
 
-        {shouldDisplayTxSummary && (
-          <TxSummary
-            loading={loadingFees}
-            tokenAmount={sourceTokenAmount}
-            fees={fees}
-            bridgingFee={bridgingFee}
-            durationEstimate={durationEstimate}
-            canPayFees={canPayFees}
-            canPayAdditionalFees={canPayAdditionalFees}
-            direction={direction}
-            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-            exceedsTransferableBalance={exceedsTransferableBalance}
-            applyTransferableBalance={applyTransferableBalance}
-          />
-        )}
+
+        <TxSummary
+          loading={loadingFees}
+          tokenAmount={sourceTokenAmount}
+          fees={fees}
+          bridgingFee={bridgingFee}
+          durationEstimate={durationEstimate}
+          canPayFees={canPayFees}
+          canPayAdditionalFees={canPayAdditionalFees}
+          direction={direction}
+          className={cn({'opacity-30': transferStatus !== 'Idle' })}
+          exceedsTransferableBalance={exceedsTransferableBalance}
+          applyTransferableBalance={applyTransferableBalance}
+          destinationChain={destinationChain}
+          destinationTokenAmount={destinationTokenAmount}
+        />
+      
 
         {/* Transfer Button */}
         <SendButton
