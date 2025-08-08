@@ -1,6 +1,6 @@
 import { Chain, Hydration, PolkadotTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { cn, spinnerSize, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
@@ -12,6 +12,7 @@ import ExclamationMark from './svg/ExclamationMark'
 import LoadingIcon from './svg/LoadingIcon'
 import NumberFlow from '@number-flow/react'
 import InfoIcon from './svg/Info'
+import FeesBreakdown from './FeesBreakdown'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount | null
@@ -102,8 +103,9 @@ export default function TxSummary({
           <div className='flex items-center gap-1'>
             <span className='text-xs text-turtle-level6 leading-none'>Fee</span>
             <span className='font-bold text-sm text-turtle-foreground'>$0.066</span>
-            <InfoIcon width={12} height={12} fill={colors['turtle-level6']}/>
-
+            <Tooltip showIcon={false} content={<FeesBreakdown/>}>
+              <InfoIcon width={12} height={12} fill={colors['turtle-level6']}/>
+            </Tooltip>
           </div>
 
           <div className='flex items-center gap-1'>
