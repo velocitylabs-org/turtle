@@ -74,22 +74,37 @@ const useTransferForm = () => {
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
+  const feesParams = useMemo(
+    () => ({
+      sourceChain,
+      destinationChain,
+      sourceToken: sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
+      destinationToken: destToken,
+      sourceTokenAmount: sourceTokenAmount?.amount,
+      sender: sourceWallet?.sender,
+      recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
+    }),
+    [
+      sourceChain,
+      destinationChain,
+      sourceTokenAmountError,
+      sourceTokenAmount?.token,
+      sourceTokenAmount?.amount,
+      sourceWallet?.sender,
+      manualRecipient,
+      destinationWallet,
+      destToken,
+    ],
+  )
+
   const {
-    fees,
     loading: loadingFees,
-    canPayFees,
+    fees,
     bridgingFee,
+    canPayFees,
     canPayAdditionalFees,
     refetch: refetchFees,
-  } = useFees(
-    sourceChain,
-    destinationChain,
-    sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
-    sourceTokenAmount?.amount,
-    sourceWallet?.sender?.address,
-    getRecipientAddress(manualRecipient, destinationWallet),
-    destToken,
-  )
+  } = useFees(feesParams)
 
   const {
     balance: balanceData,
