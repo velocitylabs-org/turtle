@@ -1,18 +1,12 @@
+import NumberFlow from '@number-flow/react'
 import { Chain, Hydration, PolkadotTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
-import { AnimatePresence, motion } from 'framer-motion'
-import { AMOUNT_VS_FEE_RATIO } from '@/config'
+import { TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
-import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
-import Delayed from './Delayed'
-import ExclamationMark from './svg/ExclamationMark'
-import LoadingIcon from './svg/LoadingIcon'
-import NumberFlow from '@number-flow/react'
-import InfoIcon from './svg/Info'
 import FeesBreakdown from './FeesBreakdown'
+import InfoIcon from './svg/Info'
 
 interface TxSummaryProps {
   tokenAmount: TokenAmount | null
@@ -27,7 +21,7 @@ interface TxSummaryProps {
   exceedsTransferableBalance: boolean
   applyTransferableBalance: () => void
   destinationChain?: Chain | null
-  destinationTokenAmount?: TokenAmount | null 
+  destinationTokenAmount?: TokenAmount | null
 }
 
 const animationConfig = {
@@ -64,62 +58,45 @@ export default function TxSummary({
   // const transferAmount = toAmountInfo(tokenAmount, price)
   const { price: destPrice } = useTokenPrice(destinationTokenAmount?.token)
 
-
   return (
-      <div className='flex flex-col items-start p-[24px] gap-[24px] rounded-[8px] border border-turtle-level3 mt-8'>
-        {/* You'll get section */}
-        <div className='flex flex-row items-start justify-between w-full'>
-          {/* Left */}
-          <div className='text-turtle-level6 text-sm leading-none'>You'll get</div>
-          
-          {/* Right */}
-          <div className='flex flex-col items-end gap-1 -mt-[9px]'>
-            <div className='flex flex-row gap-2 items-baseline'>
-              <TokenLogo
-                token={PolkadotTokens.DOT}
-                sourceChain={Hydration}
-                size={25}
-              />
-              <div className='text-turtle-foreground text-[32px] font-medium'>
-                <NumberFlow
-                    value={49816}
-                    format={numberFlowFormat}
-                  />
-              </div>
+    <div className="mt-8 flex flex-col items-start gap-[24px] rounded-[8px] border border-turtle-level3 p-[24px]">
+      {/* You'll get section */}
+      <div className="flex w-full flex-row items-start justify-between">
+        {/* Left */}
+        <div className="text-sm leading-none text-turtle-level6">You'll get</div>
+
+        {/* Right */}
+        <div className="-mt-[9px] flex flex-col items-end gap-1">
+          <div className="flex flex-row items-baseline gap-2">
+            <TokenLogo token={PolkadotTokens.DOT} sourceChain={Hydration} size={25} />
+            <div className="text-[32px] font-medium text-turtle-foreground">
+              <NumberFlow value={49816} format={numberFlowFormat} />
             </div>
-            <div className={'animate-slide-up -mt-[5px] text-sm text-turtle-level6 leading-none'}>
-                <NumberFlow
-                  value={18.083}
-                  prefix="$"
-                  format={numberFlowFormat}
-                />
-              </div>
+          </div>
+          <div className={'animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6'}>
+            <NumberFlow value={18.083} prefix="$" format={numberFlowFormat} />
           </div>
         </div>
-
-        <div className='h-1 w-full border-t border-1 border-turtle-level3'/>
-
-        <div className='flex flex-row items-start justify-between w-full'>
-          <div className='flex items-center gap-1'>
-            <span className='text-xs text-turtle-level6 leading-none'>Fee</span>
-            <span className='font-bold text-sm text-turtle-foreground'>$0.066</span>
-            <Tooltip showIcon={false} content={<FeesBreakdown/>}>
-              <InfoIcon width={12} height={12} fill={colors['turtle-level6']}/>
-            </Tooltip>
-          </div>
-
-          <div className='flex items-center gap-1'>
-            <span className='text-turtle-level6 text-normal leading-none text-xs'>Duration</span>
-            <span className='font-bold text-sm text-turtle-foreground'>~45 seconds</span>
-          </div>
-        </div>
-        
-              
-        
-
       </div>
-    )
 
+      <div className="border-1 h-1 w-full border-t border-turtle-level3" />
+
+      <div className="flex w-full flex-row items-start justify-between">
+        <div className="flex items-center gap-1">
+          <span className="text-xs leading-none text-turtle-level6">Fee</span>
+          <span className="text-sm font-bold text-turtle-foreground">$0.066</span>
+          <Tooltip showIcon={false} content={<FeesBreakdown />}>
+            <InfoIcon width={12} height={12} fill={colors['turtle-level6']} />
+          </Tooltip>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
+          <span className="text-sm font-bold text-turtle-foreground">~45 seconds</span>
+        </div>
+      </div>
+    </div>
+  )
 
   // if (!loading && !fees && !bridgingFee) return null
 
@@ -168,7 +145,7 @@ export default function TxSummary({
   //       <div className='flex flex-row items-start justify-between w-full'>
   //         {/* Left */}
   //         <div className='text-turtle-level6 text-normal leading-none'>You'll get</div>
-          
+
   //         {/* Right */}
   //         <div className='flex flex-col items-end gap-2'>
   //           <div className='flex flex-row items-baseline h-fit'>
@@ -194,8 +171,7 @@ export default function TxSummary({
   //             </div>
   //         </div>
   //       </div>
-        
-              
+
   //       <div className='h-1 border-t border-1 border-turtle-level3'/>
 
   //     </div>
