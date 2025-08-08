@@ -33,20 +33,12 @@ export const getDex = (chain: Chain): Dex | undefined => {
 export const getDexTokens = (dex: Dex): Token[] => {
   const pairs = getDexPairs(dex)
 
-  console.log(
-    pairs.filter(
-      pair => pair[0].symbol.toLowerCase() === 'ausdt' || pair[1].symbol.toLowerCase() === 'ausdt',
-    ),
-  )
-
   const uniqueTokens = new Map(
     pairs.flatMap(([token1, token2]) => [
       [token1.id, token1],
       [token2.id, token2],
     ]),
   )
-
-  console.log('ausdt', uniqueTokens.get('ausdt'))
 
   return Array.from(uniqueTokens.values())
 }
@@ -55,12 +47,6 @@ export const getDexTokens = (dex: Dex): Token[] => {
 export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const pairs = getExchangePairs(dex)
 
-  console.log(
-    pairs.filter(
-      pair => pair[0].symbol.toLowerCase() === 'ausdt' || pair[1].symbol.toLowerCase() === 'ausdt',
-    ),
-  )
-
   const turtlePairs = pairs
     .map(pair => {
       const [token1, token2] = pair
@@ -68,14 +54,6 @@ export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] =
 
       const t1 = getTokenByMultilocation(token1.multiLocation)
       const t2 = getTokenByMultilocation(token2.multiLocation)
-
-      if (token1.symbol.toLowerCase() === 'ausdt') {
-        console.log('token1', token1.symbol, token1.multiLocation, 'ausdt in turtle: ', t1)
-        console.log('token2', token2.symbol, token2.multiLocation, 'swap token in turtle: ', t2)
-      }
-
-      if (!t1 && token1.symbol.toLowerCase() === 'ausdt')
-        console.log('not found! Symbol: ', token1.symbol, 'MultiLocation: ', token1.multiLocation)
 
       if (!t1 || !t2) return null // not supported by turtle registry
       return [t1, t2] as [Token, Token]
