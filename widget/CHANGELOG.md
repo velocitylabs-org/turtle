@@ -1,5 +1,11 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.1.1
+
+### Patch Changes
+
+- e01ce5e: bump ps to 10.11.6 and papi to 1.15.2
+
 ## 0.1.0
 
 ### Minor Changes
