@@ -12,7 +12,7 @@ import { Direction, resolveDirection } from '@/services/transfer'
 import { getNativeToken, getParaSpellNode, isChainSupportingToken } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
-import { convertAmount, toHuman } from '@/utils/transfer'
+import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import useBalance from './useBalance'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
@@ -99,7 +99,7 @@ const useFees = (params: UseFeesParams) => {
             sourceChain: sourceChain,
             destinationChain: destinationChain,
             sourceToken,
-            sourceAmount: convertAmount(sourceTokenAmount, sourceToken),
+            sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
             sender,
             recipient: recipientAddress,
           })
