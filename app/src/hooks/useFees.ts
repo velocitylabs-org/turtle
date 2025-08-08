@@ -1,4 +1,3 @@
-import { getOriginFeeDetails, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
@@ -10,12 +9,7 @@ import { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction, resolveDirection } from '@/services/transfer'
-import {
-  getNativeToken,
-  getParaSpellNode,
-  getParaspellToken,
-  isChainSupportingToken,
-} from '@/utils/paraspellTransfer'
+import { getNativeToken, getParaSpellNode, isChainSupportingToken } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { convertAmount, toHuman } from '@/utils/transfer'
@@ -87,9 +81,6 @@ const useFees = (params: UseFeesParams) => {
     const sdk = resolveSdk(sourceChain, destinationChain)
     if (!sdk) throw new Error('Route not supported')
 
-    // TODO: this should be the fee token, not necessarily the native token.
-    const feeToken = getNativeToken(sourceChain)
-
     try {
       // reset
       setBridgingFee(null)
@@ -104,19 +95,6 @@ const useFees = (params: UseFeesParams) => {
           const destinationChainNode = getParaSpellNode(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
-          const currency = getParaspellToken(sourceToken, sourceChainNode)
-          const info = await getOriginFeeDetails({
-            origin: sourceChainNode as TNodeDotKsmWithRelayChains,
-            destination: destinationChainNode,
-            currency: {
-              ...currency,
-              amount: convertAmount(sourceTokenAmount, sourceToken).toString(),
-            }, // hardcoded amount because the fee is usually independent of the amount
-            account: senderAddress, // hardcode sender address because the fee is usually independent of the sender
-            accountDestination: recipientAddress, // hardcode recipient address because the fee is usually independent of the recipient
-            api: sourceChain.rpcConnection,
-          })
-
           const originXcmFee = await xcmTransferBuilderManager.getOriginXcmFee({
             sourceChain: sourceChain,
             destinationChain: destinationChain,
@@ -126,17 +104,20 @@ const useFees = (params: UseFeesParams) => {
             recipient: recipientAddress,
           })
 
-          console.log('getOriginFeeDetails', info)
-          console.log('originXcmFee', originXcmFee)
+          const {
+            currency: feeCurrency,
+            fee: feeAmount,
+            sufficient: sufficientForXCM,
+          } = originXcmFee
 
+          const feeToken = PolkadotTokens[feeCurrency! as keyof typeof PolkadotTokens]
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
-          const fee = info.xcmFee
           setFees({
-            amount: fee,
+            amount: feeAmount!,
             token: feeToken,
-            inDollars: feeTokenInDollars ? toHuman(fee, feeToken) * feeTokenInDollars : 0,
+            inDollars: feeTokenInDollars ? toHuman(feeAmount!, feeToken) * feeTokenInDollars : 0,
           })
-          setCanPayFees(info.sufficientForXCM)
+          setCanPayFees(sufficientForXCM!)
 
           // The bridging fee when sending to Ethereum is paid in DOT
           if (destinationChain.network === 'Ethereum') {
