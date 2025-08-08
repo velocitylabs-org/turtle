@@ -1,5 +1,25 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.1.0
+
+### Minor Changes
+
+- 5d7e4c3: add 1 click send swap send flow
+
+### Patch Changes
+
+- f5df643: Bump paraspell SDK & Snowbridge
+- 2e0f581: Added new assets and typography
+- 4ae102d: Added wallet icon to the assets package and replaced the import in the widget
+- 2e0f581: Updated configs, added Switch component to turtle-ui, updated widget accordingly
+- 0a49f85: refactor: Drop Environment type
+- cfe83db: fix: tracking the execute function correctly
+- 93246b6: Introduce a new transaction status called Ongoing. Transactions will now begin with the Ongoing status and update to their final status upon completion
+- 1ad5eee: Fix KSM implementation & max Button flow
+- 2e0f581: Introduced a shared package for tailwind and shared the config in the packages
+- f5df643: Bump snowbridge @0.1.69, install snowbridge new pacakges, fix breaking change and tracking
+- 7cfd68c: Update React and React DOM to v19, mark as non-optional
+
 ## 0.0.16
 
 ### Patch Changes

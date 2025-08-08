@@ -1,5 +1,24 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.0.9
+
+### Patch Changes
+
+- 2e0f581: Added icons, fixed styles for components, added styles in config
+- 2e0f581: Added new assets and typography
+- 4ae102d: Added wallet icon to the assets package and replaced the import in the widget
+- 2e0f581: Updated configs, added Switch component to turtle-ui, updated widget accordingly
+- 356a12b: Added readme
+- 0a49f85: refactor: Drop Environment type
+- 2e0f581: Introduced a shared package for tailwind and shared the config in the packages
+- 2e0f581: Added "as" property to the Button and removed full width style – also updated its props
+- Updated dependencies [2e0f581]
+- Updated dependencies [2e0f581]
+- Updated dependencies [0a49f85]
+- Updated dependencies [cfe83db]
+  - @velocitylabs-org/turtle-assets@0.0.5
+  - @velocitylabs-org/turtle-registry@0.0.8
+
 ## 0.0.8
 
 ### Patch Changes
