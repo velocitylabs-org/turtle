@@ -5,13 +5,13 @@ interface FeesBreakdownProps {
   fees: FeeDetails[]
 }
 
-export default function FeesBreakdown({fees}: FeesBreakdownProps) {
+export default function FeesBreakdown({ fees }: FeesBreakdownProps) {
   return (
     <div className="w-[359px] bg-turtle-foreground p-4 pb-0 text-turtle-background">
       <div className="w-full pb-4 text-center text-sm font-bold">Fees Breakdown</div>
       <ul>
         {fees.map(fee => (
-          <li className="pb-4">
+          <li className="pb-4" key={fee.title}>
             <div className="flex flex-row items-center justify-between">
               {/* Left - Token & Type of Fee */}
               <div className="flex flex-row items-center justify-between gap-1">

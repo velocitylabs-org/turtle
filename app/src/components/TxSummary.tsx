@@ -1,16 +1,14 @@
 import NumberFlow from '@number-flow/react'
-import { Chain, Hydration, PolkadotTokens, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
+import { AnimatePresence, motion } from 'framer-motion'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import { AmountInfo } from '@/models/transfer'
-import { Direction } from '@/services/transfer'
+import Delayed from './Delayed'
 import FeesBreakdown from './FeesBreakdown'
 import InfoIcon from './svg/Info'
-import { toHuman } from '../utils/transfer';
-import { AnimatePresence, motion } from 'framer-motion';
 import LoadingIcon from './svg/LoadingIcon'
-import Delayed from './Delayed'
 
 interface TxSummaryProps {
   // Weather it's loading the fees
@@ -20,7 +18,7 @@ interface TxSummaryProps {
   // The amount the user will receive
   receivingAmount: TokenAmount | null
   // The chain in which the user will get the `receivingAmount`
-  destChain: Chain | null,
+  destChain: Chain | null
 
   // The estimate given for the transfer
   durationEstimate?: string
@@ -30,10 +28,10 @@ interface TxSummaryProps {
 
   // canPayFees: boolean
   // canPayAdditionalFees: boolean
-  
+
   // exceedsTransferableBalance: boolean
   // applyTransferableBalance: () => void
-  
+
   className?: string
 }
 
@@ -43,7 +41,7 @@ export interface FeeDetails {
   // The chain in which the fee is charged
   chain: Chain
   // The amount to be charged
-  amount: AmountInfo,
+  amount: AmountInfo
 }
 
 const animationConfig = {
@@ -72,7 +70,13 @@ export default function TxSummary({
   const totalFeeCostInDollars = fees.map(x => x.amount.inDollars).reduce((acc, x) => acc + x)
 
   const renderContent = () => {
-    if (loading) {
+    if (
+      loading ||
+      !receivingAmount ||
+      !receivingAmount.amount ||
+      !receivingAmount.token ||
+      !receivingTokenPrice
+    ) {
       return (
         <div className="mt-8 flex h-[10rem] h-[182px] w-full animate-pulse flex-col items-center justify-center rounded-[16px] bg-turtle-level1">
           <LoadingIcon
@@ -93,51 +97,51 @@ export default function TxSummary({
       )
     }
 
+    return (
+      <div className="mt-8 flex flex-col items-start gap-[24px] rounded-[8px] border border-turtle-level3 p-[24px]">
+        {/* You'll get section */}
+        <div className="flex w-full flex-row items-start justify-between">
+          {/* Left */}
+          <div className="text-sm leading-none text-turtle-level6">You'll get</div>
 
-    if (receivingAmount && receivingAmount.amount != null  && receivingAmount.token != null) {
-      return (
-        <div className="mt-8 flex flex-col items-start gap-[24px] rounded-[8px] border border-turtle-level3 p-[24px]">
-          {/* You'll get section */}
-          <div className="flex w-full flex-row items-start justify-between">
-            {/* Left */}
-            <div className="text-sm leading-none text-turtle-level6">You'll get</div>
-
-            {/* Right */}
-            <div className="-mt-[9px] flex flex-col items-end gap-1">
-              <div className="flex flex-row items-baseline gap-2">
-                <TokenLogo token={receivingAmount.token} sourceChain={destChain} size={25} />
-                <div className="text-[32px] font-medium text-turtle-foreground">
-                  <NumberFlow value={receivingAmount.amount} format={numberFlowFormat} />
-              </div>
-              </div>
-              <div className={'animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6'}>
-                <NumberFlow value={receivingTokenPrice == undefined ? 0 : receivingTokenPrice * receivingAmount.amount} prefix="$" format={numberFlowFormat} />
+          {/* Right */}
+          <div className="-mt-[9px] flex flex-col items-end gap-1">
+            <div className="flex flex-row items-baseline gap-2">
+              <TokenLogo token={receivingAmount.token} sourceChain={destChain} size={25} />
+              <div className="text-[32px] font-medium text-turtle-foreground">
+                <NumberFlow value={receivingAmount.amount} format={numberFlowFormat} />
               </div>
             </div>
-          </div>
-
-          <div className="border-1 h-1 w-full border-t border-turtle-level3" />
-
-          <div className="flex w-full flex-row items-start justify-between">
-            <div className="flex items-center gap-1">
-              <span className="text-xs leading-none text-turtle-level6">Fee</span>
-              <span className="text-sm text-turtle-foreground"> 
-                <NumberFlow value={totalFeeCostInDollars} prefix="$" format={numberFlowFormat} />        
-              </span>
-              <Tooltip showIcon={false} content={<FeesBreakdown fees={fees} />}>
-                <InfoIcon width={12} height={12} fill={colors['turtle-level6']} />
-              </Tooltip>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
-              <span className="text-sm text-turtle-foreground">{durationEstimate}</span>
+            <div className={'animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6'}>
+              <NumberFlow
+                value={receivingTokenPrice * receivingAmount.amount}
+                prefix="$"
+                format={numberFlowFormat}
+              />
             </div>
           </div>
         </div>
-      )
-    }
 
+        <div className="border-1 h-1 w-full border-t border-turtle-level3" />
+
+        <div className="flex w-full flex-row items-start justify-between">
+          <div className="flex items-center gap-1">
+            <span className="text-xs leading-none text-turtle-level6">Fee</span>
+            <span className="text-sm text-turtle-foreground">
+              <NumberFlow value={totalFeeCostInDollars} prefix="$" format={numberFlowFormat} />
+            </span>
+            <Tooltip showIcon={false} content={<FeesBreakdown fees={fees} />}>
+              <InfoIcon width={12} height={12} fill={colors['turtle-level6']} />
+            </Tooltip>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
+            <span className="text-sm text-turtle-foreground">{durationEstimate}</span>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // if (!loading && !fees && !bridgingFee) return null
