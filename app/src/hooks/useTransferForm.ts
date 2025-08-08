@@ -18,8 +18,8 @@ import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
-import { getTransferableAmount } from '@/utils/paraspellTransfer'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import useFees from './useFees'
@@ -74,22 +74,37 @@ const useTransferForm = () => {
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
+  const feesParams = useMemo(
+    () => ({
+      sourceChain,
+      destinationChain,
+      sourceToken: sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
+      destinationToken: destToken,
+      sourceTokenAmount: sourceTokenAmount?.amount,
+      sender: sourceWallet?.sender,
+      recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
+    }),
+    [
+      sourceChain,
+      destinationChain,
+      sourceTokenAmountError,
+      sourceTokenAmount?.token,
+      sourceTokenAmount?.amount,
+      sourceWallet?.sender,
+      manualRecipient,
+      destinationWallet,
+      destToken,
+    ],
+  )
+
   const {
-    fees,
     loading: loadingFees,
-    canPayFees,
+    fees,
     bridgingFee,
+    canPayFees,
     canPayAdditionalFees,
     refetch: refetchFees,
-  } = useFees(
-    sourceChain,
-    destinationChain,
-    sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
-    sourceTokenAmount?.amount,
-    sourceWallet?.sender?.address,
-    getRecipientAddress(manualRecipient, destinationWallet),
-    destToken,
-  )
+  } = useFees(feesParams)
 
   const {
     balance: balanceData,
@@ -245,14 +260,16 @@ const useTransferForm = () => {
       const recipient =
         getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
 
-      const transferableAmount = await getTransferableAmount(
+      const params = {
         sourceChain,
         destinationChain,
-        sourceTokenAmount.token,
+        sourceToken: sourceTokenAmount.token,
         recipient,
-        sourceWallet.sender.address,
-        balanceData.value,
-      )
+        sender: sourceWallet.sender,
+        sourceAmount: balanceData.value,
+      }
+      const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
+      if (!transferableAmount) return
 
       setValue(
         'sourceTokenAmount',

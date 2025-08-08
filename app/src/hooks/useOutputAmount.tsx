@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { AmountInfo } from '@/models/transfer'
-import { getExchangeOutputAmount } from '@/utils/paraspellSwap'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
@@ -47,13 +47,14 @@ export function useOutputAmount({
       try {
         if (!isSameToken(sourceToken, destinationToken)) {
           // Swap
-          const output = await getExchangeOutputAmount(
+          const params = {
             sourceChain,
             destinationChain,
             sourceToken,
             destinationToken,
-            amount,
-          )
+            sourceAmount: amount,
+          }
+          const output = await xcmRouterBuilderManager.getExchangeOutputAmount(params)
           return output
         }
 
