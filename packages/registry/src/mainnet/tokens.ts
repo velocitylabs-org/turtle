@@ -1,9 +1,12 @@
+import aaveLogo from "@velocitylabs-org/turtle-assets/logos/aave.svg";
 import acalaLogo from "@velocitylabs-org/turtle-assets/logos/acala.svg";
 import astarLogo from "@velocitylabs-org/turtle-assets/logos/astar.svg";
+import ausdtLogo from "@velocitylabs-org/turtle-assets/logos/ausdt.svg";
 import bifrostLogo from "@velocitylabs-org/turtle-assets/logos/bifrost.svg";
 import cfgLogo from "@velocitylabs-org/turtle-assets/logos/cfg.svg";
 import daiLogo from "@velocitylabs-org/turtle-assets/logos/dai.svg";
 import ethereumLogo from "@velocitylabs-org/turtle-assets/logos/ethereum.svg";
+import gigadotLogo from "@velocitylabs-org/turtle-assets/logos/gigadot.svg";
 import hydraLogo from "@velocitylabs-org/turtle-assets/logos/hydra.svg";
 import ibtcLogo from "@velocitylabs-org/turtle-assets/logos/ibtc.svg";
 import interlayLogo from "@velocitylabs-org/turtle-assets/logos/interlay.svg";
@@ -24,9 +27,6 @@ import vethLogo from "@velocitylabs-org/turtle-assets/logos/veth.svg";
 import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
-import ausdtLogo from "@velocitylabs-org/turtle-assets/logos/ausdt.svg";
-import gigadotLogo from "@velocitylabs-org/turtle-assets/logos/gigadot.svg";
-import aaveLogo from "@velocitylabs-org/turtle-assets/logos/aave.svg";
 
 import { Token } from "@/types";
 import { parachain, snowbridgeWrapped } from "../helpers";
