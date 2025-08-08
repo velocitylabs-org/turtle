@@ -5,6 +5,7 @@ import { AmountInfo } from '@/models/transfer'
 
 import { SubstrateAccount } from '@/store/substrateWalletStore'
 import { resolveSdk } from '@/utils/routes'
+import useChainflipApi from './useChainflipApi'
 import useParaspellApi from './useParaspellApi'
 import useSnowbridgeApi from './useSnowbridgeApi'
 
@@ -34,7 +35,7 @@ const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
   const snowbridgeApi = useSnowbridgeApi()
   const paraspellApi = useParaspellApi()
-
+  const chainflipApi = useChainflipApi()
   // The entry point function which is exposed to the components
   const transfer = async (transferDetails: TransferParams) => {
     const { sourceChain, destinationChain, sourceToken, destinationToken } = transferDetails
@@ -50,6 +51,10 @@ const useTransfer = () => {
 
       case 'ParaSpellApi':
         paraspellApi.transfer(transferDetails, setStatus)
+        break
+
+      case 'ChainflipApi':
+        chainflipApi.transfer(transferDetails, setStatus)
         break
     }
   }

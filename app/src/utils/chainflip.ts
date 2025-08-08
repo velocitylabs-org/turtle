@@ -1,13 +1,22 @@
-import { AssetData, ChainData, DCAQuote, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
+import {
+  AssetData,
+  ChainData,
+  DCAQuote,
+  DepositAddressResponseV2,
+  RegularQuote,
+  SwapSDK,
+} from '@chainflip/sdk/swap'
 import {
   Chain,
   chainflipRoutes,
   EthereumTokens,
+  MainnetRegistry,
   PolkadotTokens,
   Token,
 } from '@velocitylabs-org/turtle-registry'
 import { AmountInfo } from '@/models/transfer'
 import { useChainflipSdk } from '@/store/chainflipStore'
+import { getChainSpecificAddress } from './address'
 
 /** TYPES */
 export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
@@ -23,6 +32,8 @@ export type ChainflipChain =
 export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
 
 export type ChainflipFee = { type: ChainflipFeeType } & AmountInfo
+
+export type ChainflipQuote = RegularQuote | DCAQuote
 
 type ChainflipError = {
   response?: {
@@ -106,7 +117,7 @@ export const getChainflipQuote = async (
   destinationToken: Token,
   /** Amount in the source token's decimal base */
   amount: string,
-): Promise<RegularQuote | DCAQuote | null> => {
+): Promise<ChainflipQuote | null> => {
   const sdk = getChainflipSdk()
   if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const srcChain = await getChainflipChain(sourceChain)
@@ -125,7 +136,7 @@ export const getChainflipQuote = async (
       srcAsset: srcAsset.symbol,
       destChain: destChain.chain,
       destAsset: destAsset.symbol,
-      isVaultSwap: isVaultSwapSupported(srcChain),
+      isVaultSwap: isVaultSwapSupported(srcChain, destChain),
       brokerCommissionBps: 0,
       amount,
     })
@@ -148,9 +159,54 @@ export const getChainflipQuote = async (
   }
 }
 
+/** Generates the deposit address for a swap. */
+export const getDepositAddress = async (
+  quote: RegularQuote | DCAQuote,
+  senderAddress?: string,
+  destinationAddress?: string,
+): Promise<DepositAddressResponseV2 | null> => {
+  try {
+    if (!senderAddress || !destinationAddress) return null
+    const sdk = getChainflipSdk()
+    if (!sdk) throw new Error('Chainflip SDK not initialized.')
+
+    const formattedSenderAddress = getChainSpecificAddress(
+      senderAddress,
+      toRegistryChain(quote.srcAsset.chain),
+    )
+
+    const formattedDestinationAddress = getChainSpecificAddress(
+      destinationAddress,
+      toRegistryChain(quote.destAsset.chain),
+    )
+
+    const swapDepositAddressRequest = {
+      quote,
+      srcAddress: formattedSenderAddress,
+      destAddress: formattedDestinationAddress,
+      fillOrKillParams: {
+        slippageTolerancePercent: quote.recommendedSlippageTolerancePercent, // use recommended slippage tolerance from quote
+        refundAddress: senderAddress, // address to which assets are refunded
+        retryDurationBlocks: 100, // 100 blocks * 6 seconds = 10 minutes before deposits are refunded
+      },
+    }
+    return await sdk.requestDepositAddressV2(swapDepositAddressRequest)
+  } catch (error) {
+    console.log('requestDepositAddressV2 error', error)
+    const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
+
+    if (chainflipErrorMsg) {
+      throw formatChainflipErrorMsg(chainflipErrorMsg)
+    }
+
+    throw error as Error
+  }
+}
+
 /** Returns a Chainflip chain matching with Turtle chain. */
 export const getChainflipChain = async (chain: Chain): Promise<ChainData | undefined> => {
   const sdk = getChainflipSdk()
+  if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const chainflipChains = await sdk.getChains()
 
   // Here we map through chainflipChains and find the chain that matches Turtle chain.uid.
@@ -165,12 +221,24 @@ export const getChainflipChain = async (chain: Chain): Promise<ChainData | undef
   return chainsMatch ?? assethub
 }
 
+/** Returns a Turtle Chain matching with Chainflip chain. */
+export const toRegistryChain = (ChainflipChain: ChainflipChain): Chain => {
+  const registryChain = MainnetRegistry.chains.find(c => {
+    if (c.uid.includes('-'))
+      return c.uid.split('-')[1].toLowerCase() === ChainflipChain.toLowerCase()
+    return c.uid.toLowerCase() === ChainflipChain.toLowerCase()
+  })
+  if (!registryChain) throw new Error('No registry chain match with a Chainflip chain')
+  return registryChain
+}
+
 /** Returns a Chainflip asset matching with Turtle token. */
 export const getChainflipAsset = async (
   asset: Token,
   chainflipChain: ChainData,
 ): Promise<AssetData> => {
   const sdk = getChainflipSdk()
+  if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const assetFromSrcChain = await sdk.getAssets(chainflipChain.chain)
 
   const assetMatch = assetFromSrcChain.find(a => {
@@ -207,9 +275,9 @@ export const meetChainflipMinSwapAmount = (amount: string | bigint, asset: Asset
   return BigInt(amount) >= BigInt(asset.minimumSwapAmount)
 }
 
-/** Check if the source chain is supported for vault swap (Polkadot is not supported and uses the deposit address method) */
-export const isVaultSwapSupported = (sourceChain: ChainData): boolean =>
-  sourceChain.chain !== 'Polkadot'
+/** Check if the source chain is supported for vault swap (Assethub is not supported and uses the deposit address method) */
+export const isVaultSwapSupported = (sourceChain: ChainData, destChain: ChainData): boolean =>
+  sourceChain.chain !== 'Assethub' && destChain.chain !== 'Assethub'
 
 export const getFeeTokenFromAssetSymbol = (
   assetSymbol: AssetSymbol,
@@ -236,7 +304,6 @@ export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
       return 'Deposit fee'
     case 'EGRESS':
       return 'Broadcast fee'
-
     default:
       return 'Fee'
   }
@@ -251,7 +318,6 @@ export const getChainflipDurationEstimate = (
 
 export const formatChainflipErrorMsg = (errorMsg: string): string | null => {
   if (!errorMsg) return null
-
   const capitalized = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1)
   return capitalized.endsWith('.') ? capitalized : `${capitalized}. `
 }
