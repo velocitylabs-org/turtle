@@ -18,8 +18,6 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import { WalletInfo } from '@/hooks/useWallet'
-import { AmountInfo } from '@/models/transfer'
-import { getCachedTokenPrice } from '@/services/balance'
 import { resolveDirection } from '@/services/transfer'
 import {
   getAllowedDestinationChains,
@@ -501,21 +499,21 @@ export default function Transfer() {
         </AnimatePresence>
 
         <AnimatePresence>
-          {shouldDisplayTxSummary &&
-          <TxSummary
-            loading={loadingFees || !feesBreakdown || !destinationTokenAmount}
-            fees={feesBreakdown}
-            receivingAmount={destinationTokenAmount}
-            destChain={destinationChain}
-            durationEstimate={durationEstimate}
-            // canPayFees={canPayFees}
-            // canPayAdditionalFees={canPayAdditionalFees}
-            // direction={direction}
-            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-            // exceedsTransferableBalance={exceedsTransferableBalance}
-            // applyTransferableBalance={applyTransferableBalance}
-          />
-          }
+          {shouldDisplayTxSummary && (
+            <TxSummary
+              loading={loadingFees || !feesBreakdown || !destinationTokenAmount}
+              fees={feesBreakdown}
+              receivingAmount={destinationTokenAmount}
+              destChain={destinationChain}
+              durationEstimate={durationEstimate}
+              // canPayFees={canPayFees}
+              // canPayAdditionalFees={canPayAdditionalFees}
+              // direction={direction}
+              className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+              // exceedsTransferableBalance={exceedsTransferableBalance}
+              // applyTransferableBalance={applyTransferableBalance}
+            />
+          )}
         </AnimatePresence>
 
         {/* Transfer Button */}

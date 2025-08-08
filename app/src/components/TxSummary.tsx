@@ -102,7 +102,7 @@ export default function TxSummary({
         {/* You'll get section */}
         <div className="flex w-full flex-row items-start justify-between">
           {/* Left */}
-          <div className="text-sm leading-none text-turtle-level6">You'll get</div>
+          <div className="text-sm leading-none text-turtle-level6">You&apos;ll get</div>
 
           {/* Right */}
           <div className="-mt-[9px] flex flex-col items-end gap-1">
