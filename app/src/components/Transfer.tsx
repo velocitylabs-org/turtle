@@ -1,5 +1,5 @@
 'use client'
-import { Balance, EthereumTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { AssetHub, Balance, EthereumTokens, Hydration, PolkadotTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { cn, Button, Switch } from '@velocitylabs-org/turtle-ui'
 import { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -28,6 +28,8 @@ import AlertIcon from './svg/AlertIcon'
 import SwapFromToChains from './SwapFromToChains'
 import TxSummary from './TxSummary'
 import WalletButton from './WalletButton'
+import { AmountInfo } from '@/models/transfer'
+import { getCachedTokenPrice } from '@/services/balance'
 
 const manualInputAnimationProps = {
   initial: { opacity: 0, height: 0 },
@@ -473,8 +475,24 @@ export default function Transfer() {
 
         <TxSummary
           loading={loadingFees}
-          tokenAmount={sourceTokenAmount}
-          fees={fees}
+          fees={[
+            {
+              title: 'Execution Fees',
+              chain: Hydration,
+              amount: { amount: 0.31, token: PolkadotTokens.HDX, inDollars: 0.0034 },
+            },
+            {
+              title: 'Execution Fees',
+              chain: Hydration,
+              amount: { amount: 0.2, token: PolkadotTokens.HDX, inDollars: 0.0022 },
+            },
+            {
+              title: 'Delivery Fees',
+              chain: AssetHub,
+              amount: { amount: 0.15, token: PolkadotTokens.DOT, inDollars: 0.51 },
+            },
+          ]}
+          receivingAmount={destinationTokenAmount}
           bridgingFee={bridgingFee}
           durationEstimate={durationEstimate}
           canPayFees={canPayFees}
@@ -504,4 +522,16 @@ export default function Transfer() {
       </form>
     </>
   )
+}
+
+async function toAmountInfo(x: TokenAmount | null): Promise<AmountInfo | null> {
+  if (!x || x.amount == null || x.token == null) 
+    return null
+
+  return {
+    amount: x.amount,
+    token: x.token,
+    inDollars: await getCachedTokenPrice(x.token) * x.amount
+  }
+  
 }

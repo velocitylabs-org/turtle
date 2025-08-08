@@ -1,5 +1,5 @@
 import NumberFlow from '@number-flow/react'
-import { Chain, Hydration, PolkadotTokens, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { Chain, Hydration, PolkadotTokens, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import useTokenPrice from '@/hooks/useTokenPrice'
@@ -7,21 +7,42 @@ import { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import FeesBreakdown from './FeesBreakdown'
 import InfoIcon from './svg/Info'
+import { toHuman } from '../utils/transfer';
 
 interface TxSummaryProps {
-  tokenAmount: TokenAmount | null
+  // Weather it's loading the fees
   loading?: boolean
-  fees?: AmountInfo | null
-  bridgingFee?: AmountInfo | null
+  // The fees breakdown
+  fees: FeeDetails[]
+  // The amount the user will receive
+  receivingAmount: TokenAmount | null
+  // The chain in which the user will get the `receivingAmount`
+  destChain: Chain,
+
+  // The estimate given for the transfer
   durationEstimate?: string
+
+  // The direction the transfer
   direction?: Direction
+
   canPayFees: boolean
   canPayAdditionalFees: boolean
-  className?: string
+  
   exceedsTransferableBalance: boolean
   applyTransferableBalance: () => void
   destinationChain?: Chain | null
   destinationTokenAmount?: TokenAmount | null
+
+  className?: string
+}
+
+export interface FeeDetails {
+  // The title of the fee - e.g. 'Delivery Fee'
+  title: string
+  // The chain in which the fee is charged
+  chain: Chain
+  // The amount to be charged
+  amount: AmountInfo,
 }
 
 const animationConfig = {
@@ -41,62 +62,57 @@ const numberFlowFormat = {
 
 export default function TxSummary({
   loading,
-  tokenAmount,
   fees,
-  bridgingFee,
+  receivingAmount,
+  destChain,
   durationEstimate,
-  direction,
-  canPayFees,
-  canPayAdditionalFees,
-  className,
-  exceedsTransferableBalance,
-  applyTransferableBalance,
-  destinationChain,
-  destinationTokenAmount,
 }: TxSummaryProps) {
-  // const { price } = useTokenPrice(tokenAmount.token)
-  // const transferAmount = toAmountInfo(tokenAmount, price)
-  const { price: destPrice } = useTokenPrice(destinationTokenAmount?.token)
+  const { price: receivingTokenPrice } = useTokenPrice(receivingAmount?.token)
+  const totalFeeCostInDollars = fees.map(x => x.amount.inDollars).reduce((acc, x) => acc + x)
 
-  return (
-    <div className="mt-8 flex flex-col items-start gap-[24px] rounded-[8px] border border-turtle-level3 p-[24px]">
-      {/* You'll get section */}
-      <div className="flex w-full flex-row items-start justify-between">
-        {/* Left */}
-        <div className="text-sm leading-none text-turtle-level6">You'll get</div>
+  if (receivingAmount && receivingAmount.amount != null  && receivingAmount.token != null && receivingTokenPrice) {
+    return (
+      <div className="mt-8 flex flex-col items-start gap-[24px] rounded-[8px] border border-turtle-level3 p-[24px]">
+        {/* You'll get section */}
+        <div className="flex w-full flex-row items-start justify-between">
+          {/* Left */}
+          <div className="text-sm leading-none text-turtle-level6">You'll get</div>
 
-        {/* Right */}
-        <div className="-mt-[9px] flex flex-col items-end gap-1">
-          <div className="flex flex-row items-baseline gap-2">
-            <TokenLogo token={PolkadotTokens.DOT} sourceChain={Hydration} size={25} />
-            <div className="text-[32px] font-medium text-turtle-foreground">
-              <NumberFlow value={49816} format={numberFlowFormat} />
+          {/* Right */}
+          <div className="-mt-[9px] flex flex-col items-end gap-1">
+            <div className="flex flex-row items-baseline gap-2">
+              <TokenLogo token={receivingAmount.token} sourceChain={destChain} size={25} />
+              <div className="text-[32px] font-medium text-turtle-foreground">
+                <NumberFlow value={receivingAmount.amount} format={numberFlowFormat} />
+            </div>
+            </div>
+            <div className={'animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6'}>
+              <NumberFlow value={receivingTokenPrice * receivingAmount.amount} prefix="$" format={numberFlowFormat} />
             </div>
           </div>
-          <div className={'animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6'}>
-            <NumberFlow value={18.083} prefix="$" format={numberFlowFormat} />
+        </div>
+
+        <div className="border-1 h-1 w-full border-t border-turtle-level3" />
+
+        <div className="flex w-full flex-row items-start justify-between">
+          <div className="flex items-center gap-1">
+            <span className="text-xs leading-none text-turtle-level6">Fee</span>
+            <span className="text-sm text-turtle-foreground"> 
+              <NumberFlow value={totalFeeCostInDollars} prefix="$" format={numberFlowFormat} />        
+            </span>
+            <Tooltip showIcon={false} content={<FeesBreakdown fees={fees} />}>
+              <InfoIcon width={12} height={12} fill={colors['turtle-level6']} />
+            </Tooltip>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
+            <span className="text-sm text-turtle-foreground">{durationEstimate}</span>
           </div>
         </div>
       </div>
-
-      <div className="border-1 h-1 w-full border-t border-turtle-level3" />
-
-      <div className="flex w-full flex-row items-start justify-between">
-        <div className="flex items-center gap-1">
-          <span className="text-xs leading-none text-turtle-level6">Fee</span>
-          <span className="text-sm font-bold text-turtle-foreground">$0.066</span>
-          <Tooltip showIcon={false} content={<FeesBreakdown />}>
-            <InfoIcon width={12} height={12} fill={colors['turtle-level6']} />
-          </Tooltip>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
-          <span className="text-sm font-bold text-turtle-foreground">~45 seconds</span>
-        </div>
-      </div>
-    </div>
-  )
+    )
+  }
 
   // if (!loading && !fees && !bridgingFee) return null
 
