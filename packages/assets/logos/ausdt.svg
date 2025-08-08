@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="350pt" height="350pt" viewBox="0 0 350 350">
+    <defs>
+        <clipPath id="frame">
+            <path d="M0 0h350v350H0z"/>
+        </clipPath>
+        <!-- More accurate Aave gradient (purple top-right to cyan bottom-left) -->
+        <linearGradient id="aaveGradient" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#B794F6;stop-opacity:1" />
+            <stop offset="30%" style="stop-color:#9F7AEA;stop-opacity:1" />
+            <stop offset="70%" style="stop-color:#4FD1C7;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#38B2AC;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+
+    <g clip-path="url(#frame)">
+        <!-- White background -->
+        <path d="M0 0h350v350H0z" style="fill:#ffffff"/>
+
+        <!-- Centered logo group -->
+        <g transform="translate(175, 175)">
+            <!-- Outer gradient ring -->
+            <circle cx="0" cy="0" r="135" fill="url(#aaveGradient)"/>
+
+            <!-- White separator ring -->
+            <circle cx="0" cy="0" r="116" fill="white"/>
+
+            <!-- Inner USDT green circle -->
+            <circle cx="0" cy="0" r="102" fill="#26A17B"/>
+
+            <!-- White Tether T symbol and oval -->
+            <g fill="white">
+                <!-- Top horizontal bar of T -->
+                <rect x="-48.6" y="-59.4" width="97.2" height="21.6" rx="1.35"/>
+
+                <!-- Vertical stem of T -->
+                <rect x="-10.8" y="-59.4" width="21.6" height="118.8" rx="1.35"/>
+
+                <!-- Oval ring around the T -->
+                <ellipse cx="0" cy="0" rx="59.4" ry="16.2" fill="none" stroke="white" stroke-width="5.4"/>
+            </g>
+        </g>
+    </g>
+</svg>

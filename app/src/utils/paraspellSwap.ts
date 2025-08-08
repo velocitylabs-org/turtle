@@ -46,6 +46,7 @@ export const getDexTokens = (dex: Dex): Token[] => {
 /** returns all pairs supported by a dex and supported by our registry */
 export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const pairs = getExchangePairs(dex)
+
   const turtlePairs = pairs
     .map(pair => {
       const [token1, token2] = pair
@@ -53,6 +54,7 @@ export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] =
 
       const t1 = getTokenByMultilocation(token1.multiLocation)
       const t2 = getTokenByMultilocation(token2.multiLocation)
+
       if (!t1 || !t2) return null // not supported by turtle registry
       return [t1, t2] as [Token, Token]
     })
