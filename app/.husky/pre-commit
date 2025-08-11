@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 cd "$(dirname -- "$0")/../.." || exit
 
-turbo run format-and-lint:fix
+pnpm exec turbo run format-and-lint:fix
