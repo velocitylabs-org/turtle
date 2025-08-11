@@ -32,6 +32,15 @@ interface UseFeesParams {
   destinationToken?: Token | null
 }
 
+export interface FeeDetails {
+  // The title of the fee - e.g. 'Delivery Fee'
+  title: string
+  // The chain in which the fee is charged
+  chain: Chain
+  // The amount to be charged
+  amount: AmountInfo
+}
+
 const useFees = (params: UseFeesParams) => {
   const {
     sourceChain,
@@ -42,10 +51,10 @@ const useFees = (params: UseFeesParams) => {
     sender,
     recipientAddress,
   } = params
-  const [fees, setFees] = useState<AmountInfo | null>(null)
-  const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
-  const [canPayFees, setCanPayFees] = useState<boolean>(true)
-  const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
+  const [fees, setFees] = useState<FeeDetails[] | null>(null)
+  // const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
+  // const [canPayFees, setCanPayFees] = useState<boolean>(true)
+  // const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
     useSnowbridgeContext()
@@ -74,7 +83,7 @@ const useFees = (params: UseFeesParams) => {
       !recipientAddress
     ) {
       setFees(null)
-      setBridgingFee(null)
+      // setBridgingFee(null)
       return
     }
 
@@ -83,8 +92,8 @@ const useFees = (params: UseFeesParams) => {
 
     try {
       // reset
-      setBridgingFee(null)
-      setCanPayAdditionalFees(true)
+      // setBridgingFee(null)
+      // setCanPayAdditionalFees(true)
 
       switch (sdk) {
         case 'ParaSpellApi': {
@@ -103,6 +112,29 @@ const useFees = (params: UseFeesParams) => {
             sender,
             recipient: recipientAddress,
           })
+
+          const xcmFee = await xcmTransferBuilderManager.getXcmFee({
+            sourceChain: sourceChain,
+            destinationChain: destinationChain,
+            sourceToken,
+            sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
+            sender,
+            recipient: recipientAddress,
+          })
+          // ;('Execution fees')
+          // ;('Swap fees')
+          // ;('Bridging fees')
+          // ;('Broadcast fee')
+          // const feesList = [
+          //   buildFeeObj(xcmFee.origin, 'origin'),
+          //     ...xcmFee.hops.map(hopFee => buildFeeObj(hopFee, 'hop')),
+          //   buildFeeObj(xcmFee.destination, 'destination'),
+          // ]
+
+          // setFees(feesList)
+
+          console.log('originXcmFee', originXcmFee)
+          console.log('xcmFee', xcmFee)
 
           const {
             currency: feeCurrency,
