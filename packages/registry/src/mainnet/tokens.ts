@@ -10,6 +10,7 @@ import gigadotLogo from '@velocitylabs-org/turtle-assets/logos/gigadot.svg'
 import hydraLogo from '@velocitylabs-org/turtle-assets/logos/hydra.svg'
 import ibtcLogo from '@velocitylabs-org/turtle-assets/logos/ibtc.svg'
 import interlayLogo from '@velocitylabs-org/turtle-assets/logos/interlay.svg'
+import kiltLogo from '@velocitylabs-org/turtle-assets/logos/kilt.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import mythLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
@@ -865,6 +866,27 @@ export const PolkadotTokens = {
     },
     coingeckoId: 'gigadot',
     origin: parachain(2034),
+  },
+
+  KILT: {
+    id: 'kilt',
+    name: 'KILT',
+    symbol: 'KILT',
+    logoURI: kiltLogo,
+    decimals: 15,
+    address: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: [
+          {
+            Parachain: 2086,
+          },
+        ],
+      },
+    },
+    coingeckoId: 'kilt-protocol',
+    origin: parachain(2086),
   },
 
   KSM: {

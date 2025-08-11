@@ -72,6 +72,7 @@ export const MainnetRegistry: Registry = {
     PolkadotTokens.IBTC,
     PolkadotTokens.MYTH,
     PolkadotTokens.HDX,
+    PolkadotTokens.KILT,
     PolkadotTokens.KSM,
     PolkadotTokens.KSM_BRIDGED,
   ],
