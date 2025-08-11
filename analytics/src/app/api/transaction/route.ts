@@ -5,8 +5,7 @@ import dbConnect from '@/utils/db-connect'
 import { validateApiRequest, validateWidgetRequest } from '@/utils/validate-api-request'
 
 function corsHeaders(response: NextResponse, origin?: string | null) {
-  const allowedOrigins =
-    process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
+  const allowedOrigins = process.env.TRANSACTION_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || []
 
   if (origin && allowedOrigins.includes(origin)) {
     response.headers.set('Access-Control-Allow-Origin', origin)
@@ -44,10 +43,7 @@ export async function POST(request: Request) {
     const existingTransaction = await Transaction.findOne({ txHashId: data.txHashId })
     if (existingTransaction) {
       return corsHeaders(
-        NextResponse.json(
-          { error: 'A transaction with this hash ID already exists' },
-          { status: 409 },
-        ),
+        NextResponse.json({ error: 'A transaction with this hash ID already exists' }, { status: 409 }),
         origin,
       )
     }
@@ -92,10 +88,7 @@ export async function PATCH(request: Request) {
 
     const { txHashId, status } = data
     if (!txHashId || !status) {
-      return corsHeaders(
-        NextResponse.json({ error: 'txHashId and status are required' }, { status: 400 }),
-        origin,
-      )
+      return corsHeaders(NextResponse.json({ error: 'txHashId and status are required' }, { status: 400 }), origin)
     }
 
     await dbConnect()
@@ -103,10 +96,7 @@ export async function PATCH(request: Request) {
     // First, find the existing transaction to check its current status
     const existingTransaction = await Transaction.findOne({ txHashId })
     if (!existingTransaction) {
-      return corsHeaders(
-        NextResponse.json({ error: 'Transaction not found' }, { status: 404 }),
-        origin,
-      )
+      return corsHeaders(NextResponse.json({ error: 'Transaction not found' }, { status: 404 }), origin)
     }
 
     // Don't update if the new status is 'succeeded' it means it was updated manually before
@@ -130,10 +120,7 @@ export async function PATCH(request: Request) {
     )
 
     if (!updatedTransaction) {
-      return corsHeaders(
-        NextResponse.json({ error: 'Transaction not found' }, { status: 404 }),
-        origin,
-      )
+      return corsHeaders(NextResponse.json({ error: 'Transaction not found' }, { status: 404 }), origin)
     }
 
     return corsHeaders(

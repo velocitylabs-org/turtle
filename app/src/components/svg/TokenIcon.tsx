@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 interface TokenIconProps extends ComponentPropsWithoutRef<'svg'> {
   height?: number

@@ -1,5 +1,5 @@
 import Identicon from '@polkadot/react-identicon'
-import { AddressType, Network } from '@velocitylabs-org/turtle-registry'
+import type { AddressType, Network } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import useLookupName from '@/hooks/useLookupName'
 import { truncateAddress } from '@/utils/address'
@@ -33,10 +33,7 @@ export default function Account({
           value={address}
           size={size}
           theme="polkadot"
-          className={cn(
-            'mr-1 rounded-full border border-turtle-secondary-dark hover:cursor-default',
-            className,
-          )}
+          className={cn('mr-1 rounded-full border border-turtle-secondary-dark hover:cursor-default', className)}
         />
       )}
 
@@ -49,12 +46,7 @@ export default function Account({
           )}
           style={{ width: size, height: size }}
         >
-          <Identicon
-            value={address}
-            size={size}
-            theme="ethereum"
-            className="hover:cursor-default"
-          />
+          <Identicon value={address} size={size} theme="ethereum" className="hover:cursor-default" />
         </div>
       )}
 

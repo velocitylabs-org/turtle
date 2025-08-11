@@ -1,4 +1,4 @@
-import { Route } from "../types";
+import type { Route } from "@/types";
 import {
   Acala,
   AssetHub,
@@ -8,13 +8,13 @@ import {
   Ethereum,
   Hydration,
   Interlay,
+  Kusama,
+  KusamaAssetHub,
   Moonbeam,
   Mythos,
   Phala,
   Polimec,
   Polkadot,
-  Kusama,
-  KusamaAssetHub,
 } from "./chains";
 import { EthereumTokens, PolkadotTokens } from "./tokens";
 

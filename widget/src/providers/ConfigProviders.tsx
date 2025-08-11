@@ -1,4 +1,4 @@
-import { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { createContext } from 'react'
 
 export interface ConfigRegistryType {
@@ -14,18 +14,8 @@ export const ConfigContext = createContext<{
   allowedTokens: [],
 })
 
-export const ConfigProvider = ({
-  registry,
-  children,
-}: {
-  registry: ConfigRegistryType
-  children: React.ReactNode
-}) => {
+export const ConfigProvider = ({ registry, children }: { registry: ConfigRegistryType; children: React.ReactNode }) => {
   const { chains: allowedChains, tokens: allowedTokens } = registry
 
-  return (
-    <ConfigContext.Provider value={{ allowedChains, allowedTokens }}>
-      {children}
-    </ConfigContext.Provider>
-  )
+  return <ConfigContext.Provider value={{ allowedChains, allowedTokens }}>{children}</ConfigContext.Provider>
 }

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { txStatusOptions, TxStatus } from '@/models/Transaction'
+import { type TxStatus, txStatusOptions } from '@/models/Transaction'
 
 const swapViewSchema = z.object({
   _id: z.any().transform(id => id?.toString() || ''),

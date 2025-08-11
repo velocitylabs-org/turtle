@@ -1,7 +1,8 @@
 'use client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import React, { Suspense } from 'react'
+import type React from 'react'
+import { Suspense } from 'react'
 import { LoadingBarContainer } from 'react-top-loading-bar'
 import { loadingBarOpt } from '@/constants'
 

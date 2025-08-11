@@ -1,5 +1,5 @@
-import { historyV2 as history, Context } from '@snowbridge/api'
-import { AssetRegistry } from '@snowbridge/base-types'
+import type { Context, historyV2 as history } from '@snowbridge/api'
+import type { AssetRegistry } from '@snowbridge/base-types'
 
 export type SnowbridgeStatus = {
   toEthereum: number

@@ -28,7 +28,7 @@ import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
 
-import { Token } from "@/types";
+import type { Token } from "@/types";
 import { parachain, snowbridgeWrapped } from "../helpers";
 
 // Tokens

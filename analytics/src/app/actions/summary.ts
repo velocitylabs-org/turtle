@@ -1,5 +1,5 @@
 'use server'
-import { startOfMonth, subMonths, format, addDays, startOfDay, subDays } from 'date-fns'
+import { addDays, format, startOfDay, startOfMonth, subDays, subMonths } from 'date-fns'
 import { volumePeakThreshold } from '@/constants'
 import Transaction from '@/models/Transaction'
 import captureServerError from '@/utils/capture-server-error'
@@ -9,98 +9,88 @@ export async function getSummaryData() {
   try {
     await dbConnect()
 
-    const [
-      volumeResult,
-      totalTransactions,
-      successfulTransactions,
-      topTokensByVolume,
-      topTokensByCount,
-    ] = await Promise.all([
-      // Total volume in USD
-      Transaction.aggregate([
-        { $match: { status: 'succeeded' } },
-        {
-          $group: {
-            _id: null,
-            total: { $sum: '$sourceTokenAmountUsd' },
+    const [volumeResult, totalTransactions, successfulTransactions, topTokensByVolume, topTokensByCount] =
+      await Promise.all([
+        // Total volume in USD
+        Transaction.aggregate([
+          { $match: { status: 'succeeded' } },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: '$sourceTokenAmountUsd' },
+            },
           },
-        },
-      ]),
+        ]),
 
-      // Total number of transactions
-      Transaction.countDocuments(),
+        // Total number of transactions
+        Transaction.countDocuments(),
 
-      // Successful transactions count
-      Transaction.countDocuments({ status: 'succeeded' }),
+        // Successful transactions count
+        Transaction.countDocuments({ status: 'succeeded' }),
 
-      // Top 3 tokens by volume
-      Transaction.aggregate([
-        {
-          $match: {
-            status: 'succeeded',
+        // Top 3 tokens by volume
+        Transaction.aggregate([
+          {
+            $match: {
+              status: 'succeeded',
+            },
           },
-        },
-        {
-          $group: {
-            _id: '$sourceTokenId', // Group only by sourceTokenId
-            symbol: { $first: '$sourceTokenSymbol' },
-            name: { $first: '$sourceTokenName' },
-            volume: { $sum: '$sourceTokenAmountUsd' },
+          {
+            $group: {
+              _id: '$sourceTokenId', // Group only by sourceTokenId
+              symbol: { $first: '$sourceTokenSymbol' },
+              name: { $first: '$sourceTokenName' },
+              volume: { $sum: '$sourceTokenAmountUsd' },
+            },
           },
-        },
-        { $sort: { volume: -1 } },
-        { $limit: 3 },
-        {
-          $project: {
-            _id: 0,
-            id: '$_id',
-            symbol: 1,
-            name: 1,
-            volume: 1,
+          { $sort: { volume: -1 } },
+          { $limit: 3 },
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              symbol: 1,
+              name: 1,
+              volume: 1,
+            },
           },
-        },
-      ]),
+        ]),
 
-      // Top 3 tokens by transaction count
-      Transaction.aggregate([
-        {
-          $match: {
-            status: 'succeeded',
+        // Top 3 tokens by transaction count
+        Transaction.aggregate([
+          {
+            $match: {
+              status: 'succeeded',
+            },
           },
-        },
-        {
-          $group: {
-            _id: '$sourceTokenId', // Group only by sourceTokenId
-            symbol: { $first: '$sourceTokenSymbol' },
-            name: { $first: '$sourceTokenName' },
-            count: { $sum: 1 },
+          {
+            $group: {
+              _id: '$sourceTokenId', // Group only by sourceTokenId
+              symbol: { $first: '$sourceTokenSymbol' },
+              name: { $first: '$sourceTokenName' },
+              count: { $sum: 1 },
+            },
           },
-        },
-        { $sort: { count: -1 } },
-        { $limit: 3 },
-        {
-          $project: {
-            _id: 0,
-            id: '$_id',
-            symbol: 1,
-            name: 1,
-            count: 1,
+          { $sort: { count: -1 } },
+          { $limit: 3 },
+          {
+            $project: {
+              _id: 0,
+              id: '$_id',
+              symbol: 1,
+              name: 1,
+              count: 1,
+            },
           },
-        },
-      ]),
-    ])
+        ]),
+      ])
 
     // Get transaction data for all time periods
-    const [transactionData, topTokensData] = await Promise.all([
-      getAllTransactionData(),
-      getAllTopTokensData(),
-    ])
+    const [transactionData, topTokensData] = await Promise.all([getAllTransactionData(), getAllTopTokensData()])
 
     const totalVolumeUsd = volumeResult[0]?.total || 0
-    const successRate =
-      totalTransactions > 0 ? (successfulTransactions / totalTransactions) * 100 : 0
-    const avgTransactionValue =
-      successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
+    const successRate = totalTransactions > 0 ? (successfulTransactions / totalTransactions) * 100 : 0
+    const avgTransactionValue = successfulTransactions > 0 ? totalVolumeUsd / successfulTransactions : 0
 
     return {
       totalVolumeUsd,
@@ -346,11 +336,7 @@ async function getAllTransactionData() {
 
   // Ensure all 7 previous days are included (excluding today) for both normal and flattened
   const completeNormalLastWeekData = fillMissingDays(result.lastWeekData, sevenDaysAgo, todayStart)
-  const completeFlattenedLastWeekData = fillMissingDays(
-    result.flattenedLastWeekData,
-    sevenDaysAgo,
-    todayStart,
-  )
+  const completeFlattenedLastWeekData = fillMissingDays(result.flattenedLastWeekData, sevenDaysAgo, todayStart)
 
   return {
     normal: {

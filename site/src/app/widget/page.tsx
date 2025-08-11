@@ -1,11 +1,11 @@
-import { Body, Button, cn, LargeHeading, Large } from '@velocitylabs-org/turtle-ui'
-import CallToAction from '@/components/widget/CallToAction'
-import TurtlesBackground from '@/components/TurtlesBackground'
-import WidgetWrapper from '@/components/widget/WidgetWrapper'
+import { Body, Button, cn, Large, LargeHeading } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
-import { headerButtons, developerIntegrationGuide, features } from '@/components/widget/data'
+import TurtlesBackground from '@/components/TurtlesBackground'
+import CallToAction from '@/components/widget/CallToAction'
 import CodeBit from '@/components/widget/CodeBit'
+import { developerIntegrationGuide, features, headerButtons } from '@/components/widget/data'
 import Networks from '@/components/widget/Networks'
+import WidgetWrapper from '@/components/widget/WidgetWrapper'
 
 const SectionInnerContainer = ({
   children,
@@ -41,15 +41,12 @@ export default function Widget() {
                 <div className="flex flex-col gap-10 md:gap-20 lg:max-w-[375px]">
                   <LargeHeading className="leading-none">Turtle Widget</LargeHeading>
                   <div className="flex flex-col gap-5 md:gap-10">
-                    <h2 className="text-section-title leading-none">
-                      All of Polkadot on your dApp in minutes
-                    </h2>
+                    <h2 className="text-section-title leading-none">All of Polkadot on your dApp in minutes</h2>
                     <p className="text-lg leading-none">
-                      Effortless Integration · Unified In-App Experience · Customizable to Your
-                      Brand
+                      Effortless Integration · Unified In-App Experience · Customizable to Your Brand
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {headerButtons.map((button) => (
+                      {headerButtons.map(button => (
                         <Button variant="outline" size="sm" key={button.label} as="span">
                           <Image src={button.icon} alt={button.label} width={24} height={24} />
                           <p className="text-sm">{button.label}</p>
@@ -68,28 +65,23 @@ export default function Widget() {
         </TurtlesBackground>
       </section>
       <section className="flex min-h-[100vh] flex-col items-center gap-20 bg-white pb-48 lg:pb-96">
-        <SectionInnerContainer
-          id="what-is-turtle-widget"
-          className="mt-24"
-          heading="🐢 What is the Turtle Widget?"
-        >
+        <SectionInnerContainer id="what-is-turtle-widget" className="mt-24" heading="🐢 What is the Turtle Widget?">
           <Body>
-            Turtle is a seamless cross-chain token-transfer solution that makes moving digital
-            assets between networks effortless. It abstracts away the technical complexities of
-            cross-chain functionality, giving developers an all-in-one tool so users can transfer
-            assets without leaving your dApp—and without the headache of integrating multiple
-            interoperability providers.
+            Turtle is a seamless cross-chain token-transfer solution that makes moving digital assets between networks
+            effortless. It abstracts away the technical complexities of cross-chain functionality, giving developers an
+            all-in-one tool so users can transfer assets without leaving your dApp—and without the headache of
+            integrating multiple interoperability providers.
           </Body>
           <Image src="/networks.jpg" alt="Turtle app" width={865} height={400} />
           <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer className="flex flex-col gap-8" heading="🧰 Features">
           <ul className="flex flex-col gap-8">
-            {features.map((feature) => (
+            {features.map(feature => (
               <li className="flex flex-col gap-2" key={feature.title}>
                 <Large>{feature.title}</Large>
                 <ul className="ml-6 list-disc">
-                  {feature.listItems.map((item) => (
+                  {feature.listItems.map(item => (
                     <li key={item}>
                       <Body>{item}</Body>
                     </li>
@@ -102,7 +94,7 @@ export default function Widget() {
         </SectionInnerContainer>
         <SectionInnerContainer heading="💻  Developer Integration Guide" className="max-w-full">
           <ol className="flex list-decimal flex-col gap-8 md:ml-6">
-            {developerIntegrationGuide.map((guide) => (
+            {developerIntegrationGuide.map(guide => (
               <CodeBit key={guide.title} guide={guide} />
             ))}
           </ol>
@@ -114,18 +106,8 @@ export default function Widget() {
           <Divider />
         </SectionInnerContainer>
         <SectionInnerContainer heading="💚 Testimonials">
-          <Image
-            src="/testimonials-1.jpg"
-            alt="Turtle widget testimonials 1"
-            width={640}
-            height={80}
-          />
-          <Image
-            src="/testimonials-2.jpg"
-            alt="Turtle widget testimonials 2"
-            width={640}
-            height={80}
-          />
+          <Image src="/testimonials-1.jpg" alt="Turtle widget testimonials 1" width={640} height={80} />
+          <Image src="/testimonials-2.jpg" alt="Turtle widget testimonials 2" width={640} height={80} />
         </SectionInnerContainer>
         <SectionInnerContainer heading="🙋 Questions or Feedback?">
           <Body>Need help integrating or have questions?</Body>
