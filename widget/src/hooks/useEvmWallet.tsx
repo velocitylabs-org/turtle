@@ -4,6 +4,14 @@ import { useMemo } from 'react'
 import type { Account, Chain, Client, Transport } from 'viem'
 import { type Config, useAccount, useConnectorClient, useDisconnect } from 'wagmi'
 
+type EvmWallet = {
+  signer?: JsonRpcSigner
+  openModal: () => void
+  closeModal: () => void
+  disconnect: () => void
+  isConnected: boolean
+}
+
 export function clientToSigner(client: Client<Transport, Chain, Account>) {
   const { account, chain, transport } = client
   const network = {
@@ -17,7 +25,7 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
 }
 
 /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
-const useEvmWallet = ({ chainId }: { chainId?: number } = {}) => {
+const useEvmWallet = ({ chainId }: { chainId?: number } = {}): EvmWallet => {
   const { data: client } = useConnectorClient<Config>({ chainId })
   const { open, close } = useAppKit()
   const { disconnect } = useDisconnect()

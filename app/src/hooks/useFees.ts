@@ -1,17 +1,17 @@
-import { getOriginFeeDetails, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { type Chain, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
+import type { Sender } from '@/hooks/useTransfer'
+import { NotificationSeverity } from '@/models/notification'
 import type { AmountInfo } from '@/models/transfer'
-
 import { getCachedTokenPrice } from '@/services/balance'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction, resolveDirection } from '@/services/transfer'
-import { getPlaceholderAddress } from '@/utils/address'
-import { getNativeToken, getParaSpellNode, getParaspellToken, isChainSupportingToken } from '@/utils/paraspellTransfer'
+import { getNativeToken, getParaSpellNode, isChainSupportingToken } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
-import { toHuman } from '@/utils/transfer'
+import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import useBalance from './useBalance'
 import useSnowbridgeContext from './useSnowbridgeContext'
 
@@ -21,15 +21,19 @@ export type Fee =
   | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
   | { origin: 'Polkadot'; fee: AmountInfo }
 
-const useFees = (
-  sourceChain: Chain | null,
-  destinationChain?: Chain | null,
-  token?: Token | null,
-  amount?: number | null,
-  senderAddress?: string,
-  recipientAddress?: string,
-  destToken?: Token | null,
-) => {
+interface UseFeesParams {
+  sourceChain: Chain | null
+  destinationChain?: Chain | null
+  sourceToken?: Token | null
+  sourceTokenAmount?: number | null
+  sender?: Sender | undefined
+  recipientAddress?: string
+  destinationToken?: Token | null
+}
+
+const useFees = (params: UseFeesParams) => {
+  const { sourceChain, destinationChain, sourceToken, destinationToken, sourceTokenAmount, sender, recipientAddress } =
+    params
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
@@ -37,6 +41,7 @@ const useFees = (
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
   const { addNotification } = useNotification()
+  const senderAddress = sender?.address
   const { balance: feeBalance } = useBalance({
     chain: sourceChain,
     token: sourceChain ? getNativeToken(sourceChain) : undefined,
@@ -50,7 +55,15 @@ const useFees = (
   })
 
   const fetchFees = useCallback(async () => {
-    if (!sourceChain || !destinationChain || !token || !destToken) {
+    if (
+      !sourceChain ||
+      !destinationChain ||
+      !sourceToken ||
+      !destinationToken ||
+      !sourceTokenAmount ||
+      !senderAddress ||
+      !recipientAddress
+    ) {
       setFees(null)
       setBridgingFee(null)
       return
@@ -58,9 +71,6 @@ const useFees = (
 
     const sdk = resolveSdk(sourceChain, destinationChain)
     if (!sdk) throw new Error('Route not supported')
-
-    // TODO: this should be the fee token, not necessarily the native token.
-    const feeToken = getNativeToken(sourceChain)
 
     try {
       // reset
@@ -76,24 +86,31 @@ const useFees = (
           const destinationChainNode = getParaSpellNode(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
-          const currency = getParaspellToken(token, sourceChainNode)
-          const info = await getOriginFeeDetails({
-            origin: sourceChainNode as TNodeDotKsmWithRelayChains,
-            destination: destinationChainNode,
-            currency: { ...currency, amount: BigInt(10 ** token.decimals).toString() }, // hardcoded amount because the fee is usually independent of the amount
-            account: getPlaceholderAddress(sourceChain.supportedAddressTypes[0]), // hardcode sender address because the fee is usually independent of the sender
-            accountDestination: getPlaceholderAddress(destinationChain.supportedAddressTypes[0]), // hardcode recipient address because the fee is usually independent of the recipient
-            api: sourceChain.rpcConnection,
+          const originXcmFee = await xcmTransferBuilderManager.getOriginXcmFee({
+            sourceChain: sourceChain,
+            destinationChain: destinationChain,
+            sourceToken,
+            sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
+            sender,
+            recipient: recipientAddress,
           })
 
+          const { currency: feeCurrency, fee: feeAmount, sufficient: sufficientForXCM } = originXcmFee
+
+          if (!feeCurrency) throw new Error('Fee currency not available from XCM transfer builder')
+          if (!feeAmount) throw new Error('Fee amount not available from XCM transfer builder')
+
+          const feeToken = PolkadotTokens[feeCurrency as keyof typeof PolkadotTokens]
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
-          const fee = info.xcmFee
           setFees({
-            amount: fee,
+            amount: feeAmount,
             token: feeToken,
-            inDollars: feeTokenInDollars ? toHuman(fee, feeToken) * feeTokenInDollars : 0,
+            inDollars: feeTokenInDollars ? toHuman(feeAmount, feeToken) * feeTokenInDollars : 0,
           })
-          setCanPayFees(info.sufficientForXCM)
+
+          if (sufficientForXCM !== undefined) {
+            setCanPayFees(sufficientForXCM)
+          }
 
           // The bridging fee when sending to Ethereum is paid in DOT
           if (destinationChain.network === 'Ethereum') {
@@ -120,7 +137,7 @@ const useFees = (
         }
 
         case 'SnowbridgeApi': {
-          if (!sourceChain || !senderAddress || !destinationChain || !amount || !recipientAddress) {
+          if (!sourceChain || !senderAddress || !destinationChain || !sourceTokenAmount || !recipientAddress) {
             setLoading(false)
             setFees(null)
             setBridgingFee(null)
@@ -142,14 +159,14 @@ const useFees = (
             throw snowbridgeContextError ?? new Error('Snowbridge context undefined')
 
           const fee = await getFeeEstimate(
-            token,
+            sourceToken,
             sourceChain,
             destinationChain,
             direction,
             snowbridgeContext,
             senderAddress,
             recipientAddress,
-            amount,
+            sourceTokenAmount,
           )
           if (!fee) {
             setFees(null)
@@ -182,26 +199,31 @@ const useFees = (
       setBridgingFee(null)
       captureException(error)
       console.error('useFees > error is', error)
-      // addNotification({
-      //   severity: NotificationSeverity.Error,
-      //   message: 'Failed to fetch the fees. Please try again later.',
-      //   dismissible: true,
-      // })
+      addNotification({
+        severity: NotificationSeverity.Error,
+        message: 'Failed to fetch the fees. Please try again later.',
+        dismissible: true,
+      })
     } finally {
       setLoading(false)
     }
   }, [
     sourceChain,
     destinationChain,
-    token?.id,
+    sourceToken?.id,
     snowbridgeContext,
     addNotification,
     senderAddress,
     recipientAddress,
-    amount,
+    sourceTokenAmount,
     dotBalance,
     feeBalance,
-    destToken,
+    destinationToken,
+    isSnowbridgeContextLoading,
+    snowbridgeContextError,
+    fees?.token,
+    fees?.amount,
+    sender,
   ])
 
   useEffect(() => {
