@@ -1,12 +1,12 @@
-import { toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
-import { Chain, Token, isAssetHub, getTokenPrice } from '@velocitylabs-org/turtle-registry'
+import { type toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { type Chain, getTokenPrice, isAssetHub, type Token } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { Signer, TransactionResponse } from 'ethers'
+import type { Signer, TransactionResponse } from 'ethers'
 import { mainnet } from 'wagmi/chains'
 import { findValidationError } from '@/lib/snowbridge'
 import { NotificationSeverity } from '@/models/notification'
-import { SnowbridgeContext } from '@/models/snowbridge'
-import { StoredTransfer } from '@/models/transfer'
+import type { SnowbridgeContext } from '@/models/snowbridge'
+import type { StoredTransfer } from '@/models/transfer'
 import { wagmiConfig } from '@/providers/config'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics.ts'
@@ -14,7 +14,7 @@ import { Direction, resolveDirection, txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import { Sender, Status, TransferParams } from './useTransfer'
+import type { Sender, Status, TransferParams } from './useTransfer'
 
 type TransferType = toPolkadotV2.Transfer | toEthereumV2.Transfer
 
@@ -108,9 +108,7 @@ const useSnowbridgeApi = () => {
 
       switch (direction) {
         case Direction.ToPolkadot: {
-          response = await (sender as Signer).sendTransaction(
-            (transfer as toPolkadotV2.Transfer).tx,
-          )
+          response = await (sender as Signer).sendTransaction((transfer as toPolkadotV2.Transfer).tx)
           const receipt = await response.wait(1)
           if (!receipt) {
             throw Error(`Transaction ${response.hash} not included`)
@@ -121,9 +119,7 @@ const useSnowbridgeApi = () => {
 
         case Direction.ToEthereum: {
           //todo(nuno): fix this
-          response = await (sender as Signer).sendTransaction(
-            (transfer as toPolkadotV2.Transfer).tx,
-          )
+          response = await (sender as Signer).sendTransaction((transfer as toPolkadotV2.Transfer).tx)
           const receipt = await response.wait(1)
           if (!receipt) {
             throw Error(`Transaction ${response.hash} not included`)

@@ -1,11 +1,10 @@
 import { captureException } from '@sentry/nextjs'
-import { Chain, PolkadotTokens, Token } from '@velocitylabs-org/turtle-registry'
+import { type Chain, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
-import { Sender } from '@/hooks/useTransfer'
+import type { Sender } from '@/hooks/useTransfer'
 import { NotificationSeverity } from '@/models/notification'
-import { AmountInfo } from '@/models/transfer'
-
+import type { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -33,22 +32,14 @@ interface UseFeesParams {
 }
 
 const useFees = (params: UseFeesParams) => {
-  const {
-    sourceChain,
-    destinationChain,
-    sourceToken,
-    destinationToken,
-    sourceTokenAmount,
-    sender,
-    recipientAddress,
-  } = params
+  const { sourceChain, destinationChain, sourceToken, destinationToken, sourceTokenAmount, sender, recipientAddress } =
+    params
   const [fees, setFees] = useState<AmountInfo | null>(null)
   const [bridgingFee, setBridgingFee] = useState<AmountInfo | null>(null)
   const [canPayFees, setCanPayFees] = useState<boolean>(true)
   const [canPayAdditionalFees, setCanPayAdditionalFees] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
-  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } =
-    useSnowbridgeContext()
+  const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
   const { addNotification } = useNotification()
   const senderAddress = sender?.address
   const { balance: feeBalance } = useBalance({
@@ -104,11 +95,7 @@ const useFees = (params: UseFeesParams) => {
             recipient: recipientAddress,
           })
 
-          const {
-            currency: feeCurrency,
-            fee: feeAmount,
-            sufficient: sufficientForXCM,
-          } = originXcmFee
+          const { currency: feeCurrency, fee: feeAmount, sufficient: sufficientForXCM } = originXcmFee
 
           if (!feeCurrency) throw new Error('Fee currency not available from XCM transfer builder')
           if (!feeAmount) throw new Error('Fee amount not available from XCM transfer builder')
@@ -138,25 +125,19 @@ const useFees = (params: UseFeesParams) => {
             })
 
             // if the bridging fee is the same as the execution fee, sum them both before checking the user can pay for it all.
-            const toPay =
-              fees?.token === bridgeFeeToken ? BigInt(fees.amount) + bridgeFee : bridgeFee
+            const toPay = fees?.token === bridgeFeeToken ? BigInt(fees.amount) + bridgeFee : bridgeFee
 
             // if the dotBalance is not available, we act as if it's ok. This prevents a delay
             // in the UI showing the error label for insufficient fee balance, which is particularly
             // noticable when switching chains.
+            // biome-ignore lint/suspicious/noDoubleEquals: dotBalance
             setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
           }
           break
         }
 
         case 'SnowbridgeApi': {
-          if (
-            !sourceChain ||
-            !senderAddress ||
-            !destinationChain ||
-            !sourceTokenAmount ||
-            !recipientAddress
-          ) {
+          if (!sourceChain || !senderAddress || !destinationChain || !sourceTokenAmount || !recipientAddress) {
             setLoading(false)
             setFees(null)
             setBridgingFee(null)
@@ -226,8 +207,6 @@ const useFees = (params: UseFeesParams) => {
     } finally {
       setLoading(false)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     sourceChain,
     destinationChain,
@@ -240,6 +219,11 @@ const useFees = (params: UseFeesParams) => {
     dotBalance,
     feeBalance,
     destinationToken,
+    isSnowbridgeContextLoading,
+    snowbridgeContextError,
+    fees?.token,
+    fees?.amount,
+    sender,
   ])
 
   useEffect(() => {

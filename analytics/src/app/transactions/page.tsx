@@ -1,15 +1,13 @@
 'use client'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import ethLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import turtleLogo from '@velocitylabs-org/turtle-assets/logos/turtle.svg'
-import { Token } from '@velocitylabs-org/turtle-registry'
-import { tokensById, chainsByUid } from '@velocitylabs-org/turtle-registry'
-import { getOriginBadge, cn } from '@velocitylabs-org/turtle-ui'
-import { CheckCircle, X, DollarSign, Ban, CircleHelp, RefreshCcw } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral, parseAsInteger, parseAsIsoDate } from 'nuqs'
-import React from 'react'
+import { chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
+import { cn, getOriginBadge } from '@velocitylabs-org/turtle-ui'
+import { Ban, CheckCircle, CircleHelp, DollarSign, RefreshCcw, X } from 'lucide-react'
+import { parseAsInteger, parseAsIsoDate, parseAsStringLiteral, useQueryState } from 'nuqs'
 import { getTransactionsData } from '@/app/actions/transactions'
 import DatePicker from '@/components/DatePicker'
 import ErrorPanel from '@/components/ErrorPanel'
@@ -19,10 +17,10 @@ import SmallStatBox from '@/components/SmallStatBox'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { chains, transactionsPerPage, tokens } from '@/constants'
+import { chains, tokens, transactionsPerPage } from '@/constants'
 import { usePagination } from '@/hooks/usePagination'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
-import { TxStatus } from '@/models/Transaction'
+import type { TxStatus } from '@/models/Transaction'
 import formatUSD from '@/utils/format-USD'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'
 
@@ -74,10 +72,7 @@ const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function TransactionsPage() {
   const [sourceChainUid, setSourceChainUid] = useQueryState('sourceChain', emptyDefaultString)
-  const [destinationChainUid, setDestinationChainUid] = useQueryState(
-    'destChain',
-    emptyDefaultString,
-  )
+  const [destinationChainUid, setDestinationChainUid] = useQueryState('destChain', emptyDefaultString)
   const [sourceTokenId, setSourceTokenId] = useQueryState('sourceToken', emptyDefaultString)
   const [destinationTokenId, setDestinationTokenId] = useQueryState('destToken', emptyDefaultString)
   const [statusFilterRaw, setStatusFilterRaw] = useQueryState('status', statusFilterParser)
@@ -86,10 +81,7 @@ export default function TransactionsPage() {
   const [toDate, setToDate] = useQueryState('toDate', parseAsIsoDate)
   const [origin, setOrigin] = useQueryState('origin', emptyDefaultString)
   const [senderAddress, setSenderAddress] = useQueryState('senderAddress', emptyDefaultString)
-  const [recipientAddress, setRecipientAddress] = useQueryState(
-    'recipientAddress',
-    emptyDefaultString,
-  )
+  const [recipientAddress, setRecipientAddress] = useQueryState('recipientAddress', emptyDefaultString)
   const [currentPage, setCurrentPage] = useQueryState('filterPage', pageQueryDefault)
 
   const { data, isLoading, error, isFetching } = useQuery({
@@ -230,9 +222,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'succeeded' ? 'bg-green-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() =>
-                          setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded'),
-                        )
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'succeeded' ? 'all' : 'succeeded'))
                       }
                     >
                       <CheckCircle className="mr-1 h-4 w-4" />
@@ -243,9 +233,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'failed' ? 'bg-red-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() =>
-                          setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed'),
-                        )
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'failed' ? 'all' : 'failed'))
                       }
                     >
                       <Ban className="mr-1 h-4 w-4" />
@@ -256,9 +244,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'undefined' ? 'bg-yellow-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() =>
-                          setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined'),
-                        )
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'undefined' ? 'all' : 'undefined'))
                       }
                     >
                       <CircleHelp className="mr-1 h-4 w-4" />
@@ -269,9 +255,7 @@ export default function TransactionsPage() {
                       size="sm"
                       className={`flex-1 ${statusFilter === 'ongoing' ? 'bg-blue-100' : ''}`}
                       onClick={() =>
-                        handleFilterChange(() =>
-                          setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing'),
-                        )
+                        handleFilterChange(() => setStatusFilterRaw(statusFilter === 'ongoing' ? 'all' : 'ongoing'))
                       }
                     >
                       <RefreshCcw className="mr-1 h-4 w-4" />
@@ -341,9 +325,7 @@ export default function TransactionsPage() {
                   <Select
                     options={chainOptions}
                     selected={destinationChainUid}
-                    onChange={val =>
-                      handleFilterChange(() => setDestinationChainUid(val as string))
-                    }
+                    onChange={val => handleFilterChange(() => setDestinationChainUid(val as string))}
                     placeholder="Destination Chain"
                   />
                 </div>
@@ -366,9 +348,7 @@ export default function TransactionsPage() {
           </CardHeader>
           <CardContent>
             <RecentTransactionsTable transactions={transactions} isLoading={isLoading} />
-            {!isLoading && (
-              <PaginationComponent className={cn('mt-7', isFetching && 'pointer-events-none')} />
-            )}
+            {!isLoading && <PaginationComponent className={cn('mt-7', isFetching && 'pointer-events-none')} />}
           </CardContent>
         </Card>
       </div>

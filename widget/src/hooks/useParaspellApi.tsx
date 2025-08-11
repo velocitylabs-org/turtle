@@ -1,24 +1,24 @@
-import { TDryRunNodeResult } from '@paraspell/sdk'
+import type { TDryRunNodeResult } from '@paraspell/sdk'
 import { getTokenPrice, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { InvalidTxError } from 'polkadot-api'
 import type { TxEvent } from 'polkadot-api'
-import { getPolkadotSignerFromPjs, SignPayload, SignRaw } from 'polkadot-api/pjs-signer'
-import { Config, useConnectorClient } from 'wagmi'
+import { InvalidTxError } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
+import { type Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
 import { createRouterPlan } from '@/lib/paraspell/swap'
 import {
   createTransferTx,
+  type DryRunResult,
   dryRun,
-  DryRunResult,
   isExistentialDepositMetAfterTransfer,
   moonbeamTransfer,
 } from '@/lib/paraspell/transfer'
 import { extractPapiEvent } from '@/lib/polkadot/papi'
 import { NotificationSeverity } from '@/models/notification'
-import { CompletedTransfer, OnChainBaseEvents, StoredTransfer, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { wagmiConfig } from '@/providers/config'
-import { SubstrateAccount } from '@/stores/substrateWalletStore'
+import type { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics.ts'
 import { wait } from '@/utils/datetime'
@@ -27,7 +27,7 @@ import { isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/tra
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
-import { Sender, Status, TransferParams } from './useTransfer'
+import type { Sender, Status, TransferParams } from './useTransfer'
 
 const useParaspellApi = () => {
   const { addNotification } = useNotification()
@@ -40,20 +40,15 @@ const useParaspellApi = () => {
     setStatus('Loading')
 
     try {
-      if (!isSameToken(params.sourceToken, params.destinationToken))
-        await handleSwap(params, setStatus)
-      else if (params.sourceChain.uid === 'moonbeam')
-        await handleMoonbeamTransfer(params, setStatus)
+      if (!isSameToken(params.sourceToken, params.destinationToken)) await handleSwap(params, setStatus)
+      else if (params.sourceChain.uid === 'moonbeam') await handleMoonbeamTransfer(params, setStatus)
       else await handlePolkadotTransfer(params, setStatus)
     } catch (e) {
       handleSendError(params.sender, e, setStatus)
     }
   }
 
-  const handleMoonbeamTransfer = async (
-    params: TransferParams,
-    setStatus: (status: Status) => void,
-  ) => {
+  const handleMoonbeamTransfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
     await switchChain(wagmiConfig, { chainId: moonbeam.id })
     const hash = await moonbeamTransfer(params, viemClient)
 
@@ -92,14 +87,10 @@ const useParaspellApi = () => {
     })
   }
 
-  const handlePolkadotTransfer = async (
-    params: TransferParams,
-    setStatus: (status: Status) => void,
-  ) => {
+  const handlePolkadotTransfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
     const account = params.sender as SubstrateAccount
 
-    if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
-      throw new Error('Signer not found')
+    if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw) throw new Error('Signer not found')
 
     // Validate the transfer
     setStatus('Validating')
@@ -122,8 +113,7 @@ const useParaspellApi = () => {
 
       if (validationResult.origin.success && validationResult.destination?.success) {
         const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
-        if (!isExistentialDepositMet)
-          throw new Error('Transfer failed: existential deposit will not be met.')
+        if (!isExistentialDepositMet) throw new Error('Transfer failed: existential deposit will not be met.')
       }
     }
 
@@ -191,8 +181,7 @@ const useParaspellApi = () => {
 
   const handleSwap = async (params: TransferParams, setStatus: (status: Status) => void) => {
     const account = params.sender as SubstrateAccount
-    if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw)
-      throw new Error('Signer not found')
+    if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw) throw new Error('Signer not found')
 
     setStatus('Loading')
 
@@ -262,11 +251,7 @@ const useParaspellApi = () => {
   }
 
   // /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */
-  const handleTxEvent = async (
-    event: TxEvent,
-    transferToStore: StoredTransfer,
-    onComplete?: () => void,
-  ) => {
+  const handleTxEvent = async (event: TxEvent, transferToStore: StoredTransfer, onComplete?: () => void) => {
     if (event.type === 'signed') {
       await addToOngoingTransfers(
         {
@@ -318,9 +303,7 @@ const useParaspellApi = () => {
 
     const txSuccessful =
       txEvent.type === 'finalized' &&
-      txEvent.events.some(
-        event => event.type === 'System' && event.value.type === 'ExtrinsicSuccess',
-      )
+      txEvent.events.some(event => event.type === 'System' && event.value.type === 'ExtrinsicSuccess')
 
     if (!txSuccessful) {
       // captureException(new Error('Swap failed'), { extra: { transfer } })
@@ -360,10 +343,7 @@ const useParaspellApi = () => {
   }
 
   const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
-    return !(
-      !dryRunNodeResult.success &&
-      dryRunNodeResult.failureReason.includes('DryRunApi is not available')
-    )
+    return !(!dryRunNodeResult.success && dryRunNodeResult.failureReason.includes('DryRunApi is not available'))
   }
 
   const getFailureReason = (dryRunResult: DryRunResult) => {
@@ -378,10 +358,7 @@ const useParaspellApi = () => {
   const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
       const result = await dryRun(params, params.sourceChain.rpcConnection)
-      if (
-        !isDryRunApiSupported(result.origin) ||
-        (result.destination && !isDryRunApiSupported(result.destination))
-      ) {
+      if (!isDryRunApiSupported(result.origin) || (result.destination && !isDryRunApiSupported(result.destination))) {
         return {
           type: 'Unsupported',
           ...result,
@@ -411,10 +388,7 @@ const useParaspellApi = () => {
     }
   }
 
-  const addToOngoingTransfers = async (
-    transferToStore: StoredTransfer,
-    onComplete?: () => void,
-  ): Promise<void> => {
+  const addToOngoingTransfers = async (transferToStore: StoredTransfer, onComplete?: () => void): Promise<void> => {
     // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
     // and unlocking the UI by resetting the form back to 'Idle'.
     await new Promise(resolve =>

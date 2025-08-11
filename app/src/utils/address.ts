@@ -1,12 +1,12 @@
-import { convertSs58, getTNode, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { convertSs58, getTNode, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
-import { AddressType, Chain, ManualRecipient } from '@velocitylabs-org/turtle-registry'
+import type { AddressType, Chain, ManualRecipient } from '@velocitylabs-org/turtle-registry'
 import { JsonRpcSigner } from 'ethers'
 import { isAddress } from 'viem/utils'
-import { Sender } from '@/hooks/useTransfer'
-import { WalletInfo } from '@/hooks/useWallet'
+import type { Sender } from '@/hooks/useTransfer'
+import type { WalletInfo } from '@/hooks/useWallet'
 import { toPsEcosystem } from './paraspellTransfer'
 
 /**
@@ -76,7 +76,7 @@ export const isValidSubstrateAddress = (address: string): boolean => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
-  } catch (error) {
+  } catch (_error) {
     return false
   }
 }
@@ -119,11 +119,7 @@ export function getAccountId32(address: string): string {
  * if it's an ss58 address (substrate) or the input address if it's an ethereum address.
  */
 export function getChainSpecificAddress(address: string, chain: Chain): string {
-  if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address))
-    return address
+  if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address)) return address
 
-  return convertSs58(
-    address,
-    getTNode(chain.chainId, toPsEcosystem(chain.network)) as TNodeDotKsmWithRelayChains,
-  )
+  return convertSs58(address, getTNode(chain.chainId, toPsEcosystem(chain.network)) as TNodeDotKsmWithRelayChains)
 }

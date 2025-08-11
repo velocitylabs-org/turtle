@@ -1,34 +1,34 @@
-import { Chain, Origin } from "./types";
+import type { Chain, Origin } from './types'
 
 export function rpcConnectionAsHttps(rpc?: string): string {
-  if (!rpc) return "";
-  return rpc.replace("wss://", "https://");
+  if (!rpc) return ''
+  return rpc.replace('wss://', 'https://')
 }
 
 export function isAssetHub(chain: Chain): boolean {
-  return chain.network == "Polkadot" && chain.chainId === 1000;
+  return chain.network === 'Polkadot' && chain.chainId === 1000
 }
 
 export function parachain(paraId: number): Origin {
   return {
-    type: "Polkadot",
+    type: 'Polkadot',
     paraId,
-  };
+  }
 }
 
 export function snowbridgeWrapped(): Origin {
   return {
-    type: "Ethereum",
-    bridge: "Snowbridge",
-  };
+    type: 'Ethereum',
+    bridge: 'Snowbridge',
+  }
 }
 
 export function getDestChainId(destChain: Chain): string {
   switch (destChain.network) {
-    case "Ethereum": {
-      return `{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"${destChain.chainId}"}}}}}`;
+    case 'Ethereum': {
+      return `{"parents":"2","interior":{"X1":{"GlobalConsensus":{"Ethereum":{"chainId":"${destChain.chainId}"}}}}}`
     }
     default:
-      return destChain.chainId.toString();
+      return destChain.chainId.toString()
   }
 }

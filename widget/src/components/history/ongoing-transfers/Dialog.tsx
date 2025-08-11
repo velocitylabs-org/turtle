@@ -1,5 +1,5 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { LoadingIcon, Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { Icon, LoadingIcon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import Account from '@/components/Account'
@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { StoredTransfer } from '@/models/transfer'
+import type { StoredTransfer } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { getExplorerLink } from '@/utils/explorer'
 import { Direction, formatAmount, isSwap, resolveDirection, toHuman } from '@/utils/transfer'
@@ -19,13 +19,7 @@ import { SummaryRow } from '../completed-transfers/Dialog'
 import OngoingTransfer from './Card'
 import TransferEstimate from './OngoingTransferEstimate'
 
-export const OngoingTransferDialog = ({
-  transfer,
-  status,
-}: {
-  transfer: StoredTransfer
-  status?: string
-}) => {
+export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTransfer; status?: string }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
@@ -38,9 +32,7 @@ export const OngoingTransferDialog = ({
 
   const sourceAmountHuman = toHuman(transfer.sourceAmount, transfer.sourceToken)
   const sourceAmountUSD = sourceAmountHuman * (transfer.sourceTokenUSDValue ?? 0)
-  const destinationAmountHuman = isSwap(transfer)
-    ? toHuman(transfer.destinationAmount, transfer.destinationToken)
-    : 0
+  const destinationAmountHuman = isSwap(transfer) ? toHuman(transfer.destinationAmount, transfer.destinationToken) : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
 
   return (
@@ -55,9 +47,7 @@ export const OngoingTransferDialog = ({
         {/* Modal header */}
         <DialogHeader className="flex flex-col gap-2 rounded-tl-4xl rounded-tr-4xl border border-turtle-secondary-dark bg-turtle-secondary-light p-4">
           <DialogTitle className="sr-only">Ongoing transfer</DialogTitle>
-          <DialogDescription className="sr-only">
-            Ongoing transfer status and details
-          </DialogDescription>
+          <DialogDescription className="sr-only">Ongoing transfer status and details</DialogDescription>
           <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border border-turtle-secondary-dark bg-turtle-secondary-light px-2 py-1 text-turtle-secondary-dark">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
@@ -86,19 +76,11 @@ export const OngoingTransferDialog = ({
               <>
                 <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
                 <span>{formatAmount(destinationAmountHuman, 'Long')}</span>
-                <TokenLogo
-                  token={transfer.destinationToken}
-                  sourceChain={transfer.destChain}
-                  size={35}
-                />
+                <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={35} />
               </>
             )}
           </h3>
-          <div
-            className={
-              'flex items-center justify-center space-x-4 text-xs text-turtle-secondary-dark'
-            }
-          >
+          <div className={'flex items-center justify-center space-x-4 text-xs text-turtle-secondary-dark'}>
             <div>{formatOngoingTransferDate(transfer.date)}</div>
           </div>
         </DialogHeader>
@@ -114,15 +96,9 @@ export const OngoingTransferDialog = ({
             {direction !== Direction.WithinPolkadot ? (
               <>
                 <div className="my-2 flex items-center">
-                  <p className="text-left font-bold text-turtle-secondary-dark">
-                    {getStatus(status)}
-                  </p>
+                  <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
                 </div>
-                <TransferEstimate
-                  transfer={transfer}
-                  direction={direction}
-                  outlinedProgressBar={false}
-                />
+                <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={false} />
               </>
             ) : (
               <>
@@ -135,17 +111,11 @@ export const OngoingTransferDialog = ({
                       color={colors['turtle-secondary']}
                     />
                   )}
-                  <p className="text-left font-bold text-turtle-secondary-dark">
-                    {getStatus(status)}
-                  </p>
+                  <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
                 </div>
 
                 {isFinalTransferStep && (
-                  <TransferEstimate
-                    transfer={transfer}
-                    direction={direction}
-                    outlinedProgressBar={false}
-                  />
+                  <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={false} />
                 )}
               </>
             )}
@@ -157,9 +127,7 @@ export const OngoingTransferDialog = ({
               <ArrowRight className="h-3 w-3 rotate-90 sm:rotate-0" />
             </div>
             <div className="relative rounded-lg border border-turtle-level3 p-4 text-sm">
-              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">
-                Sender
-              </div>
+              <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5">Sender</div>
               <Account
                 network={transfer.sourceChain.network}
                 addressType={transfer.sourceChain.supportedAddressTypes?.at(0)}
@@ -211,10 +179,7 @@ export const OngoingTransferDialog = ({
             {transfer.bridgingFee && (
               <SummaryRow
                 label="Bridging fee"
-                amount={formatAmount(
-                  toHuman(transfer.bridgingFee.amount, transfer.bridgingFee.token),
-                  'Long',
-                )}
+                amount={formatAmount(toHuman(transfer.bridgingFee.amount, transfer.bridgingFee.token), 'Long')}
                 symbol={transfer.bridgingFee.token.symbol}
                 usdValue={formatAmount(transfer.bridgingFee.inDollars, 'Long')}
               />

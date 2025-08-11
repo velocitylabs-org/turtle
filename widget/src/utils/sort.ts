@@ -6,11 +6,7 @@
  * @param selectedId - 'uid' or 'id' of the selected item.
  * @returns A new array with the selected item at the top, others in their original order.
  */
-export const reorderOptionsBySelectedItem = <T>(
-  options: T[],
-  key: string,
-  selectedId?: string,
-): T[] => {
+export const reorderOptionsBySelectedItem = <T>(options: T[], key: string, selectedId?: string): T[] => {
   if (!selectedId) return options
 
   const getValue = <T>(obj: T, keyPath: string): string | undefined => {
