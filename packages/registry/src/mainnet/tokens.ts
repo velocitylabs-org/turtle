@@ -24,6 +24,7 @@ import vethLogo from "@velocitylabs-org/turtle-assets/logos/veth.svg";
 import wbtcLogo from "@velocitylabs-org/turtle-assets/logos/wbtc.svg";
 import wethLogo from "@velocitylabs-org/turtle-assets/logos/weth.svg";
 import wstethLogo from "@velocitylabs-org/turtle-assets/logos/wsteth.svg";
+import linkLogo from "@velocitylabs-org/turtle-assets/logos/chainlink.svg";
 
 import { Token } from "@/types";
 import { parachain, snowbridgeWrapped } from "../helpers";
@@ -412,6 +413,36 @@ export const EthereumTokens = {
             AccountKey20: {
               network: null,
               key: "0x18084fba666a33d37592fa2633fd49a74dd93a88",
+            },
+          },
+        ],
+      },
+    },
+    origin: snowbridgeWrapped(),
+  },
+
+  LINK: {
+    id: "link.e",
+    name: "Chainlink",
+    symbol: "LINK",
+    logoURI: linkLogo,
+    decimals: 18,
+    address: "0x514910771af9ca656af840dff83e8264ecf986ca",
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: "0x514910771af9ca656af840dff83e8264ecf986ca",
             },
           },
         ],

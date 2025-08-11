@@ -65,6 +65,7 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.WBTC.id,
+      EthereumTokens.LINK.id,
     ],
   },
   {
@@ -265,6 +266,7 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.WBTC.id,
+      EthereumTokens.LINK.id,
     ],
   },
 
