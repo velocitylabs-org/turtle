@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { Chain, Ethereum } from '@velocitylabs-org/turtle-registry'
 import { Account, Address, erc20Abi, PublicClient, WalletClient } from 'viem'
 import { usePublicClient, useWalletClient, useSwitchChain } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
@@ -9,7 +10,6 @@ import { truncateAddress } from '@/utils/address'
 import { ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
 import useNotification from './useNotification'
 import { Status, TransferParams } from './useTransfer'
-import { Chain, Ethereum } from '@velocitylabs-org/turtle-registry'
 
 const useChainflipApi = () => {
   const { getCachedQuote, fetchNewQuote } = useChainflipStore()
