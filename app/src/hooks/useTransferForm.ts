@@ -325,7 +325,7 @@ const useTransferForm = () => {
         !sourceTokenAmount?.token ||
         !destinationTokenAmount?.token ||
         !sourceAmount ||
-        !fees
+        (!fees && !chainflipFees)
       )
         return
 
@@ -338,7 +338,7 @@ const useTransferForm = () => {
         sourceAmount: sourceAmount,
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
-        fees,
+        fees: fees ?? chainflipFees[0],
         bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success

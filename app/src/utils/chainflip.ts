@@ -15,7 +15,7 @@ import {
   Token,
 } from '@velocitylabs-org/turtle-registry'
 import { AmountInfo } from '@/models/transfer'
-import { useChainflipSdk } from '@/store/chainflipStore'
+import { useChainflipStore } from '@/store/chainflipStore'
 import { getChainSpecificAddress } from './address'
 
 /** TYPES */
@@ -107,7 +107,7 @@ export const getChainflipSwapDestTokens = (
  * Get Chainflip SDK instance.
  * It creates a new instance if not already initialized.
  */
-export const getChainflipSdk = (): SwapSDK => useChainflipSdk.getState().initSdk()
+export const getChainflipSdk = (): SwapSDK => useChainflipStore.getState().initSdk()
 
 /** Get Chainflip quote for a swap. */
 export const getChainflipQuote = async (
@@ -203,6 +203,22 @@ export const getDepositAddress = async (
   }
 }
 
+/**
+ * Returns the number of block confirmations required by Chainflip for a given chain.
+ * A deposit transaction (deposit address and vault smart contract)
+ * is considered confirmed by the protocol after a certain number of blocks,
+ * reducing risks.
+ * Assethub have a deterministic finality and do not require any confirmations.
+ */
+export const getRequiredBlockConfirmation = async (
+  ChainflipChain: ChainflipChain,
+): Promise<number | null> => {
+  const sdk = getChainflipSdk()
+  if (!sdk) throw new Error('Chainflip SDK not initialized.')
+
+  return (await sdk.getRequiredBlockConfirmations())[ChainflipChain]
+}
+
 /** Returns a Chainflip chain matching with Turtle chain. */
 export const getChainflipChain = async (chain: Chain): Promise<ChainData | undefined> => {
   const sdk = getChainflipSdk()
@@ -222,11 +238,11 @@ export const getChainflipChain = async (chain: Chain): Promise<ChainData | undef
 }
 
 /** Returns a Turtle Chain matching with Chainflip chain. */
-export const toRegistryChain = (ChainflipChain: ChainflipChain): Chain => {
+export const toRegistryChain = (chainflipChain: ChainflipChain): Chain => {
   const registryChain = MainnetRegistry.chains.find(c => {
     if (c.uid.includes('-'))
-      return c.uid.split('-')[1].toLowerCase() === ChainflipChain.toLowerCase()
-    return c.uid.toLowerCase() === ChainflipChain.toLowerCase()
+      return c.uid.split('-')[1].toLowerCase() === chainflipChain.toLowerCase()
+    return c.uid.toLowerCase() === chainflipChain.toLowerCase()
   })
   if (!registryChain) throw new Error('No registry chain match with a Chainflip chain')
   return registryChain
