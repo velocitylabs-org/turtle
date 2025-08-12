@@ -16,6 +16,7 @@ import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import lidoLogo from '@velocitylabs-org/turtle-assets/logos/lido.svg'
 import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import mythLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
+import originTrailLogo from '@velocitylabs-org/turtle-assets/logos/origintrail.svg'
 import pepeLogo from '@velocitylabs-org/turtle-assets/logos/pepe.svg'
 import phalaLogo from '@velocitylabs-org/turtle-assets/logos/phala.svg'
 import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
@@ -501,6 +502,34 @@ export const EthereumTokens = {
             AccountKey20: {
               network: null,
               key: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
+            },
+          },
+        ],
+      },
+    },
+    origin: snowbridgeWrapped(),
+  },
+
+  TRAC: {
+    id: 'trac.e',
+    name: 'OriginTrail',
+    symbol: 'TRAC',
+    logoURI: originTrailLogo,
+    decimals: 18,
+    address: '0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: { chainId: 1 },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
             },
           },
         ],
