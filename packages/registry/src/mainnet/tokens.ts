@@ -22,6 +22,7 @@ import phalaLogo from '@velocitylabs-org/turtle-assets/logos/phala.svg'
 import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import shibLogo from '@velocitylabs-org/turtle-assets/logos/shib.svg'
+import skyLogo from '@velocitylabs-org/turtle-assets/logos/sky.svg'
 import tbtcLogo from '@velocitylabs-org/turtle-assets/logos/tbtc.svg'
 import tonLogo from '@velocitylabs-org/turtle-assets/logos/ton.svg'
 import usdcLogo from '@velocitylabs-org/turtle-assets/logos/usdc.svg'
@@ -530,6 +531,34 @@ export const EthereumTokens = {
             AccountKey20: {
               network: null,
               key: '0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
+            },
+          },
+        ],
+      },
+    },
+    origin: snowbridgeWrapped(),
+  },
+
+  SKY: {
+    id: 'sky.e',
+    name: 'Sky',
+    symbol: 'SKY',
+    logoURI: skyLogo,
+    decimals: 18,
+    address: '0x56072c95faa701256059aa122697b133aded9279',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: { chainId: 1 },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x56072c95faa701256059aa122697b133aded9279',
             },
           },
         ],

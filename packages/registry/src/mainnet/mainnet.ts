@@ -56,6 +56,7 @@ export const MainnetRegistry: Registry = {
     EthereumTokens.AAVE,
     EthereumTokens.LIDO,
     EthereumTokens.TRAC,
+    EthereumTokens.SKY,
 
     PolkadotTokens.USDT,
     PolkadotTokens.USDC,
