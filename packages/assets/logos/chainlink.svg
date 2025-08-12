@@ -1,14 +1,1 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
- "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="64.000000pt" height="64.000000pt" viewBox="0 0 64.000000 64.000000"
- preserveAspectRatio="xMidYMid meet">
-<g transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)"
-fill="#2a5ada" stroke="none">
-<path d="M183 552 l-133 -77 0 -155 0 -156 136 -77 135 -78 135 78 134 78 0
-155 0 155 -135 78 c-74 42 -135 77 -137 77 -2 0 -63 -35 -135 -78z m222 -96
-l70 -42 0 -94 0 -94 -70 -42 c-38 -24 -75 -43 -81 -43 -6 -1 -45 18 -87 42
-l-77 42 0 95 0 95 73 41 c39 23 79 42 87 42 8 0 47 -18 85 -42z"/>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37.8 43.6"><defs><style>.cls-1{fill:#2a5ada;}</style></defs><title>Asset 1</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M18.9,0l-4,2.3L4,8.6,0,10.9V32.7L4,35l11,6.3,4,2.3,4-2.3L33.8,35l4-2.3V10.9l-4-2.3L22.9,2.3ZM8,28.1V15.5L18.9,9.2l10.9,6.3V28.1L18.9,34.4Z"/></g></g></svg>

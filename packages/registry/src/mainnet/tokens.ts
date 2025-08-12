@@ -13,6 +13,7 @@ import ibtcLogo from '@velocitylabs-org/turtle-assets/logos/ibtc.svg'
 import interlayLogo from '@velocitylabs-org/turtle-assets/logos/interlay.svg'
 import kiltLogo from '@velocitylabs-org/turtle-assets/logos/kilt.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
+import lidoLogo from '@velocitylabs-org/turtle-assets/logos/lido.svg'
 import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import mythLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
 import pepeLogo from '@velocitylabs-org/turtle-assets/logos/pepe.svg'
@@ -472,6 +473,34 @@ export const EthereumTokens = {
             AccountKey20: {
               network: null,
               key: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
+            },
+          },
+        ],
+      },
+    },
+    origin: snowbridgeWrapped(),
+  },
+
+  LIDO: {
+    id: 'ldo.e',
+    name: 'Lido',
+    symbol: 'LDO',
+    logoURI: lidoLogo,
+    decimals: 18,
+    address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: { chainId: 1 },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
             },
           },
         ],

@@ -67,6 +67,7 @@ export const routes: Route[] = [
       EthereumTokens.WBTC.id,
       EthereumTokens.LINK.id,
       EthereumTokens.AAVE.id,
+      EthereumTokens.LIDO.id,
     ],
   },
   {
@@ -261,6 +262,7 @@ export const routes: Route[] = [
       EthereumTokens.WBTC.id,
       EthereumTokens.LINK.id,
       EthereumTokens.AAVE.id,
+      EthereumTokens.LIDO.id,
     ],
   },
 
