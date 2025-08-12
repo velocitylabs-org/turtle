@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import Header from '@/components/header'
-import Footer from '@/components/footer'
-import { dazzed } from '@/components/fonts/fonts'
 import { Analytics } from '@vercel/analytics/react'
+import { dazzed } from '@/components/fonts/fonts'
+import Footer from '@/components/footer'
+import Header from '@/components/header'
 
 export const metadata: Metadata = {
   title: 'Turtle',

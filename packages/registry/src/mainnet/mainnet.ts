@@ -1,4 +1,4 @@
-import { Registry } from "..";
+import type { Registry } from '..'
 import {
   Acala,
   AssetHub,
@@ -8,16 +8,16 @@ import {
   Ethereum,
   Hydration,
   Interlay,
+  Kusama,
+  KusamaAssetHub,
   Moonbeam,
   Mythos,
   Phala,
   Polimec,
   Polkadot,
-  KusamaAssetHub,
-  Kusama,
-} from "./chains";
-import { routes } from "./routes";
-import { EthereumTokens, PolkadotTokens } from "./tokens";
+} from './chains'
+import { routes } from './routes'
+import { EthereumTokens, PolkadotTokens } from './tokens'
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -45,7 +45,6 @@ export const MainnetRegistry: Registry = {
     EthereumTokens.WETH,
     EthereumTokens.WBTC,
     EthereumTokens.USDC,
-    PolkadotTokens.USDC,
     EthereumTokens.USDT,
     EthereumTokens.WSTETH,
     EthereumTokens.MYTH,
@@ -53,9 +52,13 @@ export const MainnetRegistry: Registry = {
     EthereumTokens.SHIB,
     EthereumTokens.PEPE,
     EthereumTokens.LINK,
+    EthereumTokens.TBTC,
+    EthereumTokens.AAVE,
 
     PolkadotTokens.USDT,
-    EthereumTokens.TBTC,
+    PolkadotTokens.USDC,
+    PolkadotTokens.AUSDT,
+    PolkadotTokens.GDOT,
     PolkadotTokens.DOT,
     EthereumTokens.DAI,
     PolkadotTokens.ACA,
@@ -70,30 +73,32 @@ export const MainnetRegistry: Registry = {
     PolkadotTokens.IBTC,
     PolkadotTokens.MYTH,
     PolkadotTokens.HDX,
+    PolkadotTokens.KILT,
     PolkadotTokens.KSM,
+    PolkadotTokens.KSM_BRIDGED,
   ],
   routes,
   assetUid: new Map([
     [
       AssetHub.uid,
       new Map([
-        [EthereumTokens.USDC.id, { symbol: "USDC.e" }],
-        [PolkadotTokens.USDC.id, { id: "1337" }],
-        [EthereumTokens.USDT.id, { symbol: "USDT.e" }],
-        [PolkadotTokens.USDT.id, { id: "1984" }],
-        [EthereumTokens.WETH.id, { symbol: "WETH.e" }],
-        [EthereumTokens.WBTC.id, { symbol: "WBTC.e" }],
+        [EthereumTokens.USDC.id, { symbol: 'USDC.e' }],
+        [PolkadotTokens.USDC.id, { id: '1337' }],
+        [EthereumTokens.USDT.id, { symbol: 'USDT.e' }],
+        [PolkadotTokens.USDT.id, { id: '1984' }],
+        [EthereumTokens.WETH.id, { symbol: 'WETH.e' }],
+        [EthereumTokens.WBTC.id, { symbol: 'WBTC.e' }],
       ]),
     ],
     [
       Hydration.uid,
       new Map([
-        [EthereumTokens.WETH.id, { id: "1000189" }],
-        [EthereumTokens.USDC.id, { id: "1000766" }],
+        [EthereumTokens.WETH.id, { id: '1000189' }],
+        [EthereumTokens.USDC.id, { id: '1000766' }],
 
-        [PolkadotTokens.USDC.id, { id: "22" }],
-        [PolkadotTokens.USDT.id, { id: "10" }],
+        [PolkadotTokens.USDC.id, { id: '22' }],
+        [PolkadotTokens.USDT.id, { id: '10' }],
       ]),
     ],
   ]),
-};
+}

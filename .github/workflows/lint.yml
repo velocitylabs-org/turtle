@@ -1,11 +1,6 @@
-name: Lint and Prettier
+name: Lint and Format
 
 on:
-  push:
-    branches:
-      - "**"
-    paths:
-      - "**"
   pull_request:
     branches:
       - "**"
@@ -13,49 +8,32 @@ on:
       - "**"
 
 jobs:
-  run-lint-prettier:
-    name: Run lint and prettier
+  run-lint-format:
+    name: Biome
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: .
 
     steps:
-
-      - name: Cache Node modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.pnpm
-            ${{ github.workspace }}/.next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Check out Git repository
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: 20.10.0
-
-      # ESLint and Prettier must be in `package.json`
-      - name: Install pnpm
-        run: npm install -g pnpm
+          cache: 'pnpm'
 
       - name: Install Node.js dependencies
         env:
           CYPRESS_INSTALL_BINARY: 0 # This disables Cypress binary installation during pnpm install
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
 
-      - name: Building packages
-        env:
-          DISABLE_SENTRY: true
-        run: pnpm run build
-      - name: Running linter
-        run: pnpm run lint
-
-      - name: Running Prettier check
-        run: pnpm run format-check
+      - name: Running lint and format check
+        run: pnpm run format-and-lint

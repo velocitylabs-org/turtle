@@ -1,4 +1,4 @@
-cd "$(dirname -- "$0")/.."
+#!/usr/bin/env sh
+cd "$(dirname -- "$0")/../.." || exit
 
-pnpm run format
-pnpm run lint
+pnpm run format-and-lint

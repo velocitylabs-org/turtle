@@ -2,26 +2,46 @@ import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import {
-  CompletedTransfer,
-  OngoingTransferWithDirection,
-  StoredTransfer,
+  type CompletedTransfer,
+  type OngoingTransferWithDirection,
+  type StoredTransfer,
   TxStatus,
-  TxTrackingResult,
+  type TxTrackingResult,
 } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink } from '@/utils/transfer'
-import {
-  findMatchingTransfer,
-  getTransferStatus,
-  isCompletedTransfer,
-} from '@/utils/transferTracking'
+import { findMatchingTransfer, getTransferStatus, isCompletedTransfer } from '@/utils/transferTracking'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 
 type ID = string
 type Message = string
+
+const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
+  return ongoingTransfers
+    .map(t => {
+      const direction = resolveDirection(t.sourceChain, t.destChain)
+      return {
+        id: t.id,
+        sourceChain: t.sourceChain,
+        destChain: t.destChain,
+        sender: t.sender,
+        recipient: t.recipient,
+        sourceToken: t.sourceToken,
+        destinationToken: t.destinationToken,
+        date: t.date,
+        direction,
+        ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
+        ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
+        ...(t.sourceChainExtrinsicIndex && {
+          sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
+        }),
+      }
+    })
+    .filter(t => t.direction !== Direction.WithinPolkadot)
+}
 
 const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const [transfers, setTransfers] = useState<TxTrackingResult[]>([])
@@ -31,33 +51,8 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
 
-  const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
-    return ongoingTransfers
-      .map(t => {
-        const direction = resolveDirection(t.sourceChain, t.destChain)
-        return {
-          id: t.id,
-          sourceChain: t.sourceChain,
-          destChain: t.destChain,
-          sender: t.sender,
-          recipient: t.recipient,
-          sourceToken: t.sourceToken,
-          destinationToken: t.destinationToken,
-          date: t.date,
-          direction,
-          ...(t.crossChainMessageHash && { crossChainMessageHash: t.crossChainMessageHash }),
-          ...(t.parachainMessageId && { parachainMessageId: t.parachainMessageId }),
-          ...(t.sourceChainExtrinsicIndex && {
-            sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
-          }),
-        }
-      })
-      .filter(t => t.direction !== Direction.WithinPolkadot)
-  }
-
   const fetchTransfers = useCallback(async () => {
-    const formattedTransfers: OngoingTransferWithDirection[] =
-      formatTransfersWithDirection(ongoingTransfers)
+    const formattedTransfers: OngoingTransferWithDirection[] = formatTransfersWithDirection(ongoingTransfers)
     if (!formattedTransfers.length) return
 
     try {
@@ -111,15 +106,9 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
         // Look for a subscan trackingUniqueId for any XCM or AH to ETH transfers,
         // to eventually update ongoing transfer store
         const trackingUniqueId =
-          'uniqueId' in foundTransfer && foundTransfer.uniqueId.length
-            ? foundTransfer.uniqueId
-            : undefined
+          'uniqueId' in foundTransfer && foundTransfer.uniqueId.length ? foundTransfer.uniqueId : undefined
 
-        if (
-          ongoing.sourceChain.network === 'Polkadot' &&
-          trackingUniqueId &&
-          !ongoing.uniqueTrackingId
-        ) {
+        if (ongoing.sourceChain.network === 'Polkadot' && trackingUniqueId && !ongoing.uniqueTrackingId) {
           updateUniqueId(ongoing.id, trackingUniqueId)
         }
 

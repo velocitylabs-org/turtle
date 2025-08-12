@@ -1,6 +1,6 @@
-import { getAssetBalance, TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, Token, Balance } from '@velocitylabs-org/turtle-registry'
+import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 
@@ -47,17 +47,13 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
 
       switch (chain.network) {
         case 'Ethereum': {
-          fetchedBalance = isNativeToken
-            ? (await fetchEthBalance()).data
-            : (await fetchErc20Balance()).data
+          fetchedBalance = isNativeToken ? (await fetchEthBalance()).data : (await fetchErc20Balance()).data
 
           if (fetchedBalance) {
             // Apply a 90% transferrable ratio for the native token to safe-guard for fees and other unforseen costs.
             // Consider the totally of the available balance otherwise for the other tokens.
             const transferrableRatio = isNativeToken ? 0.9 : 1
-            fetchedBalance.formatted = (
-              toHuman(fetchedBalance.value, token) * transferrableRatio
-            ).toString() // override formatted value
+            fetchedBalance.formatted = (toHuman(fetchedBalance.value, token) * transferrableRatio).toString() // override formatted value
           }
           break
         }
@@ -80,7 +76,6 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain, address, token?.id, fetchErc20Balance, fetchEthBalance])
 
   useEffect(() => {
@@ -92,11 +87,7 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
 
 export default useBalance
 
-export async function getBalance(
-  chain: Chain,
-  token: Token,
-  address: string,
-): Promise<Balance | undefined> {
+export async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
   const node = getParaSpellNode(chain)
 
   if (!node) throw new Error('Node not found')

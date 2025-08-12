@@ -2,7 +2,7 @@ import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import snowbridgeLogo from '@velocitylabs-org/turtle-assets/logos/snowbridge.svg'
-import { Token, Chain } from '@velocitylabs-org/turtle-registry'
+import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 
 interface OriginBadge {
   logoURI: string | Record<string, string>
@@ -21,7 +21,7 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
   // Older versions of Turtle did not include a `token.origin` so we need to play safe
   if (!sourceChain || !token.origin) return
 
-  if (sourceChain.network == 'Ethereum' && token.origin.type === 'Ethereum') {
+  if (sourceChain.network === 'Ethereum' && token.origin.type === 'Ethereum') {
     return {
       logoURI: ethereumLogo,
       text: `Ethereum ${token.symbol}`,

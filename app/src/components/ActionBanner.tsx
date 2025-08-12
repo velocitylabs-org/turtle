@@ -1,5 +1,5 @@
 import { cn } from '@velocitylabs-org/turtle-ui'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface ActionBannerProps {
   disabled: boolean
@@ -25,9 +25,7 @@ export default function ActionBanner({ disabled, header, text, image, btn }: Act
       <div className="justify-items flex flex-col items-center md:flex-row">
         {image}
         <div className="justify-left mt-4 flex flex-col md:ml-3 md:mt-0">
-          <div className="text-small text-center font-bold text-turtle-foreground md:text-left">
-            {header}
-          </div>
+          <div className="text-small text-center font-bold text-turtle-foreground md:text-left">{header}</div>
           <div className="text-small mt-1 pb-2 text-center text-turtle-foreground md:text-left">
             {text}
             {btn && (

@@ -2,8 +2,8 @@
 import { mainnet as ethereum } from '@reown/appkit/networks'
 import { createAppKit } from '@reown/appkit/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactNode } from 'react'
-import { Config, cookieToInitialState, WagmiProvider } from 'wagmi'
+import type { ReactNode } from 'react'
+import { type Config, cookieToInitialState, WagmiProvider } from 'wagmi'
 import { mainnet_networks, wagmiAdapter } from '@/config'
 import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
 

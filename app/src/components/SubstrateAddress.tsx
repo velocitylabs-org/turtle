@@ -1,5 +1,5 @@
 import Identicon from '@polkadot/react-identicon'
-import { MouseEvent } from 'react'
+import type { MouseEvent } from 'react'
 import { truncateAddress } from '@/utils/address'
 
 interface SubstrateAddressProps {

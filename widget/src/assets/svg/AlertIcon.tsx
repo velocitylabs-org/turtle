@@ -1,17 +1,7 @@
-import { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
-export const AlertIcon = ({
-  fill = '#001B04',
-  ...props
-}: ComponentPropsWithoutRef<'svg'> & { fill?: string }) => (
-  <svg
-    width="17"
-    height="16"
-    viewBox="0 0 17 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+export const AlertIcon = ({ fill = '#001B04', ...props }: ComponentPropsWithoutRef<'svg'> & { fill?: string }) => (
+  <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

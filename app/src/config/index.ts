@@ -1,4 +1,4 @@
-import { AppKitNetwork, mainnet as ethereum, moonbeam } from '@reown/appkit/networks'
+import { type AppKitNetwork, mainnet as ethereum, moonbeam } from '@reown/appkit/networks'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { cookieStorage, createStorage } from '@wagmi/core'
 import { projectId } from '@/utils/env'

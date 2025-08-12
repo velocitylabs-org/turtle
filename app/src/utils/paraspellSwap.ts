@@ -1,11 +1,11 @@
 import { getExchangePairs } from '@paraspell/xcm-router'
 import {
-  Chain,
-  Token,
-  Hydration,
-  REGISTRY,
+  type Chain,
   getTokenByMultilocation,
+  Hydration,
   isSameToken,
+  REGISTRY,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
 import { deduplicate, isSameChain } from '@/utils/routes'
 
@@ -46,6 +46,7 @@ export const getDexTokens = (dex: Dex): Token[] => {
 /** returns all pairs supported by a dex and supported by our registry */
 export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const pairs = getExchangePairs(dex)
+
   const turtlePairs = pairs
     .map(pair => {
       const [token1, token2] = pair
@@ -53,6 +54,7 @@ export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] =
 
       const t1 = getTokenByMultilocation(token1.multiLocation)
       const t2 = getTokenByMultilocation(token2.multiLocation)
+
       if (!t1 || !t2) return null // not supported by turtle registry
       return [t1, t2] as [Token, Token]
     })
@@ -78,14 +80,10 @@ export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
 
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => {
-  const chainsSupportingOneClickFlow = REGISTRY.chains.filter(
-    chain => chain?.supportExecuteExtrinsic,
-  )
+  const chainsSupportingOneClickFlow = REGISTRY.chains.filter(chain => chain?.supportExecuteExtrinsic)
 
   const oneClickChains = chainsSupportingOneClickFlow.filter(chain => {
-    const route = REGISTRY.routes.find(
-      route => route.from === chain.uid && route.to === Hydration.uid,
-    )
+    const route = REGISTRY.routes.find(route => route.from === chain.uid && route.to === Hydration.uid)
     if (!route) return false
 
     const isTradingPairCompatible = getDexPairs('HydrationDex').some(pair =>
@@ -106,9 +104,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
 
   if (!sourceChain.supportExecuteExtrinsic) return []
 
-  const routeToDex = REGISTRY.routes.find(
-    route => route.from === sourceChain.uid && route.to === Hydration.uid,
-  )
+  const routeToDex = REGISTRY.routes.find(route => route.from === sourceChain.uid && route.to === Hydration.uid)
   if (!routeToDex) return []
 
   const dexTokens = getDexPairs('HydrationDex')
@@ -125,10 +121,7 @@ export const getSwapsSourceTokens = (sourceChain: Chain | null): Token[] => {
 }
 
 /** returns all allowed destination chains for a swap. */
-export const getSwapsDestinationChains = (
-  sourceChain: Chain | null,
-  sourceToken: Token | null,
-): Chain[] => {
+export const getSwapsDestinationChains = (sourceChain: Chain | null, sourceToken: Token | null): Chain[] => {
   if (!sourceChain || !sourceToken) return []
   const chains: Chain[] = []
 
@@ -144,11 +137,7 @@ export const getSwapsDestinationChains = (
 
   // Filter routes by dex trading pairs. A route needs to support at least one tradable token of the dex
   routes.forEach(route => {
-    if (
-      route.tokens.some(routeTokenId =>
-        tradeableTokens.some(tradeableToken => tradeableToken.id === routeTokenId),
-      )
-    ) {
+    if (route.tokens.some(routeTokenId => tradeableTokens.some(tradeableToken => tradeableToken.id === routeTokenId))) {
       // lookup destination chain and add it to the list
       const destinationChain = REGISTRY.chains.find(chain => chain.uid === route.to)
       if (destinationChain) chains.push(destinationChain)
@@ -175,9 +164,7 @@ export const getSwapsDestinationTokens = (
   if (isSameChain(Hydration, destinationChain)) return tradeableTokens
 
   // Check if we can reach the destination chain
-  const route = REGISTRY.routes.find(
-    route => route.from === Hydration.uid && route.to === destinationChain.uid,
-  )
+  const route = REGISTRY.routes.find(route => route.from === Hydration.uid && route.to === destinationChain.uid)
   if (!route) return []
 
   const tradeableAndTransferableTokens = tradeableTokens.filter(tradeableToken =>

@@ -24,10 +24,7 @@ export default function Footer() {
 
           <div className="flex flex-col items-center space-y-2 md:flex-row md:justify-between md:space-x-2 md:space-y-0">
             <div className="space-x-5 text-sm underline md:space-x-2">
-              <Link
-                href="https://app.turtle.cool"
-                aria-label="Turle bridge decentralized application"
-              >
+              <Link href="https://app.turtle.cool" aria-label="Turle bridge decentralized application">
                 Start a transfer
               </Link>
             </div>
@@ -37,13 +34,7 @@ export default function Footer() {
             <div className="mr-10 hidden space-x-2 text-sm capitalize underline md:flex">
               {TurtleSocialData.map((item, idx) => {
                 return (
-                  <a
-                    key={idx}
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={item.alt}
-                  >
+                  <a key={idx} href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.alt}>
                     {item.name}
                   </a>
                 )

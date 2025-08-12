@@ -1,12 +1,7 @@
 import mongoose from 'mongoose'
 
 export type TxStatus = 'succeeded' | 'failed' | 'undefined' | 'ongoing'
-export const txStatusOptions = [
-  'succeeded',
-  'failed',
-  'undefined',
-  'ongoing',
-] as const satisfies readonly TxStatus[]
+export const txStatusOptions = ['succeeded', 'failed', 'undefined', 'ongoing'] as const satisfies readonly TxStatus[]
 
 export interface TransactionModel {
   txHashId: string
@@ -161,7 +156,6 @@ function greaterThanZero(v: number) {
 }
 
 const TransactionModel =
-  mongoose.models?.Transaction ||
-  mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)
+  mongoose.models?.Transaction || mongoose.model<TransactionMongooseModel>('Transaction', transactionSchema)
 
 export default TransactionModel

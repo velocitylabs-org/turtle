@@ -24,8 +24,7 @@ cd my-new-package
   "scripts": {
     // tsc-alias might not be always necessary
     "build": "tsc -b && tsc-alias",
-    "watch": "tsc --watch & tsc-alias -w",
-    "lint": "eslint ."
+    "watch": "tsc --watch & tsc-alias -w"
   },
   "exports": {
     ".": {
@@ -34,10 +33,7 @@ cd my-new-package
     }
   },
   "devDependencies": {
-    "@velocitylabs-org/turtle-eslint-config": "workspace:*",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
-    "eslint": "^9.25.1",
-    "prettier": "^3.5.3",
     "tsc-alias": "^1.8.16"
   }
 }
