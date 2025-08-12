@@ -58,12 +58,7 @@ const useFees = (
     address: senderAddress,
   })
 
-  const {
-    chainflipQuote,
-    isLoadingChainflipQuote,
-    isFetchingChainflipQuote,
-    isChainflipQuoteError,
-  } = useChainflipQuote({
+  const { chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError } = useChainflipQuote({
     sourceChain,
     destinationChain,
     sourceToken: token,
@@ -206,7 +201,7 @@ const useFees = (
             setChainflipFees([])
             break
           }
-          setLoading(isLoadingChainflipQuote || isFetchingChainflipQuote)
+          setLoading(isLoadingChainflipQuote)
 
           const feesData: ChainflipFee[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
@@ -250,7 +245,6 @@ const useFees = (
     token?.id,
     chainflipQuote,
     isLoadingChainflipQuote,
-    isFetchingChainflipQuote,
     isChainflipQuoteError,
     snowbridgeContext,
     addNotification,
