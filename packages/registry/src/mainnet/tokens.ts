@@ -1,12 +1,16 @@
+import aaveLogo from '@velocitylabs-org/turtle-assets/logos/aave.svg'
 import acalaLogo from '@velocitylabs-org/turtle-assets/logos/acala.svg'
 import astarLogo from '@velocitylabs-org/turtle-assets/logos/astar.svg'
+import ausdtLogo from '@velocitylabs-org/turtle-assets/logos/ausdt.svg'
 import bifrostLogo from '@velocitylabs-org/turtle-assets/logos/bifrost.svg'
 import cfgLogo from '@velocitylabs-org/turtle-assets/logos/cfg.svg'
 import daiLogo from '@velocitylabs-org/turtle-assets/logos/dai.svg'
 import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
+import gigadotLogo from '@velocitylabs-org/turtle-assets/logos/gigadot.svg'
 import hydraLogo from '@velocitylabs-org/turtle-assets/logos/hydra.svg'
 import ibtcLogo from '@velocitylabs-org/turtle-assets/logos/ibtc.svg'
 import interlayLogo from '@velocitylabs-org/turtle-assets/logos/interlay.svg'
+import kiltLogo from '@velocitylabs-org/turtle-assets/logos/kilt.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import mythLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
@@ -419,6 +423,36 @@ export const EthereumTokens = {
     },
     origin: snowbridgeWrapped(),
   },
+
+  AAVE: {
+    id: 'aave.e',
+    name: 'Aave',
+    symbol: 'AAVE',
+    logoURI: aaveLogo,
+    decimals: 18,
+    address: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 1,
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
+            },
+          },
+        ],
+      },
+    },
+    origin: snowbridgeWrapped(),
+  },
 } as const satisfies Record<string, Token>
 
 export const PolkadotTokens = {
@@ -780,6 +814,81 @@ export const PolkadotTokens = {
     origin: parachain(3369),
   },
 
+  AUSDT: {
+    id: 'ausdt',
+    name: 'Aave Hydrated USDT',
+    symbol: 'aUSDT',
+    logoURI: ausdtLogo,
+    decimals: 6,
+    address: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2034,
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xc64980e4eaf9a1151bd21712b9946b81e41e2b92',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'aave-usdt',
+    origin: parachain(2034),
+  },
+
+  GDOT: {
+    id: 'gigadot',
+    name: 'Gigadot',
+    symbol: 'GDOT',
+    logoURI: gigadotLogo,
+    decimals: 18,
+    address: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X2: [
+          {
+            Parachain: 2034,
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x34d5ffb83d14d82f87aaf2f13be895a3c814c2ad',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'gigadot',
+    origin: parachain(2034),
+  },
+
+  KILT: {
+    id: 'kilt',
+    name: 'KILT',
+    symbol: 'KILT',
+    logoURI: kiltLogo,
+    decimals: 15,
+    address: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X1: [
+          {
+            Parachain: 2086,
+          },
+        ],
+      },
+    },
+    coingeckoId: 'kilt-protocol',
+    origin: parachain(2086),
+  },
+
   KSM: {
     id: 'ksm',
     name: 'Kusama',
@@ -795,5 +904,27 @@ export const PolkadotTokens = {
     },
     coingeckoId: 'kusama',
     origin: parachain(0),
+  },
+
+  KSM_BRIDGED: {
+    id: 'ksm-bridged',
+    name: 'Kusama',
+    symbol: 'KSM',
+    logoURI: kusamaLogo,
+    decimals: 12,
+    address: '',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X1: [
+          {
+            GlobalConsensus: {
+              kusama: null,
+            },
+          },
+        ],
+      },
+    },
+    origin: parachain(1000),
   },
 } as const satisfies Record<string, Token>
