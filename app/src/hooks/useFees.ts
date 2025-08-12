@@ -31,6 +31,15 @@ interface UseFeesParams {
   destinationToken?: Token | null
 }
 
+export interface FeeDetails {
+  // The title of the fee - e.g. 'Delivery Fee'
+  title: string
+  // The chain in which the fee is charged
+  chain: Chain
+  // The amount to be charged
+  amount: AmountInfo
+}
+
 const useFees = (params: UseFeesParams) => {
   const { sourceChain, destinationChain, sourceToken, destinationToken, sourceTokenAmount, sender, recipientAddress } =
     params
@@ -95,12 +104,32 @@ const useFees = (params: UseFeesParams) => {
             recipient: recipientAddress,
           })
 
+          const xcmFee = await xcmTransferBuilderManager.getXcmFee({
+            sourceChain: sourceChain,
+            destinationChain: destinationChain,
+            sourceToken,
+            sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
+            sender,
+            recipient: recipientAddress,
+          })
+          // ;('Execution fees')
+          // ;('Swap fees')
+          // ;('Bridging fees')
+          // ;('Destination fees')
+          // const feesList = [
+          //   buildFeeObj(xcmFee.origin, 'origin'),
+          //     ...xcmFee.hops.map(hopFee => buildFeeObj(hopFee, 'hop')),
+          //   buildFeeObj(xcmFee.destination, 'destination'),
+          // ]
+
+          console.log('Fees', xcmFee)
+
           const { currency: feeCurrency, fee: feeAmount, sufficient: sufficientForXCM } = originXcmFee
 
           if (!feeCurrency) throw new Error('Fee currency not available from XCM transfer builder')
           if (!feeAmount) throw new Error('Fee amount not available from XCM transfer builder')
 
-          const feeToken = PolkadotTokens[feeCurrency as keyof typeof PolkadotTokens]
+          const feeToken = PolkadotTokens[feeCurrency as keyof typeof PolkadotTokens] as Token
           const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
           setFees({
             amount: feeAmount,
