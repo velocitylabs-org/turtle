@@ -23,18 +23,18 @@ import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import shibLogo from '@velocitylabs-org/turtle-assets/logos/shib.svg'
 import skyLogo from '@velocitylabs-org/turtle-assets/logos/sky.svg'
+import solanaLogo from '@velocitylabs-org/turtle-assets/logos/solana.svg'
 import tbtcLogo from '@velocitylabs-org/turtle-assets/logos/tbtc.svg'
 import tonLogo from '@velocitylabs-org/turtle-assets/logos/ton.svg'
 import usdcLogo from '@velocitylabs-org/turtle-assets/logos/usdc.svg'
 import usdtLogo from '@velocitylabs-org/turtle-assets/logos/usdt.svg'
 import vdotLogo from '@velocitylabs-org/turtle-assets/logos/vdot.svg'
-import vethLogo from '@velocitylabs-org/turtle-assets/logos/veth.svg'
 import wbtcLogo from '@velocitylabs-org/turtle-assets/logos/wbtc.svg'
 import wethLogo from '@velocitylabs-org/turtle-assets/logos/weth.svg'
 import wstethLogo from '@velocitylabs-org/turtle-assets/logos/wsteth.svg'
 
 import type { Token } from '@/types'
-import { parachain, snowbridgeWrapped } from '../helpers'
+import { parachain, snowbridgeWrapped, wormholeWrapped } from '../helpers'
 
 // Tokens
 export const EthereumTokens = {
@@ -89,8 +89,8 @@ export const EthereumTokens = {
         ],
       },
     },
-    origin: snowbridgeWrapped(),
     coingeckoId: 'usd-coin',
+    origin: snowbridgeWrapped(),
   },
 
   DAI: {
@@ -120,6 +120,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'dai',
     origin: snowbridgeWrapped(),
   },
 
@@ -150,7 +151,7 @@ export const EthereumTokens = {
         ],
       },
     },
-
+    coingeckoId: 'tether',
     origin: snowbridgeWrapped(),
   },
 
@@ -185,36 +186,6 @@ export const EthereumTokens = {
     origin: snowbridgeWrapped(),
   },
 
-  VETH: {
-    id: 'veth.e',
-    name: 'Venus ETH',
-    symbol: 'vETH',
-    logoURI: vethLogo,
-    decimals: 18,
-    address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-    multilocation: {
-      parents: 2,
-      interior: {
-        X2: [
-          {
-            GlobalConsensus: {
-              Ethereum: {
-                chainId: 1,
-              },
-            },
-          },
-          {
-            AccountKey20: {
-              network: null,
-              key: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-            },
-          },
-        ],
-      },
-    },
-    origin: snowbridgeWrapped(),
-  },
-
   WBTC: {
     id: 'wbtc.e',
     name: 'Wrapped Bitcoin',
@@ -242,6 +213,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'wrapped-bitcoin',
     origin: snowbridgeWrapped(),
   },
 
@@ -303,6 +275,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'shiba-inu',
     origin: snowbridgeWrapped(),
   },
 
@@ -333,6 +306,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'pepe',
     origin: snowbridgeWrapped(),
   },
 
@@ -425,6 +399,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'tbtc',
     origin: snowbridgeWrapped(),
   },
   LINK: {
@@ -452,6 +427,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'chainlink',
     origin: snowbridgeWrapped(),
   },
 
@@ -480,6 +456,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'aave',
     origin: snowbridgeWrapped(),
   },
 
@@ -508,6 +485,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'lido-dao',
     origin: snowbridgeWrapped(),
   },
 
@@ -536,6 +514,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'origintrail',
     origin: snowbridgeWrapped(),
   },
 
@@ -564,6 +543,7 @@ export const EthereumTokens = {
         ],
       },
     },
+    coingeckoId: 'sky',
     origin: snowbridgeWrapped(),
   },
 } as const satisfies Record<string, Token>
@@ -770,6 +750,36 @@ export const PolkadotTokens = {
     },
     coingeckoId: 'moonbeam',
     origin: parachain(2004),
+  },
+
+  SOL: {
+    id: 'sol.wormhole',
+    name: 'Solana',
+    symbol: 'SOL',
+    logoURI: solanaLogo,
+    decimals: 9,
+    address: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X3: [
+          {
+            Parachain: 2004,
+          },
+          {
+            PalletInstance: 110,
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'solana',
+    origin: wormholeWrapped(),
   },
 
   PHA: {

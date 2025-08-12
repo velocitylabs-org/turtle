@@ -14,6 +14,7 @@ interface TokenLogoProps {
 
 export const TokenLogo = ({ token, sourceChain, size = 32, className }: TokenLogoProps) => {
   const originBadge = getOriginBadge(token, sourceChain)
+  console.log(originBadge)
 
   const logoURI = typeof token.logoURI === 'string' ? token.logoURI : token.logoURI.src
   const originBadgeLogoURI = typeof originBadge?.logoURI === 'string' ? originBadge.logoURI : originBadge?.logoURI?.src
