@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ReactNode, RefObject } from 'react'
+import type { ReactNode, RefObject } from 'react'
 
 interface DropdownProps {
   isOpen: boolean

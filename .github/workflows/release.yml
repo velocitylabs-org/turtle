@@ -19,17 +19,24 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v3
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20.10.0
-      - name: Install pnpm
-        run: npm install -g pnpm
+
       - name: Install Node.js dependencies
         env:
           CYPRESS_INSTALL_BINARY: 0 # This disables Cypress binary installation during pnpm install
         run: pnpm i
-      - name: Create Release Pull Request
+
+      - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
+        with:
+          publish: pnpm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

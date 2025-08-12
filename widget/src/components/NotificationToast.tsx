@@ -7,7 +7,7 @@ import ErrorIcon from '@/assets/svg/severity-error-icon.svg'
 import InfoIcon from '@/assets/svg/severity-info-icon.svg'
 import SuccessIcon from '@/assets/svg/severity-success-icon.svg'
 import WarningIcon from '@/assets/svg/severity-warning-icon.svg'
-import { Notification, NotificationSeverity } from '@/models/notification'
+import { type Notification, NotificationSeverity } from '@/models/notification'
 
 const NOTIFICATION_TTL_MS = 5000
 
@@ -16,10 +16,7 @@ interface NotificationToastProps {
   removeNotification: (id: number) => void
 }
 
-const NotificationToast: React.FC<NotificationToastProps> = ({
-  notification,
-  removeNotification,
-}) => {
+const NotificationToast: React.FC<NotificationToastProps> = ({ notification, removeNotification }) => {
   // Remove notification after TTL
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
@@ -29,8 +26,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
     return () => clearTimeout(timeoutRef)
   }, [notification.id, removeNotification])
 
-  const header =
-    (notification.severity && getSeverityHeader(notification.severity)) || notification.header
+  const header = (notification.severity && getSeverityHeader(notification.severity)) || notification.header
 
   return (
     <motion.div
@@ -49,9 +45,7 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
 
       {/* Notification Content */}
       {header && <span className="sm:text-normal text-xs font-bold text-white">{header}</span>}
-      {notification.message && (
-        <span className="sm:text-normal text-sm text-white">{notification.message}</span>
-      )}
+      {notification.message && <span className="sm:text-normal text-sm text-white">{notification.message}</span>}
 
       {/* Close Button */}
       {notification.dismissible && (

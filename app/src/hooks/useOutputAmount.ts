@@ -1,8 +1,8 @@
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
+import { type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { DEX_TO_CHAIN_MAP } from '@/utils/paraspellSwap'
@@ -47,15 +47,11 @@ export function useOutputAmount({
       fees?.amount.toString(),
     ],
     queryFn: async () => {
-      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
-        return null
+      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
 
       try {
         // Paraspell swap from HydrationDex
-        if (
-          !isSameToken(sourceToken, destinationToken) &&
-          sourceChain === DEX_TO_CHAIN_MAP.HydrationDex
-        ) {
+        if (!isSameToken(sourceToken, destinationToken) && sourceChain === DEX_TO_CHAIN_MAP.HydrationDex) {
           const params = {
             sourceChain,
             destinationChain,
@@ -111,8 +107,7 @@ export function useOutputAmount({
   })
 
   const outputAmount = useMemo(() => {
-    if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
-      return null
+    if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
 
     if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken)) {
       return chainflipQuote ? BigInt(chainflipQuote.egressAmount) : null

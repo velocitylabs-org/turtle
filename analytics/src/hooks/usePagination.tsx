@@ -1,7 +1,7 @@
 'use client'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useState, useMemo, useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -90,10 +90,7 @@ export function usePagination({
     return rangeWithDots
   }, [currentPage, totalPages])
 
-  const PaginationComponent: React.FC<PaginationComponentProps> = ({
-    className,
-    showPageInput = true,
-  }) => {
+  const PaginationComponent: React.FC<PaginationComponentProps> = ({ className, showPageInput = true }) => {
     const [inputValue, setInputValue] = useState('')
 
     if (totalPages <= 1) return null
@@ -116,13 +113,7 @@ export function usePagination({
     return (
       <div className={cn('flex items-center justify-between gap-2', className)}>
         <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={prevPage}
-            disabled={!canGoPrev}
-            className="h-8 w-8"
-          >
+          <Button variant="outline" size="icon" onClick={prevPage} disabled={!canGoPrev} className="h-8 w-8">
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
@@ -142,8 +133,7 @@ export function usePagination({
                 size="sm"
                 onClick={() => setPage(pageNumber)}
                 className={cn('h-8 w-8 p-0', {
-                  'pointer-events-none bg-gray-100 text-black hover:bg-gray-100':
-                    pageNumber === currentPage,
+                  'pointer-events-none bg-gray-100 text-black hover:bg-gray-100': pageNumber === currentPage,
                 })}
               >
                 {pageNumber}
@@ -151,13 +141,7 @@ export function usePagination({
             )
           })}
 
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={nextPage}
-            disabled={!canGoNext}
-            className="h-8 w-8"
-          >
+          <Button variant="outline" size="icon" onClick={nextPage} disabled={!canGoNext} className="h-8 w-8">
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

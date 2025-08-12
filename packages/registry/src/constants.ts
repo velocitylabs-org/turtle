@@ -1,1 +1,1 @@
-export * from "./generated-env";
+export * from './generated-env'

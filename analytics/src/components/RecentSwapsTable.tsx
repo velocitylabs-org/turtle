@@ -1,16 +1,8 @@
 'use client'
 import Link from 'next/link'
-import React from 'react'
 import { useLoadingBar } from 'react-top-loading-bar'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { SwapView } from '@/models/swap-view'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import type { SwapView } from '@/models/swap-view'
 import { formatDate, formatDateAgo } from '@/utils/format-date'
 import formatUSD from '@/utils/format-USD'
 import { TokenChainDisplay } from './TokenChainDisplay'
@@ -57,45 +49,28 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
           ) : (
             swaps.map(swap => (
               <TableRow key={swap._id} className="hover:bg-muted/50">
-                <Link
-                  href={`/detail/${swap._id}`}
-                  className="contents cursor-pointer"
-                  prefetch
-                  onClick={() => start()}
-                >
+                <Link href={`/detail/${swap._id}`} className="contents cursor-pointer" prefetch onClick={() => start()}>
                   <TableCell>
                     <div className="flex items-center">
-                      <TokenChainDisplay
-                        tokenId={swap.sourceTokenId}
-                        chainUid={swap.sourceChainUid}
-                      />
+                      <TokenChainDisplay tokenId={swap.sourceTokenId} chainUid={swap.sourceChainUid} />
                       <div className="ml-2 flex flex-col">
                         <span className="font-medium">{swap.sourceTokenSymbol}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {swap.sourceChainName}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{swap.sourceChainName}</span>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
                       <span>{swap.sourceTokenAmount}</span>
-                      <span className="text-xs text-muted-foreground">
-                        (${formatUSD(swap.sourceTokenAmountUsd)})
-                      </span>
+                      <span className="text-xs text-muted-foreground">(${formatUSD(swap.sourceTokenAmountUsd)})</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <TokenChainDisplay
-                        tokenId={swap.destinationTokenId}
-                        chainUid={swap.destinationChainUid}
-                      />
+                      <TokenChainDisplay tokenId={swap.destinationTokenId} chainUid={swap.destinationChainUid} />
                       <div className="ml-2 flex flex-col">
                         <span className="font-medium">{swap.destinationTokenSymbol}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {swap.destinationChainName}
-                        </span>
+                        <span className="text-xs text-muted-foreground">{swap.destinationChainName}</span>
                       </div>
                     </div>
                   </TableCell>
@@ -110,9 +85,7 @@ export default function RecentSwapsTable({ swaps, isLoading }: RecentSwapsTableP
                   <TableCell>
                     <div className="flex flex-col">
                       <div className="text-sm">{formatDate(swap.txDate)}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatDateAgo(swap.txDate)}
-                      </div>
+                      <div className="text-sm text-muted-foreground">{formatDateAgo(swap.txDate)}</div>
                     </div>
                   </TableCell>
                   <TableCell>

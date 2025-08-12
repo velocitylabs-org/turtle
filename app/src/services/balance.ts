@@ -1,4 +1,4 @@
-import { Token, TokenPrice } from '@velocitylabs-org/turtle-registry'
+import type { Token, TokenPrice } from '@velocitylabs-org/turtle-registry'
 
 export const CACHE_REVALIDATE_IN_SECONDS = 180
 

@@ -1,5 +1,5 @@
-import { AssetData, ChainData, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
-import { Chain, chainflipRoutes, Token } from '@velocitylabs-org/turtle-registry'
+import type { AssetData, ChainData, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
+import { type Chain, chainflipRoutes, type Token } from '@velocitylabs-org/turtle-registry'
 import { useChainflipSdk } from '@/store/chainflipStore'
 
 /** TYPES */
@@ -38,10 +38,7 @@ export const getChainflipSwapDestChains = (sourceChain: Chain, sourceToken: Toke
   const chainsSet = new Set<Chain>()
 
   chainflipRoutes.forEach(route => {
-    if (
-      route.from.chainId === sourceChain.chainId &&
-      route.pairs.some(([token, _]) => token.id === sourceToken.id)
-    ) {
+    if (route.from.chainId === sourceChain.chainId && route.pairs.some(([token, _]) => token.id === sourceToken.id)) {
       chainsSet.add(route.to)
     }
   })
@@ -59,8 +56,7 @@ export const getChainflipSwapDestTokens = (
 
   const tokensSet = new Set<Token>()
   const route = chainflipRoutes.find(
-    route =>
-      route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
+    route => route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
   )
   if (!route) return []
 
@@ -141,10 +137,7 @@ export const getChainflipChain = async (chain: Chain): Promise<ChainData | undef
 }
 
 /** Returns a Chainflip asset matching with Turtle token. */
-export const getChainflipAsset = async (
-  asset: Token,
-  chainflipChain: ChainData,
-): Promise<AssetData> => {
+export const getChainflipAsset = async (asset: Token, chainflipChain: ChainData): Promise<AssetData> => {
   const sdk = getChainflipSdk()
   const assetFromSrcChain = await sdk.getAssets(chainflipChain.chain)
 
@@ -170,10 +163,7 @@ export const isChainflipSwap = (
     route =>
       route.from.chainId === sourceChain.chainId &&
       route.to.chainId === destinationChain.chainId &&
-      route.pairs.some(
-        ([srcToken, dstToken]) =>
-          srcToken.id === sourceToken.id && dstToken.id === destinationToken.id,
-      ),
+      route.pairs.some(([srcToken, dstToken]) => srcToken.id === sourceToken.id && dstToken.id === destinationToken.id),
   )
 }
 
@@ -183,5 +173,4 @@ export const meetChainflipMinSwapAmount = (amount: string | bigint, asset: Asset
 }
 
 /** Check if the source chain is supported for vault swap (Polkadot is not supported and uses the deposit address method) */
-export const isVaultSwapSupported = (sourceChain: ChainData): boolean =>
-  sourceChain.chain !== 'Polkadot'
+export const isVaultSwapSupported = (sourceChain: ChainData): boolean => sourceChain.chain !== 'Polkadot'

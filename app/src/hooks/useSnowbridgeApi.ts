@@ -1,13 +1,13 @@
 import { captureException } from '@sentry/nextjs'
-import { toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
-import { isAssetHub, Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { type toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { type Chain, isAssetHub, type Token } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import { Signer } from 'ethers'
+import type { Signer } from 'ethers'
 import { mainnet } from 'wagmi/chains'
 import { config } from '@/config'
 import { NotificationSeverity } from '@/models/notification'
-import { SnowbridgeContext } from '@/models/snowbridge'
-import { StoredTransfer } from '@/models/transfer'
+import type { SnowbridgeContext } from '@/models/snowbridge'
+import type { StoredTransfer } from '@/models/transfer'
 
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -18,7 +18,7 @@ import { txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
-import { Sender, Status, TransferParams } from './useTransfer'
+import type { Sender, Status, TransferParams } from './useTransfer'
 
 type TransferType = toPolkadotV2.Transfer | toEthereumV2.Transfer
 
@@ -109,13 +109,12 @@ const useSnowbridgeApi = () => {
     } = params
     try {
       setStatus('Sending')
+      // biome-ignore lint/suspicious/noImplicitAnyLet: response
       let response
 
       switch (direction) {
         case Direction.ToPolkadot: {
-          response = await (sender as Signer).sendTransaction(
-            (transfer as toPolkadotV2.Transfer).tx,
-          )
+          response = await (sender as Signer).sendTransaction((transfer as toPolkadotV2.Transfer).tx)
           const receipt = await response.wait(1)
           if (!receipt) {
             throw Error(`Transaction ${response.hash} not included`)
@@ -126,9 +125,7 @@ const useSnowbridgeApi = () => {
 
         case Direction.ToEthereum: {
           //todo(nuno): fix this
-          response = await (sender as Signer).sendTransaction(
-            (transfer as toPolkadotV2.Transfer).tx,
-          )
+          response = await (sender as Signer).sendTransaction((transfer as toPolkadotV2.Transfer).tx)
           const receipt = await response.wait(1)
           if (!receipt) {
             throw Error(`Transaction ${response.hash} not included`)
@@ -143,8 +140,7 @@ const useSnowbridgeApi = () => {
 
       const senderAddress = await getSenderAddress(sender)
       const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
-      const destinationTokenUSDValue =
-        (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
+      const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
       const date = new Date()
 
       addOrUpdate({

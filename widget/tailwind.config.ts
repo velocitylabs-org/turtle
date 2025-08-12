@@ -4,11 +4,7 @@ import tailwindcssAnimate from 'tailwindcss-animate'
 import tailwindcssMotion from 'tailwindcss-motion'
 
 const config: import('tailwindcss').Config = {
-  content: [
-    './index.html',
-    './src/**/*.{ts,tsx,js,jsx}',
-    '../packages/ui/src/**/*.{ts,tsx,js,jsx}',
-  ],
+  content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}', '../packages/ui/src/**/*.{ts,tsx,js,jsx}'],
   important: '.turtle-wrapper',
   presets: [turtleTailwindConfig],
   theme: {

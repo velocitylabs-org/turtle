@@ -1,7 +1,7 @@
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransferCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
-import { CompletedTransfer, StoredTransfer } from '@/models/transfer'
+import type { CompletedTransfer, StoredTransfer } from '@/models/transfer'
 import { CompletedTransferDialog } from './completed-transfers/Dialog'
 import { OngoingTransferDialog } from './ongoing-transfers/Dialog'
 

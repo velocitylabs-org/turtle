@@ -1,5 +1,5 @@
-import { ComponentPropsWithoutRef } from 'react'
-import { Sizes } from '@/types/global'
+import type { ComponentPropsWithoutRef } from 'react'
+import type { Sizes } from '@/types/global'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
