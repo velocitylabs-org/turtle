@@ -193,9 +193,15 @@ export default function Transfer() {
   })
 
   const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
-  const durationEstimate = direction
-    ? (getChainflipDurationEstimate(chainflipQuote) ?? getDurationEstimate(direction))
-    : undefined
+
+  const durationEstimate = () => {
+    // Chainflip swap duration
+    const chainflipDuration = getChainflipDurationEstimate(chainflipQuote)
+    if (chainflipDuration) return chainflipDuration
+
+    // Default duration from direction
+    return direction ? getDurationEstimate(direction) : undefined
+  }
 
   const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
 
@@ -495,7 +501,7 @@ export default function Transfer() {
           fees={fees}
           bridgingFee={bridgingFee}
           chainflipFees={chainflipFees}
-          durationEstimate={durationEstimate}
+          durationEstimate={durationEstimate()}
           canPayFees={canPayFees}
           canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}
