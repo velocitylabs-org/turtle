@@ -1,4 +1,4 @@
-import { ArrowLeft, History } from 'lucide-react'
+import { type TransferTabOptions, TxHistoryToggle } from '@velocitylabs-org/turtle-ui'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import NotificationSystem from '@/components/NotificationSystem'
 import SubstrateWalletModal from '@/components/SubstrateWalletModal'
@@ -9,9 +9,6 @@ import { ConfigProvider, type ConfigRegistryType } from '@/providers/ConfigProvi
 import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import { generateWidgetTheme, type WidgetTheme } from '@/utils/theme'
 import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
-
-export type TransferTab = 'New' | 'History'
-export type TransferTabOptions = TransferTab
 
 const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigRegistryType }) => {
   useMemo(() => generateWidgetTheme(theme), [theme])
@@ -30,24 +27,13 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
         <ConfigProvider registry={registry ?? { chains: [], tokens: [] }}>
           <div className="m-4 flex flex-col items-center justify-center p-6">
             <div className="relative">
-              {(ongoingTransfers.length > 0 || (completedTransfers && completedTransfers.length > 0)) && (
-                <div
-                  className="absolute -top-5 right-8 z-30 max-w-[90vw] rounded-lg bg-turtle-background"
-                  onClick={() => setNewTransferInit(newTransferInit === 'New' ? 'History' : 'New')}
-                >
-                  <div className="animation-bounce relative m-1 cursor-pointer rounded-lg border p-3">
-                    {ongoingTransfers.length > 0 && !isHistoryTabSelected && (
-                      <div className="text-foreground absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-turtle-secondary bg-turtle-background">
-                        <span className="text-xs">{ongoingTransfers.length}</span>
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turtle-secondary-dark opacity-25" />
-                      </div>
-                    )}
-                    <div>
-                      {isHistoryTabSelected ? <ArrowLeft className="h-4 w-4" /> : <History className="h-4 w-4" />}
-                    </div>
-                  </div>
-                </div>
-              )}
+              <TxHistoryToggle
+                ongoingTransfers={ongoingTransfers}
+                completedTransfers={completedTransfers}
+                isHistoryTabSelected={isHistoryTabSelected}
+                newTransferInit={newTransferInit}
+                setNewTransferInit={setNewTransferInit}
+              />
               {!isHistoryTabSelected ? (
                 <TransferForm />
               ) : (
