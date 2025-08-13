@@ -6,19 +6,21 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
+import { useChainflipQuote } from '@/hooks/useChainflipQuote'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import type { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
+import { getChainflipDurationEstimate } from '@/utils/chainflip'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
   getAllowedSourceChains,
   getAllowedSourceTokens,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, safeConvertAmount } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
 import Credits from './Credits'
@@ -102,6 +104,7 @@ export default function Transfer() {
     destinationWallet,
     fees,
     bridgingFee,
+    chainflipFees,
     refetchFees,
     loadingFees,
     canPayFees,
@@ -143,8 +146,16 @@ export default function Transfer() {
     owner: sourceWallet?.sender?.address,
   })
 
+  const { chainflipQuote, isChainflipQuoteError, chainflipQuoteError } = useChainflipQuote({
+    sourceChain,
+    destinationChain,
+    sourceToken: sourceTokenAmount?.token,
+    destinationToken: destinationTokenAmount?.token,
+    amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? '0',
+  })
+
   const requiresErc20SpendApproval =
-    erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount!
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount! && !isChainflipQuoteError
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
@@ -182,14 +193,22 @@ export default function Transfer() {
   })
 
   const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
-  const durationEstimate = direction ? getDurationEstimate(direction) : undefined
+
+  const durationEstimate = () => {
+    // Chainflip swap duration
+    const chainflipDuration = getChainflipDurationEstimate(chainflipQuote)
+    if (chainflipDuration) return chainflipDuration
+
+    // Default duration from direction
+    return direction ? getDurationEstimate(direction) : undefined
+  }
 
   const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
 
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    fees &&
+    (fees || chainflipFees.length > 0) &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
@@ -210,7 +229,8 @@ export default function Transfer() {
     transferStatus !== 'Idle' ||
     disableMaxBtnInPolkadotNetwork
 
-  const shouldDisplayTxSummary = sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+  const shouldDisplayTxSummary =
+    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval && !isChainflipQuoteError
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -460,13 +480,28 @@ export default function Transfer() {
         )}
       </AnimatePresence>
 
+      {/* Chainflip quote error */}
+      <AnimatePresence>
+        {isChainflipQuoteError && (
+          <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
+            <ActionBanner
+              disabled={false}
+              header="Can't swap this pair for now."
+              text={`${chainflipQuoteError?.message} Please try a different pair.`}
+              image={<Image src="/wip.png" alt="Work in progress" width={64} height={64} />}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {shouldDisplayTxSummary && (
         <TxSummary
           loading={loadingFees}
           tokenAmount={sourceTokenAmount}
           fees={fees}
           bridgingFee={bridgingFee}
-          durationEstimate={durationEstimate}
+          chainflipFees={chainflipFees}
+          durationEstimate={durationEstimate()}
           canPayFees={canPayFees}
           canPayAdditionalFees={canPayAdditionalFees}
           direction={direction}

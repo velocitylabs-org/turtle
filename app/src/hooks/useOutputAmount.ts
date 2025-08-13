@@ -73,7 +73,13 @@ export function useOutputAmount({
       } catch (error) {
         captureException(error, {
           level: 'error',
-          extra: { sourceChain, destinationChain, sourceToken, destinationToken, amount },
+          extra: {
+            sourceChain,
+            destinationChain,
+            sourceToken,
+            destinationToken,
+            amount,
+          },
         })
         console.error('Failed to fetch swap output amount:', error)
         return null
@@ -92,13 +98,7 @@ export function useOutputAmount({
 
   // The following hook (react-query) is used to fetch chainflip quote.
   // The quote defined the swap output amount.
-  const {
-    chainflipQuote,
-    isLoadingChainflipQuote,
-    isFetchingChainflipQuote,
-    // isErrorChainflipQuote,
-    // errorChainflipQuote,
-  } = useChainflipQuote({
+  const { chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError } = useChainflipQuote({
     sourceChain,
     destinationChain,
     sourceToken,
@@ -109,15 +109,24 @@ export function useOutputAmount({
   const outputAmount = useMemo(() => {
     if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
 
-    if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken)) {
+    if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken) && !isChainflipQuoteError) {
       return chainflipQuote ? BigInt(chainflipQuote.egressAmount) : null
     }
 
     return data
-  }, [sourceChain, destinationChain, sourceToken, destinationToken, amount, chainflipQuote, data])
+  }, [
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+    chainflipQuote,
+    isChainflipQuoteError,
+    data,
+  ])
 
   return {
     outputAmount,
-    isLoading: isLoading || isFetching || isLoadingChainflipQuote || isFetchingChainflipQuote,
+    isLoading: isLoading || isFetching || isLoadingChainflipQuote,
   }
 }

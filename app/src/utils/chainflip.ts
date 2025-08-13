@@ -1,8 +1,23 @@
-import type { AssetData, ChainData, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
-import { type Chain, chainflipRoutes, type Token } from '@velocitylabs-org/turtle-registry'
+import type { AssetData, ChainData, DCAQuote, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
+import {
+  type Chain,
+  chainflipRoutes,
+  EthereumTokens,
+  PolkadotTokens,
+  type Token,
+} from '@velocitylabs-org/turtle-registry'
+import type { AmountInfo } from '@/models/transfer'
 import { useChainflipSdk } from '@/store/chainflipStore'
 
 /** TYPES */
+export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
+
+export type ChainflipChain = 'Ethereum' | 'Polkadot' | 'Assethub' | 'Arbitrum' | 'Bitcoin' | 'Solana'
+
+export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
+
+export type ChainflipFee = { type: ChainflipFeeType } & AmountInfo
+
 type ChainflipError = {
   response?: {
     data?: {
@@ -81,7 +96,7 @@ export const getChainflipQuote = async (
   destinationToken: Token,
   /** Amount in the source token's decimal base */
   amount: string,
-): Promise<RegularQuote | null> => {
+): Promise<RegularQuote | DCAQuote | null> => {
   const sdk = getChainflipSdk()
   if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const srcChain = await getChainflipChain(sourceChain)
@@ -101,21 +116,25 @@ export const getChainflipQuote = async (
       destChain: destChain.chain,
       destAsset: destAsset.symbol,
       isVaultSwap: isVaultSwapSupported(srcChain),
+      brokerCommissionBps: 0,
       amount,
     })
 
     //Find regular quote
-    const quote = quotes.find(quote => quote.type === 'REGULAR')
-    if (!quote) throw new Error('Chainflip quote not found.')
-    return quote
+    const regularQuote = quotes.find(quote => quote.type === 'REGULAR')
+    //Find DCA quote
+    const dcaQuote = quotes.find(quote => quote.type === 'DCA')
+    if (!regularQuote && !dcaQuote) throw new Error('Chainflip quote not found.')
+
+    return regularQuote ? regularQuote : (dcaQuote ?? null)
   } catch (error) {
     const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
 
     if (chainflipErrorMsg) {
-      console.log('chainflipErrorMsg:', chainflipErrorMsg)
+      throw formatChainflipErrorMsg(chainflipErrorMsg)
     }
 
-    return null // Or throw an error ?
+    throw error as Error
   }
 }
 
@@ -174,3 +193,43 @@ export const meetChainflipMinSwapAmount = (amount: string | bigint, asset: Asset
 
 /** Check if the source chain is supported for vault swap (Polkadot is not supported and uses the deposit address method) */
 export const isVaultSwapSupported = (sourceChain: ChainData): boolean => sourceChain.chain !== 'Polkadot'
+
+export const getFeeTokenFromAssetSymbol = (assetSymbol: AssetSymbol, chain: ChainflipChain): Token => {
+  if (chain === 'Ethereum') return EthereumTokens[assetSymbol]
+  switch (assetSymbol) {
+    case 'USDC':
+      return PolkadotTokens.USDC
+    case 'USDT':
+      return PolkadotTokens.USDT
+    default:
+      return PolkadotTokens.DOT
+  }
+}
+
+export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
+  switch (feeType) {
+    case 'BROKER':
+      return 'Broker fee'
+    case 'NETWORK':
+      return 'Execution fee'
+    case 'INGRESS':
+      return 'Deposit fee'
+    case 'EGRESS':
+      return 'Broadcast fee'
+
+    default:
+      return 'Fee'
+  }
+}
+
+export const getChainflipDurationEstimate = (quote?: RegularQuote | DCAQuote | null): string | null => {
+  if (!quote) return null
+  return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
+}
+
+export const formatChainflipErrorMsg = (errorMsg: string): string | null => {
+  if (!errorMsg) return null
+
+  const capitalized = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1)
+  return capitalized.endsWith('.') ? capitalized : `${capitalized}. `
+}

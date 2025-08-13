@@ -6,6 +6,7 @@ import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import type { AmountInfo } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
+import { type ChainflipFee, getFeeLabelFromType } from '@/utils/chainflip'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import Delayed from './Delayed'
 import ExclamationMark from './svg/ExclamationMark'
@@ -15,6 +16,7 @@ interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
   fees?: AmountInfo | null
+  chainflipFees: ChainflipFee[]
   bridgingFee?: AmountInfo | null
   durationEstimate?: string
   direction?: Direction
@@ -39,6 +41,7 @@ export default function TxSummary({
   loading,
   tokenAmount,
   fees,
+  chainflipFees,
   bridgingFee,
   durationEstimate,
   direction,
@@ -51,7 +54,7 @@ export default function TxSummary({
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
-  if (!loading && !fees && !bridgingFee) return null
+  if (!loading && !fees && !bridgingFee && chainflipFees.length === 0) return null
 
   const renderContent = () => {
     if (loading) {
@@ -178,6 +181,30 @@ export default function TxSummary({
                 </div>
               </li>
             )}
+
+            {/* Chainflip fees */}
+            {chainflipFees.length > 0 &&
+              chainflipFees.map(fee => {
+                if (fee.amount.toString() === '0') return null
+                return (
+                  <li key={fee.type} className="mt-4 flex items-start justify-between border-turtle-level2">
+                    <div className="items-left flex flex-col">
+                      <div className="pt-[3px] text-sm font-bold">{getFeeLabelFromType(fee.type)}</div>
+                    </div>
+                    <div className="items-right flex">
+                      <div>
+                        <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
+                          {formatAmount(toHuman(fee.amount, fee.token))} {fee.token.symbol}
+                        </div>
+
+                        {fee.inDollars > 0 && (
+                          <div className="text-right text-sm text-turtle-level4">${formatAmount(fee.inDollars)}</div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                )
+              })}
 
             <li className="mt-4 flex items-start justify-between border-turtle-level2">
               <div className="flex">
