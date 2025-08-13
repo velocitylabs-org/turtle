@@ -33,7 +33,13 @@ export const useChainflipQuote = ({
       } catch (error) {
         captureException(error, {
           level: 'error',
-          extra: { sourceChain, destinationChain, sourceToken, destinationToken, amount },
+          extra: {
+            sourceChain,
+            destinationChain,
+            sourceToken,
+            destinationToken,
+            amount,
+          },
         })
         console.log('Failed to get Chainflip quote:', error)
         throw new Error(error as string)
@@ -52,8 +58,7 @@ export const useChainflipQuote = ({
 
   return {
     chainflipQuote,
-    isLoadingChainflipQuote,
-    isFetchingChainflipQuote,
+    isLoadingChainflipQuote: isLoadingChainflipQuote || isFetchingChainflipQuote,
     isChainflipQuoteError,
     chainflipQuoteError,
   }

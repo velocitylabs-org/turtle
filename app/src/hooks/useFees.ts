@@ -57,14 +57,13 @@ const useFees = (params: UseFeesParams) => {
     address: senderAddress,
   })
 
-  const { chainflipQuote, isLoadingChainflipQuote, isFetchingChainflipQuote, isChainflipQuoteError } =
-    useChainflipQuote({
-      sourceChain,
-      destinationChain,
-      sourceToken: sourceToken,
-      destinationToken: destinationToken,
-      amount: safeConvertAmount(sourceTokenAmount, sourceToken)?.toString() ?? '0',
-    })
+  const { chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError } = useChainflipQuote({
+    sourceChain,
+    destinationChain,
+    sourceToken: sourceToken,
+    destinationToken: destinationToken,
+    amount: safeConvertAmount(sourceTokenAmount, sourceToken)?.toString() ?? '0',
+  })
 
   const fetchFees = useCallback(async () => {
     if (
@@ -213,7 +212,7 @@ const useFees = (params: UseFeesParams) => {
             setChainflipFees([])
             break
           }
-          setLoading(isLoadingChainflipQuote || isFetchingChainflipQuote)
+          setLoading(isLoadingChainflipQuote)
 
           const feesData: ChainflipFee[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
@@ -255,7 +254,6 @@ const useFees = (params: UseFeesParams) => {
     sourceToken?.id,
     chainflipQuote,
     isLoadingChainflipQuote,
-    isFetchingChainflipQuote,
     isChainflipQuoteError,
     snowbridgeContext,
     addNotification,
