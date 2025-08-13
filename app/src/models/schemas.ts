@@ -1,5 +1,5 @@
-import { TMultiLocation } from '@paraspell/sdk'
-import { Chain, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
+import type { TMultiLocation } from '@paraspell/sdk'
+import type { Chain, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { z } from 'zod'
 
 const originSchema = z.union([
@@ -48,9 +48,7 @@ export const manualRecipientSchema: z.ZodType<ManualRecipient> = z.object({
 })
 
 export const schema = z.object({
-  sourceChain: chainSchema
-    .nullable()
-    .refine(val => val !== null, { message: 'Source chain is required' }),
+  sourceChain: chainSchema.nullable().refine(val => val !== null, { message: 'Source chain is required' }),
   destinationChain: chainSchema.refine(val => val !== null, {
     message: 'Destination chain is required',
   }),

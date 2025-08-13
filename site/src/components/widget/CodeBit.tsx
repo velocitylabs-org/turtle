@@ -1,20 +1,16 @@
 'use client'
 
-import { Large, Body } from '@velocitylabs-org/turtle-ui'
 // @ts-ignore
 import hljs from '@highlightjs/cdn-assets/es/core.min.js'
 // @ts-ignore
 import bash from '@highlightjs/cdn-assets/es/languages/bash.min.js'
 // @ts-ignore
 import typescript from '@highlightjs/cdn-assets/es/languages/typescript.min.js'
+import { Body, Large } from '@velocitylabs-org/turtle-ui'
 import '@highlightjs/cdn-assets/styles/github.min.css'
 import { useEffect } from 'react'
 
-const CodeBit = ({
-  guide,
-}: {
-  guide: { title: string; language?: string; code?: string; description?: string }
-}) => {
+const CodeBit = ({ guide }: { guide: { title: string; language?: string; code?: string; description?: string } }) => {
   useEffect(() => {
     hljs.registerLanguage('bash', bash)
     hljs.registerLanguage('typescript', typescript)

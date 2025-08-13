@@ -1,4 +1,4 @@
-import { TransferStatus } from '@snowbridge/api/dist/history'
+import type { TransferStatus } from '@snowbridge/api/dist/history'
 
 export type Status = 'pending' | 'relayed' | 'success' | 'failed'
 
@@ -28,7 +28,7 @@ type Message = {
   child_para_id: number
   child_dest: string
   protocol: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: any
   instructions: any
   message_type: string
   unique_id: string
@@ -41,7 +41,7 @@ type Message = {
 }
 
 export type SubscanTransferResponse = Message & {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: any
   assets: any
   child_message?: Message
 }

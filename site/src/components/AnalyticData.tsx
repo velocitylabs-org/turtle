@@ -45,9 +45,7 @@ function AnalyticDataClient({ initialVolume }: AnalyticDataProps) {
           <div className="text-center text-[28px] font-bold sm:text-[32px]">
             <NumberFlow value={value} format={format} prefix="$" />
           </div>
-          <div className="relative top-[-5px] text-[18px] leading-tight sm:text-[20px]">
-            Funds moved through Turtle
-          </div>
+          <div className="relative top-[-5px] text-[18px] leading-tight sm:text-[20px]">Funds moved through Turtle</div>
         </div>
       </div>
     </div>

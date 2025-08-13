@@ -3,13 +3,13 @@ import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
   getTNode,
-  TCurrencyCore,
-  TDryRunResult,
-  TEcosystemType,
-  TNodeWithRelayChains,
+  type TCurrencyCore,
+  type TDryRunResult,
+  type TEcosystemType,
+  type TNodeWithRelayChains,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { Chain, Token, EthereumTokens, REGISTRY, Network } from '@velocitylabs-org/turtle-registry'
+import { type Chain, EthereumTokens, type Network, REGISTRY, type Token } from '@velocitylabs-org/turtle-registry'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -25,8 +25,7 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
     })
   } else tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
 
-  if (!tokenSymbol)
-    captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`))
+  if (!tokenSymbol) captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`))
 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
 }

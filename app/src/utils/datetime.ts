@@ -5,7 +5,7 @@
  * @returns The formatted time string with AM/PM notation. Returns '-' if the input format is invalid.
  */
 export const formatHours = (dateString: string | Date): string => {
-  const date = typeof dateString == 'string' ? new Date(dateString) : dateString
+  const date = typeof dateString === 'string' ? new Date(dateString) : dateString
   const formattedTime = date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: 'numeric',
@@ -21,7 +21,7 @@ export const formatHours = (dateString: string | Date): string => {
  * @returns The formatted date string. For example, "Friday Apr 12, 2024".
  */
 export function formatCompletedTransferDate(dateString: string | Date): string {
-  const dateFrom = typeof dateString == 'string' ? new Date(dateString) : dateString
+  const dateFrom = typeof dateString === 'string' ? new Date(dateString) : dateString
   const weekday = dateFrom.toLocaleDateString('en-US', { weekday: 'long' })
   const month = dateFrom.toLocaleDateString('en-US', { month: 'short' })
   const day = dateFrom.toLocaleDateString('en-US', { day: 'numeric' })
@@ -36,7 +36,7 @@ export function formatCompletedTransferDate(dateString: string | Date): string {
  * @returns The formatted date string. For example, "Apr 12, 2:20:00 PM".
  */
 export const formatOngoingTransferDate = (date: string | Date): string => {
-  const dateFrom = typeof date == 'string' ? new Date(date) : date
+  const dateFrom = typeof date === 'string' ? new Date(date) : date
   return dateFrom.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',

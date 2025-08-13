@@ -5,7 +5,5 @@ interface VerticalDividerProps {
 }
 
 export default function VerticalDivider({ className }: VerticalDividerProps) {
-  return (
-    <div className={cn('ml-2 h-[1.625rem] rounded-lg border border-turtle-level2', className)} />
-  )
+  return <div className={cn('ml-2 h-[1.625rem] rounded-lg border border-turtle-level2', className)} />
 }

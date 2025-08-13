@@ -1,5 +1,4 @@
-import { tokensById } from '@velocitylabs-org/turtle-registry'
-import { chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { chainsByUid, tokensById } from '@velocitylabs-org/turtle-registry'
 import { getOriginBadge } from '@velocitylabs-org/turtle-ui'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import { getSrcFromLogo } from '@/utils/get-src-from-logo'

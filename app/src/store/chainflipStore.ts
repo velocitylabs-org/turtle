@@ -1,4 +1,4 @@
-import { SwapSDK, SwapSDKOptions } from '@chainflip/sdk/swap'
+import { SwapSDK, type SwapSDKOptions } from '@chainflip/sdk/swap'
 import { create } from 'zustand'
 
 interface ChainflipSdk {

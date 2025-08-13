@@ -1,8 +1,8 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
-import { StoredTransfer } from '@/models/transfer'
-import { Direction } from '@/services/transfer'
+import type { StoredTransfer } from '@/models/transfer'
+import type { Direction } from '@/services/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
@@ -21,9 +21,7 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
         <p className="text-left font-bold text-turtle-secondary-dark">{status}</p>
-        <p className="text-normal text-right text-turtle-secondary">
-          {formatOngoingTransferDate(transfer.date)}
-        </p>
+        <p className="text-normal text-right text-turtle-secondary">{formatOngoingTransferDate(transfer.date)}</p>
       </div>
       <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={false} />
       <div className="mb-2 flex items-center">
@@ -38,20 +36,12 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
           {isSwap(transfer) ? (
             <span className="flex items-center gap-1">
               {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}{' '}
-              <TokenLogo
-                token={transfer.destinationToken}
-                sourceChain={transfer.destChain}
-                size={25}
-              />
+              <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={25} />
             </span>
           ) : (
             <span className="flex items-center gap-1">
               {formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}{' '}
-              <TokenLogo
-                token={transfer.sourceToken}
-                sourceChain={transfer.sourceChain}
-                size={25}
-              />
+              <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={25} />
             </span>
           )}
         </div>

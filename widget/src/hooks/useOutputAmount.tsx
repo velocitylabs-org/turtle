@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { Chain, Token, isSameToken } from '@velocitylabs-org/turtle-registry'
+import { type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import { getExchangeOutputAmount } from '@/lib/paraspell/swap'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
@@ -40,8 +40,7 @@ export function useOutputAmount({
       fees?.amount.toString(),
     ],
     queryFn: async () => {
-      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
-        return null
+      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
 
       if (isSameToken(sourceToken, destinationToken)) return null
 

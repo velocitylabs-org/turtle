@@ -1,24 +1,18 @@
-import { AssetData, ChainData, DCAQuote, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
+import type { AssetData, ChainData, DCAQuote, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
 import {
-  Chain,
+  type Chain,
   chainflipRoutes,
   EthereumTokens,
   PolkadotTokens,
-  Token,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 import { useChainflipSdk } from '@/store/chainflipStore'
 
 /** TYPES */
 export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
 
-export type ChainflipChain =
-  | 'Ethereum'
-  | 'Polkadot'
-  | 'Assethub'
-  | 'Arbitrum'
-  | 'Bitcoin'
-  | 'Solana'
+export type ChainflipChain = 'Ethereum' | 'Polkadot' | 'Assethub' | 'Arbitrum' | 'Bitcoin' | 'Solana'
 
 export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
 
@@ -59,10 +53,7 @@ export const getChainflipSwapDestChains = (sourceChain: Chain, sourceToken: Toke
   const chainsSet = new Set<Chain>()
 
   chainflipRoutes.forEach(route => {
-    if (
-      route.from.chainId === sourceChain.chainId &&
-      route.pairs.some(([token, _]) => token.id === sourceToken.id)
-    ) {
+    if (route.from.chainId === sourceChain.chainId && route.pairs.some(([token, _]) => token.id === sourceToken.id)) {
       chainsSet.add(route.to)
     }
   })
@@ -80,8 +71,7 @@ export const getChainflipSwapDestTokens = (
 
   const tokensSet = new Set<Token>()
   const route = chainflipRoutes.find(
-    route =>
-      route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
+    route => route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
   )
   if (!route) return []
 
@@ -166,10 +156,7 @@ export const getChainflipChain = async (chain: Chain): Promise<ChainData | undef
 }
 
 /** Returns a Chainflip asset matching with Turtle token. */
-export const getChainflipAsset = async (
-  asset: Token,
-  chainflipChain: ChainData,
-): Promise<AssetData> => {
+export const getChainflipAsset = async (asset: Token, chainflipChain: ChainData): Promise<AssetData> => {
   const sdk = getChainflipSdk()
   const assetFromSrcChain = await sdk.getAssets(chainflipChain.chain)
 
@@ -195,10 +182,7 @@ export const isChainflipSwap = (
     route =>
       route.from.chainId === sourceChain.chainId &&
       route.to.chainId === destinationChain.chainId &&
-      route.pairs.some(
-        ([srcToken, dstToken]) =>
-          srcToken.id === sourceToken.id && dstToken.id === destinationToken.id,
-      ),
+      route.pairs.some(([srcToken, dstToken]) => srcToken.id === sourceToken.id && dstToken.id === destinationToken.id),
   )
 }
 
@@ -208,13 +192,9 @@ export const meetChainflipMinSwapAmount = (amount: string | bigint, asset: Asset
 }
 
 /** Check if the source chain is supported for vault swap (Polkadot is not supported and uses the deposit address method) */
-export const isVaultSwapSupported = (sourceChain: ChainData): boolean =>
-  sourceChain.chain !== 'Polkadot'
+export const isVaultSwapSupported = (sourceChain: ChainData): boolean => sourceChain.chain !== 'Polkadot'
 
-export const getFeeTokenFromAssetSymbol = (
-  assetSymbol: AssetSymbol,
-  chain: ChainflipChain,
-): Token => {
+export const getFeeTokenFromAssetSymbol = (assetSymbol: AssetSymbol, chain: ChainflipChain): Token => {
   if (chain === 'Ethereum') return EthereumTokens[assetSymbol]
   switch (assetSymbol) {
     case 'USDC':
@@ -242,9 +222,7 @@ export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
   }
 }
 
-export const getChainflipDurationEstimate = (
-  quote?: RegularQuote | DCAQuote | null,
-): string | null => {
+export const getChainflipDurationEstimate = (quote?: RegularQuote | DCAQuote | null): string | null => {
   if (!quote) return null
   return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
 }

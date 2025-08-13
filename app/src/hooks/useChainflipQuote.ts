@@ -1,6 +1,6 @@
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { Token, Chain } from '@velocitylabs-org/turtle-registry'
+import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { getChainflipQuote, isChainflipSwap } from '@/utils/chainflip'
 
 interface UseChainflipQuoteParams {
@@ -25,25 +25,11 @@ export const useChainflipQuote = ({
     isError: isChainflipQuoteError,
     error: chainflipQuoteError,
   } = useQuery({
-    queryKey: [
-      'chainflip-quote',
-      sourceChain,
-      destinationChain,
-      sourceToken,
-      destinationToken,
-      amount,
-    ],
+    queryKey: ['chainflip-quote', sourceChain, destinationChain, sourceToken, destinationToken, amount],
     queryFn: async () => {
-      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount)
-        return null
+      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
       try {
-        return await getChainflipQuote(
-          sourceChain,
-          destinationChain,
-          sourceToken,
-          destinationToken,
-          amount,
-        )
+        return await getChainflipQuote(sourceChain, destinationChain, sourceToken, destinationToken, amount)
       } catch (error) {
         captureException(error, {
           level: 'error',
