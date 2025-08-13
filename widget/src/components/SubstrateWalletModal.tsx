@@ -35,7 +35,11 @@ const headerElementAnimationProps = {
   initial: { opacity: 0, left: 5 },
   animate: { opacity: 1, left: 0 },
   exit: { opacity: 0, left: 5 },
-  transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' as const },
+  transition: {
+    delay: animationDuration / 2,
+    duration: 0.1,
+    type: 'tween' as const,
+  },
 }
 
 const loadingTransitions = {
@@ -89,7 +93,7 @@ export default function SubstrateWalletModal() {
 
     fetch()
     // We just need to run this effect when isModalOpen
-  }, [isModalOpen, fetchExtensions, setSelectedExtension])
+  }, [isModalOpen])
 
   const filteredAccounts = accounts.filter(account =>
     type === 'SubstrateEVM' ? account.type === 'ethereum' : ['sr25519', 'ed25519'].includes(account.type ?? ''),
@@ -112,12 +116,18 @@ export default function SubstrateWalletModal() {
             animate: {
               x: 0,
               opacity: 1,
-              transition: { duration: animationDuration / 2, type: 'spring' as const },
+              transition: {
+                duration: animationDuration / 2,
+                type: 'spring' as const,
+              },
             },
             exit: {
               x: -10,
               opacity: 0,
-              transition: { duration: animationDuration / 2, type: 'spring' as const },
+              transition: {
+                duration: animationDuration / 2,
+                type: 'spring' as const,
+              },
             },
           }
         : {
