@@ -23,7 +23,7 @@ export function snowbridgeWrapped(): Origin {
   }
 }
 
-export function wormholeWrapped(): Origin {
+export function wormholeSolanaWrapped(): Origin {
   return {
     type: 'Solana',
     bridge: 'Wormhole',

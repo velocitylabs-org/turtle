@@ -34,7 +34,7 @@ import wethLogo from '@velocitylabs-org/turtle-assets/logos/weth.svg'
 import wstethLogo from '@velocitylabs-org/turtle-assets/logos/wsteth.svg'
 
 import type { Token } from '@/types'
-import { parachain, snowbridgeWrapped, wormholeWrapped } from '../helpers'
+import { parachain, snowbridgeWrapped, wormholeSolanaWrapped } from '../helpers'
 
 // Tokens
 export const EthereumTokens = {
@@ -779,7 +779,7 @@ export const PolkadotTokens = {
       },
     },
     coingeckoId: 'solana',
-    origin: wormholeWrapped(),
+    origin: wormholeSolanaWrapped(),
   },
 
   PHA: {
