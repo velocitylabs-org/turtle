@@ -356,7 +356,12 @@ export const routes: Route[] = [
     from: Moonbeam.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
-    tokens: [PolkadotTokens.DOT.id, PolkadotTokens.GLMR.id, PolkadotTokens.VDOT.id, PolkadotTokens.SOL.id],
+    tokens: [
+      PolkadotTokens.DOT.id,
+      PolkadotTokens.GLMR.id,
+      PolkadotTokens.VDOT.id,
+      // PolkadotTokens.SOL.id
+    ],
   },
   {
     from: Moonbeam.uid,
@@ -410,7 +415,7 @@ export const routes: Route[] = [
       PolkadotTokens.GLMR.id,
       PolkadotTokens.BNC.id,
       PolkadotTokens.VDOT.id,
-      PolkadotTokens.SOL.id,
+      // PolkadotTokens.SOL.id,
     ],
   },
   {
