@@ -1,15 +1,15 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { Chain, Ethereum } from '@velocitylabs-org/turtle-registry'
-import { Account, Address, erc20Abi, PublicClient, WalletClient } from 'viem'
-import { usePublicClient, useWalletClient, useSwitchChain } from 'wagmi'
+import { type Chain, Ethereum } from '@velocitylabs-org/turtle-registry'
+import { type Account, type Address, erc20Abi, type PublicClient, type WalletClient } from 'viem'
+import { usePublicClient, useSwitchChain, useWalletClient } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { NotificationSeverity } from '@/models/notification'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { useChainflipStore } from '@/store/chainflipStore'
 import { truncateAddress } from '@/utils/address'
-import { ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
+import { type ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
 import useNotification from './useNotification'
-import { Status, TransferParams } from './useTransfer'
+import type { Status, TransferParams } from './useTransfer'
 
 const useChainflipApi = () => {
   const { getCachedQuote, fetchNewQuote } = useChainflipStore()
@@ -69,9 +69,7 @@ const useChainflipApi = () => {
         case Direction.ToPolkadot: {
           await enforceSourceChain(walletClient, sourceChain)
 
-          const requiredBlockConfirmation = await getRequiredBlockConfirmation(
-            chainflipQuote.destAsset.chain,
-          )
+          const requiredBlockConfirmation = await getRequiredBlockConfirmation(chainflipQuote.destAsset.chain)
 
           txHash = await submitTransfer(
             chainflipQuote,
@@ -127,10 +125,7 @@ const useChainflipApi = () => {
     }
   }
 
-  const enforceSourceChain = async (
-    walletClient: WalletClient,
-    sourceChain: Chain,
-  ): Promise<void> => {
+  const enforceSourceChain = async (walletClient: WalletClient, sourceChain: Chain): Promise<void> => {
     if (walletClient.chain?.id !== mainnet.id && sourceChain.uid === Ethereum.uid) {
       await switchChainAsync({ chainId: mainnet.id })
       //   await switchChain(config, { chainId: mainnet.id })
