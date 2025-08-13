@@ -7,11 +7,7 @@ interface TokenChainDisplayProps {
   size?: number
 }
 
-export default function TokenAndOriginLogos({
-  tokenURI,
-  originURI,
-  size = 28,
-}: TokenChainDisplayProps) {
+export default function TokenAndOriginLogos({ tokenURI, originURI, size = 28 }: TokenChainDisplayProps) {
   return (
     <div className="flex items-center">
       <div className="relative">
@@ -35,15 +31,10 @@ interface LogoImgProps {
 
 export function LogoImg({ logoURI, className, size, imgClassName }: LogoImgProps) {
   if (!logoURI) return null
-  const sizeStyle = size
-    ? { height: `${size}px`, width: `${size}px` }
-    : { height: '20px', width: '20px' }
+  const sizeStyle = size ? { height: `${size}px`, width: `${size}px` } : { height: '20px', width: '20px' }
 
   return (
-    <div
-      style={sizeStyle}
-      className={cn('inline-block flex-shrink-0 overflow-hidden rounded-full', className)}
-    >
+    <div style={sizeStyle} className={cn('inline-block flex-shrink-0 overflow-hidden rounded-full', className)}>
       <img
         src={logoURI}
         alt={logoURI}

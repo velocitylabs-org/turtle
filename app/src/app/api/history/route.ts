@@ -7,7 +7,7 @@ import { unstable_cache } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { getSbEnvironment } from '@/context/snowbridge'
 import { ongoingTransfersSchema } from '@/models/api-schemas'
-import { OngoingTransferWithDirection, OngoingTransfers } from '@/models/transfer'
+import type { OngoingTransfers, OngoingTransferWithDirection } from '@/models/transfer'
 import { Direction } from '@/services/transfer'
 import { getErrorMessage, trackTransfers } from '@/utils/transferTracking'
 

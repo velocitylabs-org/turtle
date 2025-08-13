@@ -1,9 +1,9 @@
-import { Chain, Token } from '@velocitylabs-org/turtle-registry'
-import { JsonRpcSigner } from 'ethers'
+import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import type { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 
-import { SubstrateAccount } from '@/store/substrateWalletStore'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { resolveSdk } from '@/utils/routes'
 import useChainflipApi from './useChainflipApi'
 import useParaspellApi from './useParaspellApi'

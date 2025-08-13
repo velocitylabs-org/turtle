@@ -1,4 +1,4 @@
-import { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
+import type { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wallet/dist/types'
 
 const DAPP_NAME = 'turtle'
 
@@ -27,13 +27,7 @@ export const waitForAuthRequest = (timeout = 10000) =>
 export const selectChain = (type: 'source' | 'dest', chainName: string) => {
   const index = type === 'source' ? 0 : 1
   cy.get('[data-cy="chain-select-trigger"]').eq(index).should('exist').click()
-  cy.get('[data-cy="chain-select"]')
-    .eq(index)
-    .get('ul')
-    .should('be.visible')
-    .find('li')
-    .contains(chainName)
-    .click()
+  cy.get('[data-cy="chain-select"]').eq(index).get('ul').should('be.visible').find('li').contains(chainName).click()
 }
 
 export const ensureSelectedChainContains = (type: 'source' | 'dest', chainName: string) => {
@@ -43,12 +37,7 @@ export const ensureSelectedChainContains = (type: 'source' | 'dest', chainName: 
 
 export const selectToken = (symbol: string) => {
   cy.get('[data-cy="token-select-trigger"]').should('exist').click()
-  cy.get('[data-cy="token-select"]')
-    .get('ul')
-    .should('be.visible')
-    .find('li')
-    .contains(symbol)
-    .click()
+  cy.get('[data-cy="token-select"]').get('ul').should('be.visible').find('li').contains(symbol).click()
 }
 
 export const ensureSelectedTokenContains = (symbol: string) => {

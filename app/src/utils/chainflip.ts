@@ -1,4 +1,4 @@
-import {
+import type {
   AssetData,
   ChainData,
   DCAQuote,
@@ -7,27 +7,21 @@ import {
   SwapSDK,
 } from '@chainflip/sdk/swap'
 import {
-  Chain,
+  type Chain,
   chainflipRoutes,
   EthereumTokens,
   MainnetRegistry,
   PolkadotTokens,
-  Token,
+  type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { AmountInfo } from '@/models/transfer'
+import type { AmountInfo } from '@/models/transfer'
 import { useChainflipStore } from '@/store/chainflipStore'
 import { getChainSpecificAddress } from './address'
 
 /** TYPES */
 export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
 
-export type ChainflipChain =
-  | 'Ethereum'
-  | 'Polkadot'
-  | 'Assethub'
-  | 'Arbitrum'
-  | 'Bitcoin'
-  | 'Solana'
+export type ChainflipChain = 'Ethereum' | 'Polkadot' | 'Assethub' | 'Arbitrum' | 'Bitcoin' | 'Solana'
 
 export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
 
@@ -70,10 +64,7 @@ export const getChainflipSwapDestChains = (sourceChain: Chain, sourceToken: Toke
   const chainsSet = new Set<Chain>()
 
   chainflipRoutes.forEach(route => {
-    if (
-      route.from.chainId === sourceChain.chainId &&
-      route.pairs.some(([token, _]) => token.id === sourceToken.id)
-    ) {
+    if (route.from.chainId === sourceChain.chainId && route.pairs.some(([token, _]) => token.id === sourceToken.id)) {
       chainsSet.add(route.to)
     }
   })
@@ -91,8 +82,7 @@ export const getChainflipSwapDestTokens = (
 
   const tokensSet = new Set<Token>()
   const route = chainflipRoutes.find(
-    route =>
-      route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
+    route => route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
   )
   if (!route) return []
 
@@ -170,10 +160,7 @@ export const getDepositAddress = async (
     const sdk = getChainflipSdk()
     if (!sdk) throw new Error('Chainflip SDK not initialized.')
 
-    const formattedSenderAddress = getChainSpecificAddress(
-      senderAddress,
-      toRegistryChain(quote.srcAsset.chain),
-    )
+    const formattedSenderAddress = getChainSpecificAddress(senderAddress, toRegistryChain(quote.srcAsset.chain))
 
     const formattedDestinationAddress = getChainSpecificAddress(
       destinationAddress,
@@ -210,9 +197,7 @@ export const getDepositAddress = async (
  * reducing risks.
  * Assethub have a deterministic finality and do not require any confirmations.
  */
-export const getRequiredBlockConfirmation = async (
-  ChainflipChain: ChainflipChain,
-): Promise<number | null> => {
+export const getRequiredBlockConfirmation = async (ChainflipChain: ChainflipChain): Promise<number | null> => {
   const sdk = getChainflipSdk()
   if (!sdk) throw new Error('Chainflip SDK not initialized.')
 
@@ -240,8 +225,7 @@ export const getChainflipChain = async (chain: Chain): Promise<ChainData | undef
 /** Returns a Turtle Chain matching with Chainflip chain. */
 export const toRegistryChain = (chainflipChain: ChainflipChain): Chain => {
   const registryChain = MainnetRegistry.chains.find(c => {
-    if (c.uid.includes('-'))
-      return c.uid.split('-')[1].toLowerCase() === chainflipChain.toLowerCase()
+    if (c.uid.includes('-')) return c.uid.split('-')[1].toLowerCase() === chainflipChain.toLowerCase()
     return c.uid.toLowerCase() === chainflipChain.toLowerCase()
   })
   if (!registryChain) throw new Error('No registry chain match with a Chainflip chain')
@@ -249,10 +233,7 @@ export const toRegistryChain = (chainflipChain: ChainflipChain): Chain => {
 }
 
 /** Returns a Chainflip asset matching with Turtle token. */
-export const getChainflipAsset = async (
-  asset: Token,
-  chainflipChain: ChainData,
-): Promise<AssetData> => {
+export const getChainflipAsset = async (asset: Token, chainflipChain: ChainData): Promise<AssetData> => {
   const sdk = getChainflipSdk()
   if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const assetFromSrcChain = await sdk.getAssets(chainflipChain.chain)
@@ -279,10 +260,7 @@ export const isChainflipSwap = (
     route =>
       route.from.chainId === sourceChain.chainId &&
       route.to.chainId === destinationChain.chainId &&
-      route.pairs.some(
-        ([srcToken, dstToken]) =>
-          srcToken.id === sourceToken.id && dstToken.id === destinationToken.id,
-      ),
+      route.pairs.some(([srcToken, dstToken]) => srcToken.id === sourceToken.id && dstToken.id === destinationToken.id),
   )
 }
 
@@ -295,10 +273,7 @@ export const meetChainflipMinSwapAmount = (amount: string | bigint, asset: Asset
 export const isVaultSwapSupported = (sourceChain: ChainData, destChain: ChainData): boolean =>
   sourceChain.chain !== 'Assethub' && destChain.chain !== 'Assethub'
 
-export const getFeeTokenFromAssetSymbol = (
-  assetSymbol: AssetSymbol,
-  chain: ChainflipChain,
-): Token => {
+export const getFeeTokenFromAssetSymbol = (assetSymbol: AssetSymbol, chain: ChainflipChain): Token => {
   if (chain === 'Ethereum') return EthereumTokens[assetSymbol]
   switch (assetSymbol) {
     case 'USDC':
@@ -325,9 +300,7 @@ export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
   }
 }
 
-export const getChainflipDurationEstimate = (
-  quote?: RegularQuote | DCAQuote | null,
-): string | null => {
+export const getChainflipDurationEstimate = (quote?: RegularQuote | DCAQuote | null): string | null => {
   if (!quote) return null
   return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
 }

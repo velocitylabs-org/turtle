@@ -4,7 +4,7 @@ import { captureException } from '@sentry/nextjs'
 
 import storeAnalyticsTransaction from '@/app/actions/store-transactions'
 import updateAnalyticsTxStatus from '@/app/actions/update-transaction-status'
-import { TransferParams } from '@/hooks/useTransfer'
+import type { TransferParams } from '@/hooks/useTransfer'
 import { isProduction } from '@/utils/env'
 import { toHuman } from '@/utils/transfer'
 
@@ -56,9 +56,7 @@ export async function trackTransferMetrics({
     destinationTokenSymbol: transferParams.destinationToken.symbol,
 
     destinationTokenAmount,
-    destinationTokenAmountUsd: destinationTokenAmount
-      ? destinationTokenAmount * destinationTokenUSDValue
-      : undefined,
+    destinationTokenAmountUsd: destinationTokenAmount ? destinationTokenAmount * destinationTokenUSDValue : undefined,
     destinationTokenUSDValue: destinationTokenUSDValue,
     destinationTokenAmountRaw: transferParams.destinationAmount?.toString(),
 

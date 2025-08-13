@@ -1,16 +1,15 @@
 'use client'
 import { tokensById } from '@velocitylabs-org/turtle-registry'
-import React from 'react'
 import {
-  ScatterChart,
+  CartesianGrid,
+  Label,
+  ResponsiveContainer,
   Scatter,
+  ScatterChart,
+  Tooltip,
+  type TooltipProps,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-  TooltipProps,
 } from 'recharts'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
 import { primaryColor } from '@/constants'
@@ -85,14 +84,7 @@ export default function TokensCountVolumeGraph({ data, loading }: TokensCountVol
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            type="number"
-            dataKey="x"
-            name="Transactions"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={10}
-          >
+          <XAxis type="number" dataKey="x" name="Transactions" tickLine={false} axisLine={false} tickMargin={10}>
             <Label value="Transaction count" offset={-30} position="insideBottom" />
           </XAxis>
           <YAxis

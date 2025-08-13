@@ -45,8 +45,7 @@ export default {
       },
       backgroundColor: {
         'btn-disabled': colors[`${prefix}-primary`],
-        'dialog-overlay':
-          'rgba(var(--turtle-dialog-overlay-rgb), var(--turtle-dialog-overlay-opacity))',
+        'dialog-overlay': 'rgba(var(--turtle-dialog-overlay-rgb), var(--turtle-dialog-overlay-opacity))',
       },
       borderRadius: {
         '4xl': '2rem',

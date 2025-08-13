@@ -8,7 +8,7 @@ import ErrorIcon from '@/../public/severity-error-icon.svg'
 import InfoIcon from '@/../public/severity-info-icon.svg'
 import SuccessIcon from '@/../public/severity-success-icon.svg'
 import WarningIcon from '@/../public/severity-warning-icon.svg'
-import { Notification, NotificationSeverity } from '@/models/notification'
+import { type Notification, NotificationSeverity } from '@/models/notification'
 
 const NOTIFICATION_TTL_MS = 5000
 
@@ -24,10 +24,7 @@ interface NotificationToastProps {
   removeNotification: (id: number) => void
 }
 
-export default function NotificationToast({
-  notification,
-  removeNotification,
-}: NotificationToastProps) {
+export default function NotificationToast({ notification, removeNotification }: NotificationToastProps) {
   // Remove notification after TTL
   useEffect(() => {
     const timeoutRef = setTimeout(() => {
@@ -37,8 +34,7 @@ export default function NotificationToast({
     return () => clearTimeout(timeoutRef)
   }, [notification.id, removeNotification])
 
-  const header =
-    (notification.severity && getSeverityHeader(notification.severity)) || notification.header
+  const header = (notification.severity && getSeverityHeader(notification.severity)) || notification.header
 
   return (
     <motion.div
@@ -54,9 +50,7 @@ export default function NotificationToast({
 
       {/* Notification Content */}
       {header && <span className="sm:text-normal text-xs font-bold text-white">{header}</span>}
-      {notification.message && (
-        <span className="sm:text-normal text-sm text-white">{notification.message}</span>
-      )}
+      {notification.message && <span className="sm:text-normal text-sm text-white">{notification.message}</span>}
 
       {/* Close Button */}
       {notification.dismissible && (

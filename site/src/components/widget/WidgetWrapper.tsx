@@ -1,7 +1,7 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { Body, LoadingIcon } from '@velocitylabs-org/turtle-ui'
+import dynamic from 'next/dynamic'
 
 const Widget = dynamic(() => import('@velocitylabs-org/turtle-widget'), {
   ssr: false,

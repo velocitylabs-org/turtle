@@ -1,25 +1,25 @@
-import { captureException } from '@sentry/nextjs'
-import { useQuery } from '@tanstack/react-query'
-import { Token, Chain } from '@velocitylabs-org/turtle-registry'
-import { getChainflipQuote, isChainflipSwap } from '@/utils/chainflip'
+import { captureException } from "@sentry/nextjs";
+import { useQuery } from "@tanstack/react-query";
+import type { Chain, Token } from "@velocitylabs-org/turtle-registry";
+import { getChainflipQuote, isChainflipSwap } from "@/utils/chainflip";
 
 export interface ChainflipQuoteParams {
-  sourceChain?: Chain | null
-  destinationChain?: Chain | null
-  sourceToken?: Token | null
-  destinationToken?: Token | null
-  amount?: string | null
+  sourceChain?: Chain | null;
+  destinationChain?: Chain | null;
+  sourceToken?: Token | null;
+  destinationToken?: Token | null;
+  amount?: string | null;
 }
 
 export const quoteQueryKey = (p: ChainflipQuoteParams) =>
   [
-    'chainflip-quote',
+    "chainflip-quote",
     p.sourceChain,
     p.destinationChain,
     p.sourceToken,
     p.destinationToken,
     p.amount,
-  ] as const
+  ] as const;
 
 export const canFetchQuote = (p: ChainflipQuoteParams) =>
   !!p.sourceChain &&
@@ -27,18 +27,29 @@ export const canFetchQuote = (p: ChainflipQuoteParams) =>
   !!p.sourceToken &&
   !!p.destinationToken &&
   !!p.amount &&
-  isChainflipSwap(p.sourceChain, p.destinationChain, p.sourceToken, p.destinationToken)
+  isChainflipSwap(
+    p.sourceChain,
+    p.destinationChain,
+    p.sourceToken,
+    p.destinationToken
+  );
 
 export async function getQuote(params: ChainflipQuoteParams) {
-  if (!canFetchQuote(params)) return null
-  const { sourceChain, destinationChain, sourceToken, destinationToken, amount } = params
+  if (!canFetchQuote(params)) return null;
+  const {
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+  } = params;
   return getChainflipQuote(
     sourceChain!,
     destinationChain!,
     sourceToken!,
     destinationToken!,
-    amount!,
-  )
+    amount!
+  );
 }
 
 export const useChainflipQuote = (params: ChainflipQuoteParams) => {
@@ -52,22 +63,23 @@ export const useChainflipQuote = (params: ChainflipQuoteParams) => {
     queryKey: quoteQueryKey(params),
     queryFn: async () => {
       try {
-        return await getQuote(params)
+        return await getQuote(params);
       } catch (err) {
-        captureException(err, { level: 'error', extra: { params } })
-        throw err instanceof Error ? err : new Error(String(err))
+        captureException(err, { level: "error", extra: { params } });
+        throw err instanceof Error ? err : new Error(String(err));
       }
     },
     enabled: canFetchQuote(params),
     staleTime: 60_000, // Cache results for 1 min
     // refetchInterval: 60_000, // Refetch every 1 min
     retry: 2,
-  })
+  });
 
   return {
     chainflipQuote,
-    isLoadingChainflipQuote: isLoadingChainflipQuote || isFetchingChainflipQuote,
+    isLoadingChainflipQuote:
+      isLoadingChainflipQuote || isFetchingChainflipQuote,
     isChainflipQuoteError,
     chainflipQuoteError,
-  }
-}
+  };
+};

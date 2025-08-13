@@ -1,13 +1,13 @@
-import { Chain, Token } from "@/types";
-import { AssetHub, Ethereum } from "./chains";
-import { EthereumTokens, PolkadotTokens } from "./tokens";
+import type { Chain, Token } from '@/types'
+import { AssetHub, Ethereum } from './chains'
+import { EthereumTokens, PolkadotTokens } from './tokens'
 
-export type ChainflipSwapPair = [Token, Token];
+export type ChainflipSwapPair = [Token, Token]
 export type ChainflipRoute = {
-  from: Chain;
-  to: Chain;
-  pairs: ChainflipSwapPair[];
-};
+  from: Chain
+  to: Chain
+  pairs: ChainflipSwapPair[]
+}
 
 export const chainflipRoutes: ChainflipRoute[] = [
   {
@@ -60,4 +60,4 @@ export const chainflipRoutes: ChainflipRoute[] = [
   //     [PolkadotTokens.DOT, EthereumTokens.USDT],
   //   ],
   // },
-];
+]

@@ -1,8 +1,8 @@
 'use client'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { cn, Checkbox } from '@velocitylabs-org/turtle-ui'
-import { CircleCheckBig, DollarSign, Repeat, Activity } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral, parseAsBoolean, parseAsInteger } from 'nuqs'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { Checkbox, cn } from '@velocitylabs-org/turtle-ui'
+import { Activity, CircleCheckBig, DollarSign, Repeat } from 'lucide-react'
+import { parseAsBoolean, parseAsInteger, parseAsStringLiteral, useQueryState } from 'nuqs'
 import { getSummaryData } from '@/app/actions/summary'
 import { getTxList } from '@/app/actions/tx-list'
 import ErrorPanel from '@/components/ErrorPanel'
@@ -13,7 +13,7 @@ import TitleToggle from '@/components/TitleToggle'
 import TopTokensChart from '@/components/TopTokensChart'
 import TransactionChart from '@/components/TransactionChart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { transactionsPerPage, GraphType, TimePeriodType } from '@/constants'
+import { type GraphType, type TimePeriodType, transactionsPerPage } from '@/constants'
 import { usePagination } from '@/hooks/usePagination'
 import useShowLoadingBar from '@/hooks/useShowLoadingBar'
 import formatUSD from '@/utils/format-USD'
@@ -42,19 +42,14 @@ const periodConfig = {
 } as const
 
 const togglesQueryDefault = parseAsStringLiteral(['volume', 'count'] as const).withDefault('volume')
-const timePeriodQueryDefault = parseAsStringLiteral([
+const timePeriodQueryDefault = parseAsStringLiteral(['last-6-months', 'last-month', 'last-week'] as const).withDefault(
   'last-6-months',
-  'last-month',
-  'last-week',
-] as const).withDefault('last-6-months')
+)
 const booleanDefaultTrue = parseAsBoolean.withDefault(true)
 const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function HomeDashboardPage() {
-  const [transactionGraphType, setTransactionGraphType] = useQueryState(
-    'transactionsBy',
-    togglesQueryDefault,
-  )
+  const [transactionGraphType, setTransactionGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
   const [outliers, setOutliers] = useQueryState('outliers', booleanDefaultTrue)
@@ -224,9 +219,7 @@ export default function HomeDashboardPage() {
             ) : (
               <TopTokensChart
                 data={getTopTokensData()}
-                total={
-                  tokensGraphType === 'volume' ? data?.totalVolumeUsd : data?.totalTransactions
-                }
+                total={tokensGraphType === 'volume' ? data?.totalVolumeUsd : data?.totalTransactions}
                 type={tokensGraphType}
               />
             )}
@@ -240,14 +233,9 @@ export default function HomeDashboardPage() {
             <CardDescription>Showing {transactionsPerPage} transactions per page</CardDescription>
           </CardHeader>
           <CardContent>
-            <RecentTransactionsTable
-              transactions={dataList?.txList || []}
-              isLoading={isInitialLoadingList}
-            />
+            <RecentTransactionsTable transactions={dataList?.txList || []} isLoading={isInitialLoadingList} />
             {!isInitialLoadingList && (
-              <PaginationComponent
-                className={cn('mt-7', isFetchingList && 'pointer-events-none')}
-              />
+              <PaginationComponent className={cn('mt-7', isFetchingList && 'pointer-events-none')} />
             )}
           </CardContent>
         </Card>
@@ -265,21 +253,10 @@ interface CheckboxLabelProps {
   tooltip?: string
 }
 
-function CheckboxLabel({
-  id,
-  label,
-  checked,
-  onCheckedChange,
-  className,
-  tooltip,
-}: CheckboxLabelProps) {
+function CheckboxLabel({ id, label, checked, onCheckedChange, className, tooltip }: CheckboxLabelProps) {
   return (
     <div className={cn('ml-4 flex items-center space-x-2', className)} title={tooltip}>
-      <Checkbox
-        id={id}
-        checked={checked}
-        onCheckedChange={checked => onCheckedChange(checked === true)}
-      />
+      <Checkbox id={id} checked={checked} onCheckedChange={checked => onCheckedChange(checked === true)} />
       <label
         htmlFor={id}
         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

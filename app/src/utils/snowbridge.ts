@@ -1,15 +1,9 @@
 import { captureException } from '@sentry/nextjs'
-import { Context, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
-import {
-  EthereumTokens,
-  PolkadotTokens,
-  Chain,
-  Token,
-  isAssetHub,
-} from '@velocitylabs-org/turtle-registry'
-import { Fee } from '@/hooks/useFees'
-import { SnowbridgeContext } from '@/models/snowbridge'
-import { AmountInfo } from '@/models/transfer'
+import { type Context, toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
+import { type Chain, EthereumTokens, isAssetHub, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
+import type { Fee } from '@/hooks/useFees'
+import type { SnowbridgeContext } from '@/models/snowbridge'
+import type { AmountInfo } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import { Direction } from '@/services/transfer'
 import { safeConvertAmount, toHuman } from './transfer'
@@ -117,9 +111,7 @@ export const getFeeEstimate = async (
             gateway: context.gateway(),
             bridgeHub: await context.bridgeHub(),
             assetHub: await context.assetHub(),
-            destParachain: isAssetHub(destinationChain)
-              ? undefined
-              : await context.parachain(destinationChain.chainId),
+            destParachain: isAssetHub(destinationChain) ? undefined : await context.parachain(destinationChain.chainId),
           },
           tx,
         )
@@ -162,5 +154,5 @@ export const getFeeEstimate = async (
 export const findValidationError = (
   validation: toPolkadotV2.ValidationResult | toEthereumV2.ValidationResult,
 ): toPolkadotV2.ValidationLog | toEthereumV2.ValidationLog | undefined => {
-  return validation.logs.find(log => log.kind == toPolkadotV2.ValidationKind.Error)
+  return validation.logs.find(log => log.kind === toPolkadotV2.ValidationKind.Error)
 }

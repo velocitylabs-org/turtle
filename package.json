@@ -9,9 +9,8 @@
     "dev-analytics": "turbo run dev --filter=@velocitylabs-org/turtle-analytics",
     "dev-widget": "turbo run dev --filter=@velocitylabs-org/turtle-widget",
     "dev-site": "turbo run dev --filter=@velocitylabs-org/turtle-site",
-    "lint": "turbo run lint",
-    "format": "turbo run format",
-    "format-check": "turbo run format-check",
+    "format-and-lint": "biome check . --diagnostic-level=error",
+    "format-and-lint:fix": "biome check . --write",
     "start": "turbo run start",
     "test": "turbo run test",
     "watch": "turbo run watch",
@@ -20,10 +19,9 @@
     "knip": "knip"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.1.2",
     "@types/node": "^22.13.4",
     "knip": "^5.55.1",
-    "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.14",
     "turbo": "^2.5.0",
     "typescript": "5.8.2"
   },

@@ -1,9 +1,8 @@
 'use client'
 import { tokensById } from '@velocitylabs-org/turtle-registry'
-import React from 'react'
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, TooltipProps } from 'recharts'
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip, type TooltipProps } from 'recharts'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
-import { GraphType } from '@/constants'
+import type { GraphType } from '@/constants'
 import useIsMobile from '@/hooks/useMobile'
 import formatPercentage from '@/utils/format-percentage'
 import formatUSD from '@/utils/format-USD'
@@ -113,7 +112,7 @@ function PieLabel({ id, x, y, cx, cy }: PieLabelProps) {
   const angle = Math.atan2(y - cy, x - cx)
 
   // Calculate distance from the center
-  const distance = Math.sqrt(Math.pow(x - cx, 2) + Math.pow(y - cy, 2))
+  const distance = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2)
   const padding = 5 // Adjust this value to control how far labels are from the pie
   const newDistance = distance + padding
 

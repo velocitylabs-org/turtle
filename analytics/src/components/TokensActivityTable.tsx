@@ -1,17 +1,10 @@
 'use client'
 import { tokensById } from '@velocitylabs-org/turtle-registry'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useQueryState, parseAsStringLiteral } from 'nuqs'
-import React, { useMemo } from 'react'
+import { parseAsStringLiteral, useQueryState } from 'nuqs'
+import { useMemo } from 'react'
 import TokenAndOriginLogos from '@/components/TokenAndOriginLogos'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import formatUSD from '@/utils/format-USD'
 import getTypeBadge from '@/utils/get-type-badge'
 
@@ -36,15 +29,9 @@ const sortColumnQueryDefault = parseAsStringLiteral([
 ] as const).withDefault('totalVolume')
 const sortDirectionQueryDefault = parseAsStringLiteral(['asc', 'desc'] as const).withDefault('desc')
 
-export default function TokensActivityTable({
-  tokens: initialTokens,
-  isLoading,
-}: TokensActivityTable) {
+export default function TokensActivityTable({ tokens: initialTokens, isLoading }: TokensActivityTable) {
   const [sortColumn, setSortColumn] = useQueryState('sortColumn', sortColumnQueryDefault)
-  const [sortDirection, setSortDirection] = useQueryState(
-    'sortDirection',
-    sortDirectionQueryDefault,
-  )
+  const [sortDirection, setSortDirection] = useQueryState('sortDirection', sortDirectionQueryDefault)
 
   const tokens = useMemo(() => {
     if (isLoading || initialTokens.length === 0) return initialTokens
@@ -173,10 +160,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
     return (
       <TableRow key={0}>
         <TableCell colSpan={6} className="text-center">
-          <div
-            className="flex items-center justify-center"
-            style={{ height: 'calc(100vh - 300px)' }}
-          >
+          <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 300px)' }}>
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           </div>
         </TableCell>
@@ -188,10 +172,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
     return (
       <TableRow key={1}>
         <TableCell colSpan={6} className="text-center">
-          <div
-            className="flex items-center justify-center"
-            style={{ height: 'calc(100vh - 300px)' }}
-          >
+          <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 300px)' }}>
             <p>There are no recent token activity to display</p>
           </div>
         </TableCell>
@@ -207,11 +188,7 @@ function TokensTableContent({ tokens, isLoading }: TokensTableContentProps) {
       <TableRow key={`${item.tokenId}-${i}`}>
         <TableCell>
           <div className="inline-flex items-center">
-            <TokenAndOriginLogos
-              tokenURI={logoURI as string}
-              originURI={typeURI as string}
-              size={28}
-            />
+            <TokenAndOriginLogos tokenURI={logoURI as string} originURI={typeURI as string} size={28} />
             <div className="ml-2 flex flex-col">
               <span className="font-medium">{token?.symbol || 'Unknown Token'}</span>
               <span className="text-xs text-muted-foreground">{token?.name || ''}</span>
