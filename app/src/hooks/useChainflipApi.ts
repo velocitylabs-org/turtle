@@ -86,11 +86,10 @@ const useChainflipApi = () => {
             requiredBlockConfirmation,
             setStatus,
           )
-          console.log('txHash', txHash)
           break
         }
         case Direction.ToEthereum: {
-          console.log('ToEthereum')
+          //TODO: Implement ToEthereum
           break
         }
 
@@ -138,7 +137,6 @@ const useChainflipApi = () => {
   const enforceSourceChain = async (walletClient: WalletClient, sourceChain: Chain): Promise<void> => {
     if (walletClient.chain?.id !== mainnet.id && sourceChain.uid === Ethereum.uid) {
       await switchChainAsync({ chainId: mainnet.id })
-      //   await switchChain(config, { chainId: mainnet.id })
     }
   }
 
