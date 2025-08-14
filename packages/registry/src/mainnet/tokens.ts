@@ -4,6 +4,7 @@ import astarLogo from '@velocitylabs-org/turtle-assets/logos/astar.svg'
 import ausdtLogo from '@velocitylabs-org/turtle-assets/logos/ausdt.svg'
 import bifrostLogo from '@velocitylabs-org/turtle-assets/logos/bifrost.svg'
 import cfgLogo from '@velocitylabs-org/turtle-assets/logos/cfg.svg'
+import linkLogo from '@velocitylabs-org/turtle-assets/logos/chainlink.svg'
 import daiLogo from '@velocitylabs-org/turtle-assets/logos/dai.svg'
 import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import gigadotLogo from '@velocitylabs-org/turtle-assets/logos/gigadot.svg'
@@ -12,25 +13,28 @@ import ibtcLogo from '@velocitylabs-org/turtle-assets/logos/ibtc.svg'
 import interlayLogo from '@velocitylabs-org/turtle-assets/logos/interlay.svg'
 import kiltLogo from '@velocitylabs-org/turtle-assets/logos/kilt.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
+import lidoLogo from '@velocitylabs-org/turtle-assets/logos/lido.svg'
 import moonbeamLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import mythLogo from '@velocitylabs-org/turtle-assets/logos/myth.svg'
+import originTrailLogo from '@velocitylabs-org/turtle-assets/logos/origintrail.svg'
 import pepeLogo from '@velocitylabs-org/turtle-assets/logos/pepe.svg'
 import phalaLogo from '@velocitylabs-org/turtle-assets/logos/phala.svg'
 import polimecLogo from '@velocitylabs-org/turtle-assets/logos/polimec.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import shibLogo from '@velocitylabs-org/turtle-assets/logos/shib.svg'
+import skyLogo from '@velocitylabs-org/turtle-assets/logos/sky.svg'
+import solanaLogo from '@velocitylabs-org/turtle-assets/logos/solana.svg'
 import tbtcLogo from '@velocitylabs-org/turtle-assets/logos/tbtc.svg'
 import tonLogo from '@velocitylabs-org/turtle-assets/logos/ton.svg'
 import usdcLogo from '@velocitylabs-org/turtle-assets/logos/usdc.svg'
 import usdtLogo from '@velocitylabs-org/turtle-assets/logos/usdt.svg'
 import vdotLogo from '@velocitylabs-org/turtle-assets/logos/vdot.svg'
-import vethLogo from '@velocitylabs-org/turtle-assets/logos/veth.svg'
 import wbtcLogo from '@velocitylabs-org/turtle-assets/logos/wbtc.svg'
 import wethLogo from '@velocitylabs-org/turtle-assets/logos/weth.svg'
 import wstethLogo from '@velocitylabs-org/turtle-assets/logos/wsteth.svg'
 
 import type { Token } from '@/types'
-import { ethereumOrigin, parachain } from '../helpers'
+import { ethereumOrigin, parachain, wormholeSolanaWrapped } from '../helpers'
 
 type BaseTokens = Record<string, Omit<Token, 'id' | 'origin'>>
 
@@ -147,6 +151,7 @@ export const sharedTokenBase: BaseTokens = {
         ],
       },
     },
+    coingeckoId: 'dai',
   },
 
   USDT: {
@@ -175,6 +180,7 @@ export const sharedTokenBase: BaseTokens = {
         ],
       },
     },
+    coingeckoId: 'tether',
   },
 
   WETH: {
@@ -206,34 +212,6 @@ export const sharedTokenBase: BaseTokens = {
     coingeckoId: 'weth',
   },
 
-  VETH: {
-    name: 'Venus ETH',
-    symbol: 'vETH',
-    logoURI: vethLogo,
-    decimals: 18,
-    address: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-    multilocation: {
-      parents: 2,
-      interior: {
-        X2: [
-          {
-            GlobalConsensus: {
-              Ethereum: {
-                chainId: 1,
-              },
-            },
-          },
-          {
-            AccountKey20: {
-              network: null,
-              key: '0xc3d088842dcf02c13699f936bb83dfbbc6f721ab',
-            },
-          },
-        ],
-      },
-    },
-  },
-
   WBTC: {
     name: 'Wrapped Bitcoin',
     symbol: 'WBTC',
@@ -260,6 +238,7 @@ export const sharedTokenBase: BaseTokens = {
         ],
       },
     },
+    coingeckoId: 'wrapped-bitcoin',
   },
 
   MYTH: {
@@ -317,6 +296,7 @@ export const sharedTokenBase: BaseTokens = {
         ],
       },
     },
+    coingeckoId: 'shiba-inu',
   },
 
   PEPE: {
@@ -345,6 +325,7 @@ export const sharedTokenBase: BaseTokens = {
         ],
       },
     },
+    coingeckoId: 'pepe',
   },
 
   TON: {
@@ -431,6 +412,34 @@ export const sharedTokenBase: BaseTokens = {
         ],
       },
     },
+    coingeckoId: 'tbtc',
+  },
+
+  LINK: {
+    name: 'Chainlink',
+    symbol: 'LINK',
+    logoURI: linkLogo,
+    decimals: 18,
+    address: '0x514910771af9ca656af840dff83e8264ecf986ca',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: { chainId: 1 },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x514910771af9ca656af840dff83e8264ecf986ca',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'chainlink',
   },
 
   AAVE: {
@@ -445,9 +454,7 @@ export const sharedTokenBase: BaseTokens = {
         X2: [
           {
             GlobalConsensus: {
-              Ethereum: {
-                chainId: 1,
-              },
+              Ethereum: { chainId: 1 },
             },
           },
           {
@@ -459,6 +466,88 @@ export const sharedTokenBase: BaseTokens = {
         ],
       },
     },
+    coingeckoId: 'aave',
+  },
+
+  LIDO: {
+    name: 'Lido',
+    symbol: 'LDO',
+    logoURI: lidoLogo,
+    decimals: 18,
+    address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: { chainId: 1 },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'lido-dao',
+  },
+
+  TRAC: {
+    name: 'OriginTrail',
+    symbol: 'TRAC',
+    logoURI: originTrailLogo,
+    decimals: 18,
+    address: '0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: { chainId: 1 },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'origintrail',
+  },
+
+  SKY: {
+    name: 'Sky',
+    symbol: 'SKY',
+    logoURI: skyLogo,
+    decimals: 18,
+    address: '0x56072c95faa701256059aa122697b133aded9279',
+    multilocation: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: { chainId: 1 },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x56072c95faa701256059aa122697b133aded9279',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'sky',
   },
 }
 
@@ -669,6 +758,36 @@ export const PolkadotTokens = {
     },
     coingeckoId: 'moonbeam',
     origin: parachain(2004),
+  },
+
+  SOL: {
+    id: 'sol.wormhole',
+    name: 'Solana',
+    symbol: 'SOL',
+    logoURI: solanaLogo,
+    decimals: 9,
+    address: '',
+    multilocation: {
+      parents: 1,
+      interior: {
+        X3: [
+          {
+            Parachain: 2004,
+          },
+          {
+            PalletInstance: 110,
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0x99fec54a5ad36d50a4bba3a41cab983a5bb86a7d',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'solana',
+    origin: wormholeSolanaWrapped(),
   },
 
   PHA: {
