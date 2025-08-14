@@ -144,7 +144,7 @@ const useFees = (params: UseFeesParams) => {
             // in the UI showing the error label for insufficient fee balance, which is particularly
             // noticable when switching chains.
             // biome-ignore lint/suspicious/noDoubleEquals: dotBalance
-            setCanPayAdditionalFees(dotBalance === undefined || toPay < (dotBalance?.value ?? 0))
+            setCanPayAdditionalFees(dotBalance == undefined || toPay < (dotBalance?.value ?? 0))
           }
           break
         }
