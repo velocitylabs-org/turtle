@@ -5,7 +5,7 @@ export default function App() {
   return (
     <main>
       <TurtlesBackground />
-      <section className="z-10 mt-10 flex flex-col items-center justify-center sm:mt-6">
+      <section className="mt-10 flex justify-center sm:mt-6">
         <AppHome />
       </section>
     </main>
