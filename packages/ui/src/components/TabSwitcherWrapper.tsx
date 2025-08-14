@@ -30,7 +30,7 @@ export const TabSwitcherWrapper = ({ TransferComponent, BuySellComponent }: TabS
 
   return (
     <>
-      <div className="relative flex flex-col rounded-t-3xl border border-b-0 border-turtle-foreground bg-turtle-level1 pt-10 pb-4 px-10 w-full sm:w-[31.5rem]">
+      <div className="relative flex flex-col rounded-t-3xl border border-b-0 border-turtle-foreground bg-turtle-level1 pt-10 pb-4 px-10 w-full max-w-[90vw] sm:w-[31.5rem]">
         <div className="flex gap-4">
           <Button label="Transfer" onClick={() => setSelectedTab('Transfer')} activeTab="Transfer" />
           <Button label="Buy/Sell" onClick={() => setSelectedTab('BuySell')} activeTab="BuySell" />
