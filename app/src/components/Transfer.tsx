@@ -155,7 +155,7 @@ export default function Transfer() {
   })
 
   const requiresErc20SpendApproval =
-    erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount! && !isChainflipQuoteError
+    erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount!
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
@@ -482,7 +482,7 @@ export default function Transfer() {
 
       {/* Chainflip quote error */}
       <AnimatePresence>
-        {isChainflipQuoteError && (
+        {isChainflipQuoteError && !requiresErc20SpendApproval && (
           <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
             <ActionBanner
               disabled={false}

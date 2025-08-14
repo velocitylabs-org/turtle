@@ -317,7 +317,7 @@ const useTransferForm = () => {
         !sourceTokenAmount?.token ||
         !destinationTokenAmount?.token ||
         !sourceAmount ||
-        !fees
+        (!fees && !chainflipFees)
       )
         return
 
@@ -330,7 +330,7 @@ const useTransferForm = () => {
         sourceAmount: sourceAmount,
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
-        fees,
+        fees: fees ?? chainflipFees[0], // TMP code until the global fee update is made, to bypass empty fees
         bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success

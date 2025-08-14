@@ -1,13 +1,22 @@
-import type { AssetData, ChainData, DCAQuote, RegularQuote, SwapSDK } from '@chainflip/sdk/swap'
+import type {
+  AssetData,
+  ChainData,
+  DCAQuote,
+  DepositAddressResponseV2,
+  RegularQuote,
+  SwapSDK,
+} from '@chainflip/sdk/swap'
 import {
   type Chain,
   chainflipRoutes,
   EthereumTokens,
+  MainnetRegistry,
   PolkadotTokens,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
 import type { AmountInfo } from '@/models/transfer'
-import { useChainflipSdk } from '@/store/chainflipStore'
+import { useChainflipStore } from '@/store/chainflipStore'
+import { getChainSpecificAddress } from './address'
 
 /** TYPES */
 export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
@@ -17,6 +26,8 @@ export type ChainflipChain = 'Ethereum' | 'Polkadot' | 'Assethub' | 'Arbitrum' |
 export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
 
 export type ChainflipFee = { type: ChainflipFeeType } & AmountInfo
+
+export type ChainflipQuote = RegularQuote | DCAQuote
 
 type ChainflipError = {
   response?: {
@@ -86,7 +97,7 @@ export const getChainflipSwapDestTokens = (
  * Get Chainflip SDK instance.
  * It creates a new instance if not already initialized.
  */
-export const getChainflipSdk = (): SwapSDK => useChainflipSdk.getState().initSdk()
+export const getChainflipSdk = (): SwapSDK => useChainflipStore.getState().initSdk()
 
 /** Get Chainflip quote for a swap. */
 export const getChainflipQuote = async (
@@ -96,7 +107,7 @@ export const getChainflipQuote = async (
   destinationToken: Token,
   /** Amount in the source token's decimal base */
   amount: string,
-): Promise<RegularQuote | DCAQuote | null> => {
+): Promise<ChainflipQuote | null> => {
   const sdk = getChainflipSdk()
   if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const srcChain = await getChainflipChain(sourceChain)
@@ -115,7 +126,7 @@ export const getChainflipQuote = async (
       srcAsset: srcAsset.symbol,
       destChain: destChain.chain,
       destAsset: destAsset.symbol,
-      isVaultSwap: isVaultSwapSupported(srcChain),
+      isVaultSwap: isVaultSwapSupported(srcChain, destChain),
       brokerCommissionBps: 0,
       amount,
     })
@@ -138,9 +149,65 @@ export const getChainflipQuote = async (
   }
 }
 
+/** Generates the deposit address for a swap. */
+export const getDepositAddress = async (
+  quote: RegularQuote | DCAQuote,
+  senderAddress?: string,
+  destinationAddress?: string,
+): Promise<DepositAddressResponseV2 | null> => {
+  try {
+    if (!senderAddress || !destinationAddress) return null
+    const sdk = getChainflipSdk()
+    if (!sdk) throw new Error('Chainflip SDK not initialized.')
+
+    const formattedSenderAddress = getChainSpecificAddress(senderAddress, toRegistryChain(quote.srcAsset.chain))
+
+    const formattedDestinationAddress = getChainSpecificAddress(
+      destinationAddress,
+      toRegistryChain(quote.destAsset.chain),
+    )
+
+    const swapDepositAddressRequest = {
+      quote,
+      srcAddress: formattedSenderAddress,
+      destAddress: formattedDestinationAddress,
+      fillOrKillParams: {
+        slippageTolerancePercent: quote.recommendedSlippageTolerancePercent, // use recommended slippage tolerance from quote
+        refundAddress: formattedSenderAddress, // address to which assets are refunded
+        retryDurationBlocks: 100, // 100 blocks * 6 seconds = 10 minutes before deposits are refunded
+      },
+    }
+    return await sdk.requestDepositAddressV2(swapDepositAddressRequest)
+  } catch (error) {
+    console.log('requestDepositAddressV2 error', error)
+    const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
+
+    if (chainflipErrorMsg) {
+      throw formatChainflipErrorMsg(chainflipErrorMsg)
+    }
+
+    throw error as Error
+  }
+}
+
+/**
+ * Returns the number of block confirmations required by Chainflip for a given chain.
+ * A deposit transaction (deposit address and vault smart contract)
+ * is considered confirmed by the protocol after a certain number of blocks,
+ * reducing risks.
+ * Assethub have a deterministic finality and do not require any confirmations.
+ */
+export const getRequiredBlockConfirmation = async (ChainflipChain: ChainflipChain): Promise<number | null> => {
+  const sdk = getChainflipSdk()
+  if (!sdk) throw new Error('Chainflip SDK not initialized.')
+
+  return (await sdk.getRequiredBlockConfirmations())[ChainflipChain]
+}
+
 /** Returns a Chainflip chain matching with Turtle chain. */
 export const getChainflipChain = async (chain: Chain): Promise<ChainData | undefined> => {
   const sdk = getChainflipSdk()
+  if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const chainflipChains = await sdk.getChains()
 
   // Here we map through chainflipChains and find the chain that matches Turtle chain.uid.
@@ -155,9 +222,20 @@ export const getChainflipChain = async (chain: Chain): Promise<ChainData | undef
   return chainsMatch ?? assethub
 }
 
+/** Returns a Turtle Chain matching with Chainflip chain. */
+export const toRegistryChain = (chainflipChain: ChainflipChain): Chain => {
+  const registryChain = MainnetRegistry.chains.find(c => {
+    if (c.uid.includes('-')) return c.uid.split('-')[1].toLowerCase() === chainflipChain.toLowerCase()
+    return c.uid.toLowerCase() === chainflipChain.toLowerCase()
+  })
+  if (!registryChain) throw new Error('No registry chain match with a Chainflip chain')
+  return registryChain
+}
+
 /** Returns a Chainflip asset matching with Turtle token. */
 export const getChainflipAsset = async (asset: Token, chainflipChain: ChainData): Promise<AssetData> => {
   const sdk = getChainflipSdk()
+  if (!sdk) throw new Error('Chainflip SDK not initialized.')
   const assetFromSrcChain = await sdk.getAssets(chainflipChain.chain)
 
   const assetMatch = assetFromSrcChain.find(a => {
@@ -191,8 +269,9 @@ export const meetChainflipMinSwapAmount = (amount: string | bigint, asset: Asset
   return BigInt(amount) >= BigInt(asset.minimumSwapAmount)
 }
 
-/** Check if the source chain is supported for vault swap (Polkadot is not supported and uses the deposit address method) */
-export const isVaultSwapSupported = (sourceChain: ChainData): boolean => sourceChain.chain !== 'Polkadot'
+/** Check if the source chain is supported for vault swap (Assethub is not supported and uses the deposit address method) */
+export const isVaultSwapSupported = (sourceChain: ChainData, destChain: ChainData): boolean =>
+  sourceChain.chain !== 'Assethub' && destChain.chain !== 'Assethub'
 
 export const getFeeTokenFromAssetSymbol = (assetSymbol: AssetSymbol, chain: ChainflipChain): Token => {
   if (chain === 'Ethereum') return EthereumTokens[assetSymbol]
@@ -216,7 +295,6 @@ export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
       return 'Deposit fee'
     case 'EGRESS':
       return 'Broadcast fee'
-
     default:
       return 'Fee'
   }
@@ -229,7 +307,6 @@ export const getChainflipDurationEstimate = (quote?: RegularQuote | DCAQuote | n
 
 export const formatChainflipErrorMsg = (errorMsg: string): string | null => {
   if (!errorMsg) return null
-
   const capitalized = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1)
   return capitalized.endsWith('.') ? capitalized : `${capitalized}. `
 }
