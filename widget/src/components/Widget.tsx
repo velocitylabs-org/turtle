@@ -1,4 +1,9 @@
-import { FormContainer, HistoryLoaderSkeleton, type TransferTabOptions } from '@velocitylabs-org/turtle-ui'
+import {
+  AppBody,
+  HistoryLoaderSkeleton,
+  TabSwitcherWrapper,
+  type TransferTabOptions,
+} from '@velocitylabs-org/turtle-ui'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import NotificationSystem from '@/components/NotificationSystem'
 import SubstrateWalletModal from '@/components/SubstrateWalletModal'
@@ -24,31 +29,39 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
     <div className="turtle-wrapper">
       <Providers>
         <ConfigProvider registry={registry ?? { chains: [], tokens: [] }}>
-          <FormContainer
-            ongoingTransfers={ongoingTransfers}
-            completedTransfers={completedTransfers}
-            isHistoryTabSelected={isHistoryTabSelected}
-            newTransferInit={newTransferInit}
-            setNewTransferInit={setNewTransferInit}
-          >
-            {!isHistoryTabSelected ? (
-              <TransferForm />
-            ) : (
-              <Suspense
-                fallback={
-                  <div className="z-20 flex flex-col gap-1 overflow-auto rounded-3xl border border-turtle-foreground bg-turtle-background">
-                    <HistoryLoaderSkeleton
-                      length={ongoingTransfers.length + (completedTransfers ? completedTransfers.length : 0)}
-                    />
-                  </div>
-                }
-              >
-                <TransfersHistory ongoingTransfers={ongoingTransfers} completedTransfers={completedTransfers ?? []} />
-              </Suspense>
-            )}
+          <div className="flex flex-col items-center justify-center">
+            <TabSwitcherWrapper
+              TransferComponent={
+                <AppBody
+                  ongoingTransfers={ongoingTransfers}
+                  completedTransfers={completedTransfers}
+                  isHistoryTabSelected={isHistoryTabSelected}
+                  newTransferInit={newTransferInit}
+                  setNewTransferInit={setNewTransferInit}
+                >
+                  {!isHistoryTabSelected ? (
+                    <TransferForm />
+                  ) : (
+                    <Suspense
+                      fallback={
+                        <HistoryLoaderSkeleton
+                          length={ongoingTransfers.length + (completedTransfers ? completedTransfers.length : 0)}
+                        />
+                      }
+                    >
+                      <TransfersHistory
+                        ongoingTransfers={ongoingTransfers}
+                        completedTransfers={completedTransfers ?? []}
+                      />
+                    </Suspense>
+                  )}
+                </AppBody>
+              }
+              BuySellComponent={<div>Buy/Sell</div>}
+            />
             <NotificationSystem />
             <SubstrateWalletModal />
-          </FormContainer>
+          </div>
         </ConfigProvider>
       </Providers>
     </div>
