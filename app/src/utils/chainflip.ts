@@ -173,7 +173,7 @@ export const getDepositAddress = async (
       destAddress: formattedDestinationAddress,
       fillOrKillParams: {
         slippageTolerancePercent: quote.recommendedSlippageTolerancePercent, // use recommended slippage tolerance from quote
-        refundAddress: senderAddress, // address to which assets are refunded
+        refundAddress: formattedSenderAddress, // address to which assets are refunded
         retryDurationBlocks: 100, // 100 blocks * 6 seconds = 10 minutes before deposits are refunded
       },
     }
