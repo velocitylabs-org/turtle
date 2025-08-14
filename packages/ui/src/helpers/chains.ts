@@ -1,5 +1,6 @@
 import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
+import wormholeLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
 import polkadotLogo from '@velocitylabs-org/turtle-assets/logos/polkadot.svg'
 import snowbridgeLogo from '@velocitylabs-org/turtle-assets/logos/snowbridge.svg'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
@@ -51,6 +52,15 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
     return {
       logoURI: kusamaLogo,
       text: `Kusama ${token.symbol}`,
+    }
+  }
+
+  if (sourceChain.network === 'Polkadot' && token.origin.type === 'Solana') {
+    if (token.origin.bridge === 'Wormhole') {
+      return {
+        logoURI: wormholeLogo,
+        text: `Wormhole ${token.symbol}`,
+      }
     }
   }
 
