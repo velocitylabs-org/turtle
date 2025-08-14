@@ -4,17 +4,20 @@ import { type Account, type Address, erc20Abi, type PublicClient, type WalletCli
 import { usePublicClient, useSwitchChain, useWalletClient } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { NotificationSeverity } from '@/models/notification'
+// import type { StoredTransfer } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { useChainflipStore } from '@/store/chainflipStore'
 import { truncateAddress } from '@/utils/address'
 import { type ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
 import useNotification from './useNotification'
+// import useOngoingTransfers from './useOngoingTransfers'
 import type { Status, TransferParams } from './useTransfer'
 
 const useChainflipApi = () => {
   const { getCachedQuote, fetchNewQuote } = useChainflipStore()
   const { addNotification } = useNotification()
   const publicClient = usePublicClient()
+  // const { addOrUpdate } = useOngoingTransfers()
   const qClient = useQueryClient()
   const { switchChainAsync } = useSwitchChain()
   const { data: walletClient } = useWalletClient()
@@ -31,7 +34,9 @@ const useChainflipApi = () => {
       sourceAmount,
       sender,
       recipient,
-      // onComplete,
+      onComplete,
+      // fees,
+      // bridgingFee,
     } = params
 
     const queryParams = {
@@ -63,7 +68,8 @@ const useChainflipApi = () => {
       })
 
       setStatus('Validating')
-      let txHash: `0x${string}`
+      let txHash: `0x${string}` | undefined
+
       const direction = resolveDirection(sourceChain, destinationChain)
       switch (direction) {
         case Direction.ToPolkadot: {
@@ -81,7 +87,6 @@ const useChainflipApi = () => {
             setStatus,
           )
           console.log('txHash', txHash)
-
           break
         }
         case Direction.ToEthereum: {
@@ -92,21 +97,26 @@ const useChainflipApi = () => {
         default:
           throw new Error('Unsupported chainflip flow')
       }
-      // onComplete?.()
+      onComplete?.()
+      if (!txHash) throw new Error('Transaction hash not found - Transfer failed')
+
       // const senderAddress = await getSenderAddress(sender)
       // const date = new Date()
+
       // addOrUpdate({
-      //   id: txHash,
+      //   id: txHash.toString(),
       //   sourceChain,
       //   sourceToken,
       //   destinationToken,
-      //   sourceTokenUSDValue,
+      //   sourceTokenUSDValue: 0,
       //   sender: senderAddress,
       //   destChain: destinationChain,
       //   sourceAmount: sourceAmount.toString(),
       //   recipient,
       //   date,
       //   fees,
+      //   bridgingFee,
+      //   uniqueTrackingId: depositPayload.depositChannelId,
       // } satisfies StoredTransfer)
 
       // trackTransferMetrics({
