@@ -36,7 +36,7 @@ const WALLET_CONFIGS: Record<Wallet, WalletConfig> = {
   },
 }
 
-export const capitalizeFirstLetter = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1)
+const capitalizeFirstLetter = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1)
 
 const isNovaWallet = (window?: Window): boolean => {
   // biome-ignore lint/suspicious/noExplicitAny: any

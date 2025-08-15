@@ -17,7 +17,7 @@ import { safeConvertAmount, toHuman } from './transfer'
  * @param nativeTokenUSDValue - The USD value of the fee token.
  * @returns An object containing the tx estimate gas fee in the fee token and its USD value.
  */
-export const estimateTransactionFees = async (
+const estimateTransactionFees = async (
   transfer: toPolkadotV2.Transfer,
   context: Context,
   feeToken: Token,

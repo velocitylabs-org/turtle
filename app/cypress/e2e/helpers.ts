@@ -28,11 +28,6 @@ export const selectToken = (symbol: string) => {
   cy.get('[data-cy="token-select-trigger"]').should('exist').click()
   cy.get('[data-cy="token-select"]').get('ul').should('be.visible').find('li').contains(symbol).click()
 }
-
-export const ensureSelectedTokenContains = (symbol: string) => {
-  cy.get('[data-cy="token-select-symbol"]').should('contain', symbol)
-}
-
 export const inputAmount = (amount: string) => {
   cy.get('[data-cy="amount-input"]').should('exist').type(amount)
 }

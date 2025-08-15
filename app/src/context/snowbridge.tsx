@@ -1,4 +1,4 @@
-import { Context, contextConfigFor, environment, status } from '@snowbridge/api'
+import { Context, contextConfigFor, environment } from '@snowbridge/api'
 import {
   AssetHub,
   BridgeHub,
@@ -7,7 +7,6 @@ import {
   rpcConnectionAsHttps,
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
 } from '@velocitylabs-org/turtle-registry'
-import type { SnowbridgeStatus } from '@/models/snowbridge'
 
 /**
  * Given a network, return the adequate Snowbridge Api Environment scheme.
@@ -56,14 +55,5 @@ function toSnowbridgeNetwork(network: Network): 'polkadot_mainnet' | undefined {
       return 'polkadot_mainnet'
     default:
       return undefined
-  }
-}
-
-// This is not used anywhere in the app – delete?
-export async function getSnowBridgeEtimatedTransferDuration(snowbridgeCtx: Context): Promise<SnowbridgeStatus> {
-  const bridgeStatus = await status.bridgeStatusInfo(snowbridgeCtx)
-  return {
-    toEthereum: bridgeStatus.toEthereum.latencySeconds,
-    toPolkadot: bridgeStatus.toPolkadot.latencySeconds,
   }
 }

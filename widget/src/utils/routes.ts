@@ -22,7 +22,7 @@ export const deduplicate = <T extends { uid?: string; id?: string }>(items: T[],
 }
 
 /** Filters all tokens by selected source chain and available routes */
-export const getTransferTokens = (
+const getTransferTokens = (
   sourceChain: Chain | null,
   destinationChain: Chain | null,
   allowedTokens?: Token['id'][] | undefined,
@@ -138,7 +138,7 @@ export const getAllowedDestinationTokens = (
   return deduplicate(allowedTokens)
 }
 
-export const getRoute = (from: Chain, to: Chain): Route | undefined => {
+const getRoute = (from: Chain, to: Chain): Route | undefined => {
   return MainnetRegistry.routes.find(route => route.from === from.uid && route.to === to.uid)
 }
 
@@ -146,7 +146,7 @@ export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
   return chain1.uid === chain2.uid
 }
 
-export const isSamePolkadotChain = (sourceChain?: Chain | null, destinationChain?: Chain | null): boolean => {
+const isSamePolkadotChain = (sourceChain?: Chain | null, destinationChain?: Chain | null): boolean => {
   return Boolean(
     sourceChain && destinationChain && isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot',
   )
