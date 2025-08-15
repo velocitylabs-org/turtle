@@ -55,10 +55,16 @@ export default function useFees(params: UseFeesParams) {
   const { addNotification } = useNotification()
   const senderAddress = sender?.address
 
+  // Determine if we need ETH balance (only for SnowbridgeApi case)
+  const sdk = sourceChain && destinationChain ? resolveSdk(sourceChain, destinationChain) : null
+  const isSnowbridgeRoute = sdk === 'SnowbridgeApi'
+
+  // Only fetch ETH balance when using SnowbridgeApi
+  // useBalance handles undefined values gracefully by returning early
   const { balance: ethBalance } = useBalance({
-    chain: sourceChain,
-    token: EthereumTokens.ETH,
-    address: senderAddress,
+    chain: isSnowbridgeRoute ? sourceChain : undefined,
+    token: isSnowbridgeRoute ? EthereumTokens.ETH : undefined,
+    address: isSnowbridgeRoute ? senderAddress : undefined,
   })
 
   const fetchFees = useCallback(async () => {
@@ -75,7 +81,6 @@ export default function useFees(params: UseFeesParams) {
       return
     }
 
-    const sdk = resolveSdk(sourceChain, destinationChain)
     if (!sdk) throw new Error('Route not supported')
 
     try {
@@ -98,50 +103,58 @@ export default function useFees(params: UseFeesParams) {
             recipient: recipientAddress,
           })
 
-          const originToken = getTokenFromSymbol(xcmFee.origin.currency)
-          const origin: FeeDetails = {
-            title: 'Execution fees',
-            chain: sourceChain,
-            sufficient: xcmFee.origin.sufficient ?? false,
-            amount: {
-              amount: xcmFee.origin.fee,
-              token: originToken,
-              inDollars: await getTokenAmountInDollars(originToken, xcmFee.origin.fee),
-            },
+          const origin: FeeDetails[] = []
+          if (xcmFee.origin && xcmFee.origin.feeType !== 'noFeeRequired') {
+            const originToken = getTokenFromSymbol(xcmFee.origin.currency)
+            origin.push({
+              title: 'Execution fees',
+              chain: sourceChain,
+              sufficient: xcmFee.origin.sufficient ?? false,
+              amount: {
+                amount: xcmFee.origin.fee,
+                token: originToken,
+                inDollars: await getTokenAmountInDollars(originToken, xcmFee.origin.fee),
+              },
+            })
           }
 
-          const destinationToken = getTokenFromSymbol(xcmFee.destination.currency)
-          const destination: FeeDetails = {
-            title: 'Destination fees',
-            chain: destinationChain,
-            sufficient: xcmFee.destination.sufficient ?? false,
-            amount: {
-              amount: xcmFee.destination.fee,
-              token: destinationToken,
-              inDollars: await getTokenAmountInDollars(destinationToken, xcmFee.destination.fee),
-            },
+          const destination: FeeDetails[] = []
+          if (xcmFee.destination && xcmFee.destination.feeType !== 'noFeeRequired') {
+            const destinationToken = getTokenFromSymbol(xcmFee.destination.currency)
+            destination.push({
+              title: 'Destination fees',
+              chain: destinationChain,
+              sufficient: xcmFee.destination.sufficient ?? false,
+              amount: {
+                amount: xcmFee.destination.fee,
+                token: destinationToken,
+                inDollars: await getTokenAmountInDollars(destinationToken, xcmFee.destination.fee),
+              },
+            })
           }
 
           const isBridgeToEthereum = destinationChain.network === 'Ethereum'
           const intermediate: FeeDetails[] = []
           if (xcmFee.hops.length > 0) {
             for (const hop of xcmFee.hops) {
-              const hopToken = getTokenFromSymbol(hop.result.currency)
-              const hopFeeDetailItem: FeeDetails = {
-                title: isBridgeToEthereum ? 'Bridging fees' : 'Swap fees',
-                chain: mapParaspellChainToRegistry(hop.chain),
-                sufficient: hop.result.sufficient ?? false,
-                amount: {
-                  amount: hop.result.fee,
-                  token: hopToken,
-                  inDollars: await getTokenAmountInDollars(hopToken, hop.result.fee),
-                },
+              if (hop.result.feeType !== 'noFeeRequired') {
+                const hopToken = getTokenFromSymbol(hop.result.currency)
+                const hopFeeDetailItem: FeeDetails = {
+                  title: isBridgeToEthereum ? 'Bridging fees' : 'Swap fees',
+                  chain: mapParaspellChainToRegistry(hop.chain),
+                  sufficient: hop.result.sufficient ?? false,
+                  amount: {
+                    amount: hop.result.fee,
+                    token: hopToken,
+                    inDollars: await getTokenAmountInDollars(hopToken, hop.result.fee),
+                  },
+                }
+                intermediate.push(hopFeeDetailItem)
               }
-              intermediate.push(hopFeeDetailItem)
             }
           }
 
-          const feeList = [origin, ...intermediate, destination]
+          const feeList: FeeDetails[] = [...origin, ...intermediate, ...destination]
           setFees(feeList)
           const isSufficient = checkBalanceSufficiency(feeList, sourceToken, sourceTokenAmount, sourceTokenBalance) // Check if the balance is enough for all fees
           setIsBalanceSufficientForFees(isSufficient)
@@ -271,6 +284,7 @@ export default function useFees(params: UseFeesParams) {
     sender,
     ethBalance,
     sourceTokenBalance,
+    sdk,
   ])
 
   useEffect(() => {

@@ -103,7 +103,6 @@ export default function Transfer() {
     destinationWallet,
     fees,
     isBalanceSufficientForFees,
-    fixTransferableBalance,
     refetchFees,
     loadingFees,
     transferStatus,
@@ -447,7 +446,6 @@ export default function Transfer() {
           durationEstimate={durationEstimate}
           isBalanceSufficientForFees={isBalanceSufficientForFees}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-          fixTransferableBalance={fixTransferableBalance}
         />
       )}
 

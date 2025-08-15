@@ -18,7 +18,6 @@ import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
-import type { FeeDetails } from '@/models/transfer'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
@@ -261,8 +260,7 @@ const useTransferForm = () => {
         }
         const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
         if (!transferableAmount) {
-          setMaxButtonLoading(false)
-          return
+          throw new Error('Failed to get transferable amount')
         }
 
         setValue(
@@ -378,42 +376,6 @@ const useTransferForm = () => {
     else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
 
-  // When there are insufficient funds for the sum of fees and the transfer amount, adjust the source token amount to allocate enough for fees
-  const fixTransferableBalance = useCallback(
-    async (fee: FeeDetails) => {
-      if (fee && sourceTokenAmount?.token?.id === fee.amount.token.id) {
-        if (sourceTokenAmount.token.origin.type === 'Polkadot') {
-          // For Polkadot network, we use ParaSpell's getTransferableAmount() which handles max transferable amount calculation including fees
-          await handleMaxButtonClick()
-          return
-        }
-        // Sum all fees with the same token as the parameter fee
-        const totalFeesAmount =
-          fees?.reduce((sum, f) => {
-            if (f.amount.token?.id === fee.amount.token.id) {
-              return sum + toHuman(f.amount.amount, f.amount.token)
-            }
-            return sum
-          }, 0) ?? 0
-
-        const balanceAmount = Number(balanceData!.formatted)
-        let newAmount = balanceAmount - totalFeesAmount
-        if (newAmount < 0) newAmount = 0 // Prevent negative values
-
-        setValue(
-          'sourceTokenAmount',
-          {
-            token: sourceTokenAmount.token,
-            // Parse as a number, then format to our display standard, then parse again as a number
-            amount: Number(formatAmount(newAmount, 'Longer')),
-          },
-          { shouldValidate: true },
-        )
-      }
-    },
-    [sourceTokenAmount?.token, fees, balanceData, setValue],
-  )
-
   // reset token amount
   useEffect(() => {
     if (tokenId)
@@ -443,7 +405,6 @@ const useTransferForm = () => {
     destinationWallet,
     fees,
     isBalanceSufficientForFees,
-    fixTransferableBalance,
     refetchFees,
     loadingFees,
     transferStatus,

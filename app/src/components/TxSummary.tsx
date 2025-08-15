@@ -19,7 +19,6 @@ interface TxSummaryProps {
   direction?: Direction
   isBalanceSufficientForFees: boolean
   className?: string
-  fixTransferableBalance: (fee: FeeDetails) => void
 }
 
 const animationConfig = {
@@ -39,7 +38,6 @@ export default function TxSummary({
   durationEstimate,
   isBalanceSufficientForFees,
   className,
-  fixTransferableBalance,
 }: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
@@ -70,60 +68,20 @@ export default function TxSummary({
     const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
     const isAmountTooLow = transferAmount && transferAmount.inDollars < totalFeesInDollars * AMOUNT_VS_FEE_RATIO
 
-    // Track which tokens have already shown the transferable balance warning
-    const shownTransferableWarnings = new Set<string>()
-
     return (
       <div className={cn('tx-summary p-0 pt-0', className)}>
         <div className="pt-3">
           <div className="mt-3 text-center text-lg font-bold text-turtle-foreground md:text-xl">Summary</div>
           <ul>
             {fees?.map((fee, index) => {
-              const exceedsTransferableBalanceForThisFee =
-                !isBalanceSufficientForFees &&
-                transferAmount?.token?.id &&
-                fee.amount.token?.id &&
-                transferAmount.token.id === fee.amount.token.id
-
-              // Check if we should show the warning for this token
-              const shouldShowTransferableWarning =
-                exceedsTransferableBalanceForThisFee && !shownTransferableWarnings.has(fee.amount.token.id)
-
-              // Check if the fee is not enough but uses the same token as transfer (can be fixed)
-              const canFixInsufficientFee =
-                !fee.sufficient &&
-                transferAmount?.token?.id &&
-                fee.amount.token?.id &&
-                transferAmount.token.id === fee.amount.token.id
-
-              // Mark this token as having shown the warning
-              if (shouldShowTransferableWarning && fee.amount.token?.id) {
-                shownTransferableWarnings.add(fee.amount.token.id)
-              }
-
               return (
                 <li key={index} className="mt-4 flex items-start justify-between border-turtle-level2">
                   <div className="items-left flex flex-col">
                     <div className="pt-[3px] text-sm font-bold">{fee.title}</div>
-                    {!fee.sufficient && !shouldShowTransferableWarning && !canFixInsufficientFee && (
+                    {!fee.sufficient && (
                       <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                         <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
                         <span>You don&apos;t have enough {fee.amount.token.symbol}</span>
-                      </div>
-                    )}
-                    {(shouldShowTransferableWarning || canFixInsufficientFee) && (
-                      <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-                        <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-                        <span>
-                          {fee.amount.token.symbol} needed for fees{' '}
-                          <span
-                            role="button"
-                            onClick={() => fixTransferableBalance(fee)}
-                            className="ml-1 cursor-pointer underline"
-                          >
-                            Ok
-                          </span>
-                        </span>
                       </div>
                     )}
                   </div>
