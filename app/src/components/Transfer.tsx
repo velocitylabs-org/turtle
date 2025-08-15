@@ -182,6 +182,7 @@ export default function Transfer() {
   const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
   const hasFees = fees && fees?.length > 0
+  const allFeesItemsAreSufficient = hasFees && fees.every(fee => fee.sufficient)
 
   const isTransferAllowed =
     isValid &&
@@ -191,7 +192,8 @@ export default function Transfer() {
     !requiresErc20SpendApproval &&
     !loadingFees &&
     !isLoadingOutputAmount &&
-    isBalanceSufficientForFees
+    isBalanceSufficientForFees &&
+    allFeesItemsAreSufficient
 
   const disableMaxBtnInPolkadotNetwork =
     (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&

@@ -87,9 +87,14 @@ export default function TxSummary({
 
               // Check if we should show the warning for this token
               const shouldShowTransferableWarning =
-                exceedsTransferableBalanceForThisFee &&
-                fee.sufficient &&
-                !shownTransferableWarnings.has(fee.amount.token.id)
+                exceedsTransferableBalanceForThisFee && !shownTransferableWarnings.has(fee.amount.token.id)
+
+              // Check if the fee is not enough but uses the same token as transfer (can be fixed)
+              const canFixInsufficientFee =
+                !fee.sufficient &&
+                transferAmount?.token?.id &&
+                fee.amount.token?.id &&
+                transferAmount.token.id === fee.amount.token.id
 
               // Mark this token as having shown the warning
               if (shouldShowTransferableWarning && fee.amount.token?.id) {
@@ -100,13 +105,13 @@ export default function TxSummary({
                 <li key={index} className="mt-4 flex items-start justify-between border-turtle-level2">
                   <div className="items-left flex flex-col">
                     <div className="pt-[3px] text-sm font-bold">{fee.title}</div>
-                    {!fee.sufficient && (
+                    {!fee.sufficient && !shouldShowTransferableWarning && !canFixInsufficientFee && (
                       <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                         <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
                         <span>You don&apos;t have enough {fee.amount.token.symbol}</span>
                       </div>
                     )}
-                    {shouldShowTransferableWarning && (
+                    {(shouldShowTransferableWarning || canFixInsufficientFee) && (
                       <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                         <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
                         <span>

@@ -376,7 +376,7 @@ const useTransferForm = () => {
   // When there are insufficient funds for the sum of fees and the transfer amount, adjust the source token amount to allocate enough for fees
   const fixTransferableBalance = useCallback(
     (fee: FeeDetails) => {
-      if (!isBalanceSufficientForFees && fee && sourceTokenAmount?.token?.id === fee.amount.token.id) {
+      if (fee && sourceTokenAmount?.token?.id === fee.amount.token.id) {
         // Sum all fees with the same token as the parameter fee
         const totalFeesAmount =
           fees?.reduce((sum, f) => {
@@ -401,7 +401,7 @@ const useTransferForm = () => {
         )
       }
     },
-    [isBalanceSufficientForFees, sourceTokenAmount?.token, fees, balanceData, setValue],
+    [sourceTokenAmount?.token, fees, balanceData, setValue],
   )
 
   // reset token amount
