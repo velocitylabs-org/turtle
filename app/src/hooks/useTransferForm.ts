@@ -287,6 +287,10 @@ const useTransferForm = () => {
       }
     } catch (error) {
       console.error('Error setting max amount:', error)
+      addNotification({
+        message: 'Manually input an amount less than your balance.',
+        severity: NotificationSeverity.Error,
+      })
     } finally {
       setMaxButtonLoading(false)
     }
@@ -301,6 +305,7 @@ const useTransferForm = () => {
     sourceChain,
     sourceToken,
     sourceWallet?.sender,
+    addNotification,
   ])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
