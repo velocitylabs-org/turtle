@@ -1,8 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="350pt" height="350pt" viewBox="0 0 350 350">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
     <defs>
-        <clipPath id="frame">
-            <path d="M0 0h350v350H0z"/>
-        </clipPath>
         <!-- More accurate Aave gradient (purple top-right to cyan bottom-left) -->
         <linearGradient id="aaveGradient" x1="100%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" style="stop-color:#B794F6;stop-opacity:1" />
@@ -12,32 +9,24 @@
         </linearGradient>
     </defs>
 
-    <g clip-path="url(#frame)">
-        <!-- White background -->
-        <path d="M0 0h350v350H0z" style="fill:#ffffff"/>
+    <!-- Outer gradient ring -->
+    <circle cx="50" cy="50" r="50" fill="url(#aaveGradient)"/>
 
-        <!-- Centered logo group -->
-        <g transform="translate(175, 175)">
-            <!-- Outer gradient ring -->
-            <circle cx="0" cy="0" r="135" fill="url(#aaveGradient)"/>
+    <!-- White separator ring -->
+    <circle cx="50" cy="50" r="43" fill="white"/>
 
-            <!-- White separator ring -->
-            <circle cx="0" cy="0" r="116" fill="white"/>
+    <!-- Inner USDT green circle -->
+    <circle cx="50" cy="50" r="38" fill="#26A17B"/>
 
-            <!-- Inner USDT green circle -->
-            <circle cx="0" cy="0" r="102" fill="#26A17B"/>
+    <!-- White Tether T symbol and oval -->
+    <g fill="white">
+        <!-- Top horizontal bar of T (even shorter) -->
+        <rect x="32" y="28" width="36" height="8" rx="0.5"/>
 
-            <!-- White Tether T symbol and oval -->
-            <g fill="white">
-                <!-- Top horizontal bar of T -->
-                <rect x="-48.6" y="-59.4" width="97.2" height="21.6" rx="1.35"/>
+        <!-- Vertical stem of T - continuous -->
+        <rect x="46" y="28" width="8" height="44" rx="0.5"/>
 
-                <!-- Vertical stem of T -->
-                <rect x="-10.8" y="-59.4" width="21.6" height="118.8" rx="1.35"/>
-
-                <!-- Oval ring around the T -->
-                <ellipse cx="0" cy="0" rx="59.4" ry="16.2" fill="none" stroke="white" stroke-width="5.4"/>
-            </g>
-        </g>
+        <!-- Oval ring around the T (thinner and smaller, more inclined) -->
+        <ellipse cx="50" cy="50" rx="22" ry="6" fill="none" stroke="white" stroke-width="2"/>
     </g>
 </svg>

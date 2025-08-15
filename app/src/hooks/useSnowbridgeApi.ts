@@ -96,17 +96,8 @@ const useSnowbridgeApi = () => {
     direction: Direction,
     setStatus: (status: Status) => void,
   ) => {
-    const {
-      sourceChain,
-      sourceToken,
-      destinationToken,
-      destinationChain,
-      recipient,
-      sourceAmount,
-      fees,
-      bridgingFee,
-      onComplete,
-    } = params
+    const { sourceChain, sourceToken, destinationToken, destinationChain, recipient, sourceAmount, fees, onComplete } =
+      params
     try {
       setStatus('Sending')
       // biome-ignore lint/suspicious/noImplicitAnyLet: response
@@ -155,7 +146,6 @@ const useSnowbridgeApi = () => {
         recipient,
         date,
         fees,
-        bridgingFee,
       } satisfies StoredTransfer)
 
       trackTransferMetrics({

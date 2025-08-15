@@ -144,21 +144,16 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                 />
               )}
 
-              <SummaryRow
-                label={transfer.bridgingFee ? 'Execution fee' : 'Fee'}
-                amount={formatAmount(toHuman(transfer.fees.amount, transfer.fees.token), 'Long')}
-                symbol={transfer.fees.token.symbol}
-                usdValue={formatAmount(transfer.fees.inDollars, 'Long')}
-              />
-
-              {transfer.bridgingFee && (
-                <SummaryRow
-                  label="Bridging fee"
-                  amount={formatAmount(toHuman(transfer.bridgingFee.amount, transfer.bridgingFee.token), 'Long')}
-                  symbol={transfer.bridgingFee.token.symbol}
-                  usdValue={formatAmount(transfer.bridgingFee.inDollars, 'Long')}
-                />
-              )}
+              {Array.isArray(transfer.fees) &&
+                transfer.fees.map((fee, index) => (
+                  <SummaryRow
+                    key={index}
+                    label={fee.title}
+                    amount={formatAmount(toHuman(fee.amount.amount, fee.amount.token), 'Long')}
+                    symbol={fee.amount.token.symbol}
+                    usdValue={formatAmount(fee.amount.inDollars, 'Long')}
+                  />
+                ))}
 
               {explorerLink && (
                 <a
