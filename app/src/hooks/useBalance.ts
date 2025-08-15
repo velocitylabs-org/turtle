@@ -85,9 +85,7 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
   return { balance, fetchBalance, loading: loading || loadingErc20Balance || loadingEthBalance }
 }
 
-export default useBalance
-
-export async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
+async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
   const node = getParaSpellNode(chain)
 
   if (!node) throw new Error('Node not found')
@@ -108,3 +106,5 @@ export async function getBalance(chain: Chain, token: Token, address: string): P
     formatted: toHuman(balance, token).toString(),
   }
 }
+
+export default useBalance

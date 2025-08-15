@@ -49,7 +49,7 @@ export async function getSnowBridgeContext(network: Network = 'Polkadot'): Promi
  * @param network - The network in which the app is operating
  * @returns the corresponding network value that Snowbridge/api understands
  */
-export function toSnowbridgeNetwork(network: Network): 'polkadot_mainnet' | undefined {
+function toSnowbridgeNetwork(network: Network): 'polkadot_mainnet' | undefined {
   switch (network) {
     case 'Polkadot':
     case 'Ethereum':
@@ -59,6 +59,7 @@ export function toSnowbridgeNetwork(network: Network): 'polkadot_mainnet' | unde
   }
 }
 
+// This is not used anywhere in the app – delete?
 export async function getSnowBridgeEtimatedTransferDuration(snowbridgeCtx: Context): Promise<SnowbridgeStatus> {
   const bridgeStatus = await status.bridgeStatusInfo(snowbridgeCtx)
   return {

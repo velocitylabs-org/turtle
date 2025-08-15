@@ -2,27 +2,16 @@ import type { InjectedAccountWitMnemonic } from '@chainsafe/cypress-polkadot-wal
 
 const DAPP_NAME = 'turtle'
 
-export const seed = Cypress.env('seed')
-export const seedAccountAddress = Cypress.env('address')
+const seed = Cypress.env('seed')
+const seedAccountAddress = Cypress.env('address')
 export const manualRecipientAddress = Cypress.env('manualRecipientAddress')
 
-export const Alice = {
+const Alice = {
   address: seedAccountAddress,
   name: 'Alice',
   type: 'sr25519',
   mnemonic: seed,
 } as InjectedAccountWitMnemonic
-
-export const waitForAuthRequest = (timeout = 10000) =>
-  cy.waitUntil(
-    () =>
-      cy.getTxRequests().then(req => {
-        return Object.entries(req).length > 0
-      }),
-    {
-      timeout,
-    },
-  )
 
 export const selectChain = (type: 'source' | 'dest', chainName: string) => {
   const index = type === 'source' ? 0 : 1
