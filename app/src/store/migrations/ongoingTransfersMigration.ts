@@ -48,7 +48,7 @@ export const migrateOngoingTransfers = (persistedState: any, version: number) =>
           title: 'Execution fees',
           chain: transfer.sourceChain,
           amount: transfer.fees,
-          sufficient: true,
+          sufficient: 'sufficient',
         })
       }
 
@@ -58,7 +58,7 @@ export const migrateOngoingTransfers = (persistedState: any, version: number) =>
           title: 'Bridging fees',
           chain: transfer.sourceChain,
           amount: transfer.bridgingFee,
-          sufficient: true,
+          sufficient: 'sufficient',
         })
       }
 

@@ -103,13 +103,21 @@ export default function useFees(params: UseFeesParams) {
             recipient: recipientAddress,
           })
 
+          // NOTE: 'sufficient' may be undefined when chains lack dry-run support, preventing fee/success validation.
+          // - Present: reliable sufficiency indicator
+          // - Missing: defaults to true, but user proceeds at own risk
           const origin: FeeDetails[] = []
           if (xcmFee.origin && xcmFee.origin.feeType !== 'noFeeRequired') {
             const originToken = getTokenFromSymbol(xcmFee.origin.currency)
             origin.push({
               title: 'Execution fees',
               chain: sourceChain,
-              sufficient: xcmFee.origin.sufficient ?? false,
+              sufficient:
+                xcmFee.origin.sufficient === undefined
+                  ? 'undetermined'
+                  : xcmFee.origin.sufficient
+                    ? 'sufficient'
+                    : 'insufficient',
               amount: {
                 amount: xcmFee.origin.fee,
                 token: originToken,
@@ -124,7 +132,12 @@ export default function useFees(params: UseFeesParams) {
             destination.push({
               title: 'Destination fees',
               chain: destinationChain,
-              sufficient: xcmFee.destination.sufficient ?? false,
+              sufficient:
+                xcmFee.destination.sufficient === undefined
+                  ? 'undetermined'
+                  : xcmFee.destination.sufficient
+                    ? 'sufficient'
+                    : 'insufficient',
               amount: {
                 amount: xcmFee.destination.fee,
                 token: destinationToken,
@@ -142,7 +155,12 @@ export default function useFees(params: UseFeesParams) {
                 const hopFeeDetailItem: FeeDetails = {
                   title: isBridgeToEthereum ? 'Bridging fees' : 'Swap fees',
                   chain: mapParaspellChainToRegistry(hop.chain),
-                  sufficient: hop.result.sufficient ?? false,
+                  sufficient:
+                    hop.result.sufficient === undefined
+                      ? 'undetermined'
+                      : hop.result.sufficient
+                        ? 'sufficient'
+                        : 'insufficient',
                   amount: {
                     amount: hop.result.fee,
                     token: hopToken,
@@ -209,7 +227,7 @@ export default function useFees(params: UseFeesParams) {
             const execution: FeeDetails = {
               title: 'Execution fees',
               chain: sourceChain,
-              sufficient: BigInt(executionAmount) < BigInt(ethBalanceAmount),
+              sufficient: BigInt(executionAmount) < BigInt(ethBalanceAmount) ? 'sufficient' : 'insufficient',
               amount: {
                 amount: snowbridgeFees.execution.amount,
                 token: snowbridgeFees.execution.token,
@@ -224,7 +242,7 @@ export default function useFees(params: UseFeesParams) {
             const bridging: FeeDetails = {
               title: 'Bridging fees',
               chain: sourceChain,
-              sufficient: BigInt(bridgingAmount) < BigInt(ethBalanceAmount),
+              sufficient: BigInt(bridgingAmount) < BigInt(ethBalanceAmount) ? 'sufficient' : 'insufficient',
               amount: {
                 amount: snowbridgeFees.bridging.amount,
                 token: snowbridgeFees.bridging.token,

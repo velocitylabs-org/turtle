@@ -78,10 +78,16 @@ export default function TxSummary({
                 <li key={index} className="mt-4 flex items-start justify-between border-turtle-level2">
                   <div className="items-left flex flex-col">
                     <div className="pt-[3px] text-sm font-bold">{fee.title}</div>
-                    {!fee.sufficient && (
+                    {fee.sufficient === 'insufficient' && (
                       <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                         <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
                         <span>You don&apos;t have enough {fee.amount.token.symbol}</span>
+                      </div>
+                    )}
+                    {fee.sufficient === 'undetermined' && (
+                      <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-gray-200 bg-gray-100 px-2 py-1 text-xs">
+                        <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
+                        <span>Unable to verify the sufficiency of {fee.amount.token.symbol}</span>
                       </div>
                     )}
                   </div>

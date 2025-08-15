@@ -196,6 +196,8 @@ export type OnChainBaseEvents = {
 
 type FeeDetailType = 'Execution fees' | 'Destination fees' | 'Bridging fees' | 'Swap fees'
 
+export type FeeSufficiency = 'sufficient' | 'insufficient' | 'undetermined'
+
 export interface FeeDetails {
   // The title of the fee - e.g. 'Execution fees'
   title: FeeDetailType
@@ -204,5 +206,6 @@ export interface FeeDetails {
   // The amount to be charged
   amount: AmountInfo
   // Indicates if the user's balance is enough to cover this transfer fee
-  sufficient: boolean
+  // 'undetermined' when a chain lacks dry-run support to validate sufficiency
+  sufficient: FeeSufficiency
 }
