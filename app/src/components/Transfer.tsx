@@ -204,7 +204,8 @@ export default function Transfer() {
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
     transferStatus !== 'Idle' ||
-    disableMaxBtnInPolkadotNetwork
+    disableMaxBtnInPolkadotNetwork ||
+    maxButtonLoading
 
   const shouldDisplayTxSummary = sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 

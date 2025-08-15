@@ -64,9 +64,12 @@ export const Button = <T extends React.ElementType = 'button'>({
   onClick,
   loading,
   label,
-  icon = <LoadingIcon className="animate-spin" size={size} />,
+  icon,
   ...rest
 }: ButtonProps<T>) => {
+  // Default icon if not provided
+  const defaultIcon = icon || <LoadingIcon className="animate-spin" size={size} />
+
   const classNames = cn(
     'relative flex items-center justify-center rounded-lg outline-none hover:opacity-80 subpixel-antialiased z-0',
     (as === 'button' || as === 'a') && 'cursor-pointer',
@@ -83,7 +86,7 @@ export const Button = <T extends React.ElementType = 'button'>({
     <Component type={type} tabIndex={0} className={classNames} onClick={onClick} disabled={disabled} {...rest}>
       {loading && (
         <div className="flex items-center">
-          {icon && <span className={label ? 'mr-3' : ''}>{icon}</span>}
+          {defaultIcon && <span className={cn(label && 'mr-3')}>{defaultIcon}</span>}
           {!!label && <span>{label}</span>}
         </div>
       )}

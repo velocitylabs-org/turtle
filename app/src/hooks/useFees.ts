@@ -237,7 +237,7 @@ export default function useFees(params: UseFeesParams) {
             feeList.push(execution)
           }
 
-          if ('bridging' in snowbridgeFees) {
+          if ('bridging' in snowbridgeFees && snowbridgeFees.bridging) {
             const bridgingAmount = snowbridgeFees.bridging.amount ?? 0n
             const bridging: FeeDetails = {
               title: 'Bridging fees',
