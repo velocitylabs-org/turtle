@@ -33,6 +33,7 @@
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "daisyui": "^4.10.2",
     "husky": "^8.0.0",
+    "null-loader": "^4.0.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",

@@ -7,10 +7,6 @@ import React from 'react'
 
 const Sheet = SheetPrimitive.Root
 
-const _SheetTrigger = SheetPrimitive.Trigger
-
-const _SheetClose = SheetPrimitive.Close
-
 const SheetPortal = SheetPrimitive.Portal
 
 const SheetOverlay = React.forwardRef<
