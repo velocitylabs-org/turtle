@@ -76,6 +76,7 @@ const useTransferForm = () => {
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
+  const [maxButtonLoading, setMaxButtonLoading] = useState<boolean>(false)
 
   const {
     balance: balanceData,
@@ -235,44 +236,59 @@ const useTransferForm = () => {
       balanceData === undefined ||
       balanceData === null ||
       !sourceChain
-    )
+    ) {
+      setMaxButtonLoading(false)
       return
+    }
 
-    if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
-      if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) return
+    setMaxButtonLoading(true)
 
-      const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
+    try {
+      if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
+        if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) {
+          setMaxButtonLoading(false)
+          return
+        }
 
-      const params = {
-        sourceChain,
-        destinationChain,
-        sourceToken: sourceTokenAmount.token,
-        recipient,
-        sender: sourceWallet.sender,
-        sourceAmount: balanceData.value,
+        const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
+        const params = {
+          sourceChain,
+          destinationChain,
+          sourceToken: sourceTokenAmount.token,
+          recipient,
+          sender: sourceWallet.sender,
+          sourceAmount: balanceData.value,
+        }
+        const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
+        if (!transferableAmount) {
+          setMaxButtonLoading(false)
+          return
+        }
+
+        setValue(
+          'sourceTokenAmount',
+          {
+            token: sourceTokenAmount.token,
+            // Parse as number, then format to our display standard, then parse again as number
+            amount: Number(formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer')),
+          },
+          { shouldValidate: true },
+        )
+      } else {
+        setValue(
+          'sourceTokenAmount',
+          {
+            token: sourceTokenAmount.token,
+            // Parse as number, then format to our display standard, then parse again as number
+            amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
+          },
+          { shouldValidate: true },
+        )
       }
-      const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
-      if (!transferableAmount) return
-
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer')),
-        },
-        { shouldValidate: true },
-      )
-    } else {
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
-        },
-        { shouldValidate: true },
-      )
+    } catch (error) {
+      console.error('Error setting max amount:', error)
+    } finally {
+      setMaxButtonLoading(false)
     }
   }, [
     sourceWallet?.isConnected,
@@ -429,6 +445,7 @@ const useTransferForm = () => {
     balanceData,
     fetchBalance,
     isLoadingOutputAmount,
+    maxButtonLoading,
   }
 }
 

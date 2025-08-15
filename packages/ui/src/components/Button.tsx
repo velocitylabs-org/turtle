@@ -64,7 +64,7 @@ export const Button = <T extends React.ElementType = 'button'>({
   onClick,
   loading,
   label,
-  icon = <LoadingIcon className="mr-3 animate-spin" size={size} />,
+  icon = <LoadingIcon className="animate-spin" size={size} />,
   ...rest
 }: ButtonProps<T>) => {
   const classNames = cn(
@@ -83,8 +83,8 @@ export const Button = <T extends React.ElementType = 'button'>({
     <Component type={type} tabIndex={0} className={classNames} onClick={onClick} disabled={disabled} {...rest}>
       {loading && (
         <div className="flex items-center">
-          {icon && <span className="mr-3">{icon}</span>}
-          <span className="mr-3">{label}</span>
+          {icon && <span className={label ? 'mr-3' : ''}>{icon}</span>}
+          {!!label && <span>{label}</span>}
         </div>
       )}
 

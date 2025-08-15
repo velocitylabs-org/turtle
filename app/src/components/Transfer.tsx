@@ -114,6 +114,7 @@ export default function Transfer() {
     balanceData,
     fetchBalance,
     isLoadingOutputAmount,
+    maxButtonLoading,
   } = useTransferForm()
 
   const {
@@ -290,12 +291,13 @@ export default function Transfer() {
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
                           <Button
-                            label="Max"
+                            label={maxButtonLoading ? '' : 'Max'}
                             size="sm"
                             variant="outline"
                             className="min-w-[40px]"
                             onClick={handleMaxButtonClick}
                             disabled={shouldDisableMaxButton}
+                            loading={maxButtonLoading}
                           />
                         ),
                         tooltipContent: 'Max transferrable balance',

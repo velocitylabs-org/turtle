@@ -110,7 +110,7 @@ export default function TxSummary({
                       <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
                         <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
                         <span>
-                          We need some of that {fee.amount.token.symbol} to pay fees{' '}
+                          {fee.amount.token.symbol} needed for fees{' '}
                           <span
                             role="button"
                             onClick={() => fixTransferableBalance(fee)}
