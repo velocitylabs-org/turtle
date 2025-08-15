@@ -18,6 +18,7 @@ import useTransfer from '@/hooks/useTransfer'
 import useWallet from '@/hooks/useWallet'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
+import type { FeeDetails } from '@/models/transfer'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
@@ -75,16 +76,27 @@ const useTransferForm = () => {
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
+
+  const {
+    balance: balanceData,
+    loading: loadingBalance,
+    fetchBalance,
+  } = useBalance({
+    chain: sourceChain,
+    token: sourceTokenAmount?.token ?? undefined,
+    address: sourceWallet?.sender?.address,
+  })
+
   const feesParams = useMemo(
     () => ({
       sourceChain,
       destinationChain,
-      // biome-ignore lint/suspicious/noDoubleEquals: doubleEquals
-      sourceToken: sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
+      sourceToken: !sourceTokenAmountError ? sourceTokenAmount?.token : null,
       destinationToken: destToken,
       sourceTokenAmount: sourceTokenAmount?.amount,
       sender: sourceWallet?.sender,
       recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
+      sourceTokenBalance: balanceData,
     }),
     [
       sourceChain,
@@ -96,27 +108,11 @@ const useTransferForm = () => {
       manualRecipient,
       destinationWallet,
       destToken,
+      balanceData,
     ],
   )
 
-  const {
-    loading: loadingFees,
-    fees,
-    bridgingFee,
-    canPayFees,
-    canPayAdditionalFees,
-    refetch: refetchFees,
-  } = useFees(feesParams)
-
-  const {
-    balance: balanceData,
-    loading: loadingBalance,
-    fetchBalance,
-  } = useBalance({
-    chain: sourceChain,
-    token: sourceTokenAmount?.token ?? undefined,
-    address: sourceWallet?.sender?.address,
-  })
+  const { loading: loadingFees, fees, isBalanceSufficientForFees, refetch: refetchFees } = useFees(feesParams)
 
   const { outputAmount, isLoading: isLoadingOutputAmount } = useOutputAmount({
     sourceChain,
@@ -324,7 +320,6 @@ const useTransferForm = () => {
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
         fees,
-        bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success
           reset()
@@ -340,7 +335,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   // validate recipient address
@@ -362,66 +357,36 @@ const useTransferForm = () => {
     else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
 
-  // Unlike canPayFees and canPayAdditionalFees, which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
-  // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
-  const exceedsTransferableBalance = useMemo(() => {
-    const hasFees = Boolean(fees?.token?.id && fees?.amount)
-    const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
-    const hasBalance = Boolean(balanceData?.formatted)
-    const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
-    if (!hasTokenAmount || !hasBalance) return false
+  // When there are insufficient funds for the sum of fees and the transfer amount, adjust the source token amount to allocate enough for fees
+  const fixTransferableBalance = useCallback(
+    (fee: FeeDetails) => {
+      if (!isBalanceSufficientForFees && fee && sourceTokenAmount?.token?.id === fee.amount.token.id) {
+        // Sum all fees with the same token as the parameter fee
+        const totalFeesAmount =
+          fees?.reduce((sum, f) => {
+            if (f.amount.token?.id === fee.amount.token.id) {
+              return sum + toHuman(f.amount.amount, f.amount.token)
+            }
+            return sum
+          }, 0) ?? 0
 
-    const transferToken = sourceTokenAmount!.token!.id
-    const transferAmount = sourceTokenAmount!.amount!
-    const balanceAmount = Number(balanceData!.formatted)
-    let totalFeesAmount = 0
+        const balanceAmount = Number(balanceData!.formatted)
+        let newAmount = balanceAmount - totalFeesAmount
+        if (newAmount < 0) newAmount = 0 // Prevent negative values
 
-    // We have regular fees in the same token as the transfer
-    if (hasFees && fees!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(fees!.amount, fees!.token)
-    }
-    // We have bridging fees in the same token as the transfer, This applies whether we have regular fees
-    if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
-    }
-    // If we have no fees at all, there's no risk of exceeding transferable balance
-    if (totalFeesAmount === 0) return false
-
-    // Check if the transfer amount plus all applicable fees exceeds the available balance
-    return transferAmount + totalFeesAmount > balanceAmount
-  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
-
-  const applyTransferableBalance = useCallback(() => {
-    if (exceedsTransferableBalance && sourceTokenAmount?.token) {
-      const transferToken = sourceTokenAmount.token.id
-      const hasFees = Boolean(fees?.token?.id && fees?.amount)
-      const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
-      let totalFeesAmount = 0
-
-      // We have regular fees in the same token as the transfer
-      if (hasFees && fees!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(fees!.amount, fees!.token)
+        setValue(
+          'sourceTokenAmount',
+          {
+            token: sourceTokenAmount.token,
+            // Parse as a number, then format to our display standard, then parse again as a number
+            amount: Number(formatAmount(newAmount, 'Longer')),
+          },
+          { shouldValidate: true },
+        )
       }
-      // We have bridging fees in the same token as the transfer
-      if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
-      }
-
-      const balanceAmount = Number(balanceData!.formatted)
-      let newAmount = balanceAmount - totalFeesAmount
-      if (newAmount < 0) newAmount = 0 // Prevent negative values
-
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(newAmount, 'Longer')),
-        },
-        { shouldValidate: true },
-      )
-    }
-  }, [exceedsTransferableBalance, sourceTokenAmount?.token, bridgingFee, fees, balanceData, setValue])
+    },
+    [isBalanceSufficientForFees, sourceTokenAmount?.token, fees, balanceData, setValue],
+  )
 
   // reset token amount
   useEffect(() => {
@@ -445,16 +410,16 @@ const useTransferForm = () => {
     sourceChain,
     destinationChain,
     sourceTokenAmount,
+    sourceToken,
     destinationTokenAmount,
     manualRecipient,
     sourceWallet,
     destinationWallet,
     fees,
-    bridgingFee,
+    isBalanceSufficientForFees,
+    fixTransferableBalance,
     refetchFees,
     loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
     transferStatus,
     sourceTokenAmountError,
     manualRecipientError,
@@ -464,8 +429,6 @@ const useTransferForm = () => {
     balanceData,
     fetchBalance,
     isLoadingOutputAmount,
-    exceedsTransferableBalance,
-    applyTransferableBalance,
   }
 }
 
