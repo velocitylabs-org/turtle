@@ -1,6 +1,6 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { cn } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from 'lucide-react'
+import { cn } from '../helpers'
 
 function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn('animate-pulse rounded-md bg-turtle-level2', className)} {...props} />
