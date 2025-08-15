@@ -375,8 +375,13 @@ const useTransferForm = () => {
 
   // When there are insufficient funds for the sum of fees and the transfer amount, adjust the source token amount to allocate enough for fees
   const fixTransferableBalance = useCallback(
-    (fee: FeeDetails) => {
+    async (fee: FeeDetails) => {
       if (fee && sourceTokenAmount?.token?.id === fee.amount.token.id) {
+        if (sourceTokenAmount.token.origin.type === 'Polkadot') {
+          // For Polkadot network, we use ParaSpell's getTransferableAmount() which handles max transferable amount calculation including fees
+          await handleMaxButtonClick()
+          return
+        }
         // Sum all fees with the same token as the parameter fee
         const totalFeesAmount =
           fees?.reduce((sum, f) => {

@@ -302,7 +302,7 @@ export default function Transfer() {
                             loading={maxButtonLoading}
                           />
                         ),
-                        tooltipContent: 'Max transferrable balance',
+                        tooltipContent: 'Max transferable balance',
                       }}
                       walletProps={{
                         address: sourceWallet?.sender?.address,
