@@ -1,7 +1,7 @@
 import type { JSX } from 'react'
 import { X } from './twitter'
 
-export enum SocialIcon {
+enum SocialIcon {
   X = 'x',
   DISCORD = 'discord',
   TELEGRAM = 'telegram',

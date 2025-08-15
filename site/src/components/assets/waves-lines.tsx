@@ -2,9 +2,9 @@ import type { ComponentPropsWithoutRef } from 'react'
 
 type SvgProps = ComponentPropsWithoutRef<'svg'>
 
-export type WaveLinesName = keyof typeof Waves
+type WaveLinesName = keyof typeof Waves
 
-export type WaveLinesProps = {
+type WaveLinesProps = {
   name: WaveLinesName
   withStroke?: boolean
 } & SvgProps

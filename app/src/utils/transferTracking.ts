@@ -81,9 +81,7 @@ export function getTransferStatus(transferResult: TxTrackingResult) {
  * @param transferResult - The transfer tracking response from either the Subscan API (for Parachain to AH transfers) or the Snowbridge API (for AH to Ethereum transfers).
  * @returns - the transfer status
  */
-export function getTransferStatusFromParachain(
-  transferResult: FromAhToEthTrackingResult | FromParachainTrackingResult,
-) {
+function getTransferStatusFromParachain(transferResult: FromAhToEthTrackingResult | FromParachainTrackingResult) {
   /** Bridge Hub Channel Message Delivered */
   const isBHChannelMsgDelivered =
     'bridgeHubChannelDelivered' in transferResult && transferResult.bridgeHubChannelDelivered?.success
@@ -119,7 +117,7 @@ export function getTransferStatusFromParachain(
  * @param txTrackingResult - The transfer tracking response for an Eth to Parachain/AH transfer from the Snowbridge API.
  * @returns - the transfer status
  */
-export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingResult) => {
+const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingResult) => {
   const { status, submitted } = txTrackingResult
 
   switch (status) {

@@ -13,7 +13,7 @@ import { type Chain, EthereumTokens, type Network, REGISTRY, type Token } from '
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
-export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   let tokenSymbol: string | undefined
@@ -28,17 +28,6 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
   if (!tokenSymbol) captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`))
 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
-}
-
-export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
-  switch (network) {
-    case 'Polkadot':
-      return 'polkadot'
-    case 'Kusama':
-      return 'kusama'
-    default:
-      throw new Error('Cannot find relay node. Unsupported environment')
-  }
 }
 
 /**

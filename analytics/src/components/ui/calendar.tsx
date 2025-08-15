@@ -15,7 +15,7 @@ import {
 import { DayPicker, type DayPickerProps, labelNext, labelPrevious, useDayPicker } from 'react-day-picker'
 import { Button, buttonVariants } from '@/components/ui/button'
 
-export type CalendarProps = DayPickerProps & {
+type CalendarProps = DayPickerProps & {
   yearRange?: number
   showYearSwitcher?: boolean
   monthsClassName?: string

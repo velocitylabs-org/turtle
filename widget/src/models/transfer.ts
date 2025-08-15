@@ -3,7 +3,7 @@ import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import type { Direction } from '@/utils/transfer'
 import type { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
 
-export interface RawTransfer {
+interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
   id: string
   sourceChain: Chain
@@ -54,7 +54,7 @@ export interface StoredTransferV0 extends RawTransferV0 {
   finalizedAt?: Date
 }
 
-export interface RawTransferV0 {
+interface RawTransferV0 {
   /** Substrate extrinsic hash or Ethereum transaction hash */
   id: string
   sourceChain: Chain
@@ -135,8 +135,6 @@ export type CompletedTransferV0 = {
   explorerLink?: string
   errors?: string[]
 }
-
-export type TransfersByDate = Record<string, CompletedTransfer[]>
 
 export type TxTrackingResult =
   // Snowbridge API | Snowbridge API | Subscan API

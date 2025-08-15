@@ -4,7 +4,7 @@ import { Direction } from '@/services/transfer'
 import { chainSchema, tokenSchema } from './schemas'
 import type { OngoingTransferWithDirection } from './transfer'
 
-export const transferSchema: z.ZodType<OngoingTransferWithDirection> = z.object({
+const transferSchema: z.ZodType<OngoingTransferWithDirection> = z.object({
   id: z.string(),
   sourceChain: chainSchema,
   destChain: chainSchema,

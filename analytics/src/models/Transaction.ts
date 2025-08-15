@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 export type TxStatus = 'succeeded' | 'failed' | 'undefined' | 'ongoing'
 export const txStatusOptions = ['succeeded', 'failed', 'undefined', 'ongoing'] as const satisfies readonly TxStatus[]
 
-export interface TransactionModel {
+interface TransactionModel {
   txHashId: string
 
   sourceTokenId: string
@@ -57,7 +57,7 @@ export interface TransactionModel {
   oldFormat: boolean // For transactions migrated from an old analytics source with an old format
 }
 
-export interface TransactionMongooseModel extends mongoose.Document, TransactionModel {}
+interface TransactionMongooseModel extends mongoose.Document, TransactionModel {}
 
 const transactionSchema = new mongoose.Schema<TransactionMongooseModel>(
   {

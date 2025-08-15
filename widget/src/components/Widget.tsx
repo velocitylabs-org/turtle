@@ -10,8 +10,8 @@ import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
 import { generateWidgetTheme, type WidgetTheme } from '@/utils/theme'
 import HistoryLoaderSkeleton from './history/HistoryLoaderSkeleton'
 
-export type TransferTab = 'New' | 'History'
-export type TransferTabOptions = TransferTab
+type TransferTab = 'New' | 'History'
+type TransferTabOptions = TransferTab
 
 const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigRegistryType }) => {
   useMemo(() => generateWidgetTheme(theme), [theme])

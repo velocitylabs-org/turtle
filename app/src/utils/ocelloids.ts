@@ -22,7 +22,7 @@ enum xcmNotificationType {
   Bridge = 'xcm.bridge',
 }
 
-export const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
+const OCELLOIDS_API_KEY = process.env.NEXT_PUBLIC_OC_API_KEY_READ_WRITE || ''
 
 // Helper to filter the subscribable transfers only
 // It prevents opening socket for local swaps
@@ -31,7 +31,7 @@ export const getSubscribableTransfers = (transfers: StoredTransfer[]) =>
     t => resolveDirection(t.sourceChain, t.destChain) === Direction.WithinPolkadot && !isSameChainSwap(t),
   )
 
-export const initOcelloidsClient = (API_KEY: string) => {
+const initOcelloidsClient = (API_KEY: string) => {
   if (!API_KEY) throw new Error('OCELLOIDS_API_KEY is undefined')
   return new OcelloidsClient({
     apiKey: API_KEY,

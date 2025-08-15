@@ -58,7 +58,7 @@ export async function getSnowBridgeContext(network: Network = 'Polkadot'): Promi
  * @param network - The network in which the app is operating
  * @returns the corresponding network value that Snowbridge/api understands
  */
-export function toSnowbridgeNetwork(network: Network): string | undefined {
+function toSnowbridgeNetwork(network: Network): string | undefined {
   switch (network) {
     case 'Polkadot':
     case 'Ethereum':
@@ -77,7 +77,7 @@ export function toSnowbridgeNetwork(network: Network): string | undefined {
  * @param feeTokenUSDValue
  * @returns An object containing the tx estimate gas fee in the fee token and its USD value.
  */
-export const estimateTransactionFees = async (
+const estimateTransactionFees = async (
   transfer: toPolkadotV2.Transfer,
   context: Context,
   feeToken: Token,

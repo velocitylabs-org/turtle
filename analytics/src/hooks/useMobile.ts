@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 const MOBILE_BREAKPOINT = 768
 
-export const isMobileDevice = (userAgent: string): boolean => {
+const isMobileDevice = (userAgent: string): boolean => {
   return /android.+mobile|ip(hone|[oa]d)/i.test(userAgent)
 }
 
