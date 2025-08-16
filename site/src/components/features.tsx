@@ -13,7 +13,7 @@ export default function Features() {
       icon: turtle,
     },
     {
-      title: 'Trans&shy;parency all the way',
+      title: 'Trans\u00ADparency all the way', // u00AD is a soft hyphen for responsive word breaking
       description: `Keep an eye on your assets at every step of the way. The days of anxiously waiting for our funds to arrive are finally behind us!`,
       icon: chart,
     },
