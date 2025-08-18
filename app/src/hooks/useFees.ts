@@ -1,6 +1,7 @@
 import { captureException } from '@sentry/nextjs'
 import {
   type Balance,
+  BridgeHub,
   type Chain,
   EthereumTokens,
   MainnetRegistry,
@@ -18,6 +19,7 @@ import { Direction } from '@/services/transfer'
 import { getParaSpellNode } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
+import { removeWhitespace } from '@/utils/strings'
 import { safeConvertAmount, toHuman } from '@/utils/transfer'
 import useBalance from './useBalance'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -107,7 +109,7 @@ export default function useFees(params: UseFeesParams) {
           // - Present: reliable sufficiency indicator
           // - Missing: defaults to true, but user proceeds at own risk
           const origin: FeeDetails[] = []
-          if (xcmFee.origin && xcmFee.origin.feeType !== 'noFeeRequired') {
+          if (hasParaspellFee(xcmFee.origin)) {
             const originToken = getTokenFromSymbol(xcmFee.origin.currency)
             origin.push({
               title: 'Execution fees',
@@ -127,7 +129,7 @@ export default function useFees(params: UseFeesParams) {
           }
 
           const destination: FeeDetails[] = []
-          if (xcmFee.destination && xcmFee.destination.feeType !== 'noFeeRequired') {
+          if (hasParaspellFee(xcmFee.destination)) {
             const destinationToken = getTokenFromSymbol(xcmFee.destination.currency)
             destination.push({
               title: 'Destination fees',
@@ -150,7 +152,7 @@ export default function useFees(params: UseFeesParams) {
           const intermediate: FeeDetails[] = []
           if (xcmFee.hops.length > 0) {
             for (const hop of xcmFee.hops) {
-              if (hop.result.feeType !== 'noFeeRequired') {
+              if (hasParaspellFee(hop.result)) {
                 const hopToken = getTokenFromSymbol(hop.result.currency)
                 const hopFeeDetailItem: FeeDetails = {
                   title: isBridgeToEthereum ? 'Bridging fees' : 'Swap fees',
@@ -334,20 +336,22 @@ function getTokenFromSymbol(symbol: string): Token {
 function mapParaspellChainToRegistry(chainName: string): Chain {
   const map: Record<string, string> = {
     AssetHubPolkadot: 'AssetHub',
-    BridgeHubPolkadot: 'Polkadot',
+    BridgeHubPolkadot: 'BridgeHub',
     BifrostPolkadot: 'Bifrost',
     AssetHubKusama: 'KusamaAssetHub',
   }
   const name = map[chainName] ?? chainName
-  const chain = MainnetRegistry.chains.find(c => removeWhitespace(c.name) === removeWhitespace(name))
+  // BridgeHub is not part of the main registry, so we need to add it manually
+  const chain = [...MainnetRegistry.chains, BridgeHub].find(c => removeWhitespace(c.name) === removeWhitespace(name))
   if (!chain) {
     throw new Error(`Chain not found for name: ${chainName}`)
   }
   return chain
 }
 
-function removeWhitespace(str: string) {
-  return str.replace(/\s+/g, '')
+// Checks if a Paraspell fee item has actual fees to be paid
+function hasParaspellFee(feeItem: { feeType: string; fee: bigint } | undefined): boolean {
+  return feeItem !== undefined && feeItem.feeType !== 'noFeeRequired' && feeItem.fee !== 0n
 }
 
 function checkBalanceSufficiency(
