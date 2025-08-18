@@ -28,7 +28,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
   return (
     <div
       id="ongoing-txs"
-      className="z-20 flex max-h-[70vh] max-w-[90vw] flex-col gap-1 overflow-auto rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+      className="flex max-h-[60vh] max-w-[90vw] flex-col gap-1 overflow-auto rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
     >
       {ongoingTransfers &&
         ongoingTransfers.length > 0 &&

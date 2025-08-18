@@ -9,8 +9,8 @@ export const AppBody = ({
   ongoingTransfers,
   completedTransfers,
   isHistoryTabSelected,
-  newTransferInit,
-  setNewTransferInit,
+  selectedTab,
+  setSelectedTab,
 }: {
   children: React.ReactNode
   // TODO: replace with Transfer Type when moving the Types to turtle-core
@@ -20,19 +20,19 @@ export const AppBody = ({
   // biome-ignore lint/suspicious/noExplicitAny: any
   completedTransfers?: any[]
   isHistoryTabSelected: boolean
-  newTransferInit: string
-  setNewTransferInit: Dispatch<SetStateAction<TransferTab>>
+  selectedTab: string
+  setSelectedTab: Dispatch<SetStateAction<TransferTab>>
 }) => {
   const onClick = () => {
-    setNewTransferInit(newTransferInit === 'New' ? 'History' : 'New')
+    setSelectedTab(selectedTab === 'New' ? 'History' : 'New')
   }
 
   return (
     <div className="flex flex-col">
       <div className="relative">
         {(ongoingTransfers.length > 0 || completedTransfers?.length > 0) && (
-          <div className="absolute -top-5 right-8 z-30 rounded-lg bg-turtle-background" onClick={onClick}>
-            <div className="animation-bounce relative m-1 cursor-pointer rounded-lg border border-turtle-foreground p-3">
+          <div className="absolute -top-5 right-10 z-30 rounded-lg" onClick={onClick}>
+            <div className="animation-bounce relative cursor-pointer rounded-lg border border-turtle-foreground p-3 bg-turtle-background">
               {ongoingTransfers.length > 0 && !isHistoryTabSelected && (
                 <div className="text-foreground absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-turtle-secondary bg-turtle-background">
                   <span className="text-xs">{ongoingTransfers.length}</span>

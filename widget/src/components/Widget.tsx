@@ -20,8 +20,8 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const { completedTransfers } = useCompletedTransfers()
 
-  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
-  const isHistoryTabSelected = newTransferInit === 'History'
+  const [selectedTab, setSelectedTab] = useState<TransferTabOptions>('New')
+  const isHistoryTabSelected = selectedTab === 'History'
 
   const TransfersHistory = lazy(() => import('@/components/history/TransfersHistory'))
 
@@ -36,8 +36,8 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
                   ongoingTransfers={ongoingTransfers}
                   completedTransfers={completedTransfers}
                   isHistoryTabSelected={isHistoryTabSelected}
-                  newTransferInit={newTransferInit}
-                  setNewTransferInit={setNewTransferInit}
+                  selectedTab={selectedTab}
+                  setSelectedTab={setSelectedTab}
                 >
                   {!isHistoryTabSelected ? (
                     <TransferForm />

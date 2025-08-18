@@ -20,8 +20,8 @@ export default function AppHome() {
   const { completedTransfers } = useCompletedTransfers()
 
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
-  const [newTransferInit, setNewTransferInit] = useState<TransferTabOptions>('New')
-  const isHistoryTabSelected = newTransferInit === 'History'
+  const [selectedTab, setSelectedTab] = useState<TransferTabOptions>('New')
+  const isHistoryTabSelected = selectedTab === 'History'
 
   return (
     <TabSwitcherWrapper
@@ -30,8 +30,8 @@ export default function AppHome() {
           ongoingTransfers={ongoingTransfers}
           completedTransfers={completedTransfers}
           isHistoryTabSelected={isHistoryTabSelected}
-          newTransferInit={newTransferInit}
-          setNewTransferInit={setNewTransferInit}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
         >
           {!isHistoryTabSelected ? (
             <Transfer />
