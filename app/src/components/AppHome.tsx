@@ -10,6 +10,7 @@ import { Suspense, useState } from 'react'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
+import OnOffRamp from './OnOffRamp'
 
 const TransactionHistory = dynamic(() => import('./TransactionsHistory'), {
   loading: () => <HistoryLoaderSkeleton length={5} />,
@@ -42,7 +43,7 @@ export default function AppHome() {
           )}
         </AppBody>
       }
-      BuySellComponent={<div>Buy/Sell</div>}
+      BuySellComponent={<OnOffRamp />}
     />
   )
 }
