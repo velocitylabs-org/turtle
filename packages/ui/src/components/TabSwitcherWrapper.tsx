@@ -22,7 +22,7 @@ export const TabSwitcherWrapper = ({ TransferComponent, BuySellComponent }: TabS
     activeTab: 'Transfer' | 'BuySell'
   }) => {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <button className={cn('text-xl', selectedTab === activeTab && 'font-bold')} onClick={onClick}>
           <Body>{label}</Body>
         </button>
