@@ -60,15 +60,13 @@ function SkeletonCard() {
 
 export const HistoryLoaderSkeleton = ({ length }: { length: number }) => {
   return (
-    <div className="border border-t-0 border-turtle-foreground max-h-[60vh] overflow-y-auto flex flex-col gap-4 rounded-b-3xl bg-white p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
+    <div className="border border-t-0 border-turtle-foreground h-[90vh] sm:h-[525px] overflow-y-auto flex flex-col gap-4 rounded-b-3xl bg-white p-4 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]">
       {Array.from({ length }, (_, i) => i + 1).map(idx => (
-        <div key={idx} className="z-30">
-          <div className="w-full space-y-4">
-            <Skeleton className="h-5 w-1/3" />
-            {Array.from({ length: 2 }, (_, i) => i + 1).map(idx => (
-              <SkeletonCard key={idx} />
-            ))}
-          </div>
+        <div key={idx} className="w-full space-y-4">
+          <Skeleton className="h-5 w-1/3" />
+          {Array.from({ length: 2 }, (_, i) => i + 1).map(idx => (
+            <SkeletonCard key={idx} />
+          ))}
         </div>
       ))}
     </div>

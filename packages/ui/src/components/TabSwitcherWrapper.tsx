@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Body } from '@/components/typography'
 import { cn } from '../helpers'
 
 type TabSwitcherWrapperProps = {
@@ -23,7 +24,7 @@ export const TabSwitcherWrapper = ({ TransferComponent, BuySellComponent }: TabS
     return (
       <div className="flex flex-col gap-4">
         <button className={cn('text-xl', selectedTab === activeTab && 'font-bold')} onClick={onClick}>
-          {label}
+          <Body>{label}</Body>
         </button>
         {activeTab === selectedTab && <div className="h-0.5 w-full bg-turtle-primary" />}
       </div>

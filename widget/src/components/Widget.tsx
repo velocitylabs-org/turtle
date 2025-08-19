@@ -42,13 +42,7 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
                   {!isHistoryTabSelected ? (
                     <TransferForm />
                   ) : (
-                    <Suspense
-                      fallback={
-                        <HistoryLoaderSkeleton
-                          length={ongoingTransfers.length + (completedTransfers ? completedTransfers.length : 0)}
-                        />
-                      }
-                    >
+                    <Suspense fallback={<HistoryLoaderSkeleton length={5} />}>
                       <TransfersHistory
                         ongoingTransfers={ongoingTransfers}
                         completedTransfers={completedTransfers ?? []}

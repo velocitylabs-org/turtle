@@ -12,7 +12,7 @@ import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 const TransactionHistory = dynamic(() => import('./TransactionsHistory'), {
-  loading: () => <HistoryLoaderSkeleton length={10} />,
+  loading: () => <HistoryLoaderSkeleton length={5} />,
   ssr: false,
 })
 
@@ -36,13 +36,7 @@ export default function AppHome() {
           {!isHistoryTabSelected ? (
             <Transfer />
           ) : (
-            <Suspense
-              fallback={
-                <HistoryLoaderSkeleton
-                  length={ongoingTransfers.length + (completedTransfers ? completedTransfers.length : 0)}
-                />
-              }
-            >
+            <Suspense fallback={<HistoryLoaderSkeleton length={5} />}>
               <TransactionHistory transfers={completedTransfers} />
             </Suspense>
           )}
