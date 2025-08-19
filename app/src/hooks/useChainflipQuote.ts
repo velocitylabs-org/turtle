@@ -12,7 +12,14 @@ export interface ChainflipQuoteParams {
 }
 
 export const quoteQueryKey = (p: ChainflipQuoteParams) =>
-  ['chainflip-quote', p.sourceChain, p.destinationChain, p.sourceToken, p.destinationToken, p.amount] as const
+  [
+    'chainflip-quote',
+    p.sourceChain?.uid,
+    p.destinationChain?.uid,
+    p.sourceToken?.id,
+    p.destinationToken?.id,
+    p.amount?.toString(),
+  ] as const
 
 export const canFetchQuote = (p: ChainflipQuoteParams) =>
   !!p.sourceChain &&
