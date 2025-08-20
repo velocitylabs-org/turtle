@@ -44,6 +44,7 @@ const initValues: FormInputs = {
 const useTransferForm = () => {
   const { transfer, transferStatus } = useTransfer()
   const { addNotification } = useNotification()
+  const [transferableAmount, setTransferableAmount] = useState<bigint | null>(null)
 
   const {
     control,
@@ -91,12 +92,14 @@ const useTransferForm = () => {
     () => ({
       sourceChain,
       destinationChain,
-      sourceToken: !sourceTokenAmountError ? sourceTokenAmount?.token : null,
+      sourceToken: sourceTokenAmount?.token,
       destinationToken: destToken,
       sourceTokenAmount: sourceTokenAmount?.amount,
       sender: sourceWallet?.sender,
       recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
       sourceTokenBalance: balanceData,
+      sourceTokenAmountError: sourceTokenAmountError,
+      transferableAmount,
     }),
     [
       sourceChain,
@@ -109,6 +112,7 @@ const useTransferForm = () => {
       destinationWallet,
       destToken,
       balanceData,
+      transferableAmount,
     ],
   )
 
@@ -193,6 +197,7 @@ const useTransferForm = () => {
       setValue('destinationChain', null)
       setValue('manualRecipient', { enabled: false, address: '' })
       setValue('sourceTokenAmount', { token: null, amount: null })
+      setTransferableAmount(null)
     },
     [setValue, sourceChain, destinationChain, sourceTokenAmount],
   )
@@ -246,6 +251,7 @@ const useTransferForm = () => {
       if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
         if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) {
           setMaxButtonLoading(false)
+          setTransferableAmount(null)
           return
         }
 
@@ -262,6 +268,8 @@ const useTransferForm = () => {
         if (!transferableAmount) {
           throw new Error('Failed to get transferable amount')
         }
+
+        setTransferableAmount(transferableAmount)
 
         setValue(
           'sourceTokenAmount',

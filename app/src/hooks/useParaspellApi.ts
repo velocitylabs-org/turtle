@@ -427,7 +427,9 @@ const useParaspellApi = () => {
     setStatus('Idle')
     console.log('Transfer error:', e)
     const cancelledByUser = txWasCancelled(sender, e)
-    const message = cancelledByUser ? 'Transfer rejected' : 'Failed to submit the transfer'
+    const message = cancelledByUser
+      ? 'Transfer rejected'
+      : 'Failed to submit the transfer. Make sure you have enough DOT'
 
     if (txId) removeOngoing(txId)
     if (!cancelledByUser) captureException(e)

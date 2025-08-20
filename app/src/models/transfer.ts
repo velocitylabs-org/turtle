@@ -194,7 +194,7 @@ export type OnChainBaseEvents = {
   isExecuteAttemptCompleted?: boolean
 }
 
-type FeeDetailType = 'Execution fees' | 'Destination fees' | 'Bridging fees' | 'Swap fees'
+type FeeDetailType = 'Execution fees' | 'Delivery fees' | 'Bridging fees' | 'Routing fees' | 'Swap fees'
 
 export type FeeSufficiency = 'sufficient' | 'insufficient' | 'undetermined'
 
