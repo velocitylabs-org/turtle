@@ -57,7 +57,7 @@ const useChainflipApi = () => {
 
       // Get chainflip deposit address
       const depositPayload = await getDepositAddress(chainflipQuote, sender.address, recipient)
-      if (!depositPayload) throw new Error('Failed to generated the deposit address')
+      if (!depositPayload) throw new Error('Failed to generate the deposit address')
       const depositAddress = depositPayload.depositAddress as Address
       const srcTokenContractAddress = sourceToken.address as Address
 
