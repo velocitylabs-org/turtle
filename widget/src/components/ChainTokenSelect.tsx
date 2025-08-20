@@ -260,13 +260,13 @@ const TokenAmountInput = ({
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
           <div
             className={cn('flex items-center gap-1', !disabled && 'cursor-pointer')}
-            data-cy="token-select-trigger"
+            data-testid="token-select-trigger"
             onClick={disabled ? undefined : onTriggerClick}
           >
             {token.value ? (
               <>
                 <TokenLogo token={token.value} sourceChain={token.sourceChainToDetermineOriginBanner} />
-                <span className="ml-1 text-nowrap" data-cy="token-select-symbol">
+                <span className="ml-1 text-nowrap" data-testid="token-select-symbol">
                   {token.value.symbol}
                 </span>
               </>
@@ -281,7 +281,7 @@ const TokenAmountInput = ({
           </div>
           <div className="align-center ml-1 flex flex-col">
             <input
-              data-cy="amount-input"
+              data-testid="amount-input"
               disabled={disabled || amount?.disabled}
               type="number"
               className={cn(
