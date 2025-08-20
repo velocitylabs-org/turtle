@@ -1,13 +1,5 @@
 import { captureException } from '@sentry/nextjs'
-import {
-  type Balance,
-  BridgeHub,
-  type Chain,
-  EthereumTokens,
-  MainnetRegistry,
-  PolkadotTokens,
-  type Token,
-} from '@velocitylabs-org/turtle-registry'
+import { type Balance, type Chain, EthereumTokens, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import useNotification from '@/hooks/useNotification'
 import type { Sender } from '@/hooks/useTransfer'
@@ -16,10 +8,9 @@ import type { FeeDetails } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction } from '@/services/transfer'
-import { getParaSpellNode } from '@/utils/paraspellTransfer'
+import { getParaSpellNode, mapParaspellChainToTurtleRegistry } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
-import { removeWhitespace } from '@/utils/strings'
 import { isSwap, safeConvertAmount, toHuman } from '@/utils/transfer'
 import useBalance from './useBalance'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -170,7 +161,7 @@ export default function useFees(params: UseFeesParams) {
                 const hopToken = getTokenFromSymbol(hop.result.currency)
                 const hopFeeDetailItem: FeeDetails = {
                   title: isBridgeToEthereum ? 'Bridging fees' : isSwapping ? 'Swap fees' : 'Routing fees',
-                  chain: mapParaspellChainToRegistry(hop.chain),
+                  chain: mapParaspellChainToTurtleRegistry(hop.chain),
                   sufficient:
                     hop.result.sufficient === undefined
                       ? 'undetermined'
@@ -404,22 +395,6 @@ function getTokenFromSymbol(symbol: string): Token {
     throw new Error(`Token not found for symbol: ${symbolUpper}`)
   }
   return token as Token
-}
-
-function mapParaspellChainToRegistry(chainName: string): Chain {
-  const map: Record<string, string> = {
-    AssetHubPolkadot: 'AssetHub',
-    BridgeHubPolkadot: 'BridgeHub',
-    BifrostPolkadot: 'Bifrost',
-    AssetHubKusama: 'KusamaAssetHub',
-  }
-  const name = map[chainName] ?? chainName
-  // BridgeHub is not part of the main registry, so we need to add it manually
-  const chain = [...MainnetRegistry.chains, BridgeHub].find(c => removeWhitespace(c.name) === removeWhitespace(name))
-  if (!chain) {
-    throw new Error(`Chain not found for name: ${chainName}`)
-  }
-  return chain
 }
 
 // Checks if a Paraspell fee item has actual fees to be paid
