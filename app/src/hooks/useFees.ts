@@ -118,8 +118,6 @@ export default function useFees(params: UseFeesParams) {
             recipient: recipientAddress,
           })
 
-          const isSwapping = isSwap({ sourceToken, destinationToken })
-
           // NOTE: 'sufficient' may be undefined when chains lack dry-run support, preventing fee/success validation.
           // - Present: reliable sufficiency indicator
           // - Missing: defaults to true, but user proceeds at own risk
@@ -166,6 +164,7 @@ export default function useFees(params: UseFeesParams) {
           const isBridgeToEthereum = destinationChain.network === 'Ethereum'
           const intermediate: FeeDetails[] = []
           if (xcmFee.hops.length > 0) {
+            const isSwapping = isSwap({ sourceToken, destinationToken })
             for (const hop of xcmFee.hops) {
               if (hasParaspellFee(hop.result)) {
                 const hopToken = getTokenFromSymbol(hop.result.currency)
@@ -191,13 +190,14 @@ export default function useFees(params: UseFeesParams) {
 
           const feeList: FeeDetails[] = [...origin, ...intermediate, ...destination]
 
-          // NOTE: if dry run fails, it means that we don't have bridging fees in the fees list so we need to add it manually (this is a way around while paraspell work on improving this)
+          // NOTE: if dry run fails, it means that we don't have bridging fees in the fee list, so we need to add it manually (this is a way around while paraspell work on improving this)
           // The bridging fee when sending to Ethereum is paid in DOT
           if (destinationChain.network === 'Ethereum' && !feeList.find(fee => fee.title === 'Bridging fees')) {
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
             const bridgeFee = await getCachedBridgingFee()
-            const isSufficient = checkBalanceSufficiency(feeList, bridgeFeeToken, sourceTokenAmount, dotBalance)
+            const bridgeFeeInNumber = Number(toHuman(bridgeFee, bridgeFeeToken))
+            const isSufficient = checkBalanceSufficiency(feeList, bridgeFeeToken, bridgeFeeInNumber, dotBalance)
             feeList.push({
               title: 'Bridging fees',
               chain: sourceChain,
@@ -205,7 +205,7 @@ export default function useFees(params: UseFeesParams) {
               amount: {
                 amount: bridgeFee,
                 token: bridgeFeeToken,
-                inDollars: Number(toHuman(bridgeFee, bridgeFeeToken)) * bridgeFeeTokenInDollars,
+                inDollars: bridgeFeeInNumber * bridgeFeeTokenInDollars,
               },
             })
           }
@@ -277,7 +277,7 @@ export default function useFees(params: UseFeesParams) {
           const ethBalanceAmount = ethBalance?.value ?? 0n
 
           if ('execution' in snowbridgeFees && snowbridgeFees.execution) {
-            const executionAmount = (snowbridgeFees.execution.amount ?? 0n) as bigint
+            const executionAmount = BigInt(snowbridgeFees.execution.amount ?? 0n)
             const execution: FeeDetails = {
               title: 'Execution fees',
               chain: sourceChain,
@@ -292,11 +292,20 @@ export default function useFees(params: UseFeesParams) {
           }
 
           if ('bridging' in snowbridgeFees && snowbridgeFees.bridging) {
-            const bridgingAmount = (snowbridgeFees.bridging.amount ?? 0n) as bigint
+            const bridgingAmount = BigInt(snowbridgeFees.bridging.amount ?? 0n)
+
+            // Find execution fees from feeList and check if same token
+            let totalFees = bridgingAmount
+            const executionFee = feeList.find(fee => fee.title === 'Execution fees')
+            if (executionFee?.amount?.token?.id === snowbridgeFees.bridging.token?.id) {
+              const executionAmount = BigInt(executionFee.amount.amount ?? 0n)
+              totalFees = bridgingAmount + executionAmount
+            }
+
             const bridging: FeeDetails = {
               title: 'Bridging fees',
               chain: sourceChain,
-              sufficient: bridgingAmount < ethBalanceAmount ? 'sufficient' : 'insufficient',
+              sufficient: totalFees <= ethBalanceAmount ? 'sufficient' : 'insufficient',
               amount: {
                 amount: snowbridgeFees.bridging.amount,
                 token: snowbridgeFees.bridging.token,
@@ -429,16 +438,16 @@ function checkBalanceSufficiency(
   // Sum all fees that use the same token as the source token
   const totalFeesInSourceToken = feeList.reduce((sum, fee) => {
     if (fee.amount.token?.id === sourceToken.id) {
-      const feeAmount = (fee.amount.amount ?? 0n) as bigint
+      const feeAmount = BigInt(fee.amount.amount ?? 0n)
       return sum + feeAmount
     }
     return sum
   }, 0n)
 
-  const convertedAmount = safeConvertAmount(sourceAmount, sourceToken)
-  if (!convertedAmount) return false
+  const sourceConvertedAmount = safeConvertAmount(sourceAmount, sourceToken)
+  if (!sourceConvertedAmount) return false
 
-  const totalRequired = totalFeesInSourceToken + convertedAmount
+  const totalRequired = totalFeesInSourceToken + sourceConvertedAmount
   return totalRequired <= sourceTokenBalance.value
 }
 
