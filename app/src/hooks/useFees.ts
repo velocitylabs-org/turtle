@@ -197,7 +197,7 @@ export default function useFees(params: UseFeesParams) {
             const bridgeFeeToken = PolkadotTokens.DOT
             const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
             const bridgeFee = await getCachedBridgingFee()
-            const isSufficient = checkBalanceSufficiency(feeList, bridgeFeeToken, Number(sourceTokenAmount), dotBalance)
+            const isSufficient = checkBalanceSufficiency(feeList, bridgeFeeToken, sourceTokenAmount, dotBalance)
             feeList.push({
               title: 'Bridging fees',
               chain: sourceChain,
@@ -277,11 +277,11 @@ export default function useFees(params: UseFeesParams) {
           const ethBalanceAmount = ethBalance?.value ?? 0n
 
           if ('execution' in snowbridgeFees && snowbridgeFees.execution) {
-            const executionAmount = snowbridgeFees.execution.amount ?? 0n
+            const executionAmount = (snowbridgeFees.execution.amount ?? 0n) as bigint
             const execution: FeeDetails = {
               title: 'Execution fees',
               chain: sourceChain,
-              sufficient: BigInt(executionAmount) < BigInt(ethBalanceAmount) ? 'sufficient' : 'insufficient',
+              sufficient: executionAmount < ethBalanceAmount ? 'sufficient' : 'insufficient',
               amount: {
                 amount: snowbridgeFees.execution.amount,
                 token: snowbridgeFees.execution.token,
@@ -292,11 +292,11 @@ export default function useFees(params: UseFeesParams) {
           }
 
           if ('bridging' in snowbridgeFees && snowbridgeFees.bridging) {
-            const bridgingAmount = snowbridgeFees.bridging.amount ?? 0n
+            const bridgingAmount = (snowbridgeFees.bridging.amount ?? 0n) as bigint
             const bridging: FeeDetails = {
               title: 'Bridging fees',
               chain: sourceChain,
-              sufficient: BigInt(bridgingAmount) < BigInt(ethBalanceAmount) ? 'sufficient' : 'insufficient',
+              sufficient: bridgingAmount < ethBalanceAmount ? 'sufficient' : 'insufficient',
               amount: {
                 amount: snowbridgeFees.bridging.amount,
                 token: snowbridgeFees.bridging.token,
@@ -366,13 +366,14 @@ export default function useFees(params: UseFeesParams) {
     fetchFees()
   }, [fetchFees])
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We need fees to be in this array of dependencies
   useEffect(() => {
     if (sourceTokenAmountError) {
       setFees(null)
       setLoading(false)
       setIsBalanceSufficientForFees(true)
     }
-  }, [fees, sourceTokenAmountError]) // We need fees to be in this array of dependencies
+  }, [fees, sourceTokenAmountError])
 
   return { fees, isBalanceSufficientForFees, loading, refetch: fetchFees }
 }
@@ -423,18 +424,22 @@ function checkBalanceSufficiency(
   sourceAmount: number,
   sourceTokenBalance: Balance | undefined,
 ): boolean {
-  if (!sourceTokenBalance) return false
+  if (!sourceTokenBalance || !sourceTokenBalance.value) return false
 
   // Sum all fees that use the same token as the source token
   const totalFeesInSourceToken = feeList.reduce((sum, fee) => {
     if (fee.amount.token?.id === sourceToken.id) {
-      return sum + BigInt(fee.amount.amount ?? 0n)
+      const feeAmount = (fee.amount.amount ?? 0n) as bigint
+      return sum + feeAmount
     }
     return sum
   }, 0n)
 
-  const totalRequired = totalFeesInSourceToken + safeConvertAmount(sourceAmount, sourceToken)!
-  return totalRequired <= BigInt(sourceTokenBalance.value ?? 0n)
+  const convertedAmount = safeConvertAmount(sourceAmount, sourceToken)
+  if (!convertedAmount) return false
+
+  const totalRequired = totalFeesInSourceToken + convertedAmount
+  return totalRequired <= sourceTokenBalance.value
 }
 
 const getCachedBridgingFee = async (): Promise<bigint> => {
