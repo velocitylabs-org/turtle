@@ -8,7 +8,6 @@ const OnOffRamp = () => {
         height="700"
         width="450"
         title="Meld Widget"
-        className="bg-white"
       />
     </div>
   )
