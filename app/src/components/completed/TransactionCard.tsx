@@ -2,7 +2,7 @@ import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
-import { formatHours } from '@/utils/datetime'
+import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
@@ -94,7 +94,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
               transferFailed ? 'text-turtle-error' : 'text-turtle-level5',
             )}
           >
-            {formatHours(tx.date)}
+            {formatOngoingTransferDate(tx.date)}
           </div>
         </div>
         <div className={cn('flex items-center justify-start space-x-4', transferFailed && 'text-turtle-error-dark')}>

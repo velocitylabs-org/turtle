@@ -26,6 +26,7 @@
     "@radix-ui/react-tooltip": "^1.2.4",
     "@velocitylabs-org/turtle-assets": "workspace:*",
     "@velocitylabs-org/turtle-registry": "workspace:*",
+    "@velocitylabs-org/turtle-tailwind-config": "workspace:*",
     "lucide-react": "^0.533.0"
   },
   "devDependencies": {
