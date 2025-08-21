@@ -11,23 +11,23 @@ export interface ChainflipQuoteParams {
   amount?: string | null
 }
 
-export const quoteQueryKey = (p: ChainflipQuoteParams) =>
+export const quoteQueryKey = (params: ChainflipQuoteParams) =>
   [
     'chainflip-quote',
-    p.sourceChain?.uid,
-    p.destinationChain?.uid,
-    p.sourceToken?.id,
-    p.destinationToken?.id,
-    p.amount?.toString(),
+    params.sourceChain?.uid,
+    params.destinationChain?.uid,
+    params.sourceToken?.id,
+    params.destinationToken?.id,
+    params.amount?.toString(),
   ] as const
 
-export const canFetchQuote = (p: ChainflipQuoteParams) =>
-  !!p.sourceChain &&
-  !!p.destinationChain &&
-  !!p.sourceToken &&
-  !!p.destinationToken &&
-  !!p.amount &&
-  isChainflipSwap(p.sourceChain, p.destinationChain, p.sourceToken, p.destinationToken)
+export const canFetchQuote = (params: ChainflipQuoteParams) =>
+  !!params.sourceChain &&
+  !!params.destinationChain &&
+  !!params.sourceToken &&
+  !!params.destinationToken &&
+  !!params.amount &&
+  isChainflipSwap(params.sourceChain, params.destinationChain, params.sourceToken, params.destinationToken)
 
 export async function getQuote(params: ChainflipQuoteParams) {
   if (!canFetchQuote(params)) return null
