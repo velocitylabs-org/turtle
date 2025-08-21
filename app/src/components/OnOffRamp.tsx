@@ -4,8 +4,8 @@ const OnOffRamp = () => {
   return (
     <div className="flex pb-5 w-full max-w-[90vw] flex-col gap-1 rounded-b-3xl border border-t-0 border-turtle-foreground bg-white sm:w-[31.5rem] relative items-center justify-center">
       <iframe
-        src={`https://sb.meldcrypto.com/?theme=lightMode&publicKey=${meldApiKey}`}
-        height="700"
+        src={`https://meldcrypto.com/?theme=lightMode&publicKey=${meldApiKey}`}
+        height="790"
         width="450"
         title="Meld Widget"
       />
