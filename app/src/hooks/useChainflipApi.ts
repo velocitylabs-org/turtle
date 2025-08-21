@@ -106,7 +106,6 @@ const useChainflipApi = () => {
             setStatus,
           )
           if (!txHash) throw new Error('Transaction hash not found - Transfer failed')
-          console.log('depositChannelId', depositPayload.depositChannelId)
 
           const senderAddress = await getSenderAddress(sender)
           const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
