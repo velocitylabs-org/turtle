@@ -51,13 +51,13 @@ const useChainflipApi = () => {
       setStatus('Loading')
       // Get cached quote from store
       let chainflipQuote = getCachedQuote(qClient, queryParams)
-      // Fetch a new quote if not cached quote are found
+      // Fetch a new quote if no cached quote is found
       if (!chainflipQuote) chainflipQuote = await fetchNewQuote(qClient, queryParams)
       if (!chainflipQuote) throw new Error('No Chainflip quote available')
 
       // Get chainflip deposit address
       const depositPayload = await getDepositAddress(chainflipQuote, sender.address, recipient)
-      if (!depositPayload) throw new Error('Failed to generated the deposit address')
+      if (!depositPayload) throw new Error('Failed to generate the deposit address')
       const depositAddress = depositPayload.depositAddress as Address
       const srcTokenContractAddress = sourceToken.address as Address
 
