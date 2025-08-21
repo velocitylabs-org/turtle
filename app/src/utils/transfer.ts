@@ -222,7 +222,7 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
   if (!(error instanceof Error)) return false
 
   if (sender instanceof JsonRpcSigner)
-    return error.message.includes('ethers-user-denied') // Ethers connection
+    return error.message.includes('ethers-user-denied') || error.message.includes('User rejected the request') // Ethers/Viem.js connection
   else return error.message.includes('Cancelled') // Substrate connection
 }
 

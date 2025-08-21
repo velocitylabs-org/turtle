@@ -191,3 +191,19 @@ export function getErrorMessage(err: unknown) {
   console.error(message, err)
   return message
 }
+
+export const addToOngoingTransfers = async (
+  transferToStore: StoredTransfer,
+  addOrUpdate: (transfer: StoredTransfer) => void,
+  onComplete?: () => void,
+): Promise<void> => {
+  // For a smoother UX, give it 2 seconds before adding the tx to 'ongoing'
+  // and unlocking the UI by resetting the form back to 'Idle'.
+  await new Promise(resolve =>
+    setTimeout(() => {
+      addOrUpdate(transferToStore)
+      onComplete?.()
+      resolve(true)
+    }, 2000),
+  )
+}

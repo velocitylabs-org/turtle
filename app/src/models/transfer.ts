@@ -30,7 +30,7 @@ export interface StoredTransfer extends RawTransfer {
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
-  // A subscan unique Id shared accross chains to track ongoing transfers
+  // A unique Id to track an ongoing transfer, ex: subscan unique Id, chainflip deposit channel Id (...)
   uniqueTrackingId?: string
   status?: string
   // WithinPolkadot transfer is considered as finalized
