@@ -9,7 +9,16 @@ import {
   type TNodeWithRelayChains,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { type Chain, EthereumTokens, type Network, REGISTRY, type Token } from '@velocitylabs-org/turtle-registry'
+import {
+  BridgeHub,
+  type Chain,
+  EthereumTokens,
+  MainnetRegistry,
+  type Network,
+  REGISTRY,
+  type Token,
+} from '@velocitylabs-org/turtle-registry'
+import { removeWhitespace } from '@/utils/strings'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
@@ -99,4 +108,20 @@ export function isChainSupportingToken(chain: Chain | null, token: Token | null)
   const asset = findAsset(node, currency, null)
 
   return !!asset
+}
+
+export function mapParaspellChainToTurtleRegistry(chainName: string): Chain {
+  const map: Record<string, string> = {
+    AssetHubPolkadot: 'AssetHub',
+    BridgeHubPolkadot: 'BridgeHub',
+    BifrostPolkadot: 'Bifrost',
+    AssetHubKusama: 'KusamaAssetHub',
+  }
+  const name = map[chainName] ?? chainName
+  // BridgeHub is not part of the main registry, so we need to add it manually
+  const chain = [...MainnetRegistry.chains, BridgeHub].find(c => removeWhitespace(c.name) === removeWhitespace(name))
+  if (!chain) {
+    throw new Error(`Chain not found for name: ${chainName}`)
+  }
+  return chain
 }
