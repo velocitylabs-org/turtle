@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { getChainflipQuote, isChainflipSwap } from '@/utils/chainflip'
 
-interface UseChainflipQuoteParams {
+export interface ChainflipQuoteParams {
   sourceChain?: Chain | null
   destinationChain?: Chain | null
   sourceToken?: Token | null
@@ -11,13 +11,31 @@ interface UseChainflipQuoteParams {
   amount?: string | null
 }
 
-export const useChainflipQuote = ({
-  sourceChain,
-  destinationChain,
-  sourceToken,
-  destinationToken,
-  amount,
-}: UseChainflipQuoteParams) => {
+export const quoteQueryKey = (params: ChainflipQuoteParams) =>
+  [
+    'chainflip-quote',
+    params.sourceChain,
+    params.destinationChain,
+    params.sourceToken,
+    params.destinationToken,
+    params.amount,
+  ] as const
+
+export const canFetchQuote = (params: ChainflipQuoteParams) =>
+  !!params.sourceChain &&
+  !!params.destinationChain &&
+  !!params.sourceToken &&
+  !!params.destinationToken &&
+  !!params.amount &&
+  isChainflipSwap(params.sourceChain, params.destinationChain, params.sourceToken, params.destinationToken)
+
+export async function getQuote(params: ChainflipQuoteParams) {
+  if (!canFetchQuote(params)) return null
+  const { sourceChain, destinationChain, sourceToken, destinationToken, amount } = params
+  return getChainflipQuote(sourceChain!, destinationChain!, sourceToken!, destinationToken!, amount!)
+}
+
+export const useChainflipQuote = (params: ChainflipQuoteParams) => {
   const {
     data: chainflipQuote,
     isLoading: isLoadingChainflipQuote,
@@ -25,35 +43,19 @@ export const useChainflipQuote = ({
     isError: isChainflipQuoteError,
     error: chainflipQuoteError,
   } = useQuery({
-    queryKey: ['chainflip-quote', sourceChain, destinationChain, sourceToken, destinationToken, amount],
+    queryKey: quoteQueryKey(params),
     queryFn: async () => {
-      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
       try {
-        return await getChainflipQuote(sourceChain, destinationChain, sourceToken, destinationToken, amount)
-      } catch (error) {
-        captureException(error, {
-          level: 'error',
-          extra: {
-            sourceChain,
-            destinationChain,
-            sourceToken,
-            destinationToken,
-            amount,
-          },
-        })
-        console.log('Failed to get Chainflip quote:', error)
-        throw new Error(error as string)
+        return await getQuote(params)
+      } catch (err) {
+        captureException(err, { level: 'error', extra: { params } })
+        throw err instanceof Error ? err : new Error(String(err))
       }
     },
-    enabled:
-      !!sourceChain &&
-      !!destinationChain &&
-      !!sourceToken &&
-      !!destinationToken &&
-      !!amount &&
-      isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken),
-    staleTime: 30000, // Cache results for 30 seconds
-    retry: 2, // Retry failed requests twice
+    enabled: canFetchQuote(params),
+    staleTime: 60_000, // Cache results for 1 min
+    // refetchInterval: 60_000, // Refetch every 1 min
+    retry: 2,
   })
 
   return {
