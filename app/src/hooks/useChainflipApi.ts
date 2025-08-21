@@ -12,7 +12,7 @@ import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { useChainflipStore } from '@/store/chainflipStore'
 import type { SubstrateAccount } from '@/store/substrateWalletStore'
-import { getChainSpecificAddress, getSenderAddress, truncateAddress } from '@/utils/address'
+import { getChainSpecificAddress, getSenderAddress } from '@/utils/address'
 import { type ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
 import { extractPapiEvent, getPolkadotSigner } from '@/utils/papi'
 import { convertAmount, txWasCancelled } from '@/utils/transfer'
@@ -77,12 +77,6 @@ const useChainflipApi = () => {
       // Get chainflip deposit address
       const depositPayload = await getDepositAddress(chainflipQuote, sender.address, recipient)
       if (!depositPayload) throw new Error('Failed to generate the deposit address')
-
-      addNotification({
-        message: `Deposit channel opened: ${truncateAddress(depositPayload.depositAddress, 4, 4)}`,
-        severity: NotificationSeverity.Success,
-        dismissible: true,
-      })
 
       setStatus('Validating')
       let txHash: string | undefined
@@ -381,11 +375,8 @@ const handlePolkadotTxEvents = async (
 
   const onchainEvents = extractPapiEvent(event)
   if (!onchainEvents) return
-  console.log('isExtrinsicSuccess:', onchainEvents.isExtrinsicSuccess)
 
-  if (!onchainEvents.isExtrinsicSuccess) {
-    throw new Error('Can not swap tokens. Extrinsic failed.')
-  }
+  if (!onchainEvents.isExtrinsicSuccess) throw new Error('Can not swap tokens. Extrinsic failed.')
 
   addOrUpdate({
     ...transferToStore,
@@ -393,7 +384,6 @@ const handlePolkadotTxEvents = async (
     status: `Arriving at ${transferToStore.destChain.name}`,
     finalizedAt: new Date(),
   })
-  console.log('resolve promise')
   resolve()
 }
 
