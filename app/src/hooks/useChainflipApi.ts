@@ -151,8 +151,10 @@ const useChainflipApi = () => {
             polkadotTransferParams,
             swapParams,
             depositPayload.depositChannelId,
-            addOrUpdate,
             setStatus,
+            addOrUpdate,
+            removeOngoingTransfer,
+            addNotification,
           )
           break
         }
@@ -247,8 +249,10 @@ const submitPolkadotTransfer = async (
   polkadotTransferParams: TransferParams,
   swapParams: TransferParams,
   depositChannelId: string,
-  addOrUpdate: (transfer: StoredTransfer) => void,
   setStatus: (status: Status) => void,
+  addOrUpdate: (transfer: StoredTransfer) => void,
+  removeOngoingTransfer: (id: string) => void,
+  addNotification: (notification: Omit<Notification, 'id'>) => void,
 ): Promise<void> => {
   const { sourceChain, sourceToken, sender, destinationToken, sourceAmount, bridgingFee, fees, onComplete } =
     polkadotTransferParams
@@ -307,20 +311,19 @@ const submitPolkadotTransfer = async (
           }
           await handlePolkadotTxEvents(event, addOrUpdate, transferToStore, resolve, onSignedCallback)
         } catch (error) {
-          console.log('error sub', error)
-          // reject(error)
-          //handleSendError(sender, error, setStatus, event.txHash.toString())
           xcmTransferBuilderManager.disconnect(polkadotTransferParams)
+          handleSendError(sender, error, removeOngoingTransfer, addNotification, setStatus, event.txHash?.toString())
+          reject(error instanceof Error ? error : new Error(String(error)))
         }
       },
       error: callbackError => {
+        let enhancedError = callbackError
         if (callbackError instanceof InvalidTxError) {
-          console.log(`InvalidTxError - TransactionValidityError: ${callbackError.error}`)
+          enhancedError = new Error(`InvalidTxError - Transaction validation failed: ${callbackError.error}`)
         }
-        console.log('callbackError', callbackError)
-        reject(callbackError instanceof Error ? callbackError : new Error(String(callbackError)))
-        // handleSendError(params.sender, callbackError, setStatus)
         xcmTransferBuilderManager.disconnect(polkadotTransferParams)
+        handleSendError(sender, enhancedError, removeOngoingTransfer, addNotification, setStatus)
+        reject(enhancedError instanceof Error ? enhancedError : new Error(String(enhancedError)))
       },
       complete: () => {
         console.log('The transaction is complete')
