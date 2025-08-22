@@ -14,7 +14,7 @@ import {
   PolkadotTokens,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
-import type { AmountInfo } from '@/models/transfer'
+import type { FeeDetailType } from '@/models/transfer'
 import { useChainflipStore } from '@/store/chainflipStore'
 import { getChainSpecificAddress } from './address'
 
@@ -24,8 +24,6 @@ export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SO
 export type ChainflipChain = 'Ethereum' | 'Polkadot' | 'Assethub' | 'Arbitrum' | 'Bitcoin' | 'Solana'
 
 export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
-
-export type ChainflipFee = { type: ChainflipFeeType } & AmountInfo
 
 export type ChainflipQuote = RegularQuote | DCAQuote
 
@@ -285,18 +283,18 @@ export const getFeeTokenFromAssetSymbol = (assetSymbol: AssetSymbol, chain: Chai
   }
 }
 
-export const getFeeLabelFromType = (feeType: ChainflipFeeType): string => {
+export const getFeeLabelFromType = (feeType: ChainflipFeeType): FeeDetailType => {
   switch (feeType) {
     case 'BROKER':
-      return 'Broker fee'
+      return 'Broker fees'
     case 'NETWORK':
-      return 'Execution fee'
+      return 'Execution fees'
     case 'INGRESS':
-      return 'Deposit fee'
+      return 'Deposit fees'
     case 'EGRESS':
-      return 'Broadcast fee'
+      return 'Delivery fees'
     default:
-      return 'Fee'
+      return 'Swap fees'
   }
 }
 
