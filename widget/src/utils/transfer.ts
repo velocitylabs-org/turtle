@@ -4,7 +4,7 @@ import type { Sender } from '@/hooks/useTransfer'
 import type { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { isSameChain } from '@/utils/routes'
 
-export type FormatLength = 'Short' | 'Long' | 'Longer'
+type FormatLength = 'Short' | 'Long' | 'Longer'
 
 function getMaxSignificantDigits(length: FormatLength): number {
   switch (length) {
@@ -141,7 +141,7 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   throw Error('The impossible happened')
 }
 
-export function isAnyPolkadotNetwork(network: Network): boolean {
+function isAnyPolkadotNetwork(network: Network): boolean {
   return network === 'Polkadot' || network === 'Kusama'
 }
 export function toAmountInfo(tokenAmount?: TokenAmount | null, usdPrice?: number | null): AmountInfo | null {
@@ -152,15 +152,6 @@ export function toAmountInfo(tokenAmount?: TokenAmount | null, usdPrice?: number
     token: tokenAmount.token,
     inDollars: tokenAmount.amount * usdPrice,
   }
-}
-
-export const getTotalFees = (fees: AmountInfo, bridgingFee?: AmountInfo | null) => {
-  const additionalAmount = bridgingFee ? Number(bridgingFee.amount) : 0
-  const additionalValue = bridgingFee?.inDollars || 0
-  const totalFeesAmount = formatAmount(toHuman(fees.amount, fees.token) + additionalAmount)
-  const totalFeesValue = formatAmount(fees.inDollars + additionalValue)
-
-  return { totalFeesAmount, totalFeesValue }
 }
 
 export const txWasCancelled = (sender: Sender, error: unknown): boolean => {

@@ -5,7 +5,7 @@ import type { Direction } from '@/services/transfer'
 import type { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
 import type { FromParachainTrackingResult } from './subscan'
 
-export interface RawTransfer {
+interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
   id: string
   sourceChain: Chain
@@ -72,7 +72,7 @@ export interface StoredTransferV1 extends RawTransfer {
   }
 }
 
-export interface RawTransferV0 {
+interface RawTransferV0 {
   /** Substrate extrinsic hash or Ethereum transaction hash */
   id: string
   sourceChain: Chain

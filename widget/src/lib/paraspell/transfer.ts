@@ -146,7 +146,7 @@ export const getTransferableAmount = async (
     .getTransferableAmount()
 }
 
-export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   let tokenSymbol: string | undefined
@@ -213,6 +213,6 @@ export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TC
  * @param network
  * @returns the matching paraspell value
  */
-export function toPsEcosystem(network: Network): TEcosystemType {
+function toPsEcosystem(network: Network): TEcosystemType {
   return network.toLowerCase() as TEcosystemType
 }
