@@ -125,16 +125,19 @@ const useTransferForm = () => {
     destinationToken: destToken,
     amount: sourceAmount && sourceToken ? safeConvertAmount(sourceAmount, sourceToken)?.toString() : undefined,
     fees,
+    loadingFees,
   })
 
-  // Update destination amount when output amount changes
+  // Update destination amount when output the amount changes
   useEffect(() => {
-    if (isLoadingOutputAmount || !outputAmount) {
+    // outputAmount is null or undefined
+    // Note: using loose equality (==) to check for both null and undefined
+    if (isLoadingOutputAmount || outputAmount == null) {
       setValue('destinationTokenAmount.amount', null)
       return
     }
 
-    if (outputAmount && destToken) {
+    if (outputAmount != null && destToken) {
       setValue('destinationTokenAmount.amount', toHuman(outputAmount, destToken))
     }
   }, [outputAmount, isLoadingOutputAmount, destToken, setValue])

@@ -14,6 +14,7 @@ interface UseOutputAmountParams {
   amount?: string | null
   /** Fees are used to calculate the output amount for transfers */
   fees?: FeeDetails[] | null
+  loadingFees?: boolean
 }
 
 interface OutputAmountResult {
@@ -28,10 +29,11 @@ export function useOutputAmount({
   destinationToken,
   amount,
   fees,
+  loadingFees,
 }: UseOutputAmountParams): OutputAmountResult {
   // Calculate total fees for the source token
   const totalFeesForSourceToken = useMemo(() => {
-    if (!fees || !sourceToken) return null
+    if (loadingFees || !fees || fees.length === 0 || !sourceToken) return null
 
     let hasMatchingFees = false
     const total = fees.reduce((sum, fee) => {
@@ -44,7 +46,7 @@ export function useOutputAmount({
 
     // Return null if no fees match the source token, otherwise return the total
     return hasMatchingFees ? total : null
-  }, [fees, sourceToken])
+  }, [fees, sourceToken, loadingFees])
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [
@@ -54,10 +56,11 @@ export function useOutputAmount({
       sourceToken?.id,
       destinationToken?.id,
       amount,
-      totalFeesForSourceToken?.toString(),
+      loadingFees,
+      totalFeesForSourceToken?.toString() ?? 'no-fees',
     ],
     queryFn: async () => {
-      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
+      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount || loadingFees) return null
 
       try {
         if (!isSameToken(sourceToken, destinationToken)) {
@@ -76,7 +79,6 @@ export function useOutputAmount({
         if (!totalFeesForSourceToken) return BigInt(amount)
 
         const amountBigInt = BigInt(amount)
-        if (totalFeesForSourceToken > amountBigInt) return 0n
         return amountBigInt - totalFeesForSourceToken
       } catch (error) {
         captureException(error, {
@@ -87,7 +89,7 @@ export function useOutputAmount({
         return null
       }
     },
-    enabled: !!sourceChain && !!destinationChain && !!sourceToken && !!destinationToken && !!amount,
+    enabled: !!sourceChain && !!destinationChain && !!sourceToken && !!destinationToken && !!amount && !loadingFees,
     staleTime: 10000, // Cache results for 10 seconds
     retry: 2, // Retry failed requests twice
   })
@@ -95,8 +97,8 @@ export function useOutputAmount({
   return useMemo(
     () => ({
       outputAmount: data,
-      isLoading: isLoading || isFetching,
+      isLoading: isLoading || isFetching || !!loadingFees,
     }),
-    [data, isLoading, isFetching],
+    [data, isLoading, isFetching, loadingFees],
   )
 }

@@ -45,6 +45,19 @@ const numberFlowFormat = {
   maximumFractionDigits: 3,
 }
 
+const getNumberFormat = (value: number) => {
+  // For very small numbers, use standard notation with more decimal places
+  if (Math.abs(value) < 0.01 && value !== 0) {
+    return {
+      notation: 'standard' as const,
+      maximumFractionDigits: 8,
+      minimumFractionDigits: 1,
+    }
+  }
+  // For regular numbers, use compact notation
+  return numberFlowFormat
+}
+
 interface TxSummaryProps {
   loading?: boolean
   sourceTokenAmount: TokenAmount | null
@@ -85,7 +98,10 @@ export default function TxSummary({
   // Calculate total fees in dollars for isAmountTooLow check
   const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
   const isAmountTooLow = calcSendingAmountTooLow(totalFeesInDollars, sourceTokenAmount, sendingTokenPrice)
-  const isItWrappedToken = destinationTokenAmount?.token?.origin?.type === 'Ethereum'
+  const isItWrappedToken =
+    destinationTokenAmount?.token?.origin?.type === 'Ethereum' && destChain?.network === 'Polkadot'
+  const hasFeesFailed = !loading && (fees === null || fees?.length === 0)
+  const balanceToLowToCoverFees = destinationTokenAmount?.amount != null && destinationTokenAmount?.amount < 0
 
   const renderContent = () => {
     return (
@@ -125,12 +141,25 @@ export default function TxSummary({
                 <div className="-mt-[9px] flex flex-col items-end gap-1">
                   <div className="flex flex-row items-baseline gap-2">
                     <TokenLogo token={destinationTokenAmount.token!} sourceChain={destChain} size={25} />
-                    <div className="text-[32px] font-medium text-turtle-foreground">
-                      <NumberFlow value={destinationTokenAmount.amount!} format={numberFlowFormat} />
+                    <div
+                      className={cn(
+                        'text-[32px] font-medium',
+                        balanceToLowToCoverFees ? 'text-turtle-error' : 'text-turtle-foreground',
+                      )}
+                    >
+                      <NumberFlow
+                        value={destinationTokenAmount.amount!}
+                        format={getNumberFormat(destinationTokenAmount.amount!)}
+                      />
                     </div>
                   </div>
                   {receivingTokenPrice && (
-                    <div className={'animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6'}>
+                    <div
+                      className={cn(
+                        'animate-slide-up -mt-[5px] text-sm leading-none',
+                        balanceToLowToCoverFees ? 'text-turtle-error' : 'text-turtle-level6',
+                      )}
+                    >
                       <NumberFlow
                         value={receivingTokenPrice * destinationTokenAmount.amount!}
                         prefix="$"
@@ -141,7 +170,7 @@ export default function TxSummary({
                 </div>
               </div>
 
-              {isAmountTooLow && (
+              {!hasFeesFailed && !balanceToLowToCoverFees && isAmountTooLow && (
                 <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
                   <InfoIcon width={17} height={17} fill="black" />
                   <span className="text-[12px] text-turtle-foreground ine-block">
@@ -149,11 +178,19 @@ export default function TxSummary({
                   </span>
                 </div>
               )}
-              {isItWrappedToken && (
+              {!hasFeesFailed && !balanceToLowToCoverFees && isItWrappedToken && (
                 <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
                   <InfoIcon width={17} height={17} fill="black" />
                   <span className="text-[12px] text-turtle-foreground ine-block">
                     <span className="font-bold ">Note:</span> You can swap this wrapped token on Hydration
+                  </span>
+                </div>
+              )}
+              {hasFeesFailed && (
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-error px-2 py-1">
+                  <AlertIcon width={17} height={17} fill="white" />
+                  <span className="text-[12px] text-white inline-block">
+                    <span className="font-bold">Error:</span> Failed to load fees. Please try again
                   </span>
                 </div>
               )}
@@ -162,14 +199,18 @@ export default function TxSummary({
 
               <div className="flex w-full flex-row items-start justify-between">
                 <div className="flex items-center gap-1">
-                  <span className={cn('text-xs leading-none text-turtle-level6', getFeeStatusColor(fees))}>Fee</span>
-                  <span className={cn('text-sm', getFeeStatusColor(fees))}>
-                    <NumberFlow value={totalFeesInDollars} prefix="$" format={numberFlowFormat} />
-                  </span>
                   {!!fees?.length && (
-                    <Tooltip showIcon={false} content={<FeesBreakdown fees={fees} />}>
-                      {getFeeStatusIcon(fees)}
-                    </Tooltip>
+                    <>
+                      <span className={cn('text-xs leading-none text-turtle-level6', getFeeStatusColor(fees))}>
+                        Fee
+                      </span>
+                      <span className={cn('text-sm', getFeeStatusColor(fees))}>
+                        <NumberFlow value={totalFeesInDollars} prefix="$" format={numberFlowFormat} />
+                      </span>
+                      <Tooltip showIcon={false} content={<FeesBreakdown fees={fees} />}>
+                        {getFeeStatusIcon(fees)}
+                      </Tooltip>
+                    </>
                   )}
                 </div>
 

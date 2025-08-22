@@ -162,6 +162,7 @@ export default function Transfer() {
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
   const hasFees = fees && fees?.length > 0
   const allFeesItemsAreSufficient = hasFees && fees.every(fee => fee.sufficient !== 'insufficient')
+  const balanceToLowToCoverFees = destinationTokenAmount?.amount != null && destinationTokenAmount?.amount < 0
 
   const isTransferAllowed =
     isValid &&
@@ -172,7 +173,8 @@ export default function Transfer() {
     !loadingFees &&
     !isLoadingOutputAmount &&
     isBalanceSufficientForFees &&
-    allFeesItemsAreSufficient
+    allFeesItemsAreSufficient &&
+    !balanceToLowToCoverFees
 
   const disableMaxBtnInPolkadotNetwork =
     (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&
@@ -190,9 +192,12 @@ export default function Transfer() {
   const shouldDisplayTxSummary =
     sourceTokenAmount?.token &&
     sourceTokenAmount?.amount &&
+    destinationTokenAmount?.token &&
     !allowanceLoading &&
     !requiresErc20SpendApproval &&
-    destinationChain
+    destinationChain &&
+    sourceWallet?.sender &&
+    destinationWallet?.sender
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -234,8 +239,15 @@ export default function Transfer() {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (!isBalanceSufficientForFees) return `We need some of that ${sourceToken?.symbol} to pay fees`
+    if (balanceToLowToCoverFees) return `Insufficient ${sourceToken?.symbol} to cover fees`
     return undefined
-  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, isBalanceSufficientForFees, sourceToken])
+  }, [
+    errors.sourceTokenAmount?.amount?.message,
+    sourceTokenAmountError,
+    isBalanceSufficientForFees,
+    sourceToken,
+    balanceToLowToCoverFees,
+  ])
 
   return (
     <form
@@ -427,9 +439,9 @@ export default function Transfer() {
       <AnimatePresence>
         {shouldDisplayTxSummary && (
           <TxSummary
-            loading={loadingFees || !destinationTokenAmount}
-            destinationTokenAmount={destinationTokenAmount}
+            loading={loadingFees}
             sourceTokenAmount={sourceTokenAmount}
+            destinationTokenAmount={destinationTokenAmount}
             destChain={destinationChain}
             fees={fees}
             durationEstimate={durationEstimate}
