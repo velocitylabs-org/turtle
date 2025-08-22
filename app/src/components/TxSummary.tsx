@@ -3,7 +3,7 @@ import type { Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import FeesBreakdown from '@/components/FeesBreakdown'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
@@ -13,10 +13,6 @@ import Delayed from './Delayed'
 import AlertIcon from './svg/AlertIcon'
 import InfoIcon from './svg/Info'
 import LoadingIcon from './svg/LoadingIcon'
-
-const contentAnimationDuration = 400 // ms
-const animationDelay = 100
-const scrollBuffer = 200
 
 const fadeAnimationConfig = {
   initial: { opacity: 0 },
@@ -70,26 +66,20 @@ export default function TxSummary({
 }: TxSummaryProps) {
   const { price: sendingTokenPrice } = useTokenPrice(sendingAmount?.token)
   const { price: receivingTokenPrice } = useTokenPrice(receivingAmount?.token)
-  const summaryRef = useRef<HTMLDivElement>(null)
 
-  const showLoading = loading || !receivingAmount || !receivingAmount.amount || !receivingAmount.token
+  const showLoading = loading || !receivingAmount || !receivingAmount.amount || !receivingAmount.token || !fees
 
-  // Scroll into view when content loads
   useEffect(() => {
-    if (!showLoading && summaryRef.current) {
-      // Wait for the animation to complete
-      const scrollDelay = contentAnimationDuration + animationDelay + scrollBuffer
+    if (showLoading) {
       setTimeout(() => {
-        summaryRef.current?.scrollIntoView({
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
           behavior: 'smooth',
-          block: 'end',
-          inline: 'nearest',
         })
-      }, scrollDelay)
+      }, 800)
+      return
     }
   }, [showLoading])
-
-  if (!loading && !fees) return null
 
   // Calculate total fees in dollars for isAmountTooLow check
   const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
@@ -98,7 +88,7 @@ export default function TxSummary({
 
   const renderContent = () => {
     return (
-      <div ref={summaryRef}>
+      <div>
         <AnimatePresence mode="wait">
           {showLoading ? (
             <motion.div
