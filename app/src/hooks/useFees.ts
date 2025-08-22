@@ -55,7 +55,8 @@ export default function useFees(params: UseFeesParams) {
   const senderAddress = sender?.address
 
   // Determine if we need ETH balance (only for SnowbridgeApi case)
-  const sdk = sourceChain && destinationChain ? resolveSdk(sourceChain, destinationChain) : null
+  const sdk =
+    sourceChain && destinationChain ? resolveSdk(sourceChain, destinationChain, sourceToken, destinationToken) : null
   const isSnowbridgeRoute = sdk === 'SnowbridgeApi'
   const isBridgingToEthereum = destinationChain?.network === 'Ethereum'
 
