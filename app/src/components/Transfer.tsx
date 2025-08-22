@@ -64,20 +64,6 @@ const getSourceAmountPlaceholder = ({
   return formatAmount(Number(balanceData?.formatted), 'Longer')
 }
 
-const getReceiveAmountPlaceholder = ({
-  isLoadingOutputAmount,
-  sourceTokenAmount,
-  destinationTokenAmount,
-}: {
-  isLoadingOutputAmount: boolean
-  sourceTokenAmount: TokenAmount | null
-  destinationTokenAmount: TokenAmount | null
-}): string => {
-  if (isLoadingOutputAmount) return 'Loading...'
-  if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id) return ''
-  return 'Receive Amount'
-}
-
 export default function Transfer() {
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
@@ -172,12 +158,6 @@ export default function Transfer() {
     balanceData,
   })
 
-  const receiveAmountPlaceholder = getReceiveAmountPlaceholder({
-    isLoadingOutputAmount,
-    sourceTokenAmount,
-    destinationTokenAmount,
-  })
-
   const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
   const hasFees = fees && fees?.length > 0
@@ -207,7 +187,12 @@ export default function Transfer() {
     disableMaxBtnInPolkadotNetwork ||
     maxButtonLoading
 
-  const shouldDisplayTxSummary = sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+  const shouldDisplayTxSummary =
+    sourceTokenAmount?.token &&
+    sourceTokenAmount?.amount &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval &&
+    destinationChain
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -351,10 +336,10 @@ export default function Transfer() {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amountProps={{
-                      value: destinationTokenAmount?.amount ?? null,
+                      value: null, // the destination amount is shown in the TxSummary component
                       onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: receiveAmountPlaceholder,
+                      placeholder: '',
                       disabled: true,
                     }}
                     walletProps={{
@@ -439,20 +424,23 @@ export default function Transfer() {
         )}
       </AnimatePresence>
 
-      {shouldDisplayTxSummary && (
-        <TxSummary
-          loading={loadingFees}
-          tokenAmount={sourceTokenAmount}
-          fees={fees}
-          durationEstimate={durationEstimate}
-          isBalanceSufficientForFees={isBalanceSufficientForFees}
-          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-        />
-      )}
+      <AnimatePresence>
+        {shouldDisplayTxSummary && (
+          <TxSummary
+            loading={loadingFees || !destinationTokenAmount}
+            receivingAmount={destinationTokenAmount}
+            sendingAmount={sourceTokenAmount}
+            destChain={destinationChain}
+            fees={fees}
+            durationEstimate={durationEstimate}
+            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Transfer Button */}
       <SendButton
-        className="my-5 w-full"
+        className="w-full mt-6 sm:mt-9 mb-1 sm:mb-2"
         label="Send"
         size="lg"
         variant="primary"
