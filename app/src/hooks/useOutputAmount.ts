@@ -79,6 +79,7 @@ export function useOutputAmount({
         if (!totalFeesForSourceToken) return BigInt(amount)
 
         const amountBigInt = BigInt(amount)
+        if (totalFeesForSourceToken > amountBigInt) return 0n
         return amountBigInt - totalFeesForSourceToken
       } catch (error) {
         captureException(error, {

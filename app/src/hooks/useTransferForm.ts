@@ -130,8 +130,8 @@ const useTransferForm = () => {
 
   // Update destination amount when output the amount changes
   useEffect(() => {
-    // outputAmount is null or undefined
-    // Note: using loose equality (==) to check for both null and undefined
+    // outputAmount could be null or undefined
+    // using loose equality (==) to check for both null and undefined
     if (isLoadingOutputAmount || outputAmount == null) {
       setValue('destinationTokenAmount.amount', null)
       return

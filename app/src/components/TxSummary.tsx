@@ -45,19 +45,6 @@ const numberFlowFormat = {
   maximumFractionDigits: 3,
 }
 
-const getNumberFormat = (value: number) => {
-  // For very small numbers, use standard notation with more decimal places
-  if (Math.abs(value) < 0.01 && value !== 0) {
-    return {
-      notation: 'standard' as const,
-      maximumFractionDigits: 8,
-      minimumFractionDigits: 1,
-    }
-  }
-  // For regular numbers, use compact notation
-  return numberFlowFormat
-}
-
 interface TxSummaryProps {
   loading?: boolean
   sourceTokenAmount: TokenAmount | null
@@ -81,7 +68,7 @@ export default function TxSummary({
   const { price: receivingTokenPrice } = useTokenPrice(destinationTokenAmount?.token)
 
   const showLoading =
-    loading || !destinationTokenAmount || !destinationTokenAmount.amount || !destinationTokenAmount.token
+    loading || !destinationTokenAmount || destinationTokenAmount.amount == null || !destinationTokenAmount.token
 
   useEffect(() => {
     if (showLoading) {
@@ -101,7 +88,6 @@ export default function TxSummary({
   const isItWrappedToken =
     destinationTokenAmount?.token?.origin?.type === 'Ethereum' && destChain?.network === 'Polkadot'
   const hasFeesFailed = !loading && (fees === null || fees?.length === 0)
-  const balanceToLowToCoverFees = destinationTokenAmount?.amount != null && destinationTokenAmount?.amount < 0
 
   const renderContent = () => {
     return (
@@ -141,12 +127,7 @@ export default function TxSummary({
                 <div className="-mt-[9px] flex flex-col items-end gap-1">
                   <div className="flex flex-row items-baseline gap-2">
                     <TokenLogo token={destinationTokenAmount.token!} sourceChain={destChain} size={25} />
-                    <div
-                      className={cn(
-                        'text-[32px] font-medium',
-                        balanceToLowToCoverFees ? 'text-turtle-error' : 'text-turtle-foreground',
-                      )}
-                    >
+                    <div className="text-[32px] font-medium text-turtle-foreground">
                       <NumberFlow
                         value={destinationTokenAmount.amount!}
                         format={getNumberFormat(destinationTokenAmount.amount!)}
@@ -154,12 +135,7 @@ export default function TxSummary({
                     </div>
                   </div>
                   {receivingTokenPrice && (
-                    <div
-                      className={cn(
-                        'animate-slide-up -mt-[5px] text-sm leading-none',
-                        balanceToLowToCoverFees ? 'text-turtle-error' : 'text-turtle-level6',
-                      )}
-                    >
+                    <div className="animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6">
                       <NumberFlow
                         value={receivingTokenPrice * destinationTokenAmount.amount!}
                         prefix="$"
@@ -170,7 +146,7 @@ export default function TxSummary({
                 </div>
               </div>
 
-              {!hasFeesFailed && !balanceToLowToCoverFees && isAmountTooLow && (
+              {!hasFeesFailed && isAmountTooLow && (
                 <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
                   <InfoIcon width={17} height={17} fill="black" />
                   <span className="text-[12px] text-turtle-foreground ine-block">
@@ -178,7 +154,7 @@ export default function TxSummary({
                   </span>
                 </div>
               )}
-              {!hasFeesFailed && !balanceToLowToCoverFees && isItWrappedToken && (
+              {!hasFeesFailed && isItWrappedToken && (
                 <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
                   <InfoIcon width={17} height={17} fill="black" />
                   <span className="text-[12px] text-turtle-foreground ine-block">
@@ -280,4 +256,17 @@ function getFeeStatusColor(fees?: FeeDetails[] | null): string {
     default:
       return 'text-turtle-foreground'
   }
+}
+
+function getNumberFormat(value: number) {
+  // For very small numbers, use standard notation with more decimal places
+  if (Math.abs(value) < 0.01 && value !== 0) {
+    return {
+      notation: 'standard' as const,
+      maximumFractionDigits: 8,
+      minimumFractionDigits: 1,
+    }
+  }
+  // For regular numbers, use compact notation
+  return numberFlowFormat
 }

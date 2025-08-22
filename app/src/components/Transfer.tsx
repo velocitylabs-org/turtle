@@ -162,7 +162,6 @@ export default function Transfer() {
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
   const hasFees = fees && fees?.length > 0
   const allFeesItemsAreSufficient = hasFees && fees.every(fee => fee.sufficient !== 'insufficient')
-  const balanceToLowToCoverFees = destinationTokenAmount?.amount != null && destinationTokenAmount?.amount < 0
 
   const isTransferAllowed =
     isValid &&
@@ -173,8 +172,7 @@ export default function Transfer() {
     !loadingFees &&
     !isLoadingOutputAmount &&
     isBalanceSufficientForFees &&
-    allFeesItemsAreSufficient &&
-    !balanceToLowToCoverFees
+    allFeesItemsAreSufficient
 
   const disableMaxBtnInPolkadotNetwork =
     (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&
@@ -239,15 +237,8 @@ export default function Transfer() {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (!isBalanceSufficientForFees) return `We need some of that ${sourceToken?.symbol} to pay fees`
-    if (balanceToLowToCoverFees) return `Insufficient ${sourceToken?.symbol} to cover fees`
     return undefined
-  }, [
-    errors.sourceTokenAmount?.amount?.message,
-    sourceTokenAmountError,
-    isBalanceSufficientForFees,
-    sourceToken,
-    balanceToLowToCoverFees,
-  ])
+  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, isBalanceSufficientForFees, sourceToken])
 
   return (
     <form
