@@ -375,7 +375,7 @@ export default function Transfer() {
               <Switch
                 {...field}
                 checked={field.value}
-                className="items-start pt-1"
+                className="items-start pt-3"
                 label="Send to a different address"
                 disabled={transferStatus !== 'Idle'}
               />
@@ -385,7 +385,7 @@ export default function Transfer() {
           {/* Manual input warning */}
           <AnimatePresence>
             {manualRecipient.enabled && (
-              <motion.div className="flex items-center gap-1 self-center pt-1" {...manualInputAnimationProps}>
+              <motion.div className="flex items-center gap-1 pt-2" {...manualInputAnimationProps}>
                 <AlertIcon />
                 <span className="text-xs">Double check the address to avoid losing funds</span>
               </motion.div>
