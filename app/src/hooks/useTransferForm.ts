@@ -45,6 +45,7 @@ const initValues: FormInputs = {
 const useTransferForm = () => {
   const { transfer, transferStatus } = useTransfer()
   const { addNotification } = useNotification()
+  const [transferableAmount, setTransferableAmount] = useState<bigint | null>(null)
 
   const {
     control,
@@ -80,15 +81,30 @@ const useTransferForm = () => {
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
   const destinationWallet = useWallet(destinationChain?.walletType)
+  const [maxButtonLoading, setMaxButtonLoading] = useState<boolean>(false)
+
+  const {
+    balance: balanceData,
+    loading: loadingBalance,
+    fetchBalance,
+  } = useBalance({
+    chain: sourceChain,
+    token: sourceTokenAmount?.token ?? undefined,
+    address: sourceWallet?.sender?.address,
+  })
+
   const feesParams = useMemo(
     () => ({
       sourceChain,
       destinationChain,
-      sourceToken: sourceTokenAmountError === '' && minSwapAmountError === '' ? sourceTokenAmount?.token : null,
+      sourceToken: sourceTokenAmount?.token,
       destinationToken: destToken,
       sourceTokenAmount: sourceTokenAmount?.amount,
       sender: sourceWallet?.sender,
       recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
+      sourceTokenBalance: balanceData,
+      sourceTokenAmountError: sourceTokenAmountError || minSwapAmountError,
+      transferableAmount,
     }),
     [
       sourceChain,
@@ -101,28 +117,12 @@ const useTransferForm = () => {
       manualRecipient,
       destinationWallet,
       destToken,
+      balanceData,
+      transferableAmount,
     ],
   )
 
-  const {
-    loading: loadingFees,
-    fees,
-    bridgingFee,
-    chainflipFees,
-    canPayFees,
-    canPayAdditionalFees,
-    refetch: refetchFees,
-  } = useFees(feesParams)
-
-  const {
-    balance: balanceData,
-    loading: loadingBalance,
-    fetchBalance,
-  } = useBalance({
-    chain: sourceChain,
-    token: sourceTokenAmount?.token ?? undefined,
-    address: sourceWallet?.sender?.address,
-  })
+  const { loading: loadingFees, fees, isBalanceSufficientForFees, refetch: refetchFees } = useFees(feesParams)
 
   const { outputAmount, isLoading: isLoadingOutputAmount } = useOutputAmount({
     sourceChain,
@@ -204,6 +204,7 @@ const useTransferForm = () => {
       setValue('destinationChain', null)
       setValue('manualRecipient', { enabled: false, address: '' })
       setValue('sourceTokenAmount', { token: null, amount: null })
+      setTransferableAmount(null)
     },
     [setValue, sourceChain, destinationChain, sourceTokenAmount],
   )
@@ -246,44 +247,65 @@ const useTransferForm = () => {
       balanceData === undefined ||
       balanceData === null ||
       !sourceChain
-    )
+    ) {
+      setMaxButtonLoading(false)
       return
+    }
 
-    if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
-      if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) return
+    setMaxButtonLoading(true)
 
-      const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
+    try {
+      if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
+        if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) {
+          setMaxButtonLoading(false)
+          setTransferableAmount(null)
+          return
+        }
 
-      const params = {
-        sourceChain,
-        destinationChain,
-        sourceToken: sourceTokenAmount.token,
-        recipient,
-        sender: sourceWallet.sender,
-        sourceAmount: balanceData.value,
+        const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
+        const params = {
+          sourceChain,
+          destinationChain,
+          sourceToken: sourceTokenAmount.token,
+          recipient,
+          sender: sourceWallet.sender,
+          sourceAmount: balanceData.value,
+        }
+        const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
+        if (!transferableAmount) {
+          throw new Error('Failed to get transferable amount')
+        }
+
+        setTransferableAmount(transferableAmount)
+
+        setValue(
+          'sourceTokenAmount',
+          {
+            token: sourceTokenAmount.token,
+            // Parse as number, then format to our display standard, then parse again as number
+            amount: Number(formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer')),
+          },
+          { shouldValidate: true },
+        )
+      } else {
+        setValue(
+          'sourceTokenAmount',
+          {
+            token: sourceTokenAmount.token,
+            // Parse as number, then format to our display standard, then parse again as number
+            amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
+          },
+          { shouldValidate: true },
+        )
       }
-      const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
-      if (!transferableAmount) return
-
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer')),
-        },
-        { shouldValidate: true },
-      )
-    } else {
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
-        },
-        { shouldValidate: true },
-      )
+    } catch (error) {
+      console.error('Error setting max amount:', error)
+      addNotification({
+        message: 'Manually input an amount less than your balance.',
+        severity: NotificationSeverity.Error,
+      })
+    } finally {
+      setMaxButtonLoading(false)
     }
   }, [
     sourceWallet?.isConnected,
@@ -296,6 +318,7 @@ const useTransferForm = () => {
     sourceChain,
     sourceToken,
     sourceWallet?.sender,
+    addNotification,
   ])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
@@ -317,7 +340,7 @@ const useTransferForm = () => {
         !sourceTokenAmount?.token ||
         !destinationTokenAmount?.token ||
         !sourceAmount ||
-        (!fees && !chainflipFees)
+        !fees
       )
         return
 
@@ -330,8 +353,7 @@ const useTransferForm = () => {
         sourceAmount: sourceAmount,
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
-        fees: fees ?? chainflipFees[0], // TMP code until the global fee update is made, to bypass empty fees
-        bridgingFee: bridgingFee,
+        fees,
         onComplete: () => {
           // reset form on success
           reset()
@@ -347,7 +369,7 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   // validate recipient address
@@ -396,67 +418,6 @@ const useTransferForm = () => {
     validateChainflipSwap()
   }, [sourceChain, destinationChain, sourceToken, destToken, sourceTokenAmount?.amount])
 
-  // Unlike canPayFees and canPayAdditionalFees, which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
-  // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
-  const exceedsTransferableBalance = useMemo(() => {
-    const hasFees = Boolean(fees?.token?.id && fees?.amount)
-    const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
-    const hasBalance = Boolean(balanceData?.formatted)
-    const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
-    if (!hasTokenAmount || !hasBalance) return false
-
-    const transferToken = sourceTokenAmount!.token!.id
-    const transferAmount = sourceTokenAmount!.amount!
-    const balanceAmount = Number(balanceData!.formatted)
-    let totalFeesAmount = 0
-
-    // We have regular fees in the same token as the transfer
-    if (hasFees && fees!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(fees!.amount, fees!.token)
-    }
-    // We have bridging fees in the same token as the transfer, This applies whether we have regular fees
-    if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
-    }
-    // If we have no fees at all, there's no risk of exceeding transferable balance
-    if (totalFeesAmount === 0) return false
-
-    // Check if the transfer amount plus all applicable fees exceeds the available balance
-    return transferAmount + totalFeesAmount > balanceAmount
-  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
-
-  const applyTransferableBalance = useCallback(() => {
-    if (exceedsTransferableBalance && sourceTokenAmount?.token) {
-      const transferToken = sourceTokenAmount.token.id
-      const hasFees = Boolean(fees?.token?.id && fees?.amount)
-      const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
-      let totalFeesAmount = 0
-
-      // We have regular fees in the same token as the transfer
-      if (hasFees && fees!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(fees!.amount, fees!.token)
-      }
-      // We have bridging fees in the same token as the transfer
-      if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
-      }
-
-      const balanceAmount = Number(balanceData!.formatted)
-      let newAmount = balanceAmount - totalFeesAmount
-      if (newAmount < 0) newAmount = 0 // Prevent negative values
-
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(newAmount, 'Longer')),
-        },
-        { shouldValidate: true },
-      )
-    }
-  }, [exceedsTransferableBalance, sourceTokenAmount?.token, bridgingFee, fees, balanceData, setValue])
-
   // reset token amount
   useEffect(() => {
     if (tokenId)
@@ -479,17 +440,15 @@ const useTransferForm = () => {
     sourceChain,
     destinationChain,
     sourceTokenAmount,
+    sourceToken,
     destinationTokenAmount,
     manualRecipient,
     sourceWallet,
     destinationWallet,
     fees,
-    bridgingFee,
-    chainflipFees,
+    isBalanceSufficientForFees,
     refetchFees,
     loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
     transferStatus,
     sourceTokenAmountError,
     minSwapAmountError,
@@ -500,8 +459,7 @@ const useTransferForm = () => {
     balanceData,
     fetchBalance,
     isLoadingOutputAmount,
-    exceedsTransferableBalance,
-    applyTransferableBalance,
+    maxButtonLoading,
   }
 }
 

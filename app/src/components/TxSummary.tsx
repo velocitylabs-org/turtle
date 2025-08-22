@@ -4,9 +4,8 @@ import { cn, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import type { AmountInfo } from '@/models/transfer'
-import { Direction } from '@/services/transfer'
-import { type ChainflipFee, getFeeLabelFromType } from '@/utils/chainflip'
+import type { FeeDetails } from '@/models/transfer'
+import type { Direction } from '@/services/transfer'
 import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
 import Delayed from './Delayed'
 import ExclamationMark from './svg/ExclamationMark'
@@ -15,16 +14,11 @@ import LoadingIcon from './svg/LoadingIcon'
 interface TxSummaryProps {
   tokenAmount: TokenAmount
   loading?: boolean
-  fees?: AmountInfo | null
-  chainflipFees: ChainflipFee[]
-  bridgingFee?: AmountInfo | null
+  fees?: FeeDetails[] | null
   durationEstimate?: string
   direction?: Direction
-  canPayFees: boolean
-  canPayAdditionalFees: boolean
+  isBalanceSufficientForFees: boolean
   className?: string
-  exceedsTransferableBalance: boolean
-  applyTransferableBalance: () => void
 }
 
 const animationConfig = {
@@ -41,20 +35,14 @@ export default function TxSummary({
   loading,
   tokenAmount,
   fees,
-  chainflipFees,
-  bridgingFee,
   durationEstimate,
-  direction,
-  canPayFees,
-  canPayAdditionalFees,
+  isBalanceSufficientForFees,
   className,
-  exceedsTransferableBalance,
-  applyTransferableBalance,
 }: TxSummaryProps) {
   const { price } = useTokenPrice(tokenAmount.token)
   const transferAmount = toAmountInfo(tokenAmount, price)
 
-  if (!loading && !fees && !bridgingFee && chainflipFees.length === 0) return null
+  if (!loading && !fees) return null
 
   const renderContent = () => {
     if (loading) {
@@ -76,129 +64,44 @@ export default function TxSummary({
       )
     }
 
-    const isAmountTooLow = transferAmount && transferAmount.inDollars < (fees?.inDollars ?? 0) * AMOUNT_VS_FEE_RATIO
-
-    const isBridgeTransfer = direction === Direction.ToEthereum || direction === Direction.ToPolkadot
-
-    const exceedsTransferableBalanceInFees =
-      exceedsTransferableBalance &&
-      transferAmount?.token?.id &&
-      fees?.token?.id &&
-      transferAmount.token.id === fees.token.id
-
-    const exceedsTransferableBalanceInBridgingFee =
-      exceedsTransferableBalance &&
-      !exceedsTransferableBalanceInFees &&
-      transferAmount?.token?.id &&
-      bridgingFee?.token?.id &&
-      transferAmount.token.id === bridgingFee.token.id
+    // Calculate total fees in dollars for isAmountTooLow check
+    const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
+    const isAmountTooLow = transferAmount && transferAmount.inDollars < totalFeesInDollars * AMOUNT_VS_FEE_RATIO
 
     return (
       <div className={cn('tx-summary p-0 pt-0', className)}>
         <div className="pt-3">
           <div className="mt-3 text-center text-lg font-bold text-turtle-foreground md:text-xl">Summary</div>
           <ul>
-            {/* Execution fees */}
-            {fees && (
-              <li className="mt-4 flex items-start justify-between border-turtle-level2">
-                <div className="items-left flex flex-col">
-                  <div className="pt-[3px] text-sm font-bold">{bridgingFee ? 'Execution fee' : 'Fee'} </div>
-                  {!canPayFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-                      <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-                      <span>You don&apos;t have enough {fees.token.symbol} </span>
-                    </div>
-                  )}
-                  {exceedsTransferableBalanceInFees && canPayFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-                      <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-                      <span>
-                        We need some of that {fees.token.symbol} to pay fees{' '}
-                        <span
-                          role="button"
-                          onClick={applyTransferableBalance}
-                          className="ml-1 cursor-pointer underline"
-                        >
-                          Ok
-                        </span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="items-right flex">
-                  <div>
-                    <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
-                    </div>
-
-                    {fees.inDollars > 0 && (
-                      <div className="text-right text-sm text-turtle-level4">${formatAmount(fees.inDollars)}</div>
-                    )}
-                  </div>
-                </div>
-              </li>
-            )}
-
-            {/* Bridging fees */}
-            {isBridgeTransfer && bridgingFee && (
-              <li className="mt-4 flex items-start justify-between border-turtle-level2">
-                <div className="items-left flex flex-col">
-                  <div className="pt-[3px] text-sm font-bold">Bridging fee</div>
-                  {!canPayAdditionalFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-                      <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-                      <span>You don&apos;t have enough {bridgingFee.token.symbol}</span>
-                    </div>
-                  )}
-                  {exceedsTransferableBalanceInBridgingFee && canPayAdditionalFees && (
-                    <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-                      <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-                      <span>
-                        We need some of that {bridgingFee.token.symbol} to pay fees{' '}
-                        <span
-                          role="button"
-                          onClick={applyTransferableBalance}
-                          className="ml-1 cursor-pointer underline"
-                        >
-                          Ok
-                        </span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="items-right flex">
-                  <div>
-                    <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                      {formatAmount(toHuman(bridgingFee.amount, bridgingFee.token))} {bridgingFee.token.symbol}
-                    </div>
-
-                    {bridgingFee.inDollars > 0 && (
-                      <div className="text-right text-sm text-turtle-level4">
-                        ${formatAmount(bridgingFee.inDollars)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </li>
-            )}
-
-            {/* Chainflip fees */}
-            {chainflipFees.length > 0 &&
-              chainflipFees.map(fee => {
-                if (fee.amount.toString() === '0') return null
+            {Array.isArray(fees) &&
+              fees.map((fee, index) => {
                 return (
-                  <li key={fee.type} className="mt-4 flex items-start justify-between border-turtle-level2">
+                  <li key={index} className="mt-4 flex items-start justify-between border-turtle-level2">
                     <div className="items-left flex flex-col">
-                      <div className="pt-[3px] text-sm font-bold">{getFeeLabelFromType(fee.type)}</div>
+                      <div className="pt-[3px] text-sm font-bold">{fee.title}</div>
+                      {fee.sufficient === 'insufficient' && (
+                        <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
+                          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
+                          <span>You don&apos;t have enough {fee.amount.token.symbol}</span>
+                        </div>
+                      )}
+                      {fee.sufficient === 'undetermined' && (
+                        <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-gray-200 bg-gray-100 px-2 py-1 text-xs">
+                          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
+                          <span>Unable to verify your sufficiency of {fee.amount.token.symbol}</span>
+                        </div>
+                      )}
                     </div>
                     <div className="items-right flex">
                       <div>
                         <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                          {formatAmount(toHuman(fee.amount, fee.token))} {fee.token.symbol}
+                          {formatAmount(toHuman(fee.amount.amount, fee.amount.token))} {fee.amount.token.symbol}
                         </div>
 
-                        {fee.inDollars > 0 && (
-                          <div className="text-right text-sm text-turtle-level4">${formatAmount(fee.inDollars)}</div>
+                        {fee.amount.inDollars > 0 && (
+                          <div className="text-right text-sm text-turtle-level4">
+                            ${formatAmount(fee.amount.inDollars)}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -216,7 +119,7 @@ export default function TxSummary({
             </li>
           </ul>
 
-          {canPayFees && !exceedsTransferableBalance && isAmountTooLow && (
+          {isBalanceSufficientForFees && isAmountTooLow && (
             <div className="bg-turtle-secondary-transparent my-4 flex flex-row items-center justify-center rounded-[8px] p-2">
               <ExclamationMark width={20} height={20} fill={colors['turtle-foreground']} className="mr-3" />
               <div className="text-small">The amount is a bit too low to justify the fees</div>
