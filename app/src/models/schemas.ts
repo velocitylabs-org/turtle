@@ -5,6 +5,7 @@ import { z } from 'zod'
 const originSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('Ethereum'), bridge: z.enum(['Snowbridge']) }),
   z.object({ type: z.literal('Polkadot'), paraId: z.number() }),
+  z.object({ type: z.literal('Solana'), bridge: z.enum(['Wormhole']) }),
 ])
 
 export const tokenSchema: z.ZodType<Token> = z.object({

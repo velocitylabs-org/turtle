@@ -47,7 +47,11 @@ export const toHuman = (input: bigint | string | number, token: Token): number =
   return Number(input) / 10 ** token.decimals
 }
 
-type FormatLength = 'Short' | 'Long' | 'Longer'
+export function feeToHuman(fees: AmountInfo): string {
+  return toHuman(fees.amount, fees.token).toFixed(10)
+}
+
+export type FormatLength = 'Short' | 'Long' | 'Longer'
 
 function getMaxSignificantDigits(length: FormatLength): number {
   switch (length) {

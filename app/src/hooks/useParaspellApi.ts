@@ -64,7 +64,6 @@ const useParaspellApi = () => {
       sourceAmount: params.sourceAmount.toString(),
       recipient: params.recipient,
       date,
-      bridgingFee: params.bridgingFee,
       fees: params.fees,
       status: `Submitting to ${params.sourceChain.name}`,
     }
@@ -163,7 +162,6 @@ const useParaspellApi = () => {
           sourceAmount: params.sourceAmount.toString(),
           recipient: params.recipient,
           date,
-          bridgingFee: params.bridgingFee,
           fees: params.fees,
           status: `Submitting to ${params.sourceChain.name}`,
         }
@@ -243,7 +241,6 @@ const useParaspellApi = () => {
           recipient: params.recipient,
           date,
           fees: params.fees,
-          bridgingFee: params.bridgingFee,
           status: `Submitting to ${params.sourceChain.name}`,
           swapInformation: { plan: routerPlan, currentStep: 0 },
         }
@@ -356,7 +353,6 @@ const useParaspellApi = () => {
       sourceTokenUSDValue: transfer.sourceTokenUSDValue ?? 0,
       destinationTokenUSDValue: transfer.destinationTokenUSDValue,
       fees: transfer.fees,
-      bridgingFee: transfer.bridgingFee,
       sender: transfer.sender,
       recipient: transfer.recipient,
       date: transfer.date,
@@ -431,7 +427,9 @@ const useParaspellApi = () => {
     setStatus('Idle')
     console.log('Transfer error:', e)
     const cancelledByUser = txWasCancelled(sender, e)
-    const message = cancelledByUser ? 'Transfer rejected' : 'Failed to submit the transfer'
+    const message = cancelledByUser
+      ? 'Transfer rejected'
+      : 'Failed to submit the transfer. Make sure you have enough DOT'
 
     if (txId) removeOngoing(txId)
     if (!cancelledByUser) captureException(e)
