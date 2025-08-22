@@ -1,24 +1,33 @@
-import type { TokenAmount } from '@velocitylabs-org/turtle-registry'
+import NumberFlow from '@number-flow/react'
+import type { Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { cn, spinnerSize } from '@velocitylabs-org/turtle-ui'
+import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect } from 'react'
+import FeesBreakdown from '@/components/FeesBreakdown'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import type { FeeDetails } from '@/models/transfer'
-import type { Direction } from '@/services/transfer'
-import { formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
+import type { FeeDetails, FeeSufficiency } from '@/models/transfer'
+import { toAmountInfo } from '@/utils/transfer'
 import Delayed from './Delayed'
-import ExclamationMark from './svg/ExclamationMark'
+import AlertIcon from './svg/AlertIcon'
+import InfoIcon from './svg/Info'
 import LoadingIcon from './svg/LoadingIcon'
 
-interface TxSummaryProps {
-  tokenAmount: TokenAmount
-  loading?: boolean
-  fees?: FeeDetails[] | null
-  durationEstimate?: string
-  direction?: Direction
-  isBalanceSufficientForFees: boolean
-  className?: string
+const fadeAnimationConfig = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+}
+
+const loadingAnimationConfig = {
+  ...fadeAnimationConfig,
+  transition: { duration: 0.3 },
+}
+
+const contentAnimationConfig = {
+  ...fadeAnimationConfig,
+  transition: { duration: 0.4, delay: 0.1 },
 }
 
 const animationConfig = {
@@ -31,101 +40,164 @@ const animationConfig = {
   exit: { opacity: 0, height: 0, transition: { duration: 0.2 } },
 }
 
+const numberFlowFormat = {
+  notation: 'compact' as const,
+  maximumFractionDigits: 3,
+}
+
+interface TxSummaryProps {
+  loading?: boolean
+  sourceTokenAmount: TokenAmount | null
+  destinationTokenAmount: TokenAmount | null
+  destChain: Chain | null
+  fees?: FeeDetails[] | null
+  durationEstimate?: string
+  className?: string
+}
+
 export default function TxSummary({
   loading,
-  tokenAmount,
+  destinationTokenAmount,
+  sourceTokenAmount,
+  destChain,
   fees,
   durationEstimate,
-  isBalanceSufficientForFees,
   className,
 }: TxSummaryProps) {
-  const { price } = useTokenPrice(tokenAmount.token)
-  const transferAmount = toAmountInfo(tokenAmount, price)
+  const { price: sendingTokenPrice } = useTokenPrice(sourceTokenAmount?.token)
+  const { price: receivingTokenPrice } = useTokenPrice(destinationTokenAmount?.token)
 
-  if (!loading && !fees) return null
+  const showLoading =
+    loading || !destinationTokenAmount || destinationTokenAmount.amount == null || !destinationTokenAmount.token
+
+  useEffect(() => {
+    if (showLoading) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        })
+      }, 800)
+      return
+    }
+  }, [showLoading])
+
+  // Calculate total fees in dollars for isAmountTooLow check
+  const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
+  const isAmountTooLow = calcSendingAmountTooLow(totalFeesInDollars, sourceTokenAmount, sendingTokenPrice)
+  const isItWrappedToken =
+    destinationTokenAmount?.token?.origin?.type === 'Ethereum' && destChain?.network === 'Polkadot'
+  const hasFeesFailed = !loading && (fees === null || fees?.length === 0)
 
   const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
-          <LoadingIcon
-            className="animate-spin"
-            width={spinnerSize.lg}
-            height={spinnerSize.lg}
-            color={colors['turtle-secondary']}
-          />
-          <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">Loading fees</div>
-          <Delayed millis={7000}>
-            <div className="animate-slide-up-soft mt-1 text-center text-xs text-turtle-secondary">
-              Sorry that it&apos;s taking so long. Hang on or try again
-            </div>
-          </Delayed>
-        </div>
-      )
-    }
-
-    // Calculate total fees in dollars for isAmountTooLow check
-    const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
-    const isAmountTooLow = transferAmount && transferAmount.inDollars < totalFeesInDollars * AMOUNT_VS_FEE_RATIO
-
     return (
-      <div className={cn('tx-summary p-0 pt-0', className)}>
-        <div className="pt-3">
-          <div className="mt-3 text-center text-lg font-bold text-turtle-foreground md:text-xl">Summary</div>
-          <ul>
-            {Array.isArray(fees) &&
-              fees.map((fee, index) => {
-                return (
-                  <li key={index} className="mt-4 flex items-start justify-between border-turtle-level2">
-                    <div className="items-left flex flex-col">
-                      <div className="pt-[3px] text-sm font-bold">{fee.title}</div>
-                      {fee.sufficient === 'insufficient' && (
-                        <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-                          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-                          <span>You don&apos;t have enough {fee.amount.token.symbol}</span>
-                        </div>
-                      )}
-                      {fee.sufficient === 'undetermined' && (
-                        <div className="ml-[-6px] mt-1 flex w-auto flex-row items-center rounded-[6px] border border-gray-200 bg-gray-100 px-2 py-1 text-xs">
-                          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-                          <span>Unable to verify your sufficiency of {fee.amount.token.symbol}</span>
-                        </div>
-                      )}
+      <div>
+        <AnimatePresence mode="wait">
+          {showLoading ? (
+            <motion.div
+              key="loading"
+              {...loadingAnimationConfig}
+              className="mt-6 sm:mt-8 flex h-[174px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
+            >
+              <LoadingIcon
+                className="animate-spin"
+                width={spinnerSize.lg}
+                height={spinnerSize.lg}
+                color={colors['turtle-secondary']}
+              />
+              <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">Loading fees</div>
+              <Delayed millis={7000}>
+                <div className="animate-slide-up-soft mt-1 text-center text-xs text-turtle-secondary">
+                  Sorry that it&apos;s taking so long. Hang on or try again
+                </div>
+              </Delayed>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="content"
+              {...contentAnimationConfig}
+              className={cn(
+                'mt-6 sm:mt-8 flex flex-col items-start gap-[15px] sm:gap-[20px] rounded-[8px] border border-turtle-level3 p-[18px] sm:p-[24px]',
+                className,
+              )}
+            >
+              {/* You'll get section */}
+              <div className="flex w-full flex-row items-start justify-between">
+                <div className="text-sm leading-none text-turtle-level6">You&apos;ll get</div>
+                <div className="-mt-[9px] flex flex-col items-end gap-1">
+                  <div className="flex flex-row items-baseline gap-2">
+                    <TokenLogo token={destinationTokenAmount.token!} sourceChain={destChain} size={25} />
+                    <div className="text-[32px] font-medium text-turtle-foreground">
+                      <NumberFlow
+                        value={destinationTokenAmount.amount!}
+                        format={getNumberFormat(destinationTokenAmount.amount!)}
+                      />
                     </div>
-                    <div className="items-right flex">
-                      <div>
-                        <div className="flex items-center text-right text-lg text-turtle-foreground md:text-xl">
-                          {formatAmount(toHuman(fee.amount.amount, fee.amount.token))} {fee.amount.token.symbol}
-                        </div>
-
-                        {fee.amount.inDollars > 0 && (
-                          <div className="text-right text-sm text-turtle-level4">
-                            ${formatAmount(fee.amount.inDollars)}
-                          </div>
-                        )}
-                      </div>
+                  </div>
+                  {receivingTokenPrice && (
+                    <div className="animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6">
+                      <NumberFlow
+                        value={receivingTokenPrice * destinationTokenAmount.amount!}
+                        prefix="$"
+                        format={numberFlowFormat}
+                      />
                     </div>
-                  </li>
-                )
-              })}
-
-            <li className="mt-4 flex items-start justify-between border-turtle-level2">
-              <div className="flex">
-                <div className="pt-[3px] text-sm font-bold">Duration</div>
+                  )}
+                </div>
               </div>
-              <div className="items-right flex items-center space-x-0.5">
-                <div className="text-right text-lg text-turtle-foreground md:text-xl">{durationEstimate}</div>
-              </div>
-            </li>
-          </ul>
 
-          {isBalanceSufficientForFees && isAmountTooLow && (
-            <div className="bg-turtle-secondary-transparent my-4 flex flex-row items-center justify-center rounded-[8px] p-2">
-              <ExclamationMark width={20} height={20} fill={colors['turtle-foreground']} className="mr-3" />
-              <div className="text-small">The amount is a bit too low to justify the fees</div>
-            </div>
+              {!hasFeesFailed && isAmountTooLow && (
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
+                  <InfoIcon width={17} height={17} fill="black" />
+                  <span className="text-[12px] text-turtle-foreground ine-block">
+                    <span className="font-bold ">Note:</span> The amount is a bit too low to justify the fees
+                  </span>
+                </div>
+              )}
+              {!hasFeesFailed && isItWrappedToken && (
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
+                  <InfoIcon width={17} height={17} fill="black" />
+                  <span className="text-[12px] text-turtle-foreground ine-block">
+                    <span className="font-bold ">Note:</span> You can swap this wrapped token on Hydration
+                  </span>
+                </div>
+              )}
+              {hasFeesFailed && (
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-error px-2 py-1">
+                  <AlertIcon width={17} height={17} fill="white" />
+                  <span className="text-[12px] text-white inline-block">
+                    <span className="font-bold">Error:</span> Failed to load fees. Please try again
+                  </span>
+                </div>
+              )}
+
+              <div className="border-1 h-1 w-full border-t border-turtle-level3" />
+
+              <div className="flex w-full flex-row items-start justify-between">
+                <div className="flex items-center gap-1">
+                  {!!fees?.length && (
+                    <>
+                      <span className={cn('text-xs leading-none text-turtle-level6', getFeeStatusColor(fees))}>
+                        Fee
+                      </span>
+                      <span className={cn('text-sm', getFeeStatusColor(fees))}>
+                        <NumberFlow value={totalFeesInDollars} prefix="$" format={numberFlowFormat} />
+                      </span>
+                      <Tooltip showIcon={false} content={<FeesBreakdown fees={fees} />}>
+                        {getFeeStatusIcon(fees)}
+                      </Tooltip>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
+                  <span className="text-sm text-turtle-foreground">{durationEstimate}</span>
+                </div>
+              </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
     )
   }
@@ -135,4 +207,66 @@ export default function TxSummary({
       <motion.div {...animationConfig}>{renderContent()}</motion.div>
     </AnimatePresence>
   )
+}
+
+function calcSendingAmountTooLow(
+  totalFeesInDollars: number,
+  sourceTokenAmount: TokenAmount | null,
+  sendingTokenPrice: number | undefined,
+) {
+  // Calculate total fees in dollars for isAmountTooLow check
+  const transferAmountInfo = toAmountInfo(sourceTokenAmount, sendingTokenPrice)
+  return transferAmountInfo && transferAmountInfo.inDollars < totalFeesInDollars * AMOUNT_VS_FEE_RATIO
+}
+
+function getFeeStatus(fees?: FeeDetails[] | null): FeeSufficiency {
+  if (!fees?.length) return 'sufficient'
+
+  const hasInsufficient = fees.some(fee => fee.sufficient === 'insufficient')
+  if (hasInsufficient) return 'insufficient'
+
+  const hasUndetermined = fees.some(fee => fee.sufficient === 'undetermined')
+  if (hasUndetermined) return 'undetermined'
+
+  return 'sufficient'
+}
+
+function getFeeStatusIcon(fees: FeeDetails[]) {
+  const size = { width: 14, height: 14 }
+  const status = getFeeStatus(fees)
+
+  switch (status) {
+    case 'insufficient':
+      return <AlertIcon {...size} fill={colors['turtle-error']} />
+    case 'undetermined':
+      return <AlertIcon {...size} fill="#F97316" />
+    default:
+      return <InfoIcon {...size} fill={colors['turtle-level6']} />
+  }
+}
+
+function getFeeStatusColor(fees?: FeeDetails[] | null): string {
+  const status = getFeeStatus(fees)
+
+  switch (status) {
+    case 'insufficient':
+      return 'text-turtle-error'
+    case 'undetermined':
+      return 'text-orange-500'
+    default:
+      return 'text-turtle-foreground'
+  }
+}
+
+function getNumberFormat(value: number) {
+  // For very small numbers, use standard notation with more decimal places
+  if (Math.abs(value) < 0.01 && value !== 0) {
+    return {
+      notation: 'standard' as const,
+      maximumFractionDigits: 8,
+      minimumFractionDigits: 1,
+    }
+  }
+  // For regular numbers, use compact notation
+  return numberFlowFormat
 }
