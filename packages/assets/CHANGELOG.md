@@ -1,5 +1,12 @@
 # @velocitylabs-org/turtle-assets
 
+## 0.1.0
+
+### Minor Changes
+
+- 5a96db7: Adding Aave, aUSDT, and GDOT tokens and paths
+- bd9dfa9: Feat: Add tokens and paths (LINK, SOL, LDO, SKY, TRAC)
+
 ## 0.0.5
 
 ### Patch Changes
