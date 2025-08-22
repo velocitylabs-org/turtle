@@ -47,8 +47,8 @@ const numberFlowFormat = {
 
 interface TxSummaryProps {
   loading?: boolean
-  sendingAmount: TokenAmount | null
-  receivingAmount: TokenAmount | null
+  sourceTokenAmount: TokenAmount | null
+  destinationTokenAmount: TokenAmount | null
   destChain: Chain | null
   fees?: FeeDetails[] | null
   durationEstimate?: string
@@ -57,17 +57,18 @@ interface TxSummaryProps {
 
 export default function TxSummary({
   loading,
-  receivingAmount,
-  sendingAmount,
+  destinationTokenAmount,
+  sourceTokenAmount,
   destChain,
   fees,
   durationEstimate,
   className,
 }: TxSummaryProps) {
-  const { price: sendingTokenPrice } = useTokenPrice(sendingAmount?.token)
-  const { price: receivingTokenPrice } = useTokenPrice(receivingAmount?.token)
+  const { price: sendingTokenPrice } = useTokenPrice(sourceTokenAmount?.token)
+  const { price: receivingTokenPrice } = useTokenPrice(destinationTokenAmount?.token)
 
-  const showLoading = loading || !receivingAmount || !receivingAmount.amount || !receivingAmount.token
+  const showLoading =
+    loading || !destinationTokenAmount || !destinationTokenAmount.amount || !destinationTokenAmount.token
 
   useEffect(() => {
     if (showLoading) {
@@ -83,8 +84,8 @@ export default function TxSummary({
 
   // Calculate total fees in dollars for isAmountTooLow check
   const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
-  const isAmountTooLow = calcSendingAmountTooLow(totalFeesInDollars, sendingAmount, sendingTokenPrice)
-  const isItWrappedToken = receivingAmount?.token?.origin?.type === 'Ethereum'
+  const isAmountTooLow = calcSendingAmountTooLow(totalFeesInDollars, sourceTokenAmount, sendingTokenPrice)
+  const isItWrappedToken = destinationTokenAmount?.token?.origin?.type === 'Ethereum'
 
   const renderContent = () => {
     return (
@@ -123,15 +124,15 @@ export default function TxSummary({
                 <div className="text-sm leading-none text-turtle-level6">You&apos;ll get</div>
                 <div className="-mt-[9px] flex flex-col items-end gap-1">
                   <div className="flex flex-row items-baseline gap-2">
-                    <TokenLogo token={receivingAmount.token!} sourceChain={destChain} size={25} />
+                    <TokenLogo token={destinationTokenAmount.token!} sourceChain={destChain} size={25} />
                     <div className="text-[32px] font-medium text-turtle-foreground">
-                      <NumberFlow value={receivingAmount.amount!} format={numberFlowFormat} />
+                      <NumberFlow value={destinationTokenAmount.amount!} format={numberFlowFormat} />
                     </div>
                   </div>
                   {receivingTokenPrice && (
                     <div className={'animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6'}>
                       <NumberFlow
-                        value={receivingTokenPrice * receivingAmount.amount!}
+                        value={receivingTokenPrice * destinationTokenAmount.amount!}
                         prefix="$"
                         format={numberFlowFormat}
                       />
@@ -193,11 +194,11 @@ export default function TxSummary({
 
 function calcSendingAmountTooLow(
   totalFeesInDollars: number,
-  sendingAmount: TokenAmount | null,
+  sourceTokenAmount: TokenAmount | null,
   sendingTokenPrice: number | undefined,
 ) {
   // Calculate total fees in dollars for isAmountTooLow check
-  const transferAmountInfo = toAmountInfo(sendingAmount, sendingTokenPrice)
+  const transferAmountInfo = toAmountInfo(sourceTokenAmount, sendingTokenPrice)
   return transferAmountInfo && transferAmountInfo.inDollars < totalFeesInDollars * AMOUNT_VS_FEE_RATIO
 }
 

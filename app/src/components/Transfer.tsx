@@ -428,8 +428,8 @@ export default function Transfer() {
         {shouldDisplayTxSummary && (
           <TxSummary
             loading={loadingFees || !destinationTokenAmount}
-            receivingAmount={destinationTokenAmount}
-            sendingAmount={sourceTokenAmount}
+            destinationTokenAmount={destinationTokenAmount}
+            sourceTokenAmount={sourceTokenAmount}
             destChain={destinationChain}
             fees={fees}
             durationEstimate={durationEstimate}
