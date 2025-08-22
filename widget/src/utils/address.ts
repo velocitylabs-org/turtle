@@ -1,6 +1,6 @@
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
-import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
+import { hexToU8a, isHex } from '@polkadot/util'
 import type { AddressType, Chain, ManualRecipient } from '@velocitylabs-org/turtle-registry'
 import { JsonRpcSigner } from 'ethers'
 import { isAddress } from 'viem/utils'
@@ -31,7 +31,7 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
  * @param address - The address string to be validated.
  * @returns True if the address is a valid Ethereum address, false otherwise.
  */
-export const isValidEthereumAddress = (address: string): boolean => {
+const isValidEthereumAddress = (address: string): boolean => {
   return isAddress(address)
 }
 
@@ -41,7 +41,7 @@ export const isValidEthereumAddress = (address: string): boolean => {
  * @param address - The address string to be validated.
  * @returns True if the address is a valid Substrate address, false otherwise.
  */
-export const isValidSubstrateAddress = (address: string): boolean => {
+const isValidSubstrateAddress = (address: string): boolean => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
@@ -57,7 +57,7 @@ export const isValidSubstrateAddress = (address: string): boolean => {
  * @param types - The address types to validate the address against. Only one type needs to match.
  * @returns True if the address is a valid address of the network, false otherwise.
  */
-export const isValidAddressType = (address: string, types: AddressType[]): boolean => {
+const isValidAddressType = (address: string, types: AddressType[]): boolean => {
   for (const type of types) {
     switch (type) {
       case 'evm': {
@@ -109,14 +109,3 @@ export const getPlaceholderAddress = (type: AddressType): string => {
 /** Get the transfer sender address from the sender origin base (Substrate or Ethereum)*/
 export const getSenderAddress = async (sender: Sender): Promise<string> =>
   sender instanceof JsonRpcSigner ? await sender.getAddress() : (sender as InjectedAccount).address
-
-/**
- * Return the AccountId32 reprsentation of the given `address`. It should represent the same
- * wallet across any chain in the Polkadot ecosystem.
- *
- * @param address - the base address to decode
- * @returns the AccountId32 presentation of `address`
- */
-export function getAccountId32(address: string): string {
-  return u8aToHex(decodeAddress(address))
-}

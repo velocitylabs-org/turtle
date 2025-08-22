@@ -96,16 +96,15 @@ export default function Transfer() {
     sourceChain,
     destinationChain,
     sourceTokenAmount,
+    sourceToken,
     destinationTokenAmount,
     manualRecipient,
     sourceWallet,
     destinationWallet,
     fees,
-    bridgingFee,
+    isBalanceSufficientForFees,
     refetchFees,
     loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
     transferStatus,
     sourceTokenAmountError,
     manualRecipientError,
@@ -114,8 +113,7 @@ export default function Transfer() {
     balanceData,
     fetchBalance,
     isLoadingOutputAmount,
-    exceedsTransferableBalance,
-    applyTransferableBalance,
+    maxButtonLoading,
   } = useTransferForm()
 
   const {
@@ -182,20 +180,19 @@ export default function Transfer() {
 
   const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
-
-  const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
+  const hasFees = fees && fees?.length > 0
+  const allFeesItemsAreSufficient = hasFees && fees.every(fee => fee.sufficient !== 'insufficient')
 
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    fees &&
+    hasFees &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
-    canPayFees &&
-    canPayBridgingFee &&
     !isLoadingOutputAmount &&
-    !exceedsTransferableBalance
+    isBalanceSufficientForFees &&
+    allFeesItemsAreSufficient
 
   const disableMaxBtnInPolkadotNetwork =
     (sourceChain?.network === 'Polkadot' || sourceChain?.network === 'Kusama') &&
@@ -207,7 +204,8 @@ export default function Transfer() {
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
     transferStatus !== 'Idle' ||
-    disableMaxBtnInPolkadotNetwork
+    disableMaxBtnInPolkadotNetwork ||
+    maxButtonLoading
 
   const shouldDisplayTxSummary = sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
 
@@ -250,9 +248,9 @@ export default function Transfer() {
   const sourceTokenAmountErrorMessage = useMemo(() => {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
     if (sourceTokenAmountError) return sourceTokenAmountError
-    if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
+    if (!isBalanceSufficientForFees) return `We need some of that ${sourceToken?.symbol} to pay fees`
     return undefined
-  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, exceedsTransferableBalance, fees])
+  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, isBalanceSufficientForFees, sourceToken])
 
   return (
     <form
@@ -295,15 +293,16 @@ export default function Transfer() {
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
                           <Button
-                            label="Max"
+                            label={maxButtonLoading ? '' : 'Max'}
                             size="sm"
                             variant="outline"
                             className="min-w-[40px]"
                             onClick={handleMaxButtonClick}
                             disabled={shouldDisableMaxButton}
+                            loading={maxButtonLoading}
                           />
                         ),
-                        tooltipContent: 'Max transferrable balance',
+                        tooltipContent: 'Max transferable balance',
                       }}
                       walletProps={{
                         address: sourceWallet?.sender?.address,
@@ -445,14 +444,9 @@ export default function Transfer() {
           loading={loadingFees}
           tokenAmount={sourceTokenAmount}
           fees={fees}
-          bridgingFee={bridgingFee}
           durationEstimate={durationEstimate}
-          canPayFees={canPayFees}
-          canPayAdditionalFees={canPayAdditionalFees}
-          direction={direction}
+          isBalanceSufficientForFees={isBalanceSufficientForFees}
           className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-          exceedsTransferableBalance={exceedsTransferableBalance}
-          applyTransferableBalance={applyTransferableBalance}
         />
       )}
 

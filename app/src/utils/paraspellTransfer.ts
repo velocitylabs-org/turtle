@@ -9,11 +9,20 @@ import {
   type TNodeWithRelayChains,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { type Chain, EthereumTokens, type Network, REGISTRY, type Token } from '@velocitylabs-org/turtle-registry'
+import {
+  BridgeHub,
+  type Chain,
+  EthereumTokens,
+  MainnetRegistry,
+  type Network,
+  REGISTRY,
+  type Token,
+} from '@velocitylabs-org/turtle-registry'
+import { removeWhitespace } from '@/utils/strings'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
-export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   let tokenSymbol: string | undefined
@@ -28,17 +37,6 @@ export const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) 
   if (!tokenSymbol) captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`))
 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
-}
-
-export const getRelayNode = (network: Network): 'polkadot' | 'kusama' => {
-  switch (network) {
-    case 'Polkadot':
-      return 'polkadot'
-    case 'Kusama':
-      return 'kusama'
-    default:
-      throw new Error('Cannot find relay node. Unsupported environment')
-  }
 }
 
 /**
@@ -99,4 +97,20 @@ export function isChainSupportingToken(chain: Chain | null, token: Token | null)
   const asset = findAsset(node, currency, null)
 
   return !!asset
+}
+
+export function mapParaspellChainToTurtleRegistry(chainName: string): Chain {
+  const map: Record<string, string> = {
+    AssetHubPolkadot: 'AssetHub',
+    BridgeHubPolkadot: 'BridgeHub',
+    BifrostPolkadot: 'Bifrost',
+    AssetHubKusama: 'KusamaAssetHub',
+  }
+  const name = map[chainName] ?? chainName
+  // BridgeHub is not part of the main registry, so we need to add it manually
+  const chain = [...MainnetRegistry.chains, BridgeHub].find(c => removeWhitespace(c.name) === removeWhitespace(name))
+  if (!chain) {
+    throw new Error(`Chain not found for name: ${chainName}`)
+  }
+  return chain
 }

@@ -6,7 +6,7 @@ import formatPercentage from '@/utils/format-percentage'
 import formatUSD from '@/utils/format-USD'
 import getTypeBadge from '@/utils/get-type-badge'
 
-export interface SwapPairData {
+interface SwapPairData {
   pairName: string
   sourceTokenId: string
   destinationTokenId: string

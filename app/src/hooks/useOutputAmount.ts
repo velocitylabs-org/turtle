@@ -2,7 +2,7 @@ import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 import { type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
-import type { AmountInfo } from '@/models/transfer'
+import type { FeeDetails } from '@/models/transfer'
 import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 
 interface UseOutputAmountParams {
@@ -13,7 +13,7 @@ interface UseOutputAmountParams {
   /** Amount in the source token's decimal base */
   amount?: string | null
   /** Fees are used to calculate the output amount for transfers */
-  fees?: AmountInfo | null
+  fees?: FeeDetails[] | null
 }
 
 interface OutputAmountResult {
@@ -29,6 +29,23 @@ export function useOutputAmount({
   amount,
   fees,
 }: UseOutputAmountParams): OutputAmountResult {
+  // Calculate total fees for the source token
+  const totalFeesForSourceToken = useMemo(() => {
+    if (!fees || !sourceToken) return null
+
+    let hasMatchingFees = false
+    const total = fees.reduce((sum, fee) => {
+      if (fee.amount.token?.id === sourceToken.id) {
+        hasMatchingFees = true
+        return sum + BigInt(fee.amount.amount ?? 0n)
+      }
+      return sum
+    }, 0n)
+
+    // Return null if no fees match the source token, otherwise return the total
+    return hasMatchingFees ? total : null
+  }, [fees, sourceToken])
+
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [
       'outputAmount',
@@ -37,8 +54,7 @@ export function useOutputAmount({
       sourceToken?.id,
       destinationToken?.id,
       amount,
-      fees?.token.id,
-      fees?.amount.toString(),
+      totalFeesForSourceToken?.toString(),
     ],
     queryFn: async () => {
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
@@ -53,17 +69,15 @@ export function useOutputAmount({
             destinationToken,
             sourceAmount: amount,
           }
-          const output = await xcmRouterBuilderManager.getExchangeOutputAmount(params)
-          return output
+          return await xcmRouterBuilderManager.getExchangeOutputAmount(params)
         }
 
         // Normal transfer
-        if (!fees || fees.token.id !== sourceToken.id) return BigInt(amount)
+        if (!totalFeesForSourceToken) return BigInt(amount)
 
         const amountBigInt = BigInt(amount)
-        const feesBigInt = BigInt(fees.amount)
-        if (feesBigInt > amountBigInt) return 0n
-        return amountBigInt - feesBigInt
+        if (totalFeesForSourceToken > amountBigInt) return 0n
+        return amountBigInt - totalFeesForSourceToken
       } catch (error) {
         captureException(error, {
           level: 'error',
