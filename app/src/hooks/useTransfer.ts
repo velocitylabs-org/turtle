@@ -1,8 +1,7 @@
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import type { JsonRpcSigner } from 'ethers'
 import { useState } from 'react'
-import type { AmountInfo } from '@/models/transfer'
-
+import type { FeeDetails } from '@/models/transfer'
 import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { resolveSdk } from '@/utils/routes'
 import useChainflipApi from './useChainflipApi'
@@ -20,8 +19,7 @@ export interface TransferParams {
   recipient: string
   sourceAmount: bigint
   destinationAmount?: bigint
-  fees: AmountInfo
-  bridgingFee: AmountInfo | null
+  fees: FeeDetails[]
   /**
    * Callback when Turtle has completed submitting the transfer.
    * It does NOT mean that the transfer itself is completed.

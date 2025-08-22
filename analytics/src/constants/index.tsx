@@ -1,4 +1,4 @@
-import { Ethereum, Polkadot, REGISTRY } from '@velocitylabs-org/turtle-registry'
+import { Ethereum, Moonbeam, Polkadot, REGISTRY } from '@velocitylabs-org/turtle-registry'
 
 export const primaryColor = '#00FF29'
 
@@ -14,6 +14,7 @@ export const transactionsPerPage = 10
 export const chains = REGISTRY.chains
 export const ethereumChain = Ethereum
 export const relayChain = Polkadot
+export const moonbeamChain = Moonbeam
 
 // Tokens
 export const tokens = REGISTRY.tokens
