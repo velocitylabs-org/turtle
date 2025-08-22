@@ -8,5 +8,5 @@
     "types": ["jest", "node"]
   },
   "include": ["next-env.d.ts", "src", ".next/types/**/*.ts", "next.config.mjs"],
-  "exclude": ["node_modules", "cypress"]
+  "exclude": ["node_modules"]
 }

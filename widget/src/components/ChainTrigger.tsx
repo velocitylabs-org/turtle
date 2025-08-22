@@ -75,7 +75,7 @@ export default function ChainTrigger({
           error && 'border-turtle-error',
           className,
         )}
-        data-cy="chain-select-trigger"
+        data-testid="chain-select-trigger"
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
           <div className={cn('flex shrink-0 items-center gap-1', !disabled && 'cursor-pointer')} onClick={handleClick}>
@@ -89,7 +89,7 @@ export default function ChainTrigger({
                   className="h-[2rem] w-[2rem] rounded-full border border-turtle-foreground bg-turtle-background"
                 />
                 {shouldShowChainName && (
-                  <span className="text-nowrap" data-cy="chain-select-value">
+                  <span className="text-nowrap" data-testid="chain-select-value">
                     {value.name}
                   </span>
                 )}
@@ -132,7 +132,7 @@ export default function ChainTrigger({
                 value={manualRecipientInput.address}
                 onChange={handleManualRecipientChange}
                 onClick={e => e.stopPropagation()}
-                data-cy="manual-address-input"
+                data-testid="manual-address-input"
               />
             </>
           )}
