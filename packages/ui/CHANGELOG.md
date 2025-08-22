@@ -1,5 +1,22 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.1.0
+
+### Minor Changes
+
+- bd9dfa9: Feat: Add tokens and paths (LINK, SOL, LDO, SKY, TRAC)
+
+### Patch Changes
+
+- 356267c: Removed unused files, unused dependecies and exports
+- 68a404b: Replace ESLint + Prettier with Biome
+- Updated dependencies [356267c]
+- Updated dependencies [5a96db7]
+- Updated dependencies [68a404b]
+- Updated dependencies [bd9dfa9]
+  - @velocitylabs-org/turtle-registry@0.1.0
+  - @velocitylabs-org/turtle-assets@0.1.0
+
 ## 0.0.9
 
 ### Patch Changes
