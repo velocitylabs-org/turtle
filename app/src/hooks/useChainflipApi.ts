@@ -67,7 +67,6 @@ const useChainflipApi = () => {
       recipient,
       onComplete,
       fees,
-      bridgingFee,
     } = params
 
     try {
@@ -117,7 +116,6 @@ const useChainflipApi = () => {
             recipient,
             date,
             fees,
-            bridgingFee,
             uniqueTrackingId: depositPayload.depositChannelId,
           } satisfies StoredTransfer)
 
@@ -248,8 +246,7 @@ const submitPolkadotTransfer = async (
   removeOngoingTransfer: (id: string) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
 ): Promise<void> => {
-  const { sourceChain, sourceToken, sender, destinationToken, sourceAmount, bridgingFee, fees, onComplete } =
-    polkadotTransferParams
+  const { sourceChain, sourceToken, sender, destinationToken, sourceAmount, fees, onComplete } = polkadotTransferParams
   const { destinationChain, recipient } = swapParams
 
   // Here we create the unsigned transaction with Paraspell Builder
@@ -276,7 +273,6 @@ const submitPolkadotTransfer = async (
     // not the chainflip deposit address
     recipient: recipient,
     date,
-    bridgingFee,
     fees,
     uniqueTrackingId: depositChannelId,
     // Same as destchain
