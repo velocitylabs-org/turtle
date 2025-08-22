@@ -67,7 +67,7 @@ export default function TxSummary({
   const { price: sendingTokenPrice } = useTokenPrice(sendingAmount?.token)
   const { price: receivingTokenPrice } = useTokenPrice(receivingAmount?.token)
 
-  const showLoading = loading || !receivingAmount || !receivingAmount.amount || !receivingAmount.token || !fees
+  const showLoading = loading || !receivingAmount || !receivingAmount.amount || !receivingAmount.token
 
   useEffect(() => {
     if (showLoading) {
@@ -80,6 +80,8 @@ export default function TxSummary({
       return
     }
   }, [showLoading])
+
+  if (!showLoading && !fees) return null
 
   // Calculate total fees in dollars for isAmountTooLow check
   const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
