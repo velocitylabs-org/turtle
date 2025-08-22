@@ -1,5 +1,5 @@
 {
-  "name": "e2e-tests",
+  "name": "@velocitylabs-org/turtle-e2e",
   "version": "1.0.0",
   "author": "Stefano Imparato",
   "description": "End-to-end tests for the Turtle app",
@@ -15,5 +15,9 @@
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@types/node": "^24.3.0"
+  },
+  "dependencies": {
+    "@tenkeylabs/dappwright": "^2.11.2",
+    "playwright-core": "^1.55.0"
   }
 }

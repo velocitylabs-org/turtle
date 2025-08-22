@@ -1,57 +1,108 @@
-import { expect, test } from '@playwright/test'
+import { test as baseTest, expect } from '@playwright/test'
+import dappwright, { type Dappwright, MetaMaskWallet, type OfficialOptions } from '@tenkeylabs/dappwright'
+import type { BrowserContext } from 'playwright-core'
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('http://localhost:3000')
+export const test = baseTest.extend<{
+  context: BrowserContext
+  wallet: Dappwright
+}>({
+  // biome-ignore lint/correctness/noEmptyPattern: the first argument is not used, and will crash with _
+  context: async ({}, use, testInfo) => {
+    // Launch context with extension and playwright project params
+    const metadata = testInfo.project.metadata as OfficialOptions
+    const [wallet, , context] = await dappwright.bootstrap('', {
+      ...metadata,
+      headless: testInfo.project.use.headless,
+    })
+
+    // Coinbase Wallet already this network set.
+    if (wallet instanceof MetaMaskWallet) {
+      // Add Hardhat as a custom network.
+      await wallet.addNetwork({
+        networkName: 'Hardhat',
+        rpc: 'http://localhost:8546',
+        chainId: 31337,
+        symbol: 'ETH',
+      })
+    }
+
+    await use(context)
+  },
+
+  wallet: async ({ context }, use, testInfo) => {
+    const walletId = testInfo.project.metadata.wallet
+    const metamask = await dappwright.getWallet(walletId, context)
+
+    await use(metamask)
+  },
 })
 
-test.describe('Turtle', () => {
-  test('Health Check', async ({ page }) => {
-    await expect(page).toHaveTitle(/Turtle/)
-  })
+// test.beforeEach(async ({ page }) => {
+//   await page.goto('http://localhost:3000')
+// })
 
-  test('Happy Path – allows selecting chains, tokens, and amount', async ({ page }) => {
-    await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
-    await expect(page.getByRole('button', { name: 'Send' })).toBeDisabled()
+test('Health Check', async ({ page }) => {
+  await expect(page).toHaveTitle(/Turtle/)
+})
 
-    // Select From chain → unlock From token
-    await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
+test('Happy Path – allows selecting chains, tokens, and amount', async ({ page }) => {
+  await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
+  await expect(page.getByRole('button', { name: 'Send' })).toBeDisabled()
 
-    await expect(page.getByText('Ethereum')).toBeVisible()
-    await page.getByText('Ethereum').click()
+  // Select From chain → unlock From token
+  await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
 
-    await expect(page.getByText('ETH', { exact: true })).toBeVisible()
-    await page.getByText('ETH', { exact: true }).click()
+  await expect(page.getByText('Ethereum')).toBeVisible()
+  await page.getByText('Ethereum').click()
 
-    // Closes the dropdown
-    await page.click('body')
+  await expect(page.getByText('ETH', { exact: true })).toBeVisible()
+  await page.getByText('ETH', { exact: true }).click()
 
-    await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'false')
-    await page.getByTestId('chain-select-trigger-to').getByText('Chain').click()
+  // Closes the dropdown
+  await page.click('body')
 
-    await expect(page.getByText('Bifrost')).toBeVisible()
-    await page.getByText('Bifrost').click()
+  await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'false')
+  await page.getByTestId('chain-select-trigger-to').getByText('Chain').click()
 
-    await page.getByRole('listitem').filter({ hasText: 'ETH' }).locator('span').click()
+  await expect(page.getByText('Bifrost')).toBeVisible()
+  await page.getByText('Bifrost').click()
 
-    await page.getByPlaceholder('Amount').fill('0.01')
+  await page.getByRole('listitem').filter({ hasText: 'ETH' }).locator('span').click()
 
-    await expect(page.getByPlaceholder('Amount')).toHaveValue('0.01')
-  })
+  await page.getByPlaceholder('Amount').fill('0.01')
 
-  test('Destination token and chain are disabled until Source token and chain are selected', async ({ page }) => {
-    await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
+  await expect(page.getByPlaceholder('Amount')).toHaveValue('0.01')
+})
 
-    await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
-    await page.getByRole('listitem').filter({ hasText: 'Ethereum' }).click()
-    await page.getByText('ETH', { exact: true }).click()
-    await page.click('body')
+test('Destination token and chain are disabled until Source token and chain are selected', async ({ page }) => {
+  await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
 
-    await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'false')
+  await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
+  await page.getByRole('listitem').filter({ hasText: 'Ethereum' }).click()
+  await page.getByText('ETH', { exact: true }).click()
+  await page.click('body')
 
-    await page.getByTestId('chain-select-trigger-from').getByText('Ethereum').click()
-    await page.getByTestId('clear-button').first().click()
-    await page.click('body')
+  await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'false')
 
-    await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
-  })
+  await page.getByTestId('chain-select-trigger-from').getByText('Ethereum').click()
+  await page.getByTestId('clear-button').first().click()
+  await page.click('body')
+
+  await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
+})
+
+test('Can connect wallet', async ({ page }) => {
+  await page.goto('http://localhost:3000')
+
+  await expect(page.getByRole('button', { name: 'Connect' })).toBeDisabled()
+
+  await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
+  await page.getByRole('listitem').filter({ hasText: 'Ethereum' }).click()
+  await page.getByText('ETH', { exact: true }).click()
+  await page.click('body')
+
+  await expect(page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' })).toBeEnabled()
+  await page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' }).click()
+
+  await expect(page.getByText('Metamask')).toBeVisible()
 })

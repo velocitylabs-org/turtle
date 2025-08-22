@@ -1,4 +1,5 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig } from '@playwright/test'
+import { MetaMaskWallet } from '@tenkeylabs/dappwright'
 
 /**
  * Read environment variables from file.
@@ -30,25 +31,35 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    headless: false,
   },
 
   /* Configure projects for major browsers */
   projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
+    // {
+    //   name: 'chromium',
+    //   use: { ...devices['Desktop Chrome'] },
+    // },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
 
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+      name: 'MetaMask',
+      metadata: {
+        wallet: 'metamask',
+        version: MetaMaskWallet.recommendedVersion,
 
+        // Hardhat's default https://hardhat.org/hardhat-network/docs/reference#accounts
+        seed: 'test test test test test test test test test test test junk',
+      },
+    },
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
