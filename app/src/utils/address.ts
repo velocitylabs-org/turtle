@@ -1,7 +1,7 @@
 import { convertSs58, getTNode, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
-import { hexToU8a, isHex, u8aToHex } from '@polkadot/util'
+import { hexToU8a, isHex } from '@polkadot/util'
 import type { AddressType, Chain, ManualRecipient } from '@velocitylabs-org/turtle-registry'
 import { JsonRpcSigner } from 'ethers'
 import { isAddress } from 'viem/utils'
@@ -62,7 +62,7 @@ export const isValidAddressType = (address: string, types: AddressType[]): boole
  * @param address - The address string to be validated.
  * @returns True if the address is a valid Ethereum address, false otherwise.
  */
-export const isValidEthereumAddress = (address: string): boolean => {
+const isValidEthereumAddress = (address: string): boolean => {
   return isAddress(address)
 }
 
@@ -72,7 +72,7 @@ export const isValidEthereumAddress = (address: string): boolean => {
  * @param address - The address string to be validated.
  * @returns True if the address is a valid Substrate address, false otherwise.
  */
-export const isValidSubstrateAddress = (address: string): boolean => {
+const isValidSubstrateAddress = (address: string): boolean => {
   try {
     encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address))
     return true
@@ -101,16 +101,6 @@ export const getPlaceholderAddress = (type: AddressType): string => {
     case 'ss58':
       return '5EkE3p9hnUi5p14d7pJnDBjiNYqPNPSutKbyAuvV3mFGGxPi' // Velocity Address
   }
-}
-/**
- * Return the AccountId32 reprsentation of the given `address`. It should represent the same
- * wallet across any chain in the Polkadot ecosystem.
- *
- * @param address - the base address to decode
- * @returns the AccountId32 presentation of `address`
- */
-export function getAccountId32(address: string): string {
-  return u8aToHex(decodeAddress(address))
 }
 
 /**
