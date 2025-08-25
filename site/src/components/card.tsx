@@ -1,7 +1,7 @@
 import { cn } from '@velocitylabs-org/turtle-ui'
 import Image, { type StaticImageData } from 'next/image'
 
-export type Feature = {
+type Feature = {
   title: string
   description: string
   icon: StaticImageData

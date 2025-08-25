@@ -104,7 +104,7 @@ export async function lookupName(network: Network, address: string): Promise<str
   }
 }
 
-export const removeURLSlash = (url: string) => {
+const removeURLSlash = (url: string) => {
   if (url.length === 0) return url
   const lastChar = url.charAt(url.length - 1)
   if (lastChar === '/') {
@@ -190,7 +190,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
  * @param url - The URL from which the subdomain needs to be extracted. For example, "https://sub.example.com".
  * @returns The subdomain string from the URL.
  */
-export const getSubdomainPath = (url: string) => {
+const getSubdomainPath = (url: string) => {
   // Generate a constructor URL. Example: 'https://polkadot.subscan.io/'
   const parsedUrl = new URL(url)
   // Filter hostname from URL: 'polkadot.subscan.io/'
@@ -205,7 +205,7 @@ export const getSubdomainPath = (url: string) => {
  * @param sender - The sender address.
  * @returns The Subscan explorer link
  */
-export const getCustomExplorerLink = (name: string, sender: string) => {
+const getCustomExplorerLink = (name: string, sender: string) => {
   return `https://${name.toLowerCase()}.subscan.io/account/${sender}?tab=xcm_transfer`
 }
 
@@ -253,7 +253,7 @@ export function toAmountInfo(tokenAmount?: TokenAmount | null, usdPrice?: number
  * @param transfers - The list of completed transfers to order.
  * @returns The list of completed transfers ordered by date.
  */
-export const orderTransfersByDate = (transfers: CompletedTransfer[]) =>
+const orderTransfersByDate = (transfers: CompletedTransfer[]) =>
   transfers.reduce<TransfersByDate>((acc, transfer) => {
     let date: string
     if (typeof transfer.date === 'string') {

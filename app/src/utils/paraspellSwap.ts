@@ -17,20 +17,17 @@ export const DEX_TO_CHAIN_MAP = {
 
 export type Dex = keyof typeof DEX_TO_CHAIN_MAP
 
-/** returns all supported dex paraspell nodes */
-export const getSupportedDexNodes = () => Object.keys(DEX_TO_CHAIN_MAP)
-
 /** returns all supported dex chains */
-export const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
+const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
 
 /** returns the paraspell dex for a given chain */
-export const getDex = (chain: Chain): Dex | undefined => {
+const getDex = (chain: Chain): Dex | undefined => {
   const entry = Object.entries(DEX_TO_CHAIN_MAP).find(([_, c]) => c.uid === chain.uid)
   return entry?.[0] as Dex | undefined
 }
 
 /** returns all tokens supported by a dex that are also supported by our registry and have at least one trading pair */
-export const getDexTokens = (dex: Dex): Token[] => {
+const getDexTokens = (dex: Dex): Token[] => {
   const pairs = getDexPairs(dex)
 
   const uniqueTokens = new Map(
@@ -44,7 +41,7 @@ export const getDexTokens = (dex: Dex): Token[] => {
 }
 
 /** returns all pairs supported by a dex and supported by our registry */
-export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
+const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const pairs = getExchangePairs(dex)
 
   const turtlePairs = pairs
@@ -63,7 +60,7 @@ export const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] =
 }
 
 /** returns all tokens that can be traded with the given source token on the specified dex */
-export const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
+const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
   const dexPairs = getDexPairs(dex)
   const tradeableTokens = new Set<Token>()
 
