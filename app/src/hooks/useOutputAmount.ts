@@ -70,7 +70,7 @@ export function useOutputAmount({
 
       try {
         // Paraspell swap from HydrationDex
-        if (!isSameToken(sourceToken, destinationToken) && sourceChain === DEX_TO_CHAIN_MAP.HydrationDex) {
+        if (!isSameToken(sourceToken, destinationToken) && sourceChain.uid === DEX_TO_CHAIN_MAP.HydrationDex.uid) {
           const params = {
             sourceChain,
             destinationChain,
