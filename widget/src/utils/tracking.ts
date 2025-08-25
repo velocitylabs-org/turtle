@@ -89,7 +89,7 @@ export function getTransferStatus(transferResult: TxTrackingResult) {
  * @param transferResult - The transfer tracking response from the Snowbridge API.
  * @returns - the transfer status
  */
-export function getTransferStatusFromParachain(transferResult: FromParaToEthTrackingResult) {
+function getTransferStatusFromParachain(transferResult: FromParaToEthTrackingResult) {
   /** Bridge Hub Channel Message Delivered */
   const isBHChannelMsgDelivered =
     'bridgeHubChannelDelivered' in transferResult && transferResult.bridgeHubChannelDelivered?.success
@@ -122,7 +122,7 @@ export function getTransferStatusFromParachain(transferResult: FromParaToEthTrac
  * @param txTrackingResult - The transfer tracking response for an Eth to Parachain/AH transfer from the Snowbridge API.
  * @returns - the transfer status
  */
-export const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingResult) => {
+const getTransferStatusToPolkadot = (txTrackingResult: FromEthTrackingResult) => {
   const { status, submitted } = txTrackingResult
 
   switch (status) {

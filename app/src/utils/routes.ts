@@ -30,12 +30,12 @@ export const deduplicate = <T extends { uid?: string; id?: string }>(items: T[],
 }
 
 /** Filters all chains by available routes. */
-export const getTransferSourceChains = (): Chain[] => {
+const getTransferSourceChains = (): Chain[] => {
   return MainnetRegistry.chains.filter(chain => MainnetRegistry.routes.some(route => route.from === chain.uid))
 }
 
 /** Filters all chains by selected source chain, selected token and available routes */
-export const getTransferDestinationChains = (sourceChain: Chain | null, token: Token | null): Chain[] => {
+const getTransferDestinationChains = (sourceChain: Chain | null, token: Token | null): Chain[] => {
   if (!sourceChain || !token) return []
 
   return MainnetRegistry.chains.filter(c =>
@@ -46,7 +46,7 @@ export const getTransferDestinationChains = (sourceChain: Chain | null, token: T
 }
 
 /** Filters all tokens by selected source chain and available routes */
-export const getTransferTokens = (sourceChain: Chain | null, destinationChain: Chain | null): Token[] => {
+const getTransferTokens = (sourceChain: Chain | null, destinationChain: Chain | null): Token[] => {
   if (!sourceChain) return []
 
   return MainnetRegistry.tokens.filter(token =>
@@ -127,7 +127,7 @@ export const getAllowedDestinationTokens = (
   return deduplicate(allowedTokens)
 }
 
-export const getRoute = (from: Chain, to: Chain): Route | undefined => {
+const getRoute = (from: Chain, to: Chain): Route | undefined => {
   return MainnetRegistry.routes.find(route => route.from === from.uid && route.to === to.uid)
 }
 

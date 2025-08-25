@@ -66,20 +66,6 @@ const getSourceAmountPlaceholder = ({
   return formatAmount(Number(balanceData?.formatted), 'Longer')
 }
 
-const getReceiveAmountPlaceholder = ({
-  isLoadingOutputAmount,
-  sourceTokenAmount,
-  destinationTokenAmount,
-}: {
-  isLoadingOutputAmount: boolean
-  sourceTokenAmount: TokenAmount | null
-  destinationTokenAmount: TokenAmount | null
-}): string => {
-  if (isLoadingOutputAmount) return 'Loading...'
-  if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id) return ''
-  return 'Receive Amount'
-}
-
 export default function Transfer() {
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
@@ -183,12 +169,6 @@ export default function Transfer() {
     balanceData,
   })
 
-  const receiveAmountPlaceholder = getReceiveAmountPlaceholder({
-    isLoadingOutputAmount,
-    sourceTokenAmount,
-    destinationTokenAmount,
-  })
-
   const durationEstimate = () => {
     const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
     // Chainflip swap duration
@@ -226,7 +206,15 @@ export default function Transfer() {
     maxButtonLoading
 
   const shouldDisplayTxSummary =
-    sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval && !isChainflipQuoteError
+    sourceTokenAmount?.token &&
+    sourceTokenAmount?.amount &&
+    destinationTokenAmount?.token &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval &&
+    destinationChain &&
+    sourceWallet?.sender &&
+    destinationWallet?.sender &&
+    !isChainflipQuoteError
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -385,14 +373,10 @@ export default function Transfer() {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amountProps={{
-                      value: destinationTokenAmount?.amount ?? null,
-                      onChange: amount =>
-                        tokenField.onChange({
-                          token: tokenField.value?.token ?? null,
-                          amount,
-                        }),
+                      value: null, // the destination amount is shown in the TxSummary component
+                      onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: receiveAmountPlaceholder,
+                      placeholder: '',
                       disabled: true,
                     }}
                     walletProps={{
@@ -428,7 +412,7 @@ export default function Transfer() {
               <Switch
                 {...field}
                 checked={field.value}
-                className="items-start pt-1"
+                className="items-start pt-3"
                 label="Send to a different address"
                 disabled={transferStatus !== 'Idle'}
               />
@@ -438,7 +422,7 @@ export default function Transfer() {
           {/* Manual input warning */}
           <AnimatePresence>
             {manualRecipient.enabled && (
-              <motion.div className="flex items-center gap-1 self-center pt-1" {...manualInputAnimationProps}>
+              <motion.div className="flex items-center gap-1 pt-2" {...manualInputAnimationProps}>
                 <AlertIcon />
                 <span className="text-xs">Double check the address to avoid losing funds</span>
               </motion.div>
@@ -491,20 +475,23 @@ export default function Transfer() {
         )}
       </AnimatePresence>
 
-      {shouldDisplayTxSummary && (
-        <TxSummary
-          loading={loadingFees}
-          tokenAmount={sourceTokenAmount}
-          fees={fees}
-          durationEstimate={durationEstimate()}
-          isBalanceSufficientForFees={isBalanceSufficientForFees}
-          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-        />
-      )}
+      <AnimatePresence>
+        {shouldDisplayTxSummary && (
+          <TxSummary
+            loading={loadingFees}
+            sourceTokenAmount={sourceTokenAmount}
+            destinationTokenAmount={destinationTokenAmount}
+            destChain={destinationChain}
+            fees={fees}
+            durationEstimate={durationEstimate()}
+            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Transfer Button */}
       <SendButton
-        className="my-5 w-full"
+        className="w-full mt-6 sm:mt-9 mb-1 sm:mb-2"
         label="Send"
         size="lg"
         variant="primary"
