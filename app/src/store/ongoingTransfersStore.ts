@@ -12,6 +12,7 @@ interface State {
   addOrUpdate: (transfer: StoredTransfer) => void
   updateUniqueId: (id: string, uniqueTrackingId: string) => void
   updateStatus: (id: string, newStatus?: string) => void
+  updateProgress: (id: string) => void
   remove: (id: string) => void
 }
 
@@ -79,6 +80,21 @@ export const useOngoingTransfersStore = create<State>()(
               : transfer,
           ),
         }))
+      },
+
+      // When called, this function completes the transfer progress bar
+      updateProgress: (id: string) => {
+        if (!id) return
+        set(state => {
+          return {
+            transfers: state.transfers.map(transfer => {
+              if (transfer.id === id) {
+                transfer.progress = 100
+              }
+              return transfer
+            }),
+          }
+        })
       },
 
       remove: id => {

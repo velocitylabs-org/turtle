@@ -13,6 +13,7 @@ import useOngoingTransfers from './useOngoingTransfers'
 const handleOngoingSwap = async (
   swap: StoredTransfer,
   updateStatus: (id: string, newStatus?: string) => void,
+  updateProgress: (id: string) => void,
   addCompletedSwap: (completedTransfer: CompletedTransfer) => void,
   removeOngoingSwap: (id: string) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
@@ -46,49 +47,56 @@ const handleOngoingSwap = async (
     }
     case 'COMPLETED':
     case 'FAILED': {
+      // Completes the progress bar to 100%
+      updateProgress(swap.id)
       const success = state === 'COMPLETED'
       const swapStatus = success ? TxStatus.Succeeded : TxStatus.Failed
       const newStatus = success ? 'Transfer completed!' : 'Transfer failed!'
       updateStatus(id, newStatus)
 
-      addNotification({
-        message: newStatus,
-        severity: success ? NotificationSeverity.Success : NotificationSeverity.Error,
-        dismissible: true,
-      })
-
-      const explorerLink = getChainflipExplorerLink(swap, status.swapId)
-      addCompletedSwap({
-        id: id,
-        result: swapStatus,
-        sourceToken,
-        destinationToken,
-        sourceChain,
-        destChain,
-        sourceAmount: swap.sourceAmount,
-        destinationAmount: swap.destinationAmount,
-        sourceTokenUSDValue: swap.sourceTokenUSDValue ?? 0,
-        destinationTokenUSDValue: swap.destinationTokenUSDValue,
-        fees: swap.fees,
-        sender: swap.sender,
-        recipient,
-        date: swap.date,
-        ...(explorerLink && { explorerLink }),
-      } satisfies CompletedTransfer)
-
-      removeOngoingSwap(id)
-
-      updateTransferMetrics({
-        txHashId: swap.id,
-        status: swapStatus,
-      })
-
-      if (!success) {
-        captureException(new Error(`Chainflip swap ${id} failed - ${uniqueTrackingId}`), {
-          tags: { source: 'useChainflipTracker' },
-          extra: { swap, swapData: status },
+      // For a smoother UX, give it 1.5 seconds to:
+      // Let the progress bar complete
+      // Show the notification before removing the transfer from the ongoing transfers list
+      setTimeout(() => {
+        addNotification({
+          message: newStatus,
+          severity: success ? NotificationSeverity.Success : NotificationSeverity.Error,
+          dismissible: true,
         })
-      }
+
+        const explorerLink = getChainflipExplorerLink(swap, status.swapId)
+        addCompletedSwap({
+          id: id,
+          result: swapStatus,
+          sourceToken,
+          destinationToken,
+          sourceChain,
+          destChain,
+          sourceAmount: swap.sourceAmount,
+          destinationAmount: swap.destinationAmount,
+          sourceTokenUSDValue: swap.sourceTokenUSDValue ?? 0,
+          destinationTokenUSDValue: swap.destinationTokenUSDValue,
+          fees: swap.fees,
+          sender: swap.sender,
+          recipient,
+          date: swap.date,
+          ...(explorerLink && { explorerLink }),
+        } satisfies CompletedTransfer)
+
+        removeOngoingSwap(id)
+
+        updateTransferMetrics({
+          txHashId: swap.id,
+          status: swapStatus,
+        })
+
+        if (!success) {
+          captureException(new Error(`Chainflip swap ${id} failed - ${uniqueTrackingId}`), {
+            tags: { source: 'useChainflipTracker' },
+            extra: { swap, swapData: status },
+          })
+        }
+      }, 1500)
       break
     }
 
@@ -100,7 +108,7 @@ const handleOngoingSwap = async (
 export const useChainflipTracker = (ongoingTransfers: StoredTransfer[]): void => {
   // Ref to prevent polling overlap
   const isPollingRef = useRef(false)
-  const { remove, updateStatus } = useOngoingTransfers()
+  const { remove, updateStatus, updateProgress } = useOngoingTransfers()
   const { addCompletedTransfer } = useCompletedTransfers()
   const { addNotification } = useNotification()
   const chainflipSwaps = useMemo(() => getChainflipOngoingSwaps(ongoingTransfers), [ongoingTransfers])
@@ -111,7 +119,9 @@ export const useChainflipTracker = (ongoingTransfers: StoredTransfer[]): void =>
       isPollingRef.current = true
       try {
         const results = await Promise.allSettled(
-          swaps.map(s => handleOngoingSwap(s, updateStatus, addCompletedTransfer, remove, addNotification)),
+          swaps.map(s =>
+            handleOngoingSwap(s, updateStatus, updateProgress, addCompletedTransfer, remove, addNotification),
+          ),
         )
 
         // Report failed tracking attempts to Sentry
@@ -133,7 +143,7 @@ export const useChainflipTracker = (ongoingTransfers: StoredTransfer[]): void =>
         isPollingRef.current = false
       }
     },
-    [updateStatus, addCompletedTransfer, remove, addNotification],
+    [updateStatus, addCompletedTransfer, remove, addNotification, updateProgress],
   )
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we only care about chainflipSwaps length not content

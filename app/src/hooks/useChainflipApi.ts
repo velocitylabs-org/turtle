@@ -385,7 +385,6 @@ const handlePolkadotTxEvents = async (
   addOrUpdate({
     ...transferToStore,
     id: event.txHash.toString(),
-    status: `Arriving at ${transferToStore.destChain.name}`,
     finalizedAt: new Date(),
   })
   resolve()

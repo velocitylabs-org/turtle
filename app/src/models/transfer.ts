@@ -34,6 +34,7 @@ export interface StoredTransfer extends RawTransfer {
   status?: string
   // WithinPolkadot transfer is considered as finalized
   finalizedAt?: Date
+  progress?: number
   swapInformation?: {
     currentStep?: number
     plan?: TRouterPlan
