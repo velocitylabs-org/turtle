@@ -5,6 +5,7 @@ import type {
   DepositAddressResponseV2,
   RegularQuote,
   SwapSDK,
+  SwapStatusResponseV2,
 } from '@chainflip/sdk/swap'
 import {
   type Chain,
@@ -14,7 +15,7 @@ import {
   PolkadotTokens,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
-import type { FeeDetailType } from '@/models/transfer'
+import type { FeeDetailType, StoredTransfer } from '@/models/transfer'
 import { useChainflipStore } from '@/store/chainflipStore'
 import { getChainSpecificAddress } from './address'
 
@@ -188,6 +189,26 @@ export const getDepositAddress = async (
   }
 }
 
+export const getSwapStatus = async (depositChannelId: string): Promise<SwapStatusResponseV2> => {
+  try {
+    const sdk = getChainflipSdk()
+    if (!sdk) throw new Error('Chainflip SDK not initialized.')
+    const statusRequest = {
+      id: depositChannelId,
+    }
+    return await sdk.getStatusV2(statusRequest)
+  } catch (error) {
+    console.log('SwapStatusResponseV2 error', error)
+    const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
+
+    if (chainflipErrorMsg) {
+      throw formatChainflipErrorMsg(chainflipErrorMsg)
+    }
+
+    throw error as Error
+  }
+}
+
 /**
  * Returns the number of block confirmations required by Chainflip for a given chain.
  * A deposit transaction (deposit address and vault smart contract)
@@ -259,6 +280,12 @@ export const isChainflipSwap = (
       route.from.chainId === sourceChain.chainId &&
       route.to.chainId === destinationChain.chainId &&
       route.pairs.some(([srcToken, dstToken]) => srcToken.id === sourceToken.id && dstToken.id === destinationToken.id),
+  )
+}
+
+export const getChainflipOngoingSwaps = (ongoingTransfers: StoredTransfer[]) => {
+  return ongoingTransfers.filter(
+    t => t.destinationToken && isChainflipSwap(t.sourceChain, t.destChain, t.sourceToken, t.destinationToken),
   )
 }
 
