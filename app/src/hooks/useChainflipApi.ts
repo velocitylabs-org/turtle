@@ -6,13 +6,14 @@ import { type Account, type Address, erc20Abi, type PublicClient, type WalletCli
 import { usePublicClient, useSwitchChain, useWalletClient } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { type Notification, NotificationSeverity } from '@/models/notification'
-import type { StoredTransfer } from '@/models/transfer'
+import { type StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { useChainflipStore } from '@/store/chainflipStore'
 import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getChainSpecificAddress, getSenderAddress } from '@/utils/address'
+import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { type ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
 import { extractPapiEvent, getPolkadotSigner } from '@/utils/papi'
 import { convertAmount, txWasCancelled } from '@/utils/transfer'
@@ -99,6 +100,7 @@ const useChainflipApi = () => {
 
           const senderAddress = await getSenderAddress(sender)
           const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+          const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
           const date = new Date()
 
           addOrUpdate({
@@ -113,21 +115,22 @@ const useChainflipApi = () => {
             recipient,
             date,
             fees,
+            status: `Submitting to ${sourceChain.name}`,
             uniqueTrackingId: depositPayload.depositChannelId,
           } satisfies StoredTransfer)
 
           onComplete?.()
           setStatus('Idle')
 
-          // TODO: Add transfer metrics
-          // trackTransferMetrics({
-          //   transferParams: params,
-          //   txId: txHash,
-          //   senderAddress,
-          //   sourceTokenUSDValue,
-          //   destinationTokenUSDValue,
-          //   date,
-          // })
+          trackTransferMetrics({
+            transferParams: params,
+            txId: txHash,
+            senderAddress,
+            sourceTokenUSDValue,
+            destinationTokenUSDValue,
+            date,
+            isSwap: true,
+          })
           break
         }
         case Direction.ToEthereum: {
@@ -258,6 +261,7 @@ const submitPolkadotTransfer = async (
   const senderAddress = await getSenderAddress(sender)
   const formattedSenderAddress = getChainSpecificAddress(senderAddress, sourceChain)
   const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+  const destinationTokenUSDValue = (await getCachedTokenPrice(destinationToken))?.usd ?? 0
   const date = new Date()
 
   const transferToStore = {
@@ -291,15 +295,16 @@ const submitPolkadotTransfer = async (
           const onSignedCallback = () => {
             onComplete?.()
             setStatus('Idle')
-            // TODO: Add transfer metrics
-            // trackTransferMetrics({
-            //   transferParams: params,
-            //   txId: event.txHash?.toString(),
-            //   senderAddress,
-            //   sourceTokenUSDValue,
-            //   destinationTokenUSDValue,
-            //   date,
-            // })
+
+            trackTransferMetrics({
+              transferParams: polkadotTransferParams,
+              txId: event.txHash?.toString(),
+              senderAddress: formattedSenderAddress,
+              sourceTokenUSDValue,
+              destinationTokenUSDValue,
+              date,
+              isSwap: true,
+            })
             xcmTransferBuilderManager.disconnect(polkadotTransferParams)
           }
           await handlePolkadotTxEvents(event, addOrUpdate, transferToStore, resolve, onSignedCallback)
@@ -407,13 +412,12 @@ const handleSendError = (
     severity: NotificationSeverity.Error,
   })
 
-  // TODO: Handle failed transfers metrics
-  // if (txId) {
-  //   updateTransferMetrics({
-  //     txHashId: txId,
-  //     status: TxStatus.Failed,
-  //   })
-  // }
+  if (txId) {
+    updateTransferMetrics({
+      txHashId: txId,
+      status: TxStatus.Failed,
+    })
+  }
 }
 
 export default useChainflipApi
