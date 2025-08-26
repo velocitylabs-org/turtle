@@ -23,6 +23,13 @@ export function snowbridgeWrapped(): Origin {
   }
 }
 
+export function wormholeSolanaWrapped(): Origin {
+  return {
+    type: 'Solana',
+    bridge: 'Wormhole',
+  }
+}
+
 export function getDestChainId(destChain: Chain): string {
   switch (destChain.network) {
     case 'Ethereum': {

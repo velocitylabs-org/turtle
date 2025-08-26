@@ -31,6 +31,6 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   throw Error('The impossible happened')
 }
 
-export function isAnyPolkadotNetwork(network: Network): boolean {
+function isAnyPolkadotNetwork(network: Network): boolean {
   return network === 'Polkadot' || network === 'Kusama'
 }

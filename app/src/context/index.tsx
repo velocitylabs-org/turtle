@@ -8,7 +8,7 @@ import { mainnet_networks, wagmiAdapter } from '@/config'
 import { isDevelopment, projectId, vercelDomain } from '@/utils/env'
 
 // Setup queryClient
-export const queryClient = new QueryClient()
+const queryClient = new QueryClient()
 
 // Get projectId at https://cloud.walletconnect.com
 if (!projectId) throw new Error('Project ID is not defined')
@@ -23,7 +23,7 @@ const metadata = {
 }
 
 // Create modal
-export const modal = createAppKit({
+createAppKit({
   adapters: [wagmiAdapter],
   networks: mainnet_networks,
   defaultNetwork: ethereum,

@@ -65,7 +65,11 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.WBTC.id,
+      EthereumTokens.LINK.id,
       EthereumTokens.AAVE.id,
+      EthereumTokens.LIDO.id,
+      EthereumTokens.TRAC.id,
+      EthereumTokens.SKY.id,
     ],
   },
   {
@@ -258,7 +262,11 @@ export const routes: Route[] = [
       EthereumTokens.USDC.id,
       EthereumTokens.USDT.id,
       EthereumTokens.WBTC.id,
+      EthereumTokens.LINK.id,
       EthereumTokens.AAVE.id,
+      EthereumTokens.LIDO.id,
+      EthereumTokens.TRAC.id,
+      EthereumTokens.SKY.id,
     ],
   },
 
@@ -348,7 +356,12 @@ export const routes: Route[] = [
     from: Moonbeam.uid,
     to: Hydration.uid,
     sdk: 'ParaSpellApi',
-    tokens: [PolkadotTokens.DOT.id, PolkadotTokens.GLMR.id, PolkadotTokens.VDOT.id],
+    tokens: [
+      PolkadotTokens.DOT.id,
+      PolkadotTokens.GLMR.id,
+      PolkadotTokens.VDOT.id,
+      // PolkadotTokens.SOL.id
+    ],
   },
   {
     from: Moonbeam.uid,
@@ -402,6 +415,7 @@ export const routes: Route[] = [
       PolkadotTokens.GLMR.id,
       PolkadotTokens.BNC.id,
       PolkadotTokens.VDOT.id,
+      // PolkadotTokens.SOL.id,
     ],
   },
   {
