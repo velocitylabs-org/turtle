@@ -159,7 +159,7 @@ export default function TxSummary({
               {!hasFeesFailed && isItWrappedToken && (
                 <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1 w-full mb-1">
                   <InfoIcon width={17} height={17} fill="black" />
-                  <span className="text-[12px] text-turtle-foreground ine-block">
+                  <span className="text-[12px] text-turtle-foreground inline-block">
                     <span className="font-bold ">Note:</span> You can swap this wrapped token on Hydration
                   </span>
                 </div>
