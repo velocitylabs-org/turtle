@@ -114,3 +114,11 @@ export function mapParaspellChainToTurtleRegistry(chainName: string): Chain {
   }
   return chain
 }
+
+export function moonbeamSymbolToRegistry(tokenSymbol: string): string {
+  const moonbeamErc20Prefix = 'xc'
+  if (tokenSymbol.startsWith(moonbeamErc20Prefix)) {
+    return tokenSymbol.slice(moonbeamErc20Prefix.length)
+  }
+  return tokenSymbol
+}
