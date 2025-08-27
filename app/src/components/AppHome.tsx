@@ -10,7 +10,7 @@ import { Suspense, useState } from 'react'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-import OnOffRamp from './OnOffRamp'
+import MeldWidget from './MeldWidget'
 
 const TransactionHistory = dynamic(() => import('./TransactionsHistory'), {
   loading: () => <HistoryLoaderSkeleton length={5} />,
@@ -43,7 +43,7 @@ export default function AppHome() {
           )}
         </AppBody>
       }
-      BuySellComponent={<OnOffRamp />}
+      BuySellComponent={<MeldWidget />}
     />
   )
 }

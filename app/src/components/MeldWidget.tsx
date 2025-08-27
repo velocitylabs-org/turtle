@@ -1,4 +1,4 @@
-const OnOffRamp = () => {
+const MeldWidget = () => {
   const meldApiKey = process.env.NEXT_PUBLIC_MELD_API_KEY
 
   return (
@@ -14,4 +14,4 @@ const OnOffRamp = () => {
   )
 }
 
-export default OnOffRamp
+export default MeldWidget
