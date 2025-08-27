@@ -167,8 +167,13 @@ export default function TxSummary({
 
               <div className="border-1 w-full border-t border-turtle-level3" />
 
-              <div className="flex w-full flex-row items-start justify-between">
-                {!sourceTokenAmountError ? (
+              <div
+                className={cn(
+                  'flex w-full flex-row items-start',
+                  sourceTokenAmountError ? 'justify-end' : 'justify-between',
+                )}
+              >
+                {!sourceTokenAmountError && (
                   <Tooltip
                     showIcon={false}
                     content={<FeesBreakdown fees={fees} hasFeesFailed={hasFeesFailed} />}
@@ -191,8 +196,6 @@ export default function TxSummary({
                       <span className="inline-block">{getFeeStatusIcon(fees)}</span>
                     </div>
                   </Tooltip>
-                ) : (
-                  <div />
                 )}
                 <div className="flex items-center gap-1">
                   <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
