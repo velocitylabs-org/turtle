@@ -1,6 +1,8 @@
 import { captureException } from '@sentry/nextjs'
 import { type Balance, type Chain, EthereumTokens, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
+import { encodeFunctionData, erc20Abi, type PublicClient, parseEther, parseUnits, type WalletClient } from 'viem'
+import { usePublicClient, useWalletClient } from 'wagmi'
 import useNotification from '@/hooks/useNotification'
 import type { Sender } from '@/hooks/useTransfer'
 import { NotificationSeverity } from '@/models/notification'
@@ -52,6 +54,8 @@ export default function useFees(params: UseFeesParams) {
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
   const { addNotification } = useNotification()
+  const publicClient = usePublicClient()
+  const { data: walletClient } = useWalletClient()
   const senderAddress = sender?.address
 
   // Determine if we need ETH balance (only for SnowbridgeApi case)
@@ -361,20 +365,46 @@ export default function useFees(params: UseFeesParams) {
               sourceToken,
               sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
               sender,
-              recipient: senderAddress, // Recipient here must be a placeholder address
+              recipient: senderAddress, // Recipient here must be a placeholder address so we use the sender address
             }
 
-            const originFee = await xcmTransferBuilderManager.getOriginXcmFee(localTransferParams)
-            if (!originFee.fee) throw new Error('ChainflipApi Local transfer fee not found')
+            const networkFee = await xcmTransferBuilderManager.getOriginXcmFee(localTransferParams)
+            if (!networkFee.fee) throw new Error('ChainflipApi Local transfer fee not found')
 
             feeList.unshift({
               title: 'Transfer fees',
               chain: sourceChain,
-              sufficient: originFee.sufficient ? 'sufficient' : 'insufficient',
+              sufficient: networkFee.sufficient ? 'sufficient' : 'insufficient',
               amount: {
-                amount: originFee.fee,
+                amount: networkFee.fee,
                 token: localTransferfeeToken,
-                inDollars: feeTokenInDollars ? toHuman(originFee.fee, localTransferfeeToken) * feeTokenInDollars : 0,
+                inDollars: feeTokenInDollars ? toHuman(networkFee.fee, localTransferfeeToken) * feeTokenInDollars : 0,
+              },
+            })
+          }
+
+          if (sourceChain.network === 'Ethereum') {
+            if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
+
+            const networkFee = await estimateEip1559NetworkFee(
+              publicClient,
+              walletClient,
+              senderAddress as `0x${string}`,
+              sourceToken,
+              sourceTokenAmount,
+            )
+
+            const feeToken = EthereumTokens.ETH
+            const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
+
+            feeList.unshift({
+              title: 'Transfer fees',
+              chain: sourceChain,
+              sufficient: 'sufficient',
+              amount: {
+                amount: networkFee,
+                token: feeToken,
+                inDollars: feeTokenInDollars ? toHuman(networkFee, feeToken) * feeTokenInDollars : 0,
               },
             })
           }
@@ -433,6 +463,8 @@ export default function useFees(params: UseFeesParams) {
     sdk,
     sourceTokenAmountError,
     transferableAmount,
+    walletClient,
+    publicClient,
   ])
 
   useEffect(() => {
@@ -512,4 +544,39 @@ const getCachedBridgingFee = async (): Promise<bigint> => {
     throw new Error(error || `Failed to fetch bridging fee`)
   }
   return await response.json().then(BigInt)
+}
+
+const estimateEip1559NetworkFee = async (
+  publicClient: PublicClient,
+  walletClient: WalletClient,
+  senderAddress: `0x${string}`,
+  sourceToken: Token,
+  sourceTokenAmount: number,
+): Promise<bigint> => {
+  if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
+
+  let gas: bigint
+
+  if (sourceToken === EthereumTokens.ETH) {
+    gas = await publicClient.estimateGas({
+      account: walletClient.account,
+      to: senderAddress, // Recipient here must be a placeholder address so we use the sender address
+      value: parseEther(sourceTokenAmount.toString()),
+    })
+  } else {
+    const data = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: 'transfer',
+      args: [senderAddress, parseUnits(sourceTokenAmount.toString(), sourceToken.decimals)],
+    })
+
+    gas = await publicClient.estimateGas({
+      account: walletClient.account,
+      to: sourceToken.address as `0x${string}`, // Token smart contract address
+      data: data,
+    })
+  }
+
+  const gasPrice = await publicClient.getGasPrice()
+  return gas * gasPrice
 }
