@@ -353,7 +353,8 @@ export default function useFees(params: UseFeesParams) {
           const feeList: FeeDetails[] = [...chainflipfeeList]
 
           if (sourceChain.network === 'Polkadot') {
-            const feeTokenInDollars = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+            const localTransferfeeToken = PolkadotTokens.DOT
+            const feeTokenInDollars = (await getCachedTokenPrice(localTransferfeeToken))?.usd ?? 0
             const localTransferParams = {
               sourceChain,
               destinationChain: sourceChain, // Local transfer to AH
@@ -369,11 +370,11 @@ export default function useFees(params: UseFeesParams) {
             feeList.unshift({
               title: 'Transfer fees',
               chain: sourceChain,
-              sufficient: originFee.sufficient ? 'sufficient' : 'insufficient', // Should I check balance here?
+              sufficient: originFee.sufficient ? 'sufficient' : 'insufficient',
               amount: {
                 amount: originFee.fee,
-                token: sourceToken,
-                inDollars: feeTokenInDollars ? toHuman(originFee.fee, sourceToken) * feeTokenInDollars : 0,
+                token: localTransferfeeToken,
+                inDollars: feeTokenInDollars ? toHuman(originFee.fee, localTransferfeeToken) * feeTokenInDollars : 0,
               },
             })
           }
