@@ -2,6 +2,7 @@
 import {
   AppBody,
   HistoryLoaderSkeleton,
+  MeldWidget,
   TabSwitcherWrapper,
   type TransferTabOptions,
 } from '@velocitylabs-org/turtle-ui'
@@ -10,7 +11,6 @@ import { Suspense, useState } from 'react'
 import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-import MeldWidget from './MeldWidget'
 
 const TransactionHistory = dynamic(() => import('./TransactionsHistory'), {
   loading: () => <HistoryLoaderSkeleton length={5} />,

@@ -1,4 +1,4 @@
-const MeldWidget = () => {
+export const MeldWidget = () => {
   const meldApiKey = process.env.NEXT_PUBLIC_MELD_API_KEY
 
   return (
@@ -13,5 +13,3 @@ const MeldWidget = () => {
     </div>
   )
 }
-
-export default MeldWidget
