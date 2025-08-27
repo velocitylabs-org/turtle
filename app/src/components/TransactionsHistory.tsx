@@ -16,23 +16,23 @@ type TransactionHistoryProps = {
 }
 
 export default function TransactionHistory({ transfers }: TransactionHistoryProps) {
-  const formattedTransfers = formatTransfersByDate(transfers ?? [])
-  const ongoingTransfers = useOngoingTransfersStore(state => state.transfers).sort(
+  const ongoingTxs = useOngoingTransfersStore(state => state.transfers).sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   )
-  const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
+  const completedTxs = formatTransfersByDate(transfers ?? [])
+  const { statusMessages } = useOngoingTransfersTracker(ongoingTxs)
 
-  useOngoingTransfersCleaner(ongoingTransfers)
-  useOcelloidsSubscribe(ongoingTransfers)
+  useOngoingTransfersCleaner(ongoingTxs)
+  useOcelloidsSubscribe(ongoingTxs)
 
   return (
     <div
       id="ongoing-txs"
       className="flex h-[525px] max-w-[90vw] flex-col gap-1 overflow-y-auto rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
     >
-      {ongoingTransfers &&
-        ongoingTransfers.length > 0 &&
-        ongoingTransfers.map(tx => {
+      {ongoingTxs &&
+        ongoingTxs.length > 0 &&
+        ongoingTxs.map(tx => {
           const transfer = {
             ...tx,
             sourceToken: tokensById[tx.sourceToken.id] as Token,
@@ -43,7 +43,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
 
           return <OngoingTransferDialog key={tx.id} transfer={transfer} status={statusMessages[tx.id]} />
         })}
-      {formattedTransfers.map(({ date, transfers }, idx) => (
+      {completedTxs.map(({ date, transfers }, idx) => (
         <div key={idx + date + transfers.length}>
           <div className="w-full space-y-3">
             <p className={cn('tx-group-date mb-[-1] text-sm', idx !== 0 && 'mt-5')}>
