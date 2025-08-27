@@ -332,9 +332,7 @@ export default function useFees(params: UseFeesParams) {
           }
           setLoading(isLoadingChainflipQuote)
 
-          // TODO: Add Transfer fee to Deposit address & verify setIsBalanceSufficientForFees
-
-          const feeList: FeeDetails[] = await Promise.all(
+          const chainflipfeeList: FeeDetails[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
               const token = getFeeTokenFromAssetSymbol(fee.asset, fee.chain)
               const feeTokenInDollars = (await getCachedTokenPrice(token))?.usd ?? 0
@@ -351,6 +349,34 @@ export default function useFees(params: UseFeesParams) {
               }
             }),
           )
+
+          const feeList: FeeDetails[] = [...chainflipfeeList]
+
+          if (sourceChain.network === 'Polkadot') {
+            const feeTokenInDollars = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+            const localTransferParams = {
+              sourceChain,
+              destinationChain: sourceChain, // Local transfer to AH
+              sourceToken,
+              sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
+              sender,
+              recipient: senderAddress, // Recipient here must be a placeholder address
+            }
+
+            const originFee = await xcmTransferBuilderManager.getOriginXcmFee(localTransferParams)
+            if (!originFee.fee) throw new Error('ChainflipApi Local transfer fee not found')
+
+            feeList.unshift({
+              title: 'Transfer fees',
+              chain: sourceChain,
+              sufficient: originFee.sufficient ? 'sufficient' : 'insufficient', // Should I check balance here?
+              amount: {
+                amount: originFee.fee,
+                token: sourceToken,
+                inDollars: feeTokenInDollars ? toHuman(originFee.fee, sourceToken) * feeTokenInDollars : 0,
+              },
+            })
+          }
 
           setFees(feeList)
           break

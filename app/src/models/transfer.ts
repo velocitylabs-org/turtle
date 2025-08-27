@@ -202,6 +202,7 @@ export type FeeDetailType =
   | 'Swap fees'
   | 'Broker fees'
   | 'Deposit fees'
+  | 'Transfer fees'
 
 export type FeeSufficiency = 'sufficient' | 'insufficient' | 'undetermined'
 
