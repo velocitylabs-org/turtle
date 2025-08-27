@@ -12,6 +12,8 @@ import Transfer from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
+const meldApiKey = process.env.NEXT_PUBLIC_MELD_API_KEY ?? ''
+
 const TransactionHistory = dynamic(() => import('./TransactionsHistory'), {
   loading: () => <HistoryLoaderSkeleton length={5} />,
   ssr: false,
@@ -41,7 +43,7 @@ export default function AppHome() {
           )}
         </AppBody>
       }
-      BuySellComponent={<MeldWidget />}
+      BuySellComponent={<MeldWidget apiKey={meldApiKey} />}
     />
   )
 }
