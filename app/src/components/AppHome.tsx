@@ -22,7 +22,6 @@ export default function AppHome() {
 
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const [selectedTab, setSelectedTab] = useState<TransferTabOptions>('New')
-  const isHistoryTabSelected = selectedTab === 'History'
 
   return (
     <TabSwitcherWrapper
@@ -30,11 +29,10 @@ export default function AppHome() {
         <AppBody
           ongoingTransfers={ongoingTransfers}
           completedTransfers={completedTransfers}
-          isHistoryTabSelected={isHistoryTabSelected}
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
         >
-          {!isHistoryTabSelected ? (
+          {selectedTab !== 'History' ? (
             <Transfer />
           ) : (
             <Suspense fallback={<HistoryLoaderSkeleton length={5} />}>

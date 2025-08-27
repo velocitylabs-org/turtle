@@ -21,7 +21,6 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
   const { completedTransfers } = useCompletedTransfers()
 
   const [selectedTab, setSelectedTab] = useState<TransferTabOptions>('New')
-  const isHistoryTabSelected = selectedTab === 'History'
 
   const TransfersHistory = lazy(() => import('@/components/history/TransfersHistory'))
 
@@ -35,11 +34,10 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
                 <AppBody
                   ongoingTransfers={ongoingTransfers}
                   completedTransfers={completedTransfers}
-                  isHistoryTabSelected={isHistoryTabSelected}
                   selectedTab={selectedTab}
                   setSelectedTab={setSelectedTab}
                 >
-                  {!isHistoryTabSelected ? (
+                  {selectedTab !== 'History' ? (
                     <TransferForm />
                   ) : (
                     <Suspense fallback={<HistoryLoaderSkeleton length={5} />}>
