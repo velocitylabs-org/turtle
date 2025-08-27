@@ -5,6 +5,8 @@ export const vercelDomain: string | undefined = import.meta.env.VITE_PUBLIC_VERC
 
 export const OCELLOIDS_API_Key: string | undefined = import.meta.env.VITE_PUBLIC_OC_API_KEY_READ_WRITE
 
+export const meldApiKey: string | undefined = import.meta.env.VITE_PUBLIC_MELD_API_KEY
+
 export const CACHE_REVALIDATE_IN_SECONDS = 180
 export const AMOUNT_VS_FEE_RATIO: number = 10
 

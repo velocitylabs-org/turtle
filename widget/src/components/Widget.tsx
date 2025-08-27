@@ -1,6 +1,7 @@
 import {
   AppBody,
   HistoryLoaderSkeleton,
+  MeldWidget,
   TabSwitcherWrapper,
   type TransferTabOptions,
 } from '@velocitylabs-org/turtle-ui'
@@ -12,6 +13,7 @@ import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { Providers } from '@/providers'
 import { ConfigProvider, type ConfigRegistryType } from '@/providers/ConfigProviders'
 import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
+import { meldApiKey } from '@/utils/consts'
 import { generateWidgetTheme, type WidgetTheme } from '@/utils/theme'
 
 const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigRegistryType }) => {
@@ -49,7 +51,7 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
                   )}
                 </AppBody>
               }
-              BuySellComponent={<div>Buy/Sell</div>}
+              BuySellComponent={<MeldWidget apiKey={meldApiKey ?? ''} />}
             />
             <NotificationSystem />
             <SubstrateWalletModal />
