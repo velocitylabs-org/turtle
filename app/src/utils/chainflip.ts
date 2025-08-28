@@ -270,11 +270,13 @@ export const getChainflipAsset = async (asset: Token, chainflipChain: ChainData)
 
 /** Check if the swap is supported by Chainflip and match our Chainflip routes registry. */
 export const isChainflipSwap = (
-  sourceChain: Chain,
-  destinationChain: Chain,
-  sourceToken: Token,
-  destinationToken: Token,
+  sourceChain?: Chain | null,
+  destinationChain?: Chain | null,
+  sourceToken?: Token | null,
+  destinationToken?: Token | null,
 ): boolean => {
+  if (!sourceChain || !destinationChain || !sourceToken || !destinationToken) return false
+
   return chainflipRoutes.some(
     route =>
       route.from.chainId === sourceChain.chainId &&
@@ -284,9 +286,7 @@ export const isChainflipSwap = (
 }
 
 export const getChainflipOngoingSwaps = (ongoingTransfers: StoredTransfer[]) => {
-  return ongoingTransfers.filter(
-    t => t.destinationToken && isChainflipSwap(t.sourceChain, t.destChain, t.sourceToken, t.destinationToken),
-  )
+  return ongoingTransfers.filter(t => isChainflipSwap(t.sourceChain, t.destChain, t.sourceToken, t.destinationToken))
 }
 
 /** Check if the amount is greater than the minimum swap amount for the asset. */
