@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { cn } from '../helpers'
 
@@ -21,8 +20,8 @@ export const TabSwitcherWrapper = ({ TransferComponent, BuySellComponent }: TabS
     activeTab: 'Transfer' | 'BuySell'
   }) => {
     return (
-      <div className="flex flex-col gap-3">
-        <button className={cn(selectedTab === activeTab && 'font-bold')} onClick={onClick}>
+      <div className="flex flex-col">
+        <button className={cn('px-[1rem] py-[0.5rem]', selectedTab === activeTab && 'font-bold')} onClick={onClick}>
           <span className="text-[20px]">{label}</span>
         </button>
         {activeTab === selectedTab && <div className="h-0.5 w-full bg-turtle-primary" />}
@@ -33,7 +32,7 @@ export const TabSwitcherWrapper = ({ TransferComponent, BuySellComponent }: TabS
   return (
     <div>
       <div className="relative flex flex-col rounded-t-3xl border border-b-0 border-turtle-foreground bg-turtle-level1 pt-10 pb-4 px-10 w-full max-w-[90vw] sm:w-[31.5rem] h-[5-">
-        <div className="flex gap-4">
+        <div className="flex">
           <Button label="Transfer" onClick={() => setSelectedTab('Transfer')} activeTab="Transfer" />
           <Button label="Buy/Sell" onClick={() => setSelectedTab('BuySell')} activeTab="BuySell" />
         </div>
