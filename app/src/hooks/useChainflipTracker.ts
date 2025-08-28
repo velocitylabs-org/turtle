@@ -129,7 +129,7 @@ export const useChainflipTracker = (ongoingTransfers: StoredTransfer[]): void =>
           if (r.status === 'rejected') {
             captureException(r.reason, {
               extra: {
-                sawp: swaps[i],
+                swap: swaps[i],
               },
               tags: {
                 source: 'useChainflipTracker',
