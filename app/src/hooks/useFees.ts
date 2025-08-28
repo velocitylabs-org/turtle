@@ -386,7 +386,7 @@ export default function useFees(params: UseFeesParams) {
           if (sourceChain.network === 'Ethereum') {
             if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
 
-            const networkFee = await estimateEip1559NetworkFee(
+            const { estimatedGasFee: networkFee, isBalanceSufficient } = await getEip1559NetworkFee(
               publicClient,
               walletClient,
               senderAddress as `0x${string}`,
@@ -400,7 +400,7 @@ export default function useFees(params: UseFeesParams) {
             feeList.unshift({
               title: 'Transfer fees',
               chain: sourceChain,
-              sufficient: 'sufficient',
+              sufficient: isBalanceSufficient ? 'sufficient' : 'insufficient',
               amount: {
                 amount: networkFee,
                 token: feeToken,
@@ -546,13 +546,18 @@ const getCachedBridgingFee = async (): Promise<bigint> => {
   return await response.json().then(BigInt)
 }
 
-const estimateEip1559NetworkFee = async (
+/**
+ * Estimates the network fee for an Ethereum transfer in Chainflip swaps.
+ * It's based on the EIP-1559 standard.
+ * Supports both native ETH and ERC-20 (USDC/USDT) transfers, and verifies balance sufficiency.
+ */
+const getEip1559NetworkFee = async (
   publicClient: PublicClient,
   walletClient: WalletClient,
   senderAddress: `0x${string}`,
   sourceToken: Token,
   sourceTokenAmount: number,
-): Promise<bigint> => {
+): Promise<{ estimatedGasFee: bigint; isBalanceSufficient: boolean }> => {
   if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
 
   let gas: bigint
@@ -578,5 +583,54 @@ const estimateEip1559NetworkFee = async (
   }
 
   const gasPrice = await publicClient.getGasPrice()
-  return gas * gasPrice
+  const estimatedGasFee = gas * gasPrice
+  const isBalanceSufficient = await checkEip1559BalanceSufficiency(
+    publicClient,
+    sourceToken,
+    gas,
+    gasPrice,
+    sourceTokenAmount,
+    senderAddress,
+  )
+  return { estimatedGasFee, isBalanceSufficient }
+}
+
+/**
+ * Checks the balance sufficiency for an Ethereum transfer in Chainflip swaps.
+ * It's based on the EIP-1559 standard.
+ * Supports both native ETH and ERC-20 (USDC/USDT) transfers.
+ */
+const checkEip1559BalanceSufficiency = async (
+  publicClient: PublicClient,
+  sourceToken: Token,
+  gas: bigint,
+  gasPrice: bigint,
+  sourceTokenAmount: number,
+  address: `0x${string}`,
+): Promise<boolean> => {
+  if (!publicClient) throw new Error('Public client not found')
+
+  const feesValues = await publicClient.estimateFeesPerGas()
+  const maxFeePerGas = feesValues.maxFeePerGas ?? gasPrice
+  const maxGasFee = gas * maxFeePerGas
+  const ethBalance = await publicClient.getBalance({ address })
+
+  // ETH balance check
+  if (sourceToken === EthereumTokens.ETH) {
+    const transferAmount = parseEther(sourceTokenAmount.toString())
+    return ethBalance >= transferAmount + maxGasFee
+  }
+
+  // ERC-20 transfer: user must have ETH for gas
+  if (ethBalance < maxGasFee) return false
+
+  // ERC-20 token balance check
+  const erc20Balance = await publicClient.readContract({
+    address: sourceToken.address as `0x${string}`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: [address],
+  })
+
+  return erc20Balance >= parseUnits(sourceTokenAmount.toString(), sourceToken.decimals)
 }
