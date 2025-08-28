@@ -146,7 +146,6 @@ export const useChainflipTracker = (ongoingTransfers: StoredTransfer[]): void =>
     [updateStatus, addCompletedTransfer, remove, addNotification, updateProgress],
   )
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: we only care about chainflipSwaps length not content
   useEffect(() => {
     if (chainflipSwaps.length === 0) return
 
@@ -156,5 +155,5 @@ export const useChainflipTracker = (ongoingTransfers: StoredTransfer[]): void =>
     // then poll every 20s
     const interval = setInterval(() => pollStatuses(chainflipSwaps), 20_000)
     return () => clearInterval(interval)
-  }, [chainflipSwaps.length, pollStatuses])
+  }, [chainflipSwaps, pollStatuses])
 }
