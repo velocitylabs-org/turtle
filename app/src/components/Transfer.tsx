@@ -484,6 +484,7 @@ export default function Transfer() {
             destChain={destinationChain}
             fees={fees}
             durationEstimate={durationEstimate()}
+            sourceTokenAmountError={sourceTokenAmountErrorMessage}
             className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
           />
         )}
