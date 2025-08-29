@@ -1,6 +1,7 @@
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import { useMemo } from 'react'
 import { getChainflipQuote, isChainflipSwap } from '@/utils/chainflip'
 
 export interface ChainflipQuoteParams {
@@ -58,7 +59,13 @@ export const useChainflipQuote = (params: ChainflipQuoteParams) => {
     retry: 2,
   })
 
+  const isChainflip = useMemo(
+    () => isChainflipSwap(params.sourceChain, params.destinationChain, params.sourceToken, params.destinationToken),
+    [params.sourceChain, params.destinationChain, params.sourceToken, params.destinationToken],
+  )
+
   return {
+    isChainflipSwap: isChainflip,
     chainflipQuote,
     isLoadingChainflipQuote: isLoadingChainflipQuote || isFetchingChainflipQuote,
     isChainflipQuoteError,

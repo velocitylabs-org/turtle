@@ -129,13 +129,28 @@ export default function Transfer() {
     owner: sourceWallet?.sender?.address,
   })
 
-  const { chainflipQuote, isChainflipQuoteError, chainflipQuoteError } = useChainflipQuote({
-    sourceChain,
-    destinationChain,
-    sourceToken: sourceTokenAmount?.token,
-    destinationToken: destinationTokenAmount?.token,
-    amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? '0',
-  })
+  const { isChainflipSwap, chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError, chainflipQuoteError } =
+    useChainflipQuote({
+      sourceChain,
+      destinationChain,
+      sourceToken: sourceTokenAmount?.token,
+      destinationToken: destinationTokenAmount?.token,
+      amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? '0',
+    })
+
+  const isChainflipSwapAllowed = useMemo(() => {
+    if (
+      // Transfer is not a Chainflip swap
+      !isChainflipSwap ||
+      // if Chainflip swap is loading or if swap quote is avaialble & valid
+      (isChainflipSwap && isLoadingChainflipQuote) ||
+      (isChainflipSwap && !isChainflipQuoteError && !!chainflipQuote)
+    )
+      return true
+
+    // If conditions are not met, the swap is not allowed
+    return false
+  }, [isChainflipSwap, isLoadingChainflipQuote, isChainflipQuoteError, chainflipQuote])
 
   const requiresErc20SpendApproval =
     erc20SpendAllowance !== undefined && erc20SpendAllowance < sourceTokenAmount!.amount!
@@ -178,6 +193,7 @@ export default function Transfer() {
     // Default duration from direction
     return direction ? getDurationEstimate(direction) : undefined
   }
+
   const hasFees = fees && fees?.length > 0
   const allFeesItemsAreSufficient = hasFees && fees.every(fee => fee.sufficient !== 'insufficient')
 
@@ -214,7 +230,7 @@ export default function Transfer() {
     destinationChain &&
     sourceWallet?.sender &&
     destinationWallet?.sender &&
-    !isChainflipQuoteError
+    isChainflipSwapAllowed
 
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
@@ -478,12 +494,13 @@ export default function Transfer() {
       <AnimatePresence>
         {shouldDisplayTxSummary && (
           <TxSummary
-            loading={loadingFees}
+            loading={loadingFees || isLoadingChainflipQuote}
             sourceTokenAmount={sourceTokenAmount}
             destinationTokenAmount={destinationTokenAmount}
             destChain={destinationChain}
             fees={fees}
             durationEstimate={durationEstimate()}
+            sourceTokenAmountError={sourceTokenAmountErrorMessage}
             className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
           />
         )}
