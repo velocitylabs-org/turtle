@@ -1,6 +1,8 @@
 import { captureException } from '@sentry/nextjs'
 import { type Balance, type Chain, EthereumTokens, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
+import { encodeFunctionData, erc20Abi, type PublicClient, parseEther, parseUnits, type WalletClient } from 'viem'
+import { usePublicClient, useWalletClient } from 'wagmi'
 import useNotification from '@/hooks/useNotification'
 import type { Sender } from '@/hooks/useTransfer'
 import { NotificationSeverity } from '@/models/notification'
@@ -56,6 +58,8 @@ export default function useFees(params: UseFeesParams) {
   const [loading, setLoading] = useState<boolean>(false)
   const { snowbridgeContext, isSnowbridgeContextLoading, snowbridgeContextError } = useSnowbridgeContext()
   const { addNotification } = useNotification()
+  const publicClient = usePublicClient()
+  const { data: walletClient } = useWalletClient()
   const senderAddress = sender?.address
 
   // Determine if we need ETH balance (only for SnowbridgeApi case)
@@ -78,7 +82,7 @@ export default function useFees(params: UseFeesParams) {
     address: isBridgingToEthereum ? senderAddress : undefined,
   })
 
-  const { chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError } = useChainflipQuote({
+  const { chainflipQuote, isChainflipQuoteError } = useChainflipQuote({
     sourceChain,
     destinationChain,
     sourceToken: sourceToken,
@@ -334,11 +338,9 @@ export default function useFees(params: UseFeesParams) {
             setIsBalanceSufficientForFees(true) // TODO: check if this is correct
             break
           }
-          setLoading(isLoadingChainflipQuote)
+          setLoading(true)
 
-          // TODO: Add Transfer fee to Deposit address & verify setIsBalanceSufficientForFees
-
-          const feeList: FeeDetails[] = await Promise.all(
+          const chainflipfeeList: FeeDetails[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
               const token = getFeeTokenFromAssetSymbol(fee.asset, fee.chain)
               const feeTokenInDollars = (await getCachedTokenPrice(token))?.usd ?? 0
@@ -355,6 +357,61 @@ export default function useFees(params: UseFeesParams) {
               }
             }),
           )
+
+          const feeList: FeeDetails[] = [...chainflipfeeList]
+
+          if (sourceChain.network === 'Polkadot') {
+            const localTransferfeeToken = PolkadotTokens.DOT
+            const feeTokenInDollars = (await getCachedTokenPrice(localTransferfeeToken))?.usd ?? 0
+            const localTransferParams = {
+              sourceChain,
+              destinationChain: sourceChain, // Local transfer to AH
+              sourceToken,
+              sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
+              sender,
+              recipient: senderAddress, // Recipient here must be a placeholder address so we use the sender address
+            }
+
+            const networkFee = await xcmTransferBuilderManager.getOriginXcmFee(localTransferParams)
+            if (!networkFee.fee) throw new Error('ChainflipApi Local transfer fee not found')
+
+            feeList.unshift({
+              title: 'Transfer fees',
+              chain: sourceChain,
+              sufficient: networkFee.sufficient ? 'sufficient' : 'insufficient',
+              amount: {
+                amount: networkFee.fee,
+                token: localTransferfeeToken,
+                inDollars: feeTokenInDollars ? toHuman(networkFee.fee, localTransferfeeToken) * feeTokenInDollars : 0,
+              },
+            })
+          }
+
+          if (sourceChain.network === 'Ethereum') {
+            if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
+
+            const { estimatedGasFee: networkFee, isBalanceSufficient } = await getEip1559NetworkFee(
+              publicClient,
+              walletClient,
+              senderAddress as `0x${string}`,
+              sourceToken,
+              sourceTokenAmount,
+            )
+
+            const feeToken = EthereumTokens.ETH
+            const feeTokenInDollars = (await getCachedTokenPrice(feeToken))?.usd ?? 0
+
+            feeList.unshift({
+              title: 'Transfer fees',
+              chain: sourceChain,
+              sufficient: isBalanceSufficient ? 'sufficient' : 'insufficient',
+              amount: {
+                amount: networkFee,
+                token: feeToken,
+                inDollars: feeTokenInDollars ? toHuman(networkFee, feeToken) * feeTokenInDollars : 0,
+              },
+            })
+          }
 
           setFees(feeList)
           break
@@ -393,7 +450,6 @@ export default function useFees(params: UseFeesParams) {
     destinationChain,
     sourceToken,
     chainflipQuote,
-    isLoadingChainflipQuote,
     isChainflipQuoteError,
     snowbridgeContext,
     addNotification,
@@ -410,6 +466,8 @@ export default function useFees(params: UseFeesParams) {
     sdk,
     sourceTokenAmountError,
     transferableAmount,
+    walletClient,
+    publicClient,
   ])
 
   useEffect(() => {
@@ -492,4 +550,89 @@ const getCachedBridgingFee = async (): Promise<bigint> => {
     throw new Error(error || `Failed to fetch bridging fee`)
   }
   return await response.json().then(BigInt)
+}
+
+/**
+ * Estimates the network fee for an Ethereum transfer in Chainflip swaps.
+ * It's based on the EIP-1559 standard.
+ * Supports both native ETH and ERC-20 (USDC/USDT) transfers, and verifies balance sufficiency.
+ */
+const getEip1559NetworkFee = async (
+  publicClient: PublicClient,
+  walletClient: WalletClient,
+  senderAddress: `0x${string}`,
+  sourceToken: Token,
+  sourceTokenAmount: number,
+): Promise<{ estimatedGasFee: bigint; isBalanceSufficient: boolean }> => {
+  let gas: bigint
+
+  if (sourceToken.id === EthereumTokens.ETH.id) {
+    gas = await publicClient.estimateGas({
+      account: walletClient.account,
+      to: senderAddress, // Recipient here must be a placeholder address so we use the sender address
+      value: parseEther(sourceTokenAmount.toString()),
+    })
+  } else {
+    const data = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: 'transfer',
+      args: [senderAddress, parseUnits(sourceTokenAmount.toString(), sourceToken.decimals)],
+    })
+
+    gas = await publicClient.estimateGas({
+      account: walletClient.account,
+      to: sourceToken.address as `0x${string}`, // Token smart contract address
+      data: data,
+    })
+  }
+
+  const gasPrice = await publicClient.getGasPrice()
+  const estimatedGasFee = gas * gasPrice
+  const isBalanceSufficient = await checkEip1559BalanceSufficiency(
+    publicClient,
+    sourceToken,
+    gas,
+    gasPrice,
+    sourceTokenAmount,
+    senderAddress,
+  )
+  return { estimatedGasFee, isBalanceSufficient }
+}
+
+/**
+ * Checks the balance sufficiency for an Ethereum transfer in Chainflip swaps.
+ * It's based on the EIP-1559 standard.
+ * Supports both native ETH and ERC-20 (USDC/USDT) transfers.
+ */
+const checkEip1559BalanceSufficiency = async (
+  publicClient: PublicClient,
+  sourceToken: Token,
+  gas: bigint,
+  gasPrice: bigint,
+  sourceTokenAmount: number,
+  address: `0x${string}`,
+): Promise<boolean> => {
+  const feesValues = await publicClient.estimateFeesPerGas()
+  const maxFeePerGas = feesValues.maxFeePerGas ?? gasPrice
+  const maxGasFee = gas * maxFeePerGas
+  const ethBalance = await publicClient.getBalance({ address })
+
+  // ETH balance check
+  if (sourceToken.id === EthereumTokens.ETH.id) {
+    const transferAmount = parseEther(sourceTokenAmount.toString())
+    return ethBalance >= transferAmount + maxGasFee
+  }
+
+  // ERC-20 transfer: user must have ETH for gas
+  if (ethBalance < maxGasFee) return false
+
+  // ERC-20 token balance check
+  const erc20Balance = await publicClient.readContract({
+    address: sourceToken.address as `0x${string}`,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: [address],
+  })
+
+  return erc20Balance >= parseUnits(sourceTokenAmount.toString(), sourceToken.decimals)
 }
