@@ -82,7 +82,7 @@ export default function useFees(params: UseFeesParams) {
     address: isBridgingToEthereum ? senderAddress : undefined,
   })
 
-  const { chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError } = useChainflipQuote({
+  const { chainflipQuote, isChainflipQuoteError } = useChainflipQuote({
     sourceChain,
     destinationChain,
     sourceToken: sourceToken,
@@ -450,7 +450,6 @@ export default function useFees(params: UseFeesParams) {
     destinationChain,
     sourceToken,
     chainflipQuote,
-    isLoadingChainflipQuote,
     isChainflipQuoteError,
     snowbridgeContext,
     addNotification,
@@ -565,11 +564,9 @@ const getEip1559NetworkFee = async (
   sourceToken: Token,
   sourceTokenAmount: number,
 ): Promise<{ estimatedGasFee: bigint; isBalanceSufficient: boolean }> => {
-  if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
-
   let gas: bigint
 
-  if (sourceToken === EthereumTokens.ETH) {
+  if (sourceToken.id === EthereumTokens.ETH.id) {
     gas = await publicClient.estimateGas({
       account: walletClient.account,
       to: senderAddress, // Recipient here must be a placeholder address so we use the sender address
@@ -615,8 +612,6 @@ const checkEip1559BalanceSufficiency = async (
   sourceTokenAmount: number,
   address: `0x${string}`,
 ): Promise<boolean> => {
-  if (!publicClient) throw new Error('Public client not found')
-
   const feesValues = await publicClient.estimateFeesPerGas()
   const maxFeePerGas = feesValues.maxFeePerGas ?? gasPrice
   const maxGasFee = gas * maxFeePerGas
