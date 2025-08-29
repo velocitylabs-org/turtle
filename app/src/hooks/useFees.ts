@@ -8,7 +8,11 @@ import type { FeeDetails } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction } from '@/services/transfer'
-import { getParaSpellNode, mapParaspellChainToTurtleRegistry } from '@/utils/paraspellTransfer'
+import {
+  getParaSpellNode,
+  mapParaspellChainToTurtleRegistry,
+  moonbeamSymbolToRegistry,
+} from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { isSwap, safeConvertAmount, toHuman } from '@/utils/transfer'
@@ -387,7 +391,10 @@ async function getTokenAmountInDollars(token: Token, amount: bigint): Promise<nu
   }
 }
 
-function getTokenFromSymbol(symbol: string): Token {
+function getTokenFromSymbol(symbolParam: string): Token {
+  // Moonbeam uses ERC-20 wrapped tokens with 'xc' prefix (e.g., xcDOT for wrapped DOT)
+  // Strip the 'xc' prefix to map to the base token in our registry
+  const symbol = moonbeamSymbolToRegistry(symbolParam)
   const symbolUpper = symbol.toUpperCase()
   const tokensBySymbol = { ...EthereumTokens, ...PolkadotTokens }
   const token = tokensBySymbol[symbolUpper as keyof typeof tokensBySymbol]
