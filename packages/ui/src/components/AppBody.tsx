@@ -1,5 +1,6 @@
-import { ArrowLeft, History } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import type { Dispatch, SetStateAction } from 'react'
+import HistoryIcon from './HistoryIcon'
 
 type TransferTab = 'New' | 'History'
 export type TransferTabOptions = TransferTab
@@ -32,14 +33,9 @@ export const AppBody = ({
           <div className="absolute -top-5 right-10 z-30 rounded-lg" onClick={onClick}>
             <div className="animation-bounce relative cursor-pointer rounded-lg border border-turtle-foreground p-3 bg-turtle-background">
               {ongoingTransfers.length > 0 && selectedTab !== 'History' && (
-                <div className="text-foreground absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-turtle-secondary bg-turtle-background">
-                  <span className="text-xs">{ongoingTransfers.length}</span>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turtle-secondary-dark opacity-25" />
-                </div>
+                <div className="absolute -right-1 -top-1 flex h-[12px] w-[12px] rounded-full bg-turtle-primary" />
               )}
-              <div>
-                {selectedTab === 'History' ? <ArrowLeft className="h-4 w-4" /> : <History className="h-4 w-4" />}
-              </div>
+              <div>{selectedTab === 'History' ? <ArrowLeft className="h-4 w-4" /> : <HistoryIcon />}</div>
             </div>
           </div>
         )}
