@@ -338,7 +338,7 @@ export default function useFees(params: UseFeesParams) {
             setIsBalanceSufficientForFees(true) // TODO: check if this is correct
             break
           }
-          setLoading(isLoadingChainflipQuote)
+          setLoading(true)
 
           const chainflipfeeList: FeeDetails[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
