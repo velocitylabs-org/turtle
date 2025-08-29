@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test'
-import { MetaMaskWallet } from '@tenkeylabs/dappwright'
+import { CoinbaseWallet } from '@tenkeylabs/dappwright'
 
 /**
  * Read environment variables from file.
@@ -51,13 +51,11 @@ export default defineConfig({
     //   use: { ...devices['Desktop Safari'] },
     // },
     {
-      name: 'MetaMask',
+      name: 'Coinbase',
       metadata: {
-        wallet: 'metamask',
-        version: MetaMaskWallet.recommendedVersion,
-
-        // Hardhat's default https://hardhat.org/hardhat-network/docs/reference#accounts
-        seed: 'test test test test test test test test test test test junk',
+        wallet: 'coinbase',
+        version: CoinbaseWallet.recommendedVersion,
+        seed: 'test test test test test test test test test test test junk', // Hardhat's default https://hardhat.org/hardhat-network/docs/reference#accounts
       },
     },
     /* Test against mobile viewports. */

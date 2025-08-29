@@ -34,6 +34,18 @@
     },
     "prebuild": {
       "cache": false
+    },
+    "e2e": {
+      "cache": false
+    },
+    "e2e:ui": {
+      "cache": false
+    },
+    "e2e:debug": {
+      "cache": false
+    },
+    "e2e:codegen": {
+      "cache": false
     }
   }
 }

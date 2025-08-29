@@ -2,7 +2,7 @@ import { test as baseTest, expect } from '@playwright/test'
 import dappwright, { type Dappwright, MetaMaskWallet, type OfficialOptions } from '@tenkeylabs/dappwright'
 import type { BrowserContext } from 'playwright-core'
 
-export const test = baseTest.extend<{
+export const withWalletTest = baseTest.extend<{
   context: BrowserContext
   wallet: Dappwright
 }>({
@@ -37,15 +37,15 @@ export const test = baseTest.extend<{
   },
 })
 
-// test.beforeEach(async ({ page }) => {
-//   await page.goto('http://localhost:3000')
-// })
+baseTest.beforeEach(async ({ page }) => {
+  await page.goto('http://localhost:3000')
+})
 
-test('Health Check', async ({ page }) => {
+baseTest('Health Check', async ({ page }) => {
   await expect(page).toHaveTitle(/Turtle/)
 })
 
-test('Happy Path – allows selecting chains, tokens, and amount', async ({ page }) => {
+baseTest('Happy Path – allows selecting chains, tokens, and amount', async ({ page }) => {
   await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
   await expect(page.getByRole('button', { name: 'Send' })).toBeDisabled()
 
@@ -74,7 +74,7 @@ test('Happy Path – allows selecting chains, tokens, and amount', async ({ page
   await expect(page.getByPlaceholder('Amount')).toHaveValue('0.01')
 })
 
-test('Destination token and chain are disabled until Source token and chain are selected', async ({ page }) => {
+baseTest('Destination token and chain are disabled until Source token and chain are selected', async ({ page }) => {
   await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
 
   await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
@@ -91,7 +91,7 @@ test('Destination token and chain are disabled until Source token and chain are 
   await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
 })
 
-test('Can connect wallet', async ({ page }) => {
+withWalletTest('Can connect wallet', async ({ page, context }) => {
   await page.goto('http://localhost:3000')
 
   await expect(page.getByRole('button', { name: 'Connect' })).toBeDisabled()
@@ -104,5 +104,23 @@ test('Can connect wallet', async ({ page }) => {
   await expect(page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' })).toBeEnabled()
   await page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' }).click()
 
-  await expect(page.getByText('Metamask')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'All Wallets' })).toBeVisible()
+  await page.getByRole('button', { name: 'All Wallets' }).click()
+
+  await page.getByTestId('wui-input-text').click()
+  await page.getByTestId('wui-input-text').fill('coinbase')
+
+  // await page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click()
+  const [popup] = await Promise.all([
+    context.waitForEvent('page'), // catches target=_blank + rel=noopener
+    page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click(),
+  ])
+
+  await popup.waitForLoadState('domcontentloaded')
+  console.log('popup url:', popup.url())
+
+  console.log('evaluating location ref', await popup.evaluate('location.href'))
+
+  await popup.getByRole('button', { name: 'Connect' }).click()
+  await expect(page.getByRole('button', { name: 'Disconnect' })).toBeVisible()
 })
