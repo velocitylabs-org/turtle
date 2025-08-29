@@ -623,7 +623,7 @@ const checkEip1559BalanceSufficiency = async (
   const ethBalance = await publicClient.getBalance({ address })
 
   // ETH balance check
-  if (sourceToken === EthereumTokens.ETH) {
+  if (sourceToken.id === EthereumTokens.ETH.id) {
     const transferAmount = parseEther(sourceTokenAmount.toString())
     return ethBalance >= transferAmount + maxGasFee
   }
