@@ -1,14 +1,17 @@
 import NumberFlow from '@number-flow/react'
+import SlippageIcon from '@velocitylabs-org/turtle-assets/icons/slippage.svg'
 import type { Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image'
 import { type JSX, useEffect } from 'react'
 import FeesBreakdown from '@/components/FeesBreakdown'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import type { FeeDetails, FeeSufficiency } from '@/models/transfer'
 import { toAmountInfo } from '@/utils/transfer'
+import ChainflipRefund from './ChainflipRefund'
 import Delayed from './Delayed'
 import AlertIcon from './svg/AlertIcon'
 import InfoIcon from './svg/Info'
@@ -51,7 +54,9 @@ interface TxSummaryProps {
   destinationTokenAmount: TokenAmount | null
   destChain: Chain | null
   fees?: FeeDetails[] | null
+  slippage?: number | null
   durationEstimate?: string
+  isChainflipSwap?: boolean | null
   sourceTokenAmountError?: string | undefined
   className?: string
 }
@@ -62,7 +67,9 @@ export default function TxSummary({
   sourceTokenAmount,
   destChain,
   fees,
+  slippage,
   durationEstimate,
+  isChainflipSwap,
   sourceTokenAmountError,
   className,
 }: TxSummaryProps) {
@@ -136,15 +143,25 @@ export default function TxSummary({
                       />
                     </div>
                   </div>
-                  {receivingTokenPrice && (
-                    <div className="animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6">
-                      <NumberFlow
-                        value={receivingTokenPrice * destinationTokenAmount.amount!}
-                        prefix="$"
-                        format={numberFlowFormat}
-                      />
-                    </div>
-                  )}
+                  <div className="animate-slide-up -mt-1 flex items-center gap-2 text-sm leading-none text-turtle-level6">
+                    {slippage && (
+                      <div className="flex items-center gap-1">
+                        <Image src={SlippageIcon} alt={'Swap Slippage'} width={16} height={16} />
+                        <span>Slippage</span>
+                        <span>{slippage}%</span>
+                      </div>
+                    )}
+                    {slippage && receivingTokenPrice && <span aria-hidden>·</span>}
+                    {receivingTokenPrice && (
+                      <div>
+                        <NumberFlow
+                          value={receivingTokenPrice * destinationTokenAmount.amount!}
+                          prefix="$"
+                          format={numberFlowFormat}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -202,6 +219,11 @@ export default function TxSummary({
                   <span className="text-sm text-turtle-foreground">{durationEstimate}</span>
                 </div>
               </div>
+            </motion.div>
+          )}
+          {!showLoading && (
+            <motion.div key="refund" {...contentAnimationConfig}>
+              <ChainflipRefund isChainflipCheck={isChainflipSwap} className="mt-6 sm:mt-8" />
             </motion.div>
           )}
         </AnimatePresence>

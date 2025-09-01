@@ -330,6 +330,11 @@ export const getChainflipDurationEstimate = (quote?: RegularQuote | DCAQuote | n
   return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
 }
 
+export const getChainflipSlippage = (quote?: RegularQuote | DCAQuote | null): number | null => {
+  if (!quote) return null
+  return quote.recommendedSlippageTolerancePercent
+}
+
 export const formatChainflipErrorMsg = (errorMsg: string): string | null => {
   if (!errorMsg) return null
   const capitalized = errorMsg.charAt(0).toUpperCase() + errorMsg.slice(1)

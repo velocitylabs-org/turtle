@@ -13,7 +13,7 @@ import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import type { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
-import { getChainflipDurationEstimate } from '@/utils/chainflip'
+import { getChainflipDurationEstimate, getChainflipSlippage } from '@/utils/chainflip'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
@@ -282,6 +282,8 @@ export default function Transfer() {
     sourceToken,
   ])
 
+  const swapSlippage = getChainflipSlippage(chainflipQuote)
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -500,6 +502,8 @@ export default function Transfer() {
             destChain={destinationChain}
             fees={fees}
             durationEstimate={durationEstimate()}
+            slippage={swapSlippage}
+            isChainflipSwap={isChainflipSwap}
             sourceTokenAmountError={sourceTokenAmountErrorMessage}
             className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
           />
@@ -508,7 +512,7 @@ export default function Transfer() {
 
       {/* Transfer Button */}
       <SendButton
-        className="w-full mt-6 sm:mt-9 mb-1 sm:mb-2"
+        className="w-full mt-6 sm:mt-8 mb-1 sm:mb-2"
         label="Send"
         size="lg"
         variant="primary"
