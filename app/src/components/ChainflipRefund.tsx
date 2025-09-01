@@ -31,7 +31,7 @@ export default function ChainflipRefund({ isChainflipCheck, swapParams, classNam
     return (
       <div className={cn('flex justify-center items-center gap-1', className)}>
         <Image src={ExclamationIcon} alt={'Refund warning'} width={16} height={16} />
-        <span className="text-xs">Any refund will be sent back to your origin account.</span>
+        <span className="text-xs">Refunds will be sent back to your origin account.</span>
       </div>
     )
   }
