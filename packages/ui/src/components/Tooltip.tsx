@@ -39,7 +39,7 @@ export const Tooltip = ({
             <TooltipContent
               sideOffset={5}
               className={cn(
-                'z-50 flex rounded-[8px] gap-1 bg-black text-white px-[9px] py-[2px]',
+                'turtle-wrapper z-50 flex rounded-[8px] gap-1 bg-black text-white px-[9px] py-[2px]',
                 'animate-in data-[state=delayed-open]:duration-350 data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:delay-100',
                 'data-[state=closed]:fade-out-0 data-[state=closed]:duration-300 data-[state=closed]:zoom-out-95 origin-[--radix-tooltip-content-transform-origin]',
                 className,
