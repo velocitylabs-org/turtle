@@ -32,11 +32,11 @@ jobs:
     - name: Build app
       env:
         NEXT_TELEMETRY_DISABLED: '1'
-      run: pnpm --filter=@velocitylabs-org/turtle-app build
+      run: pnpm run build --filter=@velocitylabs-org/turtle-app
       
     - name: Start app
       run: |
-        pnpm --filter=@velocitylabs-org/turtle-app start
+        pnpm run start --filter=@velocitylabs-org/turtle-app
         echo $! > server.pid
     
     - name: Wait for app to start
