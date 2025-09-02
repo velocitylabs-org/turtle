@@ -346,6 +346,9 @@ importers:
       '@tenkeylabs/dappwright':
         specifier: ^2.11.2
         version: 2.11.2(playwright-core@1.55.0)
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.5.0
       playwright-core:
         specifier: ^1.55.0
         version: 1.55.0
