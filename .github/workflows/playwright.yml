@@ -25,6 +25,22 @@ jobs:
       run: pnpm install && pnpm install -g @playwright/test
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
+
+    - name: Install wait-on
+      run: pnpm install -g wait-on   
+
+    - name: Build app
+      env:
+        NEXT_TELEMETRY_DISABLED: '1'
+      run: pnpm --filter=@velocitylabs-org/turtle-app build
+      
+    - name: Start app
+      run: |
+        pnpm --filter=@velocitylabs-org/turtle-app start
+        echo $! > server.pid
+    
+    - name: Wait for app to start
+      run: pnpm exec wait-on http://localhost:3000
     - name: Run Playwright tests
       env:
         COINBASE_SEED: ${{ secrets.COINBASE_SEED }}
@@ -35,3 +51,10 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - name: Stop Server
+      if: always()
+      run: |
+        if [ -f server.pid ]; then
+          kill $(cat server.pid)
+          rm server.pid
+        fi
