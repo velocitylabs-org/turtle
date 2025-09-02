@@ -99,7 +99,7 @@ export default function TxSummary({
             <motion.div
               key="loading"
               {...loadingAnimationConfig}
-              className="mt-6 sm:mt-8 flex h-[174px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
+              className="mt-6 sm:mt-8 flex h-[155px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
             >
               <LoadingIcon
                 className="animate-spin"

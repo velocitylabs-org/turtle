@@ -3,7 +3,7 @@ import type { Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, type MotionProps, motion } from 'framer-motion'
-import { type JSX, useEffect } from 'react'
+import type { JSX } from 'react'
 import { AlertIcon } from '@/assets/svg/AlertIcon.tsx'
 import { Info as InfoIcon } from '@/assets/svg/Info'
 import LoadingIcon from '@/assets/svg/LoadingIcon'
@@ -72,18 +72,6 @@ export default function TxSummary({
   const showLoading =
     loading || !destinationTokenAmount || destinationTokenAmount.amount == null || !destinationTokenAmount.token
 
-  useEffect(() => {
-    if (showLoading) {
-      setTimeout(() => {
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: 'smooth',
-        })
-      }, 800)
-      return
-    }
-  }, [showLoading])
-
   // Calculate total fees in dollars for isAmountTooLow check
   const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
   const isAmountTooLow = calcSendingAmountTooLow(totalFeesInDollars, sourceTokenAmount, sendingTokenPrice)
@@ -99,7 +87,7 @@ export default function TxSummary({
             <motion.div
               key="loading"
               {...loadingAnimationConfig}
-              className="mt-6 sm:mt-8 flex h-[174px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
+              className="mt-6 sm:mt-8 flex h-[155px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
             >
               <LoadingIcon
                 className="animate-spin"
