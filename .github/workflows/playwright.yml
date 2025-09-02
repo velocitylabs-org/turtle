@@ -22,7 +22,7 @@ jobs:
         node-version: lts/*
         cache: 'pnpm'
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install && pnpm install -g @playwright/test
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
