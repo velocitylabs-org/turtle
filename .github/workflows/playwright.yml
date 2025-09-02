@@ -15,8 +15,9 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+        cache: 'pnpm'
     - name: Install dependencies
-      run: npm install -g pnpm && pnpm install && pnpm install -g @playwright/test
+      run: pnpm install
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
     - name: Run Playwright tests
