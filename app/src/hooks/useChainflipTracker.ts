@@ -4,7 +4,7 @@ import { type Notification, NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { truncateAddress } from '@/utils/address'
 import { updateTransferMetrics } from '@/utils/analytics'
-import { getChainflipOngoingSwaps, getSwapStatus } from '@/utils/chainflip'
+import { chainflipRefund, getChainflipOngoingSwaps, getSwapStatus } from '@/utils/chainflip'
 import { getChainflipExplorerLink } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
@@ -65,6 +65,7 @@ const handleOngoingSwap = async (
         })
 
         const explorerLink = getChainflipExplorerLink(swap, status.swapId)
+        const refund = chainflipRefund(status)
         addCompletedSwap({
           id: id,
           result: swapStatus,
@@ -81,6 +82,7 @@ const handleOngoingSwap = async (
           recipient,
           date: swap.date,
           ...(explorerLink && { explorerLink }),
+          ...(refund && { errors: [refund] }),
         } satisfies CompletedTransfer)
 
         removeOngoingSwap(id)

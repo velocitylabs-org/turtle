@@ -2,7 +2,7 @@ import ExclamationIcon from '@velocitylabs-org/turtle-assets/icons/exclamation-c
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
-import { isChainflipSwap } from '@/utils/chainflip'
+import { ChainflipRefundStatus, isChainflipSwap } from '@/utils/chainflip'
 
 interface ChainflipRefundProps {
   isChainflipCheck?: boolean | null
@@ -12,11 +12,31 @@ interface ChainflipRefundProps {
     sourceToken: Token
     destinationToken: Token
   } | null
+  swapCompleted?: boolean | null
+  swapRefundError?: string | null
   className?: string
 }
 
-export default function ChainflipRefund({ isChainflipCheck, swapParams, className }: ChainflipRefundProps) {
+export default function ChainflipRefund({
+  isChainflipCheck,
+  swapParams,
+  swapRefundError,
+  swapCompleted,
+  className,
+}: ChainflipRefundProps) {
+  // Not a chainflip swap
   if (!isChainflipCheck && !swapParams) return null
+  // Swap completed without refund
+  if (swapCompleted && !swapRefundError) return null
+
+  const refundMessage = (swapCompleted?: boolean | null, swapRefundError?: string | null): string | null => {
+    // Info message to ongoing swaps
+    if (!swapCompleted) return 'Refunds will be sent back to your origin account.'
+    // Swap completed with a partial refund
+    if (swapRefundError === ChainflipRefundStatus.Partially) return 'Swap partially refunded to your origin account.'
+    // Swap completed with a full refund
+    return 'Swap refunded to your origin account.'
+  }
 
   if (
     isChainflipCheck ||
@@ -31,7 +51,7 @@ export default function ChainflipRefund({ isChainflipCheck, swapParams, classNam
     return (
       <div className={cn('flex justify-center items-center gap-1', className)}>
         <Image src={ExclamationIcon} alt={'Refund warning'} width={16} height={16} />
-        <span className="text-xs">Refunds will be sent back to your origin account.</span>
+        <span className="text-xs">{refundMessage(swapCompleted, swapRefundError)}</span>
       </div>
     )
   }

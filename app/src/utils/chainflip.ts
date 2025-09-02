@@ -36,6 +36,11 @@ type ChainflipError = {
   }
 }
 
+export enum ChainflipRefundStatus {
+  Refunded = 'refunded',
+  Partially = 'partially refunded',
+}
+
 /** ROUTES HELPERS */
 
 /** Returns all Chainflip allowed source chains for a swap. */
@@ -283,6 +288,16 @@ export const isChainflipSwap = (
       route.to.chainId === destinationChain.chainId &&
       route.pairs.some(([srcToken, dstToken]) => srcToken.id === sourceToken.id && dstToken.id === destinationToken.id),
   )
+}
+
+/** Check if the swap has been refunded or partially refunded. */
+export const chainflipRefund = (status: SwapStatusResponseV2): string | null => {
+  const refundEgress = 'refundEgress' in status
+  const swapEgress = 'swapEgress' in status
+
+  if (refundEgress && swapEgress) return ChainflipRefundStatus.Partially
+  if (refundEgress && !swapEgress) return ChainflipRefundStatus.Refunded
+  return null
 }
 
 export const getChainflipOngoingSwaps = (ongoingTransfers: StoredTransfer[]) => {
