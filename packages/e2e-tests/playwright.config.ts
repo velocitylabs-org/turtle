@@ -55,7 +55,7 @@ export default defineConfig({
       metadata: {
         wallet: 'coinbase',
         version: CoinbaseWallet.recommendedVersion,
-        seed: 'test test test test test test test test test test test junk', // Hardhat's default https://hardhat.org/hardhat-network/docs/reference#accounts
+        seed: process.env.COINBASE_SEED,
       },
     },
     /* Test against mobile viewports. */
@@ -80,9 +80,9 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    command: 'cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+  },
 })
