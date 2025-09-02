@@ -166,6 +166,7 @@ export default function TxSummary({
                     showIcon={false}
                     content={<FeesBreakdown fees={fees} hasFeesFailed={hasFeesFailed} />}
                     className="bg-turtle-foreground"
+                    portal={false}
                   >
                     <div className="flex items-center gap-1 cursor-default">
                       <span className={cn('text-xs leading-none text-turtle-level6', getFeeStatusColor(fees))}>

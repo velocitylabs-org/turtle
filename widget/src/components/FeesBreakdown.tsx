@@ -1,6 +1,7 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { AlertIcon } from '@/assets/svg/AlertIcon.tsx'
 import type { FeeDetails } from '@/models/transfer'
+import { getSrcFromLogo } from '@/utils/getSrcFromLogo.ts'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
 interface FeesBreakdownProps {
@@ -19,7 +20,7 @@ export default function FeesBreakdown({ fees, hasFeesFailed }: FeesBreakdownProp
               {/* Left - Token & Type of Fee */}
               <div className="flex flex-row items-center justify-between gap-1">
                 <img
-                  src={(fee.chain.logoURI as Record<string, string>).src}
+                  src={getSrcFromLogo(fee.chain)}
                   alt={fee.chain.name}
                   width={16}
                   height={16}

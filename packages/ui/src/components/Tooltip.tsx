@@ -7,6 +7,7 @@ import {
   Trigger as TooltipTrigger,
 } from '@radix-ui/react-tooltip'
 import TooltipIcon from '@velocitylabs-org/turtle-assets/icons/tooltip-icon.svg'
+import { Fragment } from 'react'
 import { cn } from '@/helpers'
 
 interface TooltipProps {
@@ -15,17 +16,26 @@ interface TooltipProps {
   className?: string
   showArrow?: boolean
   children: React.ReactNode
+  portal?: boolean
 }
 
-export const Tooltip = ({ content, className, showIcon = true, showArrow = true, children }: TooltipProps) => {
+export const Tooltip = ({
+  content,
+  className,
+  showIcon = true,
+  showArrow = true,
+  children,
+  portal = true,
+}: TooltipProps) => {
   const iconSrc = typeof TooltipIcon === 'string' ? TooltipIcon : TooltipIcon.src
+  const PortalEl = portal ? TooltipPortal : Fragment
 
   return (
     <TooltipProvider>
       <TooltipRoot delayDuration={350}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         {content && (
-          <TooltipPortal>
+          <PortalEl>
             <TooltipContent
               sideOffset={5}
               className={cn(
@@ -39,7 +49,7 @@ export const Tooltip = ({ content, className, showIcon = true, showArrow = true,
               {content}
               {showArrow && <TooltipArrow />}
             </TooltipContent>
-          </TooltipPortal>
+          </PortalEl>
         )}
       </TooltipRoot>
     </TooltipProvider>
