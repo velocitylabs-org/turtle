@@ -10,11 +10,11 @@ import { switchChain } from '@wagmi/core'
 import { use, useCallback, useEffect, useMemo, useState } from 'react'
 import { type SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { mainnet } from 'viem/chains'
-import { getTransferableAmount } from '@/lib/paraspell/transfer'
 import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import { ConfigContext } from '@/providers/ConfigProviders'
 import { wagmiConfig } from '@/providers/config'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder.ts'
 import { useNotificationStore } from '@/stores/notificationStore'
 import { getRecipientAddress, isValidRecipient } from '@/utils/address'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
@@ -57,7 +57,6 @@ const useTransferForm = () => {
     delayError: 3000,
     defaultValues: initValues,
   })
-
   const sourceChain = useWatch({ control, name: 'sourceChain' })
   const destinationChain = useWatch({ control, name: 'destinationChain' })
   const manualRecipient = useWatch({ control, name: 'manualRecipient' })
@@ -75,23 +74,8 @@ const useTransferForm = () => {
   const destinationWallet = useWallet(destinationChain?.walletType)
   const { transfer, transferStatus } = useTransfer()
   const { allowedTokens } = use(ConfigContext)
-
-  const {
-    fees,
-    loading: loadingFees,
-    canPayFees,
-    bridgingFee,
-    canPayAdditionalFees,
-    refetch: refetchFees,
-  } = useFees(
-    sourceChain,
-    destinationChain,
-    // biome-ignore lint/suspicious/noDoubleEquals: sourceTokenAmountError
-    sourceTokenAmountError == '' ? sourceTokenAmount?.token : null,
-    sourceTokenAmount?.amount,
-    sourceWallet?.sender?.address,
-    getRecipientAddress(manualRecipient, destinationWallet),
-  )
+  const [maxButtonLoading, setMaxButtonLoading] = useState<boolean>(false)
+  const [transferableAmount, setTransferableAmount] = useState<bigint | null>(null)
 
   const {
     balance: balanceData,
@@ -103,6 +87,36 @@ const useTransferForm = () => {
     address: sourceWallet?.sender?.address,
   })
 
+  const feesParams = useMemo(
+    () => ({
+      sourceChain,
+      destinationChain,
+      sourceToken: sourceTokenAmount?.token,
+      destinationToken: destToken,
+      sourceTokenAmount: sourceTokenAmount?.amount,
+      sender: sourceWallet?.sender,
+      recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
+      sourceTokenBalance: balanceData,
+      sourceTokenAmountError: sourceTokenAmountError,
+      transferableAmount,
+    }),
+    [
+      sourceChain,
+      destinationChain,
+      sourceTokenAmountError,
+      sourceTokenAmount?.token,
+      sourceTokenAmount?.amount,
+      sourceWallet?.sender,
+      manualRecipient,
+      destinationWallet,
+      destToken,
+      balanceData,
+      transferableAmount,
+    ],
+  )
+
+  const { loading: loadingFees, fees, isBalanceSufficientForFees, refetch: refetchFees } = useFees(feesParams)
+
   const { outputAmount, isLoading: isLoadingOutputAmount } = useOutputAmount({
     sourceChain,
     destinationChain,
@@ -110,16 +124,21 @@ const useTransferForm = () => {
     destinationToken: destToken,
     amount: sourceAmount && sourceToken ? safeConvertAmount(sourceAmount, sourceToken)?.toString() : undefined,
     fees,
+    loadingFees,
   })
+
+  console.log('outputAmount', outputAmount)
 
   // Update destination amount when output amount changes
   useEffect(() => {
-    if (isLoadingOutputAmount || !outputAmount) {
+    // outputAmount could be null or undefined
+    // using loose equality (==) to check for both null and undefined
+    if (isLoadingOutputAmount || outputAmount == null) {
       setValue('destinationTokenAmount.amount', null)
       return
     }
 
-    if (outputAmount && destToken) {
+    if (outputAmount != null && destToken) {
       setValue('destinationTokenAmount.amount', toHuman(outputAmount, destToken))
     }
   }, [outputAmount, isLoadingOutputAmount, destToken, setValue])
@@ -184,6 +203,7 @@ const useTransferForm = () => {
       setValue('sourceChain', newValue)
       setValue('destinationChain', null)
       setValue('sourceTokenAmount', { token: null, amount: null })
+      setTransferableAmount(null)
     },
     [setValue, sourceChain, destinationChain, sourceTokenAmount, allowedTokens],
   )
@@ -225,42 +245,60 @@ const useTransferForm = () => {
       balanceData === undefined ||
       balanceData === null ||
       !sourceChain
-    )
+    ) {
+      setMaxButtonLoading(false)
       return
+    }
 
-    if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
-      if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) return
+    setMaxButtonLoading(true)
+    try {
+      if (sourceChain.network === 'Polkadot' || sourceChain.network === 'Kusama') {
+        if (!destinationChain || !destinationWallet?.sender || !sourceWallet?.sender || !sourceToken) {
+          setMaxButtonLoading(false)
+          setTransferableAmount(null)
+          return
+        }
 
-      const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
+        const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
+        const params = {
+          sourceChain,
+          destinationChain,
+          sourceToken: sourceTokenAmount.token,
+          recipient,
+          sender: sourceWallet.sender,
+          sourceAmount: balanceData.value,
+        }
+        const transferableAmount = await xcmTransferBuilderManager.getTransferableAmount(params)
+        if (!transferableAmount) {
+          throw new Error('Failed to get transferable amount')
+        }
 
-      const transferableAmount = await getTransferableAmount(
-        sourceChain,
-        destinationChain,
-        sourceTokenAmount.token,
-        recipient,
-        sourceWallet.sender.address,
-        balanceData.value,
-      )
+        setTransferableAmount(transferableAmount)
 
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer')),
-        },
-        { shouldValidate: true },
-      )
-    } else {
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
-        },
-        { shouldValidate: true },
-      )
+        setValue(
+          'sourceTokenAmount',
+          {
+            token: sourceTokenAmount.token,
+            // Parse as number, then format to our display standard, then parse again as number
+            amount: Number(formatAmount(Number(toHuman(transferableAmount, sourceToken).toString()), 'Longer')),
+          },
+          { shouldValidate: true },
+        )
+      } else {
+        setValue(
+          'sourceTokenAmount',
+          {
+            token: sourceTokenAmount.token,
+            // Parse as number, then format to our display standard, then parse again as number
+            amount: Number(formatAmount(Number(balanceData.formatted), 'Longer')),
+          },
+          { shouldValidate: true },
+        )
+      }
+    } catch (error) {
+      console.error('Error setting max amount:', error)
+    } finally {
+      setMaxButtonLoading(false)
     }
   }, [
     sourceWallet?.isConnected,
@@ -293,67 +331,6 @@ const useTransferForm = () => {
       setSourceTokenAmountError("That's more than you have in your wallet")
     else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
-
-  // Unlike canPayFees and canPayAdditionalFees, which only check if you have enough balance to cover fees separately, this checks if your total balance is sufficient to
-  // cover BOTH the transfer amount AND all associated fees. This prevents transactions from failing when you attempt to send your entire balance without accounting for fees.
-  const exceedsTransferableBalance = useMemo(() => {
-    const hasFees = Boolean(fees?.token?.id && fees?.amount)
-    const hasTokenAmount = Boolean(sourceTokenAmount?.token?.id && sourceTokenAmount?.amount)
-    const hasBalance = Boolean(balanceData?.formatted)
-    const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
-    if (!hasTokenAmount || !hasBalance) return false
-
-    const transferToken = sourceTokenAmount!.token!.id
-    const transferAmount = sourceTokenAmount!.amount!
-    const balanceAmount = Number(balanceData!.formatted)
-    let totalFeesAmount = 0
-
-    // We have regular fees in the same token as the transfer
-    if (hasFees && fees!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(fees!.amount, fees!.token)
-    }
-    // We have bridging fees in the same token as the transfer, This applies whether we have regular fees
-    if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
-      totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
-    }
-    // If we have no fees at all, there's no risk of exceeding transferable balance
-    if (totalFeesAmount === 0) return false
-
-    // Check if the transfer amount plus all applicable fees exceeds the available balance
-    return transferAmount + totalFeesAmount > balanceAmount
-  }, [fees, bridgingFee, balanceData, sourceTokenAmount])
-
-  const applyTransferableBalance = useCallback(() => {
-    if (exceedsTransferableBalance && sourceTokenAmount?.token) {
-      const transferToken = sourceTokenAmount.token.id
-      const hasFees = Boolean(fees?.token?.id && fees?.amount)
-      const hasBridgingFee = Boolean(bridgingFee?.token?.id && bridgingFee?.amount)
-      let totalFeesAmount = 0
-
-      // We have regular fees in the same token as the transfer
-      if (hasFees && fees!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(fees!.amount, fees!.token)
-      }
-      // We have bridging fees in the same token as the transfer
-      if (hasBridgingFee && bridgingFee!.token!.id === transferToken) {
-        totalFeesAmount += toHuman(bridgingFee!.amount, bridgingFee!.token)
-      }
-
-      const balanceAmount = Number(balanceData!.formatted)
-      let newAmount = balanceAmount - totalFeesAmount
-      if (newAmount < 0) newAmount = 0 // Prevent negative values
-
-      setValue(
-        'sourceTokenAmount',
-        {
-          token: sourceTokenAmount.token,
-          // Parse as number, then format to our display standard, then parse again as number
-          amount: Number(formatAmount(newAmount, 'Longer')),
-        },
-        { shouldValidate: true },
-      )
-    }
-  }, [exceedsTransferableBalance, sourceTokenAmount?.token, bridgingFee, fees, balanceData, setValue])
 
   // reset token amount
   useEffect(() => {
@@ -394,7 +371,6 @@ const useTransferForm = () => {
         destinationAmount: destinationAmount ?? undefined,
         recipient: recipient,
         fees,
-        bridgingFee: bridgingFee,
         onComplete: () => {
           // reset form on success
           reset()
@@ -410,62 +386,44 @@ const useTransferForm = () => {
         },
       })
     },
-    [destinationWallet, fees, bridgingFee, reset, sourceWallet?.sender, transfer, addNotification],
+    [destinationWallet, fees, reset, sourceWallet?.sender, transfer, addNotification],
   )
 
   return {
-    // Form control and validation
     control,
     errors,
     isValid: isFormValid,
-    isValidating,
+    isValidating, // Only includes validating zod schema atm
+    allowFromToSwap,
     handleSubmit: handleSubmit(onSubmit),
-
-    // Chain selection and related handlers
-    sourceChain,
-    destinationChain,
     handleSourceChainChange,
     handleDestinationChainChange,
     handleSourceTokenChange,
     swapFromTo,
-    allowFromToSwap,
-
-    // Wallet states
+    handleManualRecipientChange,
+    handleMaxButtonClick,
+    sourceChain,
+    destinationChain,
+    sourceTokenAmount,
+    sourceToken,
+    destinationTokenAmount,
+    manualRecipient,
     sourceWallet,
     destinationWallet,
-
-    // Manual recipient handling
-    manualRecipient,
-    manualRecipientError,
-    handleManualRecipientChange,
-
-    // Token and amount handling
-    sourceTokenAmount,
-    destinationTokenAmount,
-    sourceTokenAmountError,
-    handleMaxButtonClick,
-    isLoadingOutputAmount,
-
-    // Balance related
-    // biome-ignore lint/suspicious/noDoubleEquals: balanceData?.value
-    isBalanceAvailable: balanceData?.value != undefined,
-    balanceData,
-    loadingBalance,
-    fetchBalance,
-
-    // Fees related
     fees,
-    bridgingFee,
-    loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
+    isBalanceSufficientForFees,
     refetchFees,
-
-    // Transfer status
+    loadingFees,
     transferStatus,
-
-    exceedsTransferableBalance,
-    applyTransferableBalance,
+    sourceTokenAmountError,
+    manualRecipientError,
+    // biome-ignore lint/suspicious/noDoubleEquals: isBalanceAvailable
+    isBalanceAvailable: balanceData?.value != undefined,
+    loadingBalance,
+    balanceData,
+    fetchBalance,
+    isLoadingOutputAmount,
+    maxButtonLoading,
   }
 }
 

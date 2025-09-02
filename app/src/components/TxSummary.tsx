@@ -227,7 +227,7 @@ function calcSendingAmountTooLow(
 }
 
 function getFeeStatus(fees?: FeeDetails[] | null): FeeSufficiency {
-  if (!fees?.length) return 'sufficient'
+  if (!fees?.length) return 'insufficient'
 
   const hasInsufficient = fees.some(fee => fee.sufficient === 'insufficient')
   if (hasInsufficient) return 'insufficient'

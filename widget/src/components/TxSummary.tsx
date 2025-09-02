@@ -1,180 +1,214 @@
-import type { TokenAmount } from '@velocitylabs-org/turtle-registry'
+import NumberFlow from '@number-flow/react'
+import type { Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { cn, LoadingIcon } from '@velocitylabs-org/turtle-ui'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRightLeft, Clock, Zap } from 'lucide-react'
-import { ExclamationMark } from '@/assets/svg/ExclamationMark'
+import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
+import { AnimatePresence, type MotionProps, motion } from 'framer-motion'
+import { type JSX, useEffect } from 'react'
+import { AlertIcon } from '@/assets/svg/AlertIcon.tsx'
+import { Info as InfoIcon } from '@/assets/svg/Info'
+import LoadingIcon from '@/assets/svg/LoadingIcon'
+import FeesBreakdown from '@/components/FeesBreakdown'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import type { AmountInfo } from '@/models/transfer'
-import { AMOUNT_VS_FEE_RATIO } from '@/utils/consts'
-import { Direction, formatAmount, toAmountInfo, toHuman } from '@/utils/transfer'
+import type { FeeDetails, FeeSufficiency } from '@/models/transfer'
+import { AMOUNT_VS_FEE_RATIO } from '@/utils/consts.ts'
+import { toAmountInfo } from '@/utils/transfer'
 import Delayed from './Delayed'
 
-interface TxSummaryProps {
-  tokenAmount: TokenAmount
-  loading?: boolean
-  fees?: AmountInfo | null
-  bridgingFee?: AmountInfo | null
-  durationEstimate?: string
-  direction?: Direction
-  canPayFees: boolean
-  canPayAdditionalFees: boolean
-  className?: string
-  exceedsTransferableBalance: boolean
-  applyTransferableBalance: () => void
+const fadeAnimationConfig = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
 }
 
-const animationConfig = {
+const loadingAnimationConfig = {
+  ...fadeAnimationConfig,
+  transition: { duration: 0.3 },
+}
+
+const contentAnimationConfig = {
+  ...fadeAnimationConfig,
+  transition: { duration: 0.4, delay: 0.1 },
+}
+
+const animationConfig: MotionProps = {
   initial: { opacity: 0, height: 0 },
   animate: {
     opacity: 1,
     height: 'auto',
-    transition: { type: 'spring' as const, bounce: 0.6, duration: 0.5 },
+    transition: { type: 'spring', bounce: 0.6, duration: 0.5 },
   },
   exit: { opacity: 0, height: 0, transition: { duration: 0.2 } },
 }
 
-const TxSummary = ({
-  loading,
-  tokenAmount,
-  fees,
-  bridgingFee,
-  durationEstimate,
-  direction,
-  canPayFees,
-  canPayAdditionalFees,
-  className,
-  exceedsTransferableBalance,
-  applyTransferableBalance,
-}: TxSummaryProps) => {
-  const { price } = useTokenPrice(tokenAmount.token)
-  const transferAmount = toAmountInfo(tokenAmount, price)
+const numberFlowFormat = {
+  notation: 'compact' as const,
+  maximumFractionDigits: 3,
+}
 
-  if (!loading && !fees && !bridgingFee) return null
+interface TxSummaryProps {
+  loading?: boolean
+  sourceTokenAmount: TokenAmount | null
+  destinationTokenAmount: TokenAmount | null
+  destChain: Chain | null
+  fees?: FeeDetails[] | null
+  durationEstimate?: string
+  sourceTokenAmountError?: string | undefined
+  className?: string
+}
+
+export default function TxSummary({
+  loading,
+  destinationTokenAmount,
+  sourceTokenAmount,
+  destChain,
+  fees,
+  durationEstimate,
+  sourceTokenAmountError,
+  className,
+}: TxSummaryProps) {
+  const { price: sendingTokenPrice } = useTokenPrice(sourceTokenAmount?.token)
+  const { price: receivingTokenPrice } = useTokenPrice(destinationTokenAmount?.token)
+
+  const showLoading =
+    loading || !destinationTokenAmount || destinationTokenAmount.amount == null || !destinationTokenAmount.token
+
+  console.log('loading', loading)
+  console.log('destinationTokenAmount', destinationTokenAmount)
+  console.log('showLoading', showLoading)
+
+  useEffect(() => {
+    if (showLoading) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        })
+      }, 800)
+      return
+    }
+  }, [showLoading])
+
+  // Calculate total fees in dollars for isAmountTooLow check
+  const totalFeesInDollars = fees?.reduce((sum, fee) => sum + fee.amount.inDollars, 0) ?? 0
+  const isAmountTooLow = calcSendingAmountTooLow(totalFeesInDollars, sourceTokenAmount, sendingTokenPrice)
+  const isItWrappedToken =
+    destinationTokenAmount?.token?.origin?.type === 'Ethereum' && destChain?.network === 'Polkadot'
+  const hasFeesFailed = !loading && (fees === null || fees?.length === 0)
 
   const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="mt-4 flex h-[10rem] w-full animate-pulse flex-col items-center justify-center rounded-[8px] bg-turtle-level1">
-          <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary']} />
-          <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">Loading fees</div>
-          <Delayed millis={7000}>
-            <div className="animate-slide-up-soft mt-1 text-center text-xs text-turtle-secondary">
-              Sorry that it&apos;s taking so long. Hang on or try again
-            </div>
-          </Delayed>
-        </div>
-      )
-    }
-
-    const isAmountTooLow = transferAmount && transferAmount.inDollars < (fees?.inDollars ?? 0) * AMOUNT_VS_FEE_RATIO
-
-    const isBridgeTransfer = direction === Direction.ToEthereum || direction === Direction.ToPolkadot
-
-    const exceedsTransferableBalanceInFees = !!(
-      exceedsTransferableBalance &&
-      transferAmount?.token?.id &&
-      fees?.token?.id &&
-      transferAmount.token.id === fees.token.id
-    )
-
-    const exceedsTransferableBalanceInBridgingFee = !!(
-      exceedsTransferableBalance &&
-      !exceedsTransferableBalanceInFees &&
-      transferAmount?.token?.id &&
-      bridgingFee?.token?.id &&
-      transferAmount.token.id === bridgingFee.token.id
-    )
-
     return (
-      <div className={cn('tx-summary p-0 pt-0', className)}>
-        <div className="pt-3">
-          <div className="relative my-4 flex max-w-3xl flex-col gap-3 rounded-lg border bg-white p-3 shadow-sm">
-            <div className="absolute -top-2.5 left-2.5 bg-white px-1 text-sm text-turtle-level5">Summary</div>
-            <div className="flex items-center justify-between space-x-4 py-2">
-              {fees && (
-                <div className="flex items-center gap-2">
-                  <div className="rounded-md bg-amber-50 p-1.5">
-                    <Zap className="h-4 w-4 text-amber-600" />
+      <div>
+        <AnimatePresence mode="wait">
+          {showLoading ? (
+            <motion.div
+              key="loading"
+              {...loadingAnimationConfig}
+              className="mt-6 sm:mt-8 flex h-[174px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
+            >
+              <LoadingIcon
+                className="animate-spin"
+                width={spinnerSize.lg}
+                height={spinnerSize.lg}
+                color={colors['turtle-secondary']}
+              />
+              <div className="animate-slide-up-soft mt-2 text-sm font-bold text-turtle-secondary">Loading fees</div>
+              <Delayed millis={7000}>
+                <div className="animate-slide-up-soft mt-1 text-center text-xs text-turtle-secondary">
+                  Sorry that it&apos;s taking so long. Hang on or try again
+                </div>
+              </Delayed>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="content"
+              {...contentAnimationConfig}
+              className={cn(
+                'mt-6 sm:mt-8 flex flex-col items-start gap-[14px] sm:gap-[16px] rounded-[8px] border border-turtle-level3 p-[18px] sm:p-[20px]',
+                className,
+              )}
+            >
+              {/* You'll get section */}
+              <div className="flex w-full flex-row items-start justify-between">
+                <div className="text-sm leading-none text-turtle-level6">You&apos;ll get</div>
+                <div className="-mt-[9px] flex flex-col items-end gap-1">
+                  <div className="flex flex-row items-baseline gap-2">
+                    <TokenLogo token={destinationTokenAmount.token!} sourceChain={destChain} size={25} />
+                    <div className="text-[32px] font-medium text-turtle-foreground">
+                      <NumberFlow
+                        value={destinationTokenAmount.amount!}
+                        format={getNumberFormat(destinationTokenAmount.amount!)}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-500">{bridgingFee ? 'Execution fee' : 'Fee'}</p>
-                    <div className="flex flex-col items-baseline gap-0.5">
-                      <span className="text-sm font-medium">
-                        {formatAmount(toHuman(fees.amount, fees.token))} {fees.token.symbol}
+                  {receivingTokenPrice && (
+                    <div className="animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6">
+                      <NumberFlow
+                        value={receivingTokenPrice * destinationTokenAmount.amount!}
+                        prefix="$"
+                        format={numberFlowFormat}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {!hasFeesFailed && isAmountTooLow && (
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1 w-full mb-1">
+                  <InfoIcon width={17} height={17} fill="black" />
+                  <span className="text-[12px] text-turtle-foreground inline-block">
+                    <span className="font-bold ">Note:</span> The amount is a bit too low to justify the fees
+                  </span>
+                </div>
+              )}
+              {!hasFeesFailed && isItWrappedToken && (
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1 w-full mb-1">
+                  <InfoIcon width={17} height={17} fill="black" />
+                  <span className="text-[12px] text-turtle-foreground inline-block">
+                    <span className="font-bold ">Note:</span> You can swap this wrapped token on Hydration
+                  </span>
+                </div>
+              )}
+
+              <div className="border-1 w-full border-t border-turtle-level3" />
+
+              <div
+                className={cn(
+                  'flex w-full flex-row items-start',
+                  sourceTokenAmountError ? 'justify-end' : 'justify-between',
+                )}
+              >
+                {!sourceTokenAmountError && (
+                  <Tooltip
+                    showIcon={false}
+                    content={<FeesBreakdown fees={fees} hasFeesFailed={hasFeesFailed} />}
+                    className="bg-turtle-foreground"
+                  >
+                    <div className="flex items-center gap-1 cursor-default">
+                      <span className={cn('text-xs leading-none text-turtle-level6', getFeeStatusColor(fees))}>
+                        Fee
                       </span>
-                      {fees.inDollars > 0 && (
-                        <span className="text-xs text-gray-400">${formatAmount(fees.inDollars)}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {!isBridgeTransfer ? (
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="rounded-md bg-purple-50 p-1.5">
-                      <Clock className="h-4 w-4 text-purple-600" />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Duration</p>
-                    <span className="text-sm font-medium">{durationEstimate}</span>
-                  </div>
-                </div>
-              ) : (
-                bridgingFee && (
-                  <div className="flex items-center gap-2">
-                    <div className="rounded-md bg-blue-50 p-1.5">
-                      <ArrowRightLeft className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Bridging fee</p>
-                      <div className="flex flex-col items-baseline gap-0.5">
-                        <span className="text-sm font-medium">
-                          {formatAmount(toHuman(bridgingFee.amount, bridgingFee.token))} {bridgingFee.token.symbol}
+                      {!hasFeesFailed && (
+                        <span className={cn('text-sm', getFeeStatusColor(fees))}>
+                          <NumberFlow
+                            value={totalFeesInDollars}
+                            prefix="$"
+                            format={numberFlowFormat}
+                            className="cursor-default"
+                          />
                         </span>
-                        {bridgingFee.inDollars > 0 && (
-                          <span className="text-xs text-gray-400">${formatAmount(bridgingFee.inDollars)}</span>
-                        )}
-                      </div>
+                      )}
+                      <span className="inline-block">{getFeeStatusIcon(fees)}</span>
                     </div>
-                  </div>
-                )
-              )}
-            </div>
-
-            {isBridgeTransfer && (
-              <>
-                <div className="border-t border-gray-100" />
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="rounded-md bg-purple-50 p-1.5">
-                      <Clock className="h-4 w-4 text-purple-600" />
-                    </div>
-                    <p className="text-xs text-gray-500">Duration</p>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium">{durationEstimate}</span>
-                  </div>
+                  </Tooltip>
+                )}
+                <div className="flex items-center gap-1">
+                  <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
+                  <span className="text-sm text-turtle-foreground">{durationEstimate}</span>
                 </div>
-              </>
-            )}
-          </div>
-
-          {/* Display warning messages if needed */}
-          {displayWarningMessage({
-            fees,
-            bridgingFee,
-            canPayFees,
-            canPayAdditionalFees,
-            exceedsTransferableBalanceInFees,
-            exceedsTransferableBalanceInBridgingFee,
-            isAmountTooLow,
-            applyTransferableBalance,
-          })}
-        </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     )
   }
@@ -186,94 +220,64 @@ const TxSummary = ({
   )
 }
 
-export default TxSummary
+function calcSendingAmountTooLow(
+  totalFeesInDollars: number,
+  sourceTokenAmount: TokenAmount | null,
+  sendingTokenPrice: number | undefined,
+) {
+  // Calculate total fees in dollars for isAmountTooLow check
+  const transferAmountInfo = toAmountInfo(sourceTokenAmount, sendingTokenPrice)
+  return transferAmountInfo && transferAmountInfo.inDollars < totalFeesInDollars * AMOUNT_VS_FEE_RATIO
+}
 
-function displayWarningMessage(params: {
-  fees?: AmountInfo | null
-  bridgingFee?: AmountInfo | null
-  canPayFees: boolean
-  canPayAdditionalFees: boolean
-  exceedsTransferableBalanceInFees: boolean
-  exceedsTransferableBalanceInBridgingFee: boolean
-  isAmountTooLow: boolean | null
-  applyTransferableBalance: () => void
-}) {
-  const {
-    fees,
-    bridgingFee,
-    canPayFees,
-    canPayAdditionalFees,
-    exceedsTransferableBalanceInFees,
-    exceedsTransferableBalanceInBridgingFee,
-    isAmountTooLow,
-    applyTransferableBalance,
-  } = params
+function getFeeStatus(fees?: FeeDetails[] | null): FeeSufficiency {
+  if (!fees?.length) return 'insufficient'
 
-  if (fees) {
-    if (!canPayFees) {
-      return (
-        <div className="mx-auto flex w-fit flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-          <span>You don&apos;t have enough {fees.token.symbol}</span>
-        </div>
-      )
-    }
+  const hasInsufficient = fees.some(fee => fee.sufficient === 'insufficient')
+  if (hasInsufficient) return 'insufficient'
 
-    if (exceedsTransferableBalanceInFees && canPayFees) {
-      return (
-        <div
-          role="button"
-          onClick={applyTransferableBalance}
-          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs"
-        >
-          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-          <span>
-            We need some of that {fees.token.symbol} to pay fees
-            <span className="ml-1 underline"> Ok</span>
-          </span>
-        </div>
-      )
+  const hasUndetermined = fees.some(fee => fee.sufficient === 'undetermined')
+  if (hasUndetermined) return 'undetermined'
+
+  return 'sufficient'
+}
+
+function getFeeStatusIcon(fees: FeeDetails[] | null | undefined): JSX.Element | null {
+  const size = { width: 14, height: 14 }
+  const status = getFeeStatus(fees)
+
+  switch (status) {
+    case 'insufficient':
+      return <AlertIcon {...size} fill={colors['turtle-error']} />
+    case 'undetermined':
+      return <AlertIcon {...size} fill="#F97316" />
+    default:
+      return <InfoIcon {...size} fill={colors['turtle-level6']} />
+  }
+}
+
+function getFeeStatusColor(fees?: FeeDetails[] | null): string {
+  const status = getFeeStatus(fees)
+
+  switch (status) {
+    case 'insufficient':
+      return 'text-turtle-error'
+    case 'undetermined':
+      return 'text-orange-500'
+    default:
+      return 'text-turtle-foreground'
+  }
+}
+
+function getNumberFormat(value: number) {
+  // For very small numbers, use standard notation with more decimal places
+  if (Math.abs(value) < 0.01 && value !== 0) {
+    return {
+      notation: 'standard' as const,
+      maximumFractionDigits: 8,
+      minimumFractionDigits: 1,
     }
   }
-
-  if (bridgingFee) {
-    if (!canPayAdditionalFees) {
-      return (
-        <div className="mx-auto flex w-fit items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs">
-          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-          <span>You don&apos;t have enough {bridgingFee.token.symbol}</span>
-        </div>
-      )
-    }
-
-    if (exceedsTransferableBalanceInBridgingFee && canPayAdditionalFees) {
-      return (
-        <div
-          role="button"
-          onClick={applyTransferableBalance}
-          className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-black bg-turtle-warning px-2 py-1 text-xs"
-        >
-          <ExclamationMark width={16} height={16} fill={colors['turtle-foreground']} className="mr-2" />
-          <span>
-            We need some of that {bridgingFee.token.symbol} to pay fees
-            <span className="ml-1 underline"> Ok</span>
-          </span>
-        </div>
-      )
-    }
-  }
-
-  if (canPayFees && !exceedsTransferableBalanceInFees && isAmountTooLow) {
-    return (
-      <div
-        // className="mx-auto my-4 flex w-fit flex-row items-center justify-center rounded-[8px] border border-turtle-secondary-dark-40 bg-turtle-secondary-transparent p-2"
-        className="mx-auto flex w-fit cursor-pointer flex-row items-center rounded-[6px] border border-turtle-secondary-dark bg-turtle-secondary-transparent px-2 py-1 text-xs"
-      >
-        <ExclamationMark width={16} height={16} fill={colors['turtle-secondary-dark']} className="mr-2" />
-        <div className="text-xs">The amount is a bit too low to justify the fees</div>
-      </div>
-    )
-  }
-
-  return
+  // For regular numbers, use compact notation
+  return numberFlowFormat
 }

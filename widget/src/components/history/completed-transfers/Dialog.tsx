@@ -174,28 +174,16 @@ export const CompletedTransferDialog = ({ tx }: { tx: CompletedTransfer }) => {
             )}
 
             {/* Fees */}
-            <SummaryRow
-              label={tx.bridgingFee ? 'Execution fee' : 'Fee'}
-              amount={formatAmount(toHuman(tx.fees.amount, tx.fees.token), 'Long')}
-              symbol={tx.fees.token.symbol}
-              usdValue={
-                typeof tx.sourceTokenUSDValue === 'number' ? formatAmount(tx.fees.inDollars, 'Long') : undefined
-              }
-            />
-
-            {/* Bridging Fee */}
-            {tx.bridgingFee && (
-              <SummaryRow
-                label="Bridging fee"
-                amount={formatAmount(toHuman(tx.bridgingFee.amount, tx.bridgingFee.token), 'Long')}
-                symbol={tx.bridgingFee.token.symbol}
-                usdValue={
-                  typeof tx.sourceTokenUSDValue === 'number'
-                    ? formatAmount(tx.bridgingFee.inDollars, 'Long')
-                    : undefined
-                }
-              />
-            )}
+            {Array.isArray(tx.fees) &&
+              tx.fees.map((fee, index) => (
+                <SummaryRow
+                  key={index}
+                  label={fee.title}
+                  amount={formatAmount(toHuman(fee.amount.amount, fee.amount.token), 'Long')}
+                  symbol={fee.amount.token.symbol}
+                  usdValue={formatAmount(fee.amount.inDollars, 'Long')}
+                />
+              ))}
 
             {tx.explorerLink && (
               <a
