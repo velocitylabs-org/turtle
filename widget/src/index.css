@@ -5,6 +5,22 @@
 
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Dazzed';
+  src: url('./fonts/dazzed.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dazzed';
+  src: url('./fonts/dazzed-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer utilities {
   .xxl-letter-spacing {
     letter-spacing: var(--letter-spacing-xxl);
@@ -116,7 +132,7 @@
 .turtle-wrapper {
   all: initial;
 
-  font-family: system-ui, sans-serif;
+  font-family: 'Dazzed', system-ui, sans-serif;
   letter-spacing: var(--letter-spacing-default);
 
   -webkit-font-smoothing: antialiased;

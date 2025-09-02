@@ -39,6 +39,9 @@ export const colors = {
 export default {
   theme: {
     extend: {
+      fontFamily: {
+        dazzed: ['Dazzed', 'system-ui', 'sans-serif'],
+      },
       colors,
       fontSize: {
         'large-heading': 'clamp(3.5rem, 2.4966rem + 4.5872vw, 6.625rem)',
