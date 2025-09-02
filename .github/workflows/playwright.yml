@@ -36,7 +36,7 @@ jobs:
       
     - name: Start app
       run: |
-        pnpm run start --filter=@velocitylabs-org/turtle-app
+        pnpm run start --filter=@velocitylabs-org/turtle-app &
         echo $! > server.pid
     
     - name: Wait for app to start
