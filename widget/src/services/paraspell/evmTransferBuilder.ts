@@ -52,7 +52,7 @@ class EvmTransferBuilderManager {
     return builder
   }
 
-  getBuilder(params: TransferParams) {
+  getBuilder(params: TransferParams): TxBuilder {
     const key = txKey(params)
     const existing = this.builders.get(key)
     return existing ?? this.createBuilder(params)
@@ -80,7 +80,7 @@ class EvmTransferBuilderManager {
     this.builders.delete(key)
   }
 
-  builderList() {
+  builderList(): Map<string, TxBuilder> {
     return this.builders
   }
 }
