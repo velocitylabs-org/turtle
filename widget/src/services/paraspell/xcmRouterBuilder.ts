@@ -58,7 +58,7 @@ class XcmRouterBuilderManager {
     return builder
   }
 
-  getBuilder(params: TransferParams, exchange: Dex) {
+  getBuilder(params: TransferParams, exchange: Dex): TxBuilder {
     const key = txKey(params, exchange)
     const existing = this.builders.get(key)
     return existing ?? this.createBuilder(params, exchange)
@@ -112,7 +112,7 @@ class XcmRouterBuilderManager {
     this.builders.delete(key)
   }
 
-  builderList() {
+  builderList(): Map<string, TxBuilder> {
     return this.builders
   }
 }
