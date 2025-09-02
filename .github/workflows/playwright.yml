@@ -25,21 +25,21 @@ jobs:
       run: pnpm install && pnpm install -g @playwright/test
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
-    - name: Build app
+    - name: Prebuild the app to make sure tests can run it
       env:
         NEXT_TELEMETRY_DISABLED: '1'
       run: pnpm run build --filter=@velocitylabs-org/turtle-app
       
-    - name: Start app
-      run: |
-        pnpm run start --filter=@velocitylabs-org/turtle-app &
-        echo $! > server.pid
+    # - name: Start app
+    #   run: |
+    #     pnpm run start --filter=@velocitylabs-org/turtle-app &
+    #     echo $! > server.pid
     - name: Run Playwright tests
       env:
         COINBASE_SEED: ${{ secrets.COINBASE_SEED }}
       run: pnpm run e2e
     - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+      if: ${{ always() }}
       with:
         name: playwright-report
         path: playwright-report/
