@@ -72,10 +72,6 @@ export default function TxSummary({
   const showLoading =
     loading || !destinationTokenAmount || destinationTokenAmount.amount == null || !destinationTokenAmount.token
 
-  console.log('loading', loading)
-  console.log('destinationTokenAmount', destinationTokenAmount)
-  console.log('showLoading', showLoading)
-
   useEffect(() => {
     if (showLoading) {
       setTimeout(() => {

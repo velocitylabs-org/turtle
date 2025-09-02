@@ -127,8 +127,6 @@ const useTransferForm = () => {
     loadingFees,
   })
 
-  console.log('outputAmount', outputAmount)
-
   // Update destination amount when output amount changes
   useEffect(() => {
     // outputAmount could be null or undefined
