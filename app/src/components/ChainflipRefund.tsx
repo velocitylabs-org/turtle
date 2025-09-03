@@ -1,4 +1,5 @@
 import ExclamationIcon from '@velocitylabs-org/turtle-assets/icons/exclamation-circle.svg'
+import InfoIcon from '@velocitylabs-org/turtle-assets/icons/info.svg'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
@@ -50,7 +51,7 @@ export default function ChainflipRefund({
   ) {
     return (
       <div className={cn('flex justify-center items-center gap-1', className)}>
-        <Image src={ExclamationIcon} alt={'Refund warning'} width={16} height={16} />
+        <Image src={swapCompleted ? ExclamationIcon : InfoIcon} alt={'Refund warning'} width={16} height={16} />
         <span className="text-xs">{refundMessage(swapCompleted, swapRefundError)}</span>
       </div>
     )
