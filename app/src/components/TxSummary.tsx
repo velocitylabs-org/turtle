@@ -99,7 +99,7 @@ export default function TxSummary({
             <motion.div
               key="loading"
               {...loadingAnimationConfig}
-              className="mt-6 sm:mt-8 flex h-[174px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
+              className="mt-6 sm:mt-8 flex h-[155px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
             >
               <LoadingIcon
                 className="animate-spin"
@@ -227,7 +227,7 @@ function calcSendingAmountTooLow(
 }
 
 function getFeeStatus(fees?: FeeDetails[] | null): FeeSufficiency {
-  if (!fees?.length) return 'sufficient'
+  if (!fees?.length) return 'insufficient'
 
   const hasInsufficient = fees.some(fee => fee.sufficient === 'insufficient')
   if (hasInsufficient) return 'insufficient'

@@ -159,7 +159,8 @@ export default function SubstrateWalletModal() {
         }}
       >
         {/* Header */}
-        <DialogHeader className="relative flex items-center justify-center rounded-t-4xl p-4">
+        {/* Extra custom classes to Override default padding */}
+        <DialogHeader className="relative flex items-center justify-center rounded-t-4xl dialog-header dialog-custom-header-styles">
           {currentView === 'accounts' && (
             <motion.div key={currentView} {...headerElementAnimationProps} className="absolute left-0">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>

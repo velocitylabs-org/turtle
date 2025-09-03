@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import type { AmountInfo, StoredTransfer } from '@/models/transfer'
+import type { FeeDetails, StoredTransfer } from '@/models/transfer'
 import { STORE_VERSIONS } from './migrations/constants'
 import { migrateOngoingTransfers } from './migrations/ongoingTransfersMigration'
 
@@ -16,12 +16,13 @@ interface State {
   remove: (id: string) => void
 }
 
-const serializeFeeAmount = (fees: AmountInfo): AmountInfo => {
-  return {
-    ...fees,
-    amount: fees.amount.toString(),
-  }
-}
+const serializeFeeDetails = (feeDetails: FeeDetails): FeeDetails => ({
+  ...feeDetails,
+  amount: {
+    ...feeDetails.amount,
+    amount: feeDetails.amount.amount.toString(),
+  },
+})
 
 export const useOngoingTransfersStore = create<State>()(
   persist(
@@ -35,10 +36,7 @@ export const useOngoingTransfersStore = create<State>()(
 
         const persistableTransfer = {
           ...newOngoingTransfer,
-          fees: serializeFeeAmount(newOngoingTransfer.fees),
-          ...(newOngoingTransfer.bridgingFee && {
-            bridgingFee: serializeFeeAmount(newOngoingTransfer.bridgingFee),
-          }),
+          fees: newOngoingTransfer.fees.map(serializeFeeDetails),
           swapInformation: undefined, // set to undefined for now to avoid circular references. It's not used at the moment for 1 click swaps.
         }
 

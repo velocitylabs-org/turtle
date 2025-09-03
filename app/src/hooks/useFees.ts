@@ -293,7 +293,7 @@ export default function useFees(params: UseFeesParams) {
             let totalFees = bridgingAmount
             const executionFee = feeList.find(fee => fee.title === 'Execution fees')
             if (executionFee?.amount?.token?.id === snowbridgeFees.bridging.token?.id) {
-              const executionAmount = BigInt(executionFee.amount.amount ?? 0n)
+              const executionAmount = BigInt(executionFee?.amount?.amount ?? 0n)
               totalFees = bridgingAmount + executionAmount
             }
 

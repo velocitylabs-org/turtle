@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import type { AmountInfo, CompletedTransfer } from '@/models/transfer'
+import type { CompletedTransfer, FeeDetails } from '@/models/transfer'
 import { migrateCompletedTransfers } from './migrations/completedTransfersMigration'
 import { STORE_VERSIONS } from './migrations/constants'
 
@@ -9,12 +9,13 @@ interface CompletedTxState {
   addCompletedTransfer: (completedTransfer: CompletedTransfer) => void
 }
 
-const serializeFeeAmount = (fees: AmountInfo): AmountInfo => {
-  return {
-    ...fees,
-    amount: fees.amount.toString(),
-  }
-}
+const serializeFeeDetails = (feeDetails: FeeDetails): FeeDetails => ({
+  ...feeDetails,
+  amount: {
+    ...feeDetails.amount,
+    amount: feeDetails.amount.amount.toString(),
+  },
+})
 
 export const useCompletedTransfersStore = create<CompletedTxState>()(
   persist(
@@ -27,10 +28,7 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
         // needed to not run into bigint persistence issues
         const persistableTransfer = {
           ...newCompletedTransfer,
-          fees: serializeFeeAmount(newCompletedTransfer.fees),
-          ...(newCompletedTransfer.bridgingFee && {
-            bridgingFee: serializeFeeAmount(newCompletedTransfer.bridgingFee),
-          }),
+          fees: newCompletedTransfer.fees.map(serializeFeeDetails),
         }
 
         set(state => {
