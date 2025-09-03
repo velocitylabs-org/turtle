@@ -36,6 +36,11 @@ type ChainflipError = {
   }
 }
 
+export enum ChainflipRefundStatus {
+  Refunded = 'refunded',
+  Partially = 'partially refunded',
+}
+
 /** ROUTES HELPERS */
 
 /** Returns all Chainflip allowed source chains for a swap. */
@@ -285,6 +290,16 @@ export const isChainflipSwap = (
   )
 }
 
+/** Check if the swap has been refunded or partially refunded. */
+export const chainflipRefund = (status: SwapStatusResponseV2): string | null => {
+  const refundEgress = 'refundEgress' in status
+  const swapEgress = 'swapEgress' in status
+
+  if (refundEgress && swapEgress) return ChainflipRefundStatus.Partially
+  if (refundEgress && !swapEgress) return ChainflipRefundStatus.Refunded
+  return null
+}
+
 export const getChainflipOngoingSwaps = (ongoingTransfers: StoredTransfer[]) => {
   return ongoingTransfers.filter(t => isChainflipSwap(t.sourceChain, t.destChain, t.sourceToken, t.destinationToken))
 }
@@ -328,6 +343,11 @@ export const getFeeLabelFromType = (feeType: ChainflipFeeType): FeeDetailType =>
 export const getChainflipDurationEstimate = (quote?: RegularQuote | DCAQuote | null): string | null => {
   if (!quote) return null
   return `~${Math.ceil(quote.estimatedDurationSeconds / 60)} min`
+}
+
+export const getChainflipSlippage = (quote?: RegularQuote | DCAQuote | null): number | null => {
+  if (!quote) return null
+  return quote.recommendedSlippageTolerancePercent
 }
 
 export const formatChainflipErrorMsg = (errorMsg: string): string | null => {
