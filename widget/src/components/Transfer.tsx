@@ -284,7 +284,7 @@ const Transfer: FC = () => {
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
                           <Button
-                            label={maxButtonLoading ? '' : 'Max'}
+                            {...(!maxButtonLoading && { label: 'Max' })}
                             size="sm"
                             variant="outline"
                             className="min-w-[40px]"
