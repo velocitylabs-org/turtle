@@ -12,7 +12,7 @@ interface FeesBreakdownProps {
 export default function FeesBreakdown({ fees, hasFeesFailed }: FeesBreakdownProps) {
   return (
     <div className="w-[360px] bg-turtle-foreground p-3 pb-1 text-turtle-background">
-      <div className="w-full pb-3 pt-2 text-center text-sm font-bold">Fees Breakdown</div>
+      <div className="w-full pb-3 pt-1 text-center text-sm font-bold">Fees Breakdown</div>
       <ul>
         {fees?.map(fee => (
           <li className="pb-3.5" key={fee.title}>
