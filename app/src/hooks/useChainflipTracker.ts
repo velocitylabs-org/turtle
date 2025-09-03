@@ -21,7 +21,6 @@ const handleOngoingSwap = async (
   const { sourceToken, sourceChain, destChain, destinationToken, id, uniqueTrackingId, recipient } = swap
   if (!uniqueTrackingId) throw new Error(`Chainflip swap ${id} does not have a unique tracking id`)
   const status = await getSwapStatus(uniqueTrackingId)
-  console.log('status', status)
   const { state } = status
   const formattedRecipient = truncateAddress(recipient)
   switch (state) {

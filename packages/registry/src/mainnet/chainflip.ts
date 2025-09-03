@@ -25,16 +25,6 @@ export const chainflipRoutes: ChainflipRoute[] = [
       [EthereumTokens.USDT, PolkadotTokens.USDT],
     ],
   },
-  // TBC: Soon deprecated
-  // {
-  //   from: Ethereum,
-  //   to: Polkadot,
-  //   pairs: [
-  //     [EthereumTokens.ETH, PolkadotTokens.DOT],
-  //     [EthereumTokens.USDC, PolkadotTokens.DOT],
-  //     [EthereumTokens.USDT, PolkadotTokens.DOT],
-  //   ],
-  // },
   {
     from: AssetHub,
     to: Ethereum,
@@ -50,14 +40,4 @@ export const chainflipRoutes: ChainflipRoute[] = [
       [PolkadotTokens.USDT, EthereumTokens.USDT],
     ],
   },
-  // TBC: Soon deprecated
-  // {
-  //   from: Polkadot,
-  //   to: Ethereum,
-  //   pairs: [
-  //     [PolkadotTokens.DOT, EthereumTokens.ETH],
-  //     [PolkadotTokens.DOT, EthereumTokens.USDC],
-  //     [PolkadotTokens.DOT, EthereumTokens.USDT],
-  //   ],
-  // },
 ]
