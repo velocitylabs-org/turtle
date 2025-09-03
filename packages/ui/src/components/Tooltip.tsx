@@ -28,7 +28,7 @@ export const Tooltip = ({
   portal = true,
 }: TooltipProps) => {
   const iconSrc = typeof TooltipIcon === 'string' ? TooltipIcon : TooltipIcon.src
-  const PortalEl = portal ? TooltipPortal : Fragment
+  const PortalEl = portal ? TooltipPortal : Fragment // Determines whether to render the tooltip in a portal (outside app scope) or directly within the parent element scope
 
   return (
     <TooltipProvider>
