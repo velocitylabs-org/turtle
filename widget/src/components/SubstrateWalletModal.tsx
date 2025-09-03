@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
 import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
+import { Dialog, DialogContent } from './ui/dialog'
 
 const animationDuration = 0.35
 
@@ -159,7 +159,7 @@ export default function SubstrateWalletModal() {
         }}
       >
         {/* Header */}
-        <DialogHeader className="relative flex items-center justify-center rounded-t-4xl p-4">
+        <div className="relative flex items-center justify-center rounded-t-4xl p-4">
           {currentView === 'accounts' && (
             <motion.div key={currentView} {...headerElementAnimationProps} className="absolute left-0">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
@@ -169,7 +169,7 @@ export default function SubstrateWalletModal() {
               </Button>
             </motion.div>
           )}
-          <DialogTitle className="mt-1 text-base font-bold">
+          <div className="mt-1 text-base font-bold">
             <AnimatePresence mode="wait">
               {currentView === 'extensions' && (
                 <motion.div key="extensionsView" {...extensionsViewTransitions}>
@@ -182,8 +182,8 @@ export default function SubstrateWalletModal() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </DialogTitle>
-        </DialogHeader>
+          </div>
+        </div>
 
         {/* Animate Height Transition */}
         <motion.div
