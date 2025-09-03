@@ -167,3 +167,7 @@
 .turtle-wrapper::-webkit-scrollbar {
   display: none;
 }
+
+.turtle-wrapper div.dialog-header.dialog-custom-header-styles {
+  padding: 1rem !important;
+}
