@@ -83,7 +83,7 @@ export default defineConfig({
     command: process.env.CI
       ? `echo "Starting DEV server..." && 
          cd ../../app && 
-         DEBUG="next:*,turbopack:*" NODE_OPTIONS="--enable-source-maps --trace-uncaught --trace-warnings --unhandled-rejections=strict --trace-deprecation" next dev --turbo`
+         DEBUG="next:*,turbopack:*" NODE_OPTIONS="--enable-source-maps --trace-uncaught --trace-warnings --unhandled-rejections=strict --trace-deprecation" npm run dev`
       : 'echo "Starting DEV server..." && pnpm run dev --filter=@velocitylabs-org/turtle-app',
     url: 'http://localhost:3000',
     stdout: 'pipe',
