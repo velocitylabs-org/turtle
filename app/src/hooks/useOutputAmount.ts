@@ -1,6 +1,6 @@
 import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
-import { type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-registry'
+import { AssetHub, type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
 import type { FeeDetails } from '@/models/transfer'
 import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
@@ -69,8 +69,9 @@ export function useOutputAmount({
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount || loadingFees) return null
 
       try {
-        // Paraspell swap from HydrationDex
-        if (!isSameToken(sourceToken, destinationToken) && sourceChain.uid === DEX_TO_CHAIN_MAP.HydrationDex.uid) {
+        // Paraspell swap from HydrationDex or AH
+        const isSrcChainDex = sourceChain.uid === DEX_TO_CHAIN_MAP.HydrationDex.uid || sourceChain.uid === AssetHub.uid
+        if (!isSameToken(sourceToken, destinationToken) && isSrcChainDex) {
           const params = {
             sourceChain,
             destinationChain,
