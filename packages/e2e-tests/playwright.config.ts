@@ -81,11 +81,14 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env.CI
-      ? 'cd ../../ && pnpm run start --filter=@velocitylabs-org/turtle-app'
-      : 'cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
-
+    // command: process.env.CI
+    //   ? 'echo "Starting CI server..." && cd ../../ && pnpm run start --filter=@velocitylabs-org/turtle-app'
+    //   : ' echo "Starting DEV server..." && cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
+    command: 'echo "Starting DEV server..." && cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    // port: 3000,
+    stdout: 'pipe',
+    ignoreHTTPSErrors: true,
+    reuseExistingServer: false,
   },
 })
