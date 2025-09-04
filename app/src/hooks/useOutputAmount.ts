@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 import type { FeeDetails } from '@/models/transfer'
 import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 import { isChainflipSwap } from '@/utils/chainflip'
-import { DEX_TO_CHAIN_MAP } from '@/utils/paraspellSwap'
 import { useChainflipQuote } from './useChainflipQuote'
 
 interface UseOutputAmountParams {
@@ -69,8 +68,8 @@ export function useOutputAmount({
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount || loadingFees) return null
 
       try {
-        // Paraspell swap from HydrationDex
-        if (!isSameToken(sourceToken, destinationToken) && sourceChain.uid === DEX_TO_CHAIN_MAP.HydrationDex.uid) {
+        // Paraspell swap from HydrationDex or AH
+        if (!isSameToken(sourceToken, destinationToken)) {
           const params = {
             sourceChain,
             destinationChain,
