@@ -80,7 +80,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'echo "Starting DEV server..." && cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
+    command: process.env.CI
+      ? `echo "Starting DEV server..." && 
+         cd ../../app && 
+         DEBUG="next:*,turbopack:*" NODE_OPTIONS="--enable-source-maps --trace-uncaught --trace-warnings --unhandled-rejections=strict --trace-deprecation" next dev --turbo`
+      : 'echo "Starting DEV server..." && pnpm run dev --filter=@velocitylabs-org/turtle-app',
     url: 'http://localhost:3000',
     stdout: 'pipe',
     ignoreHTTPSErrors: true,
