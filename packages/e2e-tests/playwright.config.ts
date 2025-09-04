@@ -31,7 +31,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    headless: !!process.env.CI,
+    // headless: !!process.env.CI,
   },
 
   /* Configure projects for major browsers */
@@ -40,7 +40,6 @@ export default defineConfig({
     //   name: 'chromium',
     //   use: { ...devices['Desktop Chrome'] },
     // },
-
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },
@@ -85,10 +84,11 @@ export default defineConfig({
     //   ? 'echo "Starting CI server..." && cd ../../ && pnpm run start --filter=@velocitylabs-org/turtle-app'
     //   : ' echo "Starting DEV server..." && cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
     command: 'echo "Starting DEV server..." && cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
-    url: 'http://localhost:3000',
+    url: 'http://127.0.0.1:3000',
     // port: 3000,
     stdout: 'pipe',
     ignoreHTTPSErrors: true,
     reuseExistingServer: false,
+    timeout: 120_000,
   },
 })
