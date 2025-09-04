@@ -31,7 +31,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    // headless: !!process.env.CI,
+    headless: false,
   },
 
   /* Configure projects for major browsers */
@@ -80,12 +80,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    // command: process.env.CI
-    //   ? 'echo "Starting CI server..." && cd ../../ && pnpm run start --filter=@velocitylabs-org/turtle-app'
-    //   : ' echo "Starting DEV server..." && cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
     command: 'echo "Starting DEV server..." && cd ../../ && pnpm run dev --filter=@velocitylabs-org/turtle-app',
-    url: 'http://127.0.0.1:3000',
-    // port: 3000,
+    url: 'http://localhost:3000',
     stdout: 'pipe',
     ignoreHTTPSErrors: true,
     reuseExistingServer: false,
