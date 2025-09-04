@@ -37,7 +37,16 @@ jobs:
 
       - name: Run Playwright tests
         env:
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
+          NEXT_PUBLIC_SUBSCAN_KEY: ${{ secrets.NEXT_PUBLIC_SUBSCAN_KEY }}
+          NEXT_PUBLIC_ALCHEMY_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_KEY }}
+          NEXT_PUBLIC_DWELLIR_KEY: ${{ secrets.NEXT_PUBLIC_DWELLIR_KEY }}
+          NEXT_PUBLIC_ENVIRONMENT: ${{ secrets.NEXT_PUBLIC_ENVIRONMENT }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+          NEXT_PUBLIC_OC_API_KEY_READ_WRITE: ${{ secrets.NEXT_PUBLIC_OC_API_KEY_READ_WRITE }}
+          NEXT_TELEMETRY_DISABLED: '1'
           COINBASE_SEED: ${{ secrets.COINBASE_SEED }}
+          
         run: cd packages/e2e-tests && DEBUG=pw:webserver pnpm run e2e
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
