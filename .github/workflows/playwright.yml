@@ -17,6 +17,9 @@ jobs:
 
 
     steps:
+      - name: Check env variables
+        run: |
+          echo "$GITHUB_REPOSITORY"
       - name: Check out Git repository
         uses: actions/checkout@v4
       
@@ -47,7 +50,7 @@ jobs:
           NEXT_TELEMETRY_DISABLED: '1'
           COINBASE_SEED: ${{ secrets.COINBASE_SEED }}
           
-        run: cd packages/e2e-tests && DEBUG=pw:webserver pnpm run e2e
+        run: unset $(env | grep RUNNER | cut -d= -f1) && unset $(env | grep GITHUB | cut -d= -f1) && cd packages/e2e-tests && pnpm run e2e
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
