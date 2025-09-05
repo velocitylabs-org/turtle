@@ -43,7 +43,12 @@ class XcmTransferBuilderManager {
     let builder: TxBuilder
     try {
       const senderAddress = sender.address
-      builder = Builder(wssEndpoint)
+      builder = Builder(
+        Builder({
+          apiOverrides: wssEndpoint,
+          abstractDecimals: false,
+        }),
+      )
         .from(sourceChainNode as TNodeDotKsmWithRelayChains)
         .to(destinationChainNode as TNodeDotKsmWithRelayChains)
         .currency({ ...currencyId, amount: sourceAmount })
