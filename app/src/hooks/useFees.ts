@@ -362,7 +362,7 @@ export default function useFees(params: UseFeesParams) {
 
           if (sourceChain.network === 'Polkadot') {
             const localTransferFeeToken = PolkadotTokens.DOT
-            const feeTokenInDollars = (await getCachedTokenPrice(localTransferfeeToken))?.usd ?? 0
+            const feeTokenInDollars = (await getCachedTokenPrice(localTransferFeeToken))?.usd ?? 0
             const localTransferParams = {
               sourceChain,
               destinationChain: sourceChain, // Local transfer to AH
@@ -381,8 +381,8 @@ export default function useFees(params: UseFeesParams) {
               sufficient: networkFee.sufficient ? 'sufficient' : 'insufficient',
               amount: {
                 amount: networkFee.fee,
-                token: localTransferfeeToken,
-                inDollars: feeTokenInDollars ? toHuman(networkFee.fee, localTransferfeeToken) * feeTokenInDollars : 0,
+                token: localTransferFeeToken,
+                inDollars: feeTokenInDollars ? toHuman(networkFee.fee, localTransferFeeToken) * feeTokenInDollars : 0,
               },
             })
           }
