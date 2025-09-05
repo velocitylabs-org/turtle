@@ -1,25 +1,14 @@
 name: Playwright Tests
 on:
-  push:
-    branches: 
-      - "**"
-  # pull_request:
-  #   branches:
-  #     - "main"
+  deployment_status:
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: .
-
-
+    if: github.event.deployment_status.state == 'success'
     steps:
-      - name: Check env variables
-        run: |
-          echo "$GITHUB_REPOSITORY"
+      - name: Dump GitHub context
+        run: echo '${{ toJson(github) }}'
       - name: Check out Git repository
         uses: actions/checkout@v4
       
@@ -32,33 +21,73 @@ jobs:
         with:
           node-version: 20.10.0
           cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile && pnpm install -g @playwright/test
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-      - name: Build app
-        run: pnpm run build --filter=@velocitylabs-org/turtle-app
-
+      - name: Install Playwright
+        run: npx playwright install --with-deps
       - name: Run Playwright tests
+        run: cd packages/e2e-tests &&pnpm run e2e
         env:
-          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
-          NEXT_PUBLIC_SUBSCAN_KEY: ${{ secrets.NEXT_PUBLIC_SUBSCAN_KEY }}
-          NEXT_PUBLIC_ALCHEMY_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_KEY }}
-          NEXT_PUBLIC_DWELLIR_KEY: ${{ secrets.NEXT_PUBLIC_DWELLIR_KEY }}
-          NEXT_PUBLIC_ENVIRONMENT: ${{ secrets.NEXT_PUBLIC_ENVIRONMENT }}
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
-          NEXT_PUBLIC_OC_API_KEY_READ_WRITE: ${{ secrets.NEXT_PUBLIC_OC_API_KEY_READ_WRITE }}
-          NEXT_TELEMETRY_DISABLED: '1'
-          COINBASE_SEED: ${{ secrets.COINBASE_SEED }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+
+# on:
+#   push:
+#     branches: 
+#       - "**"
+#   # pull_request:
+#   #   branches:
+#   #     - "main"
+# jobs:
+#   test:
+#     timeout-minutes: 60
+#     runs-on: ubuntu-latest
+
+#     defaults:
+#       run:
+#         working-directory: .
+
+
+#     steps:
+#       - name: Check env variables
+#         run: |
+#           echo "$GITHUB_REPOSITORY"
+#       - name: Check out Git repository
+#         uses: actions/checkout@v4
+      
+#       - name: Install pnpm
+#         uses: pnpm/action-setup@v4
+#         with:
+#           version: 9.0.0
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20.10.0
+#           cache: 'pnpm'
+
+#       - name: Install dependencies
+#         run: pnpm install --frozen-lockfile && pnpm install -g @playwright/test
+#       - name: Install Playwright Browsers
+#         run: pnpm exec playwright install --with-deps
+#       - name: Build app
+#         run: pnpm run build --filter=@velocitylabs-org/turtle-app
+
+#       - name: Run Playwright tests
+#         env:
+#           NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID }}
+#           NEXT_PUBLIC_SUBSCAN_KEY: ${{ secrets.NEXT_PUBLIC_SUBSCAN_KEY }}
+#           NEXT_PUBLIC_ALCHEMY_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_KEY }}
+#           NEXT_PUBLIC_DWELLIR_KEY: ${{ secrets.NEXT_PUBLIC_DWELLIR_KEY }}
+#           NEXT_PUBLIC_ENVIRONMENT: ${{ secrets.NEXT_PUBLIC_ENVIRONMENT }}
+#           NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+#           NEXT_PUBLIC_OC_API_KEY_READ_WRITE: ${{ secrets.NEXT_PUBLIC_OC_API_KEY_READ_WRITE }}
+#           NEXT_TELEMETRY_DISABLED: '1'
+#           COINBASE_SEED: ${{ secrets.COINBASE_SEED }}
           
-        run: unset $(env | grep RUNNER | cut -d= -f1) && unset $(env | grep GITHUB | cut -d= -f1) && cd packages/e2e-tests && pnpm run e2e:ci
-      - uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+#         run: unset $(env | grep RUNNER | cut -d= -f1) && unset $(env | grep GITHUB | cut -d= -f1) && cd packages/e2e-tests && pnpm run e2e:ci
+#       - uses: actions/upload-artifact@v4
+#         if: ${{ always() }}
+#         with:
+#           name: playwright-report
+#           path: playwright-report/
+#           retention-days: 30
     # - name: Stop Server
     #   if: always()
     #   run: |
