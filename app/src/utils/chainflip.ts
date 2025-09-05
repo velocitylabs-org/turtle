@@ -21,11 +21,8 @@ import { getChainSpecificAddress } from './address'
 
 /** TYPES */
 export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
-
 export type ChainflipChain = 'Ethereum' | 'Polkadot' | 'Assethub' | 'Arbitrum' | 'Bitcoin' | 'Solana'
-
 export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
-
 export type ChainflipQuote = RegularQuote | DCAQuote
 
 type ChainflipError = {
@@ -141,7 +138,7 @@ export const getChainflipQuote = async (
     const dcaQuote = quotes.find(quote => quote.type === 'DCA')
     if (!regularQuote && !dcaQuote) throw new Error('Chainflip quote not found.')
 
-    return regularQuote ? regularQuote : (dcaQuote ?? null)
+    return regularQuote ?? dcaQuote ?? null
   } catch (error) {
     const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
 
