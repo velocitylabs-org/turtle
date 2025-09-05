@@ -8,6 +8,7 @@
   "scripts": {
     "e2e": "lsof -ti:3000 | xargs -r kill -9 && playwright test",
     "e2e:ui": "lsof -ti:3000 | xargs -r kill -9 && playwright test --ui",
+    "e2e:ci": "xvfb-run playwright test",
     "e2e:debug": "playwright test --debug",
     "e2e:codegen": "playwright codegen http://localhost:3000"
   },

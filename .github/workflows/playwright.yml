@@ -52,7 +52,7 @@ jobs:
           NEXT_TELEMETRY_DISABLED: '1'
           COINBASE_SEED: ${{ secrets.COINBASE_SEED }}
           
-        run: unset $(env | grep RUNNER | cut -d= -f1) && unset $(env | grep GITHUB | cut -d= -f1) && cd packages/e2e-tests && pnpm run e2e
+        run: unset $(env | grep RUNNER | cut -d= -f1) && unset $(env | grep GITHUB | cut -d= -f1) && cd packages/e2e-tests && pnpm run e2e:ci
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
