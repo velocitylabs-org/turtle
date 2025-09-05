@@ -139,17 +139,13 @@ export default function Transfer() {
     })
 
   const isChainflipSwapAllowed = useMemo(() => {
-    if (
+    return (
       // Transfer is not a Chainflip swap
       !isChainflipSwap ||
       // if Chainflip swap is loading or if swap quote is avaialble & valid
-      (isChainflipSwap && isLoadingChainflipQuote) ||
-      (isChainflipSwap && !isChainflipQuoteError && !!chainflipQuote)
+      isLoadingChainflipQuote ||
+      (!isChainflipQuoteError && !!chainflipQuote)
     )
-      return true
-
-    // If conditions are not met, the swap is not allowed
-    return false
   }, [isChainflipSwap, isLoadingChainflipQuote, isChainflipQuoteError, chainflipQuote])
 
   const requiresErc20SpendApproval =
