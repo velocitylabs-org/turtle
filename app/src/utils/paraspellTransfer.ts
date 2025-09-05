@@ -46,7 +46,7 @@ export function getParaspellToken(token: Token, chain?: TChain): TCurrencyCore {
   if (token.id === EthereumTokens.MYTH.id)
     return chain ? { symbol: getTokenSymbol(chain, token) } : { symbol: token.symbol }
 
-  if (token.multilocation) return { multilocation: token.multilocation } // TODO: Fix this
+  if (token.location) return { location: token.location }
   if (chain) return { symbol: getTokenSymbol(chain, token) }
 
   return { symbol: token.symbol }

@@ -15,7 +15,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),
-  multilocation: z.custom<TLocation>(),
+  location: z.custom<TLocation>(),
   coingeckoId: z.string().optional(),
   origin: originSchema,
 })

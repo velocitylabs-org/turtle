@@ -201,7 +201,7 @@ importers:
         version: 0.1.69
       '@sodazone/ocelloids-client':
         specifier: ^2.5.2
-        version: 2.5.2(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        version: 2.5.2(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@talismn/connect-components':
         specifier: ^1.1.8
         version: 1.1.9(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/extension-inject@0.58.10(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util@13.5.1)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -353,8 +353,8 @@ importers:
   packages/registry:
     dependencies:
       '@paraspell/sdk':
-        specifier: ^8.13.1
-        version: 8.16.0(bufferutil@4.0.9)(polkadot-api@1.16.4(@microsoft/api-extractor@7.52.8(@types/node@22.15.31))(@swc/core@1.12.0(@swc/helpers@0.5.17))(bufferutil@4.0.9)(rxjs@7.8.2)(utf-8-validate@5.0.10))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.61)
+        specifier: 11.2.4
+        version: 11.2.4(bufferutil@4.0.9)(polkadot-api@1.16.4(@microsoft/api-extractor@7.52.8(@types/node@22.15.31))(@swc/core@1.12.0(@swc/helpers@0.5.17))(bufferutil@4.0.9)(rxjs@7.8.2)(utf-8-validate@5.0.10))(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.61)
       '@types/node':
         specifier: '>=20.16.15'
         version: 22.15.31
@@ -571,7 +571,7 @@ importers:
         version: 0.1.69
       '@sodazone/ocelloids-client':
         specifier: ^2.5.2
-        version: 2.5.2(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        version: 2.5.2(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@tanstack/react-query':
         specifier: ^5.66.9
         version: 5.80.6(react@19.0.0)
@@ -2822,17 +2822,11 @@ packages:
   '@paraspell/assets@11.2.4':
     resolution: {integrity: sha512-8TMkdg7xKFsVtTMOtSHNb/9Fh6E93R2D6fc7o7K4eXvC8H8cEsY+UgONNdzuUy3Uj6veLuBjBHi0TS8gW+JnGw==}
 
-  '@paraspell/assets@8.16.0':
-    resolution: {integrity: sha512-quwgBDn0LN3iH06MgWgtu7h5DGLc+u6asZoFK36N5UmRf/6+v3Gw/XzlFTlzBNSQlUozNnEeynKMrn0ZkElEsg==}
-
   '@paraspell/pallets@10.11.8':
     resolution: {integrity: sha512-c5y/1OA4qoOh/wrJ+FY+6xOow2W2nqxmPgwBYlg9n89FwlOJmG0kOpCtdZbdyaL4XtaNdqTIPy3AuVg0iBRPng==}
 
   '@paraspell/pallets@11.2.4':
     resolution: {integrity: sha512-NHFJ3OAl26OMe8vcbY60aSl1hO4rSQbbf4Vd0mzbEN+g4B6TmpqKktb5N/C53lBljEVAWSWPQtiPLfGY4chPWw==}
-
-  '@paraspell/pallets@8.16.0':
-    resolution: {integrity: sha512-hf7RYmJeKrSp+2X60+EjNqST+PU5fbKnRkoTSUSPvyzHjtqfTgII8FP8Xfi7853d18pG7v6n9pgoamPkWPRvbA==}
 
   '@paraspell/sdk-common@10.11.8':
     resolution: {integrity: sha512-YhR85fUE36Nej23y77HsjAwHmqoWhLPAh8+V3eaTX255OwRH1Zym6U3FkS5RFOQh/MLD3ktE2aZOu4vwmA6EJg==}
@@ -2840,17 +2834,11 @@ packages:
   '@paraspell/sdk-common@11.2.4':
     resolution: {integrity: sha512-oQMyVNOG5faIW0z+COXKM3YkkXv0InKmLhrQlh5aucu/hF4d1mkVu4Jd3NuL/wFtDfiapUEF19E38LeniwXIdA==}
 
-  '@paraspell/sdk-common@8.16.0':
-    resolution: {integrity: sha512-iHH83mDH4SQDJtCq2w53tipQFW89z0PHXxUPocwzsB6PGuIBX0TyX9H75WAbAqDo1A3FKSf5xu34BykqcHU3XA==}
-
   '@paraspell/sdk-core@10.11.8':
     resolution: {integrity: sha512-DOooqtug2uCCIZDBYTGpvcYIWSHq1QJG8+5HjET/jz1sFG5nsW4kerrv9fFn0jAVJILgfrxCQqQ6z6IOREt2fA==}
 
   '@paraspell/sdk-core@11.2.4':
     resolution: {integrity: sha512-GApNarEKt55XjHUpkpbqvSs9becVXNVr589oReE7OROWIYYDnCjf0qy/VTiysqow6ogydjVx9+T01SCg5vUsYA==}
-
-  '@paraspell/sdk-core@8.16.0':
-    resolution: {integrity: sha512-PP8l0ihQ4RCBDkjw9FMJSDLpmjGiU8puK0GD2j5FH7J3sEfBhr1J5U6YDw9Z6h5HEHCyNdNd8gCOafI/DkyuQA==}
 
   '@paraspell/sdk-pjs@10.11.8':
     resolution: {integrity: sha512-mQuXttvHbxExw29YJofwq3Xb4NNVyKEQJ3FMzFmWrkh8NXb0BfDjf90Gyi6b1n83jjOYhlQukNoFp2YsUQyEtg==}
@@ -2879,11 +2867,6 @@ packages:
     resolution: {integrity: sha512-lltMF1qEJMZjoq6FOv/knyMFQnJkZ0g3SLkWOB64Kudr9XtoYufxSoPKgX63VpEGqtIcHMqJhRgRI64msqNPng==}
     peerDependencies:
       polkadot-api: '>= 1.16.3 < 2'
-
-  '@paraspell/sdk@8.16.0':
-    resolution: {integrity: sha512-YpcOWzaUewK0EiDIm7Ht9JFior5JdkqNB+eZPpC7hJXbJzgaXXlZq9FZf8/M3hCEo5Y1/fM1kU7lNJj4qkPTHQ==}
-    peerDependencies:
-      polkadot-api: '>= 1.10.2 < 2'
 
   '@paraspell/xcm-router@10.11.8':
     resolution: {integrity: sha512-LOyUHiQnnsVoD2iMoO/XQwS9xM7vnlWyPqKIFOUGkbg12/TGvRlFEqBqSIev1WJaiAoLmJhKAJNjgnliu4XW0w==}
@@ -10184,10 +10167,6 @@ packages:
   quick-format-unescaped@4.0.4:
     resolution: {integrity: sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==}
 
-  quick-lru@7.0.1:
-    resolution: {integrity: sha512-kLjThirJMkWKutUKbZ8ViqFc09tDQhlbQo2MNuVeLWbRauqYP96Sm6nzlQ24F0HFjUNZ4i9+AgldJ9H6DZXi7g==}
-    engines: {node: '>=18'}
-
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
@@ -11973,7 +11952,7 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@acala-network/eth-providers@2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.4))(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
+  '@acala-network/eth-providers@2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.1))(bufferutil@4.0.9)(utf-8-validate@5.0.10)':
     dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/contracts': 4.3.4
@@ -12080,7 +12059,7 @@ snapshots:
   '@acala-network/sdk@4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.4))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      '@acala-network/eth-providers': 2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.4))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@acala-network/eth-providers': 2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.1))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@acala-network/sdk-core': 4.1.14(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@polkadot/api': 16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       axios: 0.24.0
@@ -14864,10 +14843,6 @@ snapshots:
     dependencies:
       '@paraspell/sdk-common': 11.2.4
 
-  '@paraspell/assets@8.16.0':
-    dependencies:
-      '@paraspell/sdk-common': 8.16.0
-
   '@paraspell/pallets@10.11.8':
     dependencies:
       '@paraspell/sdk-common': 10.11.8
@@ -14876,15 +14851,9 @@ snapshots:
     dependencies:
       '@paraspell/sdk-common': 11.2.4
 
-  '@paraspell/pallets@8.16.0':
-    dependencies:
-      '@paraspell/sdk-common': 8.16.0
-
   '@paraspell/sdk-common@10.11.8': {}
 
   '@paraspell/sdk-common@11.2.4': {}
-
-  '@paraspell/sdk-common@8.16.0': {}
 
   '@paraspell/sdk-core@10.11.8(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.61)':
     dependencies:
@@ -14914,15 +14883,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk-core@8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.61)':
+  '@paraspell/sdk-core@11.2.4(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.61)':
     dependencies:
       '@noble/hashes': 1.8.0
-      '@paraspell/assets': 8.16.0
-      '@paraspell/pallets': 8.16.0
-      '@paraspell/sdk-common': 8.16.0
-      '@scure/base': 1.2.6
-      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      viem: 2.31.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.61)
+      '@paraspell/assets': 11.2.4
+      '@paraspell/pallets': 11.2.4
+      '@paraspell/sdk-common': 11.2.4
+      '@scure/base': 2.0.0
+      viem: 2.37.3(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.61)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -15017,14 +14985,12 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@paraspell/sdk@8.16.0(bufferutil@4.0.9)(polkadot-api@1.16.4(@microsoft/api-extractor@7.52.8(@types/node@22.15.31))(@swc/core@1.12.0(@swc/helpers@0.5.17))(bufferutil@4.0.9)(rxjs@7.8.2)(utf-8-validate@5.0.10))(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.61)':
+  '@paraspell/sdk@11.2.4(bufferutil@4.0.9)(polkadot-api@1.16.4(@microsoft/api-extractor@7.52.8(@types/node@22.15.31))(@swc/core@1.12.0(@swc/helpers@0.5.17))(bufferutil@4.0.9)(rxjs@7.8.2)(utf-8-validate@5.0.10))(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.61)':
     dependencies:
       '@noble/hashes': 1.8.0
-      '@paraspell/sdk-core': 8.16.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.61)
-      ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@paraspell/sdk-core': 11.2.4(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.61)
       polkadot-api: 1.16.4(@microsoft/api-extractor@7.52.8(@types/node@22.15.31))(@swc/core@1.12.0(@swc/helpers@0.5.17))(bufferutil@4.0.9)(rxjs@7.8.2)(utf-8-validate@5.0.10)
-      quick-lru: 7.0.1
-      viem: 2.31.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.61)
+      viem: 2.37.3(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.61)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -15102,7 +15068,7 @@ snapshots:
   : dependencies:
       '@acala-network/api': 6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/app-util': 4.1.8-14
-      '@acala-network/eth-providers': 2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.4))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      '@acala-network/eth-providers': 2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.1))(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@acala-network/sdk': 4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.4))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/sdk-core': 4.1.14(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@acala-network/sdk-swap': 4.1.14(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@acala-network/eth-providers@2.9.8(@acala-network/api@6.2.0(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@polkadot/util-crypto@13.5.4(@polkadot/util@13.5.4))(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@acala-network/types@6.2.0(@polkadot/api@15.10.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)))(@polkadot/api@16.4.6(bufferutil@4.0.9)(utf-8-validate@5.0.10))(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
@@ -20755,11 +20721,11 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.2': {}
 
-  '@sodazone/ocelloids-client@2.5.2(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+  '@sodazone/ocelloids-client@2.5.2(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
-      isows: 1.0.7(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ky: 1.7.5
-      ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       zod: 3.25.61
 
   '@sora-substrate/type-definitions@1.27.7':
@@ -22888,15 +22854,15 @@ snapshots:
       typescript: 5.8.3
       zod: 3.23.8
 
-  abitype@1.0.8(typescript@5.8.3)(zod@3.25.61):
-    optionalDependencies:
-      typescript: 5.8.3
-      zod: 3.25.61
-
   abitype@1.1.0(typescript@5.8.3)(zod@3.23.8):
     optionalDependencies:
       typescript: 5.8.3
       zod: 3.23.8
+
+  abitype@1.1.0(typescript@5.9.2)(zod@3.25.61):
+    optionalDependencies:
+      typescript: 5.9.2
+      zod: 3.25.61
 
   accepts@1.3.8:
     dependencies:
@@ -25206,10 +25172,6 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
-    dependencies:
-      ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-
   isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -26541,21 +26503,6 @@ snapshots:
     transitivePeerDependencies:
       - zod
 
-  ox@0.7.1(typescript@5.8.3)(zod@3.25.61):
-    dependencies:
-      '@adraffy/ens-normalize': 1.11.0
-      '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.2
-      '@noble/hashes': 1.8.0
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.25.61)
-      eventemitter3: 5.0.1
-    optionalDependencies:
-      typescript: 5.8.3
-    transitivePeerDependencies:
-      - zod
-
   ox@0.8.6(typescript@5.7.3)(zod@3.22.4):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
@@ -26628,6 +26575,21 @@ snapshots:
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
+    transitivePeerDependencies:
+      - zod
+
+  ox@0.9.3(typescript@5.9.2)(zod@3.25.61):
+    dependencies:
+      '@adraffy/ens-normalize': 1.11.0
+      '@noble/ciphers': 1.3.0
+      '@noble/curves': 1.9.1
+      '@noble/hashes': 1.8.0
+      '@scure/bip32': 1.7.0
+      '@scure/bip39': 1.6.0
+      abitype: 1.1.0(typescript@5.9.2)(zod@3.25.61)
+      eventemitter3: 5.0.1
+    optionalDependencies:
+      typescript: 5.9.2
     transitivePeerDependencies:
       - zod
 
@@ -27341,8 +27303,6 @@ snapshots:
   queue-microtask@1.2.3: {}
 
   quick-format-unescaped@4.0.4: {}
-
-  quick-lru@7.0.1: {}
 
   radix3@1.1.2: {}
 
@@ -28980,23 +28940,6 @@ snapshots:
       - utf-8-validate
       - zod
 
-  viem@2.31.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.61):
-    dependencies:
-      '@noble/curves': 1.9.1
-      '@noble/hashes': 1.8.0
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.25.61)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      ox: 0.7.1(typescript@5.8.3)(zod@3.25.61)
-      ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-    optionalDependencies:
-      typescript: 5.8.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-      - zod
-
   viem@2.33.3(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.22.4):
     dependencies:
       '@noble/curves': 1.9.2
@@ -29077,6 +29020,23 @@ snapshots:
       ws: 8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
       typescript: 5.8.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+      - zod
+
+  viem@2.37.3(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.61):
+    dependencies:
+      '@noble/curves': 1.9.1
+      '@noble/hashes': 1.8.0
+      '@scure/bip32': 1.7.0
+      '@scure/bip39': 1.6.0
+      abitype: 1.1.0(typescript@5.9.2)(zod@3.25.61)
+      isows: 1.0.7(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      ox: 0.9.3(typescript@5.9.2)(zod@3.25.61)
+      ws: 8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    optionalDependencies:
+      typescript: 5.9.2
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate

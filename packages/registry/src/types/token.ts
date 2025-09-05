@@ -1,4 +1,4 @@
-import type { TMultiLocation } from '@paraspell/sdk'
+import type { TLocation } from '@paraspell/sdk'
 
 export interface Token {
   id: string
@@ -9,7 +9,7 @@ export interface Token {
   address: string
   // The xcm multilocation of an asset serves as a contextual identifier of said asset.
   // Learn more at https://guide.kusama.network/docs/learn/xcm/fundamentals/multilocation-summary
-  multilocation: TMultiLocation
+  location: TLocation
   // The coingeko token id, used to fetch the token price. It's not always the token symbol.
   // Examples:
   //   - https://www.coingecko.com/en/coins/bifrost-native-coin
