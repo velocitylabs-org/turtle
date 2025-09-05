@@ -138,7 +138,7 @@ export const getChainflipQuote = async (
     const dcaQuote = quotes.find(quote => quote.type === 'DCA')
     if (!regularQuote && !dcaQuote) throw new Error('Chainflip quote not found.')
 
-    return regularQuote ? regularQuote : (dcaQuote ?? null)
+    return regularQuote ?? dcaQuote ?? null
   } catch (error) {
     const chainflipErrorMsg = (error as ChainflipError).response?.data?.message
 
