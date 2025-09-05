@@ -37,9 +37,7 @@ class EvmTransferBuilderManager {
 
     let builder: TxBuilder
     try {
-      builder = EvmBuilder({
-        abstractDecimals: false,
-      })
+      builder = EvmBuilder({ abstractDecimals: false })
         .from(sourceChainNode)
         .to(destinationChainNode)
         .currency({ ...currencyId, amount: sourceAmount })

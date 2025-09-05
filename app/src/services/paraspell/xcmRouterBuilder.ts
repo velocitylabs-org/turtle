@@ -40,9 +40,7 @@ class XcmRouterBuilderManager {
 
     let builder: TxBuilder
     try {
-      builder = RouterBuilder({
-        abstractDecimals: false,
-      })
+      builder = RouterBuilder({ abstractDecimals: false })
         .from(sourceChainFromId)
         .to(destinationChainFromId)
         // biome-ignore lint/suspicious/noExplicitAny: any
