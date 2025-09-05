@@ -35,8 +35,8 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile && pnpm install -g @playwright/test
-      # - name: Install Playwright Browsers
-      #   run: pnpm exec playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
       - name: Build app
         run: pnpm run build --filter=@velocitylabs-org/turtle-app
 
