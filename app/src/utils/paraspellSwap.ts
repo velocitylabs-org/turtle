@@ -11,7 +11,7 @@ import { deduplicate, isSameChain } from '@/utils/routes'
 
 // We only support Hydration for now.
 /** contains all supported paraspell dexes mapped to the chain they run on */
-export const DEX_TO_CHAIN_MAP = {
+const DEX_TO_CHAIN_MAP = {
   HydrationDex: Hydration,
 } as const
 
