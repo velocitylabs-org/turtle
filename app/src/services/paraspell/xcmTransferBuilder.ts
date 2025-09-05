@@ -1,8 +1,8 @@
 import {
   Builder,
   type GeneralBuilder,
-  type TNodeDotKsmWithRelayChains,
   type TSendBaseOptionsWithSenderAddress,
+  type TSubstrateChain,
 } from '@paraspell/sdk'
 import type { TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
@@ -47,8 +47,8 @@ class XcmTransferBuilderManager {
         apiOverrides: { [sourceChainNode]: wssEndpoint },
         abstractDecimals: false,
       })
-        .from(sourceChainNode as TNodeDotKsmWithRelayChains)
-        .to(destinationChainNode as TNodeDotKsmWithRelayChains)
+        .from(sourceChainNode as TSubstrateChain)
+        .to(destinationChainNode as TSubstrateChain)
         .currency({ ...currencyId, amount: sourceAmount })
         .address(recipient)
         .senderAddress(senderAddress)

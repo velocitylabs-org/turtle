@@ -1,4 +1,4 @@
-import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getAssetBalance, type TSubstrateChain } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
@@ -94,7 +94,7 @@ async function getBalance(chain: Chain, token: Token, address: string): Promise<
   const balance =
     (await getAssetBalance({
       address,
-      node: node as TNodeDotKsmWithRelayChains,
+      chain: node as TSubstrateChain,
       currency,
       api: chain.rpcConnection,
     })) ?? 0n

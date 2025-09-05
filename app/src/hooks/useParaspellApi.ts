@@ -1,4 +1,4 @@
-import type { TDryRunNodeResult } from '@paraspell/sdk'
+import type { TDryRunChainResult } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
@@ -365,8 +365,8 @@ const useParaspellApi = () => {
     })
   }
 
-  const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
-    return !(!dryRunNodeResult.success && dryRunNodeResult.failureReason.includes('DryRunApi is not available'))
+  const isDryRunApiSupported = (dryRunChainResult: TDryRunChainResult) => {
+    return !(!dryRunChainResult.success && dryRunChainResult.failureReason.includes('DryRunApi is not available'))
   }
 
   const getFailureReason = (dryRunResult: DryRunResult) => {

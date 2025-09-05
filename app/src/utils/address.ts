@@ -1,4 +1,4 @@
-import { convertSs58, getTNode, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { convertSs58, getTChain, type TSubstrateChain } from '@paraspell/sdk'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
@@ -111,5 +111,5 @@ export const getPlaceholderAddress = (type: AddressType): string => {
 export function getChainSpecificAddress(address: string, chain: Chain): string {
   if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address)) return address
 
-  return convertSs58(address, getTNode(chain.chainId, toPsEcosystem(chain.network)) as TNodeDotKsmWithRelayChains)
+  return convertSs58(address, getTChain(chain.chainId, toPsEcosystem(chain.network)) as TSubstrateChain)
 }
