@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: 20.10.0
           cache: 'pnpm'
+      - name: Install playwright    
+        run: pnpm install -g @playwright/test
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run Playwright tests
