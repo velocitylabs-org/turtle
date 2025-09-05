@@ -38,7 +38,7 @@ export const withWalletTest = baseTest.extend<{
 
 baseTest.describe('Base Tests', () => {
   baseTest.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000')
+    await page.goto('/')
   })
 
   baseTest('Health Check', async ({ page }) => {
@@ -94,7 +94,7 @@ baseTest.describe('Base Tests', () => {
 
 withWalletTest.describe('Connect Wallet Tests', () => {
   withWalletTest.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000')
+    await page.goto('/')
   })
 
   withWalletTest('Can connect wallet', async ({ page, context }) => {
