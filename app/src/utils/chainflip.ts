@@ -21,11 +21,8 @@ import { getChainSpecificAddress } from './address'
 
 /** TYPES */
 export type AssetSymbol = 'DOT' | 'USDC' | 'USDT' | 'ETH' | 'FLIP' | 'BTC' | 'SOL'
-
 export type ChainflipChain = 'Ethereum' | 'Polkadot' | 'Assethub' | 'Arbitrum' | 'Bitcoin' | 'Solana'
-
 export type ChainflipFeeType = 'NETWORK' | 'INGRESS' | 'EGRESS' | 'BROKER' | 'BOOST' | 'REFUND'
-
 export type ChainflipQuote = RegularQuote | DCAQuote
 
 type ChainflipError = {
