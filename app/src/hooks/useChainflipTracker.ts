@@ -25,7 +25,7 @@ const handleOngoingSwap = async (
   const formattedRecipient = truncateAddress(recipient)
   switch (state) {
     case 'RECEIVING': {
-      const newStatus = `${sourceToken.symbol} funds deposited`
+      const newStatus = `${sourceToken.symbol} deposited`
       updateStatus(id, newStatus)
       break
     }
