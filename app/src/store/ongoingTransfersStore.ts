@@ -74,7 +74,7 @@ export const useOngoingTransfersStore = create<State>()(
             transfer.id === id
               ? {
                   ...transfer,
-                  status: newStatus ? newStatus : `Arriving at ${transfer.destChain.name}`,
+                  status: newStatus ?? `Arriving at ${transfer.destChain.name}`,
                   finalizedAt: new Date(),
                 }
               : transfer,

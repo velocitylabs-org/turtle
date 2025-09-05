@@ -335,7 +335,7 @@ export default function useFees(params: UseFeesParams) {
         case 'ChainflipApi': {
           if (!chainflipQuote || isChainflipQuoteError) {
             setFees(null)
-            setIsBalanceSufficientForFees(true) // TODO: check if this is correct
+            setIsBalanceSufficientForFees(true)
             break
           }
           setLoading(true)

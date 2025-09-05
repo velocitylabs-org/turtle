@@ -52,7 +52,7 @@ const getTransferDate = (transfer: StoredTransfer, isChainflipSwap: boolean) => 
   // handles chainflip swaps
   if (isChainflipSwap) return transfer.date
   // Bridges, XCMs, Hydra swaps, etc
-  return transfer.finalizedAt ? transfer.finalizedAt : transfer.date
+  return transfer.finalizedAt ?? transfer.date
 }
 
 export default function useTransferProgress(transfer: StoredTransfer, direction: Direction) {
