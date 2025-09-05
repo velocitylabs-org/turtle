@@ -361,7 +361,7 @@ export default function useFees(params: UseFeesParams) {
           const feeList: FeeDetails[] = [...chainflipfeeList]
 
           if (sourceChain.network === 'Polkadot') {
-            const localTransferfeeToken = PolkadotTokens.DOT
+            const localTransferFeeToken = PolkadotTokens.DOT
             const feeTokenInDollars = (await getCachedTokenPrice(localTransferfeeToken))?.usd ?? 0
             const localTransferParams = {
               sourceChain,
