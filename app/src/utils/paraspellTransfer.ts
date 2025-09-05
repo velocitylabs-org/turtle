@@ -6,7 +6,6 @@ import {
   type TChain,
   type TCurrencyCore,
   type TDryRunResult,
-  type TRelaychain,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import {
@@ -14,7 +13,6 @@ import {
   type Chain,
   EthereumTokens,
   MainnetRegistry,
-  type Network,
   REGISTRY,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
@@ -52,19 +50,10 @@ export function getParaspellToken(token: Token, chain?: TChain): TCurrencyCore {
   return { symbol: token.symbol }
 }
 
-/**
- * Convert a Turtle 'network' value to a ParaSpell 'TRelaychain'
- * @param network
- * @returns the matching paraspell value
- */
-export function toPsEcosystem(network: Network): TRelaychain {
-  return network.toLowerCase() as TRelaychain
-}
-
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const ecosystem = toPsEcosystem(chain.network)
+  const ecosystem = chain.network
   const chainNode = getTChain(chain.chainId, ecosystem)
   if (!chainNode) throw Error(`ChainNode with id ${chain.uid} not found in ${ecosystem}`)
 
@@ -75,9 +64,7 @@ export function getNativeToken(chain: Chain): Token {
 }
 
 export function getParaSpellChain(chain: Chain): TChain | null {
-  return chain.network === 'Ethereum' && chain.chainId === 1
-    ? 'Ethereum'
-    : getTChain(chain.chainId, toPsEcosystem(chain.network))
+  return chain.network === 'Ethereum' && chain.chainId === 1 ? 'Ethereum' : getTChain(chain.chainId, chain.network)
 }
 
 /**

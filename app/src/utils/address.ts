@@ -7,7 +7,6 @@ import { JsonRpcSigner } from 'ethers'
 import { isAddress } from 'viem/utils'
 import type { Sender } from '@/hooks/useTransfer'
 import type { WalletInfo } from '@/hooks/useWallet'
-import { toPsEcosystem } from './paraspellTransfer'
 
 /**
  * Truncate a blockchain address by showing the beginning and end parts.
@@ -111,5 +110,5 @@ export const getPlaceholderAddress = (type: AddressType): string => {
 export function getChainSpecificAddress(address: string, chain: Chain): string {
   if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address)) return address
 
-  return convertSs58(address, getTChain(chain.chainId, toPsEcosystem(chain.network)) as TSubstrateChain)
+  return convertSs58(address, getTChain(chain.chainId, chain.network) as TSubstrateChain)
 }
