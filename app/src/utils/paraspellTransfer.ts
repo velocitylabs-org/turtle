@@ -42,12 +42,12 @@ const getTokenSymbol = (sourceChain: TChain, token: Token) => {
 /**
  * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
  */
-export function getParaspellToken(token: Token, node?: TChain): TCurrencyCore {
+export function getParaspellToken(token: Token, chain?: TChain): TCurrencyCore {
   if (token.id === EthereumTokens.MYTH.id)
-    return node ? { symbol: getTokenSymbol(node, token) } : { symbol: token.symbol }
+    return chain ? { symbol: getTokenSymbol(chain, token) } : { symbol: token.symbol }
 
   if (token.multilocation) return { multilocation: token.multilocation } // TODO: Fix this
-  if (node) return { symbol: getTokenSymbol(node, token) }
+  if (chain) return { symbol: getTokenSymbol(chain, token) }
 
   return { symbol: token.symbol }
 }
@@ -74,7 +74,7 @@ export function getNativeToken(chain: Chain): Token {
   return token
 }
 
-export function getParaSpellNode(chain: Chain): TChain | null {
+export function getParaSpellChain(chain: Chain): TChain | null {
   return chain.network === 'Ethereum' && chain.chainId === 1
     ? 'Ethereum'
     : getTChain(chain.chainId, toPsEcosystem(chain.network))
@@ -90,11 +90,11 @@ export function getParaSpellNode(chain: Chain): TChain | null {
 export function isChainSupportingToken(chain: Chain | null, token: Token | null): boolean {
   if (!chain || !token) return false
 
-  const node = getParaSpellNode(chain)
-  if (!node) return false
+  const chainNode = getParaSpellChain(chain)
+  if (!chainNode) return false
 
-  const currency = getParaspellToken(token, node)
-  const asset = findAssetInfo(node, currency, null)
+  const currency = getParaspellToken(token, chainNode)
+  const asset = findAssetInfo(chainNode, currency, null)
 
   return !!asset
 }

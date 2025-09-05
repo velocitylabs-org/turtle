@@ -9,7 +9,7 @@ import { getCachedTokenPrice } from '@/services/balance'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction } from '@/services/transfer'
 import {
-  getParaSpellNode,
+  getParaSpellChain,
   mapParaspellChainToTurtleRegistry,
   moonbeamSymbolToRegistry,
 } from '@/utils/paraspellTransfer'
@@ -98,10 +98,10 @@ export default function useFees(params: UseFeesParams) {
         case 'ParaSpellApi': {
           setLoading(true)
           setIsBalanceSufficientForFees(true)
-          const sourceChainNode = getParaSpellNode(sourceChain)
+          const sourceChainNode = getParaSpellChain(sourceChain)
           if (!sourceChainNode) throw new Error('Source chain id not found')
 
-          const destinationChainNode = getParaSpellNode(destinationChain)
+          const destinationChainNode = getParaSpellChain(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
           const xcmFee = await xcmTransferBuilderManager.getXcmFee({

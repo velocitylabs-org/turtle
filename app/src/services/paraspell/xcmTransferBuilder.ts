@@ -5,7 +5,7 @@ import {
   type TSubstrateChain,
 } from '@paraspell/sdk'
 import type { TransferParams } from '@/hooks/useTransfer'
-import { getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import { getParaSpellChain, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof Builder>
@@ -28,8 +28,8 @@ class XcmTransferBuilderManager {
   createBuilder(params: TransferParams): TxBuilder {
     const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient, sender } = params
     const wssEndpoint = sourceChain.rpcConnection
-    const sourceChainNode = getParaSpellNode(sourceChain)
-    const destinationChainNode = getParaSpellNode(destinationChain)
+    const sourceChainNode = getParaSpellChain(sourceChain)
+    const destinationChainNode = getParaSpellChain(destinationChain)
 
     if (!sourceChainNode || !destinationChainNode) {
       throw new Error('Failed to create builder: chain id not found.')

@@ -4,7 +4,7 @@ import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
 
-import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/utils/paraspellTransfer'
+import { getNativeToken, getParaSpellChain, getParaspellToken } from '@/utils/paraspellTransfer'
 import { toHuman } from '@/utils/transfer'
 
 interface UseBalanceParams {
@@ -86,7 +86,7 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
 }
 
 async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
-  const node = getParaSpellNode(chain)
+  const node = getParaSpellChain(chain)
 
   if (!node) throw new Error('Node not found')
   const currency = getParaspellToken(token, node)
