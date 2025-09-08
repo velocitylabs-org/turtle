@@ -27,6 +27,7 @@ const txDetailViewSchema = z.object({
   hostedOn: z.string(),
   isSwap: z.boolean(),
   status: z.enum(txStatusOptions) as z.ZodType<TxStatus>,
+  uniqueTrackingId: z.string().optional(),
 })
 
 export type TxDetailView = z.infer<typeof txDetailViewSchema>
