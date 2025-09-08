@@ -46,6 +46,8 @@ baseTest.describe('Base Tests', () => {
   })
 
   baseTest('Happy Path: allows selecting chains, tokens, and amount', async ({ page }) => {
+    await page.waitForLoadState()
+
     await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'true')
     await expect(page.getByRole('button', { name: 'Send' })).toBeDisabled()
 
@@ -64,8 +66,8 @@ baseTest.describe('Base Tests', () => {
     await expect(page.getByTestId('chain-select-trigger-to')).toHaveAttribute('aria-disabled', 'false')
     await page.getByTestId('chain-select-trigger-to').getByText('Chain').click()
 
-    await expect(page.getByText('Bifrost')).toBeVisible()
-    await page.getByText('Bifrost').click()
+    await expect(page.getByText('Bifrost').first()).toBeVisible()
+    await page.getByText('Bifrost').first().click()
 
     await page.getByRole('listitem').filter({ hasText: 'ETH' }).locator('span').click()
 
