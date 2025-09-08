@@ -10,7 +10,11 @@ import {
 } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import type { Sender } from '@/hooks/useTransfer'
-import { getParaSpellNode, mapParaspellChainToTurtleRegistry, moonbeamSymbolToRegistry } from '@/lib/paraspell/transfer'
+import {
+  getParaSpellChain,
+  mapParaspellChainToTurtleRegistry,
+  moonbeamSymbolToRegistry,
+} from '@/lib/paraspell/transfer'
 import { getFeeEstimate } from '@/lib/snowbridge'
 import type { FeeDetails } from '@/models/transfer'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
@@ -103,10 +107,10 @@ export default function useFees(params: UseFeesParams) {
         case 'ParaSpellApi': {
           setLoading(true)
           setIsBalanceSufficientForFees(true)
-          const sourceChainNode = getParaSpellNode(sourceChain)
+          const sourceChainNode = getParaSpellChain(sourceChain)
           if (!sourceChainNode) throw new Error('Source chain id not found')
 
-          const destinationChainNode = getParaSpellNode(destinationChain)
+          const destinationChainNode = getParaSpellChain(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
           const xcmFee = await xcmTransferBuilderManager.getXcmFee({

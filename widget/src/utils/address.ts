@@ -1,3 +1,4 @@
+import { convertSs58, getTChain, type TSubstrateChain } from '@paraspell/sdk'
 import type { InjectedAccount } from '@polkadot/extension-inject/types'
 import { decodeAddress, encodeAddress } from '@polkadot/keyring'
 import { hexToU8a, isHex } from '@polkadot/util'
@@ -109,3 +110,14 @@ export const getPlaceholderAddress = (type: AddressType): string => {
 /** Get the transfer sender address from the sender origin base (Substrate or Ethereum)*/
 export const getSenderAddress = async (sender: Sender): Promise<string> =>
   sender instanceof JsonRpcSigner ? await sender.getAddress() : (sender as InjectedAccount).address
+
+/**
+ * In Polkadot, a wallet address gets a chain-specific representation, unlike what happens on Ethereum or EVM-based chains.
+ * This function returns a given address converted to its specific representation at the given chain
+ * if it's an ss58 address (substrate) or the input address if it's an ethereum address.
+ */
+export function getChainSpecificAddress(address: string, chain: Chain): string {
+  if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address)) return address
+
+  return convertSs58(address, getTChain(chain.chainId, chain.network) as TSubstrateChain)
+}

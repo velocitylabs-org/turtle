@@ -1,7 +1,7 @@
 import { RouterBuilder } from '@paraspell/xcm-router'
 import type { TransferParams } from '@/hooks/useTransfer'
 import type { Dex } from '@/lib/paraspell/swap'
-import { getParaSpellNode, getParaspellToken } from '@/lib/paraspell/transfer'
+import { getParaSpellChain, getParaspellToken } from '@/lib/paraspell/transfer'
 import type { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { toHuman } from '@/utils/transfer'
@@ -25,8 +25,8 @@ class XcmRouterBuilderManager {
 
   createBuilder(params: TransferParams, exchange: Dex = 'HydrationDex'): TxBuilder {
     const { sourceChain, destinationChain, sourceToken, destinationToken, sourceAmount } = params
-    const sourceChainFromId = getParaSpellNode(sourceChain)
-    const destinationChainFromId = getParaSpellNode(destinationChain)
+    const sourceChainFromId = getParaSpellChain(sourceChain)
+    const destinationChainFromId = getParaSpellChain(destinationChain)
 
     if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
     if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
@@ -40,7 +40,7 @@ class XcmRouterBuilderManager {
 
     let builder: TxBuilder
     try {
-      builder = RouterBuilder()
+      builder = RouterBuilder({ abstractDecimals: false })
         .from(sourceChainFromId)
         .to(destinationChainFromId)
         // biome-ignore lint/suspicious/noExplicitAny: any

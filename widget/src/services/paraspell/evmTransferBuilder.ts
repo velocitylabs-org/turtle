@@ -1,7 +1,7 @@
 import { EvmBuilder } from '@paraspell/sdk'
 import type { Client } from 'viem'
 import type { TransferParams } from '@/hooks/useTransfer'
-import { getParaSpellNode, getParaspellToken } from '@/lib/paraspell/transfer'
+import { getParaSpellChain, getParaspellToken } from '@/lib/paraspell/transfer'
 import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof EvmBuilder>
@@ -23,8 +23,8 @@ class EvmTransferBuilderManager {
 
   createBuilder(params: TransferParams): TxBuilder {
     const { sourceChain, destinationChain, sourceToken, sourceAmount, recipient } = params
-    const sourceChainNode = getParaSpellNode(sourceChain)
-    const destinationChainNode = getParaSpellNode(destinationChain)
+    const sourceChainNode = getParaSpellChain(sourceChain)
+    const destinationChainNode = getParaSpellChain(destinationChain)
 
     if (!sourceChainNode || !destinationChainNode) {
       throw new Error('Failed to create builder: chain id not found.')
@@ -37,7 +37,7 @@ class EvmTransferBuilderManager {
 
     let builder: TxBuilder
     try {
-      builder = EvmBuilder()
+      builder = EvmBuilder({ abstractDecimals: false })
         .from(sourceChainNode)
         .to(destinationChainNode)
         .currency({ ...currencyId, amount: sourceAmount })
