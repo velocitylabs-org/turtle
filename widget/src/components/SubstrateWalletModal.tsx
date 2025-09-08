@@ -1,9 +1,11 @@
+'use client'
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { Button, Icon, LoadingIcon } from '@velocitylabs-org/turtle-ui'
+import { Button, Icon, spinnerSize } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import LoadingIcon from '@/assets/svg/LoadingIcon.tsx'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 import { truncateAddress } from '@/utils/address'
 import { getWalletLogo, getWalletName, getWalletWeight } from '@/utils/wallet'
@@ -19,27 +21,15 @@ const noItemsFoundTransitions = {
 
 const accountsViewTransitions = {
   initial: { x: 5, opacity: 0 },
-  animate: {
-    x: 0,
-    opacity: 1,
-    transition: { duration: animationDuration / 2, type: 'spring' as const },
-  },
-  exit: {
-    x: 5,
-    opacity: 0,
-    transition: { duration: animationDuration / 2, type: 'spring' as const },
-  },
+  animate: { x: 0, opacity: 1, transition: { duration: animationDuration / 2, type: 'spring' } },
+  exit: { x: 5, opacity: 0, transition: { duration: animationDuration / 2, type: 'spring' } },
 }
 
 const headerElementAnimationProps = {
   initial: { opacity: 0, left: 5 },
   animate: { opacity: 1, left: 0 },
   exit: { opacity: 0, left: 5 },
-  transition: {
-    delay: animationDuration / 2,
-    duration: 0.1,
-    type: 'tween' as const,
-  },
+  transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' },
 }
 
 const loadingTransitions = {
@@ -103,7 +93,7 @@ export default function SubstrateWalletModal() {
     () => ({
       initial: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
       animate: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
-      transition: { duration: animationDuration, type: 'spring' as const },
+      transition: { duration: animationDuration, type: 'spring' },
     }),
     [currentView],
   )
@@ -116,18 +106,12 @@ export default function SubstrateWalletModal() {
             animate: {
               x: 0,
               opacity: 1,
-              transition: {
-                duration: animationDuration / 2,
-                type: 'spring' as const,
-              },
+              transition: { duration: animationDuration / 2, type: 'spring' },
             },
             exit: {
               x: -10,
               opacity: 0,
-              transition: {
-                duration: animationDuration / 2,
-                type: 'spring' as const,
-              },
+              transition: { duration: animationDuration / 2, type: 'spring' },
             },
           }
         : {
@@ -159,8 +143,7 @@ export default function SubstrateWalletModal() {
         }}
       >
         {/* Header */}
-        {/* Extra custom classes to Override default padding */}
-        <DialogHeader className="relative flex items-center justify-center rounded-t-4xl dialog-header dialog-custom-header-styles">
+        <DialogHeader className="flex items-center justify-center rounded-t-4xl p-4">
           {currentView === 'accounts' && (
             <motion.div key={currentView} {...headerElementAnimationProps} className="absolute left-0">
               <Button variant="ghost" size="md" onClick={() => setCurrentView('extensions')}>
@@ -200,7 +183,12 @@ export default function SubstrateWalletModal() {
                 {...loadingTransitions}
                 className="mb-3 flex h-full w-full items-center justify-center"
               >
-                <LoadingIcon className="animate-spin" size="lg" color={colors['turtle-secondary']} />
+                <LoadingIcon
+                  className="animate-spin"
+                  width={spinnerSize.lg}
+                  height={spinnerSize.lg}
+                  color={colors['turtle-secondary']}
+                />
               </motion.div>
             )}
 
@@ -297,12 +285,12 @@ function Footer() {
   )
 }
 
-// Prevent initial animation on the component mount to avoid visual glitches.
+// Prevent initial animation on component mount to avoid visual glitches.
 // Animations are only triggered after the modal opens for a smoother user experience.
 function TransitionControl({ setEnableTranslateAnimation }: { setEnableTranslateAnimation: (v: boolean) => void }) {
   useEffect(() => {
     setTimeout(() => setEnableTranslateAnimation(true), 400)
     return () => setEnableTranslateAnimation(false)
-  }, [setEnableTranslateAnimation])
+  }, [])
   return null
 }
