@@ -10,7 +10,7 @@ import type { FeeDetails } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction } from '@/services/transfer'
-import { getFeeLabelFromType, getFeeTokenFromAssetSymbol, toRegistryChain } from '@/utils/chainflip'
+import { chainflipToRegistryChain, getFeeLabelFromType, getFeeTokenFromAssetSymbol } from '@/utils/chainflip'
 import {
   getParaSpellNode,
   mapParaspellChainToTurtleRegistry,
@@ -336,17 +336,18 @@ export default function useFees(params: UseFeesParams) {
           if (!chainflipQuote || isChainflipQuoteError) {
             setFees(null)
             setIsBalanceSufficientForFees(true)
-            break
+            return
           }
           setLoading(true)
 
           const chainflipfeeList: FeeDetails[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
+              // unexported Chainflip swapFee type {type: ChainflipFeeType, amount: string, asset: AssetSymbol, chain: ChainflipChain}
               const token = getFeeTokenFromAssetSymbol(fee.asset, fee.chain)
               const feeTokenInDollars = (await getCachedTokenPrice(token))?.usd ?? 0
               return {
                 title: getFeeLabelFromType(fee.type),
-                chain: toRegistryChain(fee.chain),
+                chain: chainflipToRegistryChain(fee.chain),
                 // Chainflip handles fees for the user, so we can assume safely that the balance is sufficient
                 sufficient: 'sufficient',
                 amount: {

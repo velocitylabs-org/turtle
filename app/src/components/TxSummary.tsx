@@ -223,7 +223,7 @@ export default function TxSummary({
           )}
           {!showLoading && (
             <motion.div key="refund" {...contentAnimationConfig}>
-              <ChainflipRefund isChainflipCheck={isChainflipSwap} className="mt-6 sm:mt-8" />
+              <ChainflipRefund isSwap={isChainflipSwap} className="mt-6 sm:mt-8" />
             </motion.div>
           )}
         </AnimatePresence>

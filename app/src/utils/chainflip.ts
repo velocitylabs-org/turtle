@@ -81,15 +81,14 @@ export const getChainflipSwapDestTokens = (
 ): Token[] => {
   if (!sourceChain || !sourceToken || !destinationChain) return []
 
-  const tokensSet = new Set<Token>()
-  const route = chainflipRoutes.find(
-    route => route.from.chainId === sourceChain.chainId && route.to.chainId === destinationChain.chainId,
-  )
-  if (!route) return []
+  const destTokens =
+    chainflipRoutes
+      .find(r => r.from.chainId === sourceChain.chainId && r.to.chainId === destinationChain.chainId)
+      ?.pairs?.filter(([srcT]) => srcT.id === sourceToken.id)
+      ?.map(([, destT]) => destT) ?? []
 
-  route.pairs.forEach(([srcT, destT]) => srcT.id === sourceToken.id && tokensSet.add(destT))
-
-  return Array.from(tokensSet)
+  // return uniques
+  return [...new Set(destTokens)]
 }
 
 /** CORE SDK HELPERS */
@@ -161,11 +160,14 @@ export const getDepositAddress = async (
     const sdk = getChainflipSdk()
     if (!sdk) throw new Error('Chainflip SDK not initialized.')
 
-    const formattedSenderAddress = getChainSpecificAddress(senderAddress, toRegistryChain(quote.srcAsset.chain))
+    const formattedSenderAddress = getChainSpecificAddress(
+      senderAddress,
+      chainflipToRegistryChain(quote.srcAsset.chain),
+    )
 
     const formattedDestinationAddress = getChainSpecificAddress(
       destinationAddress,
-      toRegistryChain(quote.destAsset.chain),
+      chainflipToRegistryChain(quote.destAsset.chain),
     )
 
     const swapDepositAddressRequest = {
@@ -244,7 +246,7 @@ export const getChainflipChain = async (chain: Chain): Promise<ChainData | undef
 }
 
 /** Returns a Turtle Chain matching with Chainflip chain. */
-export const toRegistryChain = (chainflipChain: ChainflipChain): Chain => {
+export const chainflipToRegistryChain = (chainflipChain: ChainflipChain): Chain => {
   const registryChain = MainnetRegistry.chains.find(c => {
     if (c.uid.includes('-')) return c.uid.split('-')[1].toLowerCase() === chainflipChain.toLowerCase()
     return c.uid.toLowerCase() === chainflipChain.toLowerCase()

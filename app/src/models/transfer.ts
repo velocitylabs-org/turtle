@@ -195,15 +195,16 @@ export type OnChainBaseEvents = {
   isExecuteAttemptCompleted?: boolean
 }
 
+type ChainflipFeeType = 'Broker fees' | 'Deposit fees'
+
 export type FeeDetailType =
   | 'Execution fees'
   | 'Delivery fees'
   | 'Bridging fees'
   | 'Routing fees'
   | 'Swap fees'
-  | 'Broker fees'
-  | 'Deposit fees'
   | 'Transfer fees'
+  | ChainflipFeeType
 
 export type FeeSufficiency = 'sufficient' | 'insufficient' | 'undetermined'
 

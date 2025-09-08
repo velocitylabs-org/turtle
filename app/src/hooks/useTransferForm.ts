@@ -403,14 +403,14 @@ const useTransferForm = () => {
       }
 
       if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destToken)) {
-        const srcChain = await getChainflipChain(sourceChain)
-        if (!srcChain) return
-        const srcAsset = await getChainflipAsset(sourceToken, srcChain)
-        if (!srcAsset) return
+        const chainflipSourceChain = await getChainflipChain(sourceChain)
+        if (!chainflipSourceChain) return
+        const chainflipSourceToken = await getChainflipAsset(sourceToken, chainflipSourceChain)
+        if (!chainflipSourceToken) return
 
         const formatAmount = safeConvertAmount(sourceTokenAmount.amount, sourceToken)
-        if (formatAmount && !meetChainflipMinSwapAmount(formatAmount, srcAsset)) {
-          const minimumAmount = toHuman(BigInt(srcAsset.minimumSwapAmount), sourceToken)
+        if (formatAmount && !meetChainflipMinSwapAmount(formatAmount, chainflipSourceToken)) {
+          const minimumAmount = toHuman(BigInt(chainflipSourceToken.minimumSwapAmount), sourceToken)
           setMinSwapAmountError(`Minimum swap amount: ${minimumAmount} ${sourceToken.symbol.toUpperCase()}`)
           return
         }

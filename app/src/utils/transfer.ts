@@ -151,9 +151,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   } = transfer
 
   // Chainflip explorer link - Not relying on network
-  const isChainflip = !!(
-    destinationToken && isChainflipSwap(transfer.sourceChain, destChain, sourceToken, destinationToken)
-  )
+  const isChainflip = isChainflipSwap(transfer.sourceChain, destChain, sourceToken, destinationToken)
   if (isChainflip) return getChainflipExplorerLink(transfer)
 
   switch (network) {

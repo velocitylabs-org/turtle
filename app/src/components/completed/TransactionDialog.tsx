@@ -1,11 +1,11 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import ChainflipRefund from '@/components/ChainflipRefund'
 import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
-import ChainflipRefund from '../ChainflipRefund'
 import ArrowRight from '../svg/ArrowRight'
 import ArrowUpRight from '../svg/ArrowUpRight'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
@@ -16,7 +16,6 @@ interface TransactionDialogProps {
 }
 
 export default function TransactionDialog({ tx }: TransactionDialogProps) {
-  const isChainflipCheck = isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
   return (
     <Dialog>
       <DialogTrigger className="w-full">
@@ -185,7 +184,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                 ))}
 
               <ChainflipRefund
-                isChainflipCheck={isChainflipCheck}
+                isSwap={isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)}
                 swapCompleted={tx.result === TxStatus.Succeeded}
                 swapRefundError={tx.errors?.[0]}
                 className="pt-5 pb-2"

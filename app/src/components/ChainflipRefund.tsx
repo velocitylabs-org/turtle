@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { ChainflipRefundStatus, isChainflipSwap } from '@/utils/chainflip'
 
 interface ChainflipRefundProps {
-  isChainflipCheck?: boolean | null
+  isSwap?: boolean | null
   swapParams?: {
     sourceChain: Chain
     destinationChain: Chain
@@ -19,14 +19,14 @@ interface ChainflipRefundProps {
 }
 
 export default function ChainflipRefund({
-  isChainflipCheck,
+  isSwap,
   swapParams,
   swapRefundError,
   swapCompleted,
   className,
 }: ChainflipRefundProps) {
   // Not a chainflip swap
-  if (!isChainflipCheck && !swapParams) return null
+  if (!isSwap && !swapParams) return null
   // Swap completed without refund
   if (swapCompleted && !swapRefundError) return null
 
@@ -40,7 +40,7 @@ export default function ChainflipRefund({
   }
 
   if (
-    isChainflipCheck ||
+    isSwap ||
     (swapParams &&
       isChainflipSwap(
         swapParams.sourceChain,

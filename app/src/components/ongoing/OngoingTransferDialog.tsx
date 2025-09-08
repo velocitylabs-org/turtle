@@ -1,13 +1,13 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { useCallback } from 'react'
+import ChainflipRefund from '@/components/ChainflipRefund'
 import type { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, isSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
-import ChainflipRefund from '../ChainflipRefund'
 import { SummaryRow } from '../completed/TransactionDialog'
 import ArrowRight from '../svg/ArrowRight'
 import ArrowUpRight from '../svg/ArrowUpRight'
@@ -37,13 +37,6 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
       return 'Pending'
     },
     [transfer.status],
-  )
-
-  const isChainflipCheck = isChainflipSwap(
-    transfer.sourceChain,
-    transfer.destChain,
-    transfer.sourceToken,
-    transfer.destinationToken,
   )
 
   return (
@@ -164,7 +157,15 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                   />
                 ))}
 
-              <ChainflipRefund isChainflipCheck={isChainflipCheck} className="pt-5 pb-2" />
+              <ChainflipRefund
+                isSwap={isChainflipSwap(
+                  transfer.sourceChain,
+                  transfer.destChain,
+                  transfer.sourceToken,
+                  transfer.destinationToken,
+                )}
+                className="pt-5 pb-2"
+              />
 
               {explorerLink && (
                 <a
