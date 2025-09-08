@@ -66,7 +66,7 @@ export default function getExplorerLinks(tx: TxDetailView): ExplorerLinks[] | un
   }
 
   const { network, walletType, name } = sourceChain
-  const { senderAddress, txHashId, status, uniqueTrackingId } = tx
+  const { senderAddress, txHashId, status } = tx
   const isSucceeded = status === 'succeeded'
   const isWithinHydration = tx.sourceChainUid === 'hydration' && tx.destinationChainUid === 'hydration'
 
@@ -120,16 +120,8 @@ export default function getExplorerLinks(tx: TxDetailView): ExplorerLinks[] | un
       ),
   )
 
-  function getChainflipLink(): ExplorerLinks {
-    if (uniqueTrackingId) {
-      return buildAddressLink(explorers.chainflipScan, uniqueTrackingId)
-    } else {
-      return buildHashLink(explorers.chainflipScan, 'all')
-    }
-  }
-
   // Chainflip swaps do not rely on network
-  if (isChainflipSwap) return [getChainflipLink()]
+  if (isChainflipSwap) return [buildHashLink(explorers.chainflipScan, 'all')]
 
   switch (network) {
     case 'Ethereum': {
