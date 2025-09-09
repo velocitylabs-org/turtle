@@ -22,9 +22,17 @@ export interface Token {
 
 // The supported bridges. Each bridge will have it's own wrapped version of a token
 export type Bridge = 'Snowbridge' | 'Wormhole' | 'Other'
+export type TokenStandard = 'Native' | 'ERC20' // keep it future proof - Ex: "SPL" Solana Standard
 
-// The origin of a token
+// The origin of a token across supported ecosystems.
+// - Native Ethereum tokens:
+//   These include both ETH (native) and ERC20 tokens. For example, tokens used directly by Chainflip.
+// - Bridged Ethereum tokens:
+//   Tokens that are from Ethereum but wrapped by a bridge, such as Snowbridge.
+// - Native Polkadot tokens:
+//   Tokens that are native to a specific parachain, identified by its parachain Id.
 export type Origin =
-  | { type: 'Polkadot'; paraId: number }
-  | { type: 'Ethereum'; bridge: Bridge }
+  | { type: 'Ethereum'; standard: TokenStandard } // Native ETH or ERC20
+  | { type: 'Ethereum'; bridge: Bridge } // Snowbridge-wrapped tokens
+  | { type: 'Polkadot'; paraId: number } // Native tokens on Polkadot parachains
   | { type: 'Solana'; bridge: Bridge }

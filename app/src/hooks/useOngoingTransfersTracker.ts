@@ -10,6 +10,7 @@ import {
 } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { getExplorerLink } from '@/utils/transfer'
 import { findMatchingTransfer, getTransferStatus, isCompletedTransfer } from '@/utils/transferTracking'
 import useCompletedTransfers from './useCompletedTransfers'
@@ -40,7 +41,12 @@ const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]) => {
         }),
       }
     })
-    .filter(t => t.direction !== Direction.WithinPolkadot)
+    .filter(
+      t =>
+        t.direction !== Direction.WithinPolkadot &&
+        t.destinationToken &&
+        !isChainflipSwap(t.sourceChain, t.destChain, t.sourceToken, t.destinationToken),
+    )
 }
 
 const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {

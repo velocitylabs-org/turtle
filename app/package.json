@@ -12,6 +12,7 @@
     "cypress:open": "cypress open"
   },
   "dependencies": {
+    "@chainflip/sdk": "^1.10.0",
     "@chainsafe/cypress-polkadot-wallet": "^2.2.0",
     "@hookform/resolvers": "3.9.0",
     "@jest/globals": "^29.7.0",
@@ -39,6 +40,7 @@
     "@sodazone/ocelloids-client": "^2.5.2",
     "@talismn/connect-components": "^1.1.8",
     "@tanstack/react-query": "^5.61.5",
+    "@velocitylabs-org/turtle-assets": "workspace:*",
     "@velocitylabs-org/turtle-registry": "workspace:*",
     "@velocitylabs-org/turtle-ui": "workspace:*",
     "@vercel/analytics": "^1.3.1",
