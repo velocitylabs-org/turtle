@@ -4,6 +4,8 @@ import { type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-re
 import { useMemo } from 'react'
 import type { FeeDetails } from '@/models/transfer'
 import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
+import { isChainflipSwap } from '@/utils/chainflip'
+import { useChainflipQuote } from './useChainflipQuote'
 
 interface UseOutputAmountParams {
   sourceChain?: Chain | null
@@ -48,6 +50,9 @@ export function useOutputAmount({
     return hasMatchingFees ? total : null
   }, [fees, sourceToken, loadingFees])
 
+  // The following react-query is used to fetch the output amount for:
+  // A swap made from HydrationDex with Paraspell
+  // A bridge or XCM transfer made from Snowbridge or Paraspell
   const { data, isLoading, isFetching } = useQuery({
     queryKey: [
       'outputAmount',
@@ -63,8 +68,8 @@ export function useOutputAmount({
       if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount || loadingFees) return null
 
       try {
+        // Paraspell swap from HydrationDex or AH
         if (!isSameToken(sourceToken, destinationToken)) {
-          // Swap
           const params = {
             sourceChain,
             destinationChain,
@@ -75,7 +80,7 @@ export function useOutputAmount({
           return await xcmRouterBuilderManager.getExchangeOutputAmount(params)
         }
 
-        // Normal transfer
+        // Bridge & XCM transfers (Snowbridge & Paraspell)
         if (!totalFeesForSourceToken) return BigInt(amount)
 
         const amountBigInt = BigInt(amount)
@@ -84,22 +89,61 @@ export function useOutputAmount({
       } catch (error) {
         captureException(error, {
           level: 'error',
-          extra: { sourceChain, destinationChain, sourceToken, destinationToken, amount },
+          extra: {
+            sourceChain,
+            destinationChain,
+            sourceToken,
+            destinationToken,
+            amount,
+          },
         })
         console.error('Failed to fetch swap output amount:', error)
         return null
       }
     },
-    enabled: !!sourceChain && !!destinationChain && !!sourceToken && !!destinationToken && !!amount && !loadingFees,
+    enabled:
+      !!sourceChain &&
+      !!destinationChain &&
+      !!sourceToken &&
+      !!destinationToken &&
+      !!amount &&
+      !loadingFees &&
+      !isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken),
     staleTime: 10000, // Cache results for 10 seconds
     retry: 2, // Retry failed requests twice
   })
 
-  return useMemo(
-    () => ({
-      outputAmount: data,
-      isLoading: isLoading || isFetching || !!loadingFees,
-    }),
-    [data, isLoading, isFetching, loadingFees],
-  )
+  // The following hook (react-query) is used to fetch chainflip quote.
+  // The quote defined the swap output amount.
+  const { chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError } = useChainflipQuote({
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+  })
+
+  const outputAmount = useMemo(() => {
+    if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
+
+    if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken) && !isChainflipQuoteError) {
+      return chainflipQuote ? BigInt(chainflipQuote.egressAmount) : null
+    }
+
+    return data
+  }, [
+    sourceChain,
+    destinationChain,
+    sourceToken,
+    destinationToken,
+    amount,
+    chainflipQuote,
+    isChainflipQuoteError,
+    data,
+  ])
+
+  return {
+    outputAmount,
+    isLoading: isLoading || isFetching || isLoadingChainflipQuote || !!loadingFees,
+  }
 }

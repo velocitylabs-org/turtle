@@ -2,6 +2,7 @@
 import { type Chain, chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import type { Dispatch, SetStateAction } from 'react'
+import { useChainflipTracker } from '@/hooks/useChainflipTracker'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
@@ -28,6 +29,7 @@ export default function OngoingTransfers({
 
   useOngoingTransfersCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
+  useChainflipTracker(ongoingTransfers)
 
   return (
     <div id="ongoing-txs">

@@ -9,6 +9,13 @@ import {
 } from '@velocitylabs-org/turtle-registry'
 
 import {
+  getChainflipSwapDestChains,
+  getChainflipSwapDestTokens,
+  getChainflipSwapSourceChains,
+  getChainflipSwapSourceTokens,
+  isChainflipSwap,
+} from './chainflip'
+import {
   getSwapsDestinationChains,
   getSwapsDestinationTokens,
   getSwapsSourceChains,
@@ -76,8 +83,9 @@ export const isTokenAvailableForSourceChain = (
 export const getAllowedSourceChains = (): Chain[] => {
   const transferSourceChains = getTransferSourceChains()
   const swapSourceChains = getSwapsSourceChains()
+  const chainflipswapSourceChains = getChainflipSwapSourceChains()
 
-  return deduplicate([...transferSourceChains, ...swapSourceChains])
+  return deduplicate([...transferSourceChains, ...swapSourceChains, ...chainflipswapSourceChains])
 }
 
 export const getAllowedSourceTokens = (sourceChain: Chain | null, destinationChain: Chain | null): Token[] => {
@@ -85,8 +93,9 @@ export const getAllowedSourceTokens = (sourceChain: Chain | null, destinationCha
 
   const transferTokens = getTransferTokens(sourceChain, destinationChain)
   const swapTokens = getSwapsSourceTokens(sourceChain)
+  const chainflipSwapTokens = getChainflipSwapSourceTokens(sourceChain)
 
-  return deduplicate([...transferTokens, ...swapTokens])
+  return deduplicate([...transferTokens, ...swapTokens, ...chainflipSwapTokens])
 }
 
 export const getAllowedDestinationChains = (sourceChain: Chain | null, sourceToken: Token | null): Chain[] => {
@@ -94,8 +103,9 @@ export const getAllowedDestinationChains = (sourceChain: Chain | null, sourceTok
 
   const transferDestinationChains = getTransferDestinationChains(sourceChain, sourceToken)
   const swapDestinationChains = getSwapsDestinationChains(sourceChain, sourceToken)
+  const chainflipSwapDestinationChains = getChainflipSwapDestChains(sourceChain, sourceToken)
 
-  return deduplicate([...transferDestinationChains, ...swapDestinationChains])
+  return deduplicate([...transferDestinationChains, ...swapDestinationChains, ...chainflipSwapDestinationChains])
 }
 
 export const getAllowedDestinationTokens = (
@@ -110,8 +120,9 @@ export const getAllowedDestinationTokens = (
     getTransferTokens(sourceChain, destinationChain).some(t => isSameToken(t, sourceToken))
 
   const swapTokens = getSwapsDestinationTokens(sourceChain, sourceToken, destinationChain)
+  const chainFlipSwapTokens = getChainflipSwapDestTokens(sourceChain, sourceToken, destinationChain)
 
-  const allowedTokens = [...(includeSourceTokenForTransfer ? [sourceToken] : []), ...swapTokens]
+  const allowedTokens = [...(includeSourceTokenForTransfer ? [sourceToken] : []), ...swapTokens, ...chainFlipSwapTokens]
 
   return deduplicate(allowedTokens)
 }
@@ -124,12 +135,20 @@ export const isSameChain = (chain1: Chain, chain2: Chain): boolean => {
   return chain1.uid === chain2.uid
 }
 
-export const resolveSdk = (sourceChain?: Chain | null, destinationChain?: Chain | null): TransferSDK | undefined => {
-  if (!sourceChain || !destinationChain) {
+export const resolveSdk = (
+  sourceChain?: Chain | null,
+  destinationChain?: Chain | null,
+  sourceToken?: Token | null,
+  destinationToken?: Token | null,
+): TransferSDK | undefined => {
+  if (!sourceChain || !destinationChain || !sourceToken || !destinationToken) {
     return
   }
 
   const isSamePolkadotChain = isSameChain(sourceChain, destinationChain) && sourceChain.network === 'Polkadot'
+  if (isSamePolkadotChain) return 'ParaSpellApi'
 
-  return isSamePolkadotChain ? 'ParaSpellApi' : getRoute(sourceChain, destinationChain)?.sdk
+  if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken)) return 'ChainflipApi'
+
+  return getRoute(sourceChain, destinationChain)?.sdk
 }

@@ -1,7 +1,7 @@
 import type { TCurrencyCore } from '@paraspell/sdk'
 import type { Chain, Token } from '.'
 
-export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi'
+export type TransferSDK = 'SnowbridgeApi' | 'ParaSpellApi' | 'ChainflipApi'
 
 // A Turtle-defined unique chain identifier
 export type ChainUId = string
