@@ -12,7 +12,7 @@ export const withWalletTest = baseTest.extend<{
     const metadata = testInfo.project.metadata as OfficialOptions
     const [wallet, , context] = await dappwright.bootstrap('', {
       ...metadata,
-      headless: false,
+      headless: testInfo.project.use.headless,
     })
 
     if (wallet instanceof MetaMaskWallet) {
