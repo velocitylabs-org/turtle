@@ -2,7 +2,7 @@
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Button, Icon, spinnerSize } from '@velocitylabs-org/turtle-ui'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import { ChevronLeft } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import LoadingIcon from '@/assets/svg/LoadingIcon.tsx'
@@ -13,26 +13,25 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 const animationDuration = 0.35
 
-const noItemsFoundTransitions = {
+const noItemsFoundTransitions: Variants = {
   initial: { opacity: 0 },
   animate: { opacity: 1, transition: { duration: animationDuration / 2 } },
   exit: { opacity: 0, transition: { duration: animationDuration / 2 } },
 }
 
-const accountsViewTransitions = {
+const accountsViewTransitions: Variants = {
   initial: { x: 5, opacity: 0 },
   animate: { x: 0, opacity: 1, transition: { duration: animationDuration / 2, type: 'spring' } },
   exit: { x: 5, opacity: 0, transition: { duration: animationDuration / 2, type: 'spring' } },
 }
 
-const headerElementAnimationProps = {
+const headerElementAnimationProps: Variants = {
   initial: { opacity: 0, left: 5 },
-  animate: { opacity: 1, left: 0 },
-  exit: { opacity: 0, left: 5 },
-  transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' },
+  animate: { opacity: 1, left: 0, transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' } },
+  exit: { opacity: 0, left: 5, transition: { delay: animationDuration / 2, duration: 0.1, type: 'tween' } },
 }
 
-const loadingTransitions = {
+const loadingTransitions: Variants = {
   initial: { opacity: 0 },
   animate: { opacity: 1, transition: { duration: animationDuration / 3 } },
   exit: { opacity: 0, transition: { duration: animationDuration / 3 } },
@@ -93,12 +92,12 @@ export default function SubstrateWalletModal() {
     () => ({
       initial: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
       animate: { height: currentView === 'extensions' ? '12.5rem' : '14rem' },
-      transition: { duration: animationDuration, type: 'spring' },
+      transition: { duration: animationDuration, type: 'spring' as const },
     }),
     [currentView],
   )
 
-  const extensionsViewTransitions = useMemo(
+  const extensionsViewTransitions: Variants = useMemo(
     () =>
       enableTranslateAnimation
         ? {
@@ -106,12 +105,12 @@ export default function SubstrateWalletModal() {
             animate: {
               x: 0,
               opacity: 1,
-              transition: { duration: animationDuration / 2, type: 'spring' },
+              transition: { duration: animationDuration / 2, type: 'spring' as const },
             },
             exit: {
               x: -10,
               opacity: 0,
-              transition: { duration: animationDuration / 2, type: 'spring' },
+              transition: { duration: animationDuration / 2, type: 'spring' as const },
             },
           }
         : {
