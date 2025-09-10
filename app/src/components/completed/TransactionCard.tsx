@@ -1,7 +1,9 @@
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
@@ -30,6 +32,8 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
   const status = tx.result
   const transferFailed = status === TxStatus.Failed
 
+  const isGenericSwap = isSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
+
   return (
     <div className={cn('flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4', getBorder(status))}>
       <div className="w-full space-y-2">
@@ -42,10 +46,10 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              {isSwap(tx) ? (
+              {isGenericSwap ? (
                 <>
-                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
-                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={25} />
+                  <span>{formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token))}</span>
+                  <TokenLogo token={tx.destinationToken as Token} sourceChain={tx.destChain} size={25} />
                 </>
               ) : (
                 <>
