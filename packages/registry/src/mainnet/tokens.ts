@@ -81,7 +81,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: ethereumLogo,
     decimals: 18,
     address: '0x0000000000000000000000000000000000000000',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X1: {
@@ -102,7 +102,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: usdcLogo,
     decimals: 6,
     address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -131,7 +131,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: daiLogo,
     decimals: 18,
     address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -160,7 +160,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: usdtLogo,
     decimals: 6,
     address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -189,7 +189,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: wethLogo,
     decimals: 18,
     address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -218,7 +218,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: wbtcLogo,
     decimals: 8,
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -247,7 +247,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: mythLogo,
     decimals: 18,
     address: '0xba41ddf06b7ffd89d1267b5a93bfef2424eb2003',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -276,7 +276,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: shibLogo,
     decimals: 18,
     address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -305,7 +305,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: pepeLogo,
     decimals: 18,
     address: '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -334,7 +334,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: tonLogo,
     decimals: 9,
     address: '0x582d872a1b094fc48f5de31d3b73f2d9be47def1',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -363,7 +363,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: wstethLogo,
     decimals: 18,
     address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -392,7 +392,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: tbtcLogo,
     decimals: 18,
     address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -421,7 +421,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: linkLogo,
     decimals: 18,
     address: '0x514910771af9ca656af840dff83e8264ecf986ca',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -448,7 +448,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: aaveLogo,
     decimals: 18,
     address: '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -475,7 +475,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: lidoLogo,
     decimals: 18,
     address: '0x5a98fcbea516cf06857215779fd812ca3bef1b32',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -502,7 +502,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: originTrailLogo,
     decimals: 18,
     address: '0xaa7a9ca87d3694b5755f213b5d04094b8d0f0a6f',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -529,7 +529,7 @@ export const sharedTokenBase: BaseTokens = {
     logoURI: skyLogo,
     decimals: 18,
     address: '0x56072c95faa701256059aa122697b133aded9279',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X2: [
@@ -564,7 +564,7 @@ export const PolkadotTokens = {
     logoURI: acalaLogo,
     decimals: 12,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -591,7 +591,7 @@ export const PolkadotTokens = {
     logoURI: astarLogo,
     decimals: 18,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X1: {
@@ -610,7 +610,7 @@ export const PolkadotTokens = {
     logoURI: bifrostLogo,
     decimals: 12,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -637,7 +637,7 @@ export const PolkadotTokens = {
     logoURI: cfgLogo,
     decimals: 18,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -664,7 +664,7 @@ export const PolkadotTokens = {
     logoURI: hydraLogo,
     decimals: 12,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -689,7 +689,7 @@ export const PolkadotTokens = {
     logoURI: usdcLogo,
     decimals: 6,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X3: [
@@ -717,7 +717,7 @@ export const PolkadotTokens = {
     logoURI: usdtLogo,
     decimals: 6,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X3: [
@@ -743,7 +743,7 @@ export const PolkadotTokens = {
     logoURI: moonbeamLogo,
     decimals: 18,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -767,7 +767,7 @@ export const PolkadotTokens = {
     logoURI: solanaLogo,
     decimals: 9,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X3: [
@@ -797,7 +797,7 @@ export const PolkadotTokens = {
     logoURI: phalaLogo,
     decimals: 12,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X1: {
@@ -816,7 +816,7 @@ export const PolkadotTokens = {
     logoURI: interlayLogo,
     decimals: 10,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -843,7 +843,7 @@ export const PolkadotTokens = {
     symbol: 'DOT',
     decimals: 10,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         Here: null,
@@ -860,7 +860,7 @@ export const PolkadotTokens = {
     logoURI: vdotLogo,
     decimals: 10,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -887,7 +887,7 @@ export const PolkadotTokens = {
     logoURI: ibtcLogo,
     decimals: 8,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -914,7 +914,7 @@ export const PolkadotTokens = {
     logoURI: polimecLogo,
     decimals: 10,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X1: {
@@ -933,7 +933,7 @@ export const PolkadotTokens = {
     logoURI: mythLogo,
     decimals: 18,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X1: {
@@ -952,7 +952,7 @@ export const PolkadotTokens = {
     logoURI: ausdtLogo,
     decimals: 6,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -979,7 +979,7 @@ export const PolkadotTokens = {
     logoURI: gigadotLogo,
     decimals: 18,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X2: [
@@ -1006,7 +1006,7 @@ export const PolkadotTokens = {
     logoURI: kiltLogo,
     decimals: 15,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         X1: [
@@ -1027,7 +1027,7 @@ export const PolkadotTokens = {
     logoURI: kusamaLogo,
     decimals: 12,
     address: '',
-    multilocation: {
+    location: {
       parents: 1,
       interior: {
         Here: null,
@@ -1044,7 +1044,7 @@ export const PolkadotTokens = {
     logoURI: kusamaLogo,
     decimals: 12,
     address: '',
-    multilocation: {
+    location: {
       parents: 2,
       interior: {
         X1: [

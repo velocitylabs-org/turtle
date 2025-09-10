@@ -1,7 +1,7 @@
 import { getExchangePairs } from '@paraspell/xcm-router'
 import {
   type Chain,
-  getTokenByMultilocation,
+  getTokenByLocation,
   Hydration,
   isSameToken,
   REGISTRY,
@@ -47,10 +47,10 @@ const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const turtlePairs = pairs
     .map(pair => {
       const [token1, token2] = pair
-      if (!token1.multiLocation || !token2.multiLocation) return null
+      if (!token1.location || !token2.location) return null
 
-      const t1 = getTokenByMultilocation(token1.multiLocation)
-      const t2 = getTokenByMultilocation(token2.multiLocation)
+      const t1 = getTokenByLocation(token1.location)
+      const t2 = getTokenByLocation(token2.location)
 
       if (!t1 || !t2) return null // not supported by turtle registry
       return [t1, t2] as [Token, Token]

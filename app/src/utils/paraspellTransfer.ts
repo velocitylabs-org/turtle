@@ -1,12 +1,11 @@
 import {
-  findAsset,
+  findAssetInfo,
   getAllAssetsSymbols,
   getNativeAssetSymbol,
-  getTNode,
+  getTChain,
+  type TChain,
   type TCurrencyCore,
   type TDryRunResult,
-  type TEcosystemType,
-  type TNodeWithRelayChains,
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import {
@@ -14,7 +13,6 @@ import {
   type Chain,
   EthereumTokens,
   MainnetRegistry,
-  type Network,
   REGISTRY,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
@@ -22,7 +20,7 @@ import { removeWhitespace } from '@/utils/strings'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
-const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+const getTokenSymbol = (sourceChain: TChain, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   let tokenSymbol: string | undefined
@@ -42,30 +40,21 @@ const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
 /**
  * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
  */
-export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TCurrencyCore {
+export function getParaspellToken(token: Token, chain?: TChain): TCurrencyCore {
   if (token.id === EthereumTokens.MYTH.id)
-    return node ? { symbol: getTokenSymbol(node, token) } : { symbol: token.symbol }
+    return chain ? { symbol: getTokenSymbol(chain, token) } : { symbol: token.symbol }
 
-  if (token.multilocation) return { multilocation: token.multilocation }
-  if (node) return { symbol: getTokenSymbol(node, token) }
+  if (token.location) return { location: token.location }
+  if (chain) return { symbol: getTokenSymbol(chain, token) }
 
   return { symbol: token.symbol }
-}
-
-/**
- * Convert a Turtle 'network' value to a ParaSpell 'TEcosystemType'
- * @param network
- * @returns the matching paraspell value
- */
-export function toPsEcosystem(network: Network): TEcosystemType {
-  return network.toLowerCase() as TEcosystemType
 }
 
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const ecosystem = toPsEcosystem(chain.network)
-  const chainNode = getTNode(chain.chainId, ecosystem)
+  const ecosystem = chain.network
+  const chainNode = getTChain(chain.chainId, ecosystem)
   if (!chainNode) throw Error(`ChainNode with id ${chain.uid} not found in ${ecosystem}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
@@ -74,10 +63,8 @@ export function getNativeToken(chain: Chain): Token {
   return token
 }
 
-export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
-  return chain.network === 'Ethereum' && chain.chainId === 1
-    ? 'Ethereum'
-    : getTNode(chain.chainId, toPsEcosystem(chain.network))
+export function getParaSpellChain(chain: Chain): TChain | null {
+  return chain.network === 'Ethereum' && chain.chainId === 1 ? 'Ethereum' : getTChain(chain.chainId, chain.network)
 }
 
 /**
@@ -90,11 +77,11 @@ export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
 export function isChainSupportingToken(chain: Chain | null, token: Token | null): boolean {
   if (!chain || !token) return false
 
-  const node = getParaSpellNode(chain)
-  if (!node) return false
+  const chainNode = getParaSpellChain(chain)
+  if (!chainNode) return false
 
-  const currency = getParaspellToken(token, node)
-  const asset = findAsset(node, currency, null)
+  const currency = getParaspellToken(token, chainNode)
+  const asset = findAssetInfo(chainNode, currency, null)
 
   return !!asset
 }

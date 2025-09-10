@@ -1,4 +1,4 @@
-import type { TMultiLocation } from '@paraspell/sdk'
+import type { TLocation } from '@paraspell/sdk'
 import type { Chain, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { z } from 'zod'
 
@@ -16,7 +16,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),
-  multilocation: z.custom<TMultiLocation>(),
+  location: z.custom<TLocation>(),
   coingeckoId: z.string().optional(),
   origin: originSchema,
 })

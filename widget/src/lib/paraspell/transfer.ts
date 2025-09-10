@@ -1,19 +1,16 @@
 import {
   getAllAssetsSymbols,
   getNativeAssetSymbol,
-  getTNode,
+  getTChain,
+  type TChain,
   type TCurrencyCore,
   type TDryRunResult,
-  type TEcosystemType,
-  type TNodeWithRelayChains,
 } from '@paraspell/sdk'
 import {
   BridgeHub,
   type Chain,
   EthereumTokens,
-  getAssetUid,
   MainnetRegistry,
-  type Network,
   REGISTRY,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
@@ -21,7 +18,7 @@ import { removeWhitespace } from '@/utils/strings.ts'
 
 export type DryRunResult = { type: 'Supported' | 'Unsupported' } & TDryRunResult
 
-const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
+const getTokenSymbol = (sourceChain: TChain, token: Token) => {
   const supportedAssets = getAllAssetsSymbols(sourceChain)
 
   let tokenSymbol: string | undefined
@@ -39,22 +36,11 @@ const getTokenSymbol = (sourceChain: TNodeWithRelayChains, token: Token) => {
   return tokenSymbol ?? token.symbol // if not found, try with fallback
 }
 
-/**
- * Get the ParaSpell currency id in the form of `TCurrencyCore`.
- *
- * @remarks We prioritize an local asset id if specified in our registry and otherwise
- * default to the token symbol.
- *
- * */
-export function getCurrencyId(node: TNodeWithRelayChains, chainId: string, token: Token): TCurrencyCore {
-  return getAssetUid(chainId, token.id) ?? { symbol: getTokenSymbol(node, token) }
-}
-
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
 
-  const ecosystem = toPsEcosystem(chain.network)
-  const chainNode = getTNode(chain.chainId, ecosystem)
+  const ecosystem = chain.network
+  const chainNode = getTChain(chain.chainId, ecosystem)
   if (!chainNode) throw Error(`ChainNode with id ${chain.uid} not found in ${ecosystem}`)
 
   const symbol = getNativeAssetSymbol(chainNode)
@@ -63,33 +49,22 @@ export function getNativeToken(chain: Chain): Token {
   return token
 }
 
-export function getParaSpellNode(chain: Chain): TNodeWithRelayChains | null {
-  return chain.network === 'Ethereum' && chain.chainId === 1
-    ? 'Ethereum'
-    : getTNode(chain.chainId, toPsEcosystem(chain.network))
+export function getParaSpellChain(chain: Chain): TChain | null {
+  return chain.network === 'Ethereum' && chain.chainId === 1 ? 'Ethereum' : getTChain(chain.chainId, chain.network)
 }
 
 /**
  * Get the ParaSpell token. Used to convert a turtle token to a paraspell token object.
  */
-export function getParaspellToken(token: Token, node?: TNodeWithRelayChains): TCurrencyCore {
+export function getParaspellToken(token: Token, chain?: TChain): TCurrencyCore {
   // Edge Cases. Myth multilocation is not supported by Paraspell.
   if (token.id === EthereumTokens.MYTH.id)
-    return node ? { symbol: getTokenSymbol(node, token) } : { symbol: token.symbol }
+    return chain ? { symbol: getTokenSymbol(chain, token) } : { symbol: token.symbol }
 
-  if (token.multilocation) return { multilocation: token.multilocation }
-  if (node) return { symbol: getTokenSymbol(node, token) }
+  if (token.location) return { location: token.location }
+  if (chain) return { symbol: getTokenSymbol(chain, token) }
 
   return { symbol: token.symbol }
-}
-
-/**
- * Convert a Turtle 'network' value to a ParaSpell 'TEcosystemType'
- * @param network
- * @returns the matching paraspell value
- */
-function toPsEcosystem(network: Network): TEcosystemType {
-  return network.toLowerCase() as TEcosystemType
 }
 
 export function mapParaspellChainToTurtleRegistry(chainName: string): Chain {
