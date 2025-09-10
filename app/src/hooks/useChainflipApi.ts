@@ -63,6 +63,7 @@ const useChainflipApi = () => {
       destinationChain,
       sourceToken,
       destinationToken,
+      destinationAmount,
       sourceAmount,
       sender,
       recipient,
@@ -100,18 +101,20 @@ const useChainflipApi = () => {
 
           const senderAddress = await getSenderAddress(sender)
           const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
-          const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
+          const destinationTokenUSDValue = (await getCachedTokenPrice(destinationToken))?.usd ?? 0
           const date = new Date()
 
           addOrUpdate({
             id: txHash.toString(),
             sourceChain,
             sourceToken,
-            destinationToken: destinationToken,
-            sourceTokenUSDValue,
-            sender: senderAddress,
-            destChain: destinationChain,
             sourceAmount: sourceAmount.toString(),
+            sourceTokenUSDValue,
+            destChain: destinationChain,
+            destinationToken,
+            destinationAmount: destinationAmount?.toString(),
+            destinationTokenUSDValue,
+            sender: senderAddress,
             recipient,
             date,
             fees,
@@ -251,7 +254,8 @@ const submitPolkadotTransfer = async (
   removeOngoingTransfer: (id: string) => void,
   addNotification: (notification: Omit<Notification, 'id'>) => void,
 ): Promise<void> => {
-  const { sourceChain, sourceToken, sender, destinationToken, sourceAmount, fees, onComplete } = polkadotTransferParams
+  const { sourceChain, sourceToken, sender, destinationToken, destinationAmount, sourceAmount, fees, onComplete } =
+    polkadotTransferParams
   const { destinationChain, recipient } = swapParams
 
   // Here we create the unsigned transaction with Paraspell Builder
@@ -268,13 +272,15 @@ const submitPolkadotTransfer = async (
     id: '',
     sourceChain,
     sourceToken,
-    destinationToken,
+    sourceAmount: sourceAmount.toString(),
     sourceTokenUSDValue,
-    sender: formattedSenderAddress,
     // We use the final destinationChain from the swapParams (ex: ETH)
     // not the polkadotTransferParams.destinationChain (ex: AssetHub)
     destChain: destinationChain,
-    sourceAmount: sourceAmount.toString(),
+    destinationToken,
+    destinationAmount: destinationAmount?.toString(),
+    destinationTokenUSDValue,
+    sender: formattedSenderAddress,
     // We use the final recipient from the swapParams (ex: ETH)
     // not the chainflip deposit address
     recipient: recipient,
