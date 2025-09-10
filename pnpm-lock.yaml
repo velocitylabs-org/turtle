@@ -399,6 +399,9 @@ importers:
       '@velocitylabs-org/turtle-registry':
         specifier: workspace:*
         version: link:../registry
+      '@velocitylabs-org/turtle-tailwind-config':
+        specifier: workspace:*
+        version: link:../tailwind-config
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
