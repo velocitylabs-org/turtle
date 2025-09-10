@@ -20,6 +20,7 @@ import { NotificationSeverity } from '@/models/notification'
 import { schema } from '@/models/schemas'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { getRecipientAddress, isValidAddressType } from '@/utils/address'
+import { getChainflipAsset, getChainflipChain, isChainflipSwap, meetChainflipMinSwapAmount } from '@/utils/chainflip'
 import { isRouteAllowed, isTokenAvailableForSourceChain } from '@/utils/routes'
 import { formatAmount, safeConvertAmount, toHuman } from '@/utils/transfer'
 import useFees from './useFees'
@@ -65,13 +66,17 @@ const useTransferForm = () => {
   const destinationChain = useWatch({ control, name: 'destinationChain' })
   const manualRecipient = useWatch({ control, name: 'manualRecipient' })
   const sourceTokenAmount = useWatch({ control, name: 'sourceTokenAmount' })
-  const destinationTokenAmount = useWatch({ control, name: 'destinationTokenAmount' })
+  const destinationTokenAmount = useWatch({
+    control,
+    name: 'destinationTokenAmount',
+  })
 
   const sourceAmount = useWatch({ control, name: 'sourceTokenAmount.amount' })
   const sourceToken = useWatch({ control, name: 'sourceTokenAmount.token' })
   const destToken = useWatch({ control, name: 'destinationTokenAmount.token' })
 
   const [sourceTokenAmountError, setSourceTokenAmountError] = useState<string>('') // validation on top of zod
+  const [minSwapAmountError, setMinSwapAmountError] = useState<string>('') // validation on top of zod
   const [manualRecipientError, setManualRecipientError] = useState<string>('') // validation on top of zod
   const tokenId = sourceTokenAmount?.token?.id
   const sourceWallet = useWallet(sourceChain?.walletType)
@@ -98,13 +103,14 @@ const useTransferForm = () => {
       sender: sourceWallet?.sender,
       recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
       sourceTokenBalance: balanceData,
-      sourceTokenAmountError: sourceTokenAmountError,
+      sourceTokenAmountError: sourceTokenAmountError || minSwapAmountError,
       transferableAmount,
     }),
     [
       sourceChain,
       destinationChain,
       sourceTokenAmountError,
+      minSwapAmountError,
       sourceTokenAmount?.token,
       sourceTokenAmount?.amount,
       sourceWallet?.sender,
@@ -145,6 +151,7 @@ const useTransferForm = () => {
   const isFormValid =
     isValidZodSchema &&
     !sourceTokenAmountError &&
+    !minSwapAmountError &&
     !manualRecipientError &&
     sourceWallet?.isConnected &&
     !loadingBalance &&
@@ -387,6 +394,33 @@ const useTransferForm = () => {
     else setSourceTokenAmountError('')
   }, [sourceTokenAmount?.amount, balanceData, sourceWallet])
 
+  // validate chainflip source token minimum amount to swap
+  useEffect(() => {
+    const validateChainflipSwap = async () => {
+      if (!sourceChain || !destinationChain || !sourceToken || !destToken || !sourceTokenAmount?.amount) {
+        setMinSwapAmountError('')
+        return
+      }
+
+      if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destToken)) {
+        const chainflipSourceChain = await getChainflipChain(sourceChain)
+        if (!chainflipSourceChain) return
+        const chainflipSourceToken = await getChainflipAsset(sourceToken, chainflipSourceChain)
+        if (!chainflipSourceToken) return
+
+        const formatAmount = safeConvertAmount(sourceTokenAmount.amount, sourceToken)
+        if (formatAmount && !meetChainflipMinSwapAmount(formatAmount, chainflipSourceToken)) {
+          const minimumAmount = toHuman(BigInt(chainflipSourceToken.minimumSwapAmount), sourceToken)
+          setMinSwapAmountError(`Minimum swap amount: ${minimumAmount} ${sourceToken.symbol.toUpperCase()}`)
+          return
+        }
+
+        setMinSwapAmountError('')
+      }
+    }
+    validateChainflipSwap()
+  }, [sourceChain, destinationChain, sourceToken, destToken, sourceTokenAmount?.amount])
+
   // reset token amount
   useEffect(() => {
     if (tokenId)
@@ -420,6 +454,7 @@ const useTransferForm = () => {
     loadingFees,
     transferStatus,
     sourceTokenAmountError,
+    minSwapAmountError,
     manualRecipientError,
     // biome-ignore lint/suspicious/noDoubleEquals: isBalanceAvailable
     isBalanceAvailable: balanceData?.value != undefined,

@@ -1,4 +1,5 @@
 import type { TRouterPlan } from '@paraspell/xcm-router'
+import type { toEthereum, toPolkadot } from '@snowbridge/api'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import type { Direction } from '@/utils/transfer'
 import type { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
@@ -23,8 +24,7 @@ export interface StoredTransfer extends RawTransfer {
   destinationTokenUSDValue?: number
   sourceAmount: string
   destinationAmount?: string
-  fees: AmountInfo
-  bridgingFee: AmountInfo | null
+  fees: FeeDetails[]
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: string //toEthereum.SendResult | toPolkadot.SendResult
@@ -52,6 +52,24 @@ export interface StoredTransferV0 extends RawTransferV0 {
   status?: string
   // WithinPolkadot transfer is considered as finalized
   finalizedAt?: Date
+}
+
+/** Version 1 of a stored transfer. It was used after introducing swaps but before array fees. */
+export interface StoredTransferV1 extends RawTransfer {
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
+  fees: AmountInfo
+  bridgingFee: AmountInfo | null
+  sendResult?: toEthereum.SendResult | toPolkadot.SendResult
+  uniqueTrackingId?: string
+  status?: string
+  finalizedAt?: Date
+  swapInformation?: {
+    currentStep?: number
+    plan?: TRouterPlan
+  }
 }
 
 interface RawTransferV0 {
@@ -105,8 +123,7 @@ export type CompletedTransfer = {
   destinationAmount?: string
   sourceChain: Chain
   destChain: Chain
-  fees: AmountInfo
-  bridgingFee: AmountInfo | null
+  fees: FeeDetails[]
   minTokenRecieved?: string
   minTokenRecievedValue?: number
   sender: string
@@ -136,6 +153,29 @@ export type CompletedTransferV0 = {
   errors?: string[]
 }
 
+/** Version 1 of a completed transfer. It was used after introducing swaps but before array fees. */
+export type CompletedTransferV1 = {
+  id: string
+  result: TransferResult
+  sourceToken: Token
+  destinationToken?: Token
+  sourceTokenUSDValue?: number
+  destinationTokenUSDValue?: number
+  sourceAmount: string
+  destinationAmount?: string
+  sourceChain: Chain
+  destChain: Chain
+  fees: AmountInfo
+  bridgingFee: AmountInfo | null
+  minTokenRecieved?: string
+  minTokenRecievedValue?: number
+  sender: string
+  recipient: string
+  date: Date
+  explorerLink?: string
+  errors?: string[]
+}
+
 export type TxTrackingResult =
   // Snowbridge API | Snowbridge API | Subscan API
   FromEthTrackingResult | FromParaToEthTrackingResult //| FromParachainTrackingResult
@@ -147,4 +187,20 @@ export type OnChainBaseEvents = {
   isBatchCompleted?: boolean
   isExecuteAttemptCompleted?: boolean
   isExtrinsicSuccess?: boolean
+}
+
+type FeeDetailType = 'Execution fees' | 'Delivery fees' | 'Bridging fees' | 'Routing fees' | 'Swap fees'
+
+export type FeeSufficiency = 'sufficient' | 'insufficient' | 'undetermined'
+
+export interface FeeDetails {
+  // The title of the fee - e.g. 'Execution fees'
+  title: FeeDetailType
+  // The chain in which the fee is charged
+  chain: Chain
+  // The amount to be charged
+  amount: AmountInfo
+  // Indicates if the user's balance is enough to cover this transfer fee
+  // 'undetermined' when a chain lacks dry-run support to validate sufficiency
+  sufficient: FeeSufficiency
 }

@@ -1,14 +1,17 @@
 import NumberFlow from '@number-flow/react'
+import SlippageIcon from '@velocitylabs-org/turtle-assets/icons/slippage.svg'
 import type { Chain, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, spinnerSize, TokenLogo, Tooltip } from '@velocitylabs-org/turtle-ui'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect } from 'react'
+import Image from 'next/image'
+import { type JSX, useEffect } from 'react'
 import FeesBreakdown from '@/components/FeesBreakdown'
 import { AMOUNT_VS_FEE_RATIO } from '@/config'
 import useTokenPrice from '@/hooks/useTokenPrice'
 import type { FeeDetails, FeeSufficiency } from '@/models/transfer'
 import { toAmountInfo } from '@/utils/transfer'
+import ChainflipRefund from './ChainflipRefund'
 import Delayed from './Delayed'
 import AlertIcon from './svg/AlertIcon'
 import InfoIcon from './svg/Info'
@@ -51,7 +54,10 @@ interface TxSummaryProps {
   destinationTokenAmount: TokenAmount | null
   destChain: Chain | null
   fees?: FeeDetails[] | null
+  slippage?: number | null
   durationEstimate?: string
+  isChainflipSwap?: boolean | null
+  sourceTokenAmountError?: string | undefined
   className?: string
 }
 
@@ -61,7 +67,10 @@ export default function TxSummary({
   sourceTokenAmount,
   destChain,
   fees,
+  slippage,
   durationEstimate,
+  isChainflipSwap,
+  sourceTokenAmountError,
   className,
 }: TxSummaryProps) {
   const { price: sendingTokenPrice } = useTokenPrice(sourceTokenAmount?.token)
@@ -97,7 +106,7 @@ export default function TxSummary({
             <motion.div
               key="loading"
               {...loadingAnimationConfig}
-              className="mt-6 sm:mt-8 flex h-[174px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
+              className="mt-6 sm:mt-8 flex h-[155px] w-full flex-col items-center justify-center rounded-[10px] bg-turtle-level1"
             >
               <LoadingIcon
                 className="animate-spin"
@@ -117,7 +126,7 @@ export default function TxSummary({
               key="content"
               {...contentAnimationConfig}
               className={cn(
-                'mt-6 sm:mt-8 flex flex-col items-start gap-[15px] sm:gap-[20px] rounded-[8px] border border-turtle-level3 p-[18px] sm:p-[24px]',
+                'mt-6 sm:mt-8 flex flex-col items-start gap-[14px] sm:gap-[16px] rounded-[8px] border border-turtle-level3 p-[18px] sm:p-[20px]',
                 className,
               )}
             >
@@ -134,67 +143,87 @@ export default function TxSummary({
                       />
                     </div>
                   </div>
-                  {receivingTokenPrice && (
-                    <div className="animate-slide-up -mt-[5px] text-sm leading-none text-turtle-level6">
-                      <NumberFlow
-                        value={receivingTokenPrice * destinationTokenAmount.amount!}
-                        prefix="$"
-                        format={numberFlowFormat}
-                      />
-                    </div>
-                  )}
+                  <div className="animate-slide-up -mt-1 flex items-center gap-2 text-sm leading-none text-turtle-level6">
+                    {slippage && (
+                      <div className="flex items-center gap-1">
+                        <Image src={SlippageIcon} alt={'Swap Slippage'} width={16} height={16} />
+                        <span>Slippage</span>
+                        <span>{slippage}%</span>
+                      </div>
+                    )}
+                    {slippage && receivingTokenPrice && <span aria-hidden>·</span>}
+                    {receivingTokenPrice && (
+                      <div>
+                        <NumberFlow
+                          value={receivingTokenPrice * destinationTokenAmount.amount!}
+                          prefix="$"
+                          format={numberFlowFormat}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {!hasFeesFailed && isAmountTooLow && (
-                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1 w-full mb-1">
                   <InfoIcon width={17} height={17} fill="black" />
-                  <span className="text-[12px] text-turtle-foreground ine-block">
+                  <span className="text-[12px] text-turtle-foreground inline-block">
                     <span className="font-bold ">Note:</span> The amount is a bit too low to justify the fees
                   </span>
                 </div>
               )}
               {!hasFeesFailed && isItWrappedToken && (
-                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1">
+                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-level2 px-2 py-1 w-full mb-1">
                   <InfoIcon width={17} height={17} fill="black" />
-                  <span className="text-[12px] text-turtle-foreground ine-block">
+                  <span className="text-[12px] text-turtle-foreground inline-block">
                     <span className="font-bold ">Note:</span> You can swap this wrapped token on Hydration
                   </span>
                 </div>
               )}
-              {hasFeesFailed && (
-                <div className="flex flex-row items-center gap-2 rounded-[8px] bg-turtle-error px-2 py-1">
-                  <AlertIcon width={17} height={17} fill="white" />
-                  <span className="text-[12px] text-white inline-block">
-                    <span className="font-bold">Error:</span> Failed to load fees. Please try again
-                  </span>
-                </div>
-              )}
 
-              <div className="border-1 h-1 w-full border-t border-turtle-level3" />
+              <div className="border-1 w-full border-t border-turtle-level3" />
 
-              <div className="flex w-full flex-row items-start justify-between">
-                <div className="flex items-center gap-1">
-                  {!!fees?.length && (
-                    <>
+              <div
+                className={cn(
+                  'flex w-full flex-row items-start',
+                  sourceTokenAmountError ? 'justify-end' : 'justify-between',
+                )}
+              >
+                {!sourceTokenAmountError && (
+                  <Tooltip
+                    showIcon={false}
+                    content={<FeesBreakdown fees={fees} hasFeesFailed={hasFeesFailed} />}
+                    className="bg-turtle-foreground"
+                  >
+                    <div className="flex items-center gap-1 cursor-default">
                       <span className={cn('text-xs leading-none text-turtle-level6', getFeeStatusColor(fees))}>
                         Fee
                       </span>
-                      <span className={cn('text-sm', getFeeStatusColor(fees))}>
-                        <NumberFlow value={totalFeesInDollars} prefix="$" format={numberFlowFormat} />
-                      </span>
-                      <Tooltip showIcon={false} content={<FeesBreakdown fees={fees} />}>
-                        {getFeeStatusIcon(fees)}
-                      </Tooltip>
-                    </>
-                  )}
-                </div>
-
+                      {!hasFeesFailed && (
+                        <span className={cn('text-sm', getFeeStatusColor(fees))}>
+                          <NumberFlow
+                            value={totalFeesInDollars}
+                            prefix="$"
+                            format={numberFlowFormat}
+                            className="cursor-default"
+                          />
+                        </span>
+                      )}
+                      <span className="inline-block">{getFeeStatusIcon(fees)}</span>
+                    </div>
+                  </Tooltip>
+                )}
                 <div className="flex items-center gap-1">
                   <span className="text-normal text-xs leading-none text-turtle-level6">Duration</span>
                   <span className="text-sm text-turtle-foreground">{durationEstimate}</span>
                 </div>
               </div>
+            </motion.div>
+          )}
+          {!showLoading && (
+            <motion.div key="refund" {...contentAnimationConfig}>
+              <ChainflipRefund isSwap={isChainflipSwap} className="mt-6 sm:mt-8" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -220,7 +249,7 @@ function calcSendingAmountTooLow(
 }
 
 function getFeeStatus(fees?: FeeDetails[] | null): FeeSufficiency {
-  if (!fees?.length) return 'sufficient'
+  if (!fees?.length) return 'insufficient'
 
   const hasInsufficient = fees.some(fee => fee.sufficient === 'insufficient')
   if (hasInsufficient) return 'insufficient'
@@ -231,7 +260,7 @@ function getFeeStatus(fees?: FeeDetails[] | null): FeeSufficiency {
   return 'sufficient'
 }
 
-function getFeeStatusIcon(fees: FeeDetails[]) {
+function getFeeStatusIcon(fees: FeeDetails[] | null | undefined): JSX.Element | null {
   const size = { width: 14, height: 14 }
   const status = getFeeStatus(fees)
 

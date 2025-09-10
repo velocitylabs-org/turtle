@@ -1,8 +1,10 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { useCallback } from 'react'
+import ChainflipRefund from '@/components/ChainflipRefund'
 import type { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { formatAmount, getExplorerLink, isSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
@@ -154,6 +156,16 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                     usdValue={formatAmount(fee.amount.inDollars, 'Long')}
                   />
                 ))}
+
+              <ChainflipRefund
+                isSwap={isChainflipSwap(
+                  transfer.sourceChain,
+                  transfer.destChain,
+                  transfer.sourceToken,
+                  transfer.destinationToken,
+                )}
+                className="pt-5 pb-2"
+              />
 
               {explorerLink && (
                 <a

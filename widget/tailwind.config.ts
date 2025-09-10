@@ -1,12 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-import turtleTailwindConfig from '@velocitylabs-org/turtle-tailwind-config'
-import tailwindcssAnimate from 'tailwindcss-animate'
-import tailwindcssMotion from 'tailwindcss-motion'
-
 const config: import('tailwindcss').Config = {
   content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}', '../packages/ui/src/**/*.{ts,tsx,js,jsx}'],
   important: '.turtle-wrapper',
-  presets: [turtleTailwindConfig],
+  presets: [require('@velocitylabs-org/turtle-tailwind-config')],
   theme: {
     extend: {
       container: {
@@ -19,7 +14,7 @@ const config: import('tailwindcss').Config = {
     },
   },
   darkMode: ['class'],
-  plugins: [tailwindcssAnimate, tailwindcssMotion],
+  plugins: [require('tailwindcss-animate'), require('tailwindcss-motion')],
 }
 
 export default config

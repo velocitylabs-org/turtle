@@ -13,10 +13,14 @@ import {
   SNOWBRIDGE_MAINNET_PARACHAIN_URLS,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
-import type { Fee } from '@/hooks/useFees'
 import type { SnowbridgeContext } from '@/models/snowbridge'
 import type { AmountInfo } from '@/models/transfer'
 import { Direction, safeConvertAmount, toHuman } from '@/utils/transfer'
+
+export type SnowbridgeEstimateFee =
+  | { origin: 'Ethereum'; bridging: AmountInfo; execution: AmountInfo | null }
+  | { origin: 'Ethereum'; error: 'INSUFFICIENT_FUNDS' }
+  | { origin: 'Polkadot'; fee: AmountInfo }
 
 /**
  * Given a network, return the adequate Snowbridge Api Environment scheme.
@@ -104,7 +108,7 @@ export const getFeeEstimate = async (
   senderAddress: string,
   recipientAddress: string,
   amount: number,
-): Promise<Fee | null> => {
+): Promise<SnowbridgeEstimateFee | null> => {
   switch (direction) {
     case Direction.ToEthereum: {
       const amount = await toEthereumV2
@@ -190,19 +194,20 @@ export const getFeeEstimate = async (
           execution: executionFee,
         }
       } catch (error) {
-        // Estimation can fail for multiple reasons, including errors such as insufficient token approval.
+        // Estimation can fail for multiple reasons, including errors such as insufficient token approval
         console.log('Estimated Tx cost failed', error instanceof Error && { ...error })
-        // captureException(new Error('Estimated Tx cost failed'), {
-        //   level: 'warning',
-        //   tags: {
-        //     useFeesHook:
-        //       error instanceof Error && 'action' in error && typeof error.action === 'string'
-        //         ? error.action
-        //         : 'estimateTransactionFees',
-        //   },
-        //   extra: { error },
-        // }) - Sentry
-        return null
+
+        // Check if this is an insufficient funds error
+        const errorWithCode = error as { code?: string; shortMessage?: string }
+        if (errorWithCode?.code === 'INSUFFICIENT_FUNDS' || errorWithCode?.shortMessage === 'insufficient funds') {
+          return {
+            origin: 'Ethereum',
+            error: 'INSUFFICIENT_FUNDS',
+          }
+        }
+
+        // Rethrow the error to be handled by the caller
+        throw error
       }
     }
 

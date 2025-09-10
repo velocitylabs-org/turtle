@@ -1,6 +1,8 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import ChainflipRefund from '@/components/ChainflipRefund'
 import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { formatHours } from '@/utils/datetime'
 import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
@@ -180,6 +182,13 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                     usdValue={formatAmount(fee.amount.inDollars, 'Long')}
                   />
                 ))}
+
+              <ChainflipRefund
+                isSwap={isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)}
+                swapCompleted={tx.result === TxStatus.Succeeded}
+                swapRefundError={tx.errors?.[0]}
+                className="pt-5 pb-2"
+              />
 
               {tx.explorerLink && (
                 <a

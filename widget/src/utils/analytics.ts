@@ -28,13 +28,30 @@ export async function trackTransferMetrics({
   }
 
   const sourceTokenAmount = toHuman(transferParams.sourceAmount, transferParams.sourceToken)
-  const feesAmount = toHuman(transferParams.fees.amount, transferParams.fees.token)
   const destinationTokenAmount = transferParams.destinationAmount
     ? toHuman(transferParams.destinationAmount, transferParams.destinationToken)
     : undefined
-  const bridgingFeeAmount = transferParams.bridgingFee
-    ? toHuman(transferParams.bridgingFee.amount, transferParams.bridgingFee.token)
+
+  // TODO: Update database schema to support storing an array of fees with individual properties instead of splitting into regular and bridging fees
+  // Separate regular fees from bridging fees
+  const regularFees = transferParams.fees.filter(fee => fee.title !== 'Bridging fees')
+  const bridgingFees = transferParams.fees.filter(fee => fee.title === 'Bridging fees')
+
+  // Calculate total regular fees (sum all non-bridging fees)
+  const totalRegularFeesUsd = regularFees.reduce((sum, fee) => sum + fee.amount.inDollars, 0)
+
+  // Get the first regular fee for token info
+  const regularFeeInfo = regularFees[0]
+  const feesAmount = regularFeeInfo
+    ? regularFees.reduce((sum, fee) => sum + Number(toHuman(fee.amount.amount, fee.amount.token)), 0)
+    : 0
+
+  // Calculate bridging fees if they exist
+  const bridgingFeeInfo = bridgingFees[0]
+  const bridgingFeeAmount = bridgingFeeInfo
+    ? bridgingFees.reduce((sum, fee) => sum + Number(toHuman(fee.amount.amount, fee.amount.token)), 0)
     : undefined
+  const totalBridgingFeesUsd = bridgingFees.reduce((sum, fee) => sum + fee.amount.inDollars, 0) || undefined
 
   const transactionData = {
     txHashId: txId,
@@ -56,19 +73,23 @@ export async function trackTransferMetrics({
     destinationTokenUSDValue: destinationTokenUSDValue,
     destinationTokenAmountRaw: transferParams.destinationAmount?.toString(),
 
-    feesTokenId: transferParams.fees.token.id,
-    feesTokenName: transferParams.fees.token.name,
-    feesTokenSymbol: transferParams.fees.token.symbol,
+    feesTokenId: regularFeeInfo?.amount.token.id,
+    feesTokenName: regularFeeInfo?.amount.token.name,
+    feesTokenSymbol: regularFeeInfo?.amount.token.symbol,
     feesTokenAmount: feesAmount,
-    feesTokenAmountUsd: transferParams.fees.inDollars,
-    feesTokenAmountRaw: transferParams.fees.amount.toString(),
+    feesTokenAmountUsd: totalRegularFeesUsd,
+    feesTokenAmountRaw: regularFeeInfo
+      ? regularFees.reduce((sum, fee) => sum + BigInt(fee.amount.amount), 0n).toString()
+      : '0',
 
-    bridgingFeeTokenId: transferParams.bridgingFee?.token.id,
-    bridgingFeeTokenName: transferParams.bridgingFee?.token.name,
-    bridgingFeeTokenSymbol: transferParams.bridgingFee?.token.symbol,
+    bridgingFeeTokenId: bridgingFeeInfo?.amount.token.id,
+    bridgingFeeTokenName: bridgingFeeInfo?.amount.token.name,
+    bridgingFeeTokenSymbol: bridgingFeeInfo?.amount.token.symbol,
     bridgingFeeTokenAmount: bridgingFeeAmount,
-    bridgingFeeTokenAmountUsd: transferParams.bridgingFee?.inDollars,
-    bridgingFeeAmountRaw: transferParams.bridgingFee?.amount.toString(),
+    bridgingFeeTokenAmountUsd: totalBridgingFeesUsd,
+    bridgingFeeAmountRaw: bridgingFeeInfo
+      ? bridgingFees.reduce((sum, fee) => sum + BigInt(fee.amount.amount), 0n).toString()
+      : undefined,
 
     senderAddress,
     recipientAddress: transferParams.recipient,
