@@ -231,8 +231,7 @@ export default function Transfer() {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
-  const sourceChainOptions = getAllowedSourceChains()
-
+  const sourceChainOptions = useMemo(() => getAllowedSourceChains(), [])
   const destinationChainOptions = useMemo(
     () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null),
     [sourceChain, sourceTokenAmount?.token],
