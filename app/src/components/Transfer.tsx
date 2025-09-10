@@ -14,12 +14,7 @@ import useTransferForm from '@/hooks/useTransferForm'
 import type { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
 import { getChainflipDurationEstimate, getChainflipSlippage } from '@/utils/chainflip'
-import {
-  getAllowedDestinationChains,
-  getAllowedDestinationTokens,
-  getAllowedSourceChains,
-  getAllowedSourceTokens,
-} from '@/utils/routes'
+import { getAllowedDestinationChains, getAllowedDestinationTokens, getAllowedSourceTokens } from '@/utils/routes'
 import { formatAmount, getDurationEstimate, safeConvertAmount } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
@@ -231,7 +226,6 @@ export default function Transfer() {
   const shouldDisplayUsdtRevokeAllowance =
     erc20SpendAllowance !== 0 && sourceTokenAmount?.token?.id === EthereumTokens.USDT.id
 
-  const sourceChainOptions = useMemo(() => getAllowedSourceChains(), [])
   const destinationChainOptions = useMemo(
     () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null),
     [sourceChain, sourceTokenAmount?.token],
@@ -299,7 +293,6 @@ export default function Transfer() {
                       chainProps={{
                         ...chainField,
                         onChange: handleSourceChainChange,
-                        options: sourceChainOptions,
                         error: errors.sourceChain?.message,
                         clearable: true,
                         orderBySelected: true,

@@ -80,13 +80,15 @@ export const isTokenAvailableForSourceChain = (
   return getTransferTokens(sourceChain, destinationChain ?? null).some(t => t.id === token.id)
 }
 
-export const getAllowedSourceChains = (): Chain[] => {
+const getAllowedSourceChains = (): Chain[] => {
   const transferSourceChains = getTransferSourceChains()
   const swapSourceChains = getSwapsSourceChains()
   const chainflipswapSourceChains = getChainflipSwapSourceChains()
 
   return deduplicate([...transferSourceChains, ...swapSourceChains, ...chainflipswapSourceChains])
 }
+
+export const sourceChainOptions = getAllowedSourceChains()
 
 export const getAllowedSourceTokens = (sourceChain: Chain | null, destinationChain: Chain | null): Token[] => {
   if (!sourceChain) return []
