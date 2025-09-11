@@ -9,7 +9,6 @@ import { type ChangeEvent, type ReactNode, type RefObject, useMemo, useRef, useS
 import { twMerge } from 'tailwind-merge'
 import { useOutsideClick } from '@/hooks/useOutsideClick'
 import useTokenPrice from '@/hooks/useTokenPrice'
-import { sourceChainOptions } from '@/utils/routes'
 import { reorderOptionsBySelectedItem } from '@/utils/sort'
 import ChainTrigger from './ChainTrigger'
 import Dropdown from './Dropdown'
@@ -30,6 +29,7 @@ interface ChainTokenSelectProps {
   chainProps: {
     value: Chain | null
     onChange: (chain: Chain | null) => void
+    options: Chain[]
     error?: string
     clearable?: boolean
     orderBySelected?: boolean
@@ -91,8 +91,8 @@ export default function ChainTokenSelect({
 
   // Filter the options based on search
   const filteredChainOptions = useMemo(() => {
-    return sourceChainOptions.filter(option => option.name.toLowerCase().includes(chainSearch.toLowerCase()))
-  }, [chainSearch])
+    return chainProps.options.filter(option => option.name.toLowerCase().includes(chainSearch.toLowerCase()))
+  }, [chainSearch, chainProps.options])
 
   const sortedAndFilteredChainOptions = useMemo(() => {
     return chainProps.orderBySelected

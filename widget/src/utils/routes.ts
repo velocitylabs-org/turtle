@@ -66,7 +66,7 @@ export const isTokenAvailableForSourceChain = (
   return getTransferTokens(sourceChain, destinationChain ?? null, allowedTokens).some(t => t.id === token.id)
 }
 
-export const getAllowedSourceChains = (allowedChains?: Chain['uid'][]): Chain[] => {
+const getAllowedSourceChains = (allowedChains?: Chain['uid'][]): Chain[] => {
   const filteredChains =
     Array.isArray(allowedChains) && allowedChains.length > 0
       ? MainnetRegistry.chains.filter(chain => allowedChains.includes(chain.uid))
@@ -83,6 +83,8 @@ export const getAllowedSourceChains = (allowedChains?: Chain['uid'][]): Chain[] 
 
   return deduplicate([...transferSourceChains, ...swapSourceChains])
 }
+
+export const sourceChainOptions = getAllowedSourceChains()
 
 export const getAllowedSourceTokens = (
   sourceChain: Chain | null,

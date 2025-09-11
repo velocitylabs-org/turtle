@@ -16,8 +16,8 @@ import { ConfigContext } from '@/providers/ConfigProviders'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
-  getAllowedSourceChains,
   getAllowedSourceTokens,
+  sourceChainOptions,
 } from '@/utils/routes'
 import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
@@ -201,8 +201,6 @@ const Transfer: FC = () => {
     !isLoadingOutputAmount &&
     isBalanceSufficientForFees &&
     allFeesItemsAreSufficient
-
-  const sourceChainOptions = useMemo(() => getAllowedSourceChains(allowedChains), [allowedChains])
 
   const destinationChainOptions = useMemo(
     () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null, allowedChains),

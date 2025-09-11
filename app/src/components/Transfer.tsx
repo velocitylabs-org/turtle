@@ -14,7 +14,12 @@ import useTransferForm from '@/hooks/useTransferForm'
 import type { WalletInfo } from '@/hooks/useWallet'
 import { resolveDirection } from '@/services/transfer'
 import { getChainflipDurationEstimate, getChainflipSlippage } from '@/utils/chainflip'
-import { getAllowedDestinationChains, getAllowedDestinationTokens, getAllowedSourceTokens } from '@/utils/routes'
+import {
+  getAllowedDestinationChains,
+  getAllowedDestinationTokens,
+  getAllowedSourceTokens,
+  sourceChainOptions,
+} from '@/utils/routes'
 import { formatAmount, getDurationEstimate, safeConvertAmount } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
@@ -294,6 +299,7 @@ export default function Transfer() {
                         ...chainField,
                         onChange: handleSourceChainChange,
                         error: errors.sourceChain?.message,
+                        options: sourceChainOptions,
                         clearable: true,
                         orderBySelected: true,
                       }}
