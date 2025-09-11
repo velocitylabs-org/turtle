@@ -11,6 +11,7 @@ import {
   type Chain,
   EthereumTokens,
   MainnetRegistry,
+  PolkadotTokens,
   REGISTRY,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
@@ -81,6 +82,19 @@ export function mapParaspellChainToTurtleRegistry(chainName: string): Chain {
     throw new Error(`Chain not found for name: ${chainName}`)
   }
   return chain
+}
+
+export function getTokenFromSymbol(symbolParam: string): Token {
+  // Moonbeam uses ERC-20 wrapped tokens with 'xc' prefix (e.g., xcDOT for wrapped DOT)
+  // Strip the 'xc' prefix to map to the base token in our registry
+  const symbol = moonbeamSymbolToRegistry(symbolParam)
+  const symbolUpper = symbol.toUpperCase()
+  const tokensBySymbol = { ...EthereumTokens, ...PolkadotTokens }
+  const token = tokensBySymbol[symbolUpper as keyof typeof tokensBySymbol]
+  if (!token) {
+    throw new Error(`Token not found for symbol: ${symbolUpper}`)
+  }
+  return token as Token
 }
 
 export function moonbeamSymbolToRegistry(tokenSymbol: string): string {

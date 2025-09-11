@@ -1,9 +1,10 @@
-import { getParaEthTransferFees } from '@paraspell/sdk'
+import { getParaEthTransferFees, type TLocation } from '@paraspell/sdk'
 import { useQuery } from '@tanstack/react-query'
 import {
   type Balance,
   type Chain,
   EthereumTokens,
+  getTokenByLocation,
   getTokenPrice,
   PolkadotTokens,
   type Token,
@@ -127,40 +128,34 @@ export default function useFees(params: UseFeesParams) {
           // - Missing: defaults to true, but user proceeds at own risk
           const origin: FeeDetails[] = []
           if (hasParaspellFee(xcmFee.origin)) {
-            const originToken = getTokenFromSymbol(xcmFee.origin.currency)
+            const feeItem = xcmFee.origin
+            const originToken = getToken(feeItem.asset.location, feeItem.asset.symbol)
             origin.push({
               title: 'Execution fees',
               chain: sourceChain,
               sufficient:
-                xcmFee.origin.sufficient === undefined
-                  ? 'undetermined'
-                  : xcmFee.origin.sufficient
-                    ? 'sufficient'
-                    : 'insufficient',
+                feeItem.sufficient === undefined ? 'undetermined' : feeItem.sufficient ? 'sufficient' : 'insufficient',
               amount: {
-                amount: xcmFee.origin.fee,
+                amount: feeItem.fee,
                 token: originToken,
-                inDollars: await getTokenAmountInDollars(originToken, xcmFee.origin.fee),
+                inDollars: await getTokenAmountInDollars(originToken, feeItem.fee),
               },
             })
           }
 
           const destination: FeeDetails[] = []
           if (hasParaspellFee(xcmFee.destination)) {
-            const destinationToken = getTokenFromSymbol(xcmFee.destination.currency)
+            const feeItem = xcmFee.destination
+            const destinationToken = getToken(feeItem.asset.location, feeItem.asset.symbol)
             destination.push({
               title: 'Delivery fees',
               chain: destinationChain,
               sufficient:
-                xcmFee.destination.sufficient === undefined
-                  ? 'undetermined'
-                  : xcmFee.destination.sufficient
-                    ? 'sufficient'
-                    : 'insufficient',
+                feeItem.sufficient === undefined ? 'undetermined' : feeItem.sufficient ? 'sufficient' : 'insufficient',
               amount: {
-                amount: xcmFee.destination.fee,
+                amount: feeItem.fee,
                 token: destinationToken,
-                inDollars: await getTokenAmountInDollars(destinationToken, xcmFee.destination.fee),
+                inDollars: await getTokenAmountInDollars(destinationToken, feeItem.fee),
               },
             })
           }
@@ -170,21 +165,22 @@ export default function useFees(params: UseFeesParams) {
           if (xcmFee.hops.length > 0) {
             const isSwapping = isSwap({ sourceToken, destinationToken })
             for (const hop of xcmFee.hops) {
-              if (hasParaspellFee(hop.result)) {
-                const hopToken = getTokenFromSymbol(hop.result.currency)
+              const hopFeeItem = hop.result
+              if (hasParaspellFee(hopFeeItem)) {
+                const hopToken = getToken(hopFeeItem.asset.location, hopFeeItem.asset.symbol)
                 const hopFeeDetailItem: FeeDetails = {
                   title: isBridgeToEthereum ? 'Bridging fees' : isSwapping ? 'Swap fees' : 'Routing fees',
                   chain: mapParaspellChainToTurtleRegistry(hop.chain),
                   sufficient:
-                    hop.result.sufficient === undefined
+                    hopFeeItem.sufficient === undefined
                       ? 'undetermined'
-                      : hop.result.sufficient
+                      : hopFeeItem.sufficient
                         ? 'sufficient'
                         : 'insufficient',
                   amount: {
-                    amount: hop.result.fee,
+                    amount: hopFeeItem.fee,
                     token: hopToken,
-                    inDollars: await getTokenAmountInDollars(hopToken, hop.result.fee),
+                    inDollars: await getTokenAmountInDollars(hopToken, hopFeeItem.fee),
                   },
                 }
                 intermediate.push(hopFeeDetailItem)
@@ -194,7 +190,7 @@ export default function useFees(params: UseFeesParams) {
 
           const feeList: FeeDetails[] = [...origin, ...intermediate, ...destination]
 
-          // NOTE: if dry run fails, it means that we don't have bridging fees in the fee list, so we need to add it manually (this is a way around while paraspell work on improving this)
+          // NOTE: as a fallback, if the bridging fees are not automatically included in the fee list, we add them manually
           // The bridging fee when sending to Ethereum is paid in DOT
           if (
             destinationChain.network === 'Ethereum' &&
@@ -453,4 +449,12 @@ const useCachedBridgingFee = (bridgeFeeToken: Token | null, shouldRun: boolean) 
     enabled: !!bridgeFeeToken,
     staleTime: CACHE_REVALIDATE_IN_SECONDS * 1000,
   })
+}
+
+function getToken(location: TLocation | undefined, symbol: string) {
+  const token = location ? getTokenByLocation(location) : getTokenFromSymbol(symbol)
+  if (!token) {
+    throw new Error(`Token not found for location: ${JSON.stringify(location)}`)
+  }
+  return token as Token
 }
