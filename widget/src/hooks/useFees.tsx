@@ -11,11 +11,7 @@ import {
 } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import type { Sender } from '@/hooks/useTransfer'
-import {
-  getParaSpellChain,
-  mapParaspellChainToTurtleRegistry,
-  moonbeamSymbolToRegistry,
-} from '@/lib/paraspell/transfer'
+import { getParaSpellChain, getTokenFromSymbol, mapParaspellChainToTurtleRegistry } from '@/lib/paraspell/transfer'
 import { getFeeEstimate } from '@/lib/snowbridge'
 import type { FeeDetails } from '@/models/transfer'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
@@ -395,19 +391,6 @@ async function getTokenAmountInDollars(token: Token, amount: bigint): Promise<nu
   } catch {
     return 0
   }
-}
-
-function getTokenFromSymbol(symbolParam: string): Token {
-  // Moonbeam uses ERC-20 wrapped tokens with 'xc' prefix (e.g., xcDOT for wrapped DOT)
-  // Strip the 'xc' prefix to map to the base token in our registry
-  const symbol = moonbeamSymbolToRegistry(symbolParam)
-  const symbolUpper = symbol.toUpperCase()
-  const tokensBySymbol = { ...EthereumTokens, ...PolkadotTokens }
-  const token = tokensBySymbol[symbolUpper as keyof typeof tokensBySymbol]
-  if (!token) {
-    throw new Error(`Token not found for symbol: ${symbolUpper}`)
-  }
-  return token as Token
 }
 
 // Checks if a Paraspell fee item has actual fees to be paid
