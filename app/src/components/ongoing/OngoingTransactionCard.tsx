@@ -19,8 +19,6 @@ interface OngoingTransactionCardProps {
 }
 
 export default function OngoingTransactionCard({ direction, transfer, status }: OngoingTransactionCardProps) {
-  console.log(transfer)
-
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
