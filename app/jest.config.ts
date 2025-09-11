@@ -12,7 +12,7 @@ const config: Config = {
   // Add more setup options before each test is run
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
-    '^@paraspell/xcm-router$': '<rootDir>/node_modules/@paraspell/xcm-router/dist/index.d.ts',
+    '^@paraspell/xcm-router$': '<rootDir>/node_modules/@paraspell/xcm-router/dist/index.cjs',
     '^@velocitylabs-org/turtle-registry(.*)$': '<rootDir>/../packages/registry/src$1',
   },
 }
