@@ -19,6 +19,10 @@ interface OngoingTransactionCardProps {
 }
 
 export default function OngoingTransactionCard({ direction, transfer, status }: OngoingTransactionCardProps) {
+  const isGenericSwap =
+    isSwap(transfer) ||
+    isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
+
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -35,8 +39,7 @@ export default function OngoingTransactionCard({ direction, transfer, status }: 
           color={colors['turtle-secondary']}
         />
         <div className="no-letter-spacing text-xl font-normal text-turtle-foreground">
-          {isSwap(transfer) ||
-          isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken) ? (
+          {isGenericSwap ? (
             <span className="flex items-center gap-1">
               {formatAmount(toHuman(transfer.destinationAmount as string, transfer.destinationToken as Token))}{' '}
               <TokenLogo token={transfer.destinationToken as Token} sourceChain={transfer.destChain} size={25} />

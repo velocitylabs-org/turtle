@@ -1,3 +1,4 @@
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import ChainflipRefund from '@/components/ChainflipRefund'
@@ -16,6 +17,7 @@ interface TransactionDialogProps {
 }
 
 export default function TransactionDialog({ tx }: TransactionDialogProps) {
+  const isGenericSwap = isSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
   return (
     <Dialog>
       <DialogTrigger className="w-full">
@@ -71,11 +73,11 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             >
               <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
               <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={35} />
-              {isSwap(tx) && (
+              {isGenericSwap && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
-                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
-                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={35} />
+                  <span>{formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token))}</span>
+                  <TokenLogo token={tx.destinationToken as Token} sourceChain={tx.destChain} size={35} />
                 </>
               )}
             </h3>
@@ -157,15 +159,16 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                 }
               />
 
-              {isSwap(tx) && (
+              {isGenericSwap && (
                 <SummaryRow
                   label="Amount Received"
-                  amount={formatAmount(toHuman(tx.destinationAmount, tx.destinationToken), 'Long')}
-                  symbol={tx.destinationToken.symbol}
+                  amount={formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token), 'Long')}
+                  symbol={tx.destinationToken?.symbol as string}
                   usdValue={
                     typeof tx.destinationTokenUSDValue === 'number'
                       ? formatAmount(
-                          toHuman(tx.destinationAmount, tx.destinationToken) * (tx.destinationTokenUSDValue ?? 0),
+                          toHuman(tx.destinationAmount as string, tx.destinationToken as Token) *
+                            (tx.destinationTokenUSDValue ?? 0),
                           'Long',
                         )
                       : undefined

@@ -1,3 +1,4 @@
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { useCallback } from 'react'
@@ -27,7 +28,13 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
   const sourceAmountHuman = toHuman(transfer.sourceAmount, transfer.sourceToken)
   const sourceAmountUSD = sourceAmountHuman * (transfer.sourceTokenUSDValue ?? 0)
 
-  const destinationAmountHuman = isSwap(transfer) ? toHuman(transfer.destinationAmount, transfer.destinationToken) : 0
+  const isGenericSwap =
+    isSwap(transfer) ||
+    isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
+
+  const destinationAmountHuman = isGenericSwap
+    ? toHuman(transfer.destinationAmount as string, transfer.destinationToken as Token)
+    : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
 
   const getStatus = useCallback(
@@ -78,11 +85,11 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
               <span>{formatAmount(sourceAmountHuman, 'Long')}</span>
               <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={35} />
 
-              {isSwap(transfer) && (
+              {isGenericSwap && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
                   <span>{formatAmount(destinationAmountHuman, 'Long')}</span>
-                  <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={35} />
+                  <TokenLogo token={transfer.destinationToken as Token} sourceChain={transfer.destChain} size={35} />
                 </>
               )}
             </h3>
@@ -137,11 +144,11 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
                 usdValue={formatAmount(sourceAmountUSD, 'Long')}
               />
 
-              {isSwap(transfer) && (
+              {isGenericSwap && (
                 <SummaryRow
                   label="Amount Received"
                   amount={formatAmount(destinationAmountHuman, 'Long')}
-                  symbol={transfer.destinationToken.symbol}
+                  symbol={transfer.destinationToken?.symbol as string}
                   usdValue={formatAmount(destinationAmountUSD, 'Long')}
                 />
               )}
