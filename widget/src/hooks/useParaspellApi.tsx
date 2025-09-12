@@ -377,19 +377,23 @@ const useParaspellApi = () => {
         ...result,
       }
     } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred'
+      const failureResult = {
+        success: false,
+        failureReason: errorMessage,
+        currency: params.sourceToken.symbol,
+      } as TDryRunChainResult
+
       if (e instanceof Error && e.message.includes('DryRunApi is not available'))
         return {
           type: 'Unsupported',
-          origin: { success: false, failureReason: e.message },
+          origin: failureResult,
           hops: [],
         }
 
       return {
         type: 'Supported',
-        origin: {
-          success: false,
-          failureReason: (e as Error).message,
-        },
+        origin: failureResult,
         hops: [],
       }
     }

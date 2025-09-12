@@ -126,7 +126,7 @@ class XcmTransferBuilderManager {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getXcmFee()
     } catch (error) {
-      console.error('Failed to get transferable amount: ', error)
+      console.error('Failed to get xcm fees: ', error)
       throw error
     }
   }
@@ -141,7 +141,7 @@ class XcmTransferBuilderManager {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getOriginXcmFee()
     } catch (error) {
-      console.error('Failed to get transferable amount: ', error)
+      console.error('Failed to get origin xcm fees: ', error)
       throw error
     }
   }
