@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
@@ -32,7 +32,8 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
   const status = tx.result
   const transferFailed = status === TxStatus.Failed
 
-  const isGenericSwap = isSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
+  const isSwap =
+    isPolkadotSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
 
   return (
     <div className={cn('flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4', getBorder(status))}>
@@ -46,7 +47,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              {isGenericSwap ? (
+              {isSwap ? (
                 <>
                   <span>{formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token))}</span>
                   <TokenLogo token={tx.destinationToken as Token} sourceChain={tx.destChain} size={25} />

@@ -6,7 +6,7 @@ import type { StoredTransfer } from '@/models/transfer'
 import type { Direction } from '@/services/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import LoadingIcon from '../svg/LoadingIcon'
@@ -19,8 +19,8 @@ interface OngoingTransactionCardProps {
 }
 
 export default function OngoingTransactionCard({ direction, transfer, status }: OngoingTransactionCardProps) {
-  const isGenericSwap =
-    isSwap(transfer) ||
+  const isSwap =
+    isPolkadotSwap(transfer) ||
     isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
 
   return (
@@ -39,7 +39,7 @@ export default function OngoingTransactionCard({ direction, transfer, status }: 
           color={colors['turtle-secondary']}
         />
         <div className="no-letter-spacing text-xl font-normal text-turtle-foreground">
-          {isGenericSwap ? (
+          {isSwap ? (
             <span className="flex items-center gap-1">
               {formatAmount(toHuman(transfer.destinationAmount as string, transfer.destinationToken as Token))}{' '}
               <TokenLogo token={transfer.destinationToken as Token} sourceChain={transfer.destChain} size={25} />

@@ -7,7 +7,7 @@ import type { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, getExplorerLink, isSwap, toHuman } from '@/utils/transfer'
+import { formatAmount, getExplorerLink, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import { SummaryRow } from '../completed/TransactionDialog'
 import ArrowRight from '../svg/ArrowRight'
@@ -28,11 +28,11 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
   const sourceAmountHuman = toHuman(transfer.sourceAmount, transfer.sourceToken)
   const sourceAmountUSD = sourceAmountHuman * (transfer.sourceTokenUSDValue ?? 0)
 
-  const isGenericSwap =
-    isSwap(transfer) ||
+  const isSwap =
+    isPolkadotSwap(transfer) ||
     isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
 
-  const destinationAmountHuman = isGenericSwap
+  const destinationAmountHuman = isSwap
     ? toHuman(transfer.destinationAmount as string, transfer.destinationToken as Token)
     : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
@@ -85,7 +85,7 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
               <span>{formatAmount(sourceAmountHuman, 'Long')}</span>
               <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={35} />
 
-              {isGenericSwap && (
+              {isSwap && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
                   <span>{formatAmount(destinationAmountHuman, 'Long')}</span>
@@ -144,7 +144,7 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
                 usdValue={formatAmount(sourceAmountUSD, 'Long')}
               />
 
-              {isGenericSwap && (
+              {isSwap && (
                 <SummaryRow
                   label="Amount Received"
                   amount={formatAmount(destinationAmountHuman, 'Long')}
