@@ -141,7 +141,7 @@ class XcmTransferBuilderManager {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getOriginXcmFee()
     } catch (error) {
-      console.error('Failed to get origin scm fees: ', error)
+      console.error('Failed to get origin xcm fees: ', error)
       throw error
     }
   }

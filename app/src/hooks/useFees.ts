@@ -137,34 +137,42 @@ export default function useFees(params: UseFeesParams) {
           // - Missing: defaults to true, but user proceeds at own risk
           const origin: FeeDetails[] = []
           if (hasParaspellFee(xcmFee.origin)) {
-            const feeItem = xcmFee.origin
-            const originToken = getToken(feeItem.asset.location, feeItem.asset.symbol)
+            const originFee = xcmFee.origin
+            const originToken = getToken(originFee.asset.location, originFee.asset.symbol)
             origin.push({
               title: 'Execution fees',
               chain: sourceChain,
               sufficient:
-                feeItem.sufficient === undefined ? 'undetermined' : feeItem.sufficient ? 'sufficient' : 'insufficient',
+                originFee.sufficient === undefined
+                  ? 'undetermined'
+                  : originFee.sufficient
+                    ? 'sufficient'
+                    : 'insufficient',
               amount: {
-                amount: feeItem.fee,
+                amount: originFee.fee,
                 token: originToken,
-                inDollars: await getTokenAmountInDollars(originToken, feeItem.fee),
+                inDollars: await getTokenAmountInDollars(originToken, originFee.fee),
               },
             })
           }
 
           const destination: FeeDetails[] = []
           if (hasParaspellFee(xcmFee.destination)) {
-            const feeItem = xcmFee.destination
-            const destinationToken = getToken(feeItem.asset.location, feeItem.asset.symbol)
+            const destinationFee = xcmFee.destination
+            const destinationToken = getToken(destinationFee.asset.location, destinationFee.asset.symbol)
             destination.push({
               title: 'Delivery fees',
               chain: destinationChain,
               sufficient:
-                feeItem.sufficient === undefined ? 'undetermined' : feeItem.sufficient ? 'sufficient' : 'insufficient',
+                destinationFee.sufficient === undefined
+                  ? 'undetermined'
+                  : destinationFee.sufficient
+                    ? 'sufficient'
+                    : 'insufficient',
               amount: {
-                amount: feeItem.fee,
+                amount: destinationFee.fee,
                 token: destinationToken,
-                inDollars: await getTokenAmountInDollars(destinationToken, feeItem.fee),
+                inDollars: await getTokenAmountInDollars(destinationToken, destinationFee.fee),
               },
             })
           }
@@ -174,22 +182,22 @@ export default function useFees(params: UseFeesParams) {
           if (xcmFee.hops.length > 0) {
             const isSwapping = isSwap({ sourceToken, destinationToken })
             for (const hop of xcmFee.hops) {
-              const hopFeeItem = hop.result
-              if (hasParaspellFee(hopFeeItem)) {
-                const hopToken = getToken(hopFeeItem.asset.location, hopFeeItem.asset.symbol)
+              const hopFee = hop.result
+              if (hasParaspellFee(hopFee)) {
+                const hopToken = getToken(hopFee.asset.location, hopFee.asset.symbol)
                 const hopFeeDetailItem: FeeDetails = {
                   title: isBridgeToEthereum ? 'Bridging fees' : isSwapping ? 'Swap fees' : 'Routing fees',
                   chain: mapParaspellChainToTurtleRegistry(hop.chain),
                   sufficient:
-                    hopFeeItem.sufficient === undefined
+                    hopFee.sufficient === undefined
                       ? 'undetermined'
-                      : hopFeeItem.sufficient
+                      : hopFee.sufficient
                         ? 'sufficient'
                         : 'insufficient',
                   amount: {
-                    amount: hopFeeItem.fee,
+                    amount: hopFee.fee,
                     token: hopToken,
-                    inDollars: await getTokenAmountInDollars(hopToken, hopFeeItem.fee),
+                    inDollars: await getTokenAmountInDollars(hopToken, hopFee.fee),
                   },
                 }
                 intermediate.push(hopFeeDetailItem)
