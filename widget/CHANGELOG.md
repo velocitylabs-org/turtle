@@ -1,5 +1,19 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.1.1
+
+### Patch Changes
+
+- 811dbee: Fixed fetch balance and wallet connection
+- 356267c: Removed unused files, unused dependecies and exports
+- e01ce5e: bump ps to 10.11.6 and papi to 1.15.2
+- 5c7de4b: Migrate Paraspell to v11
+- 68a404b: Replace ESLint + Prettier with Biome
+- 7573de4: Add handling for new fees and introduce new TxSummary design
+- af24057: Fixed container height
+- 4c0cb0c: Bump Paraspell sdk + router to 10.11.8
+- 95a4d70: Created shared components to unify the trasaction history view between app and widget
+
 ## 0.1.0
 
 ### Minor Changes
