@@ -1,4 +1,3 @@
-import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
@@ -47,10 +46,10 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              {isSwap ? (
+              {isSwap && tx.destinationAmount && tx.destinationToken ? (
                 <>
-                  <span>{formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token))}</span>
-                  <TokenLogo token={tx.destinationToken as Token} sourceChain={tx.destChain} size={25} />
+                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
+                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={25} />
                 </>
               ) : (
                 <>

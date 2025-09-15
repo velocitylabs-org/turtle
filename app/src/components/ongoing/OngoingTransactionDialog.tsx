@@ -32,9 +32,10 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
     isPolkadotSwap(transfer) ||
     isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
 
-  const destinationAmountHuman = isSwap
-    ? toHuman(transfer.destinationAmount as string, transfer.destinationToken as Token)
-    : 0
+  const destinationAmountHuman =
+    isSwap && transfer.destinationAmount && transfer.destinationToken
+      ? toHuman(transfer.destinationAmount, transfer.destinationToken)
+      : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
 
   const getStatus = useCallback(

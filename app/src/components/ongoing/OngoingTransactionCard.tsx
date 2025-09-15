@@ -1,4 +1,3 @@
-import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
@@ -39,10 +38,10 @@ export default function OngoingTransactionCard({ direction, transfer, status }: 
           color={colors['turtle-secondary']}
         />
         <div className="no-letter-spacing text-xl font-normal text-turtle-foreground">
-          {isSwap ? (
+          {isSwap && transfer.destinationAmount && transfer.destinationToken ? (
             <span className="flex items-center gap-1">
-              {formatAmount(toHuman(transfer.destinationAmount as string, transfer.destinationToken as Token))}{' '}
-              <TokenLogo token={transfer.destinationToken as Token} sourceChain={transfer.destChain} size={25} />
+              {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}{' '}
+              <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={25} />
             </span>
           ) : (
             <span className="flex items-center gap-1">
