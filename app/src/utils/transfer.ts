@@ -17,7 +17,8 @@ import { isSameChain } from './routes'
  * Safe version of `convertAmount` that handles `null` and `undefined` params
  */
 export const safeConvertAmount = (input?: number | null, token?: Token | null): bigint | null => {
-  if (input == null || !token) return null
+  if (input == null || Number.isNaN(input) || !Number.isFinite(input) || !token || !Number.isInteger(token.decimals))
+    return null
 
   return BigInt(Math.floor(input * 10 ** token.decimals))
 }
