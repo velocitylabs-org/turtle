@@ -16,8 +16,8 @@ import { ConfigContext } from '@/providers/ConfigProviders'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
-  getAllowedSourceChains,
   getAllowedSourceTokens,
+  sourceChainOptions,
 } from '@/utils/routes'
 import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
@@ -202,8 +202,6 @@ const Transfer: FC = () => {
     isBalanceSufficientForFees &&
     allFeesItemsAreSufficient
 
-  const sourceChainOptions = useMemo(() => getAllowedSourceChains(allowedChains), [allowedChains])
-
   const destinationChainOptions = useMemo(
     () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null, allowedChains),
     [sourceChain, sourceTokenAmount?.token, allowedChains],
@@ -245,7 +243,7 @@ const Transfer: FC = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex w-full max-w-[90vw] h-[90vh] sm:h-[525px] flex-col gap-1 rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+      className="flex w-full max-w-[90vw] flex-col gap-1 rounded-b-3xl border border-t-0 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
     >
       <div className="flex flex-col gap-5">
         {/* Source Chain */}

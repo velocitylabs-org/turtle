@@ -37,11 +37,10 @@ export function formatCompletedTransferDate(dateString: string | Date): string {
  */
 export const formatOngoingTransferDate = (date: string | Date): string => {
   const dateFrom = typeof date === 'string' ? new Date(date) : date
-  return dateFrom.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  return dateFrom.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: 'numeric',
     second: 'numeric',
+    hour12: true,
   })
 }

@@ -2,6 +2,7 @@
 import { type Chain, chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import TransactionDialog from '@/components/completed/TransactionDialog'
+import { useChainflipTracker } from '@/hooks/useChainflipTracker'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransfersCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
@@ -9,7 +10,7 @@ import type { CompletedTransfer } from '@/models/transfer'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { formatCompletedTransferDate } from '@/utils/datetime'
 import { formatTransfersByDate } from '@/utils/transfer'
-import OngoingTransferDialog from './ongoing/OngoingTransferDialog'
+import OngoingTransferDialog from './ongoing/OngoingTransactionDialog'
 
 type TransactionHistoryProps = {
   transfers?: CompletedTransfer[]
@@ -24,6 +25,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
 
   useOngoingTransfersCleaner(ongoingTxs)
   useOcelloidsSubscribe(ongoingTxs)
+  useChainflipTracker(ongoingTxs)
 
   return (
     <div

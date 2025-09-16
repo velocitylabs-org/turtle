@@ -3,20 +3,25 @@ import { TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import type { StoredTransfer } from '@/models/transfer'
 import type { Direction } from '@/services/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import LoadingIcon from '../svg/LoadingIcon'
 import TransferEstimate from '../TransferEstimate'
 
-interface OngoingTransferProps {
+interface OngoingTransactionCardProps {
   direction: Direction
   transfer: StoredTransfer
   status: string
 }
 
-export default function OngoingTransfer({ direction, transfer, status }: OngoingTransferProps) {
+export default function OngoingTransactionCard({ direction, transfer, status }: OngoingTransactionCardProps) {
+  const isSwap =
+    isPolkadotSwap(transfer) ||
+    isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
+
   return (
     <div className="mb-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
       <div className="mb-2 flex items-center justify-between">
@@ -33,7 +38,7 @@ export default function OngoingTransfer({ direction, transfer, status }: Ongoing
           color={colors['turtle-secondary']}
         />
         <div className="no-letter-spacing text-xl font-normal text-turtle-foreground">
-          {isSwap(transfer) ? (
+          {isSwap && transfer.destinationAmount && transfer.destinationToken ? (
             <span className="flex items-center gap-1">
               {formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}{' '}
               <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={25} />
