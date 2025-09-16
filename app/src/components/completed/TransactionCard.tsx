@@ -1,9 +1,11 @@
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
-import { formatHours } from '@/utils/datetime'
-import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
+import { formatOngoingTransferDate } from '@/utils/datetime'
+import { formatAmount, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import Fail from '../svg/Fail'
@@ -30,6 +32,9 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
   const status = tx.result
   const transferFailed = status === TxStatus.Failed
 
+  const isSwap =
+    isPolkadotSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
+
   return (
     <div className={cn('flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4', getBorder(status))}>
       <div className="w-full space-y-2">
@@ -42,10 +47,10 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
                 transferFailed && 'text-turtle-error',
               )}
             >
-              {isSwap(tx) ? (
+              {isSwap ? (
                 <>
-                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
-                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={25} />
+                  <span>{formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token))}</span>
+                  <TokenLogo token={tx.destinationToken as Token} sourceChain={tx.destChain} size={25} />
                 </>
               ) : (
                 <>
@@ -94,7 +99,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
               transferFailed ? 'text-turtle-error' : 'text-turtle-level5',
             )}
           >
-            {formatHours(tx.date)}
+            {formatOngoingTransferDate(tx.date)}
           </div>
         </div>
         <div className={cn('flex items-center justify-start space-x-4', transferFailed && 'text-turtle-error-dark')}>

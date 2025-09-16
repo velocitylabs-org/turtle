@@ -1,4 +1,4 @@
-import { deepEqual, type TMultiLocation } from '@paraspell/sdk'
+import { deepEqual, type TLocation } from '@paraspell/sdk'
 import { MainnetRegistry } from '../mainnet'
 import type { Token, TokenPrice } from '../types'
 
@@ -21,9 +21,9 @@ export const getTokenPrice = async (token: Token): Promise<TokenPrice | null> =>
   }
 }
 
-export function getTokenByMultilocation(multilocation: TMultiLocation): Token | undefined {
+export function getTokenByLocation(location: TLocation): Token | undefined {
   // If turtle doesn't support the token it won't be found
-  return MainnetRegistry.tokens.find(token => deepEqual(token.multilocation, multilocation))
+  return MainnetRegistry.tokens.find(token => deepEqual(token.location, location))
 }
 
 export function isSameToken(token1: Token, token2: Token): boolean {

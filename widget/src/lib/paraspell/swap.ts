@@ -1,17 +1,13 @@
-import { getExchangePairs, RouterBuilder } from '@paraspell/xcm-router'
+import { getExchangePairs } from '@paraspell/xcm-router'
 import {
   type Chain,
-  getTokenByMultilocation,
+  getTokenByLocation,
   Hydration,
   isSameToken,
   REGISTRY,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
-import type { TransferParams } from '@/hooks/useTransfer'
-import type { SubstrateAccount } from '@/stores/substrateWalletStore'
-import { getSenderAddress } from '@/utils/address'
 import { deduplicate, isSameChain } from '@/utils/routes'
-import { getParaSpellNode, getParaspellToken } from './transfer'
 
 // We only support Hydration for now.
 /** contains all supported paraspell dexes mapped to the chain they run on */
@@ -19,68 +15,7 @@ const DEX_TO_CHAIN_MAP = {
   HydrationDex: Hydration,
 } as const
 
-type Dex = keyof typeof DEX_TO_CHAIN_MAP
-
-export const createRouterPlan = async (params: TransferParams, slippagePct: string = '1') => {
-  const { sourceChain, destinationChain, sourceToken, destinationToken, sourceAmount, recipient, sender } = params
-
-  const senderAddress = await getSenderAddress(sender)
-  const account = params.sender as SubstrateAccount
-  const sourceChainFromId = getParaSpellNode(sourceChain)
-  const destinationChainFromId = getParaSpellNode(destinationChain)
-
-  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
-  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
-    throw new Error('Transfer failed: Ethereum is not supported.')
-
-  const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
-  const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
-
-  const routerPlan = await RouterBuilder()
-    .from(sourceChainFromId)
-    .to(destinationChainFromId)
-    .exchange('HydrationDex')
-    .currencyFrom(currencyIdFrom)
-    .currencyTo(currencyTo)
-    .amount(sourceAmount)
-    .slippagePct(slippagePct)
-    .senderAddress(senderAddress)
-    .recipientAddress(recipient)
-    // biome-ignore lint/suspicious/noExplicitAny: any
-    .signer(account.pjsSigner as any)
-    .buildTransactions()
-
-  return routerPlan
-}
-
-export const getExchangeOutputAmount = async (
-  sourceChain: Chain,
-  destinationChain: Chain,
-  sourceToken: Token,
-  destinationToken: Token,
-  /** Amount in the source token's decimal base */
-  amount: string,
-): Promise<bigint> => {
-  const sourceChainFromId = getParaSpellNode(sourceChain)
-  const destinationChainFromId = getParaSpellNode(destinationChain)
-  if (!sourceChainFromId || !destinationChainFromId) throw new Error('Transfer failed: chain id not found.')
-  if (sourceChainFromId === 'Ethereum' || destinationChainFromId === 'Ethereum')
-    throw new Error('Transfer failed: Ethereum is not supported.')
-
-  const currencyIdFrom = getParaspellToken(sourceToken, sourceChainFromId)
-  const currencyTo = getParaspellToken(destinationToken, destinationChainFromId)
-
-  const amountOut = await RouterBuilder()
-    .from(sourceChainFromId)
-    .to(destinationChainFromId)
-    .exchange('HydrationDex')
-    .currencyFrom(currencyIdFrom)
-    .currencyTo(currencyTo)
-    .amount(amount)
-    .getBestAmountOut()
-
-  return amountOut.amountOut
-}
+export type Dex = keyof typeof DEX_TO_CHAIN_MAP
 
 /** returns all supported dex chains */
 const getSupportedDexChains = () => Object.values(DEX_TO_CHAIN_MAP)
@@ -111,10 +46,10 @@ const getDexPairs = (dex: Dex | [Dex, Dex, ...Dex[]]): [Token, Token][] => {
   const turtlePairs = pairs
     .map(pair => {
       const [token1, token2] = pair
-      if (!token1.multiLocation || !token2.multiLocation) return null
+      if (!token1.location || !token2.location) return null
 
-      const t1 = getTokenByMultilocation(token1.multiLocation)
-      const t2 = getTokenByMultilocation(token2.multiLocation)
+      const t1 = getTokenByLocation(token1.location)
+      const t2 = getTokenByLocation(token2.location)
       if (!t1 || !t2) return null // not supported by turtle registry
       return [t1, t2] as [Token, Token]
     })

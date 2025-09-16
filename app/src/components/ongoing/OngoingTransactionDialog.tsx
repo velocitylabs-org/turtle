@@ -1,31 +1,40 @@
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { useCallback } from 'react'
+import ChainflipRefund from '@/components/ChainflipRefund'
 import type { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, getExplorerLink, isSwap, toHuman } from '@/utils/transfer'
+import { formatAmount, getExplorerLink, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import { SummaryRow } from '../completed/TransactionDialog'
 import ArrowRight from '../svg/ArrowRight'
 import ArrowUpRight from '../svg/ArrowUpRight'
 import TransferEstimate from '../TransferEstimate'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
-import OngoingTransfer from './OngoingTransfer'
+import OngoingTransactionCard from './OngoingTransactionCard'
 
-interface OngoingTransferDialogProps {
+interface OngoingTransactionDialogProps {
   transfer: StoredTransfer
   status?: string
 }
 
-export default function OngoingTransferDialog({ transfer, status }: OngoingTransferDialogProps) {
+export default function OngoingTransactionDialog({ transfer, status }: OngoingTransactionDialogProps) {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
   const sourceAmountHuman = toHuman(transfer.sourceAmount, transfer.sourceToken)
   const sourceAmountUSD = sourceAmountHuman * (transfer.sourceTokenUSDValue ?? 0)
 
-  const destinationAmountHuman = isSwap(transfer) ? toHuman(transfer.destinationAmount, transfer.destinationToken) : 0
+  const isSwap =
+    isPolkadotSwap(transfer) ||
+    isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
+
+  const destinationAmountHuman = isSwap
+    ? toHuman(transfer.destinationAmount as string, transfer.destinationToken as Token)
+    : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
 
   const getStatus = useCallback(
@@ -40,7 +49,7 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransfer transfer={transfer} status={getStatus(status)} direction={direction} />
+        <OngoingTransactionCard transfer={transfer} status={getStatus(status)} direction={direction} />
       </DialogTrigger>
       <DialogContent
         className="ongoing-transfer-dialog max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem]"
@@ -76,11 +85,11 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
               <span>{formatAmount(sourceAmountHuman, 'Long')}</span>
               <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={35} />
 
-              {isSwap(transfer) && (
+              {isSwap && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
                   <span>{formatAmount(destinationAmountHuman, 'Long')}</span>
-                  <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={35} />
+                  <TokenLogo token={transfer.destinationToken as Token} sourceChain={transfer.destChain} size={35} />
                 </>
               )}
             </h3>
@@ -135,11 +144,11 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                 usdValue={formatAmount(sourceAmountUSD, 'Long')}
               />
 
-              {isSwap(transfer) && (
+              {isSwap && (
                 <SummaryRow
                   label="Amount Received"
                   amount={formatAmount(destinationAmountHuman, 'Long')}
-                  symbol={transfer.destinationToken.symbol}
+                  symbol={transfer.destinationToken?.symbol as string}
                   usdValue={formatAmount(destinationAmountUSD, 'Long')}
                 />
               )}
@@ -154,6 +163,16 @@ export default function OngoingTransferDialog({ transfer, status }: OngoingTrans
                     usdValue={formatAmount(fee.amount.inDollars, 'Long')}
                   />
                 ))}
+
+              <ChainflipRefund
+                isSwap={isChainflipSwap(
+                  transfer.sourceChain,
+                  transfer.destChain,
+                  transfer.sourceToken,
+                  transfer.destinationToken,
+                )}
+                className="pt-5 pb-2"
+              />
 
               {explorerLink && (
                 <a

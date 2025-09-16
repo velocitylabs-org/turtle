@@ -1,4 +1,4 @@
-import { chainsByUid } from '@velocitylabs-org/turtle-registry'
+import { chainflipRoutes, chainsByUid } from '@velocitylabs-org/turtle-registry'
 import type { TxDetailView } from '@/models/tx-detail-view'
 
 interface ExplorerLinks {
@@ -49,6 +49,12 @@ const explorers: Record<string, ExplorerConfig> = {
     baseUrl: 'https://xcscan.io',
     txPath: '/tx/#',
     addressPath: '/?search=',
+  },
+  chainflipScan: {
+    name: 'ChainflipScan',
+    baseUrl: 'https://scan.chainflip.io',
+    txPath: '/swaps/',
+    addressPath: '/channels/',
   },
 }
 
@@ -104,6 +110,18 @@ export default function getExplorerLinks(tx: TxDetailView): ExplorerLinks[] | un
       url: `https://${chainName.toLowerCase()}.subscan.io/account/${senderAddress}?tab=xcm_transfer`,
     }
   }
+
+  const isChainflipSwap = chainflipRoutes.some(
+    route =>
+      route.from.uid === tx.sourceChainUid &&
+      route.to.uid === tx.destinationChainUid &&
+      route.pairs.some(
+        ([srcToken, dstToken]) => srcToken.id === tx.sourceTokenId && dstToken.id === tx.destinationTokenId,
+      ),
+  )
+
+  // Chainflip swaps do not rely on network
+  if (isChainflipSwap) return [buildHashLink(explorers.chainflipScan, 'all')]
 
   switch (network) {
     case 'Ethereum': {

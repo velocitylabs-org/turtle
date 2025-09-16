@@ -1,23 +1,20 @@
-import type { TDryRunNodeResult } from '@paraspell/sdk'
+import type { TDryRunChainResult } from '@paraspell/sdk'
 import { getTokenPrice, isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
 import type { TxEvent } from 'polkadot-api'
 import { InvalidTxError } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
+import type { Client } from 'viem'
 import { type Config, useConnectorClient } from 'wagmi'
 import { moonbeam } from 'wagmi/chains'
-import { createRouterPlan } from '@/lib/paraspell/swap'
-import {
-  createTransferTx,
-  type DryRunResult,
-  dryRun,
-  isExistentialDepositMetAfterTransfer,
-  moonbeamTransfer,
-} from '@/lib/paraspell/transfer'
+import type { DryRunResult } from '@/lib/paraspell/transfer'
 import { extractPapiEvent } from '@/lib/polkadot/papi'
 import { NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { wagmiConfig } from '@/providers/config'
+import evmTransferBuilderManager from '@/services/paraspell/evmTransferBuilder.ts'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder.ts'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder.ts'
 import type { SubstrateAccount } from '@/stores/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics.ts'
@@ -50,7 +47,7 @@ const useParaspellApi = () => {
 
   const handleMoonbeamTransfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
     await switchChain(wagmiConfig, { chainId: moonbeam.id })
-    const hash = await moonbeamTransfer(params, viemClient)
+    const hash = await evmTransferBuilderManager.transferTx(params, viemClient as Client)
 
     const senderAddress = await getSenderAddress(params.sender)
     const sourceTokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
@@ -68,7 +65,6 @@ const useParaspellApi = () => {
       sourceAmount: params.sourceAmount.toString(),
       recipient: params.recipient,
       date,
-      bridgingFee: params.bridgingFee,
       fees: params.fees,
       status: `Submitting to ${params.sourceChain.name}`,
     }
@@ -84,6 +80,7 @@ const useParaspellApi = () => {
         destinationTokenUSDValue,
         date,
       })
+      evmTransferBuilderManager.disconnect(params)
     })
   }
 
@@ -95,7 +92,7 @@ const useParaspellApi = () => {
     // Validate the transfer
     setStatus('Validating')
 
-    const validationResult = await validateTransfer(params)
+    const validationResult = await validatePolkadotTransfer(params)
 
     if (validationResult.type === 'Unsupported') {
       addNotification({
@@ -112,12 +109,12 @@ const useParaspellApi = () => {
       }
 
       if (validationResult.origin.success && validationResult.destination?.success) {
-        const isExistentialDepositMet = await isExistentialDepositMetAfterTransfer(params)
+        const isExistentialDepositMet = await xcmTransferBuilderManager.isExistentialDepositMetAfterTransfer(params)
         if (!isExistentialDepositMet) throw new Error('Transfer failed: existential deposit will not be met.')
       }
     }
 
-    const tx = await createTransferTx(params, params.sourceChain.rpcConnection)
+    const tx = await xcmTransferBuilderManager.createTransferTx(params)
     setStatus('Signing')
 
     const polkadotSigner = getPolkadotSignerFromPjs(
@@ -144,7 +141,6 @@ const useParaspellApi = () => {
           sourceAmount: params.sourceAmount.toString(),
           recipient: params.recipient,
           date,
-          bridgingFee: params.bridgingFee,
           fees: params.fees,
           status: `Submitting to ${params.sourceChain.name}`,
         }
@@ -161,9 +157,11 @@ const useParaspellApi = () => {
               destinationTokenUSDValue,
               date,
             })
+            xcmTransferBuilderManager.disconnect(params)
           })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          xcmTransferBuilderManager.disconnect(params)
         }
       },
       error: callbackError => {
@@ -172,8 +170,12 @@ const useParaspellApi = () => {
           handleSendError(params.sender, callbackError, setStatus)
         }
         handleSendError(params.sender, callbackError, setStatus)
+        xcmTransferBuilderManager.disconnect(params)
       },
-      complete: () => console.log('The transaction is complete'),
+      complete: () => {
+        console.log('The transaction is complete')
+        xcmTransferBuilderManager.disconnect(params)
+      },
     })
 
     setStatus('Sending')
@@ -189,7 +191,7 @@ const useParaspellApi = () => {
     const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
-    const routerPlan = await createRouterPlan(params)
+    const routerPlan = await xcmRouterBuilderManager.createRouterPlan(params)
 
     const firstTransaction = routerPlan.at(0)
     if (!firstTransaction) throw new Error('No steps in router plan')
@@ -218,7 +220,6 @@ const useParaspellApi = () => {
           recipient: params.recipient,
           date,
           fees: params.fees,
-          bridgingFee: params.bridgingFee,
           status: `Submitting to ${params.sourceChain.name}`,
           swapInformation: { plan: routerPlan, currentStep: 0 },
         }
@@ -236,15 +237,22 @@ const useParaspellApi = () => {
               date,
               isSwap: true,
             })
+            xcmRouterBuilderManager.disconnect(params)
           })
         } catch (error) {
           handleSendError(params.sender, error, setStatus, event.txHash?.toString())
+          xcmRouterBuilderManager.disconnect(params)
         }
       },
-      error: callbackError => {
+      // biome-ignore lint/suspicious/noExplicitAny: any
+      error: (callbackError: any) => {
         handleSendError(params.sender, callbackError, setStatus)
+        xcmRouterBuilderManager.disconnect(params)
       },
-      complete: () => console.log('The first swap transaction is complete'),
+      complete: () => {
+        console.log('The first swap transaction is complete')
+        xcmRouterBuilderManager.disconnect(params)
+      },
     })
 
     setStatus('Sending')
@@ -329,7 +337,6 @@ const useParaspellApi = () => {
       sourceTokenUSDValue: transfer.sourceTokenUSDValue ?? 0,
       destinationTokenUSDValue: transfer.destinationTokenUSDValue,
       fees: transfer.fees,
-      bridgingFee: transfer.bridgingFee,
       sender: transfer.sender,
       recipient: transfer.recipient,
       date: transfer.date,
@@ -342,8 +349,8 @@ const useParaspellApi = () => {
     })
   }
 
-  const isDryRunApiSupported = (dryRunNodeResult: TDryRunNodeResult) => {
-    return !(!dryRunNodeResult.success && dryRunNodeResult.failureReason.includes('DryRunApi is not available'))
+  const isDryRunApiSupported = (dryRunChainResult: TDryRunChainResult) => {
+    return !(!dryRunChainResult.success && dryRunChainResult.failureReason.includes('DryRunApi is not available'))
   }
 
   const getFailureReason = (dryRunResult: DryRunResult) => {
@@ -355,9 +362,9 @@ const useParaspellApi = () => {
     return defaultDryRunMessage
   }
 
-  const validateTransfer = async (params: TransferParams): Promise<DryRunResult> => {
+  const validatePolkadotTransfer = async (params: TransferParams): Promise<DryRunResult> => {
     try {
-      const result = await dryRun(params, params.sourceChain.rpcConnection)
+      const result = await xcmTransferBuilderManager.dryRun(params)
       if (!isDryRunApiSupported(result.origin) || (result.destination && !isDryRunApiSupported(result.destination))) {
         return {
           type: 'Unsupported',
@@ -410,7 +417,9 @@ const useParaspellApi = () => {
     setStatus('Idle')
     console.log('Transfer error:', e)
     const cancelledByUser = txWasCancelled(sender, e)
-    const message = cancelledByUser ? 'Transfer rejected' : 'Failed to submit the transfer'
+    const message = cancelledByUser
+      ? 'Transfer rejected'
+      : 'Failed to submit the transfer. Make sure you have enough DOT'
 
     if (txId) removeOngoing(txId)
     // if (!cancelledByUser) captureException(e) - Sentry

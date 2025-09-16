@@ -12,5 +12,5 @@ interface TransferEstimateProps {
 export default function TransferEstimate({ transfer, direction, outlinedProgressBar }: TransferEstimateProps) {
   const progress = useTransferProgress(transfer, direction)
 
-  return <ProgressBar progress={progress} outlinedProgressBar={outlinedProgressBar} />
+  return <ProgressBar progress={transfer.progress ?? progress} outlinedProgressBar={outlinedProgressBar} />
 }

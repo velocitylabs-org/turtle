@@ -1,8 +1,9 @@
-import type { TMultiLocation } from '@paraspell/sdk'
+import type { TLocation } from '@paraspell/sdk'
 import type { Chain, ManualRecipient, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { z } from 'zod'
 
-const originSchema = z.discriminatedUnion('type', [
+const originSchema = z.union([
+  z.object({ type: z.literal('Ethereum'), standard: z.enum(['Native', 'ERC20']) }),
   z.object({ type: z.literal('Ethereum'), bridge: z.enum(['Snowbridge']) }),
   z.object({ type: z.literal('Polkadot'), paraId: z.number() }),
   z.object({ type: z.literal('Solana'), bridge: z.enum(['Wormhole']) }),
@@ -15,7 +16,7 @@ export const tokenSchema: z.ZodType<Token> = z.object({
   symbol: z.string(),
   decimals: z.number(),
   address: z.string(),
-  multilocation: z.custom<TMultiLocation>(),
+  location: z.custom<TLocation>(),
   coingeckoId: z.string().optional(),
   origin: originSchema,
 })

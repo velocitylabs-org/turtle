@@ -16,8 +16,8 @@ import { ConfigContext } from '@/providers/ConfigProviders'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
-  getAllowedSourceChains,
   getAllowedSourceTokens,
+  sourceChainOptions,
 } from '@/utils/routes'
 import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
@@ -62,20 +62,6 @@ const getSourceAmountPlaceholder = ({
   return formatAmount(Number(balanceData?.formatted), 'Longer')
 }
 
-const getReceiveAmountPlaceholder = ({
-  isLoadingOutputAmount,
-  sourceTokenAmount,
-  destinationTokenAmount,
-}: {
-  isLoadingOutputAmount: boolean
-  sourceTokenAmount: TokenAmount | null
-  destinationTokenAmount: TokenAmount | null
-}): string => {
-  if (isLoadingOutputAmount) return 'Loading...'
-  if (sourceTokenAmount?.token?.id === destinationTokenAmount?.token?.id) return ''
-  return 'Receive Amount'
-}
-
 const Transfer: FC = () => {
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
@@ -96,6 +82,7 @@ const Transfer: FC = () => {
     manualRecipientError,
     handleManualRecipientChange,
     sourceTokenAmount,
+    sourceToken,
     destinationTokenAmount,
     sourceTokenAmountError,
     handleMaxButtonClick,
@@ -105,15 +92,12 @@ const Transfer: FC = () => {
     loadingBalance,
     fetchBalance,
     fees,
-    bridgingFee,
+    isBalanceSufficientForFees,
     loadingFees,
-    canPayFees,
-    canPayAdditionalFees,
     refetchFees,
     transferStatus,
     isLoadingOutputAmount,
-    exceedsTransferableBalance,
-    applyTransferableBalance,
+    maxButtonLoading,
   } = useTransferForm()
 
   const { allowedChains, allowedTokens } = use(ConfigContext)
@@ -150,12 +134,6 @@ const Transfer: FC = () => {
     balanceData,
   })
 
-  const receiveAmountPlaceholder = getReceiveAmountPlaceholder({
-    isLoadingOutputAmount,
-    sourceTokenAmount,
-    destinationTokenAmount,
-  })
-
   const shouldDisplayRecipientWalletButton =
     !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
 
@@ -175,9 +153,18 @@ const Transfer: FC = () => {
     !isBalanceAvailable ||
     balanceData?.value === 0n ||
     transferStatus !== 'Idle' ||
-    disableMaxBtnInPolkadotNetwork
+    disableMaxBtnInPolkadotNetwork ||
+    maxButtonLoading
 
-  const shouldDisplayTxSummary = sourceTokenAmount?.token && !allowanceLoading && !requiresErc20SpendApproval
+  const shouldDisplayTxSummary =
+    sourceTokenAmount?.token &&
+    sourceTokenAmount?.amount &&
+    destinationTokenAmount?.token &&
+    !allowanceLoading &&
+    !requiresErc20SpendApproval &&
+    destinationChain &&
+    sourceWallet?.sender &&
+    destinationWallet?.sender
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
@@ -201,21 +188,19 @@ const Transfer: FC = () => {
 
   const durationEstimate = direction ? getDurationEstimate(direction) : undefined
 
-  const canPayBridgingFee = bridgingFee ? canPayAdditionalFees : true
+  const hasFees = fees && fees?.length > 0
+  const allFeesItemsAreSufficient = hasFees && fees.every(fee => fee.sufficient !== 'insufficient')
 
   const isTransferAllowed =
     isValid &&
     !isValidating &&
-    fees &&
+    hasFees &&
     transferStatus === 'Idle' &&
     !requiresErc20SpendApproval &&
     !loadingFees &&
-    canPayFees &&
-    canPayBridgingFee &&
     !isLoadingOutputAmount &&
-    !exceedsTransferableBalance
-
-  const sourceChainOptions = useMemo(() => getAllowedSourceChains(allowedChains), [allowedChains])
+    isBalanceSufficientForFees &&
+    allFeesItemsAreSufficient
 
   const destinationChainOptions = useMemo(
     () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null, allowedChains),
@@ -251,14 +236,14 @@ const Transfer: FC = () => {
   const sourceTokenAmountErrorMessage = useMemo(() => {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
     if (sourceTokenAmountError) return sourceTokenAmountError
-    if (exceedsTransferableBalance) return `We need some of that ${fees?.token?.symbol} to pay fees`
+    if (!isBalanceSufficientForFees) return `We need some of that ${sourceToken?.symbol} to pay fees`
     return undefined
-  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, exceedsTransferableBalance, fees])
+  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, isBalanceSufficientForFees, sourceToken])
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="z-20 flex flex-col gap-1 rounded-2xl border bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+      className="flex w-full max-w-[90vw] flex-col gap-1 rounded-b-3xl border border-t-0 border-turtle-foreground bg-white p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
     >
       <div className="flex flex-col gap-5">
         {/* Source Chain */}
@@ -297,15 +282,16 @@ const Transfer: FC = () => {
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
                           <Button
-                            label="Max"
+                            {...(!maxButtonLoading && { label: 'Max' })}
                             size="sm"
                             variant="outline"
                             className="min-w-[40px]"
                             onClick={handleMaxButtonClick}
                             disabled={shouldDisableMaxButton}
+                            loading={maxButtonLoading}
                           />
                         ),
-                        tooltipContent: 'Max transferrable balance',
+                        tooltipContent: 'Max transferable balance',
                       }}
                       walletProps={{
                         address: sourceWallet?.sender?.address,
@@ -354,10 +340,10 @@ const Transfer: FC = () => {
                       priorityToken: sourceTokenAmount?.token,
                     }}
                     amountProps={{
-                      value: destinationTokenAmount?.amount ?? null,
+                      value: null, // the destination amount is shown in the TxSummary component
                       onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
                       error: errors.destinationTokenAmount?.amount?.message,
-                      placeholder: receiveAmountPlaceholder,
+                      placeholder: '',
                       disabled: true,
                     }}
                     walletProps={{
@@ -393,7 +379,7 @@ const Transfer: FC = () => {
               <Switch
                 {...field}
                 checked={field.value}
-                className="items-start pt-1"
+                className="items-start pt-3"
                 label="Send to a different address"
                 disabled={transferStatus !== 'Idle'}
               />
@@ -403,7 +389,7 @@ const Transfer: FC = () => {
           {/* Manual input warning */}
           <AnimatePresence>
             {manualRecipient.enabled && (
-              <motion.div className="flex items-center gap-1 self-center pt-1" {...manualInputAnimationProps}>
+              <motion.div className="flex items-center gap-1 pt-2" {...manualInputAnimationProps}>
                 <AlertIcon />
                 <span className="text-xs">Double check the address to avoid losing funds</span>
               </motion.div>
@@ -451,25 +437,24 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
-      {shouldDisplayTxSummary && (
-        <TxSummary
-          loading={loadingFees}
-          tokenAmount={sourceTokenAmount}
-          fees={fees}
-          bridgingFee={bridgingFee}
-          durationEstimate={durationEstimate}
-          canPayFees={canPayFees}
-          canPayAdditionalFees={canPayAdditionalFees}
-          direction={direction}
-          className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
-          exceedsTransferableBalance={exceedsTransferableBalance}
-          applyTransferableBalance={applyTransferableBalance}
-        />
-      )}
+      <AnimatePresence>
+        {shouldDisplayTxSummary && (
+          <TxSummary
+            loading={loadingFees}
+            sourceTokenAmount={sourceTokenAmount}
+            destinationTokenAmount={destinationTokenAmount}
+            destChain={destinationChain}
+            fees={fees}
+            durationEstimate={durationEstimate}
+            sourceTokenAmountError={sourceTokenAmountErrorMessage}
+            className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Transfer Button */}
       <SendButton
-        className="my-5 w-full"
+        className="mt-6 sm:mt-9 mb-1 sm:mb-2"
         label="Send"
         size="lg"
         variant="primary"

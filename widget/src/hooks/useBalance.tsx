@@ -1,8 +1,8 @@
-import { getAssetBalance, type TNodeDotKsmWithRelayChains } from '@paraspell/sdk'
+import { getAssetBalance, type TSubstrateChain } from '@paraspell/sdk'
 import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
-import { getNativeToken, getParaSpellNode, getParaspellToken } from '@/lib/paraspell/transfer'
+import { getNativeToken, getParaSpellChain, getParaspellToken } from '@/lib/paraspell/transfer'
 import { toHuman } from '@/utils/transfer'
 
 interface UseBalanceParams {
@@ -12,14 +12,14 @@ interface UseBalanceParams {
 }
 
 export async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
-  const node = getParaSpellNode(chain)
+  const node = getParaSpellChain(chain)
   if (!node) throw new Error('Node not found')
   const currency = getParaspellToken(token, node)
 
   const balance =
     (await getAssetBalance({
       address,
-      node: node as TNodeDotKsmWithRelayChains,
+      chain: node as TSubstrateChain,
       currency,
       api: chain.rpcConnection,
     })) ?? 0n

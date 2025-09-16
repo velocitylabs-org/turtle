@@ -1,8 +1,11 @@
+import type { Token } from '@velocitylabs-org/turtle-registry'
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { cn, Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import ChainflipRefund from '@/components/ChainflipRefund'
 import { type CompletedTransfer, type TransferResult, TxStatus } from '@/models/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { formatHours } from '@/utils/datetime'
-import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import ArrowRight from '../svg/ArrowRight'
 import ArrowUpRight from '../svg/ArrowUpRight'
@@ -14,6 +17,8 @@ interface TransactionDialogProps {
 }
 
 export default function TransactionDialog({ tx }: TransactionDialogProps) {
+  const isSwap =
+    isPolkadotSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
   return (
     <Dialog>
       <DialogTrigger className="w-full">
@@ -69,11 +74,11 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
             >
               <span>{formatAmount(toHuman(tx.sourceAmount, tx.sourceToken))}</span>
               <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} size={35} />
-              {isSwap(tx) && (
+              {isSwap && (
                 <>
                   <ArrowRight className="h-3 w-3" fill={getSVGColor(tx.result)} />
-                  <span>{formatAmount(toHuman(tx.destinationAmount, tx.destinationToken))}</span>
-                  <TokenLogo token={tx.destinationToken} sourceChain={tx.destChain} size={35} />
+                  <span>{formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token))}</span>
+                  <TokenLogo token={tx.destinationToken as Token} sourceChain={tx.destChain} size={35} />
                 </>
               )}
             </h3>
@@ -155,15 +160,16 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                 }
               />
 
-              {isSwap(tx) && (
+              {isSwap && (
                 <SummaryRow
                   label="Amount Received"
-                  amount={formatAmount(toHuman(tx.destinationAmount, tx.destinationToken), 'Long')}
-                  symbol={tx.destinationToken.symbol}
+                  amount={formatAmount(toHuman(tx.destinationAmount as string, tx.destinationToken as Token), 'Long')}
+                  symbol={tx.destinationToken?.symbol as string}
                   usdValue={
                     typeof tx.destinationTokenUSDValue === 'number'
                       ? formatAmount(
-                          toHuman(tx.destinationAmount, tx.destinationToken) * (tx.destinationTokenUSDValue ?? 0),
+                          toHuman(tx.destinationAmount as string, tx.destinationToken as Token) *
+                            (tx.destinationTokenUSDValue ?? 0),
                           'Long',
                         )
                       : undefined
@@ -180,6 +186,13 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
                     usdValue={formatAmount(fee.amount.inDollars, 'Long')}
                   />
                 ))}
+
+              <ChainflipRefund
+                isSwap={isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)}
+                swapCompleted={tx.result === TxStatus.Succeeded}
+                swapRefundError={tx.errors?.[0]}
+                className="pt-5 pb-2"
+              />
 
               {tx.explorerLink && (
                 <a

@@ -29,11 +29,12 @@ export interface StoredTransfer extends RawTransfer {
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
   sendResult?: toEthereum.SendResult | toPolkadot.SendResult
-  // A subscan unique Id shared accross chains to track ongoing transfers
+  // A unique Id to track an ongoing transfer, ex: subscan unique Id, chainflip deposit channel Id (...)
   uniqueTrackingId?: string
   status?: string
   // WithinPolkadot transfer is considered as finalized
   finalizedAt?: Date
+  progress?: number
   swapInformation?: {
     currentStep?: number
     plan?: TRouterPlan
@@ -194,7 +195,16 @@ export type OnChainBaseEvents = {
   isExecuteAttemptCompleted?: boolean
 }
 
-type FeeDetailType = 'Execution fees' | 'Delivery fees' | 'Bridging fees' | 'Routing fees' | 'Swap fees'
+type ChainflipFeeType = 'Broker fees' | 'Deposit fees'
+
+export type FeeDetailType =
+  | 'Execution fees'
+  | 'Delivery fees'
+  | 'Bridging fees'
+  | 'Routing fees'
+  | 'Swap fees'
+  | 'Transfer fees'
+  | ChainflipFeeType
 
 export type FeeSufficiency = 'sufficient' | 'insufficient' | 'undetermined'
 

@@ -89,7 +89,7 @@ export default function ChainTokenSelect({
   // Filter the options based on search
   const filteredChainOptions = useMemo(() => {
     return chainProps.options.filter(option => option.name.toLowerCase().includes(chainSearch.toLowerCase()))
-  }, [chainProps.options, chainSearch])
+  }, [chainSearch, chainProps.options])
 
   const sortedAndFilteredChainOptions = useMemo(() => {
     return chainProps.orderBySelected
