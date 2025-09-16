@@ -265,12 +265,13 @@ const useTransferForm = () => {
           return
         }
 
+        const isSwap = isChainflipSwap(sourceChain, destinationChain, sourceToken, destToken)
         const recipient = getRecipientAddress(manualRecipient, destinationWallet) ?? destinationWallet.sender.address
         const params = {
           sourceChain,
-          destinationChain,
+          destinationChain: isSwap ? sourceChain : destinationChain, // Handle chainflip local transfer from AH
           sourceToken: sourceTokenAmount.token,
-          recipient,
+          recipient: isSwap ? sourceWallet.sender.address : recipient, // Handle chainflip local transfer from AH
           sender: sourceWallet.sender,
           sourceAmount: balanceData.value,
         }
@@ -322,6 +323,7 @@ const useTransferForm = () => {
     sourceToken,
     sourceWallet?.sender,
     addNotification,
+    destToken,
   ])
 
   const onSubmit: SubmitHandler<FormInputs> = useCallback(
