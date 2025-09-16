@@ -52,7 +52,6 @@ export function getParaspellToken(token: Token, chain?: TChain): TCurrencyCore {
 }
 
 export function getNativeToken(chain: Chain): Token {
-  console.log({ chain })
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
   if (chain.network === 'Arbitrum') return ArbitrumTokens.ETH
 
