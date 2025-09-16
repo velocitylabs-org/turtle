@@ -303,7 +303,7 @@ const submitPolkadotTransfer = async (
             setStatus('Idle')
 
             trackTransferMetrics({
-              transferParams: polkadotTransferParams,
+              transferParams: swapParams,
               txId: event.txHash?.toString(),
               senderAddress: formattedSenderAddress,
               sourceTokenUSDValue,
