@@ -1,6 +1,5 @@
 import type { TLocation } from '@paraspell/sdk'
 import {
-  type Balance,
   type Chain,
   EthereumTokens,
   getTokenByLocation,
@@ -31,7 +30,6 @@ interface UseFeesParams {
   sender?: Sender | undefined
   recipientAddress?: string
   destinationToken?: Token | null
-  sourceTokenBalance?: Balance | undefined
   sourceTokenAmountError?: string | null
   transferableAmount: bigint | null
 }
@@ -45,7 +43,6 @@ export default function useFees(params: UseFeesParams) {
     sourceTokenAmount,
     sender,
     recipientAddress,
-    sourceTokenBalance,
     sourceTokenAmountError,
     transferableAmount,
   } = params
@@ -214,16 +211,20 @@ export default function useFees(params: UseFeesParams) {
             }),
           ])
             .then(([maxTransferableAmount, minTransferableAmount]) => {
-              if (maxTransferableAmount) {
-                const isSufficientForFees = sourceAmountBigInt <= maxTransferableAmount
-                setIsBalanceSufficientForFees(isSufficientForFees)
-              }
               // @ts-ignore NOTE: when minTransferableAmount is 0, it means that the user has no balance to cover the transfer
-              if (minTransferableAmount === 0) setIsBalanceSufficientForFees(false)
-              if (minTransferableAmount) {
-                const isSufficientForFees = sourceAmountBigInt >= minTransferableAmount
-                setIsBalanceSufficientForFees(isSufficientForFees)
+              if (minTransferableAmount === 0) {
+                setIsBalanceSufficientForFees(false)
+                return
               }
+
+              let isSufficient = true
+              if (maxTransferableAmount) {
+                isSufficient = isSufficient && sourceAmountBigInt <= maxTransferableAmount
+              }
+              if (minTransferableAmount) {
+                isSufficient = isSufficient && sourceAmountBigInt >= minTransferableAmount
+              }
+              setIsBalanceSufficientForFees(isSufficient)
             })
             .catch(error => {
               console.error('Error checking transferable amounts:', error)
@@ -354,7 +355,6 @@ export default function useFees(params: UseFeesParams) {
     snowbridgeContextError,
     sender,
     ethBalance,
-    sourceTokenBalance,
     sdk,
     sourceTokenAmountError,
     transferableAmount,
