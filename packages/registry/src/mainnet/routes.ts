@@ -358,8 +358,8 @@ export const routes: Route[] = [
       PolkadotTokens.DOT.id,
       PolkadotTokens.GLMR.id,
       PolkadotTokens.VDOT.id,
-      // PolkadotTokens.USDT.id, // TODO: PAPI issue here, add this after upgrading to newer version of PAPI and Paraspell SDK
-      // PolkadotTokens.USDC.id, // TODO: PAPI issue here, add this after upgrading to newer version of PAPI and Paraspell SDK
+      PolkadotTokens.USDT.id,
+      PolkadotTokens.USDC.id,
       // PolkadotTokens.SOL.id
     ],
   },
