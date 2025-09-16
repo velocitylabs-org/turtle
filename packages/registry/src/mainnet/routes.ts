@@ -358,6 +358,8 @@ export const routes: Route[] = [
       PolkadotTokens.DOT.id,
       PolkadotTokens.GLMR.id,
       PolkadotTokens.VDOT.id,
+      // PolkadotTokens.USDT.id, // TODO: PAPI issue here, add this after upgrading to newer version of PAPI and PS
+      // PolkadotTokens.USDC.id, // TODO: PAPI issue here, add this after upgrading to newer version of PAPI and PS
       // PolkadotTokens.SOL.id
     ],
   },
@@ -413,7 +415,8 @@ export const routes: Route[] = [
       PolkadotTokens.GLMR.id,
       PolkadotTokens.BNC.id,
       PolkadotTokens.VDOT.id,
-      // PolkadotTokens.SOL.id,
+      PolkadotTokens.USDT.id,
+      PolkadotTokens.USDC.id,
     ],
   },
   {
