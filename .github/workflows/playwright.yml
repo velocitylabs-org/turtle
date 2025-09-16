@@ -26,7 +26,7 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-        run: cd packages/e2e-tests && xvfb-run pnpm run e2e
+        run: cd packages/e2e-tests && pnpm run e2e:ci
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
       - uses: actions/upload-artifact@v4

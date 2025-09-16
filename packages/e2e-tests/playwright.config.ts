@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from '@playwright/test'
-import { CoinbaseWallet } from '@tenkeylabs/dappwright'
+import { MetaMaskWallet } from '@tenkeylabs/dappwright'
 import dotenv from 'dotenv'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -34,16 +34,24 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    headless: !!process.env.CI,
+    headless: false,
   },
 
   /* Configure projects for major browsers */
   projects: [
+    // {
+    //   name: 'Coinbase',
+    //   metadata: {
+    //     wallet: 'coinbase',
+    //     version: CoinbaseWallet.recommendedVersion,
+    //     seed: process.env.COINBASE_SEED,
+    //   },
+    // },
     {
-      name: 'Coinbase',
+      name: 'metamask',
       metadata: {
-        wallet: 'coinbase',
-        version: CoinbaseWallet.recommendedVersion,
+        wallet: 'metamask',
+        version: MetaMaskWallet.recommendedVersion,
         seed: process.env.COINBASE_SEED,
       },
     },

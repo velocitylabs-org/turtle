@@ -1,5 +1,5 @@
 import { test as baseTest, expect } from '@playwright/test'
-import dappwright, { type Dappwright, MetaMaskWallet, type OfficialOptions } from '@tenkeylabs/dappwright'
+import dappwright, { type Dappwright, type OfficialOptions } from '@tenkeylabs/dappwright'
 import type { BrowserContext } from 'playwright-core'
 
 export const withWalletTest = baseTest.extend<{
@@ -10,20 +10,20 @@ export const withWalletTest = baseTest.extend<{
   context: async ({}, use, testInfo) => {
     // Launch context with extension and playwright project params
     const metadata = testInfo.project.metadata as OfficialOptions
-    const [wallet, , context] = await dappwright.bootstrap('', {
+    const [, , context] = await dappwright.bootstrap('', {
       ...metadata,
       headless: testInfo.project.use.headless,
     })
 
-    if (wallet instanceof MetaMaskWallet) {
-      // Add Hardhat as a custom network.
-      await wallet.addNetwork({
-        networkName: 'Hardhat',
-        rpc: 'http://localhost:8546',
-        chainId: 31337,
-        symbol: 'ETH',
-      })
-    }
+    // if (wallet instanceof MetaMaskWallet) {
+    //   // Add Hardhat as a custom network.
+    //   await wallet.addNetwork({
+    //     networkName: 'Hardhat',
+    //     rpc: 'http://localhost:8546',
+    //     chainId: 31337,
+    //     symbol: 'ETH',
+    //   })
+    // }
 
     await use(context)
   },
