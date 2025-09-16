@@ -417,6 +417,7 @@ export const routes: Route[] = [
       PolkadotTokens.VDOT.id,
       PolkadotTokens.USDT.id,
       PolkadotTokens.USDC.id,
+      // PolkadotTokens.SOL.id,
     ],
   },
   {
