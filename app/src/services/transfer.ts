@@ -10,6 +10,7 @@ export enum Direction {
   ToPolkadot = 'toPolkadot',
   WithinPolkadot = 'WithinPolkadot',
   WithinEthereum = 'WithinEthereum',
+  ToArbitrum = 'ToArbitrum',
 }
 
 /**
@@ -21,10 +22,14 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
 
   // Ethereum -> Polkadot
   if (src === 'Ethereum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
+  // Arbitrum -> Polkadot
+  if (src === 'Arbitrum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
   // Ethereum -> Ethereum
   if (src === 'Ethereum' && dst === 'Ethereum') return Direction.WithinEthereum
   // Polkadot -> Ethereum
   if (isAnyPolkadotNetwork(src) && dst === 'Ethereum') return Direction.ToEthereum
+  // Polkadot -> Ethereum
+  if (isAnyPolkadotNetwork(src) && dst === 'Arbitrum') return Direction.ToArbitrum
   // XCM
   if (isAnyPolkadotNetwork(src) && isAnyPolkadotNetwork(dst)) return Direction.WithinPolkadot
 

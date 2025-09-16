@@ -30,6 +30,13 @@ export function ethereumOrigin(standard: TokenStandard): Origin {
   }
 }
 
+export function arbitrumOrigin(standard: TokenStandard): Origin {
+  return {
+    type: 'Arbitrum',
+    standard,
+  }
+}
+
 export function wormholeSolanaWrapped(): Origin {
   return {
     type: 'Solana',

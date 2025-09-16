@@ -97,6 +97,10 @@ export const getAllowedSourceTokens = (sourceChain: Chain | null, destinationCha
   const swapTokens = getSwapsSourceTokens(sourceChain)
   const chainflipSwapTokens = getChainflipSwapSourceTokens(sourceChain)
 
+  console.log({ transferTokens })
+  // console.log({ swapTokens })
+  // console.log({ chainflipSwapTokens })
+
   return deduplicate([...transferTokens, ...swapTokens, ...chainflipSwapTokens])
 }
 
