@@ -595,7 +595,7 @@ const checkEip1559BalanceSufficiency = async (
 function getToken(location: TLocation | undefined, symbol: string) {
   const token = location ? getTokenByLocation(location) : getTokenFromSymbol(symbol)
   if (!token) {
-    throw new Error(`Token not found for location: ${JSON.stringify(location)}`)
+    throw new Error(`Token not found for location ${JSON.stringify(location)} and symbol ${symbol}`)
   }
   return token as Token
 }
