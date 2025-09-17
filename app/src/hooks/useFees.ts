@@ -1,5 +1,12 @@
 import { captureException } from '@sentry/nextjs'
-import { type Balance, type Chain, EthereumTokens, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
+import {
+  ArbitrumTokens,
+  type Balance,
+  type Chain,
+  EthereumTokens,
+  PolkadotTokens,
+  type Token,
+} from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { encodeFunctionData, erc20Abi, type PublicClient, parseEther, parseUnits, type WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
@@ -388,7 +395,7 @@ export default function useFees(params: UseFeesParams) {
             })
           }
 
-          if (sourceChain.network === 'Ethereum') {
+          if (sourceChain.network === 'Ethereum' || sourceChain.network === 'Arbitrum') {
             if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
 
             const { estimatedGasFee: networkFee, isBalanceSufficient } = await getEip1559NetworkFee(
@@ -567,7 +574,7 @@ const getEip1559NetworkFee = async (
 ): Promise<{ estimatedGasFee: bigint; isBalanceSufficient: boolean }> => {
   let gas: bigint
 
-  if (sourceToken.id === EthereumTokens.ETH.id) {
+  if (sourceToken.id === EthereumTokens.ETH.id || sourceToken.id === ArbitrumTokens.ETH.id) {
     gas = await publicClient.estimateGas({
       account: walletClient.account,
       to: senderAddress, // Recipient here must be a placeholder address so we use the sender address
@@ -619,7 +626,7 @@ const checkEip1559BalanceSufficiency = async (
   const ethBalance = await publicClient.getBalance({ address })
 
   // ETH balance check
-  if (sourceToken.id === EthereumTokens.ETH.id) {
+  if (sourceToken.id === EthereumTokens.ETH.id || sourceToken.id === ArbitrumTokens.ETH.id) {
     const transferAmount = parseEther(sourceTokenAmount.toString())
     return ethBalance >= transferAmount + maxGasFee
   }

@@ -27,7 +27,7 @@ export const chainSchema: z.ZodType<Chain> = z.object({
   name: z.string(),
   logoURI: z.union([z.string(), z.object({})]),
   chainId: z.number(),
-  network: z.enum(['Ethereum', 'Polkadot', 'Kusama']),
+  network: z.enum(['Ethereum', 'Polkadot', 'Kusama', 'Arbitrum']),
   supportedAddressTypes: z.array(z.enum(['evm', 'ss58'])),
   walletType: z.enum(['EVM', 'Substrate', 'SubstrateEVM']),
   destinationFeeDOT: z.string().optional(),
