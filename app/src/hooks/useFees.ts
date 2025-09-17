@@ -347,6 +347,8 @@ export default function useFees(params: UseFeesParams) {
           }
           setLoading(true)
 
+          const isEvmNetwork = sourceChain.network === 'Ethereum' || sourceChain.network === 'Arbitrum'
+
           const chainflipfeeList: FeeDetails[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
               // unexported Chainflip swapFee type {type: ChainflipFeeType, amount: string, asset: AssetSymbol, chain: ChainflipChain}
@@ -394,8 +396,7 @@ export default function useFees(params: UseFeesParams) {
               },
             })
           }
-
-          if (sourceChain.network === 'Ethereum' || sourceChain.network === 'Arbitrum') {
+          if (isEvmNetwork) {
             if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
 
             const { estimatedGasFee: networkFee, isBalanceSufficient } = await getEip1559NetworkFee(
@@ -572,9 +573,10 @@ const getEip1559NetworkFee = async (
   sourceToken: Token,
   sourceTokenAmount: number,
 ): Promise<{ estimatedGasFee: bigint; isBalanceSufficient: boolean }> => {
+  const isEvmToken = sourceToken.id === EthereumTokens.ETH.id || sourceToken.id === ArbitrumTokens.ETH.id
   let gas: bigint
 
-  if (sourceToken.id === EthereumTokens.ETH.id || sourceToken.id === ArbitrumTokens.ETH.id) {
+  if (isEvmToken) {
     gas = await publicClient.estimateGas({
       account: walletClient.account,
       to: senderAddress, // Recipient here must be a placeholder address so we use the sender address
@@ -599,6 +601,7 @@ const getEip1559NetworkFee = async (
   const isBalanceSufficient = await checkEip1559BalanceSufficiency(
     publicClient,
     sourceToken,
+    isEvmToken,
     gas,
     gasPrice,
     sourceTokenAmount,
@@ -615,6 +618,7 @@ const getEip1559NetworkFee = async (
 const checkEip1559BalanceSufficiency = async (
   publicClient: PublicClient,
   sourceToken: Token,
+  isEvmToken: boolean,
   gas: bigint,
   gasPrice: bigint,
   sourceTokenAmount: number,
@@ -626,7 +630,7 @@ const checkEip1559BalanceSufficiency = async (
   const ethBalance = await publicClient.getBalance({ address })
 
   // ETH balance check
-  if (sourceToken.id === EthereumTokens.ETH.id || sourceToken.id === ArbitrumTokens.ETH.id) {
+  if (isEvmToken) {
     const transferAmount = parseEther(sourceTokenAmount.toString())
     return ethBalance >= transferAmount + maxGasFee
   }
