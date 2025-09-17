@@ -14,8 +14,8 @@ export default function FeesBreakdown({ fees, hasFeesFailed }: FeesBreakdownProp
     <div className="w-[360px] bg-turtle-foreground p-3 pb-1 text-turtle-background">
       <div className="w-full pb-3 pt-0.5 text-center text-sm font-bold">Fees Breakdown</div>
       <ul>
-        {fees?.map(fee => (
-          <li className="pb-3.5" key={fee.title}>
+        {fees?.map((fee, idx) => (
+          <li className="pb-3.5" key={idx}>
             <div className="flex flex-row items-center justify-between">
               {/* Left - Token & Type of Fee */}
               <div className="flex flex-row items-center justify-between gap-1">

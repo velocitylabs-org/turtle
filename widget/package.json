@@ -30,8 +30,8 @@
   "dependencies": {
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
-    "@paraspell/sdk": "11.6.1",
-    "@paraspell/xcm-router": "11.6.1",
+    "@paraspell/sdk": "11.7.2",
+    "@paraspell/xcm-router": "11.7.2",
     "@polkadot/api": "^15.9.2",
     "@polkadot/extension-dapp": "^0.58.4",
     "@polkadot/extension-inject": "^0.58.8",
@@ -87,7 +87,7 @@
     "vite-plugin-wasm": "^3.4.1"
   },
   "peerDependencies": {
-    "@paraspell/sdk": "11.6.0",
+    "@paraspell/sdk": "11.7.2",
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/util": "^13.3.1",
     "@types/node": ">=20.16.15",
