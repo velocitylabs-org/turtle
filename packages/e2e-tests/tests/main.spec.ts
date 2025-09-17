@@ -114,18 +114,22 @@ withWalletTest.describe('Connect Wallet Tests', () => {
     await page.getByRole('button', { name: 'All Wallets' }).click()
 
     await page.getByTestId('wui-input-text').click()
-    await page.getByTestId('wui-input-text').fill('coinbase')
+    // await page.getByTestId('wui-input-text').fill('coinbase')
+    await page.getByTestId('wui-input-text').fill('metamask')
 
     // await page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click()
     const [popup] = await Promise.all([
       context.waitForEvent('page'), // catches target=_blank + rel=noopener
-      page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click(),
+      // page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click(),
+      page
+        .getByRole('button', { name: 'MetaMask' })
+        .click(),
     ])
 
     await popup.waitForLoadState('domcontentloaded')
     console.log('popup url:', popup.url())
 
-    console.log('evaluating location ref', await popup.evaluate('location.href'))
+    // console.log('evaluating location ref', await popup.evaluate('location.href'))
 
     await popup.getByRole('button', { name: 'Connect' }).click()
     await expect(page.getByRole('button', { name: 'Disconnect' })).toBeVisible()

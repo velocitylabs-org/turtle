@@ -34,7 +34,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    headless: false,
+    headless: true,
   },
 
   /* Configure projects for major browsers */
@@ -52,7 +52,7 @@ export default defineConfig({
       metadata: {
         wallet: 'metamask',
         version: MetaMaskWallet.recommendedVersion,
-        seed: process.env.COINBASE_SEED,
+        seed: 'test test test test test test test test test test test junk',
       },
     },
   ],
