@@ -28,6 +28,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@chainflip/sdk": "^1.10.0",
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
     "@paraspell/sdk": "11.2.4",
@@ -68,8 +69,8 @@
     "@types/react-dom": "^19.0.3",
     "@velocitylabs-org/turtle-assets": "workspace:*",
     "@velocitylabs-org/turtle-registry": "workspace:*",
-    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@velocitylabs-org/turtle-tailwind-config": "workspace:*",
+    "@velocitylabs-org/turtle-ui": "workspace:*",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "autoprefixer": "^10.4.20",
     "globals": "^15.14.0",

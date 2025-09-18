@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
-import { updateTransferMetrics } from '@/utils/analytics.ts'
+import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink } from '@/utils/explorer'
 import { startedTooLongAgo } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'

@@ -12,7 +12,7 @@ import TransferForm from '@/components/Transfer'
 import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { Providers } from '@/providers'
 import { ConfigProvider, type ConfigRegistryType } from '@/providers/ConfigProviders'
-import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
+import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { meldApiKey } from '@/utils/consts'
 import { generateWidgetTheme, type WidgetTheme } from '@/utils/theme'
 

@@ -1,6 +1,6 @@
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
 import { useEffect, useState } from 'react'
-import { useSubstrateWalletStore } from '@/stores/substrateWalletStore'
+import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
 
 const useSubstrateWallet = () => {
   const substrateAccount = useSubstrateWalletStore(state => state.account)
