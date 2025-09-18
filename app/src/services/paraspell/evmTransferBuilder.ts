@@ -1,4 +1,4 @@
-import { EvmBuilder } from '@paraspell/sdk'
+import { EvmBuilder, type TEvmChainFromPapi } from '@paraspell/sdk'
 import type { Client } from 'viem'
 import type { TransferParams } from '@/hooks/useTransfer'
 import { getParaSpellChain, getParaspellToken } from '@/utils/paraspellTransfer'
@@ -38,7 +38,7 @@ class EvmTransferBuilderManager {
     let builder: TxBuilder
     try {
       builder = EvmBuilder({ abstractDecimals: false })
-        .from(sourceChainNode)
+        .from(sourceChainNode as TEvmChainFromPapi)
         .to(destinationChainNode)
         .currency({ ...currencyId, amount: sourceAmount })
         .address(recipient)
