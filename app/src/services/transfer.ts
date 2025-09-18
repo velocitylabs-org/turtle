@@ -28,7 +28,7 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
   if (src === 'Ethereum' && dst === 'Ethereum') return Direction.WithinEthereum
   // Polkadot -> Ethereum
   if (isAnyPolkadotNetwork(src) && dst === 'Ethereum') return Direction.ToEthereum
-  // Polkadot -> Ethereum
+  // Polkadot -> Arbitrum
   if (isAnyPolkadotNetwork(src) && dst === 'Arbitrum') return Direction.ToArbitrum
   // XCM
   if (isAnyPolkadotNetwork(src) && isAnyPolkadotNetwork(dst)) return Direction.WithinPolkadot
