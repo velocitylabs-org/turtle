@@ -58,7 +58,7 @@ const isValidSubstrateAddress = (address: string): boolean => {
  * @param types - The address types to validate the address against. Only one type needs to match.
  * @returns True if the address is a valid address of the network, false otherwise.
  */
-const isValidAddressType = (address: string, types: AddressType[]): boolean => {
+export const isValidAddressType = (address: string, types: AddressType[]): boolean => {
   for (const type of types) {
     switch (type) {
       case 'evm': {

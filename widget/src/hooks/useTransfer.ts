@@ -4,12 +4,11 @@ import { useState } from 'react'
 import type { FeeDetails } from '@/models/transfer'
 import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { resolveSdk } from '@/utils/routes'
+import useChainflipApi from './useChainflipApi'
 import useParaspellApi from './useParaspellApi'
 import useSnowbridgeApi from './useSnowbridgeApi'
 
 export type Sender = JsonRpcSigner | SubstrateAccount
-
-export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'
 
 export interface TransferParams {
   sender: Sender
@@ -28,17 +27,19 @@ export interface TransferParams {
   onComplete?: () => void // TODO: remove this from here. It doesnt belong here.
 }
 
+export type Status = 'Idle' | 'Loading' | 'Validating' | 'Signing' | 'Sending'
+
 const useTransfer = () => {
   const [status, setStatus] = useState<Status>('Idle')
   const snowbridgeApi = useSnowbridgeApi()
   const paraspellApi = useParaspellApi()
-
+  const chainflipApi = useChainflipApi()
   // The entry point function which is exposed to the components
   const transfer = async (transferDetails: TransferParams) => {
-    const { sourceChain, destinationChain } = transferDetails
+    const { sourceChain, destinationChain, sourceToken, destinationToken } = transferDetails
     setStatus('Loading')
 
-    const sdk = resolveSdk(sourceChain, destinationChain)
+    const sdk = resolveSdk(sourceChain, destinationChain, sourceToken, destinationToken)
     if (!sdk) throw new Error('Route not supported')
 
     switch (sdk) {
@@ -48,6 +49,10 @@ const useTransfer = () => {
 
       case 'ParaSpellApi':
         paraspellApi.transfer(transferDetails, setStatus)
+        break
+
+      case 'ChainflipApi':
+        chainflipApi.transfer(transferDetails, setStatus)
         break
     }
   }
