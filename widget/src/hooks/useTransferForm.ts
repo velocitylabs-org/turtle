@@ -116,7 +116,6 @@ const useTransferForm = () => {
       manualRecipient,
       destinationWallet,
       destToken,
-      balanceData,
       transferableAmount,
     ],
   )

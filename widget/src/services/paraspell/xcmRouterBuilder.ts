@@ -101,6 +101,33 @@ class XcmRouterBuilderManager {
     }
   }
 
+  // Origin and destination fees
+  async getXcmFee(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken' | 'sender' | 'recipient'
+    > & {
+      sourceAmount: bigint | string
+    },
+    exchange: Dex = 'HydrationDex',
+    slippagePct: string = '1',
+  ) {
+    try {
+      const senderAddress = await getSenderAddress(params.sender)
+      const recipientAddress = params.recipient
+      // biome-ignore lint/suspicious/noExplicitAny: any
+      const builder = this.getBuilder(params as TransferParams, exchange) as any
+      return await builder
+        .slippagePct(slippagePct)
+        .senderAddress(senderAddress)
+        .recipientAddress(recipientAddress)
+        .getXcmFees()
+    } catch (error) {
+      console.error('Failed to get xcm fees: ', error)
+      throw error
+    }
+  }
+
   disconnect(params: TransferParams, exchange: Dex = 'HydrationDex') {
     this.removeBuilder(params, exchange)
     // TODO Router does not support .disconnect() yet but will be added in future updates
