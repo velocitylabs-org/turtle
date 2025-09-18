@@ -1,7 +1,8 @@
+import { captureException } from '@sentry/react'
 import { useEffect } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
-import { updateTransferMetrics } from '@/utils/analytics.ts'
+import { updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink } from '@/utils/explorer'
 import { startedTooLongAgo } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
@@ -48,7 +49,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
           status: TxStatus.Undefined,
         })
 
-        // captureException(new Error('Transfer tracking failed'), { extra: { ongoing } }) - Sentry
+        captureException(new Error('Transfer tracking failed'), { extra: { ongoing } })
       }
     })
   }, [ongoingTransfers, addCompletedTransfer, addNotification, remove])

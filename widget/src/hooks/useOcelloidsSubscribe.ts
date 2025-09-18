@@ -30,7 +30,7 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
               addCompletedTransfer,
               updateStatus,
               addNotification,
-              updateProgress,
+              updateProgress, // this is used only in the widget, why?
             )
             subscribedTransfers.add(t.id)
           } catch (error) {

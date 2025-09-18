@@ -2,7 +2,7 @@ import { RouterBuilder } from '@paraspell/xcm-router'
 import type { TransferParams } from '@/hooks/useTransfer'
 import type { Dex } from '@/lib/paraspell/swap'
 import { getParaSpellChain, getParaspellToken } from '@/lib/paraspell/transfer'
-import type { SubstrateAccount } from '@/stores/substrateWalletStore'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
 import { toHuman } from '@/utils/transfer'
 

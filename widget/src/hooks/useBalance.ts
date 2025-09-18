@@ -1,4 +1,5 @@
 import { getAssetBalance, type TSubstrateChain } from '@paraspell/sdk'
+import { captureException } from '@sentry/react'
 import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -9,27 +10,6 @@ interface UseBalanceParams {
   chain?: Chain | null
   token?: Token
   address?: string
-}
-
-export async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
-  const node = getParaSpellChain(chain)
-  if (!node) throw new Error('Node not found')
-  const currency = getParaspellToken(token, node)
-
-  const balance =
-    (await getAssetBalance({
-      address,
-      chain: node as TSubstrateChain,
-      currency,
-      api: chain.rpcConnection,
-    })) ?? 0n
-
-  return {
-    value: balance,
-    decimals: token.decimals,
-    symbol: token.symbol,
-    formatted: toHuman(balance, token).toString(),
-  }
 }
 
 /** Hook to fetch different balances for a given address and token. Supports Ethereum and Polkadot networks. */
@@ -85,7 +65,7 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
       setBalance(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
-      // captureException(error) - Sentry
+      captureException(error)
     } finally {
       setLoading(false)
     }
@@ -99,6 +79,28 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
     balance,
     fetchBalance,
     loading: loading || loadingErc20Balance || loadingEthBalance,
+  }
+}
+
+export async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
+  const node = getParaSpellChain(chain)
+
+  if (!node) throw new Error('Node not found')
+  const currency = getParaspellToken(token, node)
+
+  const balance =
+    (await getAssetBalance({
+      address,
+      chain: node as TSubstrateChain,
+      currency,
+      api: chain.rpcConnection,
+    })) ?? 0n
+
+  return {
+    value: balance,
+    decimals: token.decimals,
+    symbol: token.symbol,
+    formatted: toHuman(balance, token).toString(),
   }
 }
 
