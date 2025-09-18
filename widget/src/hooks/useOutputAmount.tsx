@@ -36,7 +36,9 @@ export function useOutputAmount({
 
     let hasMatchingFees = false
     const total = fees.reduce((sum, fee) => {
-      if (fee.amount.token?.id === sourceToken.id) {
+      // NOTE: Execution fees (origin fees) & bridging fees are deducted from the sender's balance.
+      // The other fees (destination and hop fees) are deducted from the amount being sent.
+      if (fee.amount.token?.id === sourceToken.id && fee.title !== 'Execution fees' && fee.title !== 'Bridging fees') {
         hasMatchingFees = true
         return sum + BigInt(fee.amount.amount ?? 0n)
       }

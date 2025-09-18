@@ -110,7 +110,7 @@ class XcmTransferBuilderManager {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferableAmount()
     } catch (error) {
-      console.error('Failed to get transferable amount: ', error)
+      console.error('Failed to get max transferable amount: ', error)
       return null
     }
   }
@@ -126,7 +126,7 @@ class XcmTransferBuilderManager {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getXcmFee()
     } catch (error) {
-      console.error('Failed to get transferable amount: ', error)
+      console.error('Failed to get xcm fees: ', error)
       throw error
     }
   }
@@ -141,8 +141,38 @@ class XcmTransferBuilderManager {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getOriginXcmFee()
     } catch (error) {
-      console.error('Failed to get transferable amount: ', error)
+      console.error('Failed to get origin xcm fees: ', error)
       throw error
+    }
+  }
+
+  async getMinTransferableAmount(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+    >,
+  ) {
+    try {
+      const builder = this.getBuilder(params as TransferParams)
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getMinTransferableAmount()
+    } catch (error) {
+      console.error('Failed to get min transferable amount: ', error)
+      return null
+    }
+  }
+
+  async getTransferInfo(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+    >,
+  ) {
+    try {
+      const builder = this.getBuilder(params as TransferParams)
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferInfo()
+    } catch (error) {
+      console.error('Failed to get transfer fees info: ', error)
+      return null
     }
   }
 
