@@ -1,4 +1,5 @@
 import { getAssetBalance, type TSubstrateChain } from '@paraspell/sdk'
+import { captureException } from '@sentry/react'
 import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { useBalance as useBalanceWagmi } from 'wagmi'
@@ -64,7 +65,7 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
       setBalance(fetchedBalance)
     } catch (error) {
       console.error('Failed to fetch balance', error)
-      // captureException(error)
+      captureException(error)
     } finally {
       setLoading(false)
     }

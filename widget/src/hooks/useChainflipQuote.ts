@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/nextjs'
+import { captureException } from '@sentry/react'
 import { useQuery } from '@tanstack/react-query'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'

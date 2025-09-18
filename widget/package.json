@@ -41,6 +41,8 @@
     "@radix-ui/react-dialog": "^1.1.6",
     "@reown/appkit": "1.6.8",
     "@reown/appkit-adapter-wagmi": "1.6.8",
+    "@sentry/react": "^10.12.0",
+    "@sentry/vite-plugin": "^4.3.0",
     "@snowbridge/api": "0.1.69",
     "@snowbridge/base-types": "0.1.69",
     "@snowbridge/contract-types": "0.1.69",

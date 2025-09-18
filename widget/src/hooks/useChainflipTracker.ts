@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/nextjs'
+import { captureException } from '@sentry/react'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { type Notification, NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'

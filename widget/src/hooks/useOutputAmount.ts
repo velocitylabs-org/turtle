@@ -1,4 +1,4 @@
-// import { captureException } from '@sentry/nextjs'
+import { captureException } from '@sentry/react'
 import { useQuery } from '@tanstack/react-query'
 import { type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
@@ -89,16 +89,16 @@ export function useOutputAmount({
         if (totalFeesForSourceToken > amountBigInt) return 0n
         return amountBigInt - totalFeesForSourceToken
       } catch (error) {
-        // captureException(error, {
-        //   level: 'error',
-        //   extra: {
-        //     sourceChain,
-        //     destinationChain,
-        //     sourceToken,
-        //     destinationToken,
-        //     amount,
-        //   },
-        // })
+        captureException(error, {
+          level: 'error',
+          extra: {
+            sourceChain,
+            destinationChain,
+            sourceToken,
+            destinationToken,
+            amount,
+          },
+        })
         console.error('Failed to fetch swap output amount:', error)
         return null
       }

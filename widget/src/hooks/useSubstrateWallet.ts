@@ -1,4 +1,5 @@
 import type { InjectedAccount, InjectedExtension } from '@polkadot/extension-inject/types'
+import { captureException } from '@sentry/react'
 import { useEffect, useState } from 'react'
 import { useSubstrateWalletStore } from '@/store/substrateWalletStore'
 
@@ -36,13 +37,15 @@ const useSubstrateWallet = () => {
       setExtensions(enabledExtensions)
     } catch (error) {
       console.error('Error fetching extensions:', error)
-      // captureException(error) - Sentry
+      captureException(error)
     } finally {
       setLoading(false)
     }
   }
+
   useEffect(() => {
     let unsubscribe = () => {}
+
     const subscribeAccounts = async () => {
       if (selectedExtension) {
         try {
@@ -53,15 +56,18 @@ const useSubstrateWallet = () => {
           })
         } catch (error) {
           console.error('Error fetching accounts:', error)
-          // captureException(error) - Sentry
+          captureException(error)
           setLoading(false)
         }
       }
     }
+
     subscribeAccounts()
+
     // Cleanup
     return () => unsubscribe()
   }, [selectedExtension])
+
   return {
     substrateAccount,
     setSubstrateAccount,

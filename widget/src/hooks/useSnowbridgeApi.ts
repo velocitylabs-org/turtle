@@ -1,16 +1,19 @@
+import { captureException } from '@sentry/react'
 import { type toEthereumV2, toPolkadotV2 } from '@snowbridge/api'
-import { type Chain, getTokenPrice, isAssetHub, type Token } from '@velocitylabs-org/turtle-registry'
+import { type Chain, isAssetHub, type Token } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import type { Signer, TransactionResponse } from 'ethers'
+import type { Signer } from 'ethers'
 import { mainnet } from 'wagmi/chains'
 import { findValidationError } from '@/lib/snowbridge'
 import { NotificationSeverity } from '@/models/notification'
 import type { SnowbridgeContext } from '@/models/snowbridge'
 import type { StoredTransfer } from '@/models/transfer'
 import { config } from '@/providers/config'
+import { getCachedTokenPrice } from '@/services/balance'
+import { Direction, resolveDirection } from '@/services/transfer'
 import { getSenderAddress } from '@/utils/address'
-import { trackTransferMetrics } from '@/utils/analytics.ts'
-import { Direction, resolveDirection, txWasCancelled } from '@/utils/transfer'
+import { trackTransferMetrics } from '@/utils/analytics'
+import { txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -49,6 +52,7 @@ const useSnowbridgeApi = () => {
         setStatus,
       )) as toPolkadotV2.Transfer
 
+      // Step 3. Validate the transaction.
       const validation = await toPolkadotV2.validateTransfer(
         {
           ethereum: snowbridgeContext.ethereum(),
@@ -86,7 +90,7 @@ const useSnowbridgeApi = () => {
   // Executes the transfer. Validation should happen before.
   const submitTransfer = async (
     sender: Sender,
-    transfer: TransferType,
+    transfer: toPolkadotV2.Transfer | toEthereumV2.Transfer,
     params: TransferParams,
     direction: Direction,
     setStatus: (status: Status) => void,
@@ -95,7 +99,8 @@ const useSnowbridgeApi = () => {
       params
     try {
       setStatus('Sending')
-      let response: TransactionResponse
+      // biome-ignore lint/suspicious/noImplicitAnyLet: response
+      let response
 
       switch (direction) {
         case Direction.ToPolkadot: {
@@ -124,8 +129,8 @@ const useSnowbridgeApi = () => {
       onComplete?.()
 
       const senderAddress = await getSenderAddress(sender)
-      const sourceTokenUSDValue = (await getTokenPrice(sourceToken))?.usd ?? 0
-      const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
+      const sourceTokenUSDValue = (await getCachedTokenPrice(sourceToken))?.usd ?? 0
+      const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
       const date = new Date()
 
       addOrUpdate({
@@ -151,6 +156,7 @@ const useSnowbridgeApi = () => {
         date,
       })
     } catch (e) {
+      if (!txWasCancelled(sender, e)) captureException(e)
       handleSendError(sender, e)
     } finally {
       setStatus('Idle')
@@ -216,8 +222,9 @@ const useSnowbridgeApi = () => {
 
   const handleSendError = (sender: Sender, e: unknown) => {
     console.log('Transfer error:', e)
+
     const cancelledByUser = txWasCancelled(sender, e)
-    // if (!cancelledByUser) captureException(e) - Sentry
+    if (!cancelledByUser) captureException(e)
 
     addNotification({
       message: cancelledByUser ? 'Transfer rejected' : 'Failed to submit the transfer',
