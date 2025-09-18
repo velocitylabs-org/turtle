@@ -7,7 +7,7 @@ import { findValidationError } from '@/lib/snowbridge'
 import { NotificationSeverity } from '@/models/notification'
 import type { SnowbridgeContext } from '@/models/snowbridge'
 import type { StoredTransfer } from '@/models/transfer'
-import { wagmiConfig } from '@/providers/config'
+import { config } from '@/providers/config'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics.ts'
 import { Direction, resolveDirection, txWasCancelled } from '@/utils/transfer'
@@ -35,7 +35,7 @@ const useSnowbridgeApi = () => {
         })
         return
       }
-      await switchChain(wagmiConfig, { chainId: mainnet.id })
+      await switchChain(config, { chainId: mainnet.id })
       const direction = resolveDirection(sourceChain, destinationChain)
 
       const transfer = (await createTx(

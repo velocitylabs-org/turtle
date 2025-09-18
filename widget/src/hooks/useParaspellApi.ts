@@ -11,7 +11,7 @@ import type { DryRunResult } from '@/lib/paraspell/transfer'
 import { extractPapiEvent } from '@/lib/polkadot/papi'
 import { NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
-import { wagmiConfig } from '@/providers/config'
+import { config } from '@/providers/config'
 import evmTransferBuilderManager from '@/services/paraspell/evmTransferBuilder.ts'
 import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder.ts'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder.ts'
@@ -46,7 +46,7 @@ const useParaspellApi = () => {
   }
 
   const handleMoonbeamTransfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    await switchChain(wagmiConfig, { chainId: moonbeam.id })
+    await switchChain(config, { chainId: moonbeam.id })
     const hash = await evmTransferBuilderManager.transferTx(params, viemClient as Client)
 
     const senderAddress = await getSenderAddress(params.sender)
