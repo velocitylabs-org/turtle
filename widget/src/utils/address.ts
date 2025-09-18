@@ -32,7 +32,7 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
  * @param address - The address string to be validated.
  * @returns True if the address is a valid Ethereum address, false otherwise.
  */
-const isValidEthereumAddress = (address: string): boolean => {
+export const isValidEthereumAddress = (address: string): boolean => {
   return isAddress(address)
 }
 

@@ -3,9 +3,8 @@ import { cn, Tooltip } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { type ChangeEvent, type ReactNode, type RefObject, useCallback } from 'react'
 import { normalize } from 'viem/ens'
-import { useEnsAvatar } from 'wagmi'
-import useLookupName from '@/hooks/useLookupName'
-import { getChainSpecificAddress, truncateAddress } from '@/utils/address'
+import { useEnsAvatar, useEnsName } from 'wagmi'
+import { getChainSpecificAddress, isValidEthereumAddress, truncateAddress } from '@/utils/address'
 import CopyAddress from './ClipboardCopy'
 import ChainIcon from './svg/ChainIcon'
 import ChevronDown from './svg/ChevronDown'
@@ -39,13 +38,16 @@ export default function ChainTrigger({
   walletAddress,
 }: ChainTriggerProps) {
   // wallet and ens
-  const addressLookup = useLookupName(value?.network, walletAddress?.toLowerCase())
+  const { data: ensName } = useEnsName({
+    address: isValidEthereumAddress(walletAddress || '') ? (walletAddress as `0x${string}`) : undefined,
+  })
+
   const convertedAddress = walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
   const displayableAddress = truncateAddress(convertedAddress)
-  const accountName = addressLookup ?? displayableAddress
+  const accountName = ensName ?? displayableAddress
 
   const { data: ensAvatar } = useEnsAvatar({
-    name: normalize(addressLookup || '') || undefined,
+    name: normalize(ensName || '') || undefined,
   })
 
   const shouldShowChainName =

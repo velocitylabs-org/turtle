@@ -1,8 +1,8 @@
 import Identicon from '@polkadot/react-identicon'
 import type { AddressType, Network } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
-import useLookupName from '@/hooks/useLookupName'
-import { truncateAddress } from '@/utils/address'
+import { useEnsName } from 'wagmi'
+import { isValidEthereumAddress, truncateAddress } from '@/utils/address'
 import CopyAddress from './ClipboardCopy'
 
 interface AccountProps {
@@ -22,8 +22,10 @@ export default function Account({
   allowCopy = true,
   size = 14,
 }: AccountProps) {
-  const accountName = useLookupName(network, address)
-  const accountDisplay = accountName ? accountName : truncateAddress(address, 4, 4)
+  const { data: ensName } = useEnsName({
+    address: isValidEthereumAddress(address) ? (address as `0x${string}`) : undefined,
+  })
+  const accountDisplay = ensName ? ensName : truncateAddress(address, 4, 4)
 
   return (
     <div className="flex items-center gap-x-1">
