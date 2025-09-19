@@ -1,12 +1,5 @@
-import {
-  AssetHub,
-  type Chain,
-  KusamaAssetHub,
-  type Network,
-  type Token,
-  type TokenAmount,
-} from '@velocitylabs-org/turtle-registry'
-import { ethers, JsonRpcSigner } from 'ethers'
+import { AssetHub, type Chain, KusamaAssetHub, type Token, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { JsonRpcSigner } from 'ethers'
 import { toHex } from 'viem/utils'
 import type { Sender } from '@/hooks/useTransfer'
 import type { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
@@ -86,24 +79,6 @@ export const formatAmount = (amount: number, length: FormatLength = 'Short'): st
       roundingMode: 'floor',
       maximumFractionDigits: 3,
     }).format(amount)
-  }
-}
-
-export async function lookupName(network: Network, address: string): Promise<string | null> {
-  switch (network) {
-    case 'Ethereum': {
-      try {
-        const provider = new ethers.CloudflareProvider()
-        return await provider.lookupAddress(address)
-      } catch (error) {
-        // Do not throw an error here
-        console.log(error)
-        return null
-      }
-    }
-    default:
-      //todo(nuno)
-      return null
   }
 }
 

@@ -61,7 +61,7 @@ export const isValidAddressType = (address: string, types: AddressType[]): boole
  * @param address - The address string to be validated.
  * @returns True if the address is a valid Ethereum address, false otherwise.
  */
-const isValidEthereumAddress = (address: string): boolean => {
+export const isValidEthereumAddress = (address: string): boolean => {
   return isAddress(address)
 }
 
