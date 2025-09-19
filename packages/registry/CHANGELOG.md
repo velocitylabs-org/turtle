@@ -1,5 +1,30 @@
 # @velocitylabs-org/turtle-registry
 
+## 0.1.0
+
+### Minor Changes
+
+- 7227711: add new routes from hydration to moonbeam for usdt and usdt
+- 5a96db7: Adding Aave, aUSDT, and GDOT tokens and paths
+- bd9dfa9: Feat: Add tokens and paths (LINK, SOL, LDO, SKY, TRAC)
+
+### Patch Changes
+
+- 3fd1f0e: Implement swaps between the Arbitrum chain & AHP
+- 356267c: Removed unused files, unused dependecies and exports
+- 9c60a77: Implement chainflip Native stablecoin swaps
+- 5c7de4b: Migrate Paraspell to v11
+- 68a404b: Replace ESLint + Prettier with Biome
+- f02d657: Paraspell SDK bump
+- Updated dependencies [3fd1f0e]
+- Updated dependencies [9c60a77]
+- Updated dependencies [9c60a77]
+- Updated dependencies [033f5f7]
+- Updated dependencies [5a96db7]
+- Updated dependencies [9c60a77]
+- Updated dependencies [bd9dfa9]
+  - @velocitylabs-org/turtle-assets@0.1.0
+
 ## 0.0.8
 
 ### Patch Changes
