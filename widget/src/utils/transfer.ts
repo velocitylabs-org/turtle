@@ -1,5 +1,6 @@
 import type { Chain, Network, Token, TokenAmount } from '@velocitylabs-org/turtle-registry'
 import { ethers, JsonRpcSigner } from 'ethers'
+import { toHex } from 'viem'
 import type { Sender } from '@/hooks/useTransfer'
 import type { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { isSameChain } from '@/utils/routes'
@@ -224,3 +225,5 @@ export const isSameChainSwap = <T extends SwapWithChains>(transfer: T): transfer
 export const isSwapWithTransfer = <T extends SwapWithChains>(transfer: T): transfer is T & CompleteSwap => {
   return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }
+
+export const hashToHex = (hash: string) => toHex(hash)

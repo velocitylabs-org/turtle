@@ -16,7 +16,7 @@ import { getChainSpecificAddress, getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { type ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
 import { extractPapiEvent, getPolkadotSigner } from '@/utils/papi'
-import { convertAmount, txWasCancelled } from '@/utils/transfer'
+import { convertAmount, hashToHex, txWasCancelled } from '@/utils/transfer'
 import { addToOngoingTransfers } from '@/utils/transferTracking'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -302,7 +302,7 @@ const submitPolkadotTransfer = async (
     unsignedTx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) => {
         try {
-          transferToStore.id = event.txHash?.toString()
+          transferToStore.id = hashToHex(event.txHash)
 
           const onSignedCallback = () => {
             onComplete?.()
@@ -310,7 +310,7 @@ const submitPolkadotTransfer = async (
 
             trackTransferMetrics({
               transferParams: swapParams,
-              txId: event.txHash?.toString(),
+              txId: hashToHex(event.txHash),
               senderAddress: formattedSenderAddress,
               sourceTokenUSDValue,
               destinationTokenUSDValue,
@@ -322,7 +322,7 @@ const submitPolkadotTransfer = async (
           await handlePolkadotTxEvents(event, addOrUpdate, transferToStore, resolve, onSignedCallback)
         } catch (error) {
           xcmTransferBuilderManager.disconnect(polkadotTransferParams)
-          handleSendError(sender, error, removeOngoingTransfer, addNotification, setStatus, event.txHash?.toString())
+          handleSendError(sender, error, removeOngoingTransfer, addNotification, setStatus, hashToHex(event.txHash))
           reject(error instanceof Error ? error : new Error(String(error)))
         }
       },
