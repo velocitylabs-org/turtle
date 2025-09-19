@@ -1,6 +1,7 @@
 import Identicon from '@polkadot/react-identicon'
 import type { AddressType, Network } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
+import type { Address } from 'viem'
 import { useEnsName } from 'wagmi'
 import { isValidEthereumAddress, truncateAddress } from '@/utils/address'
 import CopyAddress from './ClipboardCopy'
@@ -22,8 +23,9 @@ export default function Account({
   allowCopy = true,
   size = 14,
 }: AccountProps) {
+  const ensAddress = isValidEthereumAddress(address) ? (address as Address) : undefined
   const { data: ensName } = useEnsName({
-    address: isValidEthereumAddress(address) ? (address as `0x${string}`) : undefined,
+    address: ensAddress,
   })
   const accountDisplay = ensName ? ensName : truncateAddress(address, 4, 4)
 

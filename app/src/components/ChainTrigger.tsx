@@ -2,6 +2,7 @@ import type { Chain, ManualRecipientInput } from '@velocitylabs-org/turtle-regis
 import { cn, Tooltip } from '@velocitylabs-org/turtle-ui'
 import Image from 'next/image'
 import { type ChangeEvent, type ReactNode, type RefObject, useCallback } from 'react'
+import type { Address } from 'viem/accounts'
 import { normalize } from 'viem/ens'
 import { useEnsAvatar, useEnsName } from 'wagmi'
 import { getChainSpecificAddress, isValidEthereumAddress, truncateAddress } from '@/utils/address'
@@ -38,8 +39,9 @@ export default function ChainTrigger({
   walletAddress,
 }: ChainTriggerProps) {
   // wallet and ens
+  const ensAddress = isValidEthereumAddress(walletAddress || '') ? (walletAddress as Address) : undefined
   const { data: ensName } = useEnsName({
-    address: isValidEthereumAddress(walletAddress || '') ? (walletAddress as `0x${string}`) : undefined,
+    address: ensAddress,
   })
 
   const convertedAddress = walletAddress && value ? getChainSpecificAddress(walletAddress, value) : ''
