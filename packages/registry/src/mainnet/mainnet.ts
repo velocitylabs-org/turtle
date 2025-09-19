@@ -1,6 +1,7 @@
 import type { Registry } from '..'
 import {
   Acala,
+  Arbitrum,
   AssetHub,
   Astar,
   Bifrost,
@@ -17,7 +18,7 @@ import {
   Polkadot,
 } from './chains'
 import { routes } from './routes'
-import { EthereumTokens, PolkadotTokens } from './tokens'
+import { ArbitrumTokens, EthereumTokens, PolkadotTokens } from './tokens'
 
 /* Mainnet :: Polkadot - Ethereum */
 
@@ -25,6 +26,7 @@ import { EthereumTokens, PolkadotTokens } from './tokens'
 export const MainnetRegistry: Registry = {
   chains: [
     Ethereum,
+    Arbitrum,
     AssetHub,
     Polkadot,
     Bifrost,
@@ -58,6 +60,9 @@ export const MainnetRegistry: Registry = {
     EthereumTokens.SKY,
     EthereumTokens.SHIB,
     EthereumTokens.PEPE,
+
+    ArbitrumTokens.ETH,
+    ArbitrumTokens.USDC,
 
     PolkadotTokens.USDT,
     PolkadotTokens.USDC,

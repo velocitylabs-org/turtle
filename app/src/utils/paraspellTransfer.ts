@@ -9,6 +9,7 @@ import {
 } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
 import {
+  ArbitrumTokens,
   BridgeHub,
   type Chain,
   EthereumTokens,
@@ -53,6 +54,7 @@ export function getParaspellToken(token: Token, chain?: TChain): TCurrencyCore {
 
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
+  if (chain.network === 'Arbitrum') return ArbitrumTokens.ETH
 
   const ecosystem = chain.network
   const chainNode = getTChain(chain.chainId, ecosystem)
@@ -65,6 +67,7 @@ export function getNativeToken(chain: Chain): Token {
 }
 
 export function getParaSpellChain(chain: Chain): TChain | null {
+  if (chain.network === 'Arbitrum') return null
   return chain.network === 'Ethereum' && chain.chainId === 1 ? 'Ethereum' : getTChain(chain.chainId, chain.network)
 }
 

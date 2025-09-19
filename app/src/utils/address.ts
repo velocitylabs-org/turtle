@@ -108,7 +108,12 @@ export const getPlaceholderAddress = (type: AddressType): string => {
  * if it's an ss58 address (substrate) or the input address if it's an ethereum address.
  */
 export function getChainSpecificAddress(address: string, chain: Chain): string {
-  if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address)) return address
+  if (
+    !isValidAddressType(address, chain.supportedAddressTypes) ||
+    isValidEthereumAddress(address) ||
+    chain.network === 'Arbitrum'
+  )
+    return address
 
   return convertSs58(address, getTChain(chain.chainId, chain.network) as TSubstrateChain)
 }
