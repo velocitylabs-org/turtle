@@ -1,10 +1,10 @@
 import { captureException } from '@sentry/nextjs'
 import { useQueryClient } from '@tanstack/react-query'
-import { type Chain, Ethereum, PolkadotTokens } from '@velocitylabs-org/turtle-registry'
+import { type Chain, PolkadotTokens } from '@velocitylabs-org/turtle-registry'
 import { InvalidTxError, type TxEvent } from 'polkadot-api'
 import { type Account, type Address, erc20Abi, type PublicClient, type WalletClient } from 'viem'
-import { usePublicClient, useSwitchChain, useWalletClient } from 'wagmi'
-import { mainnet } from 'wagmi/chains'
+import { useChainId, usePublicClient, useSwitchChain, useWalletClient } from 'wagmi'
+import { arbitrum, mainnet } from 'wagmi/chains'
 import { type Notification, NotificationSeverity } from '@/models/notification'
 import { type StoredTransfer, TxStatus } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
@@ -46,10 +46,14 @@ const useChainflipApi = () => {
   const publicClient = usePublicClient()
   const { addOrUpdate, remove: removeOngoingTransfer } = useOngoingTransfers()
   const { switchChainAsync } = useSwitchChain()
+  const chainId = useChainId()
   const { data: walletClient } = useWalletClient()
 
-  const enforceSourceChain = async (walletClient: WalletClient, sourceChain: Chain): Promise<void> => {
-    if (walletClient.chain?.id !== mainnet.id && sourceChain.uid === Ethereum.uid) {
+  const enforceSourceChain = async (sourceChain: Chain): Promise<void> => {
+    if (sourceChain.network === 'Arbitrum' && !(chainId === arbitrum.id)) {
+      await switchChainAsync({ chainId: arbitrum.id })
+    }
+    if (sourceChain.network === 'Ethereum' && !(chainId === mainnet.id)) {
       await switchChainAsync({ chainId: mainnet.id })
     }
   }
@@ -85,10 +89,10 @@ const useChainflipApi = () => {
         case Direction.ToPolkadot: {
           const depositAddress = depositPayload.depositAddress as Address
           const srcTokenContractAddress = sourceToken.address as Address
-          await enforceSourceChain(walletClient, sourceChain)
+          await enforceSourceChain(sourceChain)
 
           const requiredBlockConfirmation = await getRequiredBlockConfirmation(chainflipQuote.destAsset.chain)
-          const txHash = await submitEthereumTransfer(
+          const txHash = await submitEvmNetworkTransfer(
             chainflipQuote,
             publicClient,
             walletClient,
@@ -136,6 +140,7 @@ const useChainflipApi = () => {
           })
           break
         }
+        case Direction.ToArbitrum:
         case Direction.ToEthereum: {
           const swapParams = params
           const depositAddress = depositPayload.depositAddress
@@ -170,7 +175,8 @@ const useChainflipApi = () => {
   return { transfer }
 }
 
-const submitEthereumTransfer = async (
+// Ethereum and Arbitrum swaps
+const submitEvmNetworkTransfer = async (
   chainflipQuote: ChainflipQuote,
   publicClient: PublicClient,
   walletClient: WalletClient,

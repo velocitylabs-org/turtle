@@ -8,6 +8,7 @@ import type {
   SwapStatusResponseV2,
 } from '@chainflip/sdk/swap'
 import {
+  ArbitrumTokens,
   type Chain,
   chainflipRoutes,
   EthereumTokens,
@@ -314,6 +315,8 @@ export const isVaultSwapSupported = (sourceChain: ChainData, destChain: ChainDat
 
 export const getFeeTokenFromAssetSymbol = (assetSymbol: AssetSymbol, chain: ChainflipChain): Token => {
   if (chain === 'Ethereum') return EthereumTokens[assetSymbol]
+  if (chain === 'Arbitrum') return ArbitrumTokens[assetSymbol]
+
   switch (assetSymbol) {
     case 'USDC':
       return PolkadotTokens.USDC

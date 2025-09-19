@@ -7,6 +7,7 @@ import {
   type TDryRunResult,
 } from '@paraspell/sdk'
 import {
+  ArbitrumTokens,
   BridgeHub,
   type Chain,
   EthereumTokens,
@@ -39,6 +40,7 @@ const getTokenSymbol = (sourceChain: TChain, token: Token) => {
 
 export function getNativeToken(chain: Chain): Token {
   if (chain.network === 'Ethereum') return EthereumTokens.ETH
+  if (chain.network === 'Arbitrum') return ArbitrumTokens.ETH
 
   const ecosystem = chain.network
   const chainNode = getTChain(chain.chainId, ecosystem)
@@ -51,7 +53,9 @@ export function getNativeToken(chain: Chain): Token {
 }
 
 export function getParaSpellChain(chain: Chain): TChain | null {
-  return chain.network === 'Ethereum' && chain.chainId === 1 ? 'Ethereum' : getTChain(chain.chainId, chain.network)
+  if (chain.network === 'Arbitrum') return null
+  if (chain.network === 'Ethereum' && chain.chainId === 1) return 'Ethereum'
+  return getTChain(chain.chainId, chain.network)
 }
 
 /**
