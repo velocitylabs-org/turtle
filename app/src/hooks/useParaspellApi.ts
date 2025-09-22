@@ -261,7 +261,7 @@ const useParaspellApi = () => {
             xcmRouterBuilderManager.disconnect(params)
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(params.sender, error, setStatus, hashToHex(event.txHash))
           await xcmRouterBuilderManager.disconnect(params)
         }
       },

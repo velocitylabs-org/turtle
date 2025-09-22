@@ -160,7 +160,7 @@ const useParaspellApi = () => {
             xcmTransferBuilderManager.disconnect(params)
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(params.sender, error, setStatus, hashToHex(event.txHash))
           xcmTransferBuilderManager.disconnect(params)
         }
       },
@@ -264,7 +264,7 @@ const useParaspellApi = () => {
       await addToOngoingTransfers(
         {
           ...transferToStore,
-          id: event.txHash.toString(),
+          id: hashToHex(event.txHash),
         },
         onComplete,
       )
@@ -277,7 +277,7 @@ const useParaspellApi = () => {
 
     addOrUpdate({
       ...transferToStore,
-      id: event.txHash.toString(),
+      id: hashToHex(event.txHash),
       crossChainMessageHash: messageHash,
       parachainMessageId: messageId,
       sourceChainExtrinsicIndex: extrinsicIndex,

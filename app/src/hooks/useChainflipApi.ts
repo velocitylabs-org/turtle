@@ -322,17 +322,37 @@ const submitPolkadotTransfer = async (
           await handlePolkadotTxEvents(event, addOrUpdate, transferToStore, resolve, onSignedCallback)
         } catch (error) {
           xcmTransferBuilderManager.disconnect(polkadotTransferParams)
-          handleSendError(sender, error, removeOngoingTransfer, addNotification, setStatus, hashToHex(event.txHash))
+          handleSendError(
+            sender,
+            error,
+            removeOngoingTransfer,
+            addNotification,
+            setStatus,
+            hashToHex(event.txHash),
+            polkadotTransferParams,
+            swapParams,
+          )
           reject(error instanceof Error ? error : new Error(String(error)))
         }
       },
       error: callbackError => {
         let enhancedError = callbackError
         if (callbackError instanceof InvalidTxError) {
-          enhancedError = new Error(`InvalidTxError - Transaction validation failed: ${callbackError.error}`)
+          enhancedError = new Error(`InvalidTxError - Transaction validation failed: ${callbackError.message}`, {
+            cause: callbackError,
+          })
         }
         xcmTransferBuilderManager.disconnect(polkadotTransferParams)
-        handleSendError(sender, enhancedError, removeOngoingTransfer, addNotification, setStatus)
+        handleSendError(
+          sender,
+          enhancedError,
+          removeOngoingTransfer,
+          addNotification,
+          setStatus,
+          undefined,
+          polkadotTransferParams,
+          swapParams,
+        )
         reject(enhancedError instanceof Error ? enhancedError : new Error(String(enhancedError)))
       },
       complete: () => {
@@ -382,7 +402,7 @@ const handlePolkadotTxEvents = async (
     await addToOngoingTransfers(
       {
         ...transferToStore,
-        id: event.txHash.toString(),
+        id: hashToHex(event.txHash),
       },
       addOrUpdate,
       onComplete,
@@ -396,7 +416,7 @@ const handlePolkadotTxEvents = async (
 
   addOrUpdate({
     ...transferToStore,
-    id: event.txHash.toString(),
+    id: hashToHex(event.txHash),
     finalizedAt: new Date(),
   })
   resolve()
@@ -409,6 +429,8 @@ const handleSendError = (
   addNotification: (notification: Omit<Notification, 'id'>) => void,
   setStatus: (status: Status) => void,
   txId?: string,
+  polkadotTransferParams?: TransferParams,
+  swapParams?: TransferParams,
 ) => {
   setStatus('Idle')
   const cancelledByUser = txWasCancelled(sender, e)
@@ -416,7 +438,15 @@ const handleSendError = (
   const message = cancelledByUser ? 'Transfer rejected' : error.message || 'Failed to submit the transfer'
 
   if (txId) removeOngoingTransfer(txId)
-  if (!cancelledByUser) captureException(e)
+  if (!cancelledByUser)
+    captureException(e, {
+      level: 'error',
+      extra: {
+        sender,
+        ...(polkadotTransferParams && { polkadotTransferParams }),
+        ...(swapParams && { swapParams }),
+      },
+    })
 
   addNotification({
     message,
