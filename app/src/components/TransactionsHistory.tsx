@@ -30,7 +30,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
   return (
     <div
       id="ongoing-txs"
-      className="flex h-[525px] max-w-[90vw] flex-col gap-1 overflow-y-auto rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+      className="flex flex-col h-[525px] max-w-[90vw] gap-1 overflow-y-auto scrollbar scrollbar-thumb-rounded rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
     >
       {ongoingTxs &&
         ongoingTxs.length > 0 &&
@@ -47,7 +47,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
         })}
       {completedTxs.map(({ date, transfers }, idx) => (
         <div key={idx + date + transfers.length}>
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-[1rem]">
             <p className={cn('tx-group-date mb-[-1] text-sm', idx !== 0 && 'mt-5')}>
               {formatCompletedTransferDate(date)}
             </p>

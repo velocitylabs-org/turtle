@@ -42,12 +42,12 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
         </div>
 
         {/* Tokens & Amounts  */}
-        <div className={'flex items-center justify-between space-x-4'}>
+        <div className={'flex items-center justify-between space-x-[12px]'}>
           {/* Source Token */}
           {getTokenAndAmount(status, tx.sourceChain, tx.sourceToken, tx.sourceAmount, tx.sourceTokenUSDValue)}
 
           {/* Source -> Dest Chain */}
-          <div className="flex justify-between items-center gap-[3px]">
+          <div className="flex justify-between items-center">
             <Image
               src={(tx.sourceChain.logoURI as Record<string, string>).src}
               alt={tx.sourceChain.name}

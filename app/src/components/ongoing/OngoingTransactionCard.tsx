@@ -48,7 +48,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         </div>
 
         {/* Source -> Dest Chain */}
-        <div className="flex justify-between items-center gap-[3px]">
+        <div className="flex justify-between items-center mx-[12px]">
           <Image
             src={(tx.sourceChain.logoURI as Record<string, string>).src}
             alt={tx.sourceChain.name}
@@ -77,7 +77,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
           <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
             <div className="text-xl leading-none">{formatAmount(destAmount)}</div>
             <div className="text-xs text-turtle-level6 leading-none">
-              ${formatAmount((tx.destinationTokenUSDValue ?? 0) * destAmount)}
+              ${formatAmount((tx.destinationTokenUSDValue ?? tx.sourceTokenUSDValue ?? 0) * destAmount)}
             </div>
           </div>
         </div>
