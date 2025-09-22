@@ -48,7 +48,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
   return (
     <div
       className={cn(
-        'group flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4',
+        'group flex items-center rounded-2xl border p-4 hover:cursor-pointer sm:gap-4 transition duration-200 ease-in',
         getStatusStyle(status),
       )}
     >
