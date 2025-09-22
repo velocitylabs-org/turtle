@@ -135,7 +135,7 @@ function getStatusStyle(result: TransferResult) {
   }
 }
 
-function getStatusIcon(status: TransferResult) {
+export function getStatusIcon(status: TransferResult) {
   switch (status) {
     case TxStatus.Failed:
       return <Fail width={24} height={24} fill={getSVGColor(status)} />
