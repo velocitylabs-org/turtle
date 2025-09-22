@@ -13,28 +13,6 @@ import Info from '../svg/Info'
 import Success from '../svg/Success'
 import { getSVGColor } from './TransactionDialog'
 
-export function getStatusIcon(status: TransferResult) {
-  switch (status) {
-    case TxStatus.Failed:
-      return <Fail width={24} height={24} fill={getSVGColor(status)} />
-    case TxStatus.Undefined:
-      return <Info width={24} height={24} fill={getSVGColor(status)} />
-    default:
-      return <Success width={24} height={24} fill={getSVGColor(status)} />
-  }
-}
-
-export function getStatusHeadline(status: TransferResult) {
-  switch (status) {
-    case TxStatus.Failed:
-      return <span className="text-turtle-error-dark">Failed</span>
-    case TxStatus.Undefined:
-      return <span className="text-turtle-tertiary-dark">Untraceable</span>
-    default:
-      return <span className="text-turtle-primary-dark">Successful</span>
-  }
-}
-
 interface TransactionCardProps {
   tx: CompletedTransfer
 }
@@ -154,5 +132,27 @@ function getStatusStyle(result: TransferResult) {
       return 'border-turtle-level5 hover:border-turtle-error-dark hover:bg-turtle-error-light'
     case TxStatus.Succeeded:
       return 'border-turtle-level5 hover:border-turtle-primary-dark hover:bg-turtle-primary-light'
+  }
+}
+
+function getStatusIcon(status: TransferResult) {
+  switch (status) {
+    case TxStatus.Failed:
+      return <Fail width={24} height={24} fill={getSVGColor(status)} />
+    case TxStatus.Undefined:
+      return <Info width={24} height={24} fill={getSVGColor(status)} />
+    default:
+      return <Success width={24} height={24} fill={getSVGColor(status)} />
+  }
+}
+
+function getStatusHeadline(status: TransferResult) {
+  switch (status) {
+    case TxStatus.Failed:
+      return <span className="text-turtle-error-dark">Failed</span>
+    case TxStatus.Undefined:
+      return <span className="text-turtle-tertiary-dark">Untraceable</span>
+    default:
+      return <span className="text-turtle-primary-dark">Successful</span>
   }
 }
