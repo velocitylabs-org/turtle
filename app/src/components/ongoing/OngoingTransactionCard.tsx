@@ -36,7 +36,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
 
       <div className={'flex items-center justify-between space-x-4 mt-4'}>
         {/* Source Token */}
-        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-2 gap-2 rounded-lg w-[160px] h-[48px] justify-center group-hover:bg-turtle-background">
+        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-2 gap-2 rounded-lg w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
           <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} />
           {/* Amount token & dolar */}
           <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
@@ -71,7 +71,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         </div>
 
         {/* Dest Token */}
-        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-2 gap-2 rounded-lg w-[160px] h-[48px] justify-center group-hover:bg-turtle-background">
+        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-2 gap-2 rounded-lg w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
           <TokenLogo token={tx.destinationToken ?? tx.sourceToken} sourceChain={tx.destChain} />
           {/* Amount token & dolar */}
           <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
