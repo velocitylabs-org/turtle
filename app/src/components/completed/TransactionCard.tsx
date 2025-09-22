@@ -128,6 +128,9 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
   }
 
   function getTokenAndAmount(status: TxStatus, chain: Chain, token: Token, amount: string, inDollars?: number) {
+    const formattedAmount = toHuman(amount, token)
+    const amountInDollars = (inDollars ?? 0) * formattedAmount
+
     return (
       <div
         className={cn(
@@ -139,7 +142,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
         {/* Amount token & dolar */}
         <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
           <div className="text-xl leading-none">{formatAmount(toHuman(amount, token))}</div>
-          <div className="text-xs text-turtle-level6 leading-none">${formatAmount(inDollars ?? 0)}</div>
+          <div className="text-xs text-turtle-level6 leading-none">${formatAmount(amountInDollars)}</div>
         </div>
       </div>
     )
