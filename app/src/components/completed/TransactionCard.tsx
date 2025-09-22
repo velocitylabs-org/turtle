@@ -40,10 +40,7 @@ interface TransactionCardProps {
 }
 
 export default function TransactionCard({ tx }: TransactionCardProps) {
-  //temp
-  const rand = Math.floor(Math.random() * 3)
-
-  const status = rand === 0 ? TxStatus.Succeeded : rand === 1 ? TxStatus.Failed : TxStatus.Undefined
+  const status = tx.result
 
   return (
     <div
@@ -97,8 +94,8 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
             status,
             tx.destChain,
             tx.destinationToken ?? tx.sourceToken,
-            tx.destinationAmount ?? '0',
-            tx.destinationTokenUSDValue,
+            tx.destinationAmount ?? tx.sourceAmount,
+            tx.destinationTokenUSDValue ?? tx.sourceTokenUSDValue,
           )}
         </div>
       </div>
