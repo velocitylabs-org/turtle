@@ -1,5 +1,14 @@
+import type { TLocation } from '@paraspell/sdk'
 import { captureException } from '@sentry/nextjs'
-import { type Balance, type Chain, EthereumTokens, PolkadotTokens, type Token } from '@velocitylabs-org/turtle-registry'
+import {
+  ArbitrumTokens,
+  type Chain,
+  EthereumTokens,
+  getTokenByLocation,
+  isSameToken,
+  PolkadotTokens,
+  type Token,
+} from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
 import { encodeFunctionData, erc20Abi, type PublicClient, parseEther, parseUnits, type WalletClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
@@ -8,14 +17,11 @@ import type { Sender } from '@/hooks/useTransfer'
 import { NotificationSeverity } from '@/models/notification'
 import type { FeeDetails } from '@/models/transfer'
 import { getCachedTokenPrice } from '@/services/balance'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
 import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { Direction } from '@/services/transfer'
 import { chainflipToRegistryChain, getFeeLabelFromType, getFeeTokenFromAssetSymbol } from '@/utils/chainflip'
-import {
-  getParaSpellChain,
-  mapParaspellChainToTurtleRegistry,
-  moonbeamSymbolToRegistry,
-} from '@/utils/paraspellTransfer'
+import { getParaSpellChain, getTokenFromSymbol, mapParaspellChainToTurtleRegistry } from '@/utils/paraspellTransfer'
 import { resolveSdk } from '@/utils/routes'
 import { getFeeEstimate } from '@/utils/snowbridge'
 import { isSwap, safeConvertAmount, toHuman } from '@/utils/transfer'
@@ -34,7 +40,6 @@ interface UseFeesParams {
   sender?: Sender | undefined
   recipientAddress?: string
   destinationToken?: Token | null
-  sourceTokenBalance?: Balance | undefined
   sourceTokenAmountError?: string | null
   transferableAmount: bigint | null
 }
@@ -48,7 +53,6 @@ export default function useFees(params: UseFeesParams) {
     sourceTokenAmount,
     sender,
     recipientAddress,
-    sourceTokenBalance,
     sourceTokenAmountError,
     transferableAmount,
   } = params
@@ -66,7 +70,6 @@ export default function useFees(params: UseFeesParams) {
   const sdk =
     sourceChain && destinationChain ? resolveSdk(sourceChain, destinationChain, sourceToken, destinationToken) : null
   const isSnowbridgeRoute = sdk === 'SnowbridgeApi'
-  const isBridgingToEthereum = destinationChain?.network === 'Ethereum'
 
   // Only fetch ETH balance when using SnowbridgeApi
   // useBalance handles undefined values gracefully by returning early
@@ -74,12 +77,6 @@ export default function useFees(params: UseFeesParams) {
     chain: isSnowbridgeRoute ? sourceChain : undefined,
     token: isSnowbridgeRoute ? EthereumTokens.ETH : undefined,
     address: isSnowbridgeRoute ? senderAddress : undefined,
-  })
-
-  const { balance: dotBalance } = useBalance({
-    chain: isBridgingToEthereum ? sourceChain : undefined,
-    token: isBridgingToEthereum ? PolkadotTokens.DOT : undefined,
-    address: isBridgingToEthereum ? senderAddress : undefined,
   })
 
   const { chainflipQuote, isChainflipQuoteError } = useChainflipQuote({
@@ -119,78 +116,90 @@ export default function useFees(params: UseFeesParams) {
           const destinationChainNode = getParaSpellChain(destinationChain)
           if (!destinationChainNode) throw new Error('Destination chain id not found')
 
-          const xcmFee = await xcmTransferBuilderManager.getXcmFee({
+          const isTokenSwap = !isSameToken(sourceToken, destinationToken)
+          const sourceAmount = safeConvertAmount(sourceTokenAmount, sourceToken)!
+          const commonParams = {
             sourceChain,
             destinationChain,
             sourceToken,
-            sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
+            sourceAmount,
             sender,
             recipient: recipientAddress,
-          })
+          }
+
+          // Get XCM fees based on operation type (swap vs transfer)
+          const xcmFee = isTokenSwap
+            ? await xcmRouterBuilderManager.getXcmFee({
+                ...commonParams,
+                destinationToken,
+              })
+            : await xcmTransferBuilderManager.getXcmFee(commonParams)
 
           // NOTE: 'sufficient' may be undefined when chains lack dry-run support, preventing fee/success validation.
           // - Present: reliable sufficiency indicator
           // - Missing: defaults to true, but user proceeds at own risk
           const origin: FeeDetails[] = []
           if (hasParaspellFee(xcmFee.origin)) {
-            const originToken = getTokenFromSymbol(xcmFee.origin.currency)
+            const originFee = xcmFee.origin
+            const originToken = getToken(originFee.asset.location, originFee.asset.symbol)
             origin.push({
               title: 'Execution fees',
               chain: sourceChain,
               sufficient:
-                xcmFee.origin.sufficient === undefined
+                originFee.sufficient === undefined
                   ? 'undetermined'
-                  : xcmFee.origin.sufficient
+                  : originFee.sufficient
                     ? 'sufficient'
                     : 'insufficient',
               amount: {
-                amount: xcmFee.origin.fee,
+                amount: originFee.fee,
                 token: originToken,
-                inDollars: await getTokenAmountInDollars(originToken, xcmFee.origin.fee),
+                inDollars: await getTokenAmountInDollars(originToken, originFee.fee),
               },
             })
           }
 
           const destination: FeeDetails[] = []
           if (hasParaspellFee(xcmFee.destination)) {
-            const destinationToken = getTokenFromSymbol(xcmFee.destination.currency)
+            const destinationFee = xcmFee.destination
+            const destinationToken = getToken(destinationFee.asset.location, destinationFee.asset.symbol)
             destination.push({
               title: 'Delivery fees',
               chain: destinationChain,
               sufficient:
-                xcmFee.destination.sufficient === undefined
+                destinationFee.sufficient === undefined
                   ? 'undetermined'
-                  : xcmFee.destination.sufficient
+                  : destinationFee.sufficient
                     ? 'sufficient'
                     : 'insufficient',
               amount: {
-                amount: xcmFee.destination.fee,
+                amount: destinationFee.fee,
                 token: destinationToken,
-                inDollars: await getTokenAmountInDollars(destinationToken, xcmFee.destination.fee),
+                inDollars: await getTokenAmountInDollars(destinationToken, destinationFee.fee),
               },
             })
           }
 
-          const isBridgeToEthereum = destinationChain.network === 'Ethereum'
           const intermediate: FeeDetails[] = []
           if (xcmFee.hops.length > 0) {
             const isSwapping = isSwap({ sourceToken, destinationToken })
             for (const hop of xcmFee.hops) {
-              if (hasParaspellFee(hop.result)) {
-                const hopToken = getTokenFromSymbol(hop.result.currency)
+              const hopFee = hop.result
+              if (hasParaspellFee(hopFee)) {
+                const hopToken = getToken(hopFee.asset.location, hopFee.asset.symbol)
                 const hopFeeDetailItem: FeeDetails = {
-                  title: isBridgeToEthereum ? 'Bridging fees' : isSwapping ? 'Swap fees' : 'Routing fees',
+                  title: isSwapping ? 'Swap fees' : 'Routing fees',
                   chain: mapParaspellChainToTurtleRegistry(hop.chain),
                   sufficient:
-                    hop.result.sufficient === undefined
+                    hopFee.sufficient === undefined
                       ? 'undetermined'
-                      : hop.result.sufficient
+                      : hopFee.sufficient
                         ? 'sufficient'
                         : 'insufficient',
                   amount: {
-                    amount: hop.result.fee,
+                    amount: hopFee.fee,
                     token: hopToken,
-                    inDollars: await getTokenAmountInDollars(hopToken, hop.result.fee),
+                    inDollars: await getTokenAmountInDollars(hopToken, hopFee.fee),
                   },
                 }
                 intermediate.push(hopFeeDetailItem)
@@ -199,47 +208,49 @@ export default function useFees(params: UseFeesParams) {
           }
 
           const feeList: FeeDetails[] = [...origin, ...intermediate, ...destination]
-
-          // NOTE: if dry run fails, it means that we don't have bridging fees in the fee list, so we need to add it manually (this is a way around while paraspell work on improving this)
-          // The bridging fee when sending to Ethereum is paid in DOT
-          if (destinationChain.network === 'Ethereum' && !feeList.find(fee => fee.title === 'Bridging fees')) {
-            const bridgeFeeToken = PolkadotTokens.DOT
-            const bridgeFeeTokenInDollars = (await getCachedTokenPrice(bridgeFeeToken))?.usd ?? 0
-            const bridgeFee = await getCachedBridgingFee()
-            const bridgeFeeInNumber = Number(toHuman(bridgeFee, bridgeFeeToken))
-            const isSufficient = checkBalanceSufficiency(feeList, bridgeFeeToken, bridgeFeeInNumber, dotBalance)
-            feeList.push({
-              title: 'Bridging fees',
-              chain: sourceChain,
-              sufficient: !dotBalance ? 'undetermined' : isSufficient ? 'sufficient' : 'insufficient',
-              amount: {
-                amount: bridgeFee,
-                token: bridgeFeeToken,
-                inDollars: bridgeFeeInNumber * bridgeFeeTokenInDollars,
-              },
-            })
-          }
-
           setFees(feeList)
+          const sourceAmountBigInt = safeConvertAmount(sourceTokenAmount, sourceToken) ?? 0n
 
-          // Use the provided transferableAmount if available (from max button), otherwise calculate it
-          let maxTransferableAmount = transferableAmount
-          if (!maxTransferableAmount) {
-            maxTransferableAmount = await xcmTransferBuilderManager.getTransferableAmount({
+          Promise.all([
+            // Get max-transferable amount
+            transferableAmount ||
+              xcmTransferBuilderManager.getTransferableAmount({
+                sourceChain,
+                destinationChain,
+                sourceToken,
+                sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
+                sender,
+                recipient: recipientAddress,
+              }),
+            // Get min-transferable amount
+            xcmTransferBuilderManager.getMinTransferableAmount({
               sourceChain,
               destinationChain,
               sourceToken,
               sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
               sender,
               recipient: recipientAddress,
-            })
-          }
+            }),
+          ])
+            .then(([maxTransferableAmount, minTransferableAmount]) => {
+              // @ts-ignore NOTE: when minTransferableAmount is 0, it means that the user has no balance to cover the transfer
+              if (minTransferableAmount === 0) {
+                setIsBalanceSufficientForFees(false)
+                return
+              }
 
-          if (maxTransferableAmount) {
-            const sourceAmountBigInt = safeConvertAmount(sourceTokenAmount, sourceToken) ?? 0n
-            const isSufficientForFees = sourceAmountBigInt <= maxTransferableAmount
-            setIsBalanceSufficientForFees(isSufficientForFees)
-          }
+              let isSufficient = true
+              if (maxTransferableAmount) {
+                isSufficient = isSufficient && sourceAmountBigInt <= maxTransferableAmount
+              }
+              if (minTransferableAmount) {
+                isSufficient = isSufficient && sourceAmountBigInt >= minTransferableAmount
+              }
+              setIsBalanceSufficientForFees(isSufficient)
+            })
+            .catch(error => {
+              console.error('Error checking transferable amounts:', error)
+            })
 
           break
         }
@@ -285,13 +296,18 @@ export default function useFees(params: UseFeesParams) {
 
           const feeList: FeeDetails[] = []
           const ethBalanceAmount = ethBalance?.value ?? 0n
+          const sourceAmount = safeConvertAmount(sourceTokenAmount, sourceToken)!
+          const sourceEthAmount = sourceToken.id === EthereumTokens.ETH.id ? sourceAmount : 0n
+          let executionAmount: bigint = 0n
+          let bridgingAmount: bigint = 0n
 
           if ('execution' in snowbridgeFees && snowbridgeFees.execution) {
-            const executionAmount = BigInt(snowbridgeFees.execution.amount ?? 0n)
+            // Execution fees are in ETH
+            executionAmount = BigInt(snowbridgeFees.execution.amount ?? 0n)
             const execution: FeeDetails = {
               title: 'Execution fees',
               chain: sourceChain,
-              sufficient: executionAmount < ethBalanceAmount ? 'sufficient' : 'insufficient',
+              sufficient: sourceEthAmount + executionAmount < ethBalanceAmount ? 'sufficient' : 'insufficient',
               amount: {
                 amount: snowbridgeFees.execution.amount,
                 token: snowbridgeFees.execution.token,
@@ -302,20 +318,13 @@ export default function useFees(params: UseFeesParams) {
           }
 
           if ('bridging' in snowbridgeFees && snowbridgeFees.bridging) {
-            const bridgingAmount = BigInt(snowbridgeFees.bridging.amount ?? 0n)
-
-            // Find execution fees from feeList and check if same token
-            let totalFees = bridgingAmount
-            const executionFee = feeList.find(fee => fee.title === 'Execution fees')
-            if (executionFee?.amount?.token?.id === snowbridgeFees.bridging.token?.id) {
-              const executionAmount = BigInt(executionFee?.amount?.amount ?? 0n)
-              totalFees = bridgingAmount + executionAmount
-            }
-
+            // Bridging fees are in ETH
+            bridgingAmount = BigInt(snowbridgeFees.bridging.amount ?? 0n)
             const bridging: FeeDetails = {
               title: 'Bridging fees',
               chain: sourceChain,
-              sufficient: totalFees <= ethBalanceAmount ? 'sufficient' : 'insufficient',
+              sufficient:
+                sourceEthAmount + bridgingAmount + executionAmount < ethBalanceAmount ? 'sufficient' : 'insufficient',
               amount: {
                 amount: snowbridgeFees.bridging.amount,
                 token: snowbridgeFees.bridging.token,
@@ -326,7 +335,7 @@ export default function useFees(params: UseFeesParams) {
           }
 
           setFees(feeList)
-          const isSufficient = checkBalanceSufficiency(feeList, sourceToken, sourceTokenAmount, sourceTokenBalance) // Check if the balance is enough for all fees
+          const isSufficient = sourceEthAmount + bridgingAmount + executionAmount < ethBalanceAmount // Check if the balance is enough for all fees
           setIsBalanceSufficientForFees(isSufficient)
 
           break
@@ -339,6 +348,8 @@ export default function useFees(params: UseFeesParams) {
             return
           }
           setLoading(true)
+
+          const isEvmNetwork = sourceChain.network === 'Ethereum' || sourceChain.network === 'Arbitrum'
 
           const chainflipfeeList: FeeDetails[] = await Promise.all(
             chainflipQuote.includedFees.map(async fee => {
@@ -387,8 +398,7 @@ export default function useFees(params: UseFeesParams) {
               },
             })
           }
-
-          if (sourceChain.network === 'Ethereum') {
+          if (isEvmNetwork) {
             if (!publicClient || !walletClient) throw new Error('Public client or wallet client not found')
 
             const { estimatedGasFee: networkFee, isBalanceSufficient } = await getEip1559NetworkFee(
@@ -462,8 +472,6 @@ export default function useFees(params: UseFeesParams) {
     snowbridgeContextError,
     sender,
     ethBalance,
-    dotBalance,
-    sourceTokenBalance,
     sdk,
     sourceTokenAmountError,
     transferableAmount,
@@ -496,61 +504,9 @@ async function getTokenAmountInDollars(token: Token, amount: bigint): Promise<nu
   }
 }
 
-function getTokenFromSymbol(symbolParam: string): Token {
-  // Moonbeam uses ERC-20 wrapped tokens with 'xc' prefix (e.g., xcDOT for wrapped DOT)
-  // Strip the 'xc' prefix to map to the base token in our registry
-  const symbol = moonbeamSymbolToRegistry(symbolParam)
-  const symbolUpper = symbol.toUpperCase()
-  const tokensBySymbol = { ...EthereumTokens, ...PolkadotTokens }
-  const token = tokensBySymbol[symbolUpper as keyof typeof tokensBySymbol]
-  if (!token) {
-    throw new Error(`Token not found for symbol: ${symbolUpper}`)
-  }
-  return token as Token
-}
-
 // Checks if a Paraspell fee item has actual fees to be paid
 function hasParaspellFee(feeItem: { feeType: string; fee: bigint } | undefined): boolean {
   return feeItem !== undefined && feeItem.feeType !== 'noFeeRequired' && feeItem.fee !== 0n
-}
-
-function checkBalanceSufficiency(
-  feeList: FeeDetails[],
-  sourceToken: Token,
-  sourceAmount: number,
-  sourceTokenBalance: Balance | undefined,
-): boolean {
-  if (!sourceTokenBalance || !sourceTokenBalance.value) return false
-
-  // Sum all fees that use the same token as the source token
-  const totalFeesInSourceToken = feeList.reduce((sum, fee) => {
-    if (fee.amount.token?.id === sourceToken.id) {
-      const feeAmount = BigInt(fee.amount.amount ?? 0n)
-      return sum + feeAmount
-    }
-    return sum
-  }, 0n)
-
-  const sourceConvertedAmount = safeConvertAmount(sourceAmount, sourceToken)
-  if (!sourceConvertedAmount) return false
-
-  const totalRequired = totalFeesInSourceToken + sourceConvertedAmount
-  return totalRequired <= sourceTokenBalance.value
-}
-
-const getCachedBridgingFee = async (): Promise<bigint> => {
-  const response = await fetch(`/api/bridging-fee`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (!response.ok) {
-    const { error } = await response.json()
-    throw new Error(error || `Failed to fetch bridging fee`)
-  }
-  return await response.json().then(BigInt)
 }
 
 /**
@@ -565,9 +521,10 @@ const getEip1559NetworkFee = async (
   sourceToken: Token,
   sourceTokenAmount: number,
 ): Promise<{ estimatedGasFee: bigint; isBalanceSufficient: boolean }> => {
+  const isEvmToken = sourceToken.id === EthereumTokens.ETH.id || sourceToken.id === ArbitrumTokens.ETH.id
   let gas: bigint
 
-  if (sourceToken.id === EthereumTokens.ETH.id) {
+  if (isEvmToken) {
     gas = await publicClient.estimateGas({
       account: walletClient.account,
       to: senderAddress, // Recipient here must be a placeholder address so we use the sender address
@@ -617,9 +574,10 @@ const checkEip1559BalanceSufficiency = async (
   const maxFeePerGas = feesValues.maxFeePerGas ?? gasPrice
   const maxGasFee = gas * maxFeePerGas
   const ethBalance = await publicClient.getBalance({ address })
+  const isEvmToken = sourceToken.id === EthereumTokens.ETH.id || sourceToken.id === ArbitrumTokens.ETH.id
 
   // ETH balance check
-  if (sourceToken.id === EthereumTokens.ETH.id) {
+  if (isEvmToken) {
     const transferAmount = parseEther(sourceTokenAmount.toString())
     return ethBalance >= transferAmount + maxGasFee
   }
@@ -636,4 +594,12 @@ const checkEip1559BalanceSufficiency = async (
   })
 
   return erc20Balance >= parseUnits(sourceTokenAmount.toString(), sourceToken.decimals)
+}
+
+function getToken(location: TLocation | undefined, symbol: string) {
+  const token = location ? getTokenByLocation(location) : getTokenFromSymbol(symbol)
+  if (!token) {
+    throw new Error(`Token not found for location ${JSON.stringify(location)} and symbol ${symbol}`)
+  }
+  return token as Token
 }

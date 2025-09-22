@@ -1,3 +1,4 @@
+import arbitrumLogo from '@velocitylabs-org/turtle-assets/logos/arbitrum.svg'
 import ethereumLogo from '@velocitylabs-org/turtle-assets/logos/ethereum.svg'
 import kusamaLogo from '@velocitylabs-org/turtle-assets/logos/kusama.svg'
 import wormholeLogo from '@velocitylabs-org/turtle-assets/logos/moonbeam.svg'
@@ -26,6 +27,13 @@ export function getOriginBadge(token: Token, sourceChain: Chain | null): OriginB
     return {
       logoURI: ethereumLogo,
       text: `Ethereum ${token.symbol}`,
+    }
+  }
+
+  if (sourceChain.network === 'Arbitrum' && token.origin.type === 'Arbitrum') {
+    return {
+      logoURI: arbitrumLogo,
+      text: `Abriturm One ${token.symbol}`,
     }
   }
 

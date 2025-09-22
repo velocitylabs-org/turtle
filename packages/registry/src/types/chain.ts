@@ -25,6 +25,6 @@ export interface Chain {
   supportExecuteExtrinsic?: boolean
 }
 
-export type Network = 'Ethereum' | 'Polkadot' | 'Kusama'
+export type Network = 'Ethereum' | 'Polkadot' | 'Kusama' | 'Arbitrum'
 export type AddressType = 'evm' | 'ss58'
 export type WalletType = 'EVM' | 'Substrate' | 'SubstrateEVM'
