@@ -30,8 +30,8 @@
   "dependencies": {
     "@hookform/resolvers": "4.1.2",
     "@number-flow/react": "^0.5.5",
-    "@paraspell/sdk": "11.2.4",
-    "@paraspell/xcm-router": "11.2.4",
+    "@paraspell/sdk": "11.7.2",
+    "@paraspell/xcm-router": "11.7.2",
     "@polkadot/api": "^15.9.2",
     "@polkadot/extension-dapp": "^0.58.4",
     "@polkadot/extension-inject": "^0.58.8",
@@ -51,12 +51,12 @@
     "ethers": "^6.15.0",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.475.0",
-    "polkadot-api": "^1.15.2",
+    "polkadot-api": "^1.17.2",
     "react-hook-form": "^7.54.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-motion": "^1.1.0",
-    "viem": "^2.23.4",
+    "viem": "^2.36.0",
     "wagmi": "^2.14.11",
     "zod": "^3.24.2",
     "zustand": "^5.0.3"
@@ -87,7 +87,7 @@
     "vite-plugin-wasm": "^3.4.1"
   },
   "peerDependencies": {
-    "@paraspell/sdk": "11.2.4",
+    "@paraspell/sdk": "11.7.2",
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/util": "^13.3.1",
     "@types/node": ">=20.16.15",

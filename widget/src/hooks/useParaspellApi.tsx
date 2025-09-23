@@ -20,7 +20,7 @@ import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics.ts'
 import { wait } from '@/utils/datetime'
 import { getExplorerLink } from '@/utils/explorer'
-import { isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
+import { hashToHex, isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -131,7 +131,7 @@ const useParaspellApi = () => {
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) => {
         const transferToStore = {
-          id: event.txHash?.toString() ?? '',
+          id: hashToHex(event.txHash),
           sourceChain: params.sourceChain,
           sourceToken: params.sourceToken,
           destinationToken: params.destinationToken,
@@ -151,7 +151,7 @@ const useParaspellApi = () => {
             params.onComplete?.()
             trackTransferMetrics({
               transferParams: params,
-              txId: event.txHash?.toString(),
+              txId: hashToHex(event.txHash),
               senderAddress,
               sourceTokenUSDValue,
               destinationTokenUSDValue,
@@ -160,7 +160,7 @@ const useParaspellApi = () => {
             xcmTransferBuilderManager.disconnect(params)
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash.toString())
+          handleSendError(params.sender, error, setStatus, hashToHex(event.txHash))
           xcmTransferBuilderManager.disconnect(params)
         }
       },
@@ -207,7 +207,7 @@ const useParaspellApi = () => {
     firstTransaction.tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) => {
         const transferToStore = {
-          id: event.txHash?.toString() ?? '',
+          id: hashToHex(event.txHash),
           sourceChain: params.sourceChain,
           sourceToken: params.sourceToken,
           destinationToken: params.destinationToken,
@@ -230,7 +230,7 @@ const useParaspellApi = () => {
             params.onComplete?.()
             trackTransferMetrics({
               transferParams: params,
-              txId: event.txHash?.toString(),
+              txId: hashToHex(event.txHash),
               senderAddress: account.address,
               sourceTokenUSDValue,
               destinationTokenUSDValue,
@@ -240,7 +240,7 @@ const useParaspellApi = () => {
             xcmRouterBuilderManager.disconnect(params)
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, event.txHash?.toString())
+          handleSendError(params.sender, error, setStatus, hashToHex(event.txHash))
           xcmRouterBuilderManager.disconnect(params)
         }
       },
@@ -264,7 +264,7 @@ const useParaspellApi = () => {
       await addToOngoingTransfers(
         {
           ...transferToStore,
-          id: event.txHash.toString(),
+          id: hashToHex(event.txHash),
         },
         onComplete,
       )
@@ -277,7 +277,7 @@ const useParaspellApi = () => {
 
     addOrUpdate({
       ...transferToStore,
-      id: event.txHash.toString(),
+      id: hashToHex(event.txHash),
       crossChainMessageHash: messageHash,
       parachainMessageId: messageId,
       sourceChainExtrinsicIndex: extrinsicIndex,
@@ -377,19 +377,23 @@ const useParaspellApi = () => {
         ...result,
       }
     } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Unknown error occurred'
+      const failureResult = {
+        success: false,
+        failureReason: errorMessage,
+        currency: params.sourceToken.symbol,
+      } as TDryRunChainResult
+
       if (e instanceof Error && e.message.includes('DryRunApi is not available'))
         return {
           type: 'Unsupported',
-          origin: { success: false, failureReason: e.message },
+          origin: failureResult,
           hops: [],
         }
 
       return {
         type: 'Supported',
-        origin: {
-          success: false,
-          failureReason: (e as Error).message,
-        },
+        origin: failureResult,
         hops: [],
       }
     }

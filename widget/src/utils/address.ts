@@ -32,7 +32,7 @@ export const truncateAddress = (str: string, start: number = 4, end: number = 4)
  * @param address - The address string to be validated.
  * @returns True if the address is a valid Ethereum address, false otherwise.
  */
-const isValidEthereumAddress = (address: string): boolean => {
+export const isValidEthereumAddress = (address: string): boolean => {
   return isAddress(address)
 }
 
@@ -117,7 +117,12 @@ export const getSenderAddress = async (sender: Sender): Promise<string> =>
  * if it's an ss58 address (substrate) or the input address if it's an ethereum address.
  */
 export function getChainSpecificAddress(address: string, chain: Chain): string {
-  if (!isValidAddressType(address, chain.supportedAddressTypes) || isValidEthereumAddress(address)) return address
+  if (
+    !isValidAddressType(address, chain.supportedAddressTypes) ||
+    isValidEthereumAddress(address) ||
+    chain.network === 'Arbitrum'
+  )
+    return address
 
   return convertSs58(address, getTChain(chain.chainId, chain.network) as TSubstrateChain)
 }

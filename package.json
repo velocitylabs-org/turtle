@@ -9,6 +9,7 @@
     "dev-analytics": "turbo run dev --filter=@velocitylabs-org/turtle-analytics",
     "dev-widget": "turbo run dev --filter=@velocitylabs-org/turtle-widget",
     "dev-site": "turbo run dev --filter=@velocitylabs-org/turtle-site",
+    "clean": "./scripts/clean.sh",
     "format-and-lint": "biome check . --diagnostic-level=error",
     "format-and-lint:fix": "biome check . --write",
     "start": "turbo run start",

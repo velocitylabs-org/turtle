@@ -33,6 +33,7 @@ export type TokenStandard = 'Native' | 'ERC20' // keep it future proof - Ex: "SP
 //   Tokens that are native to a specific parachain, identified by its parachain Id.
 export type Origin =
   | { type: 'Ethereum'; standard: TokenStandard } // Native ETH or ERC20
+  | { type: 'Arbitrum'; standard: TokenStandard }
   | { type: 'Ethereum'; bridge: Bridge } // Snowbridge-wrapped tokens
   | { type: 'Polkadot'; paraId: number } // Native tokens on Polkadot parachains
   | { type: 'Solana'; bridge: Bridge }

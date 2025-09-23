@@ -34,7 +34,7 @@ import wethLogo from '@velocitylabs-org/turtle-assets/logos/weth.svg'
 import wstethLogo from '@velocitylabs-org/turtle-assets/logos/wsteth.svg'
 
 import type { Token } from '@/types'
-import { ethereumOrigin, parachain, wormholeSolanaWrapped } from '../helpers'
+import { arbitrumOrigin, ethereumOrigin, parachain, wormholeSolanaWrapped } from '../helpers'
 
 type BaseTokens = Record<string, Omit<Token, 'id' | 'origin'>>
 
@@ -46,21 +46,24 @@ type BaseTokens = Record<string, Omit<Token, 'id' | 'origin'>>
  * @param idSuffix - Optional suffix to append to the token ID (example: EthereumTokens.USDC.id === 'usdc.e').
  * @returns A fully typed Ethereum token registry: Record<string, Token>
  */
-export const getEthereumTokens = <T extends BaseTokens>(
+export const populateTokens = <T extends BaseTokens>(
   sharedTokenBase: T,
   idSuffix = 'e',
+  origin = ethereumOrigin,
 ): {
   [K in keyof T]: Token
 } => {
   return Object.entries(sharedTokenBase).reduce(
     (acc, [tokenKey, tokenValue]) => {
+      // Prevent generating the id for Ethereum Eth to maintain compatability
+      const isEthereumEth = tokenKey === 'ETH' && idSuffix === 'e'
       acc[tokenKey as keyof T] = {
-        // Generate the token id and handle Eth exception
-        id: tokenKey === 'ETH' ? tokenKey.toLowerCase() : `${tokenKey.toLowerCase()}.${idSuffix}`,
+        // Generate the token id and handle Ethereum Eth exception
+        id: isEthereumEth ? tokenKey.toLowerCase() : `${tokenKey.toLowerCase()}.${idSuffix}`,
         // Spread the token base data
         ...tokenValue,
         // Generate the token origin (Native or ERC20)
-        origin: ethereumOrigin(tokenKey === 'ETH' ? 'Native' : 'ERC20'),
+        origin: origin(tokenKey === 'ETH' ? 'Native' : 'ERC20'),
       } as Token
       return acc
     },
@@ -74,7 +77,7 @@ export const getEthereumTokens = <T extends BaseTokens>(
  * This base omits both `id` and `origin`, allowing them to be dynamically added via `getEthereumTokens()`
  * It serves as a common source for both native Ethereum tokens and bridge-wrapped variants (example: Snowbridge wrapped tokens)
  */
-export const sharedTokenBase: BaseTokens = {
+export const sharedEthTokenBase: BaseTokens = {
   ETH: {
     name: 'Ethereum',
     symbol: 'ETH',
@@ -551,9 +554,65 @@ export const sharedTokenBase: BaseTokens = {
   },
 }
 
+export const sharedArbitrumTokenBase: BaseTokens = {
+  ETH: {
+    name: 'Ethereum',
+    symbol: 'ETH',
+    logoURI: ethereumLogo,
+    decimals: 18,
+    address: '0x0000000000000000000000000000000000000000', // native ETH
+    location: {
+      parents: 2,
+      interior: {
+        X1: {
+          GlobalConsensus: {
+            Ethereum: {
+              chainId: 42161, // Arbitrum One
+            },
+          },
+        },
+      },
+    },
+    coingeckoId: 'ethereum',
+  },
+
+  USDC: {
+    name: 'USDC',
+    symbol: 'USDC',
+    logoURI: usdcLogo,
+    decimals: 6,
+    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+    location: {
+      parents: 2,
+      interior: {
+        X2: [
+          {
+            GlobalConsensus: {
+              Ethereum: {
+                chainId: 42161, // Arbitrum One
+              },
+            },
+          },
+          {
+            AccountKey20: {
+              network: null,
+              key: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+            },
+          },
+        ],
+      },
+    },
+    coingeckoId: 'usd-coin',
+  },
+}
+
 // Tokens
 export const EthereumTokens = {
-  ...getEthereumTokens(sharedTokenBase),
+  ...populateTokens(sharedEthTokenBase),
+} as const satisfies Record<string, Token>
+
+export const ArbitrumTokens = {
+  ...populateTokens(sharedArbitrumTokenBase, 'arb', arbitrumOrigin),
 } as const satisfies Record<string, Token>
 
 export const PolkadotTokens = {

@@ -44,10 +44,12 @@ export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined 
       // Get messageId from xcmPallet pallet (ex: DOT from Relay Chain to AH)
       if (section === 'XcmPallet' && method === 'Sent' && 'message_id' in data) {
         messageId = data.message_id.asHex()
+        console.log('messageId', messageId)
       }
       // Get messageId from polkadotXcm pallet (ex: DOT from AH to Relay Chain or ETH)
       if (section === 'PolkadotXcm' && method === 'Sent' && 'message_id' in data) {
         messageId = data.message_id.asHex()
+        console.log('messageId', messageId)
       }
 
       if (section === 'PolkadotXcm' && method === 'Attempted' && 'outcome' in data) {
@@ -62,6 +64,8 @@ export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined 
         isExtrinsicSuccess = true
       }
     })
+
+    console.log('messageId', messageId)
 
     if (!messageHash && !messageId && !extrinsicIndex)
       throw new Error('MessageHash, MessageId and ExtrinsicIndex are all missing')
