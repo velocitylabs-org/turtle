@@ -51,7 +51,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
           <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} />
           {/* Amount token & dolar */}
           <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
-            <div className="text-xl leading-none">{formatAmount(sourceAmount)}</div>
+            <div className="text-normal sm:text-xl leading-none">{formatAmount(sourceAmount)}</div>
             <div className="text-xs text-turtle-level6 leading-none">
               ${formatAmount((tx.sourceTokenUSDValue ?? 0) * sourceAmount)}
             </div>
@@ -86,7 +86,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
           <TokenLogo token={tx.destinationToken ?? tx.sourceToken} sourceChain={tx.destChain} />
           {/* Amount token & dolar */}
           <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
-            <div className="text-xl leading-none">{formatAmount(destAmount)}</div>
+            <div className="text-normal sm:text-xl leading-none">{formatAmount(destAmount)}</div>
             <div className="text-xs text-turtle-level6 leading-none">
               ${formatAmount((tx.destinationTokenUSDValue ?? tx.sourceTokenUSDValue ?? 0) * destAmount)}
             </div>
