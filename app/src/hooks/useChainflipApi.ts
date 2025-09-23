@@ -349,7 +349,7 @@ const submitPolkadotTransfer = async (
           removeOngoingTransfer,
           addNotification,
           setStatus,
-          undefined,
+          transferToStore.id,
           polkadotTransferParams,
           swapParams,
         )
@@ -443,8 +443,11 @@ const handleSendError = (
       level: 'error',
       extra: {
         sender,
+        ...(txId && { txId }),
         ...(polkadotTransferParams && { polkadotTransferParams }),
         ...(swapParams && { swapParams }),
+        error,
+        errorCause: error.cause,
       },
     })
 

@@ -286,11 +286,17 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfer is outdated.
  */
-export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcm: 0.5, bridge: 6 }) => {
+export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcmOrSwap: 0.5, bridge: 6 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const isSwap = isChainflipSwap(
+    transfer.sourceChain,
+    transfer.destChain,
+    transfer.sourceToken,
+    transfer.destinationToken,
+  )
   const timeBuffer =
-    direction === Direction.WithinPolkadot
-      ? thresholdInHours.xcm * 60 * 60 * 1000
+    direction === Direction.WithinPolkadot || isSwap
+      ? thresholdInHours.xcmOrSwap * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return Date.now() - new Date(transfer.date).getTime() > timeBuffer
 }
