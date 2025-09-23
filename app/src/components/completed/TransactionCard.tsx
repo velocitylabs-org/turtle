@@ -32,11 +32,9 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex max-w-xs space-x-1 overflow-x-auto">
             <div>{getStatusIcon(status)}</div>
-            <div className={cn('flex items-center space-x-1 text-l leading-none font-bold')}>
-              {getStatusHeadline(status)}
-            </div>
+            <div className={cn('flex items-center space-x-1 leading-none font-bold')}>{getStatusHeadline(status)}</div>
           </div>
-          <div className={'text-[10px] sm:block sm:text-sm text-turtle-level5 group-hover:text-turtle-level6'}>
+          <div className={'sm:block text-sm sm:text-sm text-turtle-level5 group-hover:text-turtle-level6'}>
             {formatOngoingTransferDate(tx.date)}
           </div>
         </div>
@@ -47,7 +45,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
           {getTokenAndAmount(status, tx.sourceChain, tx.sourceToken, tx.sourceAmount, tx.sourceTokenUSDValue)}
 
           {/* Source -> Dest Chain */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-1">
             <Image
               src={(tx.sourceChain.logoURI as Record<string, string>).src}
               alt={tx.sourceChain.name}
@@ -109,14 +107,14 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
     return (
       <div
         className={cn(
-          'flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-2 gap-2 rounded-lg w-[160px] h-[48px] justify-center group-hover:bg-turtle-background',
+          'flex items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background',
           getBorderOnGroupHover(status),
         )}
       >
-        <TokenLogo token={token} sourceChain={chain} />
+        <TokenLogo token={token} sourceChain={chain} size={32} />
         {/* Amount token & dolar */}
-        <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
-          <div className="text-xl leading-none">{formatAmount(toHuman(amount, token))}</div>
+        <div className="flex flex-col justify-start items-left gap-1 sm:gap-0 text-left pl-1">
+          <div className="text-normal sm:text-xl leading-none">{formatAmount(toHuman(amount, token))}</div>
           <div className="text-xs text-turtle-level6 leading-none">${formatAmount(amountInDollars)}</div>
         </div>
       </div>

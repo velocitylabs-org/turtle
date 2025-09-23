@@ -26,9 +26,19 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
           <div className="flex items-center justify-center border border-turtle-secondary-dark rounded-[4px] w-[20px] h-[20px]">
             <LoadingIcon className="animate-spin" width={14} height={10} color={colors['turtle-secondary-dark']} />
           </div>
-          <p className="text-left font-bold text-turtle-secondary-dark">{status}</p>
+          <div
+            className="text-left font-bold text-sm sm:text-normal text-turtle-secondary-dark w-[140px] sm:w-auto overflow-x-auto text-nowrap scrollbar scrollbar-thumb-rounded
+  [&::-webkit-scrollbar]:h-1 scrollbar scrollbar-thumb-rounded
+  [&::-webkit-scrollbar-track]:m-10
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-turtle-background 
+  [&::-webkit-scrollbar-thumb]:bg-turtle-level2"
+          >
+            {status}
+          </div>
         </div>
-        <p className="text-[10px] text-right sm:block sm:text-sm text-turtle-level5 group-hover:text-turtle-level6">
+        <p className="text-[12px] text-right sm:block sm:text-sm text-turtle-level5 group-hover:text-turtle-level6 ">
           {formatOngoingTransferDate(tx.date)}
         </p>
       </div>
@@ -36,7 +46,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
 
       <div className={'flex items-center justify-between space-x-4 mt-4'}>
         {/* Source Token */}
-        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-2 gap-2 rounded-lg w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
+        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
           <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} />
           {/* Amount token & dolar */}
           <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
@@ -48,7 +58,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         </div>
 
         {/* Source -> Dest Chain */}
-        <div className="flex justify-between items-center mx-[12px]">
+        <div className="flex justify-between items-center mx-[12px] space-x-1">
           <Image
             src={(tx.sourceChain.logoURI as Record<string, string>).src}
             alt={tx.sourceChain.name}
@@ -71,7 +81,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         </div>
 
         {/* Dest Token */}
-        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-2 gap-2 rounded-lg w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
+        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
           <TokenLogo token={tx.destinationToken ?? tx.sourceToken} sourceChain={tx.destChain} />
           {/* Amount token & dolar */}
           <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
