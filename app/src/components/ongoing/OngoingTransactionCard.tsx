@@ -28,12 +28,13 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
           </div>
           <div
             className="text-left font-bold text-sm sm:text-normal text-turtle-secondary-dark w-[140px] sm:w-auto overflow-x-auto text-nowrap scrollbar scrollbar-thumb-rounded
-  [&::-webkit-scrollbar]:h-1 scrollbar scrollbar-thumb-rounded
-  [&::-webkit-scrollbar-track]:m-10
-  [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-thumb]:rounded-full
-  [&::-webkit-scrollbar-track]:bg-turtle-background 
-  [&::-webkit-scrollbar-thumb]:bg-turtle-level2"
+              scrollbar scrollbar-thumb-rounded
+              [&::-webkit-scrollbar]:h-1
+              [&::-webkit-scrollbar-track]:m-10
+              [&::-webkit-scrollbar-track]:rounded-full
+              [&::-webkit-scrollbar-thumb]:rounded-full
+              [&::-webkit-scrollbar-track]:bg-turtle-background 
+              [&::-webkit-scrollbar-thumb]:bg-turtle-level2"
           >
             {status}
           </div>
