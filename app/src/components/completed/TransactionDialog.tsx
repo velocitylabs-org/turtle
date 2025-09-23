@@ -20,7 +20,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
     isPolkadotSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
   return (
     <Dialog>
-      <DialogTrigger className="w-full overflow-hidden">
+      <DialogTrigger className="w-full">
         <TransactionCard tx={tx} />
       </DialogTrigger>
       <DialogContent
