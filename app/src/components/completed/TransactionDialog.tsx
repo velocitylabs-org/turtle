@@ -20,11 +20,11 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
     isPolkadotSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
   return (
     <Dialog>
-      <DialogTrigger className="w-full">
+      <DialogTrigger className="w-full overflow-hidden">
         <TransactionCard tx={tx} />
       </DialogTrigger>
       <DialogContent
-        className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem]"
+        className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         hideCloseButton
       >
         <div>
