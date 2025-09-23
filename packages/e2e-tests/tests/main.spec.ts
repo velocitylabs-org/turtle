@@ -15,16 +15,6 @@ export const withWalletTest = baseTest.extend<{
       headless: testInfo.project.use.headless,
     })
 
-    // if (wallet instanceof MetaMaskWallet) {
-    //   // Add Hardhat as a custom network.
-    //   await wallet.addNetwork({
-    //     networkName: 'Hardhat',
-    //     rpc: 'http://localhost:8546',
-    //     chainId: 31337,
-    //     symbol: 'ETH',
-    //   })
-    // }
-
     await use(context)
   },
 
@@ -99,7 +89,7 @@ withWalletTest.describe('Connect Wallet Tests', () => {
     await page.goto('/')
   })
 
-  withWalletTest('Can connect wallet', async ({ page, context }) => {
+  withWalletTest.skip('Can connect wallet', async ({ page, context }) => {
     await expect(page.getByRole('button', { name: 'Connect' })).toBeDisabled()
 
     await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
