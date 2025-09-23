@@ -114,8 +114,7 @@
     -moz-osx-font-smoothing: grayscale;
     font-smooth: never;
 
-    height: 100vh !important;
-    overflow: hidden;    
+    min-height: 100vh;
   }
 
   .xxl-letter-spacing {
