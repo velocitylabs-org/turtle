@@ -31,8 +31,6 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Node.js dependencies
-        env:
-          CYPRESS_INSTALL_BINARY: 0 # This disables Cypress binary installation during pnpm install
         run: pnpm i --frozen-lockfile
 
       - name: Running lint and format check
