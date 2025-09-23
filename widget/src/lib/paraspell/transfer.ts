@@ -98,11 +98,7 @@ export function normalizeSymbol(symbol: string): string {
 export function getTokenFromSymbol(symbol: string): Token {
   const symbolNormalized = normalizeSymbol(symbol)
   const tokensBySymbol = { ...EthereumTokens, ...PolkadotTokens }
-  const token = tokensBySymbol[symbolNormalized as keyof typeof tokensBySymbol]
-  if (!token) {
-    throw new Error(`Token not found for symbol: ${symbol}`)
-  }
-  return token
+  return tokensBySymbol[symbolNormalized as keyof typeof tokensBySymbol]
 }
 
 export function moonbeamSymbolToRegistry(tokenSymbol: string): string {
