@@ -30,7 +30,13 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
   return (
     <div
       id="ongoing-txs"
-      className="flex flex-col h-[525px] max-w-[90vw] gap-1 overflow-y-auto scrollbar scrollbar-thumb-rounded rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem]"
+      className="flex flex-col h-[525px] max-w-[90vw] gap-1 overflow-y-auto rounded-b-3xl border border-t-0 border-turtle-foreground bg-turtle-background p-5 px-[1.5rem] py-[2rem] sm:w-[31.5rem] sm:p-[2.5rem] [&::-webkit-scrollbar]:w-2
+  scrollbar scrollbar-thumb-rounded
+  [&::-webkit-scrollbar-track]:m-10
+  [&::-webkit-scrollbar-track]:rounded-full
+  [&::-webkit-scrollbar-thumb]:rounded-full
+  [&::-webkit-scrollbar-track]:bg-turtle-level1
+  [&::-webkit-scrollbar-thumb]:bg-turtle-level3"
     >
       {ongoingTxs &&
         ongoingTxs.length > 0 &&

@@ -107,12 +107,6 @@
     --ring: 212.7 26.8% 83.9%;
   }
 
-  /* removes scrollbar */
-  ::-webkit-scrollbar {
-    display: none;
-    scrollbar-width: none;
-  }
-
   body {
     letter-spacing: var(--letter-spacing-default);
 
@@ -120,9 +114,8 @@
     -moz-osx-font-smoothing: grayscale;
     font-smooth: never;
 
-    min-height: 110vh !important;
-
-    
+    height: 100vh !important;
+    overflow: hidden;    
   }
 
   .xxl-letter-spacing {
