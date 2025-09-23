@@ -123,7 +123,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
           const failed = foundTransfer.status === TransferStatus.Failed
 
           // Move from ongoing to done
-          remove(ongoing.id)
+          // remove(ongoing.id)
           addCompletedTransfer({
             id: ongoing.id,
             result: failed ? TxStatus.Failed : TxStatus.Succeeded,
