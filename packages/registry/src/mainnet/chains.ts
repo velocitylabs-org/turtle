@@ -1,4 +1,5 @@
 import acalaLogo from '@velocitylabs-org/turtle-assets/logos/acala.svg'
+import arbitrumLogo from '@velocitylabs-org/turtle-assets/logos/arbitrum.svg'
 import assetHubLogo from '@velocitylabs-org/turtle-assets/logos/assethub.svg'
 import astarLogo from '@velocitylabs-org/turtle-assets/logos/astar.svg'
 import bifrostLogo from '@velocitylabs-org/turtle-assets/logos/bifrost.svg'
@@ -23,6 +24,16 @@ export const Ethereum: Chain = {
   logoURI: ethereumLogo,
   chainId: 1,
   network: 'Ethereum',
+  walletType: 'EVM',
+  supportedAddressTypes: ['evm'],
+}
+
+export const Arbitrum: Chain = {
+  uid: 'arbitrum',
+  name: 'Arbitrum',
+  logoURI: arbitrumLogo,
+  chainId: 42161,
+  network: 'Arbitrum',
   walletType: 'EVM',
   supportedAddressTypes: ['evm'],
 }

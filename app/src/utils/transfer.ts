@@ -1,12 +1,6 @@
-import {
-  AssetHub,
-  type Chain,
-  KusamaAssetHub,
-  type Network,
-  type Token,
-  type TokenAmount,
-} from '@velocitylabs-org/turtle-registry'
-import { ethers, JsonRpcSigner } from 'ethers'
+import { AssetHub, type Chain, KusamaAssetHub, type Token, type TokenAmount } from '@velocitylabs-org/turtle-registry'
+import { JsonRpcSigner } from 'ethers'
+import { toHex } from 'viem/utils'
 import type { Sender } from '@/hooks/useTransfer'
 import type { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
@@ -85,24 +79,6 @@ export const formatAmount = (amount: number, length: FormatLength = 'Short'): st
       roundingMode: 'floor',
       maximumFractionDigits: 3,
     }).format(amount)
-  }
-}
-
-export async function lookupName(network: Network, address: string): Promise<string | null> {
-  switch (network) {
-    case 'Ethereum': {
-      try {
-        const provider = new ethers.CloudflareProvider()
-        return await provider.lookupAddress(address)
-      } catch (error) {
-        // Do not throw an error here
-        console.log(error)
-        return null
-      }
-    }
-    default:
-      //todo(nuno)
-      return null
   }
 }
 
@@ -310,11 +286,17 @@ export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfer is outdated.
  */
-export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcm: 0.5, bridge: 6 }) => {
+export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcmOrSwap: 0.5, bridge: 6 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const isSwap = isChainflipSwap(
+    transfer.sourceChain,
+    transfer.destChain,
+    transfer.sourceToken,
+    transfer.destinationToken,
+  )
   const timeBuffer =
-    direction === Direction.WithinPolkadot
-      ? thresholdInHours.xcm * 60 * 60 * 1000
+    direction === Direction.WithinPolkadot || isSwap
+      ? thresholdInHours.xcmOrSwap * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return Date.now() - new Date(transfer.date).getTime() > timeBuffer
 }
@@ -364,3 +346,5 @@ export const isSameChainSwap = <T extends SwapWithChains>(transfer: T): transfer
 export const isSwapWithTransfer = <T extends SwapWithChains>(transfer: T): transfer is T & CompleteSwap => {
   return isSwap(transfer) && !isSameChain(transfer.sourceChain, transfer.destChain)
 }
+
+export const hashToHex = (hash: string) => toHex(hash)
