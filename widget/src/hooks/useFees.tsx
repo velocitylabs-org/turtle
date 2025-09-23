@@ -401,5 +401,5 @@ function getToken(location: TLocation | undefined, symbol: string) {
   if (!token) {
     throw new Error(`Token not found for location ${JSON.stringify(location)} and symbol ${symbol}`)
   }
-  return token as Token
+  return token
 }
