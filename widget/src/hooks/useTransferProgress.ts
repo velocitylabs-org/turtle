@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { StoredTransfer } from '@/models/transfer'
-import { Direction } from '@/services/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
+import { Direction } from '@/utils/transfer'
 
 const ESTIMATED_DURATION = {
   toEthereum: 2 * 60 * 60, // 2 h in seconds

@@ -10,10 +10,9 @@ import type { SnowbridgeContext } from '@/models/snowbridge'
 import type { StoredTransfer } from '@/models/transfer'
 import { config } from '@/providers/config'
 import { getCachedTokenPrice } from '@/services/balance'
-import { Direction, resolveDirection } from '@/services/transfer'
 import { getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics } from '@/utils/analytics'
-import { txWasCancelled } from '@/utils/transfer'
+import { Direction, resolveDirection, txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import useSnowbridgeContext from './useSnowbridgeContext'
@@ -90,7 +89,7 @@ const useSnowbridgeApi = () => {
   // Executes the transfer. Validation should happen before.
   const submitTransfer = async (
     sender: Sender,
-    transfer: toPolkadotV2.Transfer | toEthereumV2.Transfer,
+    transfer: TransferType,
     params: TransferParams,
     direction: Direction,
     setStatus: (status: Status) => void,

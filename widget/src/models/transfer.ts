@@ -1,9 +1,8 @@
 import type { TRouterPlan } from '@paraspell/xcm-router'
 import type { toEthereum, toPolkadot } from '@snowbridge/api'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
-import type { Direction } from '@/services/transfer'
-import type { FromAhToEthTrackingResult, FromEthTrackingResult } from './snowbridge'
-import type { FromParachainTrackingResult } from './subscan'
+import type { Direction } from '@/utils/transfer'
+import type { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
 
 interface RawTransfer {
   /** Substrate extrinsic hash or Ethereum transaction hash */
@@ -94,7 +93,6 @@ export interface OngoingTransferWithDirection extends RawTransfer {
 export interface OngoingTransfers {
   toEthereum: OngoingTransferWithDirection[] // AH => Eth transfer
   toPolkadot: OngoingTransferWithDirection[] // Eth => AH || Parachain transfer
-  withinPolkadot: OngoingTransferWithDirection[] // XCM transfer: Parachain to AH, AH to Parachain, Parachain to Parachain, etc
 }
 
 export enum TxStatus {
@@ -183,8 +181,8 @@ export interface AmountInfo {
 export type TabOptions = 'New' | 'Done'
 
 export type TxTrackingResult =
-  // Snowbridge API | Snowbridge API | Subscan API
-  FromEthTrackingResult | FromAhToEthTrackingResult | FromParachainTrackingResult
+  // Snowbridge API
+  FromEthTrackingResult | FromParaToEthTrackingResult
 
 export type OnChainBaseEvents = {
   messageHash?: string
