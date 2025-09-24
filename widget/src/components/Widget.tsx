@@ -16,7 +16,15 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { meldApiKey } from '@/utils/consts'
 import { generateWidgetTheme, type WidgetTheme } from '@/utils/theme'
 
-const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigRegistryType }) => {
+const Widget = ({
+  theme,
+  registry,
+  endpointUrl = 'https://app.turtle.cool',
+}: {
+  theme?: WidgetTheme
+  registry?: ConfigRegistryType
+  endpointUrl?: string
+}) => {
   useMemo(() => generateWidgetTheme(theme), [theme])
 
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
@@ -29,7 +37,7 @@ const Widget = ({ theme, registry }: { theme?: WidgetTheme; registry?: ConfigReg
   return (
     <div className="turtle-wrapper">
       <Providers>
-        <ConfigProvider registry={registry ?? { chains: [], tokens: [] }}>
+        <ConfigProvider registry={registry ?? { chains: [], tokens: [] }} endpointUrl={endpointUrl}>
           <div className="flex flex-col items-center justify-center">
             <TabSwitcherWrapper
               TransferComponent={

@@ -10,7 +10,7 @@ export const CACHE_REVALIDATE_IN_SECONDS = 180
  * @returns - A Promise resolving to the token price as a number.
  */
 export const getCachedTokenPrice = async (token: Token): Promise<TokenPrice> => {
-  const response = await fetch(`/api/token-price`, {
+  const response = await fetch(`${globalThis.ENDPOINT_URL}/api/token-price`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
