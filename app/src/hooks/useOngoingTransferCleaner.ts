@@ -18,7 +18,7 @@ const useOngoingTransfersCleaner = (ongoingTransfers: StoredTransfer[]) => {
       if (startedTooLongAgo(ongoing)) {
         const explorerLink = getExplorerLink(ongoing)
 
-        // remove(ongoing.id)
+        remove(ongoing.id)
         addCompletedTransfer({
           id: ongoing.id,
           result: TxStatus.Undefined,
