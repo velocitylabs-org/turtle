@@ -77,7 +77,7 @@ export const formatAmount = (amount: number, length: FormatLength = 'Short'): st
       notation: 'compact',
       compactDisplay: 'short',
       roundingMode: 'floor',
-      maximumFractionDigits: 3,
+      maximumFractionDigits: length === 'Short' ? 1 : 3,
     }).format(amount)
   }
 }

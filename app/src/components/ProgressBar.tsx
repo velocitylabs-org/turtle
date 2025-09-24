@@ -11,7 +11,7 @@ export default function ProgressBar({ progress, outlinedProgressBar }: ProgressB
       {!outlinedProgressBar ? (
         <div
           className={cn(
-            'mb-4 h-2 overflow-hidden rounded-full bg-turtle-secondary-light',
+            'mb-4 h-2 overflow-hidden rounded-full bg-turtle-secondary-light group-hover:bg-turtle-background',
             progress <= 0 && 'animate-pulse',
           )}
         >

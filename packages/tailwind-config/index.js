@@ -31,9 +31,9 @@ export const colors = {
   [`${prefix}-warning-dark`]: '#7A7C00',
   [`${prefix}-warning-light`]: '#FFFFD9',
 
-  [`${prefix}-error`]: '#ef2828',
-  [`${prefix}-error-dark`]: '#8D1269',
-  [`${prefix}-error-light`]: '#FFE1F6',
+  [`${prefix}-error`]: '#ED0000',
+  [`${prefix}-error-dark`]: '#B3261E',
+  [`${prefix}-error-light`]: '#EDD2D0;',
 }
 
 export default {
