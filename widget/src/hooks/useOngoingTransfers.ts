@@ -1,4 +1,4 @@
-import { useOngoingTransfersStore } from '@/stores/ongoingTransfersStore'
+import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 
 const useOngoingTransfers = () => {
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)

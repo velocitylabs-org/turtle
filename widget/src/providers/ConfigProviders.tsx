@@ -9,13 +9,29 @@ export interface ConfigRegistryType {
 export const ConfigContext = createContext<{
   allowedChains: Chain['uid'][]
   allowedTokens: Token['id'][]
+  endpointUrl: string
 }>({
   allowedChains: [],
   allowedTokens: [],
+  endpointUrl: '',
 })
 
-export const ConfigProvider = ({ registry, children }: { registry: ConfigRegistryType; children: React.ReactNode }) => {
+globalThis.ENDPOINT_URL = ''
+
+export const ConfigProvider = ({
+  registry,
+  endpointUrl,
+  children,
+}: {
+  registry: ConfigRegistryType
+  endpointUrl: string
+  children: React.ReactNode
+}) => {
   const { chains: allowedChains, tokens: allowedTokens } = registry
 
-  return <ConfigContext.Provider value={{ allowedChains, allowedTokens }}>{children}</ConfigContext.Provider>
+  globalThis.ENDPOINT_URL = endpointUrl
+
+  return (
+    <ConfigContext.Provider value={{ allowedChains, allowedTokens, endpointUrl }}>{children}</ConfigContext.Provider>
+  )
 }

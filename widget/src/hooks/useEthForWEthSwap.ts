@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/react'
 import { type Context, environment, toPolkadot } from '@snowbridge/api'
 import { type Chain, EthereumTokens, type TokenAmount } from '@velocitylabs-org/turtle-registry'
 import type { Signer } from 'ethers'
@@ -24,7 +25,7 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
     address: owner,
   })
   const [ethBalance, setEthBalance] = useState<number | undefined>()
-  const [isSwapping, setIsSwapping] = useState<boolean>(false)
+  const [isSwapping, SetIsSwapping] = useState<boolean>(false)
 
   const fetchEthBalance = useCallback(async () => {
     if (
@@ -46,9 +47,7 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
         .then(x => toHuman(x, EthereumTokens.ETH))
       setEthBalance(balance)
     } catch (error) {
-      // if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-      //   captureException(error) - Sentry
-      console.log(error)
+      if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
     }
   }, [chain?.network, owner, tokenAmount, context])
 
@@ -59,7 +58,7 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
 
   const swapEthtoWEth = useCallback(
     async (signer: Signer, amount: number) => {
-      setIsSwapping(true)
+      SetIsSwapping(true)
 
       if (
         !context ||
@@ -69,17 +68,16 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
         ethBalance <= amount ||
         tokenAmount?.token?.symbol !== 'wETH'
       ) {
-        setIsSwapping(false)
+        SetIsSwapping(false)
         return
       }
-      console.log()
 
       try {
         await toPolkadot
           .depositWeth(context, signer, tokenAmount!.token!.address, convertAmount(amount, EthereumTokens.ETH))
           .then(x => x.wait())
 
-        setIsSwapping(false)
+        SetIsSwapping(false)
         addNotification({
           message: 'Swapped ETH for wETH',
           severity: NotificationSeverity.Success,
@@ -89,11 +87,9 @@ const useEthForWEthSwap = ({ chain, tokenAmount, owner, context }: Params) => {
           message: 'Failed to swap ETH for wETH',
           severity: NotificationSeverity.Error,
         })
-        // if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-        //   captureException(error) - Sentry
-        console.log(error)
+        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
       } finally {
-        setIsSwapping(false)
+        SetIsSwapping(false)
       }
     },
     [chain?.network, tokenAmount, context, ethBalance, owner, addNotification],

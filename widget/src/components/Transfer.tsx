@@ -3,7 +3,7 @@ import { type Balance, EthereumTokens, type TokenAmount } from '@velocitylabs-or
 import { Button, cn, Switch } from '@velocitylabs-org/turtle-ui'
 import type { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
-import { type FC, use, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import { AlertIcon } from '@/assets/svg/AlertIcon'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
@@ -11,8 +11,6 @@ import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import type { WalletInfo } from '@/hooks/useWallet'
-
-import { ConfigContext } from '@/providers/ConfigProviders'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
@@ -62,7 +60,7 @@ const getSourceAmountPlaceholder = ({
   return formatAmount(Number(balanceData?.formatted), 'Longer')
 }
 
-const Transfer: FC = () => {
+export default function Transfer() {
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
@@ -99,8 +97,6 @@ const Transfer: FC = () => {
     isLoadingOutputAmount,
     maxButtonLoading,
   } = useTransferForm()
-
-  const { allowedChains, allowedTokens } = use(ConfigContext)
 
   const {
     allowance: erc20SpendAllowance,
@@ -203,13 +199,13 @@ const Transfer: FC = () => {
     allFeesItemsAreSufficient
 
   const destinationChainOptions = useMemo(
-    () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null, allowedChains),
-    [sourceChain, sourceTokenAmount?.token, allowedChains],
+    () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null),
+    [sourceChain, sourceTokenAmount?.token],
   )
 
   const sourceTokenOptions = useMemo(
-    () => getAllowedSourceTokens(sourceChain, destinationChain, allowedTokens),
-    [sourceChain, destinationChain, allowedTokens],
+    () => getAllowedSourceTokens(sourceChain, destinationChain),
+    [sourceChain, destinationChain],
   )
 
   const destinationTokenOptions = useMemo(
@@ -466,5 +462,3 @@ const Transfer: FC = () => {
     </form>
   )
 }
-
-export default Transfer

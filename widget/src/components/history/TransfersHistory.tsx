@@ -1,3 +1,4 @@
+import { useChainflipTracker } from '@/hooks/useChainflipTracker'
 import useOcelloidsSubscribe from '@/hooks/useOcelloidsSubscribe'
 import useOngoingTransferCleaner from '@/hooks/useOngoingTransferCleaner'
 import useOngoingTransfersTracker from '@/hooks/useOngoingTransfersTracker'
@@ -17,6 +18,7 @@ const TransfersHistory = ({
   const { statusMessages } = useOngoingTransfersTracker(ongoingTransfers)
   useOngoingTransferCleaner(ongoingTransfers)
   useOcelloidsSubscribe(ongoingTransfers)
+  useChainflipTracker(ongoingTransfers)
 
   return (
     <div

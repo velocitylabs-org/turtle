@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/react'
 import { useQuery } from '@tanstack/react-query'
 import { getTokenPrice, type Token, type TokenPriceResult } from '@velocitylabs-org/turtle-registry'
 import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
@@ -18,7 +19,7 @@ const useTokenPrice = (token?: Token | null): TokenPriceResult => {
 
   if (isTokenPriceError) {
     console.error('useTokenPrice: Failed to fetch with error:', isTokenPriceError.message)
-    // captureException(isTokenPriceError.message) - Sentry
+    captureException(isTokenPriceError.message)
     return { price: undefined, loading: false }
   }
 

@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/react'
 import { type Context, toPolkadot } from '@snowbridge/api'
 import { assetStatusInfo } from '@snowbridge/api/dist/assets'
 import { EthereumTokens, type Network, type TokenAmount } from '@velocitylabs-org/turtle-registry'
@@ -46,7 +47,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
       refetchFees()
     } catch (error) {
       console.error('Failed to fetch ERC-20 Token Allowance', error)
-      // captureException(error) - Sentry
+      captureException(error)
     } finally {
       setLoading(false)
     }
@@ -83,7 +84,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
             await toPolkadot
               .approveTokenSpend(context, signer, tokenAmount!.token!.address, 0n)
               .then(x => x.wait())
-              .then(() => fetchAllowance())
+              .then(_ => fetchAllowance())
           }
         }
 
@@ -95,7 +96,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
             convertAmount(tokenAmount!.amount, tokenAmount!.token),
           )
           .then(x => x.wait())
-          .then(() => fetchAllowance())
+          .then(_ => fetchAllowance())
 
         setApproving(false)
         addNotification({
@@ -107,9 +108,7 @@ const useErc20Allowance = ({ network, tokenAmount, owner, context, refetchFees }
           message: 'Failed to approve ERC-20 spend',
           severity: NotificationSeverity.Error,
         })
-        console.log(error)
-        //if (!(error instanceof Error) || !error.message.includes('ethers-user-denied'))
-        // captureException(error) - Sentry
+        if (!(error instanceof Error) || !error.message.includes('ethers-user-denied')) captureException(error)
         setApproving(false)
       }
     },
