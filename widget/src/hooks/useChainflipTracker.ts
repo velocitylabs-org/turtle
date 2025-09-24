@@ -5,7 +5,7 @@ import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/
 import { truncateAddress } from '@/utils/address'
 import { updateTransferMetrics } from '@/utils/analytics'
 import { chainflipRefund, getChainflipOngoingSwaps, getSwapStatus } from '@/utils/chainflip'
-import { getChainflipExplorerLink } from '@/utils/transfer'
+import { getChainflipExplorerLink } from '@/utils/explorer'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'

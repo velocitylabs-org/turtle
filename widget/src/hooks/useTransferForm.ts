@@ -101,7 +101,6 @@ const useTransferForm = () => {
       sourceTokenAmount: sourceTokenAmount?.amount,
       sender: sourceWallet?.sender,
       recipientAddress: getRecipientAddress(manualRecipient, destinationWallet),
-      sourceTokenBalance: balanceData,
       sourceTokenAmountError: sourceTokenAmountError || minSwapAmountError,
       transferableAmount,
     }),

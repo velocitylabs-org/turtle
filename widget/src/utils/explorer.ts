@@ -1,5 +1,6 @@
 import { AssetHub, KusamaAssetHub } from '@velocitylabs-org/turtle-registry'
 import type { StoredTransfer } from '@/models/transfer'
+import { isChainflipSwap } from './chainflip'
 
 const EXPLORERS = {
   // Ethereum
@@ -14,16 +15,31 @@ const EXPLORERS = {
   subscan_kusama: 'https://kusama.subscan.io/',
   subscan_kusama_ah: 'https://assethub-kusama.subscan.io/',
   subscan_kusama_bh: 'https://bridgehub-kusama.subscan.io/',
+
+  // Chainflip
+  chainflip: 'https://scan.chainflip.io/',
+}
+
+export const getChainflipExplorerLink = (swap: StoredTransfer, chainflipSwapId?: string): string | undefined => {
+  if (chainflipSwapId) return `${removeURLSlash(EXPLORERS.chainflip)}/swaps/${chainflipSwapId}`
+  if (swap.uniqueTrackingId) return `${removeURLSlash(EXPLORERS.chainflip)}/channels/${swap.uniqueTrackingId}`
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const {
     sourceChain: { network, chainId, walletType, name },
+    destChain,
     sendResult: txHash,
+    sourceToken,
+    destinationToken,
     sender,
     id,
     uniqueTrackingId,
   } = transfer
+
+  // Chainflip explorer link - Not relying on network
+  const isChainflip = isChainflipSwap(transfer.sourceChain, destChain, sourceToken, destinationToken)
+  if (isChainflip) return getChainflipExplorerLink(transfer)
 
   switch (network) {
     case 'Ethereum': {
