@@ -1,8 +1,9 @@
 import { getAssetBalance, type TSubstrateChain } from '@paraspell/sdk'
 import { captureException } from '@sentry/react'
-import type { Balance, Chain, Token } from '@velocitylabs-org/turtle-registry'
+import type { Balance, Chain, Network, Token } from '@velocitylabs-org/turtle-registry'
 import { useCallback, useEffect, useState } from 'react'
-import { useBalance as useBalanceWagmi } from 'wagmi'
+import { arbitrum, mainnet } from 'viem/chains'
+import { useBalance as useBalanceWagmi, useChainId, useSwitchChain } from 'wagmi'
 import { getNativeToken, getParaSpellChain, getParaspellToken } from '@/lib/paraspell/transfer'
 import { toHuman } from '@/utils/transfer'
 
@@ -16,6 +17,9 @@ interface UseBalanceParams {
 const useBalance = ({ chain, token, address }: UseBalanceParams) => {
   const [balance, setBalance] = useState<Balance | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
+  const { switchChainAsync } = useSwitchChain()
+  const chainId = useChainId()
+
   // Wagmi token balance
   const { refetch: fetchErc20Balance, isLoading: loadingErc20Balance } = useBalanceWagmi({
     address: address?.startsWith('0x') ? (address as `0x${string}`) : undefined,
@@ -32,6 +36,19 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
     },
   })
 
+  const handleNetwork = useCallback(
+    async (chainNetwork: Network): Promise<void> => {
+      if (chainNetwork === 'Arbitrum' && !(chainId === arbitrum.id)) {
+        await switchChainAsync({ chainId: arbitrum.id })
+      }
+      if (chainNetwork === 'Ethereum' && !(chainId === mainnet.id)) {
+        await switchChainAsync({ chainId: mainnet.id })
+      }
+      return
+    },
+    [chainId, switchChainAsync],
+  )
+
   const fetchBalance = useCallback(async () => {
     // Reset balance first to avoid showing the balance on another
     // chain or for another token while fetching the new one.
@@ -42,13 +59,21 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
     try {
       setLoading(true)
       let fetchedBalance: Balance | undefined
+      const isNativeToken = getNativeToken(chain).id === token.id
 
       switch (chain.network) {
+        case 'Arbitrum':
         case 'Ethereum': {
-          fetchedBalance =
-            getNativeToken(chain).id === token.id ? (await fetchEthBalance()).data : (await fetchErc20Balance()).data
+          await handleNetwork(chain.network)
 
-          if (fetchedBalance) fetchedBalance.formatted = toHuman(fetchedBalance.value, token).toString() // override formatted value
+          fetchedBalance = isNativeToken ? (await fetchEthBalance()).data : (await fetchErc20Balance()).data
+
+          if (fetchedBalance) {
+            // Apply a 90% transferrable ratio for the native token to safe-guard for fees and other unforseen costs.
+            // Consider the totally of the available balance otherwise for the other tokens.
+            const transferrableRatio = isNativeToken ? 0.9 : 1
+            fetchedBalance.formatted = (toHuman(fetchedBalance.value, token) * transferrableRatio).toString() // override formatted value
+          }
           break
         }
 
@@ -69,7 +94,7 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
     } finally {
       setLoading(false)
     }
-  }, [chain, address, fetchErc20Balance, fetchEthBalance, token])
+  }, [chain, address, fetchErc20Balance, fetchEthBalance, handleNetwork, token])
 
   useEffect(() => {
     fetchBalance()
@@ -82,7 +107,7 @@ const useBalance = ({ chain, token, address }: UseBalanceParams) => {
   }
 }
 
-export async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
+async function getBalance(chain: Chain, token: Token, address: string): Promise<Balance | undefined> {
   const node = getParaSpellChain(chain)
 
   if (!node) throw new Error('Node not found')

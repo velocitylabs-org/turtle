@@ -1,8 +1,10 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { Icon, LoadingIcon, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { Icon, TokenLogo } from '@velocitylabs-org/turtle-ui'
+import { useCallback } from 'react'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
 import { ArrowUpRight } from '@/assets/svg/ArrowUpRight'
 import Account from '@/components/Account'
+import ChainflipRefund from '@/components/ChainflipRefund'
 import {
   Dialog,
   DialogContent,
@@ -12,27 +14,43 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import type { StoredTransfer } from '@/models/transfer'
+import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
 import { getExplorerLink } from '@/utils/explorer'
-import { Direction, formatAmount, isSwap, resolveDirection, toHuman } from '@/utils/transfer'
+import { formatAmount, isSwap as isPolkadotSwap, resolveDirection, toHuman } from '@/utils/transfer'
 import { SummaryRow } from '../completed-transfers/Dialog'
 import OngoingTransfer from './Card'
 import TransferEstimate from './OngoingTransferEstimate'
 
-export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTransfer; status?: string }) => {
+interface OngoingTransactionDialogProps {
+  transfer: StoredTransfer
+  status?: string
+}
+
+export const OngoingTransferDialog = ({ transfer, status }: OngoingTransactionDialogProps) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
   const explorerLink = getExplorerLink(transfer)
 
-  const getStatus = (status?: string) => {
-    if (typeof status === 'string') return status
-    if (transfer.status) return transfer.status
-    return 'Pending'
-  }
-  const isFinalTransferStep = getStatus(status)?.includes(transfer.destChain.name)
+  const getStatus = useCallback(
+    (status?: string) => {
+      if (typeof status === 'string') return status
+      if (transfer.status) return transfer.status
+      return 'Pending'
+    },
+    [transfer.status],
+  )
 
   const sourceAmountHuman = toHuman(transfer.sourceAmount, transfer.sourceToken)
   const sourceAmountUSD = sourceAmountHuman * (transfer.sourceTokenUSDValue ?? 0)
-  const destinationAmountHuman = isSwap(transfer) ? toHuman(transfer.destinationAmount, transfer.destinationToken) : 0
+
+  const isSwap =
+    isPolkadotSwap(transfer) ||
+    isChainflipSwap(transfer.sourceChain, transfer.destChain, transfer.sourceToken, transfer.destinationToken)
+
+  const destinationAmountHuman =
+    isSwap && transfer.destinationAmount && transfer.destinationToken
+      ? toHuman(transfer.destinationAmount, transfer.destinationToken)
+      : 0
   const destinationAmountUSD = destinationAmountHuman * (transfer.destinationTokenUSDValue ?? 0)
 
   return (
@@ -51,7 +69,7 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
           <div className="m-auto flex w-fit items-center justify-center space-x-2 rounded-2xl border border-turtle-secondary-dark bg-turtle-secondary-light px-2 py-1 text-turtle-secondary-dark">
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={transfer.sourceChain.logoURI as string}
+                src={(transfer.sourceChain.logoURI as Record<string, string>).src}
                 width={22}
                 height={22}
                 className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
@@ -61,7 +79,7 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
             <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
             <div className="turtle-success-dark flex items-center justify-center space-x-1">
               <Icon
-                src={transfer.destChain.logoURI as string}
+                src={(transfer.destChain.logoURI as Record<string, string>).src}
                 width={22}
                 height={22}
                 className="rounded-full border border-turtle-secondary-dark bg-turtle-background"
@@ -69,10 +87,11 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
               <div className="text-xs sm:text-sm">{transfer.destChain.name}</div>
             </div>
           </div>
-          <h3 className="xxl-letter-spacing flex items-center justify-center space-x-3 text-lg leading-none text-turtle-secondary-dark sm:text-4xl">
-            <span>{formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}</span>
-            <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={40} />
-            {isSwap(transfer) && (
+          <h3 className="xxl-letter-spacing text-turtle-secondary-dark flex items-center justify-center space-x-3 text-lg leading-none sm:text-4xl">
+            <span>{formatAmount(sourceAmountHuman, 'Long')}</span>
+            <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={35} />
+
+            {isSwap && transfer.destinationToken && (
               <>
                 <ArrowRight className="h-3 w-3" fill={colors['turtle-secondary-dark']} />
                 <span>{formatAmount(destinationAmountHuman, 'Long')}</span>
@@ -80,49 +99,21 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
               </>
             )}
           </h3>
-          <div className={'flex items-center justify-center space-x-4 text-xs text-turtle-secondary-dark'}>
-            <div>{formatOngoingTransferDate(transfer.date)}</div>
+
+          {/* Update and progress bar */}
+          <div className="!mb-[-10px] !mt-[-5px] block w-full gap-2 rounded-xl bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark">
+            <div className="my-2 flex items-center justify-between">
+              <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
+              <p className="text-xs text-turtle-secondary">{formatOngoingTransferDate(transfer.date)}</p>
+            </div>
+            <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={true} />
           </div>
         </DialogHeader>
 
         {/* Modal content */}
-        <div className="mt-[-1px] flex w-full flex-1 flex-col items-center gap-4 rounded-b-4xl border border-x-turtle-secondary border-b-turtle-secondary border-t-turtle-secondary-dark bg-white p-4">
-          {/* Update and progress bar */}
-          <div
-            className={
-              'block w-full gap-2 rounded-lg border border-turtle-secondary-dark bg-turtle-secondary-light px-4 text-sm text-turtle-secondary-dark'
-            }
-          >
-            {direction !== Direction.WithinPolkadot ? (
-              <>
-                <div className="my-2 flex items-center">
-                  <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
-                </div>
-                <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={false} />
-              </>
-            ) : (
-              <>
-                <div className="my-2 flex items-center">
-                  {!isFinalTransferStep && (
-                    <LoadingIcon
-                      className="mr-2 animate-spin"
-                      size="md"
-                      strokeWidth={5}
-                      color={colors['turtle-secondary']}
-                    />
-                  )}
-                  <p className="text-left font-bold text-turtle-secondary-dark">{getStatus(status)}</p>
-                </div>
-
-                {isFinalTransferStep && (
-                  <TransferEstimate transfer={transfer} direction={direction} outlinedProgressBar={false} />
-                )}
-              </>
-            )}
-          </div>
-
+        <div className="flex w-full flex-1 flex-col items-center gap-4 rounded-bl-4xl rounded-br-4xl border border-t-0 border-x-turtle-secondary border-b-turtle-secondary bg-white p-4">
           {/* sender */}
-          <div className="relative mt-2 grid w-full grid-cols-1 grid-rows-2 gap-2 sm:grid-cols-2 sm:grid-rows-1 sm:gap-1">
+          <div className="relative mt-3 grid w-full grid-cols-1 grid-rows-2 gap-2 sm:grid-cols-2 sm:grid-rows-1 sm:gap-1">
             <div className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-full border border-turtle-level3 bg-white p-2">
               <ArrowRight className="h-3 w-3 rotate-90 sm:rotate-0" />
             </div>
@@ -135,7 +126,6 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
                 size={24}
               />
             </div>
-
             <div className="relative rounded-lg border border-turtle-level3 p-4 text-right text-sm">
               <div className="absolute -top-2 left-2.5 bg-white px-0.5 text-xs text-turtle-level5 sm:left-auto sm:right-2.5">
                 Receiver
@@ -152,7 +142,7 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
           </div>
 
           {/* Summary */}
-          <div className="summary my-3 w-full space-y-3 px-1">
+          <div className="summary mb-2 w-full space-y-1 px-3">
             <SummaryRow
               label="Amount Sent"
               amount={formatAmount(sourceAmountHuman, 'Long')}
@@ -160,7 +150,7 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
               usdValue={formatAmount(sourceAmountUSD, 'Long')}
             />
 
-            {isSwap(transfer) && (
+            {isSwap && transfer.destinationToken && (
               <SummaryRow
                 label="Amount Received"
                 amount={formatAmount(destinationAmountHuman, 'Long')}
@@ -180,13 +170,23 @@ export const OngoingTransferDialog = ({ transfer, status }: { transfer: StoredTr
                 />
               ))}
 
+            <ChainflipRefund
+              isSwap={isChainflipSwap(
+                transfer.sourceChain,
+                transfer.destChain,
+                transfer.sourceToken,
+                transfer.destinationToken,
+              )}
+              className="pt-5 pb-2"
+            />
+
             {explorerLink && (
               <a
                 href={explorerLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="View transaction on block explorer"
-                className="mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 py-1 text-sm hover:text-turtle-level5 sm:m-0"
+                aria-label="View your completed transaction on block explorer"
+                className="!mt-4 mb-4 flex w-full items-center justify-center space-x-2 rounded-lg border border-turtle-level3 px-3 py-1.5 text-sm hover:text-turtle-level5"
               >
                 <p>View on Block Explorer</p> <ArrowUpRight className="hover:text-turtle-level5" />
               </a>
