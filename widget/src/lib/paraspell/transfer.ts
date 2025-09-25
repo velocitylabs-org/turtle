@@ -54,8 +54,7 @@ export function getNativeToken(chain: Chain): Token {
 
 export function getParaSpellChain(chain: Chain): TChain | null {
   if (chain.network === 'Arbitrum') return null
-  if (chain.network === 'Ethereum' && chain.chainId === 1) return 'Ethereum'
-  return getTChain(chain.chainId, chain.network)
+  return chain.network === 'Ethereum' && chain.chainId === 1 ? 'Ethereum' : getTChain(chain.chainId, chain.network)
 }
 
 /**

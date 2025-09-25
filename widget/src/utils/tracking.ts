@@ -7,6 +7,7 @@ import type {
   StoredTransfer,
   TxTrackingResult,
 } from '@/models/transfer'
+import { isChainflipSwap } from './chainflip'
 import { Direction, resolveDirection } from './transfer'
 
 export const trackTransfers = async (env: environment.SnowbridgeEnvironment, ongoingTransfers: OngoingTransfers) => {
@@ -176,7 +177,11 @@ const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]): Ongoi
       //   direction
       // }
     })
-    .filter(t => t.direction !== Direction.WithinPolkadot)
+    .filter(
+      t =>
+        t.direction !== Direction.WithinPolkadot &&
+        !isChainflipSwap(t.sourceChain, t.destChain, t.sourceToken, t.destinationToken),
+    )
 }
 
 export const getFormattedOngoingTransfers = (ongoingTransfers: StoredTransfer[]) => {

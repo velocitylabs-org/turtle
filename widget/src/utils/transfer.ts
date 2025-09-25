@@ -4,6 +4,7 @@ import { toHex } from 'viem'
 import type { Sender } from '@/hooks/useTransfer'
 import type { AmountInfo, StoredTransfer } from '@/models/transfer'
 import { isSameChain } from '@/utils/routes'
+import { isChainflipSwap } from './chainflip'
 
 type FormatLength = 'Short' | 'Long' | 'Longer'
 
@@ -57,7 +58,8 @@ export const toHuman = (input: bigint | string | number, token: Token): number =
  * Safe version of `convertAmount` that handles `null` and `undefined` params
  */
 export const safeConvertAmount = (input?: number | null, token?: Token | null): bigint | null => {
-  if (input == null || !token) return null
+  if (input == null || Number.isNaN(input) || !Number.isFinite(input) || !token || !Number.isInteger(token.decimals))
+    return null
 
   return BigInt(Math.floor(input * 10 ** token.decimals))
 }
@@ -146,7 +148,7 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
   if (!(error instanceof Error)) return false
 
   if (sender instanceof JsonRpcSigner)
-    return error.message.includes('ethers-user-denied') // Ethers connection
+    return error.message.includes('ethers-user-denied') || error.message.includes('User rejected the request') // Ethers/Viem.js connection
   else return error.message.includes('Cancelled') // Substrate connection
 }
 
@@ -158,11 +160,17 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfer is outdated.
  */
-export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcm: 0.5, bridge: 6 }) => {
+export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcmOrSwap: 0.5, bridge: 6 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const isSwap = isChainflipSwap(
+    transfer.sourceChain,
+    transfer.destChain,
+    transfer.sourceToken,
+    transfer.destinationToken,
+  )
   const timeBuffer =
-    direction === Direction.WithinPolkadot
-      ? thresholdInHours.xcm * 60 * 60 * 1000
+    direction === Direction.WithinPolkadot || isSwap
+      ? thresholdInHours.xcmOrSwap * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return Date.now() - new Date(transfer.date).getTime() > timeBuffer
 }
