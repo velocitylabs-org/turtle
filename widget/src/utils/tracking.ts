@@ -1,45 +1,8 @@
-import { type environment, historyV2 as history } from '@snowbridge/api'
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import type { FromEthTrackingResult, FromParaToEthTrackingResult } from '@/models/snowbridge'
-import type {
-  OngoingTransfers,
-  OngoingTransferWithDirection,
-  StoredTransfer,
-  TxTrackingResult,
-} from '@/models/transfer'
+import type { OngoingTransferWithDirection, StoredTransfer, TxTrackingResult } from '@/models/transfer'
 import { isChainflipSwap } from './chainflip'
 import { Direction, resolveDirection } from './transfer'
-
-export const trackTransfers = async (env: environment.SnowbridgeEnvironment, ongoingTransfers: OngoingTransfers) => {
-  const transfers: TxTrackingResult[] = []
-  const { toPolkadot, toEthereum } = ongoingTransfers
-
-  for (const transfer of toPolkadot) {
-    const tx = await history.toPolkadotTransferById(env.config.GRAPHQL_API_URL, transfer.id)
-    if (tx) transfers.push(tx)
-  }
-
-  for (const transfer of toEthereum) {
-    const tx = await history.toEthereumTransferById(
-      env.config.GRAPHQL_API_URL,
-      transfer.parachainMessageId ? transfer.parachainMessageId : transfer.id,
-    )
-    if (tx) transfers.push(tx)
-  }
-
-  return transfers.sort((a, b) => getTransferTimestamp(b) - getTransferTimestamp(a))
-}
-
-/**
- * Retrieves the transfer timestamp.
- * A transfer result from the Snowbridge API includes 'info' in the transferResult and covers:
- * both Eth to Parachain and AH to Eth transfer directions.
- *
- * The second condition returns the timestamp from an AT API transfer result.
- * @param txTrackingResult - A transfer tracking response from the Snowbridge API.
- * @returns - The transfer timestamp in milliseconds.
- */
-const getTransferTimestamp = (txTrackingResult: TxTrackingResult) => txTrackingResult.info.when.getTime()
 
 /**
  * Finds a matching ongoingTransfer stored in the user's local storage within the tracking explorer/history transfer list (Subscan, Snowbridge history, etc.).
@@ -152,7 +115,7 @@ export const isCompletedTransfer = (txTrackingResult: TxTrackingResult) => {
   return txTrackingResult.status === TransferStatus.Complete || txTrackingResult.status === TransferStatus.Failed
 }
 
-const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]): OngoingTransferWithDirection[] => {
+export const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]): OngoingTransferWithDirection[] => {
   return ongoingTransfers
     .map(t => {
       const direction = resolveDirection(t.sourceChain, t.destChain)
@@ -172,43 +135,12 @@ const formatTransfersWithDirection = (ongoingTransfers: StoredTransfer[]): Ongoi
           sourceChainExtrinsicIndex: t.sourceChainExtrinsicIndex,
         }),
       }
-      // return {
-      //   ...t,
-      //   direction
-      // }
     })
     .filter(
       t =>
         t.direction !== Direction.WithinPolkadot &&
         !isChainflipSwap(t.sourceChain, t.destChain, t.sourceToken, t.destinationToken),
     )
-}
-
-export const getFormattedOngoingTransfers = (ongoingTransfers: StoredTransfer[]) => {
-  const transfers: OngoingTransfers = {
-    toEthereum: [],
-    toPolkadot: [],
-  }
-
-  const formattedTransfers = formatTransfersWithDirection(ongoingTransfers)
-  if (!formattedTransfers.length) return transfers
-
-  formattedTransfers.forEach(transfer => {
-    switch (transfer.direction) {
-      case Direction.ToEthereum: {
-        transfers.toEthereum.push(transfer)
-        break
-      }
-      case Direction.ToPolkadot: {
-        transfers.toPolkadot.push(transfer)
-        break
-      }
-      default:
-        throw new Error('Direction not supported')
-    }
-  })
-
-  return transfers
 }
 
 export const addToOngoingTransfers = async (
