@@ -45,7 +45,7 @@ Sentry.init({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <div className="flex h-screen w-screen items-center justify-center">
-      <Widget />
+      <Widget endpointUrl={import.meta.env.VITE_PUBLIC_ENDPOINT_URL} />
     </div>
   </StrictMode>,
 )
