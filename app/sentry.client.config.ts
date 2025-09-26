@@ -42,7 +42,7 @@ init({
       colorScheme: 'light',
       showBranding: false,
       isEmailRequired: true,
-      autoInject: true,
+      autoInject: false,
     }),
   ],
 })
