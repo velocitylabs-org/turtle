@@ -70,7 +70,7 @@ const config =
           // https://github.com/getsentry/sentry-webpack-plugin#options
 
           // Suppresses SDK logs
-          silent: true,
+          silent: isProduction,
           sourcemaps: {
             disable: process.env.SENTRY_DISABLE_SOURCEMAPS === 'true',
           },
@@ -97,7 +97,7 @@ const config =
           hideSourceMaps: true,
 
           // Automatically tree-shake Sentry logger statements to reduce bundle size
-          disableLogger: true,
+          disableLogger: isProduction,
 
           // Enables automatic instrumentation of Vercel Cron Monitors.
           // See the following for more information:

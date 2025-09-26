@@ -292,3 +292,17 @@ input::-ms-input-placeholder {
   /* Edge 12 -18 */
   color: var(--turtle-level4);
 }
+
+/* Sentry Feedback Widget Styles - Ensure it's always visible and use brand colors */
+#sentry-feedback {
+  --z-index: 999999;
+  --accent-background: #00FF29;  /* Submit button background */
+  --accent-foreground: #000000;  /* Submit button text color */
+  --success-color: #00FF29;      /* Success message color */
+  --outline: 1px solid #00FF29;  /* Input focus outline */
+}
+
+[data-sentry-feedback],
+[data-sentry-feedback-trigger] {
+  z-index: 999999;
+}

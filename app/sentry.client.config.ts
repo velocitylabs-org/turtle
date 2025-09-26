@@ -40,6 +40,9 @@ init({
 
     feedbackIntegration({
       colorScheme: 'light',
+      showBranding: false,
+      isEmailRequired: true,
+      autoInject: true,
     }),
   ],
 })
