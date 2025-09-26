@@ -5,7 +5,8 @@ import { type Notification, NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { Direction, resolveDirection } from '@/services/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
-import { getExplorerLink, isSameChainSwap } from './transfer'
+import { getExplorerLink } from './explorers'
+import { isSameChainSwap } from './transfer'
 
 type ResultNotification = {
   message: string
