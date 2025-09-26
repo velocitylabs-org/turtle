@@ -1,7 +1,7 @@
 import { captureException } from '@sentry/nextjs'
-import { AssetHub, KusamaAssetHub } from '@velocitylabs-org/turtle-registry'
 import type { StoredTransfer } from '@/models/transfer'
 import { isChainflipSwap } from './chainflip'
+import { isSwap } from './transfer'
 
 const EXPLORERS = {
   // Ethereum
@@ -9,13 +9,10 @@ const EXPLORERS = {
 
   // Polkadot
   subscan_polkadot: 'https://polkadot.subscan.io/',
-  subscan_polkadot_ah: 'https://assethub-polkadot.subscan.io/',
-  subscan_polkadot_bh: 'https://bridgehub-polkadot.subscan.io/',
+  xcscan: 'https://xcscan.io/?search=',
 
   // Kusama
   subscan_kusama: 'https://kusama.subscan.io/',
-  subscan_kusama_ah: 'https://assethub-kusama.subscan.io/',
-  subscan_kusama_bh: 'https://bridgehub-kusama.subscan.io/',
 
   // Chainflip
   chainflip: 'https://scan.chainflip.io/',
@@ -42,22 +39,15 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     }
 
     case 'Polkadot': {
-      if (txHash) return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${txHash}`
+      // XCM Transfer to xcscan
+      if (!isSwap(transfer)) return `${EXPLORERS.xcscan}${txHash}`
 
-      if (sourceChain.chainId === AssetHub.chainId)
-        return `${removeURLSlash(EXPLORERS.subscan_polkadot_ah)}/extrinsic/${txHash}`
-
-      // Default Polkadot network explorer link:
-      return `${removeURLSlash(EXPLORERS.subscan_polkadot)}/account/${sender}?tab=xcm_transfer`
+      // Swap and Fallback to extrinsic subscan
+      return getCustomExplorerLink(sourceChain.name, txHash)
     }
 
     case 'Kusama': {
-      if (txHash) return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${txHash}`
-
-      if (sourceChain.chainId === KusamaAssetHub.chainId)
-        return `${removeURLSlash(EXPLORERS.subscan_kusama_ah)}/extrinsic/${txHash}`
-
-      // Default Polkadot network explorer link:
+      // Default Kusama network explorer link:
       return `${removeURLSlash(EXPLORERS.subscan_kusama)}/account/${sender}?tab=xcm_transfer`
     }
 
@@ -65,6 +55,16 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
       console.error(`Failed to create block explorer link`)
       captureException('Failed to create block explorer link', { level: 'error', extra: { transfer } })
   }
+}
+
+/**
+ * Generates the explorer link for SubstrateEVM walletType based chains. ex: Moonbmean, Mythos
+ * @param name - The chain name.
+ * @param sender - The sender address.
+ * @returns The Subscan explorer link
+ */
+const getCustomExplorerLink = (name: string, txHash: string) => {
+  return `https://${name.toLowerCase()}.subscan.io/extrinsic/${txHash}`
 }
 
 const removeURLSlash = (url: string) => {
