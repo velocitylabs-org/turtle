@@ -5,7 +5,7 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    if: github.event.deployment_status.state == 'success'
+    if: github.event.deployment_status.state == 'success' && contains(github.event.deployment_status.environment, 'turtle-app')
     steps:
       - name: Dump GitHub context
         run: echo '${{ toJson(github) }}'
