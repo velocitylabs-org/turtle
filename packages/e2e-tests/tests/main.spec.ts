@@ -1,30 +1,35 @@
 import { test as baseTest, expect } from '@playwright/test'
-import dappwright, { type Dappwright, type OfficialOptions } from '@tenkeylabs/dappwright'
-import type { BrowserContext } from 'playwright-core'
 
-export const withWalletTest = baseTest.extend<{
-  context: BrowserContext
-  wallet: Dappwright
-}>({
-  // biome-ignore lint/correctness/noEmptyPattern: the first argument is not used, and will crash with _
-  context: async ({}, use, testInfo) => {
-    // Launch context with extension and playwright project params
-    const metadata = testInfo.project.metadata as OfficialOptions
-    const [, , context] = await dappwright.bootstrap('', {
-      ...metadata,
-      headless: testInfo.project.use.headless,
-    })
+// TODO: Investigate more, do not remove.
 
-    await use(context)
-  },
+// import dappwright, { type Dappwright, type OfficialOptions } from '@tenkeylabs/dappwright'
+// import type { BrowserContext } from 'playwright-core'
 
-  wallet: async ({ context }, use, testInfo) => {
-    const walletId = testInfo.project.metadata.wallet
-    const metamask = await dappwright.getWallet(walletId, context)
+// TODO: Investigate more, do not remove.
 
-    await use(metamask)
-  },
-})
+// export const withWalletTest = baseTest.extend<{
+//   context: BrowserContext
+//   wallet: Dappwright
+// }>({
+//   // biome-ignore lint/correctness/noEmptyPattern: the first argument is not used, and will crash with _
+//   context: async ({}, use, testInfo) => {
+//     // Launch context with extension and playwright project params
+//     const metadata = testInfo.project.metadata as OfficialOptions
+//     const [, , context] = await dappwright.bootstrap('', {
+//       ...metadata,
+//       headless: testInfo.project.use.headless,
+//     })
+
+//     await use(context)
+//   },
+
+//   wallet: async ({ context }, use, testInfo) => {
+//     const walletId = testInfo.project.metadata.wallet
+//     const metamask = await dappwright.getWallet(walletId, context)
+
+//     await use(metamask)
+//   },
+// })
 
 baseTest.describe('Base Tests', () => {
   baseTest.beforeEach(async ({ page }) => {
@@ -84,44 +89,42 @@ baseTest.describe('Base Tests', () => {
   })
 })
 
-withWalletTest.describe('Connect Wallet Tests', () => {
-  withWalletTest.beforeEach(async ({ page }) => {
-    await page.goto('/')
-  })
+// TODO: Investigate more, do not remove.
+// withWalletTest.describe('Connect Wallet Tests', () => {
+//   withWalletTest.beforeEach(async ({ page }) => {
+//     await page.goto('/')
+//   })
 
-  withWalletTest.skip('Can connect wallet', async ({ page, context }) => {
-    await expect(page.getByRole('button', { name: 'Connect' })).toBeDisabled()
+//   withWalletTest.skip('Can connect wallet', async ({ page, context }) => {
+//     await expect(page.getByRole('button', { name: 'Connect' })).toBeDisabled()
 
-    await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
-    await page.getByRole('listitem').filter({ hasText: 'Ethereum' }).click()
-    await page.getByText('ETH', { exact: true }).click()
-    await page.click('body')
+//     await page.getByTestId('chain-select-trigger-from').getByText('Chain').click()
+//     await page.getByRole('listitem').filter({ hasText: 'Ethereum' }).click()
+//     await page.getByText('ETH', { exact: true }).click()
+//     await page.click('body')
 
-    await expect(page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' })).toBeEnabled()
-    await page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' }).click()
+//     await expect(page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' })).toBeEnabled()
+//     await page.getByTestId('chain-select-trigger-from').getByRole('button', { name: 'Connect' }).click()
 
-    await expect(page.getByRole('button', { name: 'All Wallets' })).toBeVisible()
-    await page.getByRole('button', { name: 'All Wallets' }).click()
+//     await expect(page.getByRole('button', { name: 'All Wallets' })).toBeVisible()
+//     await page.getByRole('button', { name: 'All Wallets' }).click()
 
-    await page.getByTestId('wui-input-text').click()
-    // await page.getByTestId('wui-input-text').fill('coinbase')
-    await page.getByTestId('wui-input-text').fill('metamask')
+//     await page.getByTestId('wui-input-text').click()
+//     // await page.getByTestId('wui-input-text').fill('coinbase')
+//     await page.getByTestId('wui-input-text').fill('metamask')
 
-    // await page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click()
-    const [popup] = await Promise.all([
-      context.waitForEvent('page'), // catches target=_blank + rel=noopener
-      // page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click(),
-      page
-        .getByRole('button', { name: 'MetaMask' })
-        .click(),
-    ])
+//     // await page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click()
+//     const [popup] = await Promise.all([
+//       context.waitForEvent('page'), // catches target=_blank + rel=noopener
+//       // page.getByRole('button', { name: 'Coinbase Wallet Coinbase' }).click(),
+//       page
+//         .getByRole('button', { name: 'MetaMask' })
+//         .click(),
+//     ])
 
-    await popup.waitForLoadState('domcontentloaded')
-    console.log('popup url:', popup.url())
+//     await popup.waitForLoadState('domcontentloaded')
 
-    // console.log('evaluating location ref', await popup.evaluate('location.href'))
-
-    await popup.getByRole('button', { name: 'Connect' }).click()
-    await expect(page.getByRole('button', { name: 'Disconnect' })).toBeVisible()
-  })
-})
+//     await popup.getByRole('button', { name: 'Connect' }).click()
+//     await expect(page.getByRole('button', { name: 'Disconnect' })).toBeVisible()
+//   })
+// })
