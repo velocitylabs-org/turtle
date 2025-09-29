@@ -30,6 +30,15 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
   const isChainflip = isChainflipSwap(transfer.sourceChain, destChain, sourceToken, destinationToken)
   if (isChainflip) return getChainflipExplorerLink(transfer)
 
+  if (!txHash) {
+    console.error(`Failed to create block explorer link due to missing txHash for network: ${sourceChain.network}`)
+    captureException(`Failed to create block explorer link due to missing txHash for network: ${sourceChain.network}`, {
+      level: 'error',
+      extra: { transfer },
+    })
+    return undefined
+  }
+
   switch (sourceChain.network) {
     case 'Ethereum': {
       if (txHash) return `${removeURLSlash(EXPLORERS.etherscan)}/tx/${txHash}`
