@@ -1,6 +1,7 @@
+import { captureException } from '@sentry/nextjs'
 import type { StoredTransfer } from '@/models/transfer'
-import { isSwap } from '@/utils/transfer'
 import { isChainflipSwap } from './chainflip'
+import { isSwap } from './transfer'
 
 const EXPLORERS = {
   // Ethereum
@@ -15,9 +16,6 @@ const EXPLORERS = {
 
   // Chainflip
   chainflip: 'https://scan.chainflip.io/',
-
-  // Chainflip
-  chainflip: 'https://scan.chainflip.io/',
 }
 
 export const getChainflipExplorerLink = (swap: StoredTransfer, chainflipSwapId?: string): string | undefined => {
@@ -26,20 +24,20 @@ export const getChainflipExplorerLink = (swap: StoredTransfer, chainflipSwapId?:
 }
 
 export function getExplorerLink(transfer: StoredTransfer): string | undefined {
-  const {
-    sourceChain: { network, chainId, walletType, name },
-    destChain,
-    sendResult: txHash,
-    sourceToken,
-    destinationToken,
-    sender,
-    id,
-    uniqueTrackingId,
-  } = transfer
+  const { sourceChain, destChain, id: txHash, sourceToken, destinationToken, sender } = transfer
 
   // Chainflip explorer link - Not relying on network
   const isChainflip = isChainflipSwap(transfer.sourceChain, destChain, sourceToken, destinationToken)
   if (isChainflip) return getChainflipExplorerLink(transfer)
+
+  if (!txHash) {
+    console.error(`Failed to create block explorer link due to missing txHash for network: ${sourceChain.network}`)
+    captureException(`Failed to create block explorer link due to missing txHash for network: ${sourceChain.network}`, {
+      level: 'error',
+      extra: { transfer },
+    })
+    return undefined
+  }
 
   switch (sourceChain.network) {
     case 'Ethereum': {
@@ -64,6 +62,10 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
 
     default:
       console.error(`Failed to create block explorer link for network: ${sourceChain.network}`)
+      captureException(`Failed to create block explorer link for network: ${sourceChain.network}`, {
+        level: 'error',
+        extra: { transfer },
+      })
   }
 }
 
