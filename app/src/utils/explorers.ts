@@ -52,8 +52,8 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
     }
 
     default:
-      console.error(`Failed to create block explorer link`)
-      captureException('Failed to create block explorer link', { level: 'error', extra: { transfer } })
+      console.error(`Failed to create block explorer link for network: ${sourceChain.network}`)
+      captureException(`Failed to create block explorer link for network: ${sourceChain.network}`, { level: 'error', extra: { transfer } })
   }
 }
 
