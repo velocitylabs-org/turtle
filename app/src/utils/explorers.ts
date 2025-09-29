@@ -58,10 +58,10 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
 }
 
 /**
- * Generates the explorer link for SubstrateEVM walletType based chains. ex: Moonbmean, Mythos
- * @param name - The chain name.
- * @param sender - The sender address.
- * @returns The Subscan explorer link
+ * Generates the explorer link for Substrate based chains
+ * @param name - The chain name
+ * @param txHash - The transaction hash
+ * @returns The explorer link
  */
 const getCustomExplorerLink = (name: string, txHash: string) => {
   return `https://${name.toLowerCase()}.subscan.io/extrinsic/${txHash}`
