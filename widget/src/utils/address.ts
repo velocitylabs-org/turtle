@@ -80,15 +80,6 @@ export const isValidAddressType = (address: string, types: AddressType[]): boole
   return false
 }
 
-export function isValidRecipient(manualRecipient: ManualRecipient, destinationChain: Chain | null) {
-  return (
-    !manualRecipient.enabled ||
-    !destinationChain ||
-    isValidAddressType(manualRecipient.address, destinationChain.supportedAddressTypes) ||
-    manualRecipient.address === ''
-  )
-}
-
 /**
  * Get the recipient address based on the enabled manual input and the connected destination wallet.
  * @remarks It doesn't check whether the address is valid or not
