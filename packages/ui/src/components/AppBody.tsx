@@ -31,9 +31,9 @@ export const AppBody = ({
       <div className="relative">
         {(ongoingTransfers.length > 0 || completedTransfers?.length > 0) && (
           <div className="absolute -top-5 right-10 z-30 rounded-lg" onClick={onClick}>
-            <div className="animation-bounce relative cursor-pointer rounded-lg border border-turtle-foreground p-3 bg-turtle-background">
+            <div className="relative cursor-pointer rounded-lg border border-turtle-foreground p-3 bg-turtle-background">
               {ongoingTransfers.length > 0 && selectedTab !== 'History' && (
-                <div className="absolute -right-1 -top-1 flex h-[12px] w-[12px] rounded-full bg-turtle-primary" />
+                <div className="absolute -right-1 -top-1 flex h-[12px] w-[12px] rounded-full bg-turtle-primary animate-ping" />
               )}
               <div>{selectedTab === 'History' ? <ArrowLeft className="h-4 w-4" /> : <HistoryIcon />}</div>
             </div>

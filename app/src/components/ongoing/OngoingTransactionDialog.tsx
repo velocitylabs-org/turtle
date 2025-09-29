@@ -6,7 +6,8 @@ import type { StoredTransfer } from '@/models/transfer'
 import { resolveDirection } from '@/services/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, getExplorerLink, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
+import { getExplorerLink } from '@/utils/explorers'
+import { formatAmount, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import Account from '../Account'
 import { SummaryRow } from '../completed/TransactionDialog'
 import ArrowRight from '../svg/ArrowRight'
@@ -49,7 +50,7 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
   return (
     <Dialog>
       <DialogTrigger className="w-full">
-        <OngoingTransactionCard transfer={transfer} status={getStatus(status)} direction={direction} />
+        <OngoingTransactionCard tx={transfer} status={getStatus(status)} direction={direction} />
       </DialogTrigger>
       <DialogContent
         className="ongoing-transfer-dialog max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem]"

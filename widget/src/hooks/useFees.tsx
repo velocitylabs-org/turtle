@@ -391,9 +391,15 @@ function hasParaspellFee(feeItem: { feeType: string; fee: bigint } | undefined):
 }
 
 function getToken(location: TLocation | undefined, symbol: string) {
-  const token = location ? getTokenByLocation(location) : getTokenFromSymbol(symbol)
-  if (!token) {
-    throw new Error(`Token not found for location: ${JSON.stringify(location)}`)
+  let token: Token | undefined
+  if (location) {
+    token = getTokenByLocation(location)
   }
-  return token as Token
+  if (!token) {
+    token = getTokenFromSymbol(symbol)
+  }
+  if (!token) {
+    throw new Error(`Token not found for location ${JSON.stringify(location)} and symbol ${symbol}`)
+  }
+  return token
 }
