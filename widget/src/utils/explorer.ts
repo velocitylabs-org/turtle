@@ -32,7 +32,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
       if (!isSwap(transfer)) return `${EXPLORERS.xcscan}${txHash}`
 
       // Swap and Fallback to extrinsic subscan
-      return getCustomExplorerLink(sourceChain.name, txHash)
+      return getCustomSubscanLink(sourceChain.name, txHash)
     }
 
     case 'Kusama': {
@@ -46,13 +46,13 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
 }
 
 /**
- * Generates the explorer link for Substrate based chains
- * @param name - The chain name
+ * Generates the subscan explorer link
+ * @param chainName - The chain name
  * @param txHash - The transaction hash
- * @returns The explorer link
+ * @returns The subscan link
  */
-const getCustomExplorerLink = (name: string, txHash: string) => {
-  return `https://${name.toLowerCase()}.subscan.io/extrinsic/${txHash}`
+const getCustomSubscanLink = (chainName: string, txHash: string) => {
+  return `https://${chainName.toLowerCase()}.subscan.io/extrinsic/${txHash}`
 }
 
 const removeURLSlash = (url: string) => {
