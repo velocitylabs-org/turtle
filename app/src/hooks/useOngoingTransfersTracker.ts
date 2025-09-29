@@ -11,7 +11,7 @@ import {
 import { Direction, resolveDirection } from '@/services/transfer'
 import { updateTransferMetrics } from '@/utils/analytics'
 import { isChainflipSwap } from '@/utils/chainflip'
-import { getExplorerLink } from '@/utils/transfer'
+import { getExplorerLink } from '@/utils/explorers'
 import { findMatchingTransfer, getTransferStatus, isCompletedTransfer } from '@/utils/transferTracking'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
