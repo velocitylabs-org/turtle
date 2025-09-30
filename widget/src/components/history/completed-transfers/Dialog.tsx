@@ -18,11 +18,11 @@ import { formatHours } from '@/utils/datetime'
 import { formatAmount, isSwap as isPolkadotSwap, toHuman } from '@/utils/transfer'
 import { CompletedTransferCard, getStatusIcon } from './Card'
 
-interface TransactionDialogProps {
+interface CompletedTransferDialogProps {
   tx: CompletedTransfer
 }
 
-export default function TransactionDialog({ tx }: TransactionDialogProps) {
+export default function CompletedTransferDialog({ tx }: CompletedTransferDialogProps) {
   const isSwap =
     isPolkadotSwap(tx) || isChainflipSwap(tx.sourceChain, tx.destChain, tx.sourceToken, tx.destinationToken)
   return (
