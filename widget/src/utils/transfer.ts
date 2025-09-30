@@ -2,7 +2,7 @@ import type { Chain, Network, Token, TokenAmount } from '@velocitylabs-org/turtl
 import { JsonRpcSigner } from 'ethers'
 import { toHex } from 'viem'
 import type { Sender } from '@/hooks/useTransfer'
-import type { AmountInfo, StoredTransfer } from '@/models/transfer'
+import type { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
 import { isSameChain } from '@/utils/routes'
 import { isChainflipSwap } from './chainflip'
 
@@ -150,6 +150,43 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
   if (sender instanceof JsonRpcSigner)
     return error.message.includes('ethers-user-denied') || error.message.includes('User rejected the request') // Ethers/Viem.js connection
   else return error.message.includes('Cancelled') // Substrate connection
+}
+
+/**
+ * Orders completed transfers by date.
+ * @param transfers - The list of completed transfers to order.
+ * @returns The list of completed transfers ordered by date.
+ */
+const orderTransfersByDate = (transfers: CompletedTransfer[]) =>
+  transfers.reduce<TransfersByDate>((acc, transfer) => {
+    let date: string
+    if (typeof transfer.date === 'string') {
+      date = new Date(transfer.date).toISOString().split('T')[0]
+    } else if (transfer.date instanceof Date) {
+      date = transfer.date.toISOString().split('T')[0]
+    } else {
+      date = 'Unknown date'
+    }
+
+    if (!acc[date]) {
+      acc[date] = []
+    }
+    acc[date].push(transfer)
+    return acc
+  }, {})
+
+/**
+ * Formats the ordered completed transfers list to match the transfer history design.
+ * @param transfers - The list of completed transfers to format.
+ * @returns The formatted list of completed transfers.
+ */
+export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
+  const orderedTransfersByDate = orderTransfersByDate(transfers)
+  return Object.keys(orderedTransfersByDate)
+    .map(date => {
+      return { date, transfers: orderedTransfersByDate[date] }
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
 
 /**

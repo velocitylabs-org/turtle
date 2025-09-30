@@ -1,6 +1,7 @@
 import type { TRouterPlan } from '@paraspell/xcm-router'
 import type { toEthereum, toPolkadot } from '@snowbridge/api'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import type { FromParachainTrackingResult } from '@/models/subscan.ts'
 import type { Direction } from '@/utils/transfer'
 import type { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
 
@@ -182,8 +183,8 @@ export interface AmountInfo {
 export type TabOptions = 'New' | 'Done'
 
 export type TxTrackingResult =
-  // Snowbridge API
-  FromEthTrackingResult | FromParaToEthTrackingResult
+  // Snowbridge API | Snowbridge API | Subscan API
+  FromEthTrackingResult | FromParachainTrackingResult | FromParaToEthTrackingResult
 
 export type OnChainBaseEvents = {
   messageHash?: string

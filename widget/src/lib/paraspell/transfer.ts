@@ -6,6 +6,7 @@ import {
   type TCurrencyCore,
   type TDryRunResult,
 } from '@paraspell/sdk'
+import { captureException } from '@sentry/react'
 import {
   ArbitrumTokens,
   BridgeHub,
@@ -32,8 +33,7 @@ const getTokenSymbol = (sourceChain: TChain, token: Token) => {
     })
   } else tokenSymbol = supportedAssets.find(a => a.toLowerCase() === token.symbol.toLowerCase())
 
-  if (!tokenSymbol) console.error(`Token symbol not found: ${token.symbol} on ${sourceChain}`)
-  // captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`)) - Sentry
+  if (!tokenSymbol) captureException(new Error(`Token symbol not found: ${token.symbol} on ${sourceChain}`))
 
   return tokenSymbol ?? token.symbol // if not found, try with fallback
 }
