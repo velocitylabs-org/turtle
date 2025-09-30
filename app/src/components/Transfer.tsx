@@ -326,7 +326,7 @@ export default function Transfer() {
                             label={maxButtonLoading ? '' : 'Max'}
                             size="sm"
                             variant="outline"
-                            className="min-w-[40px]"
+                            className={cn('min-w-[40px]', shouldDisableMaxButton && 'hidden')}
                             onClick={handleMaxButtonClick}
                             disabled={shouldDisableMaxButton}
                             loading={maxButtonLoading}

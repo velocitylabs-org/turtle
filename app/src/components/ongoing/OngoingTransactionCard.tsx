@@ -45,7 +45,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
       </div>
       <TransferEstimate transfer={tx} direction={direction} outlinedProgressBar={false} />
 
-      <div className={'flex items-center justify-between space-x-4 mt-4'}>
+      <div className={'flex items-center justify-between mt-4'}>
         {/* Source Token */}
         <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
           <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} />
@@ -59,7 +59,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         </div>
 
         {/* Source -> Dest Chain */}
-        <div className="flex justify-between items-center mx-[12px] space-x-1">
+        <div className="flex justify-between items-center gap-[2px] sm:gap-1 mx-1 sm:mx-31">
           <Image
             src={(tx.sourceChain.logoURI as Record<string, string>).src}
             alt={tx.sourceChain.name}

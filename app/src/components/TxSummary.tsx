@@ -292,7 +292,7 @@ function getNumberFormat(value: number) {
   if (Math.abs(value) < 0.01 && value !== 0) {
     return {
       notation: 'standard' as const,
-      maximumFractionDigits: 8,
+      maximumFractionDigits: 5,
       minimumFractionDigits: 1,
     }
   }

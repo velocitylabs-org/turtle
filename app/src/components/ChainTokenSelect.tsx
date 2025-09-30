@@ -412,7 +412,7 @@ const TokenList = ({
             >
               <div className="flex items-center gap-2">
                 <TokenLogo token={option} sourceChain={sourceChainToDetermineOriginBanner} />
-                <span className="text-sm">{option.symbol}</span>
+                <span className="text-sm wrap-break-word text-wrap">{option.symbol}</span>
               </div>
 
               {selectedToken?.id === option.id && clearable && <ClearButton onClick={onClear} />}
@@ -431,7 +431,7 @@ const ClearButton = ({ onClick }: { onClick: () => void }) => {
       label="Clear"
       size="sm"
       variant="outline"
-      className="z-10 h-[28px] w-[28px] min-w-5 border-turtle-secondary text-sm hover:border-turtle-secondary"
+      className="z-10 h-[28px] w-[28px] min-w-5 border-turtle-secondary text-sm hover:border-turtle-secondary bg-turtle-secondary-light"
       onClick={onClick}
     >
       <div className="flex items-center gap-1 text-turtle-foreground">
