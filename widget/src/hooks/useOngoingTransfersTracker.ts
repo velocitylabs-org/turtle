@@ -34,8 +34,7 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
     queryKey: ['ongoing-transfers', ongoingTransfers.map(t => t.id)],
     queryFn: async () => {
       const formattedTransfers = formatTransfersWithDirection(ongoingTransfers)
-      // TODO: update `/api/history` endpoint
-      const response = await fetch(`/api/history`, {
+      const response = await fetch(`${globalThis.ENDPOINT_URL}/api/history`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
