@@ -183,7 +183,7 @@ export interface AmountInfo {
 export type TabOptions = 'New' | 'Done'
 
 export type TxTrackingResult =
-  // Snowbridge API | Snowbridge API | Subscan API
+  // Snowbridge API | Subscan API
   FromEthTrackingResult | FromParachainTrackingResult | FromParaToEthTrackingResult
 
 export type OnChainBaseEvents = {

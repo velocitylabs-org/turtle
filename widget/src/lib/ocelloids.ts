@@ -317,7 +317,7 @@ const getEvmTxHashFromEvent = (event: AnyJson): string | undefined => {
 }
 
 /**
- * Finds the corresponding tx hash from an Ocelloids event:
+ * Finds the corresponding tx hash from an Ocelloid event:
  * Handles Moonbeam-specific exceptions and falls back to the basic transaction hash for the remaining chains.
  *
  * @param event - The Ocelloids event of type `AnyJson`.
