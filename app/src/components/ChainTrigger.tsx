@@ -25,6 +25,8 @@ interface ChainTriggerProps {
   manualRecipientInput?: ManualRecipientInput
   /** The connected account. */
   walletAddress?: string
+  /** The floating label to display when the trigger is not open. */
+  floatingLabel?: string
 }
 
 export default function ChainTrigger({
@@ -37,6 +39,7 @@ export default function ChainTrigger({
   triggerRef,
   manualRecipientInput,
   walletAddress,
+  floatingLabel,
 }: ChainTriggerProps) {
   // wallet and ens
   const ensAddress = isValidEthereumAddress(walletAddress || '') ? (walletAddress as Address) : undefined
@@ -72,13 +75,14 @@ export default function ChainTrigger({
     <Tooltip content={error}>
       <div
         ref={triggerRef}
+        aria-disabled={disabled}
         className={cn(
           'flex items-center justify-between border border-turtle-level3 bg-turtle-background px-3 text-sm',
           disabled && 'opacity-30',
           error && 'border-turtle-error',
           className,
         )}
-        data-cy="chain-select-trigger"
+        data-testid={`chain-select-trigger-${floatingLabel?.toLowerCase()}`}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
           <div className={cn('flex shrink-0 items-center gap-1', !disabled && 'cursor-pointer')} onClick={handleClick}>
@@ -92,7 +96,7 @@ export default function ChainTrigger({
                   className="h-[2rem] w-[2rem] rounded-full border border-turtle-foreground bg-turtle-background"
                 />
                 {shouldShowChainName && (
-                  <span className="ml-1 text-nowrap" data-cy="chain-select-value">
+                  <span className="ml-1 text-nowrap" data-testid="chain-select-value">
                     {value.name}
                   </span>
                 )}
@@ -136,7 +140,7 @@ export default function ChainTrigger({
                 value={manualRecipientInput.address}
                 onChange={handleManualRecipientChange}
                 onClick={e => e.stopPropagation()}
-                data-cy="manual-address-input"
+                data-testid="manual-address-input"
               />
             </>
           )}

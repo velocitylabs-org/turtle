@@ -73,7 +73,7 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      data-cy="connect-button"
+      data-testid="connect-button"
     >
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}

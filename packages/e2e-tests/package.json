@@ -1,0 +1,24 @@
+{
+  "name": "@velocitylabs-org/turtle-e2e",
+  "version": "1.0.0",
+  "author": "Stefano Imparato",
+  "description": "End-to-end tests for the Turtle app",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:debug": "playwright test --debug",
+    "e2e:codegen": "playwright codegen http://localhost:3000"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.0"
+  },
+  "dependencies": {
+    "@tenkeylabs/dappwright": "^2.11.2",
+    "dotenv": "^16.4.5",
+    "playwright-core": "^1.55.0"
+  }
+}

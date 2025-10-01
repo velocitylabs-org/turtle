@@ -75,7 +75,7 @@
     }
   },
   "files": {
-    "includes": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "**/*.mjs", "**/*.cjs"],
+    "includes": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json", "**/*.mjs", "**/*.cjs", "**/*.spec.ts"],
     "ignoreUnknown": true
   },
   "overrides": [

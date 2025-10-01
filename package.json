@@ -17,7 +17,11 @@
     "watch": "turbo run watch",
     "changeset": "changeset",
     "prebuild": "turbo run prebuild",
-    "knip": "knip"
+    "knip": "knip",
+    "e2e": "turbo run e2e --filter=@velocitylabs-org/turtle-e2e",
+    "e2e:ui": "turbo run e2e:ui --filter=@velocitylabs-org/turtle-e2e",
+    "e2e:debug": "turbo run e2e:debug --filter=@velocitylabs-org/turtle-e2e",
+    "e2e:codegen": "turbo run e2e:codegen --filter=@velocitylabs-org/turtle-e2e"
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.3",
