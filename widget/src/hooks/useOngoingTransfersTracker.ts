@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus, type TxTrackingResult } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
-import { getExplorerLink } from '@/utils/explorer'
+import { getExplorerLink } from '@/utils/explorers'
 import {
   findMatchingTransfer,
   formatTransfersWithDirection,

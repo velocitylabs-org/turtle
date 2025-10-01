@@ -1,10 +1,11 @@
+import { captureException } from '@sentry/react'
 import { type AnyJson, type OcelloidsAgentApi, OcelloidsClient, type xcm } from '@sodazone/ocelloids-client'
 import { Moonbeam, type Network } from '@velocitylabs-org/turtle-registry'
 import { type Notification, NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
 import { OCELLOIDS_API_Key } from '@/utils/consts'
-import { getExplorerLink } from '@/utils/explorer'
+import { getExplorerLink } from '@/utils/explorers'
 import { Direction, isSameChainSwap, resolveDirection } from '@/utils/transfer'
 
 type ResultNotification = {
@@ -47,14 +48,14 @@ export const getOcelloidsAgentApi = async (): Promise<OcelloidsAgentApi<xcm.XcmI
       .catch(error => {
         const errorMsg = 'Occeloids health error'
         console.error(errorMsg, error)
-        // captureException(errorMsg, error) - Sentry
+        captureException(errorMsg, error)
         throw new Error(errorMsg)
       })
 
     return OCLD_ClIENT.agent<xcm.XcmInputs>('xcm')
   } catch (error) {
     console.log(error)
-    // captureException(error) - Sentry
+    captureException(error)
   }
 }
 
@@ -151,7 +152,7 @@ export const xcmOcceloidsSubscribe = async (
                 break
               default: {
                 const error = 'Unsupported Ocelloids XCM payload type'
-                // captureException(error, { extra: { transfer } }) - Sentry
+                captureException(error, { extra: { transfer } })
                 console.error(error)
                 break
               }
@@ -161,7 +162,7 @@ export const xcmOcceloidsSubscribe = async (
         onAuthError: error => console.log('Auth Error', error),
         onError: error => {
           console.log('Ocelloids WebSocket Error', error)
-          // captureException(error, { extra: { ocelloids: 'WebSocket Error' } }) - Sentry
+          captureException(error, { extra: { ocelloids: 'WebSocket Error' } })
         },
         onClose: event => console.log('WebSocket Closed', event.reason),
       },
@@ -173,7 +174,7 @@ export const xcmOcceloidsSubscribe = async (
     )
   } catch (error) {
     console.log(error)
-    // captureException(error, { extra: { transfer } }) - Sentry
+    captureException(error, { extra: { transfer } })
   }
 }
 
@@ -243,10 +244,10 @@ const updateTransferStatus = (
 
     if (xcmMsgType === xcmNotificationType.Hop || xcmMsgType === xcmNotificationType.Timeout)
       console.log(new Error(`Ocelloids tracking error:${message}`))
-    // captureException(new Error(`Ocelloids tracking error:${message}`), {
-    //   tags: { XcmNotificationType: xcmMsgType, ...(transferOutcome && { transferOutcome }) },
-    //   extra: { transfer },
-    // }) - Sentry
+    captureException(new Error(`Ocelloids tracking error:${message}`), {
+      tags: { XcmNotificationType: xcmMsgType, ...(transferOutcome && { transferOutcome }) },
+      extra: { transfer },
+    })
   }, 1500)
 }
 

@@ -6,6 +6,12 @@ import { Direction, resolveDirection } from './transfer'
 
 /**
  * Finds a matching ongoingTransfer stored in the user's local storage within the tracking explorer/history transfer list (Subscan, Snowbridge history, etc.).
+ * The match relies either on the Snowbridge API or the AT API, and depends on the transfer direction.
+ * - Snowbridge API:
+ *   - Used for both Eth to Parachain and AH to Ethereum transfers.
+ *   - Ongoing transfers executed via the Snowbridge API contain the 'submitted' field in their `transferResult`.
+ * - AT API:
+ *   - Used for transfers in the XCM direction.
  *
  * @param transfers - The list of tracked transfers from the explorer's history (Subscan, Snowbridge history, etc.).
  * @param ongoingTransfer - The ongoing transfer stored in the user's local storage.
@@ -13,17 +19,26 @@ import { Direction, resolveDirection } from './transfer'
  */
 export const findMatchingTransfer = (transfers: TxTrackingResult[], ongoingTransfer: StoredTransfer) =>
   transfers.find(transfer => {
-    if (resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum') {
-      return (
-        transfer.id === ongoingTransfer.parachainMessageId ||
-        ('extrinsic_hash' in transfer.submitted && transfer.submitted.extrinsic_hash === ongoingTransfer.id)
-      )
-    } else {
-      return (
-        transfer.id === ongoingTransfer.id ||
-        ('transactionHash' in transfer.submitted && transfer.submitted.transactionHash === ongoingTransfer.id)
-      )
+    if ('submitted' in transfer) {
+      if (resolveDirection(ongoingTransfer.sourceChain, ongoingTransfer.destChain) === 'ToEthereum') {
+        return (
+          transfer.id === ongoingTransfer.parachainMessageId ||
+          ('extrinsic_hash' in transfer.submitted && transfer.submitted.extrinsic_hash === ongoingTransfer.id)
+        )
+      } else {
+        return (
+          transfer.id === ongoingTransfer.id ||
+          ('transactionHash' in transfer.submitted && transfer.submitted.transactionHash === ongoingTransfer.id)
+        )
+      }
     }
+
+    if (ongoingTransfer.crossChainMessageHash) return transfer.messageHash === ongoingTransfer.crossChainMessageHash
+
+    if (ongoingTransfer.sourceChainExtrinsicIndex)
+      return transfer.extrinsicIndex === ongoingTransfer.sourceChainExtrinsicIndex
+
+    return undefined
   })
 
 /**

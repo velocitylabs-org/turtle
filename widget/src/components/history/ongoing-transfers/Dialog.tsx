@@ -16,7 +16,7 @@ import {
 import type { StoredTransfer } from '@/models/transfer'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { getExplorerLink } from '@/utils/explorer'
+import { getExplorerLink } from '@/utils/explorers'
 import { formatAmount, isSwap as isPolkadotSwap, resolveDirection, toHuman } from '@/utils/transfer'
 import { SummaryRow } from '../completed-transfers/Dialog'
 import OngoingTransfer from './Card'
