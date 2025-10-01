@@ -76,7 +76,7 @@ export default function WalletButton({ walletType, className }: WalletButtonProp
   })()
 
   return (
-    <motion.div key={walletType} className={className} data-cy="connect-button" {...animationProps}>
+    <motion.div key={walletType} className={className} data-testid="connect-button" {...animationProps}>
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}
         variant={isConnected ? 'outline' : 'primary'}
