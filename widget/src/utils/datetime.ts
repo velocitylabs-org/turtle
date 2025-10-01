@@ -4,8 +4,6 @@
  * @param dateString - The ISO 8601 date-time string. For example, "2024-04-12T02:12:02.016Z".
  * @returns The formatted time string with AM/PM notation. Returns '-' if the input format is invalid.
  */
-
-// TODO: unused for now but keeping it as exported
 export const formatHours = (dateString: string | Date): string => {
   const date = typeof dateString === 'string' ? new Date(dateString) : dateString
   const formattedTime = date.toLocaleTimeString('en-US', {
@@ -39,12 +37,11 @@ export function formatCompletedTransferDate(dateString: string | Date): string {
  */
 export const formatOngoingTransferDate = (date: string | Date): string => {
   const dateFrom = typeof date === 'string' ? new Date(date) : date
-  return dateFrom.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  return dateFrom.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: 'numeric',
     second: 'numeric',
+    hour12: true,
   })
 }
 
