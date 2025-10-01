@@ -11,7 +11,7 @@ interface State {
   // Actions
   addOrUpdate: (transfer: StoredTransfer) => void
   updateUniqueId: (id: string, uniqueTrackingId: string) => void
-  updateStatus: (id: string) => void
+  updateStatus: (id: string, newStatus?: string) => void
   updateProgress: (id: string) => void
   remove: (id: string) => void
 }
