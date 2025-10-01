@@ -51,10 +51,7 @@ const Widget = ({
                     <TransferForm />
                   ) : (
                     <Suspense fallback={<HistoryLoaderSkeleton length={5} />}>
-                      <TransfersHistory
-                        ongoingTransfers={ongoingTransfers}
-                        completedTransfers={completedTransfers ?? []}
-                      />
+                      <TransfersHistory transfers={completedTransfers ?? []} />
                     </Suspense>
                   )}
                 </AppBody>

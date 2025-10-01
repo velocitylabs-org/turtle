@@ -10,7 +10,7 @@ const originSchema = z.union([
   z.object({ type: z.literal('Solana'), bridge: z.enum(['Wormhole']) }),
 ])
 
-const tokenSchema: z.ZodType<Token> = z.object({
+export const tokenSchema: z.ZodType<Token> = z.object({
   id: z.string(),
   name: z.string(),
   logoURI: z.union([z.string(), z.object({})]),
@@ -22,7 +22,7 @@ const tokenSchema: z.ZodType<Token> = z.object({
   origin: originSchema,
 })
 
-const chainSchema: z.ZodType<Chain> = z.object({
+export const chainSchema: z.ZodType<Chain> = z.object({
   uid: z.string(),
   name: z.string(),
   logoURI: z.union([z.string(), z.object({})]),
