@@ -10,7 +10,7 @@ import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
 import { formatCompletedTransferDate } from '@/utils/datetime'
 import { formatTransfersByDate } from '@/utils/transfer'
 import CompletedTransferDialog from './completed-transfers/Dialog'
-import { OngoingTransferDialog } from './ongoing-transfers/Dialog'
+import OngoingTransferDialog from './ongoing-transfers/Dialog'
 
 type TransfersHistoryProps = {
   transfers?: CompletedTransfer[]
