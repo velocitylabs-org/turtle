@@ -1,11 +1,6 @@
-import {
-  AppBody,
-  HistoryLoaderSkeleton,
-  MeldWidget,
-  TabSwitcherWrapper,
-  type TransferTabOptions,
-} from '@velocitylabs-org/turtle-ui'
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { AppBody, MeldWidget, TabSwitcherWrapper, type TransferTabOptions } from '@velocitylabs-org/turtle-ui'
+import { useMemo, useState } from 'react'
+import TransfersHistory from '@/components/history/TransfersHistory'
 import NotificationSystem from '@/components/NotificationSystem'
 import SubstrateWalletModal from '@/components/SubstrateWalletModal'
 import TransferForm from '@/components/Transfer'
@@ -29,10 +24,7 @@ const Widget = ({
 
   const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
   const { completedTransfers } = useCompletedTransfers()
-
   const [selectedTab, setSelectedTab] = useState<TransferTabOptions>('New')
-
-  const TransfersHistory = lazy(() => import('@/components/history/TransfersHistory'))
 
   return (
     <div className="turtle-wrapper">
@@ -50,9 +42,7 @@ const Widget = ({
                   {selectedTab !== 'History' ? (
                     <TransferForm />
                   ) : (
-                    <Suspense fallback={<HistoryLoaderSkeleton length={5} />}>
-                      <TransfersHistory transfers={completedTransfers ?? []} />
-                    </Suspense>
+                    <TransfersHistory transfers={completedTransfers ?? []} />
                   )}
                 </AppBody>
               }
