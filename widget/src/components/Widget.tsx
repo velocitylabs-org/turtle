@@ -15,10 +15,12 @@ const Widget = ({
   theme,
   registry,
   endpointUrl = 'https://app.turtle.cool/',
+  meldApiKey = MELD_API_KEY,
 }: {
   theme?: WidgetTheme
   registry?: ConfigRegistryType
   endpointUrl?: string
+  meldApiKey?: string
 }) => {
   useMemo(() => generateWidgetTheme(theme), [theme])
 
@@ -46,7 +48,7 @@ const Widget = ({
                   )}
                 </AppBody>
               }
-              BuySellComponent={<MeldWidget apiKey={MELD_API_KEY ?? ''} />}
+              BuySellComponent={<MeldWidget apiKey={meldApiKey ?? ''} />}
             />
             <NotificationSystem />
             <SubstrateWalletModal />
