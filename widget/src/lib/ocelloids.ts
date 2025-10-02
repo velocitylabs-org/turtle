@@ -4,7 +4,7 @@ import { Moonbeam, type Network } from '@velocitylabs-org/turtle-registry'
 import { type Notification, NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
-import { OCELLOIDS_API_Key } from '@/utils/consts'
+import { OCELLOIDS_API_KEY } from '@/utils/consts'
 import { getExplorerLink } from '@/utils/explorers'
 import { Direction, isSameChainSwap, resolveDirection } from '@/utils/transfer'
 
@@ -22,8 +22,6 @@ enum xcmNotificationType {
   Hop = 'xcm.hop',
   Bridge = 'xcm.bridge',
 }
-
-const OCELLOIDS_API_KEY = OCELLOIDS_API_Key || ''
 
 // Helper to filter the subscribable transfers only
 // It prevents opening socket for local swaps

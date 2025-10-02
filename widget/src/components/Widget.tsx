@@ -13,13 +13,13 @@ import useCompletedTransfers from '@/hooks/useCompletedTransfers'
 import { Providers } from '@/providers'
 import { ConfigProvider, type ConfigRegistryType } from '@/providers/ConfigProviders'
 import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
-import { meldApiKey } from '@/utils/consts'
+import { MELD_API_KEY } from '@/utils/consts'
 import { generateWidgetTheme, type WidgetTheme } from '@/utils/theme'
 
 const Widget = ({
   theme,
   registry,
-  endpointUrl = 'https://app.turtle.cool',
+  endpointUrl = 'https://app.turtle.cool/',
 }: {
   theme?: WidgetTheme
   registry?: ConfigRegistryType
@@ -56,7 +56,7 @@ const Widget = ({
                   )}
                 </AppBody>
               }
-              BuySellComponent={<MeldWidget apiKey={meldApiKey ?? ''} />}
+              BuySellComponent={<MeldWidget apiKey={MELD_API_KEY ?? ''} />}
             />
             <NotificationSystem />
             <SubstrateWalletModal />
