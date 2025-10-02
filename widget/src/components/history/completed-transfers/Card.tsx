@@ -35,12 +35,12 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
         </div>
 
         {/* Tokens & Amounts  */}
-        <div className={'flex items-center justify-between space-x-[12px]'}>
+        <div className={'flex items-center justify-between'}>
           {/* Source Token */}
           {getTokenAndAmount(status, tx.sourceChain, tx.sourceToken, tx.sourceAmount, tx.sourceTokenUSDValue)}
 
           {/* Source -> Dest Chain */}
-          <div className="flex justify-between items-center gap-1">
+          <div className="flex justify-between items-center gap-[2px] sm:gap-1 mx-1 sm:mx-3">
             <img
               src={tx.sourceChain.logoURI as string}
               alt={tx.sourceChain.name}
