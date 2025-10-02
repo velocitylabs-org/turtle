@@ -48,7 +48,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             />
             <div className="flex items-center justify-center w-[16px]">{getTxIcon(status)}</div>
             <img
-              src={tx.sourceChain.logoURI as string}
+              src={tx.destChain.logoURI as string}
               alt={tx.destChain.name}
               className="h-[1rem] w-[1rem] rounded-full border border-turtle-foreground bg-turtle-background"
             />
