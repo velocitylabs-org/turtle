@@ -50,7 +50,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
           <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} />
           {/* Amount token & dolar */}
-          <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
+          <div className="flex flex-col justify-start items-left gap-1 sm:gap-0 text-left pl-1">
             <div className="text-normal sm:text-xl leading-none">{formatAmount(sourceAmount)}</div>
             <div className="text-xs text-turtle-level6 leading-none">
               ${formatAmount((tx.sourceTokenUSDValue ?? 0) * sourceAmount)}
@@ -59,7 +59,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         </div>
 
         {/* Source -> Dest Chain */}
-        <div className="flex justify-between items-center gap-[2px] sm:gap-1 mx-1 sm:mx-31">
+        <div className="flex justify-between items-center gap-[2px] sm:gap-1 mx-1 sm:mx-3">
           <Image
             src={(tx.sourceChain.logoURI as Record<string, string>).src}
             alt={tx.sourceChain.name}
@@ -85,7 +85,7 @@ export default function OngoingTransactionCard({ direction, tx, status }: Ongoin
         <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
           <TokenLogo token={tx.destinationToken ?? tx.sourceToken} sourceChain={tx.destChain} />
           {/* Amount token & dolar */}
-          <div className="flex flex-col justify-start items-left gap-1 text-left pl-1">
+          <div className="flex flex-col justify-start items-left gap-1 sm:gap-0 text-left pl-1">
             <div className="text-normal sm:text-xl leading-none">{formatAmount(destAmount)}</div>
             <div className="text-xs text-turtle-level6 leading-none">
               ${formatAmount((tx.destinationTokenUSDValue ?? tx.sourceTokenUSDValue ?? 0) * destAmount)}
