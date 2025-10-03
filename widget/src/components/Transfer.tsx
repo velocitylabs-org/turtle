@@ -3,23 +3,23 @@ import { type Balance, EthereumTokens, type TokenAmount } from '@velocitylabs-or
 import { Button, cn, Switch } from '@velocitylabs-org/turtle-ui'
 import type { Signer } from 'ethers'
 import { AnimatePresence, motion } from 'framer-motion'
-import { type FC, use, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Controller } from 'react-hook-form'
 import { AlertIcon } from '@/assets/svg/AlertIcon'
+import { useChainflipQuote } from '@/hooks/useChainflipQuote'
 import useErc20Allowance from '@/hooks/useErc20Allowance'
 import useEthForWEthSwap from '@/hooks/useEthForWEthSwap'
 import useSnowbridgeContext from '@/hooks/useSnowbridgeContext'
 import useTransferForm from '@/hooks/useTransferForm'
 import type { WalletInfo } from '@/hooks/useWallet'
-
-import { ConfigContext } from '@/providers/ConfigProviders'
+import { getChainflipDurationEstimate, getChainflipSlippage } from '@/utils/chainflip'
 import {
   getAllowedDestinationChains,
   getAllowedDestinationTokens,
   getAllowedSourceTokens,
   sourceChainOptions,
 } from '@/utils/routes'
-import { formatAmount, getDurationEstimate, resolveDirection } from '@/utils/transfer'
+import { formatAmount, getDurationEstimate, resolveDirection, safeConvertAmount } from '@/utils/transfer'
 import ActionBanner from './ActionBanner'
 import ChainTokenSelect from './ChainTokenSelect'
 import SendButton from './SendButton'
@@ -62,7 +62,7 @@ const getSourceAmountPlaceholder = ({
   return formatAmount(Number(balanceData?.formatted), 'Longer')
 }
 
-const Transfer: FC = () => {
+export default function Transfer() {
   const { snowbridgeContext } = useSnowbridgeContext()
   const {
     control,
@@ -85,6 +85,7 @@ const Transfer: FC = () => {
     sourceToken,
     destinationTokenAmount,
     sourceTokenAmountError,
+    minSwapAmountError,
     handleMaxButtonClick,
     handleSourceTokenChange,
     isBalanceAvailable,
@@ -99,8 +100,6 @@ const Transfer: FC = () => {
     isLoadingOutputAmount,
     maxButtonLoading,
   } = useTransferForm()
-
-  const { allowedChains, allowedTokens } = use(ConfigContext)
 
   const {
     allowance: erc20SpendAllowance,
@@ -126,13 +125,24 @@ const Transfer: FC = () => {
     owner: sourceWallet?.sender?.address,
   })
 
-  const amountPlaceholder = getSourceAmountPlaceholder({
-    loadingBalance,
-    sourceWallet,
-    sourceTokenAmount,
-    isBalanceAvailable,
-    balanceData,
-  })
+  const { isChainflipSwap, chainflipQuote, isLoadingChainflipQuote, isChainflipQuoteError, chainflipQuoteError } =
+    useChainflipQuote({
+      sourceChain,
+      destinationChain,
+      sourceToken: sourceTokenAmount?.token,
+      destinationToken: destinationTokenAmount?.token,
+      amount: safeConvertAmount(sourceTokenAmount?.amount, sourceTokenAmount?.token)?.toString() ?? '0',
+    })
+
+  const isChainflipSwapAllowed = useMemo(() => {
+    return (
+      // Transfer is not a Chainflip swap
+      !isChainflipSwap ||
+      // if Chainflip swap is loading or if swap quote is avaialble & valid
+      isLoadingChainflipQuote ||
+      (!isChainflipQuoteError && !!chainflipQuote)
+    )
+  }, [isChainflipSwap, isLoadingChainflipQuote, isChainflipQuoteError, chainflipQuote])
 
   const shouldDisplayRecipientWalletButton =
     !manualRecipient.enabled && sourceChain?.walletType !== destinationChain?.walletType
@@ -164,7 +174,8 @@ const Transfer: FC = () => {
     !requiresErc20SpendApproval &&
     destinationChain &&
     sourceWallet?.sender &&
-    destinationWallet?.sender
+    destinationWallet?.sender &&
+    isChainflipSwapAllowed
 
   const shouldDisplayEthToWEthSwap: boolean =
     !!sourceWallet &&
@@ -184,9 +195,23 @@ const Transfer: FC = () => {
   const missingBalance =
     sourceTokenAmount?.amount && balanceData ? sourceTokenAmount.amount - Number(balanceData.formatted) : 0
 
-  const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
+  const amountPlaceholder = getSourceAmountPlaceholder({
+    loadingBalance,
+    sourceWallet,
+    sourceTokenAmount,
+    isBalanceAvailable,
+    balanceData,
+  })
 
-  const durationEstimate = direction ? getDurationEstimate(direction) : undefined
+  const durationEstimate = () => {
+    const direction = sourceChain && destinationChain ? resolveDirection(sourceChain, destinationChain) : undefined
+    // Chainflip swap duration
+    const chainflipDuration = getChainflipDurationEstimate(chainflipQuote)
+    if (chainflipDuration) return chainflipDuration
+
+    // Default duration from direction
+    return direction ? getDurationEstimate(direction) : undefined
+  }
 
   const hasFees = fees && fees?.length > 0
   const allFeesItemsAreSufficient = hasFees && fees.every(fee => fee.sufficient !== 'insufficient')
@@ -203,13 +228,13 @@ const Transfer: FC = () => {
     allFeesItemsAreSufficient
 
   const destinationChainOptions = useMemo(
-    () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null, allowedChains),
-    [sourceChain, sourceTokenAmount?.token, allowedChains],
+    () => getAllowedDestinationChains(sourceChain, sourceTokenAmount?.token ?? null),
+    [sourceChain, sourceTokenAmount?.token],
   )
 
   const sourceTokenOptions = useMemo(
-    () => getAllowedSourceTokens(sourceChain, destinationChain, allowedTokens),
-    [sourceChain, destinationChain, allowedTokens],
+    () => getAllowedSourceTokens(sourceChain, destinationChain),
+    [sourceChain, destinationChain],
   )
 
   const destinationTokenOptions = useMemo(
@@ -235,10 +260,19 @@ const Transfer: FC = () => {
 
   const sourceTokenAmountErrorMessage = useMemo(() => {
     if (errors.sourceTokenAmount?.amount?.message) return errors.sourceTokenAmount.amount.message
+    if (minSwapAmountError) return minSwapAmountError
     if (sourceTokenAmountError) return sourceTokenAmountError
     if (!isBalanceSufficientForFees) return `We need some of that ${sourceToken?.symbol} to pay fees`
     return undefined
-  }, [errors.sourceTokenAmount?.amount?.message, sourceTokenAmountError, isBalanceSufficientForFees, sourceToken])
+  }, [
+    errors.sourceTokenAmount?.amount?.message,
+    sourceTokenAmountError,
+    minSwapAmountError,
+    isBalanceSufficientForFees,
+    sourceToken,
+  ])
+
+  const swapSlippage = getChainflipSlippage(chainflipQuote)
 
   return (
     <form
@@ -277,7 +311,11 @@ const Transfer: FC = () => {
                       }}
                       amountProps={{
                         value: tokenField.value?.amount ?? null,
-                        onChange: amount => tokenField.onChange({ token: tokenField.value?.token ?? null, amount }),
+                        onChange: amount =>
+                          tokenField.onChange({
+                            token: tokenField.value?.token ?? null,
+                            amount,
+                          }),
                         error: sourceTokenAmountErrorMessage,
                         placeholder: amountPlaceholder,
                         trailingAction: !sourceTokenAmount?.amount && (
@@ -285,7 +323,7 @@ const Transfer: FC = () => {
                             {...(!maxButtonLoading && { label: 'Max' })}
                             size="sm"
                             variant="outline"
-                            className="min-w-[40px]"
+                            className={cn('min-w-[40px]', shouldDisableMaxButton && 'hidden')}
                             onClick={handleMaxButtonClick}
                             disabled={shouldDisableMaxButton}
                             loading={maxButtonLoading}
@@ -331,7 +369,11 @@ const Transfer: FC = () => {
                     }}
                     tokenProps={{
                       value: tokenField.value?.token ?? null,
-                      onChange: token => tokenField.onChange({ token, amount: tokenField.value?.amount ?? null }),
+                      onChange: token =>
+                        tokenField.onChange({
+                          token,
+                          amount: tokenField.value?.amount ?? null,
+                        }),
                       options: destinationTokenOptions,
                       error: errors.destinationTokenAmount?.token?.message,
                       clearable: true,
@@ -437,15 +479,31 @@ const Transfer: FC = () => {
         )}
       </AnimatePresence>
 
+      {/* Chainflip quote error */}
+      <AnimatePresence>
+        {isChainflipQuoteError && !requiresErc20SpendApproval && (
+          <motion.div className="flex items-center gap-1 self-center pt-1" {...approvalAnimationProps}>
+            <ActionBanner
+              disabled={false}
+              header="Can't swap this pair for now."
+              text={`${chainflipQuoteError?.message} Please try a different pair.`}
+              image={<img src="/wip.png" alt="Work in progress" width={64} height={64} />}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {shouldDisplayTxSummary && (
           <TxSummary
-            loading={loadingFees}
+            loading={loadingFees || isLoadingChainflipQuote}
             sourceTokenAmount={sourceTokenAmount}
             destinationTokenAmount={destinationTokenAmount}
             destChain={destinationChain}
             fees={fees}
-            durationEstimate={durationEstimate}
+            durationEstimate={durationEstimate()}
+            slippage={swapSlippage}
+            isChainflipSwap={isChainflipSwap}
             sourceTokenAmountError={sourceTokenAmountErrorMessage}
             className={cn({ 'opacity-30': transferStatus !== 'Idle' })}
           />
@@ -454,7 +512,7 @@ const Transfer: FC = () => {
 
       {/* Transfer Button */}
       <SendButton
-        className="mt-6 sm:mt-9 mb-1 sm:mb-2"
+        className="w-full mt-6 sm:mt-8 mb-1 sm:mb-2"
         label="Send"
         size="lg"
         variant="primary"
@@ -466,5 +524,3 @@ const Transfer: FC = () => {
     </form>
   )
 }
-
-export default Transfer

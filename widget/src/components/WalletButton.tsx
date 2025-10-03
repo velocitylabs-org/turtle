@@ -1,6 +1,9 @@
+'use client'
 import type { WalletType } from '@velocitylabs-org/turtle-registry'
+import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { Button, cn } from '@velocitylabs-org/turtle-ui'
 import { motion } from 'framer-motion'
+import { Cross } from '@/assets/svg/Cross'
 import useEvmWallet from '@/hooks/useEvmWallet'
 import useSubstrateWallet from '@/hooks/useSubstrateWallet'
 
@@ -11,8 +14,14 @@ interface WalletButtonProps {
   className?: string
 }
 
-/** Wallet button component that is intended to support connecting to various different networks based on its address type. */
-const WalletButton = ({ walletType, className }: WalletButtonProps) => {
+const animationProps = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+}
+
+// Wallet button component that is intended to support connecting to various different networks based on its address type.
+export default function WalletButton({ walletType, className }: WalletButtonProps) {
   const { disconnect: disconnectEvm, isConnected: evmIsConnected, openModal: openEvm } = useEvmWallet()
 
   const {
@@ -67,24 +76,22 @@ const WalletButton = ({ walletType, className }: WalletButtonProps) => {
   })()
 
   return (
-    <motion.div
-      key={walletType}
-      className={className}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      data-testid="connect-button"
-    >
+    <motion.div key={walletType} className={className} data-testid="connect-button" {...animationProps}>
       <Button
         label={isConnected ? 'Disconnect' : 'Connect'}
         variant={isConnected ? 'outline' : 'primary'}
         disabled={disabled}
         size="sm"
-        className={cn('text-sm', isConnected ? '' : 'w-[4.875rem]')}
+        className={cn('text-sm', isConnected ? '' : 'md:w-[4.875rem]')}
         onClick={buttonFunction}
-      />
+      >
+        {isConnected ? (
+          <span>
+            <Cross stroke={colors['turtle-foreground']} className="md:hidden" />{' '}
+            <span className="hidden md:inline">Disconnect</span>
+          </span>
+        ) : null}
+      </Button>
     </motion.div>
   )
 }
-
-export default WalletButton

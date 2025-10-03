@@ -1,17 +1,15 @@
 import { TransferStatus } from '@snowbridge/api/dist/history'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { getSbEnvironment } from '@/lib/snowbridge'
 import { NotificationSeverity } from '@/models/notification'
-import { type CompletedTransfer, type StoredTransfer, TxStatus } from '@/models/transfer'
+import { type CompletedTransfer, type StoredTransfer, TxStatus, type TxTrackingResult } from '@/models/transfer'
 import { updateTransferMetrics } from '@/utils/analytics.ts'
-import { getExplorerLink } from '@/utils/explorer'
+import { getExplorerLink } from '@/utils/explorers'
 import {
   findMatchingTransfer,
-  getFormattedOngoingTransfers,
+  formatTransfersWithDirection,
   getTransferStatus,
   isCompletedTransfer,
-  trackTransfers,
 } from '@/utils/tracking'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
@@ -35,9 +33,15 @@ const useOngoingTransfersTracker = (ongoingTransfers: StoredTransfer[]) => {
   } = useQuery({
     queryKey: ['ongoing-transfers', ongoingTransfers.map(t => t.id)],
     queryFn: async () => {
-      const env = getSbEnvironment('Polkadot')
-      const formattedTransfers = getFormattedOngoingTransfers(ongoingTransfers)
-      return trackTransfers(env, formattedTransfers)
+      const formattedTransfers = formatTransfersWithDirection(ongoingTransfers)
+      const response = await fetch(`${globalThis.ENDPOINT_URL}api/history`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ongoingTransfers: formattedTransfers }),
+      })
+      return (await response.json()) as TxTrackingResult[]
     },
     refetchInterval: REVALIDATE,
     staleTime: REVALIDATE,

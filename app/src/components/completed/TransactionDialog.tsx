@@ -24,7 +24,7 @@ export default function TransactionDialog({ tx }: TransactionDialogProps) {
         <TransactionCard tx={tx} />
       </DialogTrigger>
       <DialogContent
-        className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="completed-transfer m-auto max-h-[85vh] max-w-[90vw] rounded-4xl sm:max-w-[27rem] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mt-[-20vh]"
         hideCloseButton
       >
         <div>

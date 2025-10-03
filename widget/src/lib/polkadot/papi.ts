@@ -1,5 +1,7 @@
-import type { TxEvent } from 'polkadot-api'
+import type { PolkadotSigner, TxEvent } from 'polkadot-api'
+import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
 import type { OnChainBaseEvents } from '@/models/transfer'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 
 export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined => {
   // Wait until block is finalized or in a best block state
@@ -73,4 +75,13 @@ export const extractPapiEvent = (event: TxEvent): OnChainBaseEvents | undefined 
       isExecuteAttemptCompleted,
     }
   }
+}
+
+export const getPolkadotSigner = (account: SubstrateAccount): PolkadotSigner => {
+  if (!account.pjsSigner?.signPayload || !account.pjsSigner?.signRaw) throw new Error('Signer not found')
+  return getPolkadotSignerFromPjs(
+    account.address,
+    account.pjsSigner.signPayload as SignPayload,
+    account.pjsSigner.signRaw as SignRaw,
+  )
 }

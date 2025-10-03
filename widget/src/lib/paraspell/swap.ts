@@ -7,7 +7,7 @@ import {
   REGISTRY,
   type Token,
 } from '@velocitylabs-org/turtle-registry'
-import { deduplicate, isSameChain } from '@/utils/routes'
+import { isSameChain } from '@/utils/routes'
 
 // We only support Hydration for now.
 /** contains all supported paraspell dexes mapped to the chain they run on */
@@ -75,19 +75,37 @@ const getTradeableTokens = (dex: Dex, sourceToken: Token): Token[] => {
 
 /** returns all allowed source chains for a swap. */
 export const getSwapsSourceChains = (): Chain[] => {
-  const chainsSupportingOneClickFlow = REGISTRY.chains.filter(chain => chain?.supportExecuteExtrinsic)
+  const dexPairs = getDexPairs('HydrationDex')
+  const dexTokenIds = new Set(dexPairs.flat().map(token => token.id))
+  const routesToHydration = new Map(
+    REGISTRY.routes.filter(route => route.to === Hydration.uid).map(route => [route.from, route]),
+  )
 
-  const oneClickChains = chainsSupportingOneClickFlow.filter(chain => {
-    const route = REGISTRY.routes.find(route => route.from === chain.uid && route.to === Hydration.uid)
-    if (!route) return false
+  // Use Set for deduplication track seen chain UIDs
+  const seenChainUids = new Set<string>()
+  const result: Chain[] = []
 
-    const isTradingPairCompatible = getDexPairs('HydrationDex').some(pair =>
-      pair.some(token => route.tokens.includes(token.id)),
-    )
-    return isTradingPairCompatible
-  })
+  for (const dexChain of getSupportedDexChains()) {
+    if (!seenChainUids.has(dexChain.uid)) {
+      seenChainUids.add(dexChain.uid)
+      result.push(dexChain)
+    }
+  }
 
-  return deduplicate(getSupportedDexChains(), ...oneClickChains)
+  // Single filter pass combining all conditions for one-click chains
+  for (const chain of REGISTRY.chains) {
+    if (!chain?.supportExecuteExtrinsic || seenChainUids.has(chain.uid)) continue
+
+    const route = routesToHydration.get(chain.uid)
+    if (!route) continue
+
+    if (route.tokens.some(tokenId => dexTokenIds.has(tokenId))) {
+      seenChainUids.add(chain.uid)
+      result.push(chain)
+    }
+  }
+
+  return result
 }
 
 /** returns all allowed source tokens for a swap. */

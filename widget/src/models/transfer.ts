@@ -1,6 +1,7 @@
 import type { TRouterPlan } from '@paraspell/xcm-router'
 import type { toEthereum, toPolkadot } from '@snowbridge/api'
 import type { Chain, Token } from '@velocitylabs-org/turtle-registry'
+import type { FromParachainTrackingResult } from '@/models/subscan.ts'
 import type { Direction } from '@/utils/transfer'
 import type { FromEthTrackingResult, FromParaToEthTrackingResult } from './snowbridge'
 
@@ -27,8 +28,8 @@ export interface StoredTransfer extends RawTransfer {
   fees: FeeDetails[]
   // TODO(nuno): we can have multiple types of transfer and have this depend on that type.
   // that way we can support different fields, for example for xcm-only transfers in the future.
-  sendResult?: string //toEthereum.SendResult | toPolkadot.SendResult
-  // A subscan unique Id shared accross chains to track ongoing transfers
+  sendResult?: toEthereum.SendResult | toPolkadot.SendResult
+  // A unique Id to track an ongoing transfer, ex: subscan unique Id, chainflip deposit channel Id (...)
   uniqueTrackingId?: string
   status?: string
   // WithinPolkadot transfer is considered as finalized
@@ -46,7 +47,7 @@ export interface StoredTransferV0 extends RawTransferV0 {
   amount: string
   fees: AmountInfo
   bridgingFee: AmountInfo | null
-  sendResult?: string //toEthereum.SendResult | toPolkadot.SendResult
+  sendResult?: toEthereum.SendResult | toPolkadot.SendResult
   // A subscan unique Id shared accross chains to track ongoing transfers
   uniqueTrackingId?: string
   status?: string
@@ -91,17 +92,9 @@ export interface OngoingTransferWithDirection extends RawTransfer {
 }
 
 export interface OngoingTransfers {
-  toEthereum: OngoingTransferWithDirection[] // Parachain => Eth transfer
-  toPolkadot: OngoingTransferWithDirection[] // Eth => Parachain transfer
-}
-
-export interface AmountInfo {
-  /* The amount in the `token` currency */
-  amount: string | bigint | number
-  /* the token  */
-  token: Token
-  /* the amount converted to USD dollars */
-  inDollars: number
+  toEthereum: OngoingTransferWithDirection[] // AH => Eth transfer
+  toPolkadot: OngoingTransferWithDirection[] // Eth => AH || Parachain transfer
+  withinPolkadot: OngoingTransferWithDirection[]
 }
 
 export enum TxStatus {
@@ -176,20 +169,42 @@ export type CompletedTransferV1 = {
   errors?: string[]
 }
 
+export type TransfersByDate = Record<string, CompletedTransfer[]>
+
+export interface AmountInfo {
+  /* The amount in the `token` currency */
+  amount: string | bigint | number
+  /* the token  */
+  token: Token
+  /* the amount converted to USD dollars */
+  inDollars: number
+}
+
+export type TabOptions = 'New' | 'Done'
+
 export type TxTrackingResult =
-  // Snowbridge API | Snowbridge API | Subscan API
-  FromEthTrackingResult | FromParaToEthTrackingResult //| FromParachainTrackingResult
+  // Snowbridge API | Subscan API
+  FromEthTrackingResult | FromParachainTrackingResult | FromParaToEthTrackingResult
 
 export type OnChainBaseEvents = {
   messageHash?: string
   messageId?: string
   extrinsicIndex?: string
   isBatchCompleted?: boolean
-  isExecuteAttemptCompleted?: boolean
   isExtrinsicSuccess?: boolean
+  isExecuteAttemptCompleted?: boolean
 }
 
-type FeeDetailType = 'Execution fees' | 'Delivery fees' | 'Bridging fees' | 'Routing fees' | 'Swap fees'
+type ChainflipFeeType = 'Broker fees' | 'Deposit fees'
+
+export type FeeDetailType =
+  | 'Execution fees'
+  | 'Delivery fees'
+  | 'Bridging fees'
+  | 'Routing fees'
+  | 'Swap fees'
+  | 'Transfer fees'
+  | ChainflipFeeType
 
 export type FeeSufficiency = 'sufficient' | 'insufficient' | 'undetermined'
 

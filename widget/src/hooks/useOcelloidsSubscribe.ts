@@ -30,6 +30,7 @@ const useOcelloidsSubscribe = (ongoingTransfers: StoredTransfer[]) => {
               addCompletedTransfer,
               updateStatus,
               addNotification,
+              // fill the progress before moving the transfer to the completed list
               updateProgress,
             )
             subscribedTransfers.add(t.id)

@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react'
 import type { Dispatch, SetStateAction } from 'react'
+import { cn } from '../helpers/cn'
 import HistoryIcon from './HistoryIcon'
 
 type TransferTab = 'New' | 'History'
@@ -30,7 +31,13 @@ export const AppBody = ({
     <div className="flex flex-col">
       <div className="relative">
         {(ongoingTransfers.length > 0 || completedTransfers?.length > 0) && (
-          <div className="absolute -top-5 right-10 z-30 rounded-lg" onClick={onClick}>
+          <div
+            className={cn(
+              'absolute -top-5 z-30 rounded-lg right-6 sm:right-10 mr-[2px]',
+              selectedTab === 'History' && 'pr-2',
+            )}
+            onClick={onClick}
+          >
             <div className="relative cursor-pointer rounded-lg border border-turtle-foreground p-3 bg-turtle-background">
               {ongoingTransfers.length > 0 && selectedTab !== 'History' && (
                 <div className="absolute -right-1 -top-1 flex h-[12px] w-[12px] rounded-full bg-turtle-primary animate-ping" />

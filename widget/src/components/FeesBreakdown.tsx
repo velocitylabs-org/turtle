@@ -1,6 +1,6 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
 import { AlertIcon } from '@/assets/svg/AlertIcon.tsx'
-import type { FeeDetails } from '@/models/transfer'
+import type { FeeDetails, FeeSufficiency } from '@/models/transfer'
 import { getSrcFromLogo } from '@/utils/getSrcFromLogo.ts'
 import { formatAmount, toHuman } from '@/utils/transfer'
 
@@ -10,6 +10,9 @@ interface FeesBreakdownProps {
 }
 
 export default function FeesBreakdown({ fees, hasFeesFailed }: FeesBreakdownProps) {
+  const insufficientFees = getFeesBySufficiency('insufficient', fees ?? [])
+  const undeterminedFees = getFeesBySufficiency('undetermined', fees ?? [])
+
   return (
     <div className="w-[360px] bg-turtle-foreground p-3 pb-1 text-turtle-background">
       <div className="w-full pb-3 pt-0.5 text-center text-sm font-bold">Fees Breakdown</div>
@@ -42,22 +45,17 @@ export default function FeesBreakdown({ fees, hasFeesFailed }: FeesBreakdownProp
       </ul>
 
       {/* Insufficient fees warning */}
-      {fees
-        ?.filter(fee => fee.sufficient === 'insufficient')
-        ?.map(fee => (
-          <AlertRow key={`insufficient-${fee.title}`} variant="error">
-            You don&apos;t have enough {fee.amount.token.symbol} on {fee.chain.name}
-          </AlertRow>
-        ))}
+      {insufficientFees.size > 0 && (
+        <AlertRow key={'insufficient-fees'} variant="error">
+          You don&apos;t have enough ${toReadableList(insufficientFees)}
+        </AlertRow>
+      )}
 
-      {/* Undetermined fees warning */}
-      {fees
-        ?.filter(fee => fee.sufficient === 'undetermined')
-        ?.map(fee => (
-          <AlertRow key={`undetermined-${fee.title}`} variant="warning">
-            Unable to verify {fee.amount.token.symbol} balance on {fee.chain.name}
-          </AlertRow>
-        ))}
+      {undeterminedFees.size > 0 && (
+        <AlertRow key={'undetermined-fees'} variant="error">
+          You don&apos;t have enough ${toReadableList(undeterminedFees)}
+        </AlertRow>
+      )}
 
       {hasFeesFailed && (
         <AlertRow variant="error">
@@ -100,4 +98,31 @@ function AlertRow({ variant, children }: AlertRowProps) {
       <span className={`text-xs ${style.textColor}`}>{children}</span>
     </div>
   )
+}
+
+function getFeesBySufficiency(sufficiency: FeeSufficiency, fees: FeeDetails[]): Map<string, Set<string>> {
+  return groupByToken(fees?.filter(fee => fee.sufficient === sufficiency) ?? [])
+}
+
+function toReadableList(xs: Map<string, Set<string>>): string {
+  return Array.from(xs.entries())
+    .map(([token, chains], _) => `${token} on ${Array.from(chains).join(', ')}`)
+    .join('; ')
+    .concat('.')
+}
+
+function groupByToken(fees: FeeDetails[]): Map<string, Set<string>> {
+  const map = new Map<string, Set<string>>()
+
+  for (const { amount, chain } of fees) {
+    const token = amount.token.symbol
+    const chainName = chain.name
+
+    if (!map.has(token)) {
+      map.set(token, new Set())
+    }
+    map.get(token)!.add(chainName)
+  }
+
+  return map
 }

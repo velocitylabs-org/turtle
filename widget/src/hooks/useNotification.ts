@@ -1,4 +1,4 @@
-import { useNotificationStore } from '@/stores/notificationStore'
+import { useNotificationStore } from '@/store/notificationStore'
 
 const useNotification = () => {
   const notifications = useNotificationStore(state => state.notifications)

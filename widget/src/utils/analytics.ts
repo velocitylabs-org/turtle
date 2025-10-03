@@ -1,5 +1,6 @@
 'use client'
 
+import { captureException } from '@sentry/react'
 import type { TransferParams } from '@/hooks/useTransfer'
 import { ANALYTICS_DASHBOARD_BASE_URL, ANALYTICS_WIDGET_AUTH_TOKEN, isProduction } from '@/utils/consts'
 import { toHuman } from '@/utils/transfer'
@@ -137,10 +138,10 @@ export async function trackTransferMetrics({
       throw error
     }
   } catch (error) {
-    // captureException(error, {
-    //   tags: { section: 'analytics' },
-    //   extra: transactionData,
-    // })
+    captureException(error, {
+      tags: { section: 'analytics' },
+      extra: transactionData,
+    })
     console.error('Failed to store transaction:', error)
   }
 }
@@ -181,10 +182,10 @@ export async function updateTransferMetrics({ txHashId, status }: TrackTransferM
       throw error
     }
   } catch (error) {
-    // captureException(error, {
-    //   tags: { section: 'analytics' },
-    //   extra: { txHashId, status },
-    // })
+    captureException(error, {
+      tags: { section: 'analytics' },
+      extra: { txHashId, status },
+    })
     console.error('Failed to update transaction:', error)
   }
 }

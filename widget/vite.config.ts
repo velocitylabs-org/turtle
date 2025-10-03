@@ -1,4 +1,5 @@
 import { resolve } from 'node:path'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react-swc'
 import tailwindcss from 'tailwindcss'
 import { defineConfig } from 'vite'
@@ -18,6 +19,11 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
     cssInjectedByJsPlugin(),
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
   ],
   css: {
     postcss: {

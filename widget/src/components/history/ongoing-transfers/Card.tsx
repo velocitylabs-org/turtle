@@ -1,71 +1,90 @@
 import { colors } from '@velocitylabs-org/turtle-tailwind-config'
-import { LoadingIcon, TokenLogo } from '@velocitylabs-org/turtle-ui'
-import type { FC } from 'react'
+import { TokenLogo } from '@velocitylabs-org/turtle-ui'
 import { ArrowRight } from '@/assets/svg/ArrowRight'
-import Account from '@/components/Account'
+import LoadingIcon from '@/assets/svg/LoadingIcon'
+import TransferEstimate from '@/components/TransferEstimate'
 import type { StoredTransfer } from '@/models/transfer'
 import { formatOngoingTransferDate } from '@/utils/datetime'
-import { formatAmount, isSwap, toHuman } from '@/utils/transfer'
+import { type Direction, formatAmount, toHuman } from '@/utils/transfer'
 
-const OngoingTransfer: FC<{
-  transfer: StoredTransfer
-}> = ({ transfer }) => {
+interface OngoingTransferProps {
+  direction: Direction
+  tx: StoredTransfer
+  status: string
+}
+
+export default function OngoingTransfer({ direction, tx, status }: OngoingTransferProps) {
+  const sourceAmount = toHuman(tx.sourceAmount, tx.sourceToken)
+  const destAmount = toHuman(tx.destinationAmount ?? tx.sourceAmount, tx.destinationToken ?? tx.sourceToken)
+
   return (
-    <div className="hover:bg-turtle-secondary-light-50 mb-2 space-y-2 rounded-[16px] border border-turtle-level3 p-3 hover:cursor-pointer">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <LoadingIcon className="mr-2 animate-spin" size="md" strokeWidth={5} color={colors['turtle-secondary']} />
-          <div className="flex items-center text-lg font-normal tracking-[0] text-turtle-foreground sm:text-xl">
-            {isSwap(transfer) ? (
-              <span className="flex items-center gap-1">
-                <span>{formatAmount(toHuman(transfer.destinationAmount, transfer.destinationToken))}</span>
-                <TokenLogo token={transfer.destinationToken} sourceChain={transfer.destChain} size={25} />
-              </span>
-            ) : (
-              <span className="flex items-center gap-1">
-                <span>{formatAmount(toHuman(transfer.sourceAmount, transfer.sourceToken))}</span>
-                <TokenLogo token={transfer.sourceToken} sourceChain={transfer.sourceChain} size={25} />
-              </span>
-            )}
+    <div className="group mb-3 rounded-[16px] border border-turtle-level5 p-4 hover:cursor-pointer transition duration-200 ease-in hover:border-turtle-secondary-dark hover:bg-turtle-secondary-light">
+      <div className="mb-2 flex items-center justify-between">
+        <div className="flex gap-[6px] items-center">
+          <div className="flex items-center justify-center border border-turtle-secondary-dark rounded-[4px] w-[20px] h-[20px]">
+            <LoadingIcon className="animate-spin" width={14} height={10} color={colors['turtle-secondary-dark']} />
           </div>
-          {/* From and to Chains */}
-          <div className="ml-2 flex h-[24px] items-center space-x-1 rounded-full border border-turtle-level3 p-1">
-            <img
-              src={transfer.sourceChain.logoURI as string}
-              alt="Source Chain"
-              width={16}
-              height={16}
-              className="h-[16px] rounded-full border border-turtle-secondary-dark bg-turtle-background"
-            />
-            <ArrowRight className="h-[0.45rem] w-[0.45rem]" fill={colors['turtle-secondary-dark']} />
-            <img
-              src={transfer.destChain.logoURI as string}
-              alt="Destination Chain"
-              width={16}
-              height={16}
-              className="h-[16px] w-4 rounded-full border border-turtle-secondary-dark bg-turtle-background"
-            />
+          <div
+            className="text-left font-bold text-sm sm:text-normal text-turtle-secondary-dark w-[140px] sm:w-auto overflow-x-auto text-nowrap scrollbar scrollbar-thumb-rounded
+              scrollbar scrollbar-thumb-rounded
+              [&::-webkit-scrollbar]:h-1
+              [&::-webkit-scrollbar-track]:m-10
+              [&::-webkit-scrollbar-track]:rounded-full
+              [&::-webkit-scrollbar-thumb]:rounded-full
+              [&::-webkit-scrollbar-track]:bg-turtle-background 
+              [&::-webkit-scrollbar-thumb]:bg-turtle-level2"
+          >
+            {status}
           </div>
         </div>
-        <p className="text-right text-sm text-turtle-secondary">{formatOngoingTransferDate(transfer.date)}</p>
+        <p className="text-[12px] text-right sm:block sm:text-sm text-turtle-level5 group-hover:text-turtle-level6 ">
+          {formatOngoingTransferDate(tx.date)}
+        </p>
       </div>
-      <div className="flex items-center">
-        <Account
-          network={transfer.sourceChain.network}
-          addressType={transfer.sourceChain.supportedAddressTypes?.at(0)}
-          address={transfer.sender}
-          allowCopy={false}
-        />
-        <ArrowRight className="mx-3 h-[0.8rem] w-[0.8rem]" fill={colors['turtle-secondary-dark']} />
-        <Account
-          network={transfer.destChain.network}
-          addressType={transfer.destChain.supportedAddressTypes?.at(0)}
-          address={transfer.recipient}
-          allowCopy={false}
-        />
+      <TransferEstimate transfer={tx} direction={direction} outlinedProgressBar={false} />
+
+      <div className={'flex items-center justify-between mt-4'}>
+        {/* Source Token */}
+        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
+          <TokenLogo token={tx.sourceToken} sourceChain={tx.sourceChain} />
+          {/* Amount token & dolar */}
+          <div className="flex flex-col justify-start items-left gap-1 sm:gap-0 text-left pl-1">
+            <div className="text-normal sm:text-xl leading-none">{formatAmount(sourceAmount)}</div>
+            <div className="text-xs text-turtle-level6 leading-none">
+              ${formatAmount((tx.sourceTokenUSDValue ?? 0) * sourceAmount)}
+            </div>
+          </div>
+        </div>
+
+        {/* Source -> Dest Chain */}
+        <div className="flex justify-between items-center gap-[2px] sm:gap-1 mx-1 sm:mx-3">
+          <img
+            src={tx.sourceChain.logoURI as string}
+            alt={tx.sourceChain.name}
+            className="h-[1rem] w-[1rem] rounded-full border border-turtle-foreground bg-turtle-background"
+          />
+          <div className="flex items-center justify-center w-[16px]">
+            <ArrowRight className="h-3 w-3" fill={colors['turtle-foreground']} />
+          </div>
+          <img
+            src={tx.destChain.logoURI as string}
+            alt={tx.destChain.name}
+            className="h-[1rem] w-[1rem] rounded-full border border-turtle-foreground bg-turtle-background"
+          />
+        </div>
+
+        {/* Dest Token */}
+        <div className="flex p-2 items-center bg-turtle-level1 border border-turtle-level5 p-1 gap-1 sm:p-2 sm:gap-2 rounded-lg w-[96px] sm:w-[160px] h-[48px] justify-center group-hover:bg-turtle-background group-hover:border-turtle-secondary-dark">
+          <TokenLogo token={tx.destinationToken ?? tx.sourceToken} sourceChain={tx.destChain} />
+          {/* Amount token & dolar */}
+          <div className="flex flex-col justify-start items-left gap-1 sm:gap-0 text-left pl-1">
+            <div className="text-normal sm:text-xl leading-none">{formatAmount(destAmount)}</div>
+            <div className="text-xs text-turtle-level6 leading-none">
+              ${formatAmount((tx.destinationTokenUSDValue ?? tx.sourceTokenUSDValue ?? 0) * destAmount)}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
 }
-
-export default OngoingTransfer

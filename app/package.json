@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "scripts": {
-    "dev": "DEBUG='next:*,turbopack:*' NODE_OPTIONS='--enable-source-maps --trace-uncaught --trace-warnings --unhandled-rejections=strict --trace-deprecation' next dev --turbo",
+    "dev": "next dev --turbo",
     "build": "next build --turbo",
     "start": "next start",
     "test": "jest --transformIgnorePatterns \"node_modules/(?!@toolz/allow)/\"",

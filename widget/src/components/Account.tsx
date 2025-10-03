@@ -6,21 +6,23 @@ import { useEnsName } from 'wagmi'
 import { isValidEthereumAddress, truncateAddress } from '@/utils/address'
 import CopyAddress from './ClipboardCopy'
 
-function Account({
-  network,
-  addressType,
-  address,
-  className,
-  allowCopy = true,
-  size = 14,
-}: {
+interface AccountProps {
   network: Network
   addressType?: AddressType
   address: string
   className?: string
   allowCopy?: boolean
   size?: number
-}) {
+}
+
+export default function Account({
+  network,
+  addressType,
+  address,
+  className,
+  allowCopy = true,
+  size = 14,
+}: AccountProps) {
   const ensAddress = isValidEthereumAddress(address) ? (address as Address) : undefined
   const { data: ensName } = useEnsName({
     address: ensAddress,
@@ -75,4 +77,3 @@ function Account({
     </div>
   )
 }
-export default Account

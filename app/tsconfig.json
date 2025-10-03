@@ -7,12 +7,6 @@
     },
     "types": ["jest", "node"]
   },
-  "include": [
-    "next-env.d.ts",
-    "src",
-    ".next/types/**/*.ts",
-    "next.config.mjs",
-    "../packages/ui/src/components/HistoryIcon.tsx"
-  ],
-  "exclude": ["node_modules", "cypress"]
+  "include": ["next-env.d.ts", "src", ".next/types/**/*.ts", "next.config.mjs"],
+  "exclude": ["node_modules"]
 }
