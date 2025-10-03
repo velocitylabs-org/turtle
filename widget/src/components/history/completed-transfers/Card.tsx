@@ -42,13 +42,13 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
           {/* Source -> Dest Chain */}
           <div className="flex justify-between items-center gap-[2px] sm:gap-1 mx-1 sm:mx-3">
             <img
-              src={tx.sourceChain.logoURI as string}
+              src={(tx.sourceChain.logoURI as string) || (tx.sourceChain.logoURI as Record<string, string>)?.src}
               alt={tx.sourceChain.name}
               className="h-[1rem] w-[1rem] rounded-full border border-turtle-foreground bg-turtle-background"
             />
             <div className="flex items-center justify-center w-[16px]">{getTxIcon(status)}</div>
             <img
-              src={tx.destChain.logoURI as string}
+              src={(tx.destChain.logoURI as string) || (tx.destChain.logoURI as Record<string, string>)?.src}
               alt={tx.destChain.name}
               className="h-[1rem] w-[1rem] rounded-full border border-turtle-foreground bg-turtle-background"
             />
