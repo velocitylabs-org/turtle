@@ -47,7 +47,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
           {/* Source -> Dest Chain */}
           <div className="flex justify-between items-center gap-1">
             <Image
-              src={(tx.sourceChain.logoURI as Record<string, string>).src}
+              src={typeof tx.sourceChain.logoURI === 'string' ? tx.sourceChain.logoURI : tx.sourceChain.logoURI?.src}
               alt={tx.sourceChain.name}
               width={16}
               height={16}
@@ -56,8 +56,16 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
             />
             <div className="flex items-center justify-center w-[16px]">{getTxIcon(status)}</div>
             <Image
-              src={(tx.destChain.logoURI as Record<string, string>).src}
-              alt={tx.destChain.name}
+              src={
+                tx.destChain
+                  ? typeof tx.destChain.logoURI === 'string'
+                    ? tx.destChain.logoURI
+                    : tx.destChain.logoURI?.src
+                  : typeof tx.sourceChain.logoURI === 'string'
+                    ? tx.sourceChain.logoURI
+                    : tx.sourceChain.logoURI?.src
+              }
+              alt={tx.destChain ? tx.destChain.name : tx.sourceChain.name}
               width={16}
               height={16}
               priority
