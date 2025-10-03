@@ -49,14 +49,10 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
         reviver(key, value) {
           if (key === '') {
             const storage = value as StorageState
-            console.log(storage)
             const completedTransfers = storage?.state?.completedTransfers ?? []
 
-            console.log('🔥 object hydrated from storage:', completedTransfers)
-            // TODO clean the object. iterate over it and validate the schema
             const cleaned = completedTransfers.filter(transfer => completedTransferSchema.safeParse(transfer).success)
             storage.state.completedTransfers = cleaned
-            console.log('🔥 cleaned object:', storage)
 
             localStorage.setItem('turtle-completed-transactions', JSON.stringify(storage))
             return storage

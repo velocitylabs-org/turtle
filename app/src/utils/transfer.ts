@@ -40,7 +40,6 @@ export const convertAmount = (input: number, token: Token): bigint => {
  * @returns The amount readable by humans
  */
 export const toHuman = (input: bigint | string | number, token: Token): number => {
-  if (token.decimals === undefined) console.log('WARNING: Token decimals are undefined')
   return Number(input) / 10 ** token.decimals
 }
 
