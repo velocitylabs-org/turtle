@@ -1,6 +1,7 @@
 import { captureException } from '@sentry/react'
 import { useQuery } from '@tanstack/react-query'
-import { getTokenPrice, type Token, type TokenPriceResult } from '@velocitylabs-org/turtle-registry'
+import type { Token, TokenPriceResult } from '@velocitylabs-org/turtle-registry'
+import { getCachedTokenPrice } from '@/services/balance.ts'
 import { CACHE_REVALIDATE_IN_SECONDS } from '@/utils/consts'
 
 const useTokenPrice = (token?: Token | null): TokenPriceResult => {
@@ -12,7 +13,7 @@ const useTokenPrice = (token?: Token | null): TokenPriceResult => {
     queryKey: ['tokenPrice', token?.id],
     queryFn: async () => {
       if (!token) return null
-      return await getTokenPrice(token)
+      return await getCachedTokenPrice(token)
     },
     staleTime: CACHE_REVALIDATE_IN_SECONDS * 1000, // specified in miliseconds
   })
