@@ -1,6 +1,49 @@
 'use client'
-import Widget from '@velocitylabs-org/turtle-widget'
+import {
+  AppBody,
+  HistoryLoaderSkeleton,
+  MeldWidget,
+  TabSwitcherWrapper,
+  type TransferTabOptions,
+} from '@velocitylabs-org/turtle-ui'
+import dynamic from 'next/dynamic'
+import { Suspense, useState } from 'react'
+import Transfer from '@/components/Transfer'
+import useCompletedTransfers from '@/hooks/useCompletedTransfers'
+import { useOngoingTransfersStore } from '@/store/ongoingTransfersStore'
+
+const meldApiKey = process.env.NEXT_PUBLIC_MELD_API_KEY ?? ''
+
+const TransactionHistory = dynamic(() => import('./TransactionsHistory'), {
+  loading: () => <HistoryLoaderSkeleton length={5} />,
+  ssr: false,
+})
 
 export default function AppHome() {
-  return <Widget endpointUrl="/" meldApiKey={process.env.NEXT_PUBLIC_MELD_API_KEY} />
+  const { completedTransfers } = useCompletedTransfers()
+
+  const ongoingTransfers = useOngoingTransfersStore(state => state.transfers)
+  const [selectedTab, setSelectedTab] = useState<TransferTabOptions>('New')
+
+  return (
+    <TabSwitcherWrapper
+      TransferComponent={
+        <AppBody
+          ongoingTransfers={ongoingTransfers}
+          completedTransfers={completedTransfers}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+        >
+          {selectedTab !== 'History' ? (
+            <Transfer />
+          ) : (
+            <Suspense fallback={<HistoryLoaderSkeleton length={5} />}>
+              <TransactionHistory transfers={completedTransfers} />
+            </Suspense>
+          )}
+        </AppBody>
+      }
+      BuySellComponent={<MeldWidget apiKey={meldApiKey} />}
+    />
+  )
 }
