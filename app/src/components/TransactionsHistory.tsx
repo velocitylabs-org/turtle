@@ -1,5 +1,4 @@
 'use client'
-import { type Chain, chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import TransactionDialog from '@/components/completed/TransactionDialog'
 import { useChainflipTracker } from '@/hooks/useChainflipTracker'
@@ -41,15 +40,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
       {ongoingTxs &&
         ongoingTxs.length > 0 &&
         ongoingTxs.map(tx => {
-          const transfer = {
-            ...tx,
-            sourceToken: tokensById[tx.sourceToken.id] as Token,
-            destinationToken: tokensById[tx.destinationToken?.id as string] as Token,
-            sourceChain: chainsByUid[tx.sourceChain.uid] as Chain,
-            destChain: chainsByUid[tx.destChain.uid] as Chain,
-          }
-
-          return <OngoingTransferDialog key={tx.id} transfer={transfer} status={statusMessages[tx.id]} />
+          return <OngoingTransferDialog key={tx.id} transfer={tx} status={statusMessages[tx.id]} />
         })}
       {completedTxs.map(({ date, transfers }, idx) => (
         <div key={idx + date + transfers.length}>
@@ -58,15 +49,7 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
               {formatCompletedTransferDate(date)}
             </p>
             {transfers.reverse().map((tx, idx) => {
-              const transfer = {
-                ...tx,
-                sourceToken: tokensById[tx.sourceToken.id] as Token,
-                destinationToken: tokensById[tx.destinationToken?.id as string] as Token,
-                sourceChain: chainsByUid[tx.sourceChain.uid] as Chain,
-                destChain: chainsByUid[tx.destChain.uid] as Chain,
-              }
-
-              return <TransactionDialog key={idx + tx.id + tx.sender} tx={transfer} />
+              return <TransactionDialog key={idx + tx.id + tx.sender} tx={tx} />
             })}
           </div>
         </div>
