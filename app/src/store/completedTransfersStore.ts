@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import completedTransferSchema from '@/models/completed-transfer-schema'
 import type { CompletedTransfer, FeeDetails } from '@/models/transfer'
 import { migrateCompletedTransfers } from './migrations/completedTransfersMigration'
 import { STORE_VERSIONS } from './migrations/constants'
@@ -21,7 +22,6 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
   persist(
     set => ({
       completedTransfers: [],
-
       addCompletedTransfer: newCompletedTransfer => {
         if (!newCompletedTransfer) return
 
@@ -45,10 +45,33 @@ export const useCompletedTransfersStore = create<CompletedTxState>()(
     }),
     {
       name: 'turtle-completed-transactions',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => localStorage, {
+        reviver(key, value) {
+          if (key === '') {
+            const storage = value as StorageState
+            console.log(storage)
+            const completedTransfers = storage?.state?.completedTransfers ?? []
+
+            console.log('🔥 object hydrated from storage:', completedTransfers)
+            // TODO clean the object. iterate over it and validate the schema
+            const cleaned = completedTransfers.filter(transfer => completedTransferSchema.safeParse(transfer).success)
+            storage.state.completedTransfers = cleaned
+            console.log('🔥 cleaned object:', storage)
+
+            localStorage.setItem('turtle-completed-transactions', JSON.stringify(storage))
+            return storage
+          }
+          return value
+        },
+      }),
       partialize: state => ({ completedTransfers: state.completedTransfers }),
       version: STORE_VERSIONS.COMPLETED_TRANSFERS,
       migrate: migrateCompletedTransfers,
     },
   ),
 )
+
+interface StorageState {
+  state: { completedTransfers: CompletedTransfer[] }
+  version: number
+}
