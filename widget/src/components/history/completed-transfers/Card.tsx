@@ -15,6 +15,17 @@ import { getSVGColor } from './Dialog'
 export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
   const status = tx.result
 
+  const getSourceLogoSrc = () =>
+    typeof tx.sourceChain.logoURI === 'string' ? tx.sourceChain.logoURI : tx.sourceChain.logoURI?.src
+
+  const getDestLogoSrc = () => {
+    const chain = tx.destChain ?? tx.sourceChain
+    const logoURI = chain.logoURI
+
+    if (typeof logoURI === 'string') return logoURI
+    return logoURI?.src
+  }
+
   return (
     <div
       className={cn(
@@ -42,13 +53,13 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
           {/* Source -> Dest Chain */}
           <div className="flex justify-between items-center gap-[2px] sm:gap-1 mx-1 sm:mx-3">
             <img
-              src={tx.sourceChain.logoURI as string}
+              src={getSourceLogoSrc()}
               alt={tx.sourceChain.name}
               className="h-[1rem] w-[1rem] rounded-full border border-turtle-foreground bg-turtle-background"
             />
             <div className="flex items-center justify-center w-[16px]">{getTxIcon(status)}</div>
             <img
-              src={tx.destChain.logoURI as string}
+              src={getDestLogoSrc()}
               alt={tx.destChain.name}
               className="h-[1rem] w-[1rem] rounded-full border border-turtle-foreground bg-turtle-background"
             />
