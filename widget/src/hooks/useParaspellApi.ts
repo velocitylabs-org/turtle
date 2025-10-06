@@ -1,8 +1,8 @@
 import type { TDryRunChainResult } from '@paraspell/sdk'
-import { getTokenPrice, isSameToken } from '@velocitylabs-org/turtle-registry'
+import { captureException } from '@sentry/react'
+import { isSameToken } from '@velocitylabs-org/turtle-registry'
 import { switchChain } from '@wagmi/core'
-import type { TxEvent } from 'polkadot-api'
-import { InvalidTxError } from 'polkadot-api'
+import { InvalidTxError, type TxEvent } from 'polkadot-api'
 import { getPolkadotSignerFromPjs, type SignPayload, type SignRaw } from 'polkadot-api/pjs-signer'
 import type { Client } from 'viem'
 import { type Config, useConnectorClient } from 'wagmi'
@@ -11,15 +11,15 @@ import type { DryRunResult } from '@/lib/paraspell/transfer'
 import { extractPapiEvent } from '@/lib/polkadot/papi'
 import { NotificationSeverity } from '@/models/notification'
 import { type CompletedTransfer, type OnChainBaseEvents, type StoredTransfer, TxStatus } from '@/models/transfer'
-import { wagmiConfig } from '@/providers/config'
-import evmTransferBuilderManager from '@/services/paraspell/evmTransferBuilder.ts'
-import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder.ts'
-import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder.ts'
-import type { SubstrateAccount } from '@/stores/substrateWalletStore'
+import { config } from '@/providers/config'
+import { getCachedTokenPrice } from '@/services/balance'
+import evmTransferBuilderManager from '@/services/paraspell/evmTransferBuilder'
+import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
+import type { SubstrateAccount } from '@/store/substrateWalletStore'
 import { getSenderAddress } from '@/utils/address'
-import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics.ts'
-import { wait } from '@/utils/datetime'
-import { getExplorerLink } from '@/utils/explorer'
+import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
+import { getExplorerLink } from '@/utils/explorers'
 import { hashToHex, isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
@@ -27,9 +27,9 @@ import useOngoingTransfers from './useOngoingTransfers'
 import type { Sender, Status, TransferParams } from './useTransfer'
 
 const useParaspellApi = () => {
-  const { addNotification } = useNotification()
-  const { addCompletedTransfer } = useCompletedTransfers()
   const { addOrUpdate, remove: removeOngoing } = useOngoingTransfers()
+  const { addCompletedTransfer } = useCompletedTransfers()
+  const { addNotification } = useNotification()
   const { data: viemClient } = useConnectorClient<Config>({ chainId: moonbeam.id })
 
   // main transfer function which is exposed to the components.
@@ -46,12 +46,12 @@ const useParaspellApi = () => {
   }
 
   const handleMoonbeamTransfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
-    await switchChain(wagmiConfig, { chainId: moonbeam.id })
+    await switchChain(config, { chainId: moonbeam.id })
     const hash = await evmTransferBuilderManager.transferTx(params, viemClient as Client)
 
     const senderAddress = await getSenderAddress(params.sender)
-    const sourceTokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
-    const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     const transferToStore = {
@@ -82,6 +82,8 @@ const useParaspellApi = () => {
       })
       evmTransferBuilderManager.disconnect(params)
     })
+
+    setStatus('Idle')
   }
 
   const handlePolkadotTransfer = async (params: TransferParams, setStatus: (status: Status) => void) => {
@@ -94,17 +96,37 @@ const useParaspellApi = () => {
 
     const validationResult = await validatePolkadotTransfer(params)
 
+    const dryRunCapturePayload = {
+      extra: {
+        sourceChain: params.sourceChain.uid,
+        destinationChain: params.destinationChain.uid,
+        token: params.sourceToken.id,
+      },
+    }
+
     if (validationResult.type === 'Unsupported') {
       addNotification({
         message: getFailureReason(validationResult),
         severity: NotificationSeverity.Warning,
       })
+      captureException(new Error('DryRun Error: Unsupported'), {
+        ...dryRunCapturePayload,
+        level: 'warning',
+      })
     }
     if (validationResult.type === 'Supported') {
       if (!validationResult.origin.success) {
+        captureException(new Error('DryRun Error: Origin Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
+        })
         throw new Error(`Transfer dry run failed: ${validationResult.origin.failureReason}`)
       }
       if (validationResult.destination && !validationResult.destination.success) {
+        captureException(new Error('DryRun Error: Destination Validation Failed'), {
+          ...dryRunCapturePayload,
+          level: 'warning',
+        })
         throw new Error(`Transfer dry run failed: ${validationResult.destination.failureReason}`)
       }
 
@@ -124,8 +146,8 @@ const useParaspellApi = () => {
     )
 
     const senderAddress = await getSenderAddress(params.sender)
-    const sourceTokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
-    const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
@@ -187,8 +209,8 @@ const useParaspellApi = () => {
 
     setStatus('Loading')
 
-    const sourceTokenUSDValue = (await getTokenPrice(params.sourceToken))?.usd ?? 0
-    const destinationTokenUSDValue = (await getTokenPrice(params.destinationToken))?.usd ?? 0
+    const sourceTokenUSDValue = (await getCachedTokenPrice(params.sourceToken))?.usd ?? 0
+    const destinationTokenUSDValue = (await getCachedTokenPrice(params.destinationToken))?.usd ?? 0
     const date = new Date()
 
     const routerPlan = await xcmRouterBuilderManager.createRouterPlan(params)
@@ -250,7 +272,7 @@ const useParaspellApi = () => {
         xcmRouterBuilderManager.disconnect(params)
       },
       complete: () => {
-        console.log('The first swap transaction is complete')
+        console.log('The swap transaction is complete')
         xcmRouterBuilderManager.disconnect(params)
       },
     })
@@ -258,7 +280,7 @@ const useParaspellApi = () => {
     setStatus('Sending')
   }
 
-  // /** Handle the incoming transaction events and update the ongoing transfers accordingly. Supports PAPI and PJS events. */
+  /** Handle the incoming transaction events and update the ongoing transfers accordingly. */
   const handleTxEvent = async (event: TxEvent, transferToStore: StoredTransfer, onComplete?: () => void) => {
     if (event.type === 'signed') {
       await addToOngoingTransfers(
@@ -292,9 +314,8 @@ const useParaspellApi = () => {
   const monitorSwapWithTransfer = (transfer: StoredTransfer, eventsData: OnChainBaseEvents) => {
     // By default, swaps are submitted using the Execute extrinsic from PolkadotXcm pallet.
     if (isSwapWithTransfer(transfer) && transfer.sourceChain.supportExecuteExtrinsic) {
-      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess) {
+      if (!eventsData.isExecuteAttemptCompleted || !eventsData.isExtrinsicSuccess)
         throw new Error('Swap transfer did not complete - Execute function not successful')
-      }
     } else {
       // Fallback to the BatchAll extinsic from utility pallet
       if (isSwapWithTransfer(transfer) && !eventsData.isBatchCompleted)
@@ -305,16 +326,12 @@ const useParaspellApi = () => {
   const handleSameChainSwapStorage = async (transfer: StoredTransfer, txEvent: TxEvent) => {
     if (!isSameChainSwap(transfer)) return
 
-    // Wait for 3 seconds to ensure user can read swap status update
-    // before completing the transfer
-    await wait(3000)
-
     const txSuccessful =
       txEvent.type === 'finalized' &&
       txEvent.events.some(event => event.type === 'System' && event.value.type === 'ExtrinsicSuccess')
 
     if (!txSuccessful) {
-      // captureException(new Error('Swap failed'), { extra: { transfer } })
+      captureException(new Error('Swap failed'), { extra: { transfer } })
       console.error('Swap failed!')
     }
 
@@ -411,13 +428,7 @@ const useParaspellApi = () => {
     )
   }
 
-  const handleSendError = (
-    sender: Sender,
-    e: unknown,
-    setStatus: (status: Status) => void,
-    txId?: string,
-    environment?: string,
-  ) => {
+  const handleSendError = (sender: Sender, e: unknown, setStatus: (status: Status) => void, txId?: string) => {
     setStatus('Idle')
     console.log('Transfer error:', e)
     const cancelledByUser = txWasCancelled(sender, e)
@@ -426,14 +437,14 @@ const useParaspellApi = () => {
       : 'Failed to submit the transfer. Make sure you have enough DOT'
 
     if (txId) removeOngoing(txId)
-    // if (!cancelledByUser) captureException(e) - Sentry
+    if (!cancelledByUser) captureException(e)
 
     addNotification({
       message,
       severity: NotificationSeverity.Error,
     })
 
-    if (txId && environment) {
+    if (txId) {
       updateTransferMetrics({
         txHashId: txId,
         status: TxStatus.Failed,

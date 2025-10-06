@@ -26,6 +26,8 @@ interface ChainTriggerProps {
   manualRecipientInput?: ManualRecipientInput
   /** The connected account. */
   walletAddress?: string
+  /** The floating label to display when the trigger is not open. */
+  floatingLabel?: string
 }
 
 export default function ChainTrigger({
@@ -38,6 +40,7 @@ export default function ChainTrigger({
   triggerRef,
   manualRecipientInput,
   walletAddress,
+  floatingLabel,
 }: ChainTriggerProps) {
   // wallet and ens
   const ensAddress = isValidEthereumAddress(walletAddress || '') ? (walletAddress as Address) : undefined
@@ -73,14 +76,14 @@ export default function ChainTrigger({
     <Tooltip content={error}>
       <div
         ref={triggerRef}
-        onClick={disabled ? undefined : onClick}
+        aria-disabled={disabled}
         className={cn(
           'flex items-center justify-between border border-turtle-level3 bg-turtle-background px-3 text-sm',
           disabled && 'opacity-30',
           error && 'border-turtle-error',
           className,
         )}
-        data-testid="chain-select-trigger"
+        data-testid={`chain-select-trigger-${floatingLabel?.toLowerCase()}`}
       >
         <div className="flex h-[3.5rem] flex-grow items-center gap-1">
           <div className={cn('flex shrink-0 items-center gap-1', !disabled && 'cursor-pointer')} onClick={handleClick}>

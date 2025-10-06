@@ -14,7 +14,7 @@ const Widget = dynamic(() => import('@velocitylabs-org/turtle-widget'), {
 })
 
 const WidgetWrapper = () => {
-  return <Widget />
+  return <Widget meldApiKey={process.env.NEXT_PUBLIC_MELD_API_KEY} />
 }
 
 export default WidgetWrapper

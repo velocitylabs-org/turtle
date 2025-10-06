@@ -53,7 +53,7 @@ export default function OngoingTransactionDialog({ transfer, status }: OngoingTr
         <OngoingTransactionCard tx={transfer} status={getStatus(status)} direction={direction} />
       </DialogTrigger>
       <DialogContent
-        className="ongoing-transfer-dialog max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem]"
+        className="ongoing-transfer-dialog max-h-[85vh] max-w-[90vw] overflow-scroll rounded-4xl sm:max-w-[27rem] sm:mt-[-20vh]"
         hideCloseButton
       >
         <div>

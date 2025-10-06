@@ -1,4 +1,4 @@
-import { useCompletedTransfersStore } from '@/stores/completedTransfersStore'
+import { useCompletedTransfersStore } from '@/store/completedTransfersStore'
 import useStore from './useStore'
 
 const useCompletedTransfers = () => {

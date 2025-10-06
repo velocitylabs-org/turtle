@@ -2,8 +2,9 @@ import type { Chain, Network, Token, TokenAmount } from '@velocitylabs-org/turtl
 import { JsonRpcSigner } from 'ethers'
 import { toHex } from 'viem'
 import type { Sender } from '@/hooks/useTransfer'
-import type { AmountInfo, StoredTransfer } from '@/models/transfer'
+import type { AmountInfo, CompletedTransfer, StoredTransfer, TransfersByDate } from '@/models/transfer'
 import { isSameChain } from '@/utils/routes'
+import { isChainflipSwap } from './chainflip'
 
 type FormatLength = 'Short' | 'Long' | 'Longer'
 
@@ -57,7 +58,8 @@ export const toHuman = (input: bigint | string | number, token: Token): number =
  * Safe version of `convertAmount` that handles `null` and `undefined` params
  */
 export const safeConvertAmount = (input?: number | null, token?: Token | null): bigint | null => {
-  if (input == null || !token) return null
+  if (input == null || Number.isNaN(input) || !Number.isFinite(input) || !token || !Number.isInteger(token.decimals))
+    return null
 
   return BigInt(Math.floor(input * 10 ** token.decimals))
 }
@@ -105,6 +107,7 @@ export enum Direction {
   ToPolkadot = 'toPolkadot',
   WithinPolkadot = 'WithinPolkadot',
   WithinEthereum = 'WithinEthereum',
+  ToArbitrum = 'ToArbitrum',
 }
 
 export const resolveDirection = (source: Chain, destination: Chain): Direction => {
@@ -113,10 +116,14 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
 
   // Ethereum -> Polkadot
   if (src === 'Ethereum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
+  // Arbitrum -> Polkadot
+  if (src === 'Arbitrum' && isAnyPolkadotNetwork(dst)) return Direction.ToPolkadot
   // Ethereum -> Ethereum
   if (src === 'Ethereum' && dst === 'Ethereum') return Direction.WithinEthereum
   // Polkadot -> Ethereum
   if (isAnyPolkadotNetwork(src) && dst === 'Ethereum') return Direction.ToEthereum
+  // Polkadot -> Arbitrum
+  if (isAnyPolkadotNetwork(src) && dst === 'Arbitrum') return Direction.ToArbitrum
   // XCM
   if (isAnyPolkadotNetwork(src) && isAnyPolkadotNetwork(dst)) return Direction.WithinPolkadot
 
@@ -126,6 +133,7 @@ export const resolveDirection = (source: Chain, destination: Chain): Direction =
 function isAnyPolkadotNetwork(network: Network): boolean {
   return network === 'Polkadot' || network === 'Kusama'
 }
+
 export function toAmountInfo(tokenAmount?: TokenAmount | null, usdPrice?: number | null): AmountInfo | null {
   if (!tokenAmount || !tokenAmount.amount || !tokenAmount.token || !usdPrice) return null
 
@@ -140,8 +148,45 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
   if (!(error instanceof Error)) return false
 
   if (sender instanceof JsonRpcSigner)
-    return error.message.includes('ethers-user-denied') // Ethers connection
+    return error.message.includes('ethers-user-denied') || error.message.includes('User rejected the request') // Ethers/Viem.js connection
   else return error.message.includes('Cancelled') // Substrate connection
+}
+
+/**
+ * Orders completed transfers by date.
+ * @param transfers - The list of completed transfers to order.
+ * @returns The list of completed transfers ordered by date.
+ */
+const orderTransfersByDate = (transfers: CompletedTransfer[]) =>
+  transfers.reduce<TransfersByDate>((acc, transfer) => {
+    let date: string
+    if (typeof transfer.date === 'string') {
+      date = new Date(transfer.date).toISOString().split('T')[0]
+    } else if (transfer.date instanceof Date) {
+      date = transfer.date.toISOString().split('T')[0]
+    } else {
+      date = 'Unknown date'
+    }
+
+    if (!acc[date]) {
+      acc[date] = []
+    }
+    acc[date].push(transfer)
+    return acc
+  }, {})
+
+/**
+ * Formats the ordered completed transfers list to match the transfer history design.
+ * @param transfers - The list of completed transfers to format.
+ * @returns The formatted list of completed transfers.
+ */
+export const formatTransfersByDate = (transfers: CompletedTransfer[]) => {
+  const orderedTransfersByDate = orderTransfersByDate(transfers)
+  return Object.keys(orderedTransfersByDate)
+    .map(date => {
+      return { date, transfers: orderedTransfersByDate[date] }
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
 
 /**
@@ -152,11 +197,17 @@ export const txWasCancelled = (sender: Sender, error: unknown): boolean => {
  * @param transfer - The ongoing transfer to check.
  * @returns A boolean indicating whether the transfer is outdated.
  */
-export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcm: 0.5, bridge: 6 }) => {
+export const startedTooLongAgo = (transfer: StoredTransfer, thresholdInHours = { xcmOrSwap: 0.5, bridge: 6 }) => {
   const direction = resolveDirection(transfer.sourceChain, transfer.destChain)
+  const isSwap = isChainflipSwap(
+    transfer.sourceChain,
+    transfer.destChain,
+    transfer.sourceToken,
+    transfer.destinationToken,
+  )
   const timeBuffer =
-    direction === Direction.WithinPolkadot
-      ? thresholdInHours.xcm * 60 * 60 * 1000
+    direction === Direction.WithinPolkadot || isSwap
+      ? thresholdInHours.xcmOrSwap * 60 * 60 * 1000
       : thresholdInHours.bridge * 60 * 60 * 1000
   return Date.now() - new Date(transfer.date).getTime() > timeBuffer
 }
