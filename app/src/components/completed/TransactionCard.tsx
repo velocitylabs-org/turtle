@@ -20,6 +20,17 @@ interface TransactionCardProps {
 export default function TransactionCard({ tx }: TransactionCardProps) {
   const status = tx.result
 
+  const getSourceLogoSrc = () =>
+    typeof tx.sourceChain.logoURI === 'string' ? tx.sourceChain.logoURI : tx.sourceChain.logoURI?.src
+
+  const getDestLogoSrc = () => {
+    const chain = tx.destChain ?? tx.sourceChain
+    const logoURI = chain.logoURI
+
+    if (typeof logoURI === 'string') return logoURI
+    return logoURI?.src
+  }
+
   return (
     <div
       className={cn(
@@ -47,7 +58,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
           {/* Source -> Dest Chain */}
           <div className="flex justify-between items-center gap-1">
             <Image
-              src={typeof tx.sourceChain.logoURI === 'string' ? tx.sourceChain.logoURI : tx.sourceChain.logoURI?.src}
+              src={getSourceLogoSrc()}
               alt={tx.sourceChain.name}
               width={16}
               height={16}
@@ -56,15 +67,7 @@ export default function TransactionCard({ tx }: TransactionCardProps) {
             />
             <div className="flex items-center justify-center w-[16px]">{getTxIcon(status)}</div>
             <Image
-              src={
-                tx.destChain
-                  ? typeof tx.destChain.logoURI === 'string'
-                    ? tx.destChain.logoURI
-                    : tx.destChain.logoURI?.src
-                  : typeof tx.sourceChain.logoURI === 'string'
-                    ? tx.sourceChain.logoURI
-                    : tx.sourceChain.logoURI?.src
-              }
+              src={getDestLogoSrc()}
               alt={tx.destChain ? tx.destChain.name : tx.sourceChain.name}
               width={16}
               height={16}
