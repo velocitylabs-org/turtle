@@ -26,6 +26,17 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
   const status = tx.result
   const transferFailed = status === TxStatus.Failed
 
+  const getSourceLogoSrc = () =>
+    typeof tx.sourceChain.logoURI === 'string' ? tx.sourceChain.logoURI : tx.sourceChain.logoURI?.src
+
+  const getDestLogoSrc = () => {
+    const chain = tx.destChain ?? tx.sourceChain
+    const logoURI = chain.logoURI
+
+    if (typeof logoURI === 'string') return logoURI
+    return logoURI?.src
+  }
+
   return (
     <div className={cn('mb-2 space-y-2 rounded-2xl border p-3 hover:cursor-pointer', getBorder(status))}>
       <div className="w-full space-y-2 overflow-x-auto">
@@ -58,7 +69,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
             >
               <div className="relative h-4 w-4 rounded-full">
                 <img
-                  src={tx.sourceChain.logoURI as string}
+                  src={getSourceLogoSrc()}
                   alt={`${tx.sourceChain.name}`}
                   width={16}
                   height={16}
@@ -74,7 +85,7 @@ export const CompletedTransferCard = ({ tx }: { tx: CompletedTransfer }) => {
               />
               <div className="relative h-4 w-4 rounded-full">
                 <img
-                  src={tx.destChain.logoURI as string}
+                  src={getDestLogoSrc()}
                   alt={`${tx.destChain.name}`}
                   width={16}
                   height={16}
