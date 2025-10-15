@@ -22,12 +22,15 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.0.0
+          version: 9.15.3
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.10.0
+          node-version: 22.0.0
+
+      - name: Clean up
+        run: pnpm run clean
 
       - name: Install Node.js dependencies
         run: pnpm i
