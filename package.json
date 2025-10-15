@@ -1,6 +1,6 @@
 {
   "name": "turle-monorepo",
-  "description": "Turtle Widget – Seamless, trustless cross-chain transfers made easy.",
+  "description": "Turtle App – Seamless, trustless cross-chain transfers made easy.",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -30,7 +30,7 @@
     "turbo": "^2.5.8",
     "typescript": "5.8.2"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@9.15.3",
   "engines": {
     "node": ">=18"
   },
