@@ -19,6 +19,9 @@ const nextConfig = {
         test: /HeartbeatWorker\.js$/,
         use: 'null-loader', // or asset/source, depending on needs
       })
+      config.externals.push({
+        '@turtle/widget': 'Widget', // adapt to your actual package name/global
+      })
     }
     return config
   },
@@ -37,8 +40,8 @@ const config =
           sourcemaps: {
             disable: process.env.SENTRY_DISABLE_SOURCEMAPS === 'true',
           },
-          org: 'noah-joeris', // TODO: replace with actual organization
-          project: 'javascript-nextjs', // TODO: replace with actual project name
+          org: 'velocity-labs',
+          project: 'turtle-site',
         },
         {
           // For all available options, see:

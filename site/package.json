@@ -27,8 +27,8 @@
     "tailwind-merge": "^2.3.0"
   },
   "devDependencies": {
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19.1.1",
+    "@types/react-dom": "^19.1.1",
     "@velocitylabs-org/turtle-tailwind-config": "workspace:*",
     "@velocitylabs-org/turtle-typescript-config": "workspace:*",
     "daisyui": "^4.10.2",
