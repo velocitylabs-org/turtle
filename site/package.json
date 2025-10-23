@@ -13,7 +13,6 @@
   "dependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "@number-flow/react": "^0.5.10",
-    "@sentry/nextjs": "^7.114.0",
     "@tanstack/react-query": "^5.83.0",
     "@velocitylabs-org/turtle-assets": "workspace:*",
     "@velocitylabs-org/turtle-registry": "workspace:*",
