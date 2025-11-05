@@ -2,8 +2,10 @@ import { captureException } from '@sentry/nextjs'
 import { useQuery } from '@tanstack/react-query'
 import { type Chain, isSameToken, type Token } from '@velocitylabs-org/turtle-registry'
 import { useMemo } from 'react'
+import type { Sender } from '@/hooks/useTransfer'
 import type { FeeDetails } from '@/models/transfer'
 import xcmRouterBuilderManager from '@/services/paraspell/xcmRouterBuilder'
+import xcmTransferBuilderManager from '@/services/paraspell/xcmTransferBuilder'
 import { isChainflipSwap } from '@/utils/chainflip'
 import { useChainflipQuote } from './useChainflipQuote'
 
@@ -12,9 +14,9 @@ interface UseOutputAmountParams {
   destinationChain?: Chain | null
   sourceToken?: Token | null
   destinationToken?: Token | null
-  /** Amount in the source token's decimal base */
-  amount?: string | null
-  /** Fees are used to calculate the output amount for transfers */
+  sourceAmount?: bigint | null
+  sender?: Sender | undefined
+  recipientAddress?: string
   fees?: FeeDetails[] | null
   loadingFees?: boolean
 }
@@ -29,29 +31,12 @@ export function useOutputAmount({
   destinationChain,
   sourceToken,
   destinationToken,
-  amount,
+  sourceAmount,
+  sender,
+  recipientAddress,
   fees,
   loadingFees,
 }: UseOutputAmountParams): OutputAmountResult {
-  // Calculate total fees for the source token
-  const totalFeesForSourceToken = useMemo(() => {
-    if (loadingFees || !fees || fees.length === 0 || !sourceToken) return null
-
-    let hasMatchingFees = false
-    const total = fees.reduce((sum, fee) => {
-      // NOTE: Execution fees (origin fees) & bridging fees are deducted from the sender's balance.
-      // The other fees (destination and hop fees) are deducted from the amount being sent.
-      if (fee.amount.token?.id === sourceToken.id && fee.title !== 'Execution fees' && fee.title !== 'Bridging fees') {
-        hasMatchingFees = true
-        return sum + BigInt(fee.amount.amount ?? 0n)
-      }
-      return sum
-    }, 0n)
-
-    // Return null if no fees match the source token, otherwise return the total
-    return hasMatchingFees ? total : null
-  }, [fees, sourceToken, loadingFees])
-
   // The following react-query is used to fetch the output amount for:
   // A swap made from HydrationDex with Paraspell
   // A bridge or XCM transfer made from Snowbridge or Paraspell
@@ -62,32 +47,46 @@ export function useOutputAmount({
       destinationChain?.uid,
       sourceToken?.id,
       destinationToken?.id,
-      amount,
+      sourceAmount?.toString(),
       loadingFees,
-      totalFeesForSourceToken?.toString() ?? 'no-fees',
     ],
     queryFn: async () => {
-      if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount || loadingFees) return null
+      if (
+        !sourceChain ||
+        !destinationChain ||
+        !sourceToken ||
+        !destinationToken ||
+        !sourceAmount ||
+        !sender ||
+        !recipientAddress ||
+        loadingFees
+      )
+        return null
 
       try {
         // Paraspell swap from HydrationDex or AH
         if (!isSameToken(sourceToken, destinationToken)) {
-          const params = {
+          return await xcmRouterBuilderManager.getExchangeOutputAmount({
             sourceChain,
             destinationChain,
             sourceToken,
             destinationToken,
-            sourceAmount: amount,
-          }
-          return await xcmRouterBuilderManager.getExchangeOutputAmount(params)
+            sourceAmount,
+          })
         }
 
         // Bridge & XCM transfers (Snowbridge & Paraspell)
-        if (!totalFeesForSourceToken) return BigInt(amount)
-
-        const amountBigInt = BigInt(amount)
-        if (totalFeesForSourceToken > amountBigInt) return 0n
-        return amountBigInt - totalFeesForSourceToken
+        const receivableAmount = await xcmTransferBuilderManager.getReceivableAmount({
+          sourceChain,
+          destinationChain,
+          sourceToken,
+          sourceAmount,
+          sender,
+          recipient: recipientAddress,
+        })
+        return receivableAmount
+          ? receivableAmount
+          : calcReceivableAmountManually({ fees, loadingFees, sourceToken, sourceAmount })
       } catch (error) {
         captureException(error, {
           level: 'error',
@@ -96,7 +95,7 @@ export function useOutputAmount({
             destinationChain,
             sourceToken,
             destinationToken,
-            amount,
+            sourceAmount,
           },
         })
         console.error('Failed to fetch swap output amount:', error)
@@ -108,7 +107,7 @@ export function useOutputAmount({
       !!destinationChain &&
       !!sourceToken &&
       !!destinationToken &&
-      !!amount &&
+      !!sourceAmount &&
       !loadingFees &&
       !isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken),
     staleTime: 10000, // Cache results for 10 seconds
@@ -122,11 +121,11 @@ export function useOutputAmount({
     destinationChain,
     sourceToken,
     destinationToken,
-    amount,
+    amount: sourceAmount?.toString(),
   })
 
   const outputAmount = useMemo(() => {
-    if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !amount) return null
+    if (!sourceChain || !destinationChain || !sourceToken || !destinationToken || !sourceAmount) return null
 
     if (isChainflipSwap(sourceChain, destinationChain, sourceToken, destinationToken) && !isChainflipQuoteError) {
       return chainflipQuote ? BigInt(chainflipQuote.egressAmount) : null
@@ -138,7 +137,7 @@ export function useOutputAmount({
     destinationChain,
     sourceToken,
     destinationToken,
-    amount,
+    sourceAmount,
     chainflipQuote,
     isChainflipQuoteError,
     data,
@@ -148,4 +147,37 @@ export function useOutputAmount({
     outputAmount,
     isLoading: isLoading || isFetching || isLoadingChainflipQuote || !!loadingFees,
   }
+}
+
+function calcReceivableAmountManually({
+  fees,
+  sourceToken,
+  loadingFees,
+  sourceAmount,
+}: {
+  fees?: FeeDetails[] | null
+  sourceToken?: Token | null
+  loadingFees?: boolean
+  sourceAmount: bigint
+}) {
+  if (loadingFees || !fees || fees.length === 0 || !sourceToken) return sourceAmount
+
+  let hasMatchingFees = false
+  const totalFeesForSourceToken = fees.reduce((sum, fee) => {
+    // NOTE: Execution fees (origin fees) & bridging fees are deducted from the sender's balance.
+    // The other fees (destination and hop fees) are deducted from the amount being sent.
+    if (fee.amount.token?.id === sourceToken.id && fee.title !== 'Execution fees' && fee.title !== 'Bridging fees') {
+      hasMatchingFees = true
+      return sum + BigInt(fee.amount.amount ?? 0n)
+    }
+    return sum
+  }, 0n)
+
+  // If no fees match the source token, return the full amount
+  if (!hasMatchingFees) return sourceAmount
+
+  // Ensure we don't return negative amounts
+  if (totalFeesForSourceToken > sourceAmount) return 0n
+
+  return sourceAmount - totalFeesForSourceToken
 }
