@@ -1,4 +1,5 @@
 'use client'
+import { type Chain, chainsByUid, type Token, tokensById } from '@velocitylabs-org/turtle-registry'
 import { cn } from '@velocitylabs-org/turtle-ui'
 import TransactionDialog from '@/components/completed/TransactionDialog'
 import { useChainflipTracker } from '@/hooks/useChainflipTracker'
@@ -40,7 +41,14 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
       {ongoingTxs &&
         ongoingTxs.length > 0 &&
         ongoingTxs.map(tx => {
-          return <OngoingTransferDialog key={tx.id} transfer={tx} status={statusMessages[tx.id]} />
+          const transfer = {
+            ...tx,
+            sourceToken: getTokenSafe(tx.sourceToken),
+            destinationToken: getTokenSafe(tx.destinationToken as Token),
+            sourceChain: getChainSafe(tx.sourceChain),
+            destChain: getChainSafe(tx.destChain),
+          }
+          return <OngoingTransferDialog key={tx.id} transfer={transfer} status={statusMessages[tx.id]} />
         })}
       {completedTxs.map(({ date, transfers }, idx) => (
         <div key={idx + date + transfers.length}>
@@ -49,11 +57,28 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
               {formatCompletedTransferDate(date)}
             </p>
             {transfers.reverse().map((tx, idx) => {
-              return <TransactionDialog key={idx + tx.id + tx.sender} tx={tx} />
+              const transfer = {
+                ...tx,
+                sourceToken: getTokenSafe(tx.sourceToken),
+                destinationToken: getTokenSafe(tx.destinationToken as Token),
+                sourceChain: getChainSafe(tx.sourceChain),
+                destChain: getChainSafe(tx.destChain),
+              }
+              return <TransactionDialog key={idx + tx.id + tx.sender} tx={transfer} />
             })}
           </div>
         </div>
       ))}
     </div>
   )
+}
+
+// Safely retrieves a token from the registry, falling back to the provided token if not found.
+function getTokenSafe(token: Token): Token {
+  return tokensById[token.id] ?? token
+}
+
+// Safely retrieves a chain from the registry, falling back to the provided chain if not found.
+function getChainSafe(chain: Chain): Chain {
+  return chainsByUid[chain.uid] ?? chain
 }
