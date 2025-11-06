@@ -75,10 +75,10 @@ export default function TransactionHistory({ transfers }: TransactionHistoryProp
 
 // Safely retrieves a token from the registry, falling back to the provided token if not found.
 function getTokenSafe(token: Token): Token {
-  return tokensById[token.id] ?? token
+  return tokensById[token?.id] ?? token
 }
 
 // Safely retrieves a chain from the registry, falling back to the provided chain if not found.
 function getChainSafe(chain: Chain): Chain {
-  return chainsByUid[chain.uid] ?? chain
+  return chainsByUid[chain?.uid] ?? chain
 }
