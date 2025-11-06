@@ -24,7 +24,7 @@
     "@polkadot/extension-inject": "^0.58.8",
     "@polkadot/keyring": "^13.2.1",
     "@polkadot/react-identicon": "^3.10.1",
-    "@polkadot/types": "^15.9.2",
+    "@polkadot/types": "^15.10.2",
     "@polkadot/util": "^13.3.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@reown/appkit": "1.6.9",
