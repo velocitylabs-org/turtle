@@ -76,6 +76,7 @@ export function getExplorerLink(transfer: StoredTransfer): string | undefined {
  * @returns The subscan link
  */
 const getCustomSubscanLink = (chainName: string, txHash: string) => {
+  if (chainName === 'Asset Hub') return `https://assethub-polkadot.subscan.io/extrinsic/${txHash}`
   return `https://${chainName.toLowerCase()}.subscan.io/extrinsic/${txHash}`
 }
 
