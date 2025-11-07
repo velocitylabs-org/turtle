@@ -20,7 +20,7 @@ import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { getExplorerLink } from '@/utils/explorers'
 import { extractPapiEvent } from '@/utils/papi'
 import type { DryRunResult } from '@/utils/paraspellTransfer'
-import { hashToHex, isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
+import { isSameChainSwap, isSwapWithTransfer, txWasCancelled } from '@/utils/transfer'
 import useCompletedTransfers from './useCompletedTransfers'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
@@ -153,7 +153,7 @@ const useParaspellApi = () => {
     tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) => {
         const transferToStore = {
-          id: hashToHex(event.txHash),
+          id: event.txHash,
           sourceChain: params.sourceChain,
           sourceToken: params.sourceToken,
           destinationToken: params.destinationToken,
@@ -173,7 +173,7 @@ const useParaspellApi = () => {
             params.onComplete?.()
             trackTransferMetrics({
               transferParams: params,
-              txId: hashToHex(event.txHash),
+              txId: event.txHash,
               senderAddress,
               sourceTokenUSDValue,
               destinationTokenUSDValue,
@@ -182,7 +182,7 @@ const useParaspellApi = () => {
             xcmTransferBuilderManager.disconnect(params)
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, hashToHex(event.txHash))
+          handleSendError(params.sender, error, setStatus, event.txHash)
           xcmTransferBuilderManager.disconnect(params)
         }
       },
@@ -229,7 +229,7 @@ const useParaspellApi = () => {
     firstTransaction.tx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) => {
         const transferToStore = {
-          id: hashToHex(event.txHash),
+          id: event.txHash,
           sourceChain: params.sourceChain,
           sourceToken: params.sourceToken,
           destinationToken: params.destinationToken,
@@ -252,7 +252,7 @@ const useParaspellApi = () => {
             params.onComplete?.()
             trackTransferMetrics({
               transferParams: params,
-              txId: hashToHex(event.txHash),
+              txId: event.txHash,
               senderAddress: account.address,
               sourceTokenUSDValue,
               destinationTokenUSDValue,
@@ -262,7 +262,7 @@ const useParaspellApi = () => {
             xcmRouterBuilderManager.disconnect(params)
           })
         } catch (error) {
-          handleSendError(params.sender, error, setStatus, hashToHex(event.txHash))
+          handleSendError(params.sender, error, setStatus, event.txHash)
           await xcmRouterBuilderManager.disconnect(params)
         }
       },
@@ -286,7 +286,7 @@ const useParaspellApi = () => {
       await addToOngoingTransfers(
         {
           ...transferToStore,
-          id: hashToHex(event.txHash),
+          id: event.txHash,
         },
         onComplete,
       )
@@ -299,7 +299,7 @@ const useParaspellApi = () => {
 
     addOrUpdate({
       ...transferToStore,
-      id: hashToHex(event.txHash),
+      id: event.txHash,
       crossChainMessageHash: messageHash,
       parachainMessageId: messageId,
       sourceChainExtrinsicIndex: extrinsicIndex,
