@@ -43,10 +43,10 @@ export default function TransfersHistory({ transfers }: TransfersHistoryProps) {
         ongoingTxs.map(tx => {
           const transfer = {
             ...tx,
-            sourceToken: tokensById[tx.sourceToken.id] as Token,
-            destinationToken: tokensById[tx.destinationToken?.id as string] as Token,
-            sourceChain: chainsByUid[tx.sourceChain.uid] as Chain,
-            destChain: chainsByUid[tx.destChain.uid] as Chain,
+            sourceToken: getTokenSafe(tx.sourceToken),
+            destinationToken: getTokenSafe(tx.destinationToken as Token),
+            sourceChain: getChainSafe(tx.sourceChain),
+            destChain: getChainSafe(tx.destChain),
           }
 
           return <OngoingTransferDialog key={tx.id} transfer={transfer} status={statusMessages[tx.id]} />
@@ -60,10 +60,10 @@ export default function TransfersHistory({ transfers }: TransfersHistoryProps) {
             {transfers.reverse().map((tx, idx) => {
               const transfer = {
                 ...tx,
-                sourceToken: tokensById[tx.sourceToken.id] as Token,
-                destinationToken: tokensById[tx.destinationToken?.id as string] as Token,
-                sourceChain: chainsByUid[tx.sourceChain.uid] as Chain,
-                destChain: chainsByUid[tx.destChain.uid] as Chain,
+                sourceToken: getTokenSafe(tx.sourceToken),
+                destinationToken: getTokenSafe(tx.destinationToken as Token),
+                sourceChain: getChainSafe(tx.sourceChain),
+                destChain: getChainSafe(tx.destChain),
               }
 
               return <CompletedTransferDialog key={idx + tx.id + tx.sender} tx={transfer} />
@@ -73,4 +73,14 @@ export default function TransfersHistory({ transfers }: TransfersHistoryProps) {
       ))}
     </div>
   )
+}
+
+// Safely retrieves a token from the registry, falling back to the provided token if not found.
+function getTokenSafe(token: Token): Token {
+  return tokensById[token?.id] ?? token
+}
+
+// Safely retrieves a chain from the registry, falling back to the provided chain if not found.
+function getChainSafe(chain: Chain): Chain {
+  return chainsByUid[chain?.uid] ?? chain
 }
