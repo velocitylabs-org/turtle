@@ -105,21 +105,6 @@ class XcmTransferBuilderManager {
     }
   }
 
-  async getTransferableAmount(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
-    >,
-  ) {
-    try {
-      const builder = this.getBuilder(params as TransferParams)
-      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferableAmount()
-    } catch (error) {
-      console.error('Failed to get max transferable amount: ', error)
-      return null
-    }
-  }
-
   // Origin and destination fees
   async getXcmFee(
     params: Pick<
@@ -151,6 +136,22 @@ class XcmTransferBuilderManager {
     }
   }
 
+  // Max transferable amount
+  async getTransferableAmount(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+    >,
+  ) {
+    try {
+      const builder = this.getBuilder(params as TransferParams)
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferableAmount()
+    } catch (error) {
+      console.error('Failed to get max transferable amount: ', error)
+      return null
+    }
+  }
+
   async getMinTransferableAmount(
     params: Pick<
       TransferParams,
@@ -162,6 +163,21 @@ class XcmTransferBuilderManager {
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getMinTransferableAmount()
     } catch (error) {
       console.error('Failed to get min transferable amount: ', error)
+      return null
+    }
+  }
+
+  async getReceivableAmount(
+    params: Pick<
+      TransferParams,
+      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+    >,
+  ) {
+    try {
+      const builder = this.getBuilder(params as TransferParams)
+      return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getReceivableAmount()
+    } catch (error) {
+      console.error('Failed to get transfer fees info: ', error)
       return null
     }
   }

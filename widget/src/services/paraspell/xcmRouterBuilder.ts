@@ -101,6 +101,55 @@ class XcmRouterBuilderManager {
     }
   }
 
+  // Max transferable amount
+  async getTransferableAmount(
+    params: Pick<
+      TransferParams,
+      'sender' | 'recipient' | 'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken'
+    > & {
+      sourceAmount: bigint | string
+    },
+    exchange: Dex = 'HydrationDex',
+  ) {
+    try {
+      const senderAddress = await getSenderAddress(params.sender)
+      const recipientAddress = params.recipient
+      const builder = this.getBuilder(params as TransferParams, exchange)
+      // biome-ignore lint/suspicious/noExplicitAny: any
+      return await (builder as any)
+        .senderAddress(senderAddress)
+        .recipientAddress(recipientAddress)
+        .getTransferableAmount()
+    } catch (error) {
+      console.error('Failed to get max transferable amount: ', error)
+      throw error
+    }
+  }
+
+  async getMinTransferableAmount(
+    params: Pick<
+      TransferParams,
+      'sender' | 'recipient' | 'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken'
+    > & {
+      sourceAmount: bigint | string
+    },
+    exchange: Dex = 'HydrationDex',
+  ) {
+    try {
+      const senderAddress = await getSenderAddress(params.sender)
+      const recipientAddress = params.recipient
+      const builder = this.getBuilder(params as TransferParams, exchange)
+      // biome-ignore lint/suspicious/noExplicitAny: any
+      return await (builder as any)
+        .senderAddress(senderAddress)
+        .recipientAddress(recipientAddress)
+        .getMinTransferableAmount()
+    } catch (error) {
+      console.error('Failed to get min transferable amount: ', error)
+      throw error
+    }
+  }
+
   // Origin and destination fees
   async getXcmFee(
     params: Pick<
