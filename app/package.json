@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "next build --turbo",
+    "build": "next build",
     "start": "next start",
     "test": "jest --transformIgnorePatterns \"node_modules/(?!@toolz/allow)/\"",
     "test:watch": "jest --watch",
