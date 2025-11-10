@@ -13,8 +13,8 @@ export default function ArrowRight({ fill = colors['turtle-foreground'], ...prop
         clipRule="evenodd"
         d="M4 7.33334L8.66667 4M8.66667 4L4 0.666669M8.66667 4L1 4"
         stroke={fill}
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   )

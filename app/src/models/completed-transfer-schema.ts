@@ -1,10 +1,12 @@
 import { z } from 'zod'
 import { TxStatus } from './transfer'
 
+const logoURISchema = z.string().or(z.object({}).passthrough())
+
 const looseChainSchema = z.object({
   uid: z.string(),
   name: z.string(),
-  logoURI: z.string(),
+  logoURI: logoURISchema,
   chainId: z.number(),
   network: z.enum(['Ethereum', 'Polkadot', 'Kusama', 'Arbitrum']),
 
@@ -18,7 +20,7 @@ const looseChainSchema = z.object({
 const looseTokenSchema = z.object({
   id: z.string(),
   name: z.string(),
-  logoURI: z.string(),
+  logoURI: logoURISchema,
   symbol: z.string(),
   decimals: z.number(),
   address: z.string().optional(),
