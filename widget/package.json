@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "dev": "vite",
-    "build": "rimraf dist && tsc -b && vite build",
+    "build": "rimraf dist && tsc -b && NODE_OPTIONS='--max-old-space-size=8192' vite build",
     "lint": "eslint .",
     "start": "vite preview",
     "format": "prettier --write .",
