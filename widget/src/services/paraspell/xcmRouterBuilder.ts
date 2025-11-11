@@ -8,6 +8,18 @@ import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof RouterBuilder>
 
+type RouterParamsBase = Pick<TransferParams, 'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken'>
+
+type RouterParamsWithSender = RouterParamsBase & Pick<TransferParams, 'sender' | 'recipient'>
+
+type RouterParamsWithAmount = RouterParamsBase & {
+  sourceAmount: bigint | string
+}
+
+type RouterParamsComplete = RouterParamsWithSender & {
+  sourceAmount: bigint | string
+}
+
 class XcmRouterBuilderManager {
   private static instance: XcmRouterBuilderManager
   private builders: Map<string, TxBuilder>
@@ -84,12 +96,7 @@ class XcmRouterBuilderManager {
     }
   }
 
-  async getExchangeOutputAmount(
-    params: Pick<TransferParams, 'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken'> & {
-      sourceAmount: bigint | string
-    },
-    exchange: Dex = 'HydrationDex',
-  ) {
+  async getExchangeOutputAmount(params: RouterParamsWithAmount, exchange: Dex = 'HydrationDex') {
     try {
       const builder = this.getBuilder(params as TransferParams, exchange)
       // biome-ignore lint/suspicious/noExplicitAny: any
@@ -101,17 +108,41 @@ class XcmRouterBuilderManager {
     }
   }
 
+  // Max transferable amount
+  async getTransferableAmount(params: RouterParamsComplete, exchange: Dex = 'HydrationDex') {
+    try {
+      const senderAddress = await getSenderAddress(params.sender)
+      const recipientAddress = params.recipient
+      const builder = this.getBuilder(params as TransferParams, exchange)
+      // biome-ignore lint/suspicious/noExplicitAny: any
+      return await (builder as any)
+        .senderAddress(senderAddress)
+        .recipientAddress(recipientAddress)
+        .getTransferableAmount()
+    } catch (error) {
+      console.error('Failed to get max transferable amount: ', error)
+      throw error
+    }
+  }
+
+  async getMinTransferableAmount(params: RouterParamsComplete, exchange: Dex = 'HydrationDex') {
+    try {
+      const senderAddress = await getSenderAddress(params.sender)
+      const recipientAddress = params.recipient
+      const builder = this.getBuilder(params as TransferParams, exchange)
+      // biome-ignore lint/suspicious/noExplicitAny: any
+      return await (builder as any)
+        .senderAddress(senderAddress)
+        .recipientAddress(recipientAddress)
+        .getMinTransferableAmount()
+    } catch (error) {
+      console.error('Failed to get min transferable amount: ', error)
+      throw error
+    }
+  }
+
   // Origin and destination fees
-  async getXcmFee(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'destinationToken' | 'sender' | 'recipient'
-    > & {
-      sourceAmount: bigint | string
-    },
-    exchange: Dex = 'HydrationDex',
-    slippagePct: string = '1',
-  ) {
+  async getXcmFee(params: RouterParamsComplete, exchange: Dex = 'HydrationDex', slippagePct: string = '1') {
     try {
       const senderAddress = await getSenderAddress(params.sender)
       const recipientAddress = params.recipient

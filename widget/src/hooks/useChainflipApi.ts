@@ -16,7 +16,7 @@ import { getChainSpecificAddress, getSenderAddress } from '@/utils/address'
 import { trackTransferMetrics, updateTransferMetrics } from '@/utils/analytics'
 import { type ChainflipQuote, getDepositAddress, getRequiredBlockConfirmation } from '@/utils/chainflip'
 import { addToOngoingTransfers } from '@/utils/tracking'
-import { convertAmount, Direction, hashToHex, resolveDirection, txWasCancelled } from '@/utils/transfer'
+import { convertAmount, Direction, resolveDirection, txWasCancelled } from '@/utils/transfer'
 import useNotification from './useNotification'
 import useOngoingTransfers from './useOngoingTransfers'
 import type { Sender, Status, TransferParams } from './useTransfer'
@@ -301,7 +301,7 @@ const submitPolkadotTransfer = async (
     unsignedTx.signSubmitAndWatch(polkadotSigner).subscribe({
       next: async (event: TxEvent) => {
         try {
-          transferToStore.id = hashToHex(event.txHash)
+          transferToStore.id = event.txHash
 
           const onSignedCallback = () => {
             onComplete?.()
@@ -309,7 +309,7 @@ const submitPolkadotTransfer = async (
 
             trackTransferMetrics({
               transferParams: swapParams,
-              txId: hashToHex(event.txHash),
+              txId: event.txHash,
               senderAddress: formattedSenderAddress,
               sourceTokenUSDValue,
               destinationTokenUSDValue,
@@ -327,7 +327,7 @@ const submitPolkadotTransfer = async (
             removeOngoingTransfer,
             addNotification,
             setStatus,
-            hashToHex(event.txHash),
+            event.txHash,
             polkadotTransferParams,
             swapParams,
           )
@@ -401,7 +401,7 @@ const handlePolkadotTxEvents = async (
     await addToOngoingTransfers(
       {
         ...transferToStore,
-        id: hashToHex(event.txHash),
+        id: event.txHash,
       },
       addOrUpdate,
       onComplete,
@@ -415,7 +415,7 @@ const handlePolkadotTxEvents = async (
 
   addOrUpdate({
     ...transferToStore,
-    id: hashToHex(event.txHash),
+    id: event.txHash,
     finalizedAt: new Date(),
   })
   resolve()

@@ -215,23 +215,19 @@ export default function useFees(params: UseFeesParams) {
           Promise.all([
             // Get max-transferable amount
             transferableAmount ||
-              xcmTransferBuilderManager.getTransferableAmount({
-                sourceChain,
-                destinationChain,
-                sourceToken,
-                sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
-                sender,
-                recipient: recipientAddress,
-              }),
+              (isTokenSwap
+                ? xcmRouterBuilderManager.getTransferableAmount({
+                    ...commonParams,
+                    destinationToken,
+                  })
+                : xcmTransferBuilderManager.getTransferableAmount(commonParams)),
             // Get min-transferable amount
-            xcmTransferBuilderManager.getMinTransferableAmount({
-              sourceChain,
-              destinationChain,
-              sourceToken,
-              sourceAmount: safeConvertAmount(sourceTokenAmount, sourceToken)!,
-              sender,
-              recipient: recipientAddress,
-            }),
+            isTokenSwap
+              ? xcmRouterBuilderManager.getMinTransferableAmount({
+                  ...commonParams,
+                  destinationToken,
+                })
+              : xcmTransferBuilderManager.getMinTransferableAmount(commonParams),
           ])
             .then(([maxTransferableAmount, minTransferableAmount]) => {
               // @ts-ignore NOTE: when minTransferableAmount is 0, it means that the user has no balance to cover the transfer
