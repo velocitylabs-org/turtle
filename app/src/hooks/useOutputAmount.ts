@@ -86,7 +86,7 @@ export function useOutputAmount({
         })
         return receivableAmount
           ? receivableAmount
-          : calcReceivableAmountManually({ fees, loadingFees, sourceToken, sourceAmount })
+          : getReceivableAmount({ fees, loadingFees, sourceToken, sourceAmount })
       } catch (error) {
         captureException(error, {
           level: 'error',
@@ -149,7 +149,7 @@ export function useOutputAmount({
   }
 }
 
-function calcReceivableAmountManually({
+function getReceivableAmount({
   fees,
   sourceToken,
   loadingFees,

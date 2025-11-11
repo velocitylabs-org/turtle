@@ -10,6 +10,11 @@ import { toHuman } from '@/utils/transfer'
 
 type TxBuilder = ReturnType<typeof Builder>
 
+type TransferParamsBase = Pick<
+  TransferParams,
+  'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
+>
+
 const velocityRecoveryAccount = '148FYcbxxTnhTCgiTgyVod5LygZZRQiGn2bQA2YqaaZbb9WJ'
 
 class XcmTransferBuilderManager {
@@ -106,12 +111,7 @@ class XcmTransferBuilderManager {
   }
 
   // Origin and destination fees
-  async getXcmFee(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
-    >,
-  ) {
+  async getXcmFee(params: TransferParamsBase) {
     try {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getXcmFee()
@@ -121,12 +121,7 @@ class XcmTransferBuilderManager {
     }
   }
 
-  async getOriginXcmFee(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
-    >,
-  ) {
+  async getOriginXcmFee(params: TransferParamsBase) {
     try {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getOriginXcmFee()
@@ -137,12 +132,7 @@ class XcmTransferBuilderManager {
   }
 
   // Max transferable amount
-  async getTransferableAmount(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
-    >,
-  ) {
+  async getTransferableAmount(params: TransferParamsBase) {
     try {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferableAmount()
@@ -152,12 +142,7 @@ class XcmTransferBuilderManager {
     }
   }
 
-  async getMinTransferableAmount(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
-    >,
-  ) {
+  async getMinTransferableAmount(params: TransferParamsBase) {
     try {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getMinTransferableAmount()
@@ -167,12 +152,7 @@ class XcmTransferBuilderManager {
     }
   }
 
-  async getReceivableAmount(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
-    >,
-  ) {
+  async getReceivableAmount(params: TransferParamsBase) {
     try {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getReceivableAmount()
@@ -182,12 +162,7 @@ class XcmTransferBuilderManager {
     }
   }
 
-  async getTransferInfo(
-    params: Pick<
-      TransferParams,
-      'sourceChain' | 'destinationChain' | 'sourceToken' | 'recipient' | 'sender' | 'sourceAmount'
-    >,
-  ) {
+  async getTransferInfo(params: TransferParamsBase) {
     try {
       const builder = this.getBuilder(params as TransferParams)
       return await (builder as GeneralBuilder<TSendBaseOptionsWithSenderAddress>).getTransferInfo()
