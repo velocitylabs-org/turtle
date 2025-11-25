@@ -1,5 +1,20 @@
 # @velocitylabs-org/turtle-assets
 
+## 0.1.0
+
+### Minor Changes
+
+- 5a96db7: Adding Aave, aUSDT, and GDOT tokens and paths
+- bd9dfa9: Feat: Add tokens and paths (LINK, SOL, LDO, SKY, TRAC)
+
+### Patch Changes
+
+- 3fd1f0e: Implement swaps between the Arbitrum chain & AHP
+- 9c60a77: Implement chainflip Native stablecoin swaps
+- 9c60a77: Add info icon
+- 033f5f7: Update Chainlink logo
+- 9c60a77: "add new icons"
+
 ## 0.0.5
 
 ### Patch Changes
