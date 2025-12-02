@@ -27,7 +27,7 @@
     "tsc-alias": "^1.8.16"
   },
   "peerDependencies": {
-    "@paraspell/sdk": "11.14.7",
+    "@paraspell/sdk": "11.14.8",
     "@types/node": ">=20.16.15",
     "@types/react": "^19.0.8"
   }
