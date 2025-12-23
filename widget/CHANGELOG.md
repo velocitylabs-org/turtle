@@ -1,5 +1,39 @@
 # @velocitylabs-org/turtle-widget
 
+## 0.2.0
+
+### Minor Changes
+
+- 9b4aece: Update ParaSpell
+- e58378a: Update ParaSpell to 11.14.8
+
+### Patch Changes
+
+- 6fd1565: Bump Paraspell SDK and related dependencies to v11.8.5
+- acab77e: Fix KSM AH to Arb path
+- a25f024: change block explorer link logic
+- f693006: Bump paraspell sdk to v11.8.2
+- 811dbee: Fixed fetch balance and wallet connection
+- 1ac18b0: improve local storage parsing
+- 5e2284b: fix explorer on ah swap
+- 3fd1f0e: Implement swaps between the Arbitrum chain & AHP
+- 356267c: Removed unused files, unused dependecies and exports
+- e01ce5e: bump ps to 10.11.6 and papi to 1.15.2
+- c9339ea: Complete Chainflip w Arbitrum implementation
+- c9339ea: refactor snowbridge tracking
+- a69c4fb: Update Paraspell
+- 5c7de4b: Migrate Paraspell to v11
+- 68a404b: Replace ESLint + Prettier with Biome
+- 7573de4: Add handling for new fees and introduce new TxSummary design
+- af24057: Fixed container height
+- fc2935c: fix txhash format
+- f02d657: Paraspell SDK bump
+- 88bfe6a: fix ens
+- 9ecfa43: Safely handle token and chain retrieval in TransfersHistory
+- 4c0cb0c: Bump Paraspell sdk + router to 10.11.8
+- 95a4d70: Created shared components to unify the trasaction history view between app and widget
+- f1b3cee: Fix analytics
+
 ## 0.1.0
 
 ### Minor Changes
