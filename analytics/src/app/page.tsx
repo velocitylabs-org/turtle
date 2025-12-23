@@ -49,6 +49,7 @@ const booleanDefaultTrue = parseAsBoolean.withDefault(true)
 const pageQueryDefault = parseAsInteger.withDefault(1)
 
 export default function HomeDashboardPage() {
+  console.log('Random PR against main @victor')
   const [transactionGraphType, setTransactionGraphType] = useQueryState('transactionsBy', togglesQueryDefault)
   const [tokensGraphType, setTokensGraphType] = useQueryState('topTokensBy', togglesQueryDefault)
   const [timePeriod, setTimePeriod] = useQueryState('transactionsPeriod', timePeriodQueryDefault)
