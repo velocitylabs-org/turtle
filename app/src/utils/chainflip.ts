@@ -52,10 +52,8 @@ export const getChainflipSwapSourceTokens = (sourceChain: Chain): Token[] => {
 
   const tokensSet = new Set<Token>()
 
-  console.log('test')
-
   chainflipRoutes
-    .filter(route => route.from.chainId === sourceChain.chainId)
+    .filter(route => route.from.uid === sourceChain.uid)
     .map(route => route.pairs.map(([token, _]) => tokensSet.add(token)))
 
   return Array.from(tokensSet)
