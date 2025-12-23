@@ -23,7 +23,7 @@
     "husky": "^9.1.7",
     "lucide-react": "^0.454.0",
     "mongoose": "^8.14.0",
-    "next": "15.2.4",
+    "next": "15.2.8",
     "nuqs": "^2.4.3",
     "react": "19.0.0",
     "react-day-picker": "latest",
