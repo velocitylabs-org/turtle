@@ -7,7 +7,7 @@ import TurtleIcon from './svg/TurtleIcon'
 const readMoreButton = {
   label: 'Learn more',
   onClick: () => {
-    window.open('https://medium.com/todo', '_blank', 'noopener,noreferrer')
+    window.open('https://www.velocitylabs.org/post/a-farewell-to-turtle', '_blank')
   },
 }
 
@@ -23,7 +23,7 @@ export default function NavBar() {
           </div>
         </>
 
-        <motion.div className="flex items-center gap-1 self-center pt-1 w-[504px] text-center items-center">
+        <motion.div className="flex items-center gap-1 self-center pt-1 w-[504px] text-center items-center max-w-[90vw] sm:w-[31.5rem]">
           <ActionBanner
             disabled={false}
             header="Turtle is being deprecated."
