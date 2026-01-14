@@ -7,7 +7,7 @@ import TurtleIcon from './svg/TurtleIcon'
 const readMoreButton = {
   label: 'Learn more',
   onClick: () => {
-    window.open('https://medium.com/todo', '_blank', 'noopener,noreferrer')
+    window.open('https://www.velocitylabs.org/post/a-farewell-to-turtle', '_blank')
   },
 }
 
