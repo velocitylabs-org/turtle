@@ -1,5 +1,39 @@
 # @velocitylabs-org/turtle-ui
 
+## 0.1.0
+
+### Minor Changes
+
+- bd9dfa9: Feat: Add tokens and paths (LINK, SOL, LDO, SKY, TRAC)
+- f85ab20: Redesign ongoing & done transaction cards
+
+### Patch Changes
+
+- 3fd1f0e: Implement swaps between the Arbitrum chain & AHP
+- 356267c: Removed unused files, unused dependecies and exports
+- 9c60a77: Implement chainflip Native stablecoin swaps
+- c9339ea: Complete Chainflip w Arbitrum implementation
+- 68a404b: Replace ESLint + Prettier with Biome
+- 95a4d70: Created shared components to unify the trasaction history view between app and widget
+- Updated dependencies [9b4aece]
+- Updated dependencies [6fd1565]
+- Updated dependencies [f693006]
+- Updated dependencies [3fd1f0e]
+- Updated dependencies [356267c]
+- Updated dependencies [9c60a77]
+- Updated dependencies [9c60a77]
+- Updated dependencies [033f5f7]
+- Updated dependencies [7227711]
+- Updated dependencies [a69c4fb]
+- Updated dependencies [5a96db7]
+- Updated dependencies [5c7de4b]
+- Updated dependencies [68a404b]
+- Updated dependencies [f02d657]
+- Updated dependencies [9c60a77]
+- Updated dependencies [bd9dfa9]
+  - @velocitylabs-org/turtle-registry@0.1.0
+  - @velocitylabs-org/turtle-assets@0.1.0
+
 ## 0.0.9
 
 ### Patch Changes
